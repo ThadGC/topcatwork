@@ -1,0 +1,6484 @@
+[
+ {
+  "slug": "26-stellar-white",
+  "src": "raw/next/26-stellar-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/26-stellar-white.jpg",
+  "ok": false,
+  "score": 0.954,
+  "box": [
+   242,
+   0,
+   726,
+   483
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 3.7, want 4.0 at 370px)",
+  "candidates": 2
+ },
+ {
+  "slug": "absolute-black-brushed",
+  "src": "raw/nile-inv/absolute-black-brushed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/absolute-black-brushed.jpg",
+  "ok": true,
+  "score": 0.981,
+  "sharp": 5.3,
+  "src_px": 904,
+  "phash": 1209313810167704337829254333376,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   187,
+   0,
+   1738,
+   1547
+  ],
+  "tile_px": 904,
+  "thumb_px": 800,
+  "bytes": 110560,
+  "candidates": 10
+ },
+ {
+  "slug": "absolute-black-extra",
+  "src": "raw/nile-inv/absolute-black-extra.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/absolute-black-extra.jpg",
+  "ok": true,
+  "score": 0.879,
+  "sharp": 2.0,
+  "src_px": 594,
+  "phash": 654259260585714418968435657092,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 0.53,
+   "exposed": 0.53,
+   "noedge": 1.0
+  },
+  "box": [
+   687,
+   0,
+   1336,
+   650
+  ],
+  "tile_px": 592,
+  "thumb_px": 592,
+  "bytes": 4680,
+  "candidates": 10
+ },
+ {
+  "slug": "absolute-black-honed",
+  "src": "raw/nile-inv/absolute-black-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/absolute-black-honed.jpg",
+  "ok": true,
+  "score": 0.936,
+  "sharp": 2.1,
+  "src_px": 1422,
+  "phash": 184553489648435183728165228628,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 0.6,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   1282,
+   0,
+   3048,
+   1765
+  ],
+  "tile_px": 1416,
+  "thumb_px": 800,
+  "bytes": 74680,
+  "candidates": 10
+ },
+ {
+  "slug": "absolute-black-leather",
+  "src": "raw/nile-inv/absolute-black-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/absolute-black-leather.jpg",
+  "ok": true,
+  "score": 0.921,
+  "sharp": 2.2,
+  "src_px": 1436,
+  "phash": 387660376286456819617218559167,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 0.47,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   1059,
+   0,
+   2755,
+   1698
+  ],
+  "tile_px": 1432,
+  "thumb_px": 800,
+  "bytes": 96530,
+  "candidates": 10
+ },
+ {
+  "slug": "acqua-blanca-carrara",
+  "src": "raw/next/acqua-blanca-carrara.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/acqua-blanca-carrara.jpg",
+  "ok": false,
+  "score": 0.913,
+  "box": [
+   302,
+   0,
+   791,
+   489
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.9, want 4.0 at 360px)",
+  "candidates": 2
+ },
+ {
+  "slug": "almond-beige",
+  "src": "raw/nile-inv/almond-beige.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/almond-beige.jpg",
+  "ok": true,
+  "score": 0.972,
+  "sharp": 2.2,
+  "src_px": 1958,
+  "phash": 47754006735643739688225347074,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.89,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   2602,
+   2612
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 92990,
+  "candidates": 17
+ },
+ {
+  "slug": "andromeda-white",
+  "src": "raw/nile-inv/andromeda-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/andromeda-white.jpg",
+  "ok": false,
+  "score": 0.851,
+  "box": [
+   385,
+   0,
+   1157,
+   774
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.2, want 1.55 at 772px)",
+  "candidates": 10
+ },
+ {
+  "slug": "angola-black",
+  "src": "raw/nile-inv/angola-black.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/angola-black.jpg",
+  "ok": false,
+  "score": 0.901,
+  "box": [
+   0,
+   92,
+   150,
+   243
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (132px, want 340)",
+  "candidates": 10
+ },
+ {
+  "slug": "angola-black-leather",
+  "src": "raw/nile-inv/angola-black-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/angola-black-leather.jpg",
+  "ok": true,
+  "score": 0.98,
+  "sharp": 6.1,
+  "src_px": 1318,
+  "phash": 1165415798937802131908081991663,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   446,
+   0,
+   2232,
+   1790
+  ],
+  "tile_px": 1312,
+  "thumb_px": 800,
+  "bytes": 271122,
+  "candidates": 10
+ },
+ {
+  "slug": "antiq-brown-extra",
+  "src": "raw/nile-inv/antiq-brown-extra.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/antiq-brown-extra.jpg",
+  "ok": true,
+  "score": 0.962,
+  "sharp": 4.4,
+  "src_px": 660,
+  "phash": 436496156105749771176575730049,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.87,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   406,
+   0,
+   1097,
+   690
+  ],
+  "tile_px": 656,
+  "thumb_px": 656,
+  "bytes": 42178,
+  "candidates": 10
+ },
+ {
+  "slug": "antiq-brown-leather",
+  "src": "raw/nile-inv/antiq-brown-leather__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/antiq-brown-leather__10.jpg",
+  "ok": true,
+  "score": 0.982,
+  "sharp": 4.1,
+  "src_px": 676,
+  "phash": 360615075594951627957233701173,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   842,
+   840
+  ],
+  "tile_px": 672,
+  "thumb_px": 672,
+  "bytes": 45452,
+  "candidates": 10
+ },
+ {
+  "slug": "aqua-gucci",
+  "src": "raw/nile-inv/aqua-gucci__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/aqua-gucci__10.jpg",
+  "ok": true,
+  "score": 0.949,
+  "sharp": 4.6,
+  "src_px": 399,
+  "phash": 351768227298954591565403393281,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.78,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   143,
+   0,
+   542,
+   400
+  ],
+  "tile_px": 392,
+  "thumb_px": 392,
+  "bytes": 26546,
+  "candidates": 1
+ },
+ {
+  "slug": "arabescato-capri",
+  "src": "raw/nile/arabescato-capri.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/arabescato-capri.jpg",
+  "ok": true,
+  "score": 0.926,
+  "sharp": 3.2,
+  "src_px": 2708,
+  "phash": 379639741989629256678138092173,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.93,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   1267,
+   317,
+   3976,
+   3025
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 92506,
+  "candidates": 14
+ },
+ {
+  "slug": "arabescato-classico",
+  "src": "raw/next/arabescato-classico.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/arabescato-classico.jpg",
+  "ok": true,
+  "score": 0.957,
+  "sharp": 1.6,
+  "src_px": 440,
+  "phash": 245383878871302313479831656013,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 0.99,
+   "exposed": 1.0,
+   "noedge": 0.89
+  },
+  "box": [
+   0,
+   0,
+   441,
+   440
+  ],
+  "tile_px": 440,
+  "thumb_px": 440,
+  "bytes": 5172
+ },
+ {
+  "slug": "arabescato-classico-ft",
+  "src": "raw/next/arabescato-classico-ft.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/arabescato-classico-ft.jpg",
+  "ok": false,
+  "score": 0.916,
+  "box": [
+   51,
+   51,
+   484,
+   484
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.6, want 4.0 at 433px)",
+  "candidates": 2
+ },
+ {
+  "slug": "arabescato-corchia-extra",
+  "src": "raw/nile-inv/arabescato-corchia-extra__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/arabescato-corchia-extra__2.jpg",
+  "ok": true,
+  "score": 0.852,
+  "sharp": 4.6,
+  "src_px": 702,
+  "phash": 819018810910562183068689127464,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.49,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.82
+  },
+  "box": [
+   0,
+   0,
+   734,
+   735
+  ],
+  "tile_px": 696,
+  "thumb_px": 696,
+  "bytes": 74688,
+  "candidates": 1
+ },
+ {
+  "slug": "arabescato-corchia-extra-honed",
+  "src": "raw/nile-inv/arabescato-corchia-extra-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/arabescato-corchia-extra-honed.jpg",
+  "ok": true,
+  "score": 0.898,
+  "sharp": 4.6,
+  "src_px": 866,
+  "phash": 541871818348631275694237558594,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 0.54,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   918,
+   919
+  ],
+  "tile_px": 864,
+  "thumb_px": 800,
+  "bytes": 117298,
+  "candidates": 1
+ },
+ {
+  "slug": "arabescato-elegance",
+  "src": "raw/nile-inv/arabescato-elegance__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/arabescato-elegance__10.jpg",
+  "ok": true,
+  "score": 0.879,
+  "sharp": 4.7,
+  "src_px": 2354,
+  "phash": 536523030461896563336665444906,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.55,
+   "hastexture": 1.0,
+   "exposed": 0.72,
+   "noedge": 1.0
+  },
+  "box": [
+   2020,
+   0,
+   4374,
+   2362
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 221812,
+  "candidates": 19
+ },
+ {
+  "slug": "arabescato-faniello",
+  "src": "raw/next/arabescato-faniello.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/arabescato-faniello.jpg",
+  "ok": true,
+  "score": 0.982,
+  "sharp": 2.8,
+  "src_px": 1960,
+  "phash": 1224289723532605599776241973983,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   1666,
+   0,
+   3908,
+   2249
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 108084,
+  "candidates": 5
+ },
+ {
+  "slug": "arabescato-gold",
+  "src": "raw/next/arabescato-gold.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/arabescato-gold.jpg",
+  "ok": true,
+  "score": 0.977,
+  "sharp": 2.2,
+  "src_px": 390,
+  "phash": 402918337666184960322484372000,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   423,
+   0,
+   907,
+   485
+  ],
+  "tile_px": 384,
+  "thumb_px": 384,
+  "bytes": 5226,
+  "candidates": 1
+ },
+ {
+  "slug": "arabescato-grey",
+  "src": "raw/next/arabescato-grey.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/arabescato-grey.jpg",
+  "ok": true,
+  "score": 0.974,
+  "sharp": 3.8,
+  "src_px": 488,
+  "phash": 514381133591151502843182238947,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.94,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   484,
+   0,
+   972,
+   488
+  ],
+  "tile_px": 488,
+  "thumb_px": 488,
+  "bytes": 23190,
+  "candidates": 2
+ },
+ {
+  "slug": "arabescato-grey-premium",
+  "src": "raw/next/arabescato-grey-premium.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/arabescato-grey-premium.jpeg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 207,
+   "dark": 19.29,
+   "lumsd": 56.8,
+   "line": 7.35
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 207, dark 19.29, lumsd 56.8, line 7.35)",
+  "candidates": 3
+ },
+ {
+  "slug": "arabescato-vagli-oro-honed",
+  "src": "raw/nile-inv/arabescato-vagli-oro-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/arabescato-vagli-oro-honed.jpg",
+  "ok": true,
+  "score": 0.974,
+  "sharp": 2.5,
+  "src_px": 1870,
+  "phash": 587049799502059808864830148290,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.95,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   2104,
+   2104
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 75754,
+  "candidates": 1
+ },
+ {
+  "slug": "argento",
+  "src": "raw/next/argento.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/argento.jpg",
+  "ok": false,
+  "score": 0.965,
+  "box": [
+   167,
+   0,
+   642,
+   473
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.6, want 1.8 at 473px)",
+  "candidates": 5
+ },
+ {
+  "slug": "artic-cream",
+  "src": "raw/nile-inv/artic-cream.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/artic-cream.jpg",
+  "ok": true,
+  "score": 0.92,
+  "sharp": 3.8,
+  "src_px": 400,
+  "phash": 527841814791441038636065539174,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.63,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   400,
+   400
+  ],
+  "tile_px": 400,
+  "thumb_px": 400,
+  "bytes": 27772,
+  "candidates": 1
+ },
+ {
+  "slug": "astoria",
+  "src": "raw/nile-inv/astoria.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/astoria.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 5.1,
+  "src_px": 396,
+  "phash": 334098054523367819728729259625,
+  "reasons": {},
+  "box": [
+   93,
+   14,
+   539,
+   460
+  ],
+  "tile_px": 392,
+  "thumb_px": 392,
+  "bytes": 23602,
+  "candidates": 10
+ },
+ {
+  "slug": "aurelia",
+  "src": "raw/next/aurelia.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/aurelia.jpeg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 235,
+   "dark": 11.09,
+   "lumsd": 32.4,
+   "line": 28.33
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 235, dark 11.09, lumsd 32.4, line 28.33)",
+  "candidates": 2
+ },
+ {
+  "slug": "azul-platino",
+  "src": "raw/nile-inv/azul-platino__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/azul-platino__10.jpg",
+  "ok": true,
+  "score": 0.943,
+  "sharp": 11.0,
+  "src_px": 612,
+  "phash": 163588905588277001130216074817,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.75,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   217,
+   0,
+   832,
+   612
+  ],
+  "tile_px": 608,
+  "thumb_px": 608,
+  "bytes": 149794,
+  "candidates": 10
+ },
+ {
+  "slug": "azul-shimmer",
+  "src": "raw/nile-inv/azul-shimmer.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/azul-shimmer.jpg",
+  "ok": true,
+  "score": 0.933,
+  "sharp": 2.6,
+  "src_px": 1068,
+  "phash": 844904979624411516506200203491,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.81,
+   "noedge": 0.9
+  },
+  "box": [
+   927,
+   0,
+   2228,
+   1305
+  ],
+  "tile_px": 1064,
+  "thumb_px": 800,
+  "bytes": 34530,
+  "candidates": 14
+ },
+ {
+  "slug": "baltic-brown",
+  "src": "raw/nile-inv/baltic-brown__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/baltic-brown__10.jpg",
+  "ok": true,
+  "score": 0.885,
+  "sharp": 3.8,
+  "src_px": 558,
+  "phash": 279045938149990280339464665986,
+  "reasons": {
+   "neutral": 0.79,
+   "nocolourblob": 0.85,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.68,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   412,
+   558,
+   971
+  ],
+  "tile_px": 552,
+  "thumb_px": 552,
+  "bytes": 59110,
+  "candidates": 10
+ },
+ {
+  "slug": "baltic-brown-ng",
+  "src": "raw/nile-inv/baltic-brown-ng.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/baltic-brown-ng.jpg",
+  "ok": false,
+  "score": 0.873,
+  "box": [
+   0,
+   192,
+   260,
+   453
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (260px, want 340)",
+  "candidates": 10
+ },
+ {
+  "slug": "belvedere",
+  "src": "raw/nile-inv/belvedere__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/belvedere__10.jpg",
+  "ok": true,
+  "score": 0.902,
+  "sharp": 6.0,
+  "src_px": 604,
+  "phash": 638018429099508956967810762944,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.54,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   578,
+   0,
+   1369,
+   790
+  ],
+  "tile_px": 600,
+  "thumb_px": 600,
+  "bytes": 67008,
+  "candidates": 11
+ },
+ {
+  "slug": "belvedere-leather",
+  "src": "raw/nile-inv/belvedere-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/belvedere-leather.jpg",
+  "ok": true,
+  "score": 0.789,
+  "sharp": 4.7,
+  "src_px": 365,
+  "phash": 1021579290935896717463020272773,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.97,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 0.33,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.29
+  },
+  "box": [
+   219,
+   12,
+   584,
+   377
+  ],
+  "tile_px": 360,
+  "thumb_px": 360,
+  "bytes": 20856,
+  "candidates": 11
+ },
+ {
+  "slug": "bianco-antico",
+  "src": "raw/nile-inv/bianco-antico.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/bianco-antico.jpg",
+  "ok": true,
+  "score": 0.843,
+  "sharp": 6.7,
+  "src_px": 562,
+  "phash": 800611816368730123654456289052,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 0.35,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   140,
+   0,
+   702,
+   562
+  ],
+  "tile_px": 560,
+  "thumb_px": 560,
+  "bytes": 111616,
+  "candidates": 10
+ },
+ {
+  "slug": "bianco-crystal",
+  "src": "raw/nile-inv/bianco-crystal.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/bianco-crystal.jpg",
+  "ok": true,
+  "score": 0.981,
+  "sharp": 10.3,
+  "src_px": 628,
+  "phash": 1041042230481542330605089114740,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   341,
+   0,
+   1039,
+   696
+  ],
+  "tile_px": 624,
+  "thumb_px": 624,
+  "bytes": 114720,
+  "candidates": 10
+ },
+ {
+  "slug": "bianco-eclypse-calacatta-honed",
+  "src": "raw/nile-inv/bianco-eclypse-calacatta-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/bianco-eclypse-calacatta-honed.jpg",
+  "ok": false,
+  "score": 0.801,
+  "box": [
+   21,
+   7,
+   51,
+   37
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (30px, want 340)",
+  "candidates": 1
+ },
+ {
+  "slug": "bianco-eclypse-polished-calacatta",
+  "src": "raw/nile/bianco-eclypse-polished-calacatta.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/bianco-eclypse-polished-calacatta.jpeg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 179,
+   "dark": 1.34,
+   "lumsd": 36.2,
+   "line": 11.39
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 179, dark 1.34, lumsd 36.2, line 11.39)",
+  "candidates": 2
+ },
+ {
+  "slug": "bianco-eclypsia-calacatta",
+  "src": "raw/nile-inv/bianco-eclypsia-calacatta__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/bianco-eclypsia-calacatta__2.jpg",
+  "ok": false,
+  "score": 0.821,
+  "box": [
+   532,
+   242,
+   924,
+   636
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (338px, want 340)",
+  "candidates": 1
+ },
+ {
+  "slug": "bianco-eclypsia-calacatta-leather",
+  "src": "raw/nile-inv/bianco-eclypsia-calacatta-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/bianco-eclypsia-calacatta-leather.jpg",
+  "ok": true,
+  "score": 0.957,
+  "sharp": 4.8,
+  "src_px": 610,
+  "phash": 384595978680212182513602837254,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.83,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   363,
+   0,
+   973,
+   611
+  ],
+  "tile_px": 608,
+  "thumb_px": 608,
+  "bytes": 49114,
+  "candidates": 10
+ },
+ {
+  "slug": "bianco-glacier",
+  "src": "raw/nile-inv/bianco-glacier.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/bianco-glacier.jpeg",
+  "ok": true,
+  "score": 0.928,
+  "sharp": 3.2,
+  "src_px": 983,
+  "phash": 437323390275304517393658024073,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.53,
+   "noedge": 1.0
+  },
+  "box": [
+   115,
+   0,
+   1101,
+   983
+  ],
+  "tile_px": 976,
+  "thumb_px": 800,
+  "bytes": 53556,
+  "candidates": 15
+ },
+ {
+  "slug": "bianco-romano",
+  "src": "raw/nile-inv/bianco-romano.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/bianco-romano.jpg",
+  "ok": false,
+  "score": 0.801,
+  "box": [
+   21,
+   7,
+   51,
+   37
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (30px, want 340)",
+  "candidates": 10
+ },
+ {
+  "slug": "bianco-sardo",
+  "src": "raw/nile-inv/bianco-sardo.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/bianco-sardo.jpg",
+  "ok": true,
+  "score": 0.927,
+  "sharp": 11.0,
+  "src_px": 1799,
+  "phash": 1215297135227487463905776152421,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.66,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   1062,
+   0,
+   2861,
+   1801
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 1127944,
+  "candidates": 10
+ },
+ {
+  "slug": "bianco-shimmer",
+  "src": "raw/nile/bianco-shimmer__4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/bianco-shimmer__4.jpg",
+  "ok": false,
+  "score": 0.554,
+  "box": [
+   413,
+   344,
+   998,
+   928
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 3.0, want 4.0 at 390px)",
+  "candidates": 15
+ },
+ {
+  "slug": "bianco-starlight",
+  "src": "raw/nile/bianco-starlight.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/bianco-starlight.jpg",
+  "ok": true,
+  "score": 0.86,
+  "sharp": 4.0,
+  "src_px": 2310,
+  "phash": 680582043491615147415516611266,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.23,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   2313,
+   2310
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 449998,
+  "candidates": 12
+ },
+ {
+  "slug": "black-marinace",
+  "src": "raw/nile-inv/black-marinace.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/black-marinace.jpg",
+  "ok": true,
+  "score": 0.79,
+  "sharp": 5.3,
+  "src_px": 990,
+  "phash": 795611852833131280355789656300,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.21,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   512,
+   0,
+   1560,
+   1044
+  ],
+  "tile_px": 984,
+  "thumb_px": 800,
+  "bytes": 226586,
+  "candidates": 10
+ },
+ {
+  "slug": "black-pearl",
+  "src": "raw/nile-inv/black-pearl.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/black-pearl.jpg",
+  "ok": true,
+  "score": 0.981,
+  "sharp": 3.1,
+  "src_px": 584,
+  "phash": 589722193411520597875924523750,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   688,
+   689
+  ],
+  "tile_px": 584,
+  "thumb_px": 584,
+  "bytes": 18700,
+  "candidates": 10
+ },
+ {
+  "slug": "blue-dunes",
+  "src": "raw/nile-inv/blue-dunes.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/blue-dunes.jpg",
+  "ok": true,
+  "score": 0.918,
+  "sharp": 5.9,
+  "src_px": 542,
+  "phash": 827593594647241119169374363751,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.92,
+   "nostructure": 0.67,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   348,
+   0,
+   914,
+   567
+  ],
+  "tile_px": 536,
+  "thumb_px": 536,
+  "bytes": 79192,
+  "candidates": 10
+ },
+ {
+  "slug": "blue-dunes-leather",
+  "src": "raw/nile-inv/blue-dunes-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/blue-dunes-leather.jpg",
+  "ok": false,
+  "score": 0.918,
+  "sharp": 5.9,
+  "src_px": 542,
+  "phash": 827593594647241119169374363751,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.92,
+   "nostructure": 0.67,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   348,
+   0,
+   914,
+   567
+  ],
+  "why": "every frame is a duplicate of another stone's photograph",
+  "candidates": 10
+ },
+ {
+  "slug": "blue-lagoon",
+  "src": "raw/nile-inv/blue-lagoon.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/blue-lagoon.jpg",
+  "ok": true,
+  "score": 0.937,
+  "sharp": 5.4,
+  "src_px": 2373,
+  "phash": 568771874319878041255959353398,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.71,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   593,
+   0,
+   2966,
+   2382
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 646000,
+  "candidates": 18
+ },
+ {
+  "slug": "blue-pearl-gt",
+  "src": "raw/nile-inv/blue-pearl-gt.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/blue-pearl-gt.jpg",
+  "ok": true,
+  "score": 0.917,
+  "sharp": 9.2,
+  "src_px": 928,
+  "phash": 1092284208991806966184679352939,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.61,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   116,
+   0,
+   1046,
+   928
+  ],
+  "tile_px": 928,
+  "thumb_px": 800,
+  "bytes": 319912,
+  "candidates": 10
+ },
+ {
+  "slug": "blue-roma",
+  "src": "raw/nile-inv/blue-roma.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/blue-roma.jpg",
+  "ok": true,
+  "score": 0.772,
+  "sharp": 4.9,
+  "src_px": 611,
+  "phash": 227409329043076863872601582741,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.29,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 0.43,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.89
+  },
+  "box": [
+   219,
+   20,
+   830,
+   631
+  ],
+  "tile_px": 608,
+  "thumb_px": 608,
+  "bytes": 49708,
+  "candidates": 10
+ },
+ {
+  "slug": "blue-roma-honed",
+  "src": "raw/nile-inv/blue-roma-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/blue-roma-honed.jpg",
+  "ok": true,
+  "score": 0.765,
+  "sharp": 4.2,
+  "src_px": 556,
+  "phash": 639645008099368293407072237032,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.78,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.29,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.85
+  },
+  "box": [
+   80,
+   0,
+   749,
+   668
+  ],
+  "tile_px": 552,
+  "thumb_px": 552,
+  "bytes": 38422,
+  "candidates": 1
+ },
+ {
+  "slug": "blues-in-the-night",
+  "src": "raw/nile-inv/blues-in-the-night.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/blues-in-the-night.jpg",
+  "ok": true,
+  "score": 0.91,
+  "sharp": 7.0,
+  "src_px": 492,
+  "phash": 178650902018543637027821489703,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.59,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.27
+  },
+  "box": [
+   146,
+   23,
+   857,
+   734
+  ],
+  "tile_px": 488,
+  "thumb_px": 488,
+  "bytes": 39792,
+  "candidates": 10
+ },
+ {
+  "slug": "borghini-royal",
+  "src": "raw/nile/borghini-royal.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/borghini-royal.jpg",
+  "ok": true,
+  "score": 0.765,
+  "sharp": 2.7,
+  "src_px": 2730,
+  "phash": 499137143934136382229541119774,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.92,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.91,
+   "hastexture": 1.0,
+   "exposed": 0.07,
+   "noedge": 1.0
+  },
+  "box": [
+   1498,
+   0,
+   4523,
+   3025
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 66944,
+  "candidates": 15
+ },
+ {
+  "slug": "calacatta",
+  "src": "raw/nile-inv/calacatta.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta.jpg",
+  "ok": false,
+  "score": 0,
+  "kind": "blown",
+  "evidence": {
+   "blown": 87.2
+  },
+  "why": "source is clipped white, no pattern left to show (blown 87.2)",
+  "candidates": 15
+ },
+ {
+  "slug": "calacatta-alaska",
+  "src": "raw/nile-inv/calacatta-alaska__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-alaska__10.jpg",
+  "ok": true,
+  "score": 0.844,
+  "sharp": 3.3,
+  "src_px": 1523,
+  "phash": 22961601670627914073723635905,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.17,
+   "noedge": 1.0
+  },
+  "box": [
+   374,
+   0,
+   1902,
+   1523
+  ],
+  "tile_px": 1520,
+  "thumb_px": 800,
+  "bytes": 134724,
+  "candidates": 17
+ },
+ {
+  "slug": "calacatta-aurelia",
+  "src": "raw/next/calacatta-aurelia__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-aurelia__2.jpg",
+  "ok": false,
+  "score": 0.981,
+  "box": [
+   302,
+   0,
+   791,
+   489
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.9, want 4.0 at 366px)",
+  "candidates": 2
+ },
+ {
+  "slug": "calacatta-black-fusion",
+  "src": "raw/nile-inv/calacatta-black-fusion.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-black-fusion.jpg",
+  "ok": false,
+  "score": 0.553,
+  "sharp": 3.5,
+  "src_px": 1459,
+  "phash": 1050449354222452345984093218085,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.25,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.25
+  },
+  "box": [
+   2231,
+   343,
+   3690,
+   1805
+  ],
+  "candidates": 17
+ },
+ {
+  "slug": "calacatta-borghini",
+  "src": "raw/next/calacatta-borghini.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-borghini.jpg",
+  "ok": false,
+  "score": 0.979,
+  "box": [
+   0,
+   0,
+   493,
+   491
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.8, want 4.0 at 370px)",
+  "candidates": 3
+ },
+ {
+  "slug": "calacatta-borghini-light",
+  "src": "raw/next/calacatta-borghini-light.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-borghini-light.jpg",
+  "ok": true,
+  "score": 0.891,
+  "sharp": 2.0,
+  "src_px": 452,
+  "phash": 110681744257050126245494721935,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.95,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.47,
+   "noedge": 0.88
+  },
+  "box": [
+   0,
+   0,
+   484,
+   485
+  ],
+  "tile_px": 448,
+  "thumb_px": 448,
+  "bytes": 5278,
+  "candidates": 3
+ },
+ {
+  "slug": "calacatta-borghni-honed",
+  "src": "raw/nile-inv/calacatta-borghni-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-borghni-honed.jpg",
+  "ok": false,
+  "score": 0.931,
+  "box": [
+   121,
+   0,
+   367,
+   247
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (226px, want 340)",
+  "candidates": 1
+ },
+ {
+  "slug": "calacatta-brasil",
+  "src": "raw/nile-inv/calacatta-brasil.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-brasil.jpeg",
+  "ok": true,
+  "score": 0.971,
+  "sharp": 3.5,
+  "src_px": 832,
+  "phash": 764757111969363062084423445689,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.95,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   207,
+   0,
+   1077,
+   867
+  ],
+  "tile_px": 832,
+  "thumb_px": 800,
+  "bytes": 49802,
+  "candidates": 10
+ },
+ {
+  "slug": "calacatta-classic",
+  "src": "raw/nile/calacatta-classic.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-classic.jpg",
+  "ok": true,
+  "score": 0.925,
+  "sharp": 1.9,
+  "src_px": 762,
+  "phash": 302149338967658911115720589376,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.95,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.93,
+   "noedge": 0.8
+  },
+  "box": [
+   378,
+   0,
+   1141,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 11704,
+  "candidates": 12
+ },
+ {
+  "slug": "calacatta-cremo-honed",
+  "src": "raw/nile-inv/calacatta-cremo-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-cremo-honed.jpg",
+  "ok": false,
+  "score": 0.945,
+  "box": [
+   59,
+   0,
+   536,
+   476
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.9, want 4.0 at 350px)",
+  "candidates": 1
+ },
+ {
+  "slug": "calacatta-exotic",
+  "src": "raw/nile-inv/calacatta-exotic.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-exotic.jpg",
+  "ok": true,
+  "score": 0.96,
+  "sharp": 3.3,
+  "src_px": 1522,
+  "phash": 22974027017570030963494801170,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.77,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   1527,
+   1522
+  ],
+  "tile_px": 1520,
+  "thumb_px": 800,
+  "bytes": 121398,
+  "candidates": 19
+ },
+ {
+  "slug": "calacatta-fantastico",
+  "src": "raw/nile/calacatta-fantastico.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-fantastico.jpg",
+  "ok": true,
+  "score": 0.858,
+  "sharp": 2.8,
+  "src_px": 2624,
+  "phash": 242699434302607456213093089672,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.21,
+   "noedge": 1.0
+  },
+  "box": [
+   659,
+   0,
+   3296,
+   2624
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 71640,
+  "candidates": 15
+ },
+ {
+  "slug": "calacatta-gold-luna",
+  "src": "raw/next/calacatta-gold-luna.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-gold-luna.jpeg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 219,
+   "dark": 4.91,
+   "lumsd": 51.2,
+   "line": 4.33
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 219, dark 4.91, lumsd 51.2, line 4.33)",
+  "candidates": 2
+ },
+ {
+  "slug": "calacatta-gold-premium",
+  "src": "raw/next/calacatta-gold-premium.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-gold-premium.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 2
+ },
+ {
+  "slug": "calacatta-gold-shimmer",
+  "src": "raw/nile-inv/calacatta-gold-shimmer.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-gold-shimmer.jpg",
+  "ok": true,
+  "score": 0.979,
+  "sharp": 2.5,
+  "src_px": 1204,
+  "phash": 483974955182676399651748126380,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   1262,
+   0,
+   2780,
+   1522
+  ],
+  "tile_px": 1200,
+  "thumb_px": 800,
+  "bytes": 67468,
+  "candidates": 17
+ },
+ {
+  "slug": "calacatta-gold-soft",
+  "src": "raw/nile/calacatta-gold-soft.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-gold-soft.jpg",
+  "ok": true,
+  "score": 0.973,
+  "sharp": 1.9,
+  "src_px": 762,
+  "phash": 183337454476706309482097023268,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.97,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 11898,
+  "candidates": 21
+ },
+ {
+  "slug": "calacatta-grey-classic",
+  "src": "raw/next/calacatta-grey-classic.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-grey-classic.jpg",
+  "ok": true,
+  "score": 0.959,
+  "sharp": 2.5,
+  "src_px": 488,
+  "phash": 530197202070692013553935,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.76,
+   "noedge": 1.0
+  },
+  "box": [
+   484,
+   0,
+   972,
+   488
+  ],
+  "tile_px": 488,
+  "thumb_px": 488,
+  "bytes": 5890,
+  "candidates": 5
+ },
+ {
+  "slug": "calacatta-grey-classic-1",
+  "src": "raw/next/calacatta-grey-classic-1.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-grey-classic-1.jpg",
+  "ok": false,
+  "score": 0.959,
+  "sharp": 2.5,
+  "src_px": 488,
+  "phash": 530197202070692013553935,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.76,
+   "noedge": 1.0
+  },
+  "box": [
+   484,
+   0,
+   972,
+   488
+  ],
+  "why": "every frame is a duplicate of another stone's photograph",
+  "candidates": 2
+ },
+ {
+  "slug": "calacatta-lucente",
+  "src": "raw/next/calacatta-lucente.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-lucente.jpg",
+  "ok": false,
+  "score": 0.947,
+  "box": [
+   302,
+   0,
+   791,
+   488
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.3, want 4.0 at 400px)",
+  "candidates": 2
+ },
+ {
+  "slug": "calacatta-lucente-1",
+  "src": "raw/next/calacatta-lucente-1.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-lucente-1.jpg",
+  "ok": false,
+  "score": 0.947,
+  "box": [
+   302,
+   0,
+   791,
+   488
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.3, want 4.0 at 400px)",
+  "candidates": 2
+ },
+ {
+  "slug": "calacatta-luna",
+  "src": "raw/next/calacatta-luna.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-luna.jpg",
+  "ok": true,
+  "score": 0.979,
+  "sharp": 3.5,
+  "src_px": 450,
+  "phash": 920944249148974770962063307670,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   423,
+   0,
+   907,
+   484
+  ],
+  "tile_px": 448,
+  "thumb_px": 448,
+  "bytes": 6676,
+  "candidates": 2
+ },
+ {
+  "slug": "calacatta-luna-warm-white-background",
+  "src": "raw/next/calacatta-luna-warm-white-background.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/calacatta-luna-warm-white-background.jpg",
+  "ok": true,
+  "score": 0.978,
+  "sharp": 1.8,
+  "src_px": 465,
+  "phash": 42941802764310971158196428880,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   111,
+   0,
+   577,
+   465
+  ],
+  "tile_px": 464,
+  "thumb_px": 464,
+  "bytes": 4936,
+  "candidates": 2
+ },
+ {
+  "slug": "calacatta-oro-satin",
+  "src": "raw/nile/calacatta-oro-satin.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-oro-satin.jpeg",
+  "ok": true,
+  "score": 0.845,
+  "sharp": 3.3,
+  "src_px": 908,
+  "phash": 675841562185136212321252560688,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.95,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.82,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.58
+  },
+  "box": [
+   340,
+   0,
+   1248,
+   909
+  ],
+  "tile_px": 904,
+  "thumb_px": 800,
+  "bytes": 49660,
+  "candidates": 6
+ },
+ {
+  "slug": "calacatta-soft-shimmer",
+  "src": "raw/nile/calacatta-soft-shimmer.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-soft-shimmer.jpg",
+  "ok": false,
+  "score": 0.978,
+  "sharp": 1.8,
+  "src_px": 762,
+  "phash": 183347125735689273925818272036,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.96,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "why": "every frame is a duplicate of another stone's photograph",
+  "candidates": 8
+ },
+ {
+  "slug": "calacatta-supreme",
+  "src": "raw/nile/calacatta-supreme__4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-supreme__4.jpg",
+  "ok": true,
+  "score": 0.891,
+  "sharp": 2.7,
+  "src_px": 762,
+  "phash": 714002346916020271447054158180,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.95,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.35,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 18098,
+  "candidates": 9
+ },
+ {
+  "slug": "calacatta-vagli-honed",
+  "src": "raw/nile-inv/calacatta-vagli-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-vagli-honed.jpg",
+  "ok": false,
+  "score": 0.801,
+  "box": [
+   21,
+   7,
+   51,
+   37
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (30px, want 340)",
+  "candidates": 1
+ },
+ {
+  "slug": "calacatta-vagli-oro-honed",
+  "src": "raw/nile-inv/calacatta-vagli-oro-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-vagli-oro-honed.jpg",
+  "ok": true,
+  "score": 0.934,
+  "sharp": 2.7,
+  "src_px": 388,
+  "phash": 476307219332710840654740109752,
+  "reasons": {
+   "neutral": 0.99,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 0.72,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   412,
+   411
+  ],
+  "tile_px": 384,
+  "thumb_px": 384,
+  "bytes": 15212,
+  "candidates": 1
+ },
+ {
+  "slug": "calacatta-venatino",
+  "src": "raw/nile/calacatta-venatino.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-venatino.jpg",
+  "ok": true,
+  "score": 0.859,
+  "sharp": 3.1,
+  "src_px": 592,
+  "phash": 130471871838011452525826806839,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.91,
+   "nostructure": 1.0,
+   "hastexture": 0.75,
+   "exposed": 0.36,
+   "noedge": 0.96
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 592,
+  "thumb_px": 592,
+  "bytes": 6958,
+  "candidates": 7
+ },
+ {
+  "slug": "calacatta-verde",
+  "src": "raw/nile/calacatta-verde__2.png",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-verde__2.png",
+  "ok": false,
+  "score": 0.905,
+  "box": [
+   0,
+   0,
+   1378,
+   1378
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.3, want 1.55 at 1014px)",
+  "candidates": 9
+ },
+ {
+  "slug": "calacatta-viola",
+  "src": "raw/nile-inv/calacatta-viola.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-viola.jpg",
+  "ok": true,
+  "score": 0.708,
+  "sharp": 3.1,
+  "src_px": 573,
+  "phash": 362780115231797067041856495590,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 0.11,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.9
+  },
+  "box": [
+   600,
+   0,
+   1173,
+   573
+  ],
+  "tile_px": 568,
+  "thumb_px": 568,
+  "bytes": 35388
+ },
+ {
+  "slug": "calacatta-viola-honed",
+  "src": "raw/nile-inv/calacatta-viola-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-viola-honed.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 4.6,
+  "src_px": 1060,
+  "phash": 1044566664443456687902795690840,
+  "reasons": {},
+  "box": [
+   259,
+   34,
+   1319,
+   1094
+  ],
+  "tile_px": 1056,
+  "thumb_px": 800,
+  "bytes": 251526,
+  "candidates": 1
+ },
+ {
+  "slug": "calacatta-viola-wow",
+  "src": "raw/nile/calacatta-viola-wow.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-viola-wow.jpeg",
+  "ok": true,
+  "score": 0.739,
+  "sharp": 4.8,
+  "src_px": 762,
+  "phash": 1179464658857604471231018222993,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.12,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 93262,
+  "candidates": 5
+ },
+ {
+  "slug": "calacatta-volakas",
+  "src": "raw/nile/calacatta-volakas.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/calacatta-volakas.jpg",
+  "ok": false,
+  "score": 0.817,
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.6, want 1.8 at 592px)",
+  "candidates": 6
+ },
+ {
+  "slug": "carrara",
+  "src": "raw/nile/carrara__6.png",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/carrara__6.png",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 2.4,
+  "src_px": 593,
+  "phash": 1125148025716918202636086479306,
+  "reasons": {},
+  "box": [
+   38,
+   19,
+   631,
+   612
+  ],
+  "tile_px": 592,
+  "thumb_px": 592,
+  "bytes": 13468,
+  "candidates": 1
+ },
+ {
+  "slug": "carrara-gioia-jade",
+  "src": "raw/next/carrara-gioia-jade.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/carrara-gioia-jade.jpg",
+  "ok": false,
+  "score": 0.911,
+  "box": [
+   423,
+   0,
+   916,
+   494
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.1, want 4.0 at 384px)",
+  "candidates": 2
+ },
+ {
+  "slug": "carrara-gioia-jade-1",
+  "src": "raw/next/carrara-gioia-jade-1.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/carrara-gioia-jade-1.jpg",
+  "ok": false,
+  "score": 0.911,
+  "box": [
+   423,
+   0,
+   916,
+   494
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.1, want 4.0 at 384px)",
+  "candidates": 2
+ },
+ {
+  "slug": "carrara-honed",
+  "src": "raw/nile-inv/carrara-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/carrara-honed.jpg",
+  "ok": true,
+  "score": 0.981,
+  "sharp": 2.6,
+  "src_px": 508,
+  "phash": 260838574250898250315473165154,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   239,
+   0,
+   749,
+   508
+  ],
+  "tile_px": 504,
+  "thumb_px": 504,
+  "bytes": 12780,
+  "candidates": 2
+ },
+ {
+  "slug": "carrara-mist",
+  "src": "raw/nile/carrara-mist__3.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/carrara-mist__3.jpg",
+  "ok": true,
+  "score": 0.883,
+  "sharp": 1.9,
+  "src_px": 683,
+  "phash": 319393368210484137593080383680,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.94,
+   "nostructure": 1.0,
+   "hastexture": 0.88,
+   "exposed": 0.63,
+   "noedge": 1.0
+  },
+  "box": [
+   320,
+   79,
+   1003,
+   762
+  ],
+  "tile_px": 680,
+  "thumb_px": 680,
+  "bytes": 9388,
+  "candidates": 3
+ },
+ {
+  "slug": "carrara-polished",
+  "src": "raw/nile-inv/carrara-polished__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/carrara-polished__2.jpg",
+  "ok": true,
+  "score": 0.973,
+  "sharp": 4.4,
+  "src_px": 677,
+  "phash": 337073317010854808869801349169,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 0.98,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   399,
+   0,
+   1077,
+   677
+  ],
+  "tile_px": 672,
+  "thumb_px": 672,
+  "bytes": 42932,
+  "candidates": 2
+ },
+ {
+  "slug": "carrara-satin",
+  "src": "raw/nile/carrara-satin.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/carrara-satin.jpg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 251,
+   "dark": 28.56,
+   "lumsd": 44.5,
+   "line": 19.4
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 251, dark 28.56, lumsd 44.5, line 19.4)",
+  "candidates": 7
+ },
+ {
+  "slug": "carrara-shimmer",
+  "src": "raw/nile/carrara-shimmer.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/carrara-shimmer.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 3.1,
+  "src_px": 2256,
+  "phash": 718702834568186319494158239748,
+  "reasons": {},
+  "box": [
+   1304,
+   72,
+   3560,
+   2328
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 129080,
+  "candidates": 1
+ },
+ {
+  "slug": "carrara-shimmer-2-of-4",
+  "src": "raw/next/carrara-shimmer-2-of-4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/carrara-shimmer-2-of-4.jpg",
+  "ok": true,
+  "score": 0.982,
+  "sharp": 2.6,
+  "src_px": 483,
+  "phash": 1068143781188851442964269977660,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   484,
+   483
+  ],
+  "tile_px": 480,
+  "thumb_px": 480,
+  "bytes": 7786,
+  "candidates": 2
+ },
+ {
+  "slug": "carrara-spring",
+  "src": "raw/nile/carrara-spring.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/carrara-spring.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 2
+ },
+ {
+  "slug": "classic-white",
+  "src": "raw/nile/classic-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/classic-white.jpg",
+  "ok": false,
+  "score": 0,
+  "kind": "blown",
+  "evidence": {
+   "blown": 99.4
+  },
+  "why": "source is clipped white, no pattern left to show (blown 99.4)",
+  "candidates": 6
+ },
+ {
+  "slug": "cloud-burst",
+  "src": "raw/nile/cloud-burst__8.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/cloud-burst__8.jpg",
+  "ok": true,
+  "score": 0.959,
+  "sharp": 5.6,
+  "src_px": 762,
+  "phash": 985949938971896587502482420630,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.85,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 121202,
+  "candidates": 8
+ },
+ {
+  "slug": "colombo-juparana",
+  "src": "raw/nile-inv/colombo-juparana.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/colombo-juparana.jpg",
+  "ok": true,
+  "score": 0.933,
+  "sharp": 6.2,
+  "src_px": 572,
+  "phash": 253057436343765106885457838528,
+  "reasons": {
+   "neutral": 0.87,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.77,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   364,
+   0,
+   971,
+   608
+  ],
+  "tile_px": 568,
+  "thumb_px": 568,
+  "bytes": 77424,
+  "candidates": 10
+ },
+ {
+  "slug": "colonial-cream",
+  "src": "raw/nile-inv/colonial-cream.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/colonial-cream.jpg",
+  "ok": true,
+  "score": 0.922,
+  "sharp": 7.5,
+  "src_px": 604,
+  "phash": 332789185268625631990323450051,
+  "reasons": {
+   "neutral": 0.67,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.82,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   508,
+   0,
+   1210,
+   700
+  ],
+  "tile_px": 600,
+  "thumb_px": 600,
+  "bytes": 101158,
+  "candidates": 10
+ },
+ {
+  "slug": "colonial-gold",
+  "src": "raw/nile-inv/colonial-gold.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/colonial-gold.jpg",
+  "ok": false,
+  "score": 0.62,
+  "box": [
+   131,
+   6,
+   330,
+   205
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (199px, want 340)",
+  "candidates": 10
+ },
+ {
+  "slug": "colonial-white",
+  "src": "raw/nile-inv/colonial-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/colonial-white.jpg",
+  "ok": false,
+  "score": 0.97,
+  "box": [
+   0,
+   0,
+   374,
+   373
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (326px, want 340)",
+  "candidates": 10
+ },
+ {
+  "slug": "concrete-earth",
+  "src": "raw/nile/concrete-earth__5.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-earth__5.jpg",
+  "ok": true,
+  "score": 0.965,
+  "sharp": 4.4,
+  "src_px": 762,
+  "phash": 1016160296809588137976346234163,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.81,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 53960,
+  "candidates": 6
+ },
+ {
+  "slug": "concrete-look-cementum-ash",
+  "src": "raw/nile/concrete-look-cementum-ash.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-look-cementum-ash.jpg",
+  "ok": true,
+  "score": 0.832,
+  "sharp": 2.4,
+  "src_px": 762,
+  "phash": 223555555159693010634321351956,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.15,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 21218,
+  "candidates": 1
+ },
+ {
+  "slug": "concrete-look-cementum-nickel",
+  "src": "raw/nile/concrete-look-cementum-nickel.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-look-cementum-nickel.jpg",
+  "ok": true,
+  "score": 0.964,
+  "sharp": 2.4,
+  "src_px": 762,
+  "phash": 218758537507804715327829480468,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 1.0,
+   "hastexture": 0.91,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 20088,
+  "candidates": 1
+ },
+ {
+  "slug": "concrete-look-cementum-sand",
+  "src": "raw/nile/concrete-look-cementum-sand.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-look-cementum-sand.jpg",
+  "ok": true,
+  "score": 0.952,
+  "sharp": 2.4,
+  "src_px": 762,
+  "phash": 228497686411864470693620257044,
+  "reasons": {
+   "neutral": 0.85,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.94,
+   "nostructure": 1.0,
+   "hastexture": 0.91,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 20738,
+  "candidates": 1
+ },
+ {
+  "slug": "concrete-look-crete",
+  "src": "raw/nile/concrete-look-crete.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-look-crete.jpg",
+  "ok": true,
+  "score": 0.97,
+  "sharp": 1.7,
+  "src_px": 762,
+  "phash": 1073317222294569362512281780370,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.92,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   283,
+   0,
+   1047,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 12580,
+  "candidates": 1
+ },
+ {
+  "slug": "concrete-look-graphite",
+  "src": "raw/nile/concrete-look-graphite.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-look-graphite.jpg",
+  "ok": true,
+  "score": 0.97,
+  "sharp": 1.8,
+  "src_px": 762,
+  "phash": 1080534838143911037825724003878,
+  "reasons": {
+   "neutral": 0.99,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.92,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 13534,
+  "candidates": 1
+ },
+ {
+  "slug": "concrete-look-smoke",
+  "src": "raw/nile/concrete-look-smoke.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-look-smoke.jpg",
+  "ok": true,
+  "score": 0.968,
+  "sharp": 2.1,
+  "src_px": 762,
+  "phash": 706556181135373154888959209033,
+  "reasons": {
+   "neutral": 0.94,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.94,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 16788,
+  "candidates": 1
+ },
+ {
+  "slug": "concrete-look-white",
+  "src": "raw/nile/concrete-look-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-look-white.jpg",
+  "ok": false,
+  "score": 0.965,
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.5, want 1.8 at 624px)",
+  "candidates": 1
+ },
+ {
+  "slug": "concrete-oyster",
+  "src": "raw/nile/concrete-oyster__5.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/concrete-oyster__5.jpg",
+  "ok": true,
+  "score": 0.976,
+  "sharp": 3.0,
+  "src_px": 762,
+  "phash": 713773993099323402101135615304,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 26964,
+  "candidates": 6
+ },
+ {
+  "slug": "corchia-gold",
+  "src": "raw/next/corchia-gold__4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/corchia-gold__4.jpg",
+  "ok": true,
+  "score": 0.931,
+  "sharp": 2.7,
+  "src_px": 514,
+  "phash": 561259545387361570408207795425,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.57,
+   "noedge": 0.97
+  },
+  "box": [
+   578,
+   0,
+   1240,
+   663
+  ],
+  "tile_px": 512,
+  "thumb_px": 512,
+  "bytes": 13284,
+  "candidates": 5
+ },
+ {
+  "slug": "corchia-grey-premium",
+  "src": "raw/next/corchia-grey-premium.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/corchia-grey-premium.jpg",
+  "ok": true,
+  "score": 0.958,
+  "sharp": 3.6,
+  "src_px": 488,
+  "phash": 835088683932088539307719232710,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.84,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   242,
+   0,
+   730,
+   488
+  ],
+  "tile_px": 488,
+  "thumb_px": 488,
+  "bytes": 24552,
+  "candidates": 2
+ },
+ {
+  "slug": "corchia-light",
+  "src": "raw/next/corchia-light.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/corchia-light.jpg",
+  "ok": false,
+  "score": 0.981,
+  "box": [
+   0,
+   0,
+   484,
+   484
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.9, want 4.0 at 416px)",
+  "candidates": 4
+ },
+ {
+  "slug": "cosmic-black",
+  "src": "raw/nile/cosmic-black.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/cosmic-black.jpg",
+  "ok": true,
+  "score": 0.741,
+  "sharp": 5.2,
+  "src_px": 559,
+  "phash": 120806566981549809527446457650,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 0.29,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   418,
+   70,
+   977,
+   630
+  ],
+  "tile_px": 552,
+  "thumb_px": 552,
+  "bytes": 61312,
+  "candidates": 1
+ },
+ {
+  "slug": "cosmic-black-leather",
+  "src": "raw/nile/cosmic-black-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/cosmic-black-leather.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 2
+ },
+ {
+  "slug": "cote-d-azur",
+  "src": "raw/nile-inv/cote-d-azur.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/cote-d-azur.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 6.8,
+  "src_px": 1006,
+  "phash": 520446100834628029847538722092,
+  "reasons": {},
+  "box": [
+   184,
+   38,
+   1373,
+   1227
+  ],
+  "tile_px": 1000,
+  "thumb_px": 800,
+  "bytes": 339858,
+  "candidates": 10
+ },
+ {
+  "slug": "cote-dazur",
+  "src": "raw/nile/cote-dazur.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/cote-dazur.jpg",
+  "ok": true,
+  "score": 0.905,
+  "sharp": 6.0,
+  "src_px": 884,
+  "phash": 354688601240254809395531666992,
+  "reasons": {
+   "neutral": 0.99,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.95,
+   "nostructure": 0.83,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   390,
+   130,
+   1433,
+   1171
+  ],
+  "tile_px": 880,
+  "thumb_px": 800,
+  "bytes": 183390,
+  "candidates": 7
+ },
+ {
+  "slug": "crema-d-aizhi",
+  "src": "raw/next/crema-d-aizhi.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/crema-d-aizhi.jpg",
+  "ok": false,
+  "score": 0.982,
+  "box": [
+   484,
+   0,
+   972,
+   486
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.6, want 1.8 at 486px)",
+  "candidates": 2
+ },
+ {
+  "slug": "crema-d-aizhi-1-of-4",
+  "src": "raw/next/crema-d-aizhi-1-of-4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/crema-d-aizhi-1-of-4.jpg",
+  "ok": false,
+  "score": 0.982,
+  "box": [
+   484,
+   0,
+   972,
+   486
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.6, want 1.8 at 486px)",
+  "candidates": 2
+ },
+ {
+  "slug": "crema-daizhi",
+  "src": "raw/next/crema-daizhi.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/crema-daizhi.jpeg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 214,
+   "dark": 13.07,
+   "lumsd": 50.3,
+   "line": 4.94
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 214, dark 13.07, lumsd 50.3, line 4.94)",
+  "candidates": 2
+ },
+ {
+  "slug": "crema-evora",
+  "src": "raw/next/crema-evora.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/crema-evora.jpeg",
+  "ok": true,
+  "score": 0.928,
+  "sharp": 1.2,
+  "src_px": 475,
+  "phash": 159075982284865272036277248208,
+  "reasons": {
+   "neutral": 0.88,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 0.99,
+   "exposed": 0.59,
+   "noedge": 1.0
+  },
+  "box": [
+   390,
+   0,
+   865,
+   475
+  ],
+  "tile_px": 472,
+  "thumb_px": 472,
+  "bytes": 3796,
+  "candidates": 1
+ },
+ {
+  "slug": "crema-evora-polished",
+  "src": "raw/nile-inv/crema-evora-polished.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/crema-evora-polished.jpg",
+  "ok": false,
+  "score": 0.913,
+  "box": [
+   0,
+   0,
+   581,
+   583
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.7, want 1.8 at 452px)",
+  "candidates": 1
+ },
+ {
+  "slug": "crema-marfil",
+  "src": "raw/nile-inv/crema-marfil__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/crema-marfil__2.jpg",
+  "ok": false,
+  "score": 0.873,
+  "box": [
+   293,
+   0,
+   887,
+   595
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.1, want 1.8 at 594px)",
+  "candidates": 2
+ },
+ {
+  "slug": "crema-sottile",
+  "src": "raw/next/crema-sottile.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/crema-sottile.jpeg",
+  "ok": true,
+  "score": 0.861,
+  "sharp": 1.9,
+  "src_px": 479,
+  "phash": 340629975729897401396375852306,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.21,
+   "noedge": 1.0
+  },
+  "box": [
+   335,
+   0,
+   814,
+   480
+  ],
+  "tile_px": 472,
+  "thumb_px": 472,
+  "bytes": 4912,
+  "candidates": 2
+ },
+ {
+  "slug": "crema-tempest",
+  "src": "raw/next/crema-tempest.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/crema-tempest.jpeg",
+  "ok": true,
+  "score": 0.808,
+  "sharp": 2.1,
+  "src_px": 466,
+  "phash": 242903278835772389085285133605,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.95,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.11,
+   "noedge": 1.0
+  },
+  "box": [
+   423,
+   0,
+   912,
+   487
+  ],
+  "tile_px": 464,
+  "thumb_px": 464,
+  "bytes": 8636,
+  "candidates": 2
+ },
+ {
+  "slug": "crema-venato",
+  "src": "raw/next/crema-venato.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/crema-venato.jpeg",
+  "ok": true,
+  "score": 0.9,
+  "sharp": 2.1,
+  "src_px": 479,
+  "phash": 182916754951016817966762781773,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.37,
+   "noedge": 0.99
+  },
+  "box": [
+   502,
+   0,
+   982,
+   479
+  ],
+  "tile_px": 472,
+  "thumb_px": 472,
+  "bytes": 5758,
+  "candidates": 2
+ },
+ {
+  "slug": "cremo-delicato",
+  "src": "raw/next/cremo-delicato.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/cremo-delicato.jpg",
+  "ok": true,
+  "score": 0.967,
+  "sharp": 3.4,
+  "src_px": 454,
+  "phash": 362807273779861676661427863704,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.84,
+   "noedge": 1.0
+  },
+  "box": [
+   363,
+   0,
+   847,
+   482
+  ],
+  "tile_px": 448,
+  "thumb_px": 448,
+  "bytes": 14878,
+  "candidates": 4
+ },
+ {
+  "slug": "cristal-white",
+  "src": "raw/nile/cristal-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/cristal-white.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 3
+ },
+ {
+  "slug": "cristallo",
+  "src": "raw/nile-inv/cristallo.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/cristallo.jpg",
+  "ok": true,
+  "score": 0.868,
+  "sharp": 3.3,
+  "src_px": 532,
+  "phash": 768285169907667922806939106614,
+  "reasons": {
+   "neutral": 0.89,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.72,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.91
+  },
+  "box": [
+   73,
+   0,
+   682,
+   610
+  ],
+  "tile_px": 528,
+  "thumb_px": 528,
+  "bytes": 30728,
+  "candidates": 1
+ },
+ {
+  "slug": "dolce-vita",
+  "src": "raw/nile-inv/dolce-vita.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/dolce-vita.jpg",
+  "ok": true,
+  "score": 0.976,
+  "sharp": 5.6,
+  "src_px": 349,
+  "phash": 599245646758036997465483057664,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.96,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   126,
+   0,
+   475,
+   350
+  ],
+  "tile_px": 344,
+  "thumb_px": 344,
+  "bytes": 13174,
+  "candidates": 1
+ },
+ {
+  "slug": "dolce-vita-leather",
+  "src": "raw/nile-inv/dolce-vita-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/dolce-vita-leather.jpg",
+  "ok": true,
+  "score": 0.93,
+  "sharp": 4.8,
+  "src_px": 478,
+  "phash": 48131931219371613953262096912,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.91,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.11
+  },
+  "box": [
+   229,
+   15,
+   707,
+   493
+  ],
+  "tile_px": 472,
+  "thumb_px": 472,
+  "bytes": 26600,
+  "candidates": 10
+ },
+ {
+  "slug": "dover-white",
+  "src": "raw/nile-inv/dover-white__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/dover-white__10.jpg",
+  "ok": true,
+  "score": 0.818,
+  "sharp": 3.8,
+  "src_px": 588,
+  "phash": 1122981561307154600686749020370,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.91,
+   "nostructure": 0.46,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.92
+  },
+  "box": [
+   71,
+   0,
+   659,
+   589
+  ],
+  "tile_px": 584,
+  "thumb_px": 584,
+  "bytes": 48574,
+  "candidates": 1
+ },
+ {
+  "slug": "dover-white-honed",
+  "src": "raw/nile-inv/dover-white-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/dover-white-honed.jpg",
+  "ok": false,
+  "score": 0.801,
+  "box": [
+   21,
+   7,
+   51,
+   37
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (30px, want 340)",
+  "candidates": 10
+ },
+ {
+  "slug": "emerald-green",
+  "src": "raw/nile/emerald-green__3.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/emerald-green__3.jpg",
+  "ok": false,
+  "score": 0.569,
+  "box": [
+   0,
+   0,
+   283,
+   284
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (283px, want 340)",
+  "candidates": 8
+ },
+ {
+  "slug": "fantastico-arni-honed",
+  "src": "raw/nile-inv/fantastico-arni-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/fantastico-arni-honed.jpg",
+  "ok": true,
+  "score": 0.912,
+  "sharp": 4.7,
+  "src_px": 1238,
+  "phash": 1042147764821827600573922915701,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.59,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   1240,
+   1238
+  ],
+  "tile_px": 1232,
+  "thumb_px": 800,
+  "bytes": 222134,
+  "candidates": 1
+ },
+ {
+  "slug": "fresh-cement",
+  "src": "raw/next/fresh-cement.png",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/fresh-cement.png",
+  "ok": false,
+  "score": 0.982,
+  "box": [
+   390,
+   0,
+   799,
+   409
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (328px, want 340)",
+  "candidates": 2
+ },
+ {
+  "slug": "fusion-black",
+  "src": "raw/nile-inv/fusion-black__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/fusion-black__10.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 7.8,
+  "src_px": 1874,
+  "phash": 50977332598268121239909046824,
+  "reasons": {},
+  "box": [
+   567,
+   60,
+   2441,
+   1934
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 1033892,
+  "candidates": 11
+ },
+ {
+  "slug": "fusion-blue",
+  "src": "raw/nile/fusion-blue.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/fusion-blue.jpg",
+  "ok": true,
+  "score": 0.893,
+  "sharp": 4.2,
+  "src_px": 800,
+  "phash": 569668240714553496769105426126,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.71,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   521,
+   130,
+   1629,
+   1241
+  ],
+  "tile_px": 800,
+  "thumb_px": 800,
+  "bytes": 83620,
+  "candidates": 14
+ },
+ {
+  "slug": "fusion-blue-leather",
+  "src": "raw/nile-inv/fusion-blue-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/fusion-blue-leather.jpg",
+  "ok": true,
+  "score": 0.866,
+  "sharp": 5.5,
+  "src_px": 578,
+  "phash": 903594188823366632378983026609,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.82,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.52,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   214,
+   0,
+   792,
+   578
+  ],
+  "tile_px": 576,
+  "thumb_px": 576,
+  "bytes": 77982,
+  "candidates": 10
+ },
+ {
+  "slug": "fusion-multicolour",
+  "src": "raw/nile/fusion-multicolour.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/fusion-multicolour.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 1
+ },
+ {
+  "slug": "fusion-wow-multicolour",
+  "src": "raw/nile-inv/fusion-wow-multicolour.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/fusion-wow-multicolour.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 5.1,
+  "src_px": 631,
+  "phash": 1003473230084236137241449701587,
+  "reasons": {},
+  "box": [
+   282,
+   20,
+   913,
+   651
+  ],
+  "tile_px": 624,
+  "thumb_px": 624,
+  "bytes": 86078,
+  "candidates": 2
+ },
+ {
+  "slug": "fusion-wow-multicolourr",
+  "src": "raw/nile/fusion-wow-multicolourr.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/fusion-wow-multicolourr.jpg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 239,
+   "dark": 7.58,
+   "lumsd": 40.8,
+   "line": 3.97
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 239, dark 7.58, lumsd 40.8, line 3.97)",
+  "candidates": 1
+ },
+ {
+  "slug": "grigio-carnico",
+  "src": "raw/nile-inv/grigio-carnico.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/grigio-carnico.jpg",
+  "ok": false,
+  "score": 0.801,
+  "box": [
+   21,
+   7,
+   51,
+   37
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (30px, want 340)",
+  "candidates": 1
+ },
+ {
+  "slug": "grigio-fantasy",
+  "src": "raw/nile/grigio-fantasy.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/grigio-fantasy.jpg",
+  "ok": true,
+  "score": 0.965,
+  "sharp": 7.0,
+  "src_px": 646,
+  "phash": 615256098498199583500159711547,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.88,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   283,
+   0,
+   1047,
+   762
+  ],
+  "tile_px": 640,
+  "thumb_px": 640,
+  "bytes": 96054,
+  "candidates": 6
+ },
+ {
+  "slug": "grigio-shimmerr",
+  "src": "raw/nile/grigio-shimmerr.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/grigio-shimmerr.jpg",
+  "ok": true,
+  "score": 0.956,
+  "sharp": 3.2,
+  "src_px": 2130,
+  "phash": 475717318715381106066105862662,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.89,
+   "nostructure": 1.0,
+   "hastexture": 0.89,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   263,
+   0,
+   2393,
+   2139
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 216084,
+  "candidates": 4
+ },
+ {
+  "slug": "grigio-starlight",
+  "src": "raw/nile/grigio-starlight__3.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/grigio-starlight__3.jpg",
+  "ok": true,
+  "score": 0.982,
+  "sharp": 5.9,
+  "src_px": 3499,
+  "phash": 960806640937750137157357685570,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   3507,
+   3499
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 652154,
+  "candidates": 3
+ },
+ {
+  "slug": "ice-white",
+  "src": "raw/nile/ice-white__5.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/ice-white__5.jpg",
+  "ok": false,
+  "score": 0.563,
+  "sharp": 3.2,
+  "src_px": 632,
+  "phash": 4348989259309589276217819256,
+  "reasons": {
+   "neutral": 0.78,
+   "nocolourblob": 0.75,
+   "soft": 1.0,
+   "representative": 0.77,
+   "nostructure": 0.48,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.23
+  },
+  "box": [
+   0,
+   80,
+   659,
+   740
+  ],
+  "candidates": 7
+ },
+ {
+  "slug": "lavender",
+  "src": "raw/nile/lavender__6.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/lavender__6.jpg",
+  "ok": true,
+  "score": 0.885,
+  "sharp": 6.6,
+  "src_px": 762,
+  "phash": 668349547304983354176420290833,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.99,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.67,
+   "hastexture": 1.0,
+   "exposed": 0.59,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 161112,
+  "candidates": 6
+ },
+ {
+  "slug": "lemurian-blue",
+  "src": "raw/nile-inv/lemurian-blue__10.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/lemurian-blue__10.jpg",
+  "ok": true,
+  "score": 0.85,
+  "sharp": 4.1,
+  "src_px": 1554,
+  "phash": 857497687286505472831821521673,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.77,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   1467,
+   182,
+   3025,
+   1736
+  ],
+  "tile_px": 1552,
+  "thumb_px": 800,
+  "bytes": 242836,
+  "candidates": 11
+ },
+ {
+  "slug": "london-grey",
+  "src": "raw/nile/london-grey.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/london-grey.jpg",
+  "ok": true,
+  "score": 0.965,
+  "sharp": 4.6,
+  "src_px": 762,
+  "phash": 40084777324532038971302913,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.89,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 54410,
+  "candidates": 2
+ },
+ {
+  "slug": "lucente",
+  "src": "raw/next/lucente.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/lucente.jpeg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 232,
+   "dark": 11.99,
+   "lumsd": 58.7,
+   "line": 4.4
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 232, dark 11.99, lumsd 58.7, line 4.4)",
+  "candidates": 2
+ },
+ {
+  "slug": "luna-bianca",
+  "src": "raw/next/luna-bianca__3.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/luna-bianca__3.jpg",
+  "ok": false,
+  "score": 0.968,
+  "box": [
+   502,
+   0,
+   982,
+   481
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.5, want 4.0 at 420px)",
+  "candidates": 3
+ },
+ {
+  "slug": "luna-blanca",
+  "src": "raw/next/luna-blanca.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/luna-blanca.jpg",
+  "ok": false,
+  "score": 0.966,
+  "box": [
+   242,
+   0,
+   726,
+   485
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.2, want 1.8 at 464px)",
+  "candidates": 2
+ },
+ {
+  "slug": "luna-blanca-2-of-4",
+  "src": "raw/next/luna-blanca-2-of-4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/luna-blanca-2-of-4.jpg",
+  "ok": false,
+  "score": 0.966,
+  "box": [
+   242,
+   0,
+   726,
+   485
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.2, want 1.8 at 464px)",
+  "candidates": 2
+ },
+ {
+  "slug": "macaubus-fantasy",
+  "src": "raw/nile-inv/macaubus-fantasy.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/macaubus-fantasy.jpg",
+  "ok": true,
+  "score": 0.961,
+  "sharp": 4.7,
+  "src_px": 382,
+  "phash": 1025082402604869748295137837123,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.95,
+   "nostructure": 0.93,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.98
+  },
+  "box": [
+   437,
+   0,
+   937,
+   500
+  ],
+  "tile_px": 376,
+  "thumb_px": 376,
+  "bytes": 17808,
+  "candidates": 11
+ },
+ {
+  "slug": "magma-gold",
+  "src": "raw/nile-inv/magma-gold.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/magma-gold.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 5.3,
+  "src_px": 614,
+  "phash": 864326892975997036979439645233,
+  "reasons": {},
+  "box": [
+   84,
+   20,
+   698,
+   634
+  ],
+  "tile_px": 608,
+  "thumb_px": 608,
+  "bytes": 97572,
+  "candidates": 12
+ },
+ {
+  "slug": "maldives",
+  "src": "raw/nile-inv/maldives.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/maldives.jpg",
+  "ok": false,
+  "score": 0.907,
+  "box": [
+   50,
+   15,
+   513,
+   478
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 3.0, want 4.0 at 346px)",
+  "candidates": 11
+ },
+ {
+  "slug": "marble-look-altissimo",
+  "src": "raw/nile/marble-look-altissimo.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-altissimo.jpg",
+  "ok": false,
+  "score": 0.853,
+  "box": [
+   94,
+   0,
+   858,
+   762
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.4, want 1.55 at 762px)",
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-bahia-black",
+  "src": "raw/nile/marble-look-bahia-black.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-bahia-black.jpg",
+  "ok": true,
+  "score": 0.975,
+  "sharp": 4.8,
+  "src_px": 700,
+  "phash": 180209059288173617919817849059,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.97,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 696,
+  "thumb_px": 696,
+  "bytes": 59794,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-bianco-arni",
+  "src": "raw/nile/marble-look-bianco-arni.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-bianco-arni.jpg",
+  "ok": true,
+  "score": 0.8,
+  "sharp": 3.9,
+  "src_px": 634,
+  "phash": 689289406924227205215448063099,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.62,
+   "hastexture": 1.0,
+   "exposed": 0.36,
+   "noedge": 0.99
+  },
+  "box": [
+   0,
+   0,
+   683,
+   682
+  ],
+  "tile_px": 632,
+  "thumb_px": 632,
+  "bytes": 45442,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-calacatta-black",
+  "src": "raw/nile/marble-look-calacatta-black__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-calacatta-black__2.jpg",
+  "ok": true,
+  "score": 0.867,
+  "sharp": 4.3,
+  "src_px": 1198,
+  "phash": 743702997198240911269684644291,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.41,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.99
+  },
+  "box": [
+   0,
+   147,
+   1198,
+   1346
+  ],
+  "tile_px": 1192,
+  "thumb_px": 800,
+  "bytes": 122186,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-calacatta-extra",
+  "src": "raw/nile/marble-look-calacatta-extra.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-calacatta-extra.jpg",
+  "ok": true,
+  "score": 0.853,
+  "sharp": 3.1,
+  "src_px": 762,
+  "phash": 91648670546228138648551132966,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.94,
+   "nostructure": 0.76,
+   "hastexture": 1.0,
+   "exposed": 0.33,
+   "noedge": 0.99
+  },
+  "box": [
+   94,
+   0,
+   858,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 38020,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-calacatta-vena-vecchia",
+  "src": "raw/nile/marble-look-calacatta-vena-vecchia.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-calacatta-vena-vecchia.jpg",
+  "ok": true,
+  "score": 0.664,
+  "sharp": 3.3,
+  "src_px": 494,
+  "phash": 984628052545706034400307026326,
+  "reasons": {
+   "neutral": 0.63,
+   "nocolourblob": 0.98,
+   "soft": 1.0,
+   "representative": 0.8,
+   "nostructure": 0.85,
+   "hastexture": 1.0,
+   "exposed": 0.47,
+   "noedge": 0.75
+  },
+  "box": [
+   581,
+   290,
+   1076,
+   784
+  ],
+  "tile_px": 488,
+  "thumb_px": 488,
+  "bytes": 19570,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-capraia",
+  "src": "raw/nile/marble-look-capraia.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-capraia.jpg",
+  "ok": true,
+  "score": 0.746,
+  "sharp": 4.5,
+  "src_px": 700,
+  "phash": 443709050295446968534952728004,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.99,
+   "soft": 1.0,
+   "representative": 0.82,
+   "nostructure": 0.16,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 696,
+  "thumb_px": 696,
+  "bytes": 93142,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-crema-marfil",
+  "src": "raw/nile/marble-look-crema-marfil.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-crema-marfil.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-elegant-black",
+  "src": "raw/nile/marble-look-elegant-black.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-elegant-black.jpg",
+  "ok": true,
+  "score": 0.807,
+  "sharp": 3.1,
+  "src_px": 762,
+  "phash": 246125827882377200707519855372,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.89,
+   "nostructure": 0.76,
+   "hastexture": 1.0,
+   "exposed": 0.43,
+   "noedge": 0.71
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 26726,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-emperador",
+  "src": "raw/nile/marble-look-emperador.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-emperador.jpg",
+  "ok": true,
+  "score": 0.865,
+  "sharp": 6.0,
+  "src_px": 762,
+  "phash": 233269862738971451424963684469,
+  "reasons": {
+   "neutral": 0.71,
+   "nocolourblob": 0.8,
+   "soft": 1.0,
+   "representative": 0.95,
+   "nostructure": 0.68,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 147178,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-fior-di-pesco-carnico",
+  "src": "raw/nile/marble-look-fior-di-pesco-carnico__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-fior-di-pesco-carnico__2.jpg",
+  "ok": true,
+  "score": 0.974,
+  "sharp": 5.3,
+  "src_px": 920,
+  "phash": 579249065258634584942706580883,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.94,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   340,
+   920,
+   1261
+  ],
+  "tile_px": 920,
+  "thumb_px": 800,
+  "bytes": 141758,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-frappuccino",
+  "src": "raw/nile/marble-look-frappuccino.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-frappuccino.jpg",
+  "ok": true,
+  "score": 0.898,
+  "sharp": 5.4,
+  "src_px": 762,
+  "phash": 1162126567073864868950306776460,
+  "reasons": {
+   "neutral": 0.6,
+   "nocolourblob": 0.98,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.76,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   378,
+   0,
+   1141,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 134004,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-golden-white",
+  "src": "raw/nile/marble-look-golden-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-golden-white.jpg",
+  "ok": true,
+  "score": 0.822,
+  "sharp": 2.1,
+  "src_px": 588,
+  "phash": 693511722635314601003105563545,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 0.99,
+   "hastexture": 1.0,
+   "exposed": 0.47,
+   "noedge": 1.0
+  },
+  "box": [
+   72,
+   145,
+   661,
+   733
+  ],
+  "tile_px": 584,
+  "thumb_px": 584,
+  "bytes": 15242,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-grigio-carnico",
+  "src": "raw/nile/marble-look-grigio-carnico.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-grigio-carnico.jpg",
+  "ok": true,
+  "score": 0.95,
+  "sharp": 5.5,
+  "src_px": 762,
+  "phash": 689024127409220045432836714663,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.79,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 107332,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-imperiale",
+  "src": "raw/nile/marble-look-imperiale.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-imperiale.jpg",
+  "ok": true,
+  "score": 0.966,
+  "sharp": 2.7,
+  "src_px": 762,
+  "phash": 287417662934292878713671189860,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.9,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 22524,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-lasa",
+  "src": "raw/nile/marble-look-lasa.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-lasa.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-onice-avorio",
+  "src": "raw/nile/marble-look-onice-avorio.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-onice-avorio.jpg",
+  "ok": false,
+  "score": 0.845,
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.2, want 1.55 at 762px)",
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-onice-beige",
+  "src": "raw/nile/marble-look-onice-beige.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-onice-beige.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-onice-black",
+  "src": "raw/nile/marble-look-onice-black__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-onice-black__2.jpg",
+  "ok": true,
+  "score": 0.639,
+  "sharp": 2.3,
+  "src_px": 707,
+  "phash": 269518484657737635255888743651,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.98,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 0.88,
+   "hastexture": 1.0,
+   "exposed": 0.05,
+   "noedge": 0.8
+  },
+  "box": [
+   87,
+   698,
+   794,
+   1405
+  ],
+  "tile_px": 704,
+  "thumb_px": 704,
+  "bytes": 22332,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-onice-giada",
+  "src": "raw/nile/marble-look-onice-giada.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-onice-giada.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-patagonia",
+  "src": "raw/nile/marble-look-patagonia.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-patagonia.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-quarzo-bluegrey",
+  "src": "raw/nile/marble-look-quarzo-bluegrey.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-quarzo-bluegrey.jpg",
+  "ok": true,
+  "score": 0.944,
+  "sharp": 6.5,
+  "src_px": 762,
+  "phash": 882836567333139210816316650953,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.77,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 171724,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-raffaello",
+  "src": "raw/nile/marble-look-raffaello.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-raffaello.jpg",
+  "ok": true,
+  "score": 0.937,
+  "sharp": 1.7,
+  "src_px": 762,
+  "phash": 213451299080343264587888559828,
+  "reasons": {
+   "neutral": 0.95,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.69,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 13856,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-sahara-noir",
+  "src": "raw/nile/marble-look-sahara-noir.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-sahara-noir.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-saint-laurent",
+  "src": "raw/nile/marble-look-saint-laurent.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-saint-laurent.jpg",
+  "ok": true,
+  "score": 0.934,
+  "sharp": 6.5,
+  "src_px": 730,
+  "phash": 907173888649336661491168035013,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.7,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 728,
+  "thumb_px": 728,
+  "bytes": 133138,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-silver-root",
+  "src": "raw/nile/marble-look-silver-root.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-silver-root.jpg",
+  "ok": true,
+  "score": 0.941,
+  "sharp": 5.5,
+  "src_px": 688,
+  "phash": 46331347428704781983943427254,
+  "reasons": {
+   "neutral": 0.88,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 0.82,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 688,
+  "thumb_px": 688,
+  "bytes": 77916,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-sodalite",
+  "src": "raw/nile/marble-look-sodalite.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-sodalite.jpg",
+  "ok": true,
+  "score": 0.809,
+  "sharp": 5.0,
+  "src_px": 562,
+  "phash": 1174675574983740311452636691334,
+  "reasons": {
+   "neutral": 0.82,
+   "nocolourblob": 0.58,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.54,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 560,
+  "thumb_px": 560,
+  "bytes": 68062,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-staturio",
+  "src": "raw/nile/marble-look-staturio.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-staturio.jpg",
+  "ok": true,
+  "score": 0.761,
+  "sharp": 2.3,
+  "src_px": 762,
+  "phash": 361725289637798778593926275985,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.12,
+   "noedge": 0.71
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 13984,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-superwhite",
+  "src": "raw/nile/marble-look-superwhite__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-superwhite__2.jpg",
+  "ok": true,
+  "score": 0.946,
+  "sharp": 4.5,
+  "src_px": 1198,
+  "phash": 786471283926609629459652616131,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.76,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   295,
+   1198,
+   1494
+  ],
+  "tile_px": 1192,
+  "thumb_px": 800,
+  "bytes": 159724,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-tafu",
+  "src": "raw/nile/marble-look-tafu__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-tafu__2.jpg",
+  "ok": true,
+  "score": 0.913,
+  "sharp": 2.2,
+  "src_px": 920,
+  "phash": 229094002543946858765638327446,
+  "reasons": {
+   "neutral": 0.7,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.82
+  },
+  "box": [
+   0,
+   113,
+   920,
+   1034
+  ],
+  "tile_px": 920,
+  "thumb_px": 800,
+  "bytes": 27444,
+  "candidates": 2
+ },
+ {
+  "slug": "marble-look-taj-mahal",
+  "src": "raw/nile/marble-look-taj-mahal.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-taj-mahal.jpg",
+  "ok": true,
+  "score": 0.961,
+  "sharp": 4.7,
+  "src_px": 708,
+  "phash": 177442817963232901245524707142,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.8,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 704,
+  "thumb_px": 704,
+  "bytes": 60518,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-verde-aver",
+  "src": "raw/nile/marble-look-verde-aver.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-verde-aver.jpg",
+  "ok": true,
+  "score": 0.914,
+  "sharp": 4.7,
+  "src_px": 762,
+  "phash": 1015577859137057582725354279122,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.6,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 94156,
+  "candidates": 1
+ },
+ {
+  "slug": "marble-look-verde-borgogna",
+  "src": "raw/nile/marble-look-verde-borgogna.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marble-look-verde-borgogna.jpg",
+  "ok": true,
+  "score": 0.952,
+  "sharp": 5.1,
+  "src_px": 720,
+  "phash": 506541339906539027553983901665,
+  "reasons": {
+   "neutral": 0.92,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.84,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 720,
+  "thumb_px": 720,
+  "bytes": 103894,
+  "candidates": 1
+ },
+ {
+  "slug": "marquina-shimmer",
+  "src": "raw/nile/marquina-shimmer__4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/marquina-shimmer__4.jpg",
+  "ok": false,
+  "score": 0.749,
+  "box": [
+   1105,
+   0,
+   1600,
+   493
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.3, want 4.0 at 376px)",
+  "candidates": 5
+ },
+ {
+  "slug": "marron-imperial",
+  "src": "raw/nile-inv/marron-imperial.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/marron-imperial.jpg",
+  "ok": true,
+  "score": 0.942,
+  "sharp": 5.4,
+  "src_px": 605,
+  "phash": 496279634409175019954705313137,
+  "reasons": {
+   "neutral": 0.9,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.8,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   147,
+   0,
+   753,
+   605
+  ],
+  "tile_px": 600,
+  "thumb_px": 600,
+  "bytes": 58944,
+  "candidates": 2
+ },
+ {
+  "slug": "metal-look-corten",
+  "src": "raw/nile/metal-look-corten.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/metal-look-corten.jpg",
+  "ok": false,
+  "score": 0.839,
+  "box": [
+   320,
+   79,
+   1003,
+   762
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.0, want 4.0 at 426px)",
+  "candidates": 1
+ },
+ {
+  "slug": "metal-look-iron-dark",
+  "src": "raw/nile/metal-look-iron-dark.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/metal-look-iron-dark.jpg",
+  "ok": false,
+  "score": 0.856,
+  "box": [
+   480,
+   79,
+   1163,
+   762
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.5, want 1.8 at 512px)",
+  "candidates": 1
+ },
+ {
+  "slug": "misterio-gold",
+  "src": "raw/next/misterio-gold.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/misterio-gold.jpg",
+  "ok": true,
+  "score": 0.942,
+  "sharp": 2.4,
+  "src_px": 460,
+  "phash": 159708862582305168003882581399,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 0.74,
+   "exposed": 1.0,
+   "noedge": 0.93
+  },
+  "box": [
+   0,
+   0,
+   488,
+   487
+  ],
+  "tile_px": 456,
+  "thumb_px": 456,
+  "bytes": 4132,
+  "candidates": 2
+ },
+ {
+  "slug": "misterio-gold-2",
+  "src": "raw/next/misterio-gold-2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/misterio-gold-2.jpg",
+  "ok": false,
+  "score": 0.942,
+  "sharp": 2.4,
+  "src_px": 460,
+  "phash": 159708862582305168003882581399,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 0.74,
+   "exposed": 1.0,
+   "noedge": 0.93
+  },
+  "box": [
+   0,
+   0,
+   488,
+   487
+  ],
+  "why": "every frame is a duplicate of another stone's photograph",
+  "candidates": 2
+ },
+ {
+  "slug": "misterio-gold-premium",
+  "src": "raw/next/misterio-gold-premium.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/misterio-gold-premium.jpeg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 220,
+   "dark": 6.66,
+   "lumsd": 58.0,
+   "line": 6.71
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 220, dark 6.66, lumsd 58.0, line 6.71)",
+  "candidates": 2
+ },
+ {
+  "slug": "misterio-grey",
+  "src": "raw/next/misterio-grey__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/misterio-grey__2.jpg",
+  "ok": false,
+  "score": 0.944,
+  "box": [
+   60,
+   0,
+   544,
+   482
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (330px, want 340)",
+  "candidates": 2
+ },
+ {
+  "slug": "misterio-grey-1",
+  "src": "raw/next/misterio-grey-1.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/misterio-grey-1.jpg",
+  "ok": false,
+  "score": 0.871,
+  "box": [
+   60,
+   0,
+   544,
+   483
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.9, want 4.0 at 402px)",
+  "candidates": 2
+ },
+ {
+  "slug": "misterio-premium",
+  "src": "raw/next/misterio-premium__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/misterio-premium__2.jpg",
+  "ok": false,
+  "score": 0.967,
+  "box": [
+   121,
+   0,
+   609,
+   488
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.2, want 4.0 at 360px)",
+  "candidates": 2
+ },
+ {
+  "slug": "misterio-premium-1",
+  "src": "raw/next/misterio-premium-1.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/misterio-premium-1.jpg",
+  "ok": false,
+  "score": 0.95,
+  "box": [
+   121,
+   0,
+   609,
+   488
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 1.8, want 4.0 at 360px)",
+  "candidates": 2
+ },
+ {
+  "slug": "misterio-premium-2-of-4",
+  "src": "raw/next/misterio-premium-2-of-4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/misterio-premium-2-of-4.jpg",
+  "ok": false,
+  "score": 0.967,
+  "box": [
+   121,
+   0,
+   609,
+   488
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.2, want 4.0 at 360px)",
+  "candidates": 2
+ },
+ {
+  "slug": "mont-blanc",
+  "src": "raw/nile-inv/mont-blanc__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/mont-blanc__2.jpg",
+  "ok": false,
+  "score": 0.92,
+  "box": [
+   306,
+   0,
+   736,
+   429
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.3, want 4.0 at 370px)",
+  "candidates": 4
+ },
+ {
+  "slug": "mont-blanc-leather",
+  "src": "raw/nile-inv/mont-blanc-leather__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/mont-blanc-leather__2.jpg",
+  "ok": false,
+  "score": 0.916,
+  "box": [
+   0,
+   0,
+   399,
+   400
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.4, want 4.0 at 372px)",
+  "candidates": 4
+ },
+ {
+  "slug": "mystic-grey",
+  "src": "raw/nile-inv/mystic-grey.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/mystic-grey.jpg",
+  "ok": true,
+  "score": 0.968,
+  "sharp": 7.6,
+  "src_px": 490,
+  "phash": 1184312943156770660346664159841,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.9,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   61,
+   0,
+   572,
+   512
+  ],
+  "tile_px": 488,
+  "thumb_px": 488,
+  "bytes": 55712,
+  "candidates": 2
+ },
+ {
+  "slug": "mystic-grey-leather",
+  "src": "raw/nile-inv/mystic-grey-leather.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/mystic-grey-leather.jpg",
+  "ok": true,
+  "score": 0.975,
+  "sharp": 6.6,
+  "src_px": 884,
+  "phash": 688619424665202398207422556013,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.95,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   884,
+   885
+  ],
+  "tile_px": 880,
+  "thumb_px": 800,
+  "bytes": 185706,
+  "candidates": 4
+ },
+ {
+  "slug": "nero-marinace",
+  "src": "raw/nile/nero-marinace.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/nero-marinace.jpg",
+  "ok": true,
+  "score": 0.81,
+  "sharp": 5.5,
+  "src_px": 1162,
+  "phash": 925502214559980722497981547834,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.94,
+   "nostructure": 0.26,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   139,
+   0,
+   1303,
+   1162
+  ],
+  "tile_px": 1160,
+  "thumb_px": 800,
+  "bytes": 294024,
+  "candidates": 1
+ },
+ {
+  "slug": "nero-marquina",
+  "src": "raw/nile-inv/nero-marquina.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/nero-marquina.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 6.6,
+  "src_px": 666,
+  "phash": 347715684327856820136651741514,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 0.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   29,
+   1094,
+   934
+  ],
+  "tile_px": 664,
+  "thumb_px": 664,
+  "bytes": 161488,
+  "candidates": 2
+ },
+ {
+  "slug": "ns-sabbia-beige",
+  "src": "raw/next/ns-sabbia-beige.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/ns-sabbia-beige.jpg",
+  "ok": false,
+  "score": 0.981,
+  "box": [
+   484,
+   0,
+   968,
+   484
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.5, want 4.0 at 404px)",
+  "candidates": 2
+ },
+ {
+  "slug": "ocean-fantasy",
+  "src": "raw/nile/ocean-fantasy.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/ocean-fantasy.jpeg",
+  "ok": true,
+  "score": 0.812,
+  "sharp": 4.6,
+  "src_px": 702,
+  "phash": 197214132444289464838492232268,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.74,
+   "soft": 1.0,
+   "representative": 0.93,
+   "nostructure": 0.42,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.95
+  },
+  "box": [
+   109,
+   0,
+   996,
+   887
+  ],
+  "tile_px": 696,
+  "thumb_px": 696,
+  "bytes": 99180,
+  "candidates": 5
+ },
+ {
+  "slug": "oronico",
+  "src": "raw/nile/oronico.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/oronico.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 1
+ },
+ {
+  "slug": "patagonia-extra",
+  "src": "raw/nile/patagonia-extra.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/patagonia-extra.jpg",
+  "ok": true,
+  "score": 0.853,
+  "sharp": 4.4,
+  "src_px": 886,
+  "phash": 806647981973876067792197664587,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.85,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.44,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   107,
+   0,
+   994,
+   886
+  ],
+  "tile_px": 880,
+  "thumb_px": 800,
+  "bytes": 99746,
+  "candidates": 1
+ },
+ {
+  "slug": "rainforest-brown",
+  "src": "raw/nile-inv/rainforest-brown.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/rainforest-brown.jpeg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 7.3,
+  "src_px": 676,
+  "phash": 113917336321751792277268248509,
+  "reasons": {},
+  "box": [
+   269,
+   22,
+   945,
+   698
+  ],
+  "tile_px": 672,
+  "thumb_px": 672,
+  "bytes": 181680,
+  "candidates": 1
+ },
+ {
+  "slug": "repen",
+  "src": "raw/nile/repen.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/repen.jpg",
+  "ok": true,
+  "score": 0.954,
+  "sharp": 6.6,
+  "src_px": 614,
+  "phash": 463365464360418224197415522226,
+  "reasons": {
+   "neutral": 0.76,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   726,
+   728
+  ],
+  "tile_px": 608,
+  "thumb_px": 608,
+  "bytes": 52786,
+  "candidates": 1
+ },
+ {
+  "slug": "rosa-alicante",
+  "src": "raw/nile-inv/rosa-alicante.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/rosa-alicante.jpg",
+  "ok": true,
+  "score": 0.62,
+  "sharp": 3.9,
+  "src_px": 649,
+  "phash": 428893971332920551801928457844,
+  "reasons": {},
+  "box": [
+   355,
+   21,
+   1004,
+   670
+  ],
+  "tile_px": 648,
+  "thumb_px": 648,
+  "bytes": 46952,
+  "candidates": 1
+ },
+ {
+  "slug": "rosso-levanto",
+  "src": "raw/nile-inv/rosso-levanto.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/rosso-levanto.jpg",
+  "ok": true,
+  "score": 0.841,
+  "sharp": 6.6,
+  "src_px": 560,
+  "phash": 978299553617812295854322992509,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.98,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.33,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   594,
+   593
+  ],
+  "tile_px": 560,
+  "thumb_px": 560,
+  "bytes": 103324,
+  "candidates": 1
+ },
+ {
+  "slug": "royal-grey",
+  "src": "raw/nile/royal-grey.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/royal-grey.jpg",
+  "ok": true,
+  "score": 0.967,
+  "sharp": 4.3,
+  "src_px": 2130,
+  "phash": 82090908311699380595358505538,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.9,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   1054,
+   0,
+   3184,
+   2139
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 280112,
+  "candidates": 4
+ },
+ {
+  "slug": "sabbia-beige",
+  "src": "raw/next/sabbia-beige__3.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/sabbia-beige__3.jpg",
+  "ok": true,
+  "score": 0.981,
+  "sharp": 4.2,
+  "src_px": 488,
+  "phash": 69455579619851716433058963690,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   484,
+   0,
+   972,
+   488
+  ],
+  "tile_px": 488,
+  "thumb_px": 488,
+  "bytes": 26882,
+  "candidates": 3
+ },
+ {
+  "slug": "sahara-dunes",
+  "src": "raw/next/sahara-dunes.jpeg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/sahara-dunes.jpeg",
+  "ok": true,
+  "score": 0.786,
+  "sharp": 3.4,
+  "src_px": 532,
+  "phash": 255873292223309466722648655457,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.84,
+   "soft": 1.0,
+   "representative": 0.86,
+   "nostructure": 0.38,
+   "hastexture": 1.0,
+   "exposed": 0.63,
+   "noedge": 1.0
+  },
+  "box": [
+   132,
+   0,
+   665,
+   532
+  ],
+  "tile_px": 528,
+  "thumb_px": 528,
+  "bytes": 27614,
+  "candidates": 2
+ },
+ {
+  "slug": "snow-white",
+  "src": "raw/nile/snow-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/snow-white.jpg",
+  "ok": false,
+  "score": 0,
+  "kind": "scene",
+  "evidence": {
+   "range": 187,
+   "dark": 0.0,
+   "lumsd": 36.5,
+   "line": 7.8
+  },
+  "why": "photograph of a room or a yard, not a slab scan (range 187, dark 0.0, lumsd 36.5, line 7.8)",
+  "candidates": 10
+ },
+ {
+  "slug": "solid-colour-white",
+  "src": "raw/nile/solid-colour-white.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/solid-colour-white.jpg",
+  "ok": false,
+  "why": "no window",
+  "score": 0,
+  "candidates": 1
+ },
+ {
+  "slug": "st-laurent-noir",
+  "src": "raw/nile-inv/st-laurent-noir.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/st-laurent-noir.jpg",
+  "ok": false,
+  "score": 0.801,
+  "box": [
+   21,
+   7,
+   51,
+   37
+  ],
+  "rescuable": true,
+  "why": "source too small to fill a tile (30px, want 340)",
+  "candidates": 1
+ },
+ {
+  "slug": "statuario",
+  "src": "raw/nile/statuario__7.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/statuario__7.jpg",
+  "ok": true,
+  "score": 0.844,
+  "sharp": 3.4,
+  "src_px": 3676,
+  "phash": 962812736850648089339532435014,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.79,
+   "nostructure": 0.51,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.89
+  },
+  "box": [
+   0,
+   0,
+   3836,
+   3836
+  ],
+  "tile_px": 1600,
+  "thumb_px": 800,
+  "bytes": 108736,
+  "candidates": 10
+ },
+ {
+  "slug": "stone-look-basaltina",
+  "src": "raw/nile/stone-look-basaltina.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-basaltina.jpg",
+  "ok": true,
+  "score": 0.973,
+  "sharp": 4.8,
+  "src_px": 762,
+  "phash": 554684322826542407561565734187,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.94,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 64862,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-berici-beige",
+  "src": "raw/nile/stone-look-berici-beige.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-berici-beige.jpg",
+  "ok": true,
+  "score": 0.905,
+  "sharp": 3.1,
+  "src_px": 762,
+  "phash": 240161657492372476875790156418,
+  "reasons": {
+   "neutral": 0.75,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.54,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 31032,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-berici-bianco",
+  "src": "raw/nile/stone-look-berici-bianco.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-berici-bianco.jpg",
+  "ok": true,
+  "score": 0.622,
+  "sharp": 2.4,
+  "src_px": 762,
+  "phash": 161020538743922644197914544706,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 1.0,
+   "hastexture": 0.74,
+   "exposed": 0.01,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 21226,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-berici-grigio",
+  "src": "raw/nile/stone-look-berici-grigio.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-berici-grigio.jpg",
+  "ok": true,
+  "score": 0.974,
+  "sharp": 3.8,
+  "src_px": 762,
+  "phash": 996556421748772763360656303749,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.96,
+   "noedge": 1.0
+  },
+  "box": [
+   283,
+   0,
+   1047,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 46282,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-bluestone",
+  "src": "raw/nile/stone-look-bluestone.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-bluestone.jpg",
+  "ok": true,
+  "score": 0.927,
+  "sharp": 5.5,
+  "src_px": 762,
+  "phash": 209367893740957259473771107522,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.51,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 77116,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-breccia-imperiale",
+  "src": "raw/nile/stone-look-breccia-imperiale.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-breccia-imperiale.jpg",
+  "ok": true,
+  "score": 0.978,
+  "sharp": 4.7,
+  "src_px": 646,
+  "phash": 255258822312749793831631758636,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 640,
+  "thumb_px": 640,
+  "bytes": 42326,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-ceppo-di-grey",
+  "src": "raw/nile/stone-look-ceppo-di-grey.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-ceppo-di-grey.jpg",
+  "ok": true,
+  "score": 0.979,
+  "sharp": 6.1,
+  "src_px": 762,
+  "phash": 1234014141623249942551137649425,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.98,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   283,
+   0,
+   1047,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 112402,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-granito-black",
+  "src": "raw/nile/stone-look-granito-black.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-granito-black.jpg",
+  "ok": true,
+  "score": 0.925,
+  "sharp": 4.0,
+  "src_px": 762,
+  "phash": 101047460169578972261835153424,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.9,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.61,
+   "noedge": 1.0
+  },
+  "box": [
+   189,
+   0,
+   952,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 54360,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-limestone-ivory",
+  "src": "raw/nile/stone-look-limestone-ivory.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-limestone-ivory.jpg",
+  "ok": true,
+  "score": 0.811,
+  "sharp": 3.1,
+  "src_px": 762,
+  "phash": 133843026310264600731466411140,
+  "reasons": {
+   "neutral": 0.75,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.14,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 33358,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-limestone-sand",
+  "src": "raw/nile/stone-look-limestone-sand.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-limestone-sand.jpg",
+  "ok": true,
+  "score": 0.927,
+  "sharp": 3.5,
+  "src_px": 762,
+  "phash": 981145119919933905660082063818,
+  "reasons": {
+   "neutral": 0.54,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 39746,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-moon",
+  "src": "raw/nile/stone-look-moon.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-moon.jpg",
+  "ok": true,
+  "score": 0.967,
+  "sharp": 2.5,
+  "src_px": 762,
+  "phash": 43378084784166446871611984691,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.9,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 21418,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-pietra-di-vals",
+  "src": "raw/nile/stone-look-pietra-di-vals.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-pietra-di-vals.jpg",
+  "ok": true,
+  "score": 0.978,
+  "sharp": 7.2,
+  "src_px": 700,
+  "phash": 663681116494071204510530660137,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 696,
+  "thumb_px": 696,
+  "bytes": 111126,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-porfido-greenery",
+  "src": "raw/nile/stone-look-porfido-greenery.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-porfido-greenery.jpg",
+  "ok": true,
+  "score": 0.975,
+  "sharp": 7.3,
+  "src_px": 762,
+  "phash": 496037403783678304036135179341,
+  "reasons": {
+   "neutral": 0.99,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.96,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 114584,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-travertino",
+  "src": "raw/nile/stone-look-travertino.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-travertino.jpg",
+  "ok": true,
+  "score": 0.803,
+  "sharp": 4.6,
+  "src_px": 588,
+  "phash": 42402619835350945949523537993,
+  "reasons": {
+   "neutral": 0.38,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.91,
+   "noedge": 0.98
+  },
+  "box": [
+   945,
+   0,
+   1534,
+   588
+  ],
+  "tile_px": 584,
+  "thumb_px": 584,
+  "bytes": 32972,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-travertino-classico",
+  "src": "raw/nile/stone-look-travertino-classico__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-travertino-classico__2.jpg",
+  "ok": true,
+  "score": 0.88,
+  "sharp": 3.4,
+  "src_px": 920,
+  "phash": 226742678393057316408611181829,
+  "reasons": {
+   "neutral": 0.4,
+   "nocolourblob": 0.98,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.84,
+   "noedge": 0.96
+  },
+  "box": [
+   0,
+   0,
+   920,
+   920
+  ],
+  "tile_px": 920,
+  "thumb_px": 800,
+  "bytes": 60118,
+  "candidates": 2
+ },
+ {
+  "slug": "stone-look-travertino-navona",
+  "src": "raw/nile/stone-look-travertino-navona.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-travertino-navona.jpg",
+  "ok": true,
+  "score": 0.898,
+  "sharp": 3.2,
+  "src_px": 762,
+  "phash": 529942459176460007099980713025,
+  "reasons": {
+   "neutral": 0.68,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.92,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.95,
+   "noedge": 0.82
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 32148,
+  "candidates": 1
+ },
+ {
+  "slug": "stone-look-travertino-silver",
+  "src": "raw/nile/stone-look-travertino-silver.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/stone-look-travertino-silver.jpg",
+  "ok": true,
+  "score": 0.912,
+  "sharp": 4.4,
+  "src_px": 762,
+  "phash": 1007546021549272178888551827344,
+  "reasons": {
+   "neutral": 0.7,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.82
+  },
+  "box": [
+   378,
+   0,
+   1141,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 71122,
+  "candidates": 1
+ },
+ {
+  "slug": "taj-mahal",
+  "src": "raw/nile/taj-mahal.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/taj-mahal.jpg",
+  "ok": true,
+  "score": 0.848,
+  "sharp": 3.7,
+  "src_px": 538,
+  "phash": 1145276390926423968530162610578,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.77,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   325,
+   162,
+   983,
+   819
+  ],
+  "tile_px": 536,
+  "thumb_px": 536,
+  "bytes": 26374,
+  "candidates": 3
+ },
+ {
+  "slug": "taj-mahal-2-xx",
+  "src": "raw/next/taj-mahal-2-xx.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/taj-mahal-2-xx.jpg",
+  "ok": false,
+  "score": 0.979,
+  "box": [
+   484,
+   0,
+   968,
+   482
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 2.8, want 4.0 at 374px)",
+  "candidates": 2
+ },
+ {
+  "slug": "taj-mahal-elegance",
+  "src": "raw/nile/taj-mahal-elegance.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/taj-mahal-elegance.jpg",
+  "ok": true,
+  "score": 0.93,
+  "sharp": 4.3,
+  "src_px": 762,
+  "phash": 12160367752243580047060125202,
+  "reasons": {
+   "neutral": 0.78,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.97,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 0.7,
+   "noedge": 1.0
+  },
+  "box": [
+   472,
+   0,
+   1236,
+   762
+  ],
+  "tile_px": 760,
+  "thumb_px": 760,
+  "bytes": 54012,
+  "candidates": 3
+ },
+ {
+  "slug": "travertine-romano-classico-h-f",
+  "src": "raw/nile-inv/travertine-romano-classico-h-f.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/travertine-romano-classico-h-f.jpg",
+  "ok": true,
+  "score": 0.968,
+  "sharp": 4.4,
+  "src_px": 462,
+  "phash": 598901676098347356235736814108,
+  "reasons": {
+   "neutral": 0.98,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.92,
+   "nostructure": 1.0,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   361,
+   0,
+   874,
+   512
+  ],
+  "tile_px": 456,
+  "thumb_px": 456,
+  "bytes": 25544,
+  "candidates": 1
+ },
+ {
+  "slug": "tuscany-supreme",
+  "src": "raw/next/tuscany-supreme__3.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/tuscany-supreme__3.jpg",
+  "ok": true,
+  "score": 0.92,
+  "sharp": 2.6,
+  "src_px": 448,
+  "phash": 210004950338793069911219511809,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 1.0,
+   "nostructure": 0.99,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.73
+  },
+  "box": [
+   502,
+   0,
+   977,
+   476
+  ],
+  "tile_px": 448,
+  "thumb_px": 448,
+  "bytes": 6362,
+  "candidates": 4
+ },
+ {
+  "slug": "urban-concrete",
+  "src": "raw/next/urban-concrete.png",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/next/urban-concrete.png",
+  "ok": false,
+  "score": 0.981,
+  "box": [
+   306,
+   0,
+   716,
+   409
+  ],
+  "rescuable": true,
+  "why": "source is soft, likely shot at an angle (sharpness 3.6, want 4.0 at 409px)",
+  "candidates": 2
+ },
+ {
+  "slug": "venaria",
+  "src": "raw/nile/venaria.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/venaria.jpg",
+  "ok": true,
+  "score": 0.785,
+  "sharp": 4.4,
+  "src_px": 842,
+  "phash": 1206730036785852529832201723511,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 0.71,
+   "soft": 1.0,
+   "representative": 0.89,
+   "nostructure": 0.73,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   670,
+   223,
+   1563,
+   1118
+  ],
+  "tile_px": 840,
+  "thumb_px": 800,
+  "bytes": 112154,
+  "candidates": 4
+ },
+ {
+  "slug": "verde-alpi",
+  "src": "raw/nile-inv/verde-alpi__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/verde-alpi__2.jpg",
+  "ok": true,
+  "score": 0.823,
+  "sharp": 6.7,
+  "src_px": 398,
+  "phash": 393741147961156516250854342772,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.99,
+   "nostructure": 0.43,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 0.58
+  },
+  "box": [
+   32,
+   17,
+   554,
+   539
+  ],
+  "tile_px": 392,
+  "thumb_px": 392,
+  "bytes": 29190,
+  "candidates": 1
+ },
+ {
+  "slug": "verde-gautemala",
+  "src": "raw/nile-inv/verde-gautemala__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/verde-gautemala__2.jpg",
+  "ok": true,
+  "score": 0.945,
+  "sharp": 8.0,
+  "src_px": 798,
+  "phash": 549925969661820496838404312547,
+  "reasons": {
+   "neutral": 0.91,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.82,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   798,
+   798
+  ],
+  "tile_px": 792,
+  "thumb_px": 792,
+  "bytes": 169220,
+  "candidates": 2
+ },
+ {
+  "slug": "white-eclpyse",
+  "src": "raw/nile/white-eclpyse__4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/white-eclpyse__4.jpg",
+  "ok": true,
+  "score": 0.895,
+  "sharp": 3.7,
+  "src_px": 698,
+  "phash": 321324362026513348772771284114,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.98,
+   "nostructure": 0.91,
+   "hastexture": 1.0,
+   "exposed": 0.4,
+   "noedge": 1.0
+  },
+  "box": [
+   0,
+   0,
+   763,
+   762
+  ],
+  "tile_px": 696,
+  "thumb_px": 696,
+  "bytes": 39376,
+  "candidates": 5
+ },
+ {
+  "slug": "white-macaubas",
+  "src": "raw/nile/white-macaubas.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/white-macaubas.jpg",
+  "ok": true,
+  "score": 0.859,
+  "sharp": 3.2,
+  "src_px": 736,
+  "phash": 950737950189618839746858987736,
+  "reasons": {
+   "neutral": 1.0,
+   "nocolourblob": 1.0,
+   "soft": 1.0,
+   "representative": 0.87,
+   "nostructure": 0.95,
+   "hastexture": 1.0,
+   "exposed": 1.0,
+   "noedge": 1.0
+  },
+  "box": [
+   837,
+   139,
+   1989,
+   1292
+  ],
+  "tile_px": 736,
+  "thumb_px": 736,
+  "bytes": 33918,
+  "candidates": 1
+ },
+ {
+  "slug": "vanilla-noir",
+  "src": "raw/caesarstone/vanilla-noir.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/caesarstone/vanilla-noir.jpg",
+  "ok": true,
+  "src_px": 2504,
+  "tile_px": 1600,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "black-tempal",
+  "src": "raw/caesarstone/black-tempal-fusion-worktop-icon.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/caesarstone/black-tempal-fusion-worktop-icon.jpg",
+  "ok": true,
+  "src_px": 2035,
+  "tile_px": 1600,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "woodlands",
+  "src": "raw/caesarstone/woodlands__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/caesarstone/woodlands__2.jpg",
+  "ok": true,
+  "src_px": 1812,
+  "tile_px": 1600,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "darcrest",
+  "src": "raw/caesarstone/darcrest__2.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/caesarstone/darcrest__2.jpg",
+  "ok": true,
+  "src_px": 1812,
+  "tile_px": 1600,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "marquina",
+  "src": "raw/crl/marquina.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/crl/marquina.jpg",
+  "ok": true,
+  "src_px": 625,
+  "tile_px": 625,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "laurent-black",
+  "src": "raw/crl/laurent-black.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/crl/laurent-black.jpg",
+  "ok": true,
+  "src_px": 625,
+  "tile_px": 625,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "azalai-negro",
+  "src": "raw/crl/azalai-negro.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/crl/azalai-negro.jpg",
+  "ok": true,
+  "src_px": 512,
+  "tile_px": 512,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "umbra-marron",
+  "src": "raw/crl/umbra-marron.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/crl/umbra-marron.jpg",
+  "ok": true,
+  "src_px": 625,
+  "tile_px": 625,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "cristallo-gris",
+  "src": "raw/crl/cristallo-gris__4.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/crl/cristallo-gris__4.jpg",
+  "ok": true,
+  "src_px": 625,
+  "tile_px": 625,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "labradorite-royal",
+  "src": "raw/crl/labradorite-royal-blue__2.png",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/crl/labradorite-royal-blue__2.png",
+  "ok": true,
+  "src_px": 625,
+  "tile_px": 625,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "nero-starlight",
+  "src": "raw/nile/nero-starlight__3.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile/nero-starlight__3.jpg",
+  "ok": true,
+  "src_px": 799,
+  "tile_px": 799,
+  "why": "DARK QUARTZ BATCH, 10 Aug 2026. Centred square from the supplier's own flat frame, chosen by a flatness test that rejects styled product shots (Jet Black's plate-and-twigs photograph failed it), then reviewed at 330px with the other nineteen before shipping. Not cut by slabify's window search, so it carries its provenance here rather than a box."
+ },
+ {
+  "slug": "calacatta-gold-oro",
+  "src": "raw/nile-inv/calacatta-gold-oro-honed.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-gold-oro-honed.jpg",
+  "ok": true,
+  "src_px": 384,
+  "tile_px": 1600,
+  "why": "Nile's own photograph of the stone they list as 'Calacatta Gold/ Oro' in their MARBLE section. \u26a0\ufe0f Only 384px of clean slab was reachable in that frame, so this tile is a 4.2x upscale and is the weakest image in the range. \u26d4 Do not swap it for a generic 'Calacatta Gold' found elsewhere: the name is a marketing name and other makers' products under it look completely different."
+ },
+ {
+  "slug": "calacatta-oro",
+  "src": "raw/nile-inv/calacatta-oro.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/nile-inv/calacatta-oro.jpg",
+  "ok": true,
+  "src_px": 2956,
+  "tile_px": 1600,
+  "why": "RE-CROPPED 10 Aug AT SLAB SCALE. The old tile was a tight zoom on a quiet patch of the same slab: correct provenance, but it showed a few thin veins on blank white and read as a different, plainer stone than the one a customer finds when they google the name. This window is the FULL SLAB HEIGHT (2956px native, no enlargement) and carries the diagonal copper-gold veining the stone is known for. \u2b50 The general rule this sets: a tile has to show the stone at a scale where its PATTERN is recognisable, not just at the right resolution."
+ },
+ {
+  "slug": "white-mirror",
+  "src": "raw/bloom/white-mirror.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/bloom/white-mirror.jpg",
+  "ok": true,
+  "score": 1.0,
+  "box": null,
+  "why": "Bloom Stones London's own product photograph, from their product page /tiles-1/<slug>. Flat square scan, no crop needed. Resampled with Lanczos, never super-resolved: D88a measured that the model smooths mirror fleck away."
+ },
+ {
+  "slug": "cream-mirror",
+  "src": "raw/bloom/cream-mirror.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/bloom/cream-mirror.jpg",
+  "ok": true,
+  "score": 1.0,
+  "box": null,
+  "why": "Bloom Stones London's own product photograph, from their product page /tiles-1/<slug>. Flat square scan, no crop needed. Resampled with Lanczos, never super-resolved: D88a measured that the model smooths mirror fleck away."
+ },
+ {
+  "slug": "grey-mirror",
+  "src": "raw/bloom/grey-mirror.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/bloom/grey-mirror.jpg",
+  "ok": true,
+  "score": 1.0,
+  "box": null,
+  "why": "Bloom Stones London's own product photograph, from their product page /tiles-1/<slug>. Flat square scan, no crop needed. Resampled with Lanczos, never super-resolved: D88a measured that the model smooths mirror fleck away."
+ },
+ {
+  "slug": "brown-mirror",
+  "src": "raw/bloom/brown-mirror.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/bloom/brown-mirror.jpg",
+  "ok": true,
+  "score": 1.0,
+  "box": null,
+  "why": "Bloom Stones London's own product photograph, from their product page /tiles-1/<slug>. Flat square scan, no crop needed. Resampled with Lanczos, never super-resolved: D88a measured that the model smooths mirror fleck away."
+ },
+ {
+  "slug": "blue-mirror",
+  "src": "raw/bloom/blue-mirror.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/bloom/blue-mirror.jpg",
+  "ok": true,
+  "score": 1.0,
+  "box": null,
+  "why": "Bloom Stones London's own product photograph, from their product page /tiles-1/<slug>. Flat square scan, no crop needed. Resampled with Lanczos, never super-resolved: D88a measured that the model smooths mirror fleck away."
+ },
+ {
+  "slug": "black-mirror",
+  "src": "raw/bloom/black-mirror.jpg",
+  "src_abs": "/Users/thadeusgous/Documents/TOPCAT WORKTOPS/Topcat-Worktops-main/Website Demo/stones/harvest/raw/bloom/black-mirror.jpg",
+  "ok": true,
+  "score": 1.0,
+  "box": null,
+  "why": "Bloom Stones London's own product photograph, from their product page /tiles-1/<slug>. Flat square scan, no crop needed. Resampled with Lanczos, never super-resolved: D88a measured that the model smooths mirror fleck away."
+ }
+]

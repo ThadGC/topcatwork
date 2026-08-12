@@ -1,0 +1,616 @@
+[
+ {
+  "stone": "absolute-black-extra",
+  "tile": "absolute-black-extra",
+  "was": 592,
+  "now": 1600
+ },
+ {
+  "stone": "arabescato-grey",
+  "tile": "arabescato-grey",
+  "was": 488,
+  "now": 1600
+ },
+ {
+  "stone": "astoria",
+  "tile": "astoria",
+  "was": 392,
+  "now": 1600
+ },
+ {
+  "stone": "azul-platino",
+  "tile": "azul-platino",
+  "was": 608,
+  "now": 1600
+ },
+ {
+  "stone": "belvedere-leather",
+  "tile": "belvedere-leather",
+  "was": 360,
+  "now": 1600
+ },
+ {
+  "stone": "blue-dunes-leather",
+  "tile": "blue-dunes",
+  "was": 536,
+  "now": 1600
+ },
+ {
+  "stone": "blue-roma",
+  "tile": "blue-roma",
+  "was": 608,
+  "now": 1540,
+  "trimmed": "top 60px of the 1600 tile cut 10 Aug: warehouse racking and the slab's warm cut edge sat above the stone face. Re-squared to 1540 and centred. \u26d4 The trimmed tile is IN _upscale/installed/, so the restore step carries the fix rather than reverting it."
+ },
+ {
+  "stone": "carrara-honed",
+  "tile": "carrara-honed",
+  "was": 504,
+  "now": 1600
+ },
+ {
+  "stone": "colombo-juparana",
+  "tile": "colombo-juparana",
+  "was": 568,
+  "now": 1600
+ },
+ {
+  "stone": "colonial-cream",
+  "tile": "colonial-cream",
+  "was": 600,
+  "now": 1600
+ },
+ {
+  "stone": "crema-tempest",
+  "tile": "crema-tempest",
+  "was": 464,
+  "now": 1600
+ },
+ {
+  "stone": "crema-venato",
+  "tile": "crema-venato",
+  "was": 472,
+  "now": 1600
+ },
+ {
+  "stone": "fresh-cement",
+  "tile": "fresh-cement",
+  "was": 368,
+  "now": 1600
+ },
+ {
+  "stone": "sabbia-beige",
+  "tile": "ns-sabbia-beige",
+  "was": 480,
+  "now": 1600
+ },
+ {
+  "stone": "sahara-dunes",
+  "tile": "sahara-dunes",
+  "was": 528,
+  "now": 1600
+ },
+ {
+  "stone": "taj-mahal",
+  "tile": "taj-mahal",
+  "was": 536,
+  "now": 1600
+ },
+ {
+  "stone": "travertine-romano-classico",
+  "tile": "travertine-romano-classico-h-f",
+  "was": 456,
+  "now": 1600
+ },
+ {
+  "stone": "tuscany-supreme",
+  "tile": "tuscany-supreme",
+  "was": 448,
+  "now": 1600
+ },
+ {
+  "stone": "bianco-crystal",
+  "tile": "bianco-crystal",
+  "was": 624,
+  "now": 1600
+ },
+ {
+  "stone": "grigio-fantasy",
+  "tile": "grigio-fantasy",
+  "was": 640,
+  "now": 1600
+ },
+ {
+  "stone": "antiq-brown-extra",
+  "tile": "antiq-brown-extra",
+  "was": 656,
+  "now": 1600
+ },
+ {
+  "stone": "nero-marquina",
+  "tile": "nero-marquina",
+  "was": 664,
+  "now": 1600
+ },
+ {
+  "stone": "rainforest-brown",
+  "tile": "rainforest-brown",
+  "was": 672,
+  "now": 1600
+ },
+ {
+  "stone": "cloud-burst",
+  "tile": "cloud-burst",
+  "was": 760,
+  "now": 1600
+ },
+ {
+  "stone": "concrete-earth",
+  "tile": "concrete-earth",
+  "was": 760,
+  "now": 1600
+ },
+ {
+  "stone": "verde-guatemala",
+  "tile": "verde-gautemala",
+  "was": 792,
+  "now": 1600
+ },
+ {
+  "stone": "fusion-blue-leather",
+  "tile": "fusion-blue",
+  "was": 800,
+  "now": 1600
+ },
+ {
+  "stone": "venaria-reale",
+  "tile": "venaria",
+  "was": 840,
+  "now": 1600
+ },
+ {
+  "stone": "corchia-light",
+  "tile": "corchia-light",
+  "was": 416,
+  "now": 1600
+ },
+ {
+  "stone": "argento",
+  "tile": "argento",
+  "was": 475,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-lucente",
+  "tile": "calacatta-lucente",
+  "was": 400,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-aurelia",
+  "tile": "calacatta-aurelia",
+  "was": 366,
+  "now": 1600
+ },
+ {
+  "stone": "crema-d-aizhi",
+  "tile": "crema-d-aizhi",
+  "was": 488,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-cremo-honed",
+  "tile": "calacatta-cremo-honed",
+  "was": 350,
+  "now": 1600
+ },
+ {
+  "stone": "mont-blanc",
+  "tile": "mont-blanc",
+  "was": 370,
+  "now": 1600
+ },
+ {
+  "stone": "macaubas-fantasy",
+  "tile": "macaubus-fantasy",
+  "was": 376,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-borghini-light",
+  "tile": "calacatta-borghini-light",
+  "was": 448,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-luna",
+  "tile": "calacatta-luna",
+  "was": 448,
+  "now": 1600
+ },
+ {
+  "stone": "cremo-delicato",
+  "tile": "cremo-delicato",
+  "was": 448,
+  "now": 1600
+ },
+ {
+  "stone": "blues-in-the-night",
+  "tile": "blues-in-the-night",
+  "was": 488,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-grey-classic",
+  "tile": "calacatta-grey-classic",
+  "was": 488,
+  "now": 1600
+ },
+ {
+  "stone": "corchia-gold",
+  "tile": "corchia-gold",
+  "was": 512,
+  "now": 1600
+ },
+ {
+  "stone": "baltic-brown",
+  "tile": "baltic-brown",
+  "was": 552,
+  "now": 1600
+ },
+ {
+  "stone": "black-pearl",
+  "tile": "black-pearl",
+  "was": 584,
+  "now": 1600
+ },
+ {
+  "stone": "marron-imperial",
+  "tile": "marron-imperial",
+  "was": 600,
+  "now": 1600
+ },
+ {
+  "stone": "repen",
+  "tile": "repen",
+  "was": 608,
+  "now": 1600
+ },
+ {
+  "stone": "antiq-brown-leather",
+  "tile": "antiq-brown-leather",
+  "was": 672,
+  "now": 1600
+ },
+ {
+  "stone": "white-eclypse",
+  "tile": "white-eclpyse",
+  "was": 696,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-classic",
+  "tile": "calacatta-classic",
+  "was": 760,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-soft-shimmer",
+  "tile": "calacatta-soft-shimmer",
+  "was": 760,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-supreme",
+  "tile": "calacatta-supreme",
+  "was": 760,
+  "now": 1600
+ },
+ {
+  "stone": "london-grey",
+  "tile": "london-grey",
+  "was": 760,
+  "now": 1600
+ },
+ {
+  "stone": "taj-mahal-elegance",
+  "tile": "taj-mahal-elegance",
+  "was": 760,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-brasil",
+  "tile": "calacatta-brasil",
+  "was": 832,
+  "now": 1600
+ },
+ {
+  "stone": "mystic-grey-leather",
+  "tile": "mystic-grey-leather",
+  "was": 880,
+  "now": 1600
+ },
+ {
+  "stone": "absolute-black-brushed",
+  "tile": "absolute-black-brushed",
+  "was": 904,
+  "now": 1600
+ },
+ {
+  "stone": "blue-pearl",
+  "tile": "blue-pearl-gt",
+  "was": 928,
+  "now": 1600
+ },
+ {
+  "stone": "bianco-glacier",
+  "tile": "bianco-glacier",
+  "was": 976,
+  "now": 1600
+ },
+ {
+  "stone": "azul-shimmer",
+  "tile": "azul-shimmer",
+  "was": 1064,
+  "now": 1600
+ },
+ {
+  "stone": "blue-roma-honed",
+  "tile": "blue-roma-honed",
+  "was": 552,
+  "now": 1600
+ },
+ {
+  "stone": "cosmic-black",
+  "tile": "cosmic-black",
+  "was": 552,
+  "now": 1600
+ },
+ {
+  "stone": "bianco-antico",
+  "tile": "bianco-antico",
+  "was": 560,
+  "now": 1600
+ },
+ {
+  "stone": "rosso-levanto",
+  "tile": "rosso-levanto",
+  "was": 560,
+  "now": 1600
+ },
+ {
+  "stone": "belvedere",
+  "tile": "belvedere",
+  "was": 600,
+  "now": 1600
+ },
+ {
+  "stone": "bianco-eclypsia-calacatta-leather",
+  "tile": "bianco-eclypsia-calacatta-leather",
+  "was": 608,
+  "now": 1600
+ },
+ {
+  "stone": "magma-gold",
+  "tile": "magma-gold",
+  "was": 608,
+  "now": 1600
+ },
+ {
+  "stone": "rosa-alicante",
+  "tile": "rosa-alicante",
+  "was": 648,
+  "now": 1600
+ },
+ {
+  "stone": "carrara",
+  "tile": "carrara-polished",
+  "was": 672,
+  "now": 1600
+ },
+ {
+  "stone": "ocean-fantasy",
+  "tile": "ocean-fantasy",
+  "was": 696,
+  "now": 1600
+ },
+ {
+  "stone": "white-macaubas",
+  "tile": "white-macaubas",
+  "was": 736,
+  "now": 1600
+ },
+ {
+  "stone": "black-marinace",
+  "tile": "black-marinace",
+  "was": 984,
+  "now": 1600
+ },
+ {
+  "stone": "cote-d-azur",
+  "tile": "cote-d-azur",
+  "was": 1000,
+  "now": 1600
+ },
+ {
+  "stone": "nero-marinace",
+  "tile": "nero-marinace",
+  "was": 1160,
+  "now": 1600
+ },
+ {
+  "stone": "misterio-gold",
+  "tile": "misterio-gold",
+  "was": 456,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-gold-soft",
+  "tile": "calacatta-gold-soft",
+  "was": 760,
+  "now": 1600
+ },
+ {
+  "stone": "dolce-vita",
+  "tile": "dolce-vita",
+  "was": 344,
+  "now": 1600
+ },
+ {
+  "stone": "arabescato-gold",
+  "tile": "arabescato-gold",
+  "was": 384,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-vagli-oro",
+  "tile": "calacatta-vagli-oro-honed",
+  "was": 384,
+  "now": 1600
+ },
+ {
+  "stone": "aqua-gucci",
+  "tile": "aqua-gucci",
+  "was": 392,
+  "now": 1600
+ },
+ {
+  "stone": "verde-alpi",
+  "tile": "verde-alpi",
+  "was": 392,
+  "now": 1600
+ },
+ {
+  "stone": "arctic-cream",
+  "tile": "artic-cream",
+  "was": 400,
+  "now": 1600
+ },
+ {
+  "stone": "crema-evora",
+  "tile": "crema-evora",
+  "was": 472,
+  "now": 1600
+ },
+ {
+  "stone": "mystic-grey",
+  "tile": "mystic-grey",
+  "was": 488,
+  "now": 1600
+ },
+ {
+  "stone": "cristallo",
+  "tile": "cristallo",
+  "was": 528,
+  "now": 1600
+ },
+ {
+  "stone": "dover-white",
+  "tile": "dover-white",
+  "was": 584,
+  "now": 1600
+ },
+ {
+  "stone": "carrara-jumbo",
+  "tile": "carrara",
+  "was": 592,
+  "now": 1600
+ },
+ {
+  "stone": "fusion-wow-multicolour",
+  "tile": "fusion-wow-multicolour",
+  "was": 624,
+  "now": 1600
+ },
+ {
+  "stone": "arabescato-corchia-extra",
+  "tile": "arabescato-corchia-extra",
+  "was": 696,
+  "now": 1600
+ },
+ {
+  "stone": "arabescato-corchia-extra-honed",
+  "tile": "arabescato-corchia-extra-honed",
+  "was": 864,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-viola-honed",
+  "tile": "calacatta-viola-honed",
+  "was": 1056,
+  "now": 1600
+ },
+ {
+  "stone": "calacatta-viola",
+  "tile": "calacatta-viola",
+  "was": 568,
+  "now": 1600
+ },
+ {
+  "stone": "arabescato-classico",
+  "tile": "arabescato-classico",
+  "was": 440,
+  "now": 1600
+ },
+ {
+  "stone": "patagonia",
+  "tile": "patagonia-extra",
+  "was": 880,
+  "now": 1600
+ },
+ {
+  "stone": "marquina",
+  "tile": "marquina",
+  "was": 625,
+  "now": 1600,
+  "via": "bytedance_image_upscale 4k, 2x2 montage (dark-quartz batch, 10 Aug)"
+ },
+ {
+  "stone": "laurent-black",
+  "tile": "laurent-black",
+  "was": 625,
+  "now": 1600,
+  "via": "bytedance_image_upscale 4k, 2x2 montage (dark-quartz batch, 10 Aug)"
+ },
+ {
+  "stone": "azalai-negro",
+  "tile": "azalai-negro",
+  "was": 512,
+  "now": 1600,
+  "via": "bytedance_image_upscale 4k, 2x2 montage (dark-quartz batch, 10 Aug)"
+ },
+ {
+  "stone": "umbra-marron",
+  "tile": "umbra-marron",
+  "was": 625,
+  "now": 1600,
+  "via": "bytedance_image_upscale 4k, 2x2 montage (dark-quartz batch, 10 Aug)"
+ },
+ {
+  "stone": "cristallo-gris",
+  "tile": "cristallo-gris",
+  "was": 625,
+  "now": 1600,
+  "via": "bytedance_image_upscale 4k, 2x2 montage (dark-quartz batch, 10 Aug)"
+ },
+ {
+  "stone": "labradorite-royal",
+  "tile": "labradorite-royal",
+  "was": 625,
+  "now": 1600,
+  "via": "bytedance_image_upscale 4k, 2x2 montage (dark-quartz batch, 10 Aug)"
+ },
+ {
+  "stone": "nero-starlight",
+  "tile": "nero-starlight",
+  "was": 799,
+  "now": 1600,
+  "via": "bytedance_image_upscale 4k, 2x2 montage (dark-quartz batch, 10 Aug)"
+ },
+ {
+  "stone": "calacatta-gold-oro",
+  "tile": "calacatta-gold-oro-honed",
+  "was": 384,
+  "now": 1600
+ }
+]

@@ -1,0 +1,28 @@
+# ─── Raw harvest working files ───────────────────────────────────────────────
+# 1.8 GB of supplier-sourced slab photography downloaded by harvest.py, plus the
+# upscale scratch directory. These are INPUTS to the pipeline, not site assets —
+# build_stones.py writes what the site actually serves into stones/ and assets/.
+# They are also third-party photographs whose licensing is still an open question
+# (see HANDOVER.md §7), which is a second reason they do not belong in a repo.
+# ⚠️ These are `**/`-anchored ON PURPOSE. A gitignore pattern that contains a
+# slash is anchored to the directory holding the .gitignore, and the site lives
+# at `Topcat-Worktops-main/Website Demo/…`, not at the repo root — a plain
+# `Website Demo/stones/…` pattern silently matches nothing and stages all 1.8 GB.
+**/harvest/raw/
+**/harvest/_upscale/
+
+# ─── Local version control ───────────────────────────────────────────────────
+# 58 dated snapshots of index.html at ~700 KB each, plus the handover snapshots.
+# They exist only because this project had no git. Git replaces them — keeping
+# both would put 44 MB of near-duplicate history in every clone.
+*.bak
+*.bak.md
+*.pre-*.bak
+
+# ─── OS / editor noise ───────────────────────────────────────────────────────
+.DS_Store
+._*
+Thumbs.db
+
+# ─── Agent session state ─────────────────────────────────────────────────────
+.claude/

@@ -1,0 +1,1103 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Generates the TopCat Worktops V1 stone collection (/stones/*.html) from shared
+templates + the catalogue below. Run from inside this folder:
+
+    python3 build_stones.py
+
+Outputs:
+  index.html          — the full collection: searchable, filterable grid of slab tiles
+  <slug>.html  (x36)  — a dedicated page per stone with estimate / enquiry CTAs
+
+⚠️ The catalogue below (name / slug / preset / seed / supplier) is MIRRORED in the
+wheel's MATERIALS array in ../index.html — the wheel, this grid and the stone pages
+must render the SAME procedural slab for the same stone, so change both together.
+The slab SVGs are rendered client-side by the same generator code the landing page
+uses (STONE_JS below is a copy of it); tile names/tags stay in static HTML for SEO.
+
+⚠️ Stone names and supplier pairings are PLACEHOLDER demo data (like the project
+gallery) — confirm the real range with the client before go-live.
+
+House rules honoured: ⛔ fabrication is OUTSOURCED, never claim in-house (reversed 7 Aug 2026),
+no showroom (samples
+come to the customer, slabs are approved from photos), no founding year, value not
+cheap, 5.0 on Google with no review count and no aggregateRating in schema,
+no porcelain anywhere, the owner does not offer it. British English,
+no em dashes, no exclamation marks.
+"""
+import html, json, pathlib, re
+from urllib.parse import quote
+
+# ---------------------------------------------------------------------------
+# REAL SLAB PHOTOGRAPHY. harvest/match.py writes assets/slabs/manifest.json and the same map
+# into the wheel in ../index.html; this reads the one file so the collection grid, the stone
+# pages and the wheel can never show a customer a different picture of the same stone.
+# Missing file, or a stone that is not in it, simply falls back to the drawn slab.
+TILE_DIR = "/assets/slabs"
+try:
+    TILES = json.loads((pathlib.Path(__file__).parent.parent
+                        / "assets" / "slabs" / "manifest.json").read_text())
+except Exception:
+    TILES = {}
+
+
+# ---------------------------------------------------------------------------
+# ⭐ IS THIS STONE ACTUALLY VEINED? Read from the description, not from `vein`.
+#
+# ⛔ `vein` is a BUSYNESS classifier with three values (statement / soft / calm) measured off
+# the pixels, and busy is not the same as veined: a dense speckle scores busy, so Bianco Sardo,
+# Baltic Brown and Angola Black Leather all carry `statement` with no vein in them anywhere.
+# The client caught it from the search results: "when I search veining, some without veining
+# come up."
+#
+# ⚠️ NEGATION MATTERS. Nero Marinace's description reads "a conglomerate rather than a veined
+# stone", so a naive substring test for "vein" marks the one stone that says it is not.
+# ⚠️ Not every veined stone is described with the word "vein". Fusion Black reads "gold and
+# copper STRIATIONS running across it", and it is one of the most dramatically veined stones
+# in the range. These are the words the 126 descriptions actually use for linear pattern.
+_VEIN_RE = re.compile(r"\bvein|striation|\bstreak|\bband(s|ing)\b|\bseams?\b|marbling|"
+                      r"\bswirl|\bripple", re.I)
+_NOT_VEINED_RE = re.compile(r"rather than a veined|not veined|no vein|without vein", re.I)
+_SPECKLE_RE = re.compile(r"fleck|speckl|mottl|crystal|pebble|grain|scatter|conglomerate", re.I)
+
+
+def veined_words(s):
+    """Search words describing the stone's PATTERN, taken from what the picture was said to show.
+
+    Returns the vein vocabulary only for stones whose description genuinely reports veins, and
+    the speckle vocabulary only for those that report flecking. A stone can legitimately get
+    both (a veined ground with flecks) or neither (a plain colour).
+    """
+    d = DESCRIPTIONS.get(s["slug"], "")
+    out = []
+    if _VEIN_RE.search(d) and not _NOT_VEINED_RE.search(d):
+        out.append("veined veining veiny veins movement")
+    if _SPECKLE_RE.search(d):
+        out.append("speckled speckle flecked flecks mottled grainy sparkle")
+    if not out:
+        out.append("plain uniform solid")
+    return out
+
+
+def stone_face(s, cls):
+    """The slab image for a stone: its photograph if it has one, else the drawn slab.
+
+    ⚠️ The photograph branch must NOT carry data-stone. STONE_JS walks every [data-stone]
+    element on load and replaces its innerHTML with the generated SVG, so leaving the attribute
+    on would paint the drawing straight over the photograph a moment after the page appeared.
+    """
+    tile = TILES.get(s["slug"])
+    if tile:
+        # ⭐ TWO SIZES VIA srcset (10 Aug). slabify writes a -s thumb at up to 800px beside the
+        # 1600px master, and until now NOTHING requested it — the /stones/ grid pulled the full
+        # master for a 290px card, 52 of them on one page. `sizes` differs by surface: the hero
+        # (stp-stone) is 436px CSS so it wants the master on a retina screen, the grid tile
+        # (stile-stone) is ~290px so the thumb is already 2.7x what it can show.
+        hero = cls == "stp-stone"
+        sizes = "(max-width:700px) 92vw, 436px" if hero else "(max-width:700px) 45vw, 290px"
+        return (f'<span class="{cls}">'
+                f'<img src="{TILE_DIR}/{tile}.webp" '
+                f'srcset="{TILE_DIR}/{tile}-s.webp 800w, {TILE_DIR}/{tile}.webp 1600w" '
+                # ⚠️ The alt names the TRUE stone. It read "Taj Mahal marble slab" on 27 tiles,
+                # which is what a screen reader announces and what Google Images indexes the
+                # photograph as — a wrong material claim in the one place nobody proofreads.
+                f'sizes="{sizes}" alt="{e(s["name"])} {e(shown_mat(s).lower())} '
+                f'slab" loading="lazy" decoding="async"></span>')
+    return f'<span class="{cls}" data-stone="{s["preset"]}" data-seed="{s["seed"]}"></span>'
+
+BASE = "https://www.topcatworktops.co.uk"   # path assumed /stones/<slug>.html — confirm before go-live
+
+PHONE_DISPLAY = "0800 098 2812"
+PHONE_TEL = "+448000982812"
+EMAIL = "info@topcatworktops.co.uk"
+HOURS = "Monday to Friday, 8am to 6pm"
+AREA = "London, Hertfordshire, Essex & Berkshire"
+AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire"]
+
+# ⭐ THE REAL LOGO — the client's own artwork, supplied 10 Aug 2026, living in
+# /assets/brand/. It replaces a hand-rebuilt approximation of the mark that sat beside a
+# type-set wordmark; the silhouette was roughly right and every detail was wrong.
+# ⛔ Do not re-draw the mark inline again. It is a file reference now, so correcting the
+# artwork is one file rather than an edit repeated across four builders and this page's head.
+# ⚠️ width/height are the file's intrinsic ink box. They exist only to reserve the right
+# space before it loads; the RENDERED size is set in service.css, by height alone.
+BRAND_LOGO = (
+    '<img class="brand-logo" src="/assets/brand/topcat-horizontal.svg" alt=""'
+    ' width="1455" height="323" decoding="async">'
+)
+# The footer takes the supplied VERTICAL lockup, per the client's instruction of 10 Aug.
+# It is the designer's own stacking, not the horizontal one re-stacked by us.
+BRAND_LOGO_STACK = (
+    '<img class="brand-logo" src="/assets/brand/topcat-vertical.svg" alt=""'
+    ' width="528" height="495" decoding="async">'
+)
+
+# The real icon, squared off so it fills a 16px box instead of sitting in it with air on two
+# sides. ⚠️ A FILE, not a data-URI: the old one pasted the wrong drawing into the head of every
+# page it built, which is why correcting it meant touching five source files instead of one.
+FAVICON = "/assets/brand/favicon.svg"
+
+# Trade went back into the nav on 7 Aug (client): B2B is the stated first priority, so trade
+# buyers need a door they can find in seconds. It is the one nav item that is a real page
+# rather than a homepage anchor.
+NAV_LINKS = [
+    ("/index.html#services", "Services"), ("/index.html#gallery", "Projects"),
+    ("/index.html#stones", "Stones"), ("/index.html#estimator", "Estimate"),
+    ("/index.html#about", "About us"), ("/trade/", "Trade"), ("/index.html#cta", "Contact"),
+]
+
+# ---------------------------------------------------------------------------
+# THE CATALOGUE — mirrored in ../index.html MATERIALS (wheel). Keep in step.
+# tone: light | dark (drives the tone filter on the grid).
+# blurb: one or two sentences, written to match the procedural render.
+# ---------------------------------------------------------------------------
+# ⭐ THE REAL RANGE (client, 6 Aug 2026) from Nile Stone and Next Stone Slabs.
+# ⚠️ DUPLICATED as MATERIALS in ../index.html — change one, change the other.
+# facts=... overrides MAT_FACTS for stones that are not what their category says:
+# the quartzites do NOT etch, and must never carry marble care copy.
+# ⭐ ONE SOURCE, NOT THREE. This was 170 lines of hand-typed dicts that had to be kept identical
+# to MATERIALS in ../index.html and to catalogue_source.S by remembering to. See
+# catalogue_active.py for why that stopped being viable at 96 stones. index.html now gets the
+# same list injected by apply_catalogue.py, so the wheel, the grid and the stone pages cannot
+# disagree about what a name means.
+from catalogue_active import S as STONE_LIST  # noqa: E402
+from descriptions import D as DESCRIPTIONS  # noqa: E402
+
+MATS = ["Marble", "Quartz", "Granite"]
+
+# ⭐ THE NAME A CUSTOMER SEES FOR EACH BROWSE RANGE. `mat` is the key; this is the label.
+# Client, 10 Aug 2026: "on the collection page it shows marble, but on the actual page it says
+# quartzite, natural stone. So we have to say available in marble and quartzite or something
+# like that. We cannot have that confusion."
+#
+# ⚠️ THE MARBLE RANGE IS MOSTLY NOT MARBLE. 26 of its 45 stones are quartzite and one is a
+# travertine, so a range labelled "Marble" was wrong on the majority of its own contents, and
+# every one of those 27 stones opened a page that named a different rock.
+#
+# ⛔ WHY THE FIX IS THE RANGE NAME AND NOT THE STONE'S. "Taj Mahal is available in marble and
+# quartzite" is not true and could not be made true — it is one rock, a quartzite, and every UK
+# merchant sells it under that name. Calling it marble would also attach marble's care copy
+# (etches with acid, softer) to a harder stone that does neither, and quartzite commands its
+# price BECAUSE it is not marble. So the stone always states what it is, and the range around it
+# is named for what it actually contains.
+#
+# ⭐ TO CHANGE THE WORDING, CHANGE IT HERE. Every surface reads this: the stone pages, the
+# collection filter, the card tags, the related strip. index.html carries the same map as
+# MAT_LABEL for the wheel and the estimator — keep the two in step.
+# ⚠️ The single travertine (Travertine Romano Classico) is not in the label. It is one stone in
+# 45, its own card and page say "Travertine", and a three-noun range name reads as a list rather
+# than a range. Trade practice groups travertine with marble anyway — it is calcite, and it
+# etches the same way, which is why it inherits marble's care copy and quartzite does not.
+RANGE_LABEL = {"Marble": "Marble & Quartzite", "Quartz": "Quartz", "Granite": "Granite"}
+
+# honest, material-level guidance shown on every stone page of that material
+# ⛔ NOTHING HERE MAY PROMISE SOMETHING WE CANNOT GUARANTEE (client, 10 Aug 2026).
+# The client found "The pattern is consistent across the slab, so what you approve is exactly
+# what arrives" on the Arabescato Gold page: "No it fucking isn't. You cannot say that something
+# is consistent across the slab when it's not. Don't say things that you cannot guarantee. Be
+# more vague." A veined quartz plainly varies across a slab, and "exactly what arrives" is a
+# guarantee about a specific delivery.
+# ⚠️ Two more went out with it. Marble carried "we vein-match every joint by hand", which is both
+# a guarantee AND a claim to fabrication work — ⛔ TopCat OUTSOURCE fabrication and the site must
+# never claim it (D21, §2 rule 1). Granite carried "so there are no surprises on fitting day".
+# ⚠️ Absolutes are the tell. "all it asks for", "the one thing it minds", "keeps it perfect",
+# "takes it in its stride" each promise a limit we have not tested. Comparatives are safe,
+# absolutes are not: "varies less than quarried stone" is defensible, "consistent" is not.
+# ⭐ `kind` NAMES THE ROCK, not just its class. It read "Natural stone" for both marble and
+# granite, so the one row on the page headed "Stone" was the one row that never said what the
+# stone was — a Carrara page stated "Stone: Natural stone" while a quartzite beside it stated
+# "Stone: Quartzite (natural stone)", which is half of why the range read as inconsistent.
+# ⚠️ `shown_mat()` parses the word before the bracket, so the shape "<Rock> (<class>)" is load
+# bearing. Keep it if you edit these.
+MAT_FACTS = {
+  "Marble": dict(
+    kind="Marble (natural stone)",
+    care="Porous, and sealed on fitting. Acidic spills such as lemon, wine and vinegar can mark the polish if they are left.",
+    wear="Softer than granite or quartz. Boards for cutting, trivets for hot pans.",
+    why="Quarried in blocks, so the pattern varies from slab to slab and none of it repeats. You see photographs of your own slab before anything is cut.",
+  ),
+  "Quartz": dict(
+    kind="Quartz (engineered stone)",
+    care="Non-porous, so it does not need sealing. Soap and water day to day.",
+    wear="Resistant to staining and scratching. Use a trivet for hot pans, direct heat can damage the resin that binds it.",
+    why="Manufactured rather than quarried, so it varies less between slabs than natural stone does. You see the slab before anything is cut.",
+  ),
+  "Granite": dict(
+    kind="Granite (natural stone)",
+    care="Sealed on fitting. Soap and water day to day.",
+    wear="A hard stone that tolerates heat well.",
+    why="A natural stone, so grain and colour vary from block to block. You see photographs of your own slab before anything is cut.",
+  ),
+}
+
+# ⚠️ NOT EVERYTHING THE CATALOGUE CALLS MARBLE IS ONE. Nine stones come from the suppliers'
+# QUARTZITE and EXOTIC-STONE sections — Patagonia, Taj Mahal, Aqua Gucci, White Macaubas, Nero
+# Marinace, Ocean Fantasy, Cosmic Black and both Blue Romas. They are silica-based and do NOT
+# etch with acid the way a calcite marble does, so the marble `care` line above would be wrong
+# for them and would understate a harder product.
+# ⭐ CHECKED 10 Aug: every one of them ALREADY carries its own `facts=` override in the catalogue
+# with correct wording, so MAT_FACTS["Marble"] never reaches them. Nothing to add here. This note
+# stays because the next person will spot the mat/section mismatch and reach for a fix that is
+# already in place.
+# ⛔ Their `mat` is deliberately NOT changed. The estimator prices by material and knows only
+# Quartz, Marble, Granite and Porcelain, so reclassifying would invent a pricing category, and
+# TopCat's pricing is not ours to change. Raise the classification with TopCat instead.
+NOT_MARBLE = ()
+NOT_MARBLE_FACTS = {}
+
+# ---------------------------------------------------------------------------
+# The procedural slab generator — a byte-for-byte copy of the landing page's
+# marble()/vein()/mulberry32() and the STONES presets (plus crema/mist/fumo).
+# Rendered client-side into every [data-stone] element so the same seed gives
+# the SAME slab here as on the wheel. Change ../index.html and this together.
+# ---------------------------------------------------------------------------
+STONE_JS = r"""<script>
+var UID=0;
+var STONES={
+  calacatta:{base:['#F1ECE2','#E4DCCC'],grey:'rgba(120,124,130,0.30)',gold:'rgba(198,166,100,0.55)',hair:'rgba(150,150,155,0.22)'},
+  statuario:{base:['#F4F2EC','#E8E6DE'],grey:'rgba(90,95,105,0.34)',gold:'rgba(198,166,100,0.30)',hair:'rgba(120,124,132,0.20)'},
+  carrara:{base:['#E9E9E6','#DADAD4'],grey:'rgba(110,118,124,0.38)',gold:'rgba(160,160,150,0.18)',hair:'rgba(120,126,132,0.24)'},
+  nerogold:{base:['#111116','#08080b'],grey:'rgba(180,180,190,0.10)',gold:'rgba(198,166,100,0.62)',hair:'rgba(198,166,100,0.16)'},
+  emperador:{base:['#2a2018','#17110b'],grey:'rgba(120,90,60,0.22)',gold:'rgba(198,166,100,0.48)',hair:'rgba(180,140,90,0.16)'},
+  eternal:{base:['#EDE9E1','#DFD8CB'],grey:'rgba(105,110,118,0.28)',gold:'rgba(198,166,100,0.40)',hair:'rgba(140,144,150,0.20)'},
+  goldveil:{base:['#101015','#0a0a0d'],grey:'rgba(150,150,160,0.06)',gold:'rgba(198,166,100,0.50)',hair:'rgba(255,224,143,0.20)'},
+  crema:{base:['#EFE6D4','#E2D5BC'],grey:'rgba(150,130,100,0.26)',gold:'rgba(198,166,100,0.40)',hair:'rgba(160,140,110,0.20)'},
+  mist:{base:['#DDDEDC','#CBCCC8'],grey:'rgba(105,110,116,0.30)',gold:'rgba(150,150,145,0.16)',hair:'rgba(120,124,130,0.22)'},
+  fumo:{base:['#1E2024','#141518'],grey:'rgba(190,195,205,0.16)',gold:'rgba(198,166,100,0.28)',hair:'rgba(180,185,195,0.14)'}
+};
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function vein(rng,w,h,startTop){
+  let x=startTop?rng()*w:-20, y=startTop?-20:rng()*h;
+  let d=`M ${x.toFixed(0)} ${y.toFixed(0)}`;
+  const steps=4+Math.floor(rng()*3);
+  for(let i=0;i<steps;i++){
+    const nx=startTop?x+(rng()-0.45)*w*0.5:x+(w/steps)+(rng()-0.5)*70;
+    const ny=startTop?y+(h/steps)+(rng()-0.5)*70:y+(rng()-0.5)*h*0.5;
+    const c1x=x+(nx-x)*0.3+(rng()-0.5)*55,c1y=y+(rng()-0.5)*70;
+    const c2x=x+(nx-x)*0.7+(rng()-0.5)*55,c2y=ny+(rng()-0.5)*70;
+    d+=` C ${c1x.toFixed(0)} ${c1y.toFixed(0)}, ${c2x.toFixed(0)} ${c2y.toFixed(0)}, ${nx.toFixed(0)} ${ny.toFixed(0)}`;
+    x=nx;y=ny;
+  }
+  return d;
+}
+function marble(preset,seed){
+  const p=STONES[preset],rng=mulberry32(seed*997+13),id=++UID,w=400,h=520;
+  let veins='';
+  for(let i=0;i<3;i++)veins+=`<path d="${vein(rng,w,h,i%2===0)}" stroke="${p.grey}" stroke-width="${(6+rng()*10).toFixed(1)}" fill="none" stroke-linecap="round" filter="url(#b${id})"/>`;
+  for(let i=0;i<2;i++)veins+=`<path d="${vein(rng,w,h,i%2===0)}" stroke="${p.gold}" stroke-width="${(2+rng()*4).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
+  for(let i=0;i<4;i++)veins+=`<path d="${vein(rng,w,h,rng()>0.5)}" stroke="${p.hair}" stroke-width="${(0.7+rng()*1.4).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${p.base[0]}"/><stop offset="1" stop-color="${p.base[1]}"/></linearGradient>
+      <filter id="b${id}"><feGaussianBlur stdDeviation="1.1"/></filter>
+      <filter id="n${id}"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="${seed}"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0"/></filter>
+      <radialGradient id="s${id}" cx="0.3" cy="0.12" r="1"><stop offset="0" stop-color="rgba(255,255,255,0.18)"/><stop offset="0.4" stop-color="rgba(255,255,255,0)"/></radialGradient>
+    </defs>
+    <rect width="${w}" height="${h}" fill="url(#g${id})"/>${veins}
+    <rect width="${w}" height="${h}" filter="url(#n${id})"/>
+    <rect width="${w}" height="${h}" fill="url(#s${id})"/></svg>`;
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('[data-stone]').forEach(function(el){
+    el.innerHTML=marble(el.getAttribute('data-stone'),parseInt(el.getAttribute('data-seed'),10)||1);
+  });
+});
+</script>"""
+
+REVEAL_JS = ("<script>document.addEventListener('DOMContentLoaded',function(){"
+             "var io=new IntersectionObserver(function(es){es.forEach(function(x){"
+             "if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});"
+             "document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});});</script>")
+
+# ⛔ V2 IS GONE (client, 10 Aug 2026): "completely remove version two and everything about
+# it." The V1/V2 switcher pill that used to sit bottom-right on every generated page was
+# removed with it, along with /versions.html and the whole v2/ tree. ⚠️ Do not re-add a
+# PILL constant here: there is no second version to switch to.
+
+
+def e(s):
+    return html.escape(s, quote=True)
+
+
+def deep_link(s, anchor):
+    """Link into the landing page carrying the stone (read by the deep-link
+    handler at the foot of index.html's script)."""
+    return (f"/index.html?stone={quote(s['name'])}&mat={s['mat']}"
+            f"&p={s['preset']}&s={s['seed']}&slug={s['slug']}#{anchor}")
+
+
+def nav_html():
+    links = "".join(f'<a href="{h}">{e(t)}</a>' for h, t in NAV_LINKS)
+    return f"""<header class="bar">
+  <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO}</a>
+  <nav class="top">{links}</nav>
+  <a class="bar-cta" href="/index.html#cta">Get a quote</a>
+</header>"""
+
+
+def footer_html():
+    return f"""<footer class="site">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="brand brand-stack" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO_STACK}</a>
+      <p class="foot-tag">Bespoke stone worktops, templated, fitted and guaranteed by one team.</p>
+      <span class="foot-stars"><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 &middot; Google reviews</span>
+    </div>
+    <div class="foot-col">
+      <div class="foot-k">Explore</div>
+      <ul>
+        <li><a href="/index.html#services">Services</a></li>
+        <li><a href="/index.html#gallery">Projects</a></li>
+        <li><a href="/stones/">Stones</a></li>
+        <li><a href="/index.html#estimator">Estimate</a></li>
+        <li><a href="/index.html#about">About us</a></li>
+        <li><a href="/trade/">For the trade</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <div class="foot-k">Browse</div>
+      <ul>
+        <li><a href="/materials/">Materials</a></li>
+        <li><a href="/guides/">Worktop guides</a></li>
+        <li><a href="/worktops/">Areas we cover</a></li>
+        <li><a href="/index.html#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="foot-col foot-contact">
+      <div class="foot-k">Contact</div>
+      <div><span class="foot-ck">Phone</span><a class="foot-cv" href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></div>
+      <div><span class="foot-ck">Email</span><a class="foot-cv" href="mailto:{EMAIL}">{EMAIL}</a></div>
+      <div><span class="foot-ck">Area</span><span class="foot-cv">{AREA}, plus nationwide templating</span></div>
+      <div><span class="foot-ck">Hours</span><span class="foot-cv">{HOURS}</span></div>
+    </div>
+  </div>
+  <div class="foot-bar">
+    <span>&copy; 2026 TopCat Worktops Ltd. All rights reserved.</span>
+    <div class="foot-legal"><a href="/index.html#cta">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
+  </div>
+</footer>"""
+
+
+def head(title, desc, url, extra=""):
+    return f"""<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{e(title)}</title>
+<meta name="description" content="{e(desc)}">
+<link rel="canonical" href="{url}">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{e(title)}">
+<meta property="og:description" content="{e(desc)}">
+<meta property="og:url" content="{url}">
+<meta property="og:site_name" content="TopCat Worktops">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="{FAVICON}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/services/service.css">
+<link rel="stylesheet" href="/stones/stone.css">
+{extra}"""
+
+
+def business_ld():
+    return {
+        "@type": "LocalBusiness", "@id": f"{BASE}/#business", "name": "TopCat Worktops",
+        "url": BASE, "telephone": PHONE_DISPLAY, "email": EMAIL, "priceRange": "££",
+        "areaServed": AREAS_SERVED,
+        "openingHoursSpecification": [{
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "08:00", "closes": "18:00"}],
+    }
+
+
+def ld(graph):
+    data = {"@context": "https://schema.org", "@graph": graph}
+    return ('<script type="application/ld+json">'
+            + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "</script>")
+
+
+# ---------------------------------------------------------------------------
+# The collection page
+# ---------------------------------------------------------------------------
+# Customer word -> the words in our own data it should reach. Mirrors STONE_WORDS in
+# index.html; the two searches must agree or the same query gives different answers on the
+# wheel and on this page. Baked into data-find here rather than run in JS, because the tiles
+# are static and the expansion never changes once the page is built.
+SEARCH_WORDS = {
+    "cream": "beige sand sandy biscuit ivory warm",
+    "white": "bright ivory offwhite",
+    "grey": "silver graphite charcoal anthracite",
+    "black": "charcoal",
+    "blue": "navy teal",
+    "green": "teal",
+    # ⛔ "statement" MEANS BUSY, NOT VEINED, AND CONFLATING THE TWO WAS A REAL DEFECT.
+    # Client: "when I search veining, some without veining come up." He was right. This key used
+    # to expand to "veiny veined veining ...", so every busy stone answered a search for veining
+    # — and a lot of them are speckled granites with no vein in them at all. Measured off the
+    # tiles: Bianco Sardo, Baltic Brown, Angola Black Leather and Nero Marinace all carry
+    # `statement` and all score at the bottom of the vein-structure scale, because dense speckle
+    # is busy without being linear. Nero Marinace's own description calls it "a conglomerate
+    # rather than a veined stone".
+    # ⭐ The vein words now come from the DESCRIPTION instead (see veined_words), which was
+    # written with each photograph open and is the only record of what is actually in the picture.
+    "statement": "bold dramatic busy patterned",  # see veined_words() for the vein words
+
+    "soft": "subtle quiet",
+    "calm": "plain uniform solid simple subtle quiet",
+    "polished": "gloss glossy shiny shine",
+    "honed": "matt matte flat satin",
+    "leathered": "textured rough brushed",
+    "quartz": "engineered manmade composite hardwearing durable practical lowmaintenance "
+              "easy hygienic marbleeffect marblelook",
+    "marble": "natural",
+    "granite": "natural hardwearing durable tough practical",
+    "quartzite": "natural hardwearing durable tough",
+    "travertine": "natural",
+}
+
+
+def tile(s):
+    # search matches name, material, finish, colour, veining, the real geological kind, and the
+    # everyday words customers use for all of those ("matt" for honed, "veiny" for statement,
+    # "beige" for cream). NOT the supplier: Nile Stone and Next Stone Slabs are the client's own
+    # trade sources and stay off the public site entirely.
+    kind = (s.get("facts") or {}).get("kind", "")
+    # silica is a manufacturer declaration, so it only enters the haystack when one exists
+    sil = {"free": "silicafree silica free low", "low": "lowsilica low silica"}.get(s.get("silica"), "")
+    bits = [s["name"], s["finish"], s["mat"], s["tone"], s["hue"], s["vein"], kind, sil]
+    for key in list(bits):
+        for word in str(key).lower().split():
+            if word in SEARCH_WORDS:
+                bits.append(SEARCH_WORDS[word])
+    # ⭐ THE DESCRIPTION IS PART OF THE INDEX (10 Aug). Client: "I can type whatever I want and
+    # it just comes back with no stones." The blob above only knew name, finish, material and
+    # three classifier fields, so "sparkle", "pebbles", "crystals", "copper", "diagonal" — every
+    # word actually describing the picture — found nothing. The descriptions were written with
+    # each photograph open (see descriptions.py), so they are the closest thing to a record of
+    # what is in the image, and they cost nothing to index.
+    # ⚠️ The indexed copy has any NEGATED vein clause removed. Nero Marinace's description
+    # reads "a conglomerate rather than a veined stone", and indexing that verbatim made
+    # the one stone that says it has no veins answer a search for "veined".
+    bits.append(_NOT_VEINED_RE.sub("not", DESCRIPTIONS.get(s["slug"], "")))
+    bits.extend(veined_words(s))
+    find = " ".join(str(b) for b in bits if b).lower()
+    # ⭐ hue / vein / finish ride the tile too (10 Aug). The wheel could refine on colour, veining
+    # and finish and this page could not, so the surface showing ALL the stone was the one you
+    # could least narrow — at 96 stones that is the wrong way round. `finish` is lowercased and
+    # matched by CONTAINS, exactly as the wheel does it, so "Honed and filled" answers Honed.
+    return (f'<a class="stile rise" href="/stones/{s["slug"]}.html" '
+            f'data-mat="{s["mat"]}" data-tone="{s["tone"]}" data-hue="{s["hue"]}" '
+            f'data-vein="{s["vein"]}" data-finish="{e(str(s["finish"]).lower())}" '
+            f'data-find="{e(find)}">'
+            + stone_face(s, 'stile-stone') +
+            f'<span class="stile-veil"></span>'
+            # ⭐ THE TRUE STONE, not the browse category. This tag said "Marble" on 27 cards
+            # whose page then said "Quartzite" — the customer met the contradiction one click
+            # after the card, so the card is where it has to be resolved.
+            f'<span class="stile-tag">{e(shown_mat(s))}</span>'
+            f'<span class="stile-meta"><span class="stile-name">{e(s["name"])}</span>'
+            f'<span class="stile-sup">{e(s["finish"])}</span></span>'
+            f'<span class="stile-go" aria-hidden="true">&rsaquo;</span></a>')
+
+
+def collection_page():
+    url = f"{BASE}/stones/"
+    title = "The Stone Collection | Marble, Quartz & Granite Worktops | TopCat Worktops"
+    desc = ("Browse every stone we fit, marble, quartz and granite worktops across London, "
+            "Hertfordshire, Essex and Berkshire. Search by name, filter by material, then "
+            "open any stone for the detail and an estimate. Free home visit with samples.")
+    graph = [
+        {"@type": "CollectionPage", "name": "The Stone Collection", "url": url,
+         "description": desc},
+        {"@type": "ItemList", "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": s["name"],
+             "url": f"{BASE}/stones/{s['slug']}.html"} for i, s in enumerate(STONE_LIST)]},
+        {"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{BASE}/index.html"},
+            {"@type": "ListItem", "position": 2, "name": "The Stone Collection", "item": url}]},
+        business_ld(),
+    ]
+    tiles = "".join(tile(s) for s in STONE_LIST)
+    # ⚠️ `data-mat` stays the KEY and the label is only what is printed. The filter JS, the
+    # ?mat= deep link from the wheel and the estimator all match on the key, so the wording can
+    # change in RANGE_LABEL without touching a line of behaviour.
+    mat_tabs = "".join(
+        f'<button class="ftab{" on" if m == "All" else ""}" data-mat="{m}" type="button">'
+        f'{e(RANGE_LABEL.get(m, m))}</button>'
+        for m in ["All"] + MATS)
+    tone_tabs = "".join(
+        f'<button class="ftab tone{" on" if t == "All" else ""}" data-tone="{t}" type="button">{"All tones" if t == "All" else t}</button>'
+        for t in ["All", "Light", "Dark"])
+
+    # ⭐ THE REFINE DRAWER (10 Aug). Material and tone stay on the top row because they are how
+    # most people start; colour, veining and finish live in a drawer that opens, because five
+    # rows of chips permanently on screen pushes the actual stone below the fold, which is the
+    # opposite of what a collection page is for.
+    # ⚠️ Only values that EXIST in the range are offered. A chip that always returns nothing
+    # reads as a broken page, and the range changes whenever the catalogue does — so the lists
+    # are built from STONE_LIST rather than typed out.
+    def _chips(field, label, order, pretty=None, exact=False):
+        have = {str(s[field]).lower() for s in STONE_LIST if s.get(field)}
+        if exact:
+            # ⚠️ finish is matched by CONTAINS, so a value like "honed and filled" is ALREADY
+            # answered by the Honed chip. Offering it as a chip of its own gave two chips that
+            # return overlapping sets and a Finish row that read as a list of typos.
+            vals = [v for v in order if any(v in h for h in have)]
+        else:
+            vals = [v for v in order if v in have] + sorted(have - set(order))
+        if len(vals) < 2:
+            return ""                       # nothing to choose between
+        chips = "".join(
+            f'<button class="rchip" type="button" data-f="{field}" data-v="{e(v)}">'
+            f'{e((pretty or {}).get(v, v.title()))}</button>' for v in vals)
+        return (f'<div class="rgroup"><span class="rlabel">{label}</span>'
+                f'<div class="rchips">{chips}</div></div>')
+
+    refine_groups = (
+        _chips("hue", "Colour", ["white", "cream", "grey", "black", "brown", "blue", "green"],
+               {"white": "Whites", "cream": "Creams", "grey": "Greys", "black": "Blacks",
+                "brown": "Browns", "blue": "Blues", "green": "Greens"})
+        # ⚠️ plain "&" here, not "&amp;" — e() escapes the label, so a pre-escaped entity came
+        # out on the page as the literal text "Calm &amp; plain".
+        + _chips("vein", "Veining", ["statement", "soft", "calm"],
+                 {"statement": "Statement", "soft": "Soft", "calm": "Calm & plain"})
+        + _chips("finish", "Finish", ["polished", "honed", "leathered", "brushed"],
+                 {"honed": "Honed (matt)"}, exact=True)
+    )
+
+    filter_js = r"""<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var tiles=[].slice.call(document.querySelectorAll('.stile'));
+  var count=document.getElementById('stCount'), empty=document.getElementById('stEmpty');
+  var search=document.getElementById('stSearch');
+  var drawer=document.getElementById('stDrawer'), refBtn=document.getElementById('stRefine');
+  var badge=document.getElementById('stBadge'), clear=document.getElementById('stClear');
+  var q='', terms=[], mat='All', tone='All';
+  /* names customers reliably mistype. Same table as index.html — "calcutta" is far and away
+     the most common spelling of Calacatta in the wild, and it used to return nothing here. */
+  var FIX={calcutta:'calacatta',calcatta:'calacatta',calacata:'calacatta',calacutta:'calacatta',
+    calcata:'calacatta',carara:'carrara',carrera:'carrara',carrarra:'carrara',
+    statuairo:'statuario',statuary:'statuario',marquena:'marquina',marchina:'marquina',
+    arabascato:'arabescato',arabesco:'arabescato',guatamala:'guatemala'};
+  /* one wrong letter should not empty the page */
+  function nearly(hay,t){
+    if(t.length<5)return false;
+    for(var i=0;i<t.length;i++){ if(hay.indexOf(t.slice(0,i)+t.slice(i+1))>-1)return true; }
+    return false;
+  }
+  /* ⭐ The refinements are SETS, not single values: picking Whites and Creams should widen to
+     "either", while picking Whites and then Honed should narrow to "both". So it is OR inside a
+     group and AND across groups, which is what every shopper expects and what the wheel's panel
+     already did. Material and tone stay single-choice because they are the top-level split. */
+  var ref={hue:new Set(),vein:new Set(),finish:new Set()};
+  function matches(el,skip){
+    var hay=el.getAttribute('data-find');
+    if(terms.length&&!terms.every(function(t){t=FIX[t]||t;return hay.indexOf(t)>-1||nearly(hay,t);}))return false;
+    if(skip!=='mat'&&mat!=='All'&&el.getAttribute('data-mat')!==mat)return false;
+    if(skip!=='tone'&&tone!=='All'&&el.getAttribute('data-tone')!==tone.toLowerCase())return false;
+    for(var f in ref){
+      if(f===skip||!ref[f].size)continue;
+      var v=el.getAttribute('data-'+f)||'';
+      /* finish is matched by CONTAINS so "honed and filled" answers Honed */
+      var hitf=false; ref[f].forEach(function(x){ if(f==='finish'?v.indexOf(x)>-1:v===x)hitf=true; });
+      if(!hitf)return false;
+    }
+    return true;
+  }
+  function apply(){
+    var n=0;
+    tiles.forEach(function(el){
+      var ok=matches(el,null);
+      el.classList.toggle('hide',!ok);
+      if(ok)n++;
+    });
+    /* ⚠️ A chip is disabled when choosing it would empty the page — counted against everything
+       EXCEPT its own group, so the other chips beside it stay reachable. Leaving dead chips live
+       is how a filter panel comes to feel broken: you click, nothing happens, you stop trusting
+       it. A chip already on is never disabled, or you could not switch it off again. */
+    document.querySelectorAll('.rchip').forEach(function(c){
+      var f=c.getAttribute('data-f'), v=c.getAttribute('data-v');
+      if(c.classList.contains('on')){c.disabled=false;return;}
+      var any=tiles.some(function(el){
+        if(!matches(el,f))return false;
+        var got=el.getAttribute('data-'+f)||'';
+        return f==='finish'?got.indexOf(v)>-1:got===v;
+      });
+      c.disabled=!any;
+    });
+    var act=ref.hue.size+ref.vein.size+ref.finish.size;
+    if(badge){badge.hidden=!act;badge.textContent=act||'';}
+    if(clear)clear.hidden=!act;
+    count.textContent='Showing '+n+(n===1?' stone':' stones');
+    empty.hidden=n>0;
+  }
+  search.addEventListener('input',function(){
+    /* glue the phrases that mean one thing, then AND the words: "white quartz" narrows */
+    q=search.value.trim().toLowerCase()
+      .replace(/\b(marble|stone)\s+(effect|look|style)\b/g,'$1$2')
+      .replace(/\blow\s+maintenance\b/g,'lowmaintenance')
+      .replace(/\boff[\s-]white\b/g,'offwhite');
+    terms=q?q.split(/[\s,]+/).filter(Boolean):[];
+    apply();
+  });
+  document.querySelectorAll('.ftab[data-mat]').forEach(function(b){
+    b.addEventListener('click',function(){
+      mat=b.getAttribute('data-mat');
+      document.querySelectorAll('.ftab[data-mat]').forEach(function(x){x.classList.toggle('on',x===b);});
+      apply();
+    });
+  });
+  document.querySelectorAll('.ftab[data-tone]').forEach(function(b){
+    b.addEventListener('click',function(){
+      tone=b.getAttribute('data-tone');
+      document.querySelectorAll('.ftab[data-tone]').forEach(function(x){x.classList.toggle('on',x===b);});
+      apply();
+    });
+  });
+  document.querySelectorAll('.rchip').forEach(function(c){
+    c.addEventListener('click',function(){
+      var f=c.getAttribute('data-f'), v=c.getAttribute('data-v');
+      if(ref[f].has(v))ref[f].delete(v); else ref[f].add(v);
+      c.classList.toggle('on',ref[f].has(v));
+      apply();
+    });
+  });
+  if(refBtn&&drawer){
+    refBtn.addEventListener('click',function(){
+      var open=drawer.hasAttribute('hidden');
+      if(open)drawer.removeAttribute('hidden'); else drawer.setAttribute('hidden','');
+      refBtn.setAttribute('aria-expanded',open?'true':'false');
+      refBtn.classList.toggle('on',open);
+    });
+  }
+  if(clear){
+    clear.hidden=true;
+    clear.addEventListener('click',function(){
+      for(var f in ref)ref[f].clear();
+      document.querySelectorAll('.rchip.on').forEach(function(c){c.classList.remove('on');});
+      apply();
+    });
+  }
+  /* /stones/#marble etc (footer links) preselect that material */
+  var h=(location.hash||'').slice(1).toLowerCase();
+  var pre={marble:'Marble',quartz:'Quartz',granite:'Granite'}[h];
+  if(pre){
+    var b=document.querySelector('.ftab[data-mat="'+pre+'"]');
+    if(b)b.click();
+  }
+  apply();
+});
+</script>"""
+
+    return f"""<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+{head(title, desc, url, ld(graph))}
+</head>
+<body>
+{nav_html()}
+
+<nav class="crumb" aria-label="Breadcrumb">
+  <a class="crumb-back" href="/index.html#hero" aria-label="Back to Home" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <ol>
+    <li><a href="/index.html#hero">Home</a></li>
+    <li aria-current="page">The collection</li>
+  </ol>
+</nav>
+
+<main>
+  <section class="st-hero">
+    <div class="wrap">
+      <span class="eyebrow">The collection</span>
+      <h1>Choose your <em>stone</em></h1>
+      <p class="lede">Every stone we fit, in one place. Search by name, filter by material or tone, and open any stone for the detail and an estimate.</p>
+      <!-- ⭐ LIFTED OUT OF THE LEDE, 10 Aug. The sourcing offer was the last clause of the
+           paragraph above and read as a footnote to a paragraph most people skim. The client's
+           point is that the range on show must not read as the whole range: "if they think this
+           is the only range that we have, that wouldn't make sense, because there is more."
+           ⛔ Hedged deliberately, §2 rule 12 — "usually", "where we can", never an absolute. -->
+      <p class="st-source">These are the stones we hold photographs of, not the limit of what we
+        can get. If the one you have in mind is not here, <a href="/index.html#cta">tell us what
+        you are after</a> and we will source it where we can.</p>
+    </div>
+  </section>
+
+  <section class="st-controls">
+    <div class="wrap">
+      <div class="st-controlrow">
+        <label class="st-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+          <input id="stSearch" type="search" placeholder="Try white, matt, marble effect" aria-label="Search stones by colour, finish or name">
+        </label>
+        <div class="st-ftabs" role="group" aria-label="Filter by material">{mat_tabs}</div>
+        <div class="st-ftabs" role="group" aria-label="Filter by tone">{tone_tabs}</div>
+        <button class="st-refine" id="stRefine" type="button" aria-expanded="false" aria-controls="stDrawer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+          Refine<span class="st-badge" id="stBadge" hidden></span>
+        </button>
+      </div>
+      <div class="st-drawer" id="stDrawer" hidden>{refine_groups}
+        <button class="st-clear" id="stClear" type="button">Clear all</button>
+      </div>
+      <p class="st-count" id="stCount">Showing {len(STONE_LIST)} stones</p>
+    </div>
+  </section>
+
+  <section class="st-gridwrap">
+    <div class="wrap">
+      <div class="st-grid">{tiles}</div>
+      <div class="st-empty" id="stEmpty" hidden>
+        <p class="st-empty-line">No stone by that name in the collection.</p>
+        <p class="st-empty-sub">We can usually source it. Call <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a> or <a href="/index.html#cta">get in touch</a> and tell us what you are after.</p>
+      </div>
+      </div>
+  </section>
+
+  <section class="cta-band"><div class="wrap rise">
+    <h2>Can't choose from a screen?</h2>
+    <p>Nobody should. Book a free home visit and we bring samples to you, in your light, against your cabinets. You approve photographs of your actual slab before a single cut. Prefer to talk it through? Ask for Nick.</p>
+    <div class="cta-row">
+      <a class="btn-gold" href="/index.html#cta">Book a free home visit</a>
+      <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+    </div>
+  </div></section>
+</main>
+
+{footer_html()}
+{STONE_JS}
+{REVEAL_JS}
+{filter_js}
+</body>
+</html>"""
+
+
+# ---------------------------------------------------------------------------
+# Per-stone pages
+# ---------------------------------------------------------------------------
+def shown_mat(s):
+    """The stone type a READER is told, which is not always the browse category.
+
+    ⚠️ The heading above this section used to be "Why choose <stone name>", which asks the
+    paragraph beneath it to make a sales claim — that is how the quartz page ended up asserting
+    a slab's pattern was uniform. It states a fact now so the copy under it can too.
+    ⛔ Explanations like this one stay in PYTHON, never in an HTML comment in the template: a
+    comment quoting the banned phrase ships in the source of all 115 pages and trips every naive
+    scan for it. That happened once already.
+
+    ⛔ 27 pages contradicted themselves. The title said "Fusion Black Marble Worktops" and the
+    spec block on the same page said "Stone: Quartzite (natural stone)", because `mat` is the
+    browse-and-pricing category while `facts['kind']` is what the stone actually is. Client,
+    10 Aug: "Why doesn't the stone say marble, or why is it in the marble when it's a quartzite?
+    That doesn't make any sense to me." He is right — a customer reads both on one screen.
+
+    ⚠️ THE FIX IS TO THE WORDS, NOT THE CATEGORY. `s['mat']` is untouched, so the estimator, the
+    filters, the wheel and the POA behaviour are all exactly as TopCat set them, and no price
+    moves. Only the visible noun changes, to the true one.
+    ⛔ Do NOT "tidy" this by adding a Quartzite entry to MATS in index.html. It would be a fourth
+    material tab and a fourth range on a site TopCat present as quartz, marble and granite, and
+    that is a decision for TopCat, not a code change. It is in the handover as an open question.
+
+    26 of the 27 are quartzites, one is a travertine.
+
+    ⚠️ 10 Aug, SECOND ROUND. Naming the true stone here fixed the page and broke the JOURNEY:
+    the client clicked Marble on the collection, opened Fusion Black and was told "Quartzite",
+    with nothing on either screen connecting the two. "We cannot have that confusion." The
+    answer is NOT to go back to calling it marble — see RANGE_LABEL for why that is a claim we
+    could not defend — it is that the range is now named "Marble & Quartzite" on every browse
+    surface, the cards carry the true stone before you click, and the page states its range."""
+    facts = dict(MAT_FACTS[s["mat"]])
+    facts.update(s.get("facts") or {})
+    m = re.match(r"\s*([A-Za-z][A-Za-z ]*?)\s*\(", facts.get("kind", ""))
+    if m:
+        word = m.group(1).strip()
+        if word.lower() not in ("natural stone", "engineered stone"):
+            return word
+    return s["mat"]
+
+
+def range_label(s):
+    """The name of the range this stone is browsed in, as the customer sees it."""
+    return RANGE_LABEL.get(s["mat"], s["mat"])
+
+
+def titled_mat(s):
+    """`shown_mat`, dropped when the stone's own name already carries it.
+
+    ⚠️ "Travertine Romano Classico Travertine Worktops". The title is name + stone type, which
+    reads correctly for 114 of the 115 and stutters on the one stone named after its own rock.
+    Same guard covers any future Quartzite Grey or Marble Bianco."""
+    word = shown_mat(s)
+    return "" if word.lower() in s["name"].lower() else word
+
+
+def range_row(s):
+    """The spec row that ties the stone to the range the customer came from.
+
+    ⭐ This row is the handover between two screens. A customer filters the collection on
+    "Marble & Quartzite", opens Taj Mahal and reads "Stone: Quartzite" — the row beneath it
+    says which range that was, so the two never have to be reconciled by guesswork.
+
+    ⚠️ It is suppressed where the range name already IS the stone — every quartz and every
+    granite page. A row reading "Range: Quartz" under "Stone: Quartz (engineered stone)" is
+    noise, and noise in a spec block is what stops the rows above it being read.
+    ⭐ It DOES show on all 45 of the marble range, the 18 true marbles included, and that is
+    deliberate: a row that appeared only on the quartzites would read as an exception being
+    explained away. Appearing on every stone in the range makes it an ordinary spec row."""
+    label = range_label(s)
+    if label == shown_mat(s):
+        return ""
+    return f"<li><span>Range</span>{e(label)}</li>"
+
+
+def stone_desc(s):
+    """The stone's description, from descriptions.py.
+
+    ⛔ COLOUR AND PATTERN ONLY (client, 10 Aug 2026). No sealing, no heat, no durability, no
+    "suits an island", no "matches slab to slab" — those are promises or job-specific advice and
+    the client cut every one of them: "don't make promises we do not guarantee that we can
+    fulfil."
+
+    ⚠️ RAISES rather than falling back to `s['blurb']`. The blurbs still sitting in
+    catalogue_expanded.py are the SCRIPT-ASSEMBLED ones, three slots deep from a fixed phrase
+    bank, and they are what put "it hides everyday marks better than a busier stone will" — the
+    opposite of the truth — onto five stone pages including a plain honed black granite. A quiet
+    fallback would put them straight back on the site and nothing would look wrong."""
+    d = DESCRIPTIONS.get(s["slug"])
+    if not d:
+        raise KeyError(
+            f"{s['name']} ({s['slug']}) has no entry in descriptions.py. Write one against the "
+            f"tile in assets/slabs — do NOT fall back to the old generated blurb.")
+    return d
+
+
+_SIMILAR = None
+
+
+def _similar():
+    """slug -> three visually nearest slugs, from harvest/similar.py. Loaded once."""
+    global _SIMILAR
+    if _SIMILAR is None:
+        p = pathlib.Path(__file__).parent / "harvest" / "similar.json"
+        if p.exists():
+            _SIMILAR = json.loads(p.read_text())
+        else:
+            _SIMILAR = {}
+            print("⚠️  harvest/similar.json missing — the 'more to consider' strip is falling "
+                  "back to the positional pick. Run: cd harvest && python3 similar.py")
+    return _SIMILAR
+
+
+def related_tiles(current):
+    """Three stones of the same material that actually LOOK like this one.
+
+    ⛔ The picks come from `harvest/similar.json`, which is measured off the shipping
+    photographs by `harvest/similar.py` — the ground, the veining, the contrast between them and
+    how busy the stone is. ⚠️ RUN similar.py BEFORE THIS whenever tiles change, or the strip goes
+    stale in the one way nobody notices: it still renders three plausible stones.
+
+    This used to be `same[(idx + k) % len(same)]` — the next three entries in the catalogue list,
+    sharing nothing with the stone but its material. On 76 of the 115 pages all three suggestions
+    were unlike the stone being viewed; Nero Marquina, a black marble, offered a pale blue, a
+    white and a blue. Client, 10 Aug: "it shows slabs that look similar to that, it doesn't just
+    show random slabs."
+
+    ⚠️ Falls back to the old positional pick ONLY if similar.json is missing, so a fresh clone
+    still builds — but the build prints a warning, because a silent fallback here is
+    indistinguishable from working."""
+    picks = None
+    slugs = _similar().get(current["slug"])
+    if slugs:
+        by = {s["slug"]: s for s in STONE_LIST}
+        picks = [by[x] for x in slugs if x in by]
+    if not picks:
+        same = [s for s in STONE_LIST
+                if s["mat"] == current["mat"] and s["slug"] != current["slug"]]
+        idx = next(i for i, s in enumerate(STONE_LIST) if s["slug"] == current["slug"])
+        picks = [same[(idx + k) % len(same)] for k in range(3)]
+    out = []
+    for s in picks:
+        out.append(
+            f'<a class="stile mini" href="/stones/{s["slug"]}.html" aria-label="{e(s["name"])}">'
+            + stone_face(s, 'stile-stone') +
+            f'<span class="stile-veil"></span>'
+            f'<span class="stile-meta"><span class="stile-name">{e(s["name"])}</span>'
+            f'<span class="stile-sup">{e(s["finish"])}</span></span>'
+            f'<span class="stile-go" aria-hidden="true">&rsaquo;</span></a>')
+    return "".join(out)
+
+
+def slab_facts(s):
+    """Typical slab size and thickness, straight from the supplier's inventory. Left out
+    entirely where we do not hold the figure, rather than printed as a guess.
+
+    ⛔ EVERY MEASUREMENT ON THIS SITE IS IN MILLIMETRES (client, 10 Aug 2026). The supplier's
+    stock system publishes some figures in centimetres and some in millimetres, and this
+    function used to append the letters "mm" to whichever it was handed — so a slab recorded
+    as 322 x 162 cm printed as "322 x 162 mm", a worktop the size of a sheet of A4. It shipped
+    on 22 stone pages. The figures are now normalised to mm in catalogue_expanded.py and the
+    guards below fail the BUILD rather than let a wrong number reach a customer again.
+    ⚠️ Do not soften these into a warning. A silent unit error is the one defect that survives
+    every visual check, because the page looks perfectly correct."""
+    out = []
+    size = (s.get("size") or "").strip()
+    if size:
+        m = re.fullmatch(r"(\d+)\s*x\s*(\d+)", size)
+        if not m:
+            raise ValueError(f"{s['name']}: slab size {size!r} is not '<width> x <height>'")
+        w, h = int(m.group(1)), int(m.group(2))
+        # no slab is under a metre in either direction; a 3-digit figure is centimetres
+        if w < 1000 or h < 1000:
+            raise ValueError(
+                f"{s['name']}: slab size {size!r} looks like CENTIMETRES. "
+                f"Store millimetres — {w * 10} x {h * 10}.")
+        out.append(f"<li><span>Typical slab</span>{e(f'{w} × {h}')} mm</li>")
+    # ⭐ THICKNESS IS WHAT TOPCAT SUPPLY IN, NOT WHAT ONE SLAB IN A YARD MEASURED.
+    # Client, 10 Aug: "some places where you say quartzite, natural stone, you don't give slab
+    # sizings on those, like twenty or thirty millimetres." He is right that it was missing —
+    # 59 of the 115 had no thickness at all, because the supplier's stock system only publishes
+    # a figure for the slabs it happens to be holding.
+    # ⚠️ The old row was the WRONG FACT anyway. It printed the thickness of one physical slab in
+    # the supplier's yard, which is not what the customer will be sold. TopCat's own estimator
+    # offers exactly two thicknesses for every stone in the range (`THICK=[20,30]` in
+    # index.html), so that is the honest answer and it is the same on all 115 pages.
+    # ⛔ Do not put the per-slab figure back. If a specific thickness ever needs stating, it
+    # belongs on the quote, not on a catalogue page.
+    thick = (s.get("thick") or "").strip()
+    if thick and not re.fullmatch(r"\d+mm", thick):
+        raise ValueError(
+            f"{s['name']}: thickness {thick!r} must be written in millimetres, e.g. '30mm'")
+    out.append("<li><span>Thickness</span>20 mm or 30 mm</li>")
+    return "\n          ".join(out)
+
+
+def stone_page(s):
+    url = f"{BASE}/stones/{s['slug']}.html"
+    tm = titled_mat(s)
+    title = " ".join(x for x in (s["name"], tm, "Worktops") if x) + " | TopCat Worktops"
+    desc = (f"{' '.join(x for x in (s['name'], tm.lower()) if x)} worktops, templated, fitted "
+            f"and guaranteed by one team across {AREA}. {stone_desc(s).split('.')[0]}. Free home "
+            f"visit, fixed itemised quote and a ten-year guarantee.")
+    # a stone filed under Marble may be quartzite or travertine, and its own care copy wins:
+    # telling someone Taj Mahal etches like marble would be plainly wrong
+    facts = dict(MAT_FACTS[s["mat"]])
+    if s["slug"] in NOT_MARBLE:
+        facts.update(NOT_MARBLE_FACTS)
+    facts.update(s.get("facts") or {})
+    graph = [
+        {"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{BASE}/index.html"},
+            {"@type": "ListItem", "position": 2, "name": "The Stone Collection", "item": f"{BASE}/stones/"},
+            {"@type": "ListItem", "position": 3, "name": s["name"], "item": url}]},
+        business_ld(),
+    ]
+
+    return f"""<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+{head(title, desc, url, ld(graph))}
+</head>
+<body>
+{nav_html()}
+
+<nav class="crumb" aria-label="Breadcrumb">
+  <a class="crumb-back" href="/stones/" aria-label="Back to The collection" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <ol>
+    <li><a href="/index.html#hero">Home</a></li>
+    <li><a href="/stones/">The collection</a></li>
+    <li aria-current="page">{e(s['name'])}</li>
+  </ol>
+</nav>
+
+<main>
+  <section class="stp-hero">
+    <div class="wrap stp-grid">
+      <figure class="stp-slab">
+        {stone_face(s, 'stp-stone')}
+        <span class="stp-glass" aria-hidden="true"></span>
+        <figcaption class="stp-tag">{e(shown_mat(s))}</figcaption>
+      </figure>
+      <div class="stp-copy">
+        <span class="eyebrow">{e(shown_mat(s))} &middot; {e(s['finish'])}</span>
+        <h1>{e(s['name'])}</h1>
+        <p class="lede">{e(stone_desc(s))}</p>
+        <ul class="stp-facts">
+          <li><span>Stone</span>{e(facts['kind'])}</li>
+          {range_row(s)}
+          <li><span>Finish</span>{e(s['finish'])}</li>
+          {slab_facts(s)}
+          <li><span>Care</span>{e(facts['care'])}</li>
+          <li><span>In daily use</span>{e(facts['wear'])}</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn-gold" href="{deep_link(s, 'estimator')}">Get an estimate for this stone</a>
+          <a class="btn-ghost" href="{deep_link(s, 'cta')}">Get in touch</a>
+        </div>
+        <div class="trust">
+          <span><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</span>
+          <span><b>10</b> year guarantee</span>
+          <span>Prefer to talk? <a class="stp-tel" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block"><div class="wrap prose rise">
+    <h2>About {e(shown_mat(s).lower())}</h2>
+    <p>{e(facts['why'])}</p>
+    <p>Every cut-out is free of charge, drainer grooves and pencil edges come as standard, and the surface is templated to the millimetre once your units are level. The quote you approve is the price you pay, covered by a ten-year guarantee.</p>
+  </div></section>
+
+  <section class="block"><div class="wrap rise">
+    <h2>See it in your home, not on a screen</h2>
+    <p class="sub">Colour on a screen is a guide, stone in your own light is the truth. We bring samples to you on a free home visit across {e(AREA)}, and before a single cut you approve photographs of the actual slab that will become your worktop.</p>
+    <div class="cta-row">
+      <a class="btn-gold" href="{deep_link(s, 'cta')}">Book a free home visit</a>
+      <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+    </div>
+  </div></section>
+
+  <section class="block"><div class="wrap rise">
+    <h2>More {e(range_label(s).lower())} to consider</h2>
+    <p class="sub">Three that look closest to it, or <a class="stp-all" href="/stones/">browse the full collection</a>.</p>
+    <div class="st-grid related">{related_tiles(s)}</div>
+    <!-- ⭐ The range on show is not the range (client, 10 Aug). This is the right place for it on
+         a stone page: somebody reading "more to consider" is looking for an alternative, and
+         that is the moment to say the collection is not the ceiling. -->
+    <p class="st-source">Still not it? These are the stones we hold photographs of, not the limit
+      of what we can get. <a href="{deep_link(s, 'cta')}">Tell us what you are after</a> and we
+      will source it where we can.</p>
+  </div></section>
+
+  <section class="cta-band"><div class="wrap rise">
+    <h2>Make it yours</h2>
+    <p>Tell us about your kitchen and we will come and measure it, a free home visit, a fixed itemised quote, and a ten-year guarantee on every install. We reply within one working day.</p>
+    <div class="cta-row">
+      <a class="btn-gold" href="{deep_link(s, 'estimator')}">Get an estimate</a>
+      <a class="btn-ghost" href="{deep_link(s, 'cta')}">Get in touch</a>
+    </div>
+  </div></section>
+</main>
+
+{footer_html()}
+{STONE_JS}
+{REVEAL_JS}
+</body>
+</html>"""
+
+
+def main():
+    here = pathlib.Path(__file__).resolve().parent
+    slugs = [s["slug"] for s in STONE_LIST]
+    assert len(slugs) == len(set(slugs)), "duplicate slug in STONE_LIST"
+    (here / "index.html").write_text(collection_page(), encoding="utf-8")
+    print("wrote index.html")
+    for s in STONE_LIST:
+        (here / f"{s['slug']}.html").write_text(stone_page(s), encoding="utf-8")
+    print("done:", len(STONE_LIST), "stone pages + collection")
+
+
+if __name__ == "__main__":
+    main()

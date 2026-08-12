@@ -1,0 +1,227 @@
+/* ============================================================================
+   TopCat Worktops — styles for the V1 stone collection (/stones/*).
+   Loads AFTER /services/service.css, which provides the shared base
+   (tokens, header, buttons, breadcrumb, blocks, cta band, footer, .rise).
+   ========================================================================== */
+
+/* ---------- collection hero ---------- */
+.st-hero{padding:clamp(36px,6vh,72px) 0 clamp(8px,2vh,20px)}
+.st-hero .eyebrow{display:inline-block;font-family:var(--brand);font-size:10px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.st-hero h1{font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:0.01em;font-size:clamp(32px,4.6vw,54px);line-height:1.06}
+.st-hero .lede{margin-top:18px;max-width:62ch;font-size:clamp(14.5px,1.25vw,16.5px);color:var(--muted);line-height:1.7}
+
+/* ---------- controls: search + filter pills ---------- */
+.st-controls{padding:clamp(18px,3vh,30px) 0 0}
+.st-controlrow{display:flex;align-items:center;gap:clamp(12px,1.6vw,22px);flex-wrap:wrap}
+.st-search{display:flex;align-items:center;gap:10px;flex:1;min-width:230px;max-width:360px;
+  border:1px solid var(--hair);border-radius:2px;padding:12px 16px;color:var(--faint);
+  transition:border-color .4s var(--ease)}
+.st-search:focus-within{border-color:var(--gold);color:var(--gold)}
+.st-search svg{width:16px;height:16px;flex:none}
+.st-search input{flex:1;min-width:0;background:none;border:0;outline:none;color:var(--bone);
+  font-family:var(--sans);font-weight:300;font-size:14px;letter-spacing:0.02em}
+.st-search input::placeholder{color:var(--faint)}
+.st-search input::-webkit-search-cancel-button{-webkit-appearance:none}
+.st-ftabs{display:flex;gap:8px;flex-wrap:wrap}
+.ftab{font-family:var(--sans);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--muted);padding:11px 18px;border:1px solid var(--hair);border-radius:2px;
+  background:transparent;cursor:pointer;
+  transition:color .4s var(--ease),background .4s var(--ease),border-color .4s var(--ease)}
+.ftab:hover{color:var(--bone);border-color:var(--gold)}
+.ftab.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.ftab.tone{border-style:dashed}
+.ftab.tone.on{border-style:solid}
+/* ---------- refine drawer (10 Aug) ----------
+   The collection page could filter by material and tone only, so the one surface showing every
+   stone was the least narrowable — wrong at 52 and untenable at 96. Colour, veining and finish
+   now live behind a Refine button rather than adding three permanent rows of chips, which would
+   have pushed the stone itself below the fold on a laptop. */
+.st-refine{display:inline-flex;align-items:center;gap:9px;font-family:var(--sans);font-size:11px;
+  letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);padding:11px 18px;
+  border:1px solid var(--hair);border-radius:2px;background:transparent;cursor:pointer;
+  transition:color .4s var(--ease),border-color .4s var(--ease),background .4s var(--ease)}
+.st-refine svg{width:15px;height:15px;flex:none}
+.st-refine:hover{color:var(--bone);border-color:var(--gold)}
+.st-refine.on{border-color:var(--gold);color:var(--gold)}
+.st-refine:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.st-badge{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 5px;
+  border-radius:9px;background:var(--gold);color:var(--ink);font-size:10px;letter-spacing:0}
+/* ⚠️ display:inline-grid beats the [hidden] user-agent rule, so with no refinements active the
+   badge stayed on screen as a bare gold dot. An explicit hidden rule is required for any element
+   given a display value. */
+.st-badge[hidden]{display:none}
+
+.st-drawer{margin-top:18px;padding:20px 22px;border:1px solid var(--hair-soft);border-radius:3px;
+  background:rgba(255,255,255,0.015);display:flex;flex-wrap:wrap;gap:22px 34px;align-items:flex-start}
+/* ⛔ THIS LINE IS LOAD-BEARING. Without it the Refine button does nothing AT ALL.
+   The drawer is opened and closed by toggling the HTML `hidden` attribute, which the browser
+   honours through a UA rule of `[hidden]{display:none}` — and a UA rule loses to any author
+   rule, so the `display:flex` above kept it open in every state. The button still toggled
+   `hidden` and `aria-expanded` correctly; the panel just never moved, so all three filter
+   groups sat permanently open and pushed the stones off the first screen.
+   ⚠️ That is the exact failure D53 built the drawer to avoid, and it read to the client as a
+   button that does nothing: "there's a button that says refine, I don't know what that does".
+   ⚠️ Any `display` on an element you hide with `hidden` needs this companion rule. */
+.st-drawer[hidden]{display:none}
+.rgroup{display:flex;flex-direction:column;gap:9px}
+.rlabel{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--faint)}
+.rchips{display:flex;gap:7px;flex-wrap:wrap}
+.rchip{font-family:var(--sans);font-size:12px;letter-spacing:0.04em;color:var(--muted);
+  padding:8px 14px;border:1px solid var(--hair);border-radius:100px;background:transparent;
+  cursor:pointer;transition:color .3s var(--ease),background .3s var(--ease),border-color .3s var(--ease)}
+.rchip:hover:not(:disabled){color:var(--bone);border-color:var(--gold)}
+.rchip.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.rchip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+/* ⚠️ A chip that would empty the page is dimmed and unclickable rather than left live. Clicking
+   a filter and getting nothing back is what makes a panel feel broken. */
+.rchip:disabled{opacity:0.28;cursor:not-allowed}
+.st-clear{margin-left:auto;align-self:flex-end;background:none;border:0;cursor:pointer;
+  font-family:var(--sans);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--faint);text-decoration:underline;text-underline-offset:4px;padding:8px 0}
+.st-clear:hover{color:var(--gold)}
+@media(max-width:600px){.st-drawer{gap:18px 20px}.st-clear{margin-left:0}}
+
+.st-count{margin-top:14px;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--faint)}
+
+/* ---------- the grid of slab tiles ----------
+   Long rectangles (the client's spec): the stone IS the tile, name bottom-left. */
+.st-gridwrap{padding:clamp(20px,3vh,34px) 0 clamp(38px,6vh,64px)}
+.st-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,24px)}
+@media(max-width:1080px){.st-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.st-grid{grid-template-columns:1fr}}
+.stile{position:relative;display:block;aspect-ratio:5/2;border:1px solid var(--hair-soft);
+  border-radius:4px;overflow:hidden;text-decoration:none;
+  box-shadow:0 26px 50px -30px rgba(0,0,0,0.85);
+  transition:transform .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease)}
+.stile:hover{transform:translateY(-4px);border-color:var(--hair);
+  box-shadow:0 34px 60px -30px rgba(0,0,0,0.95)}
+.stile.hide{display:none}
+.stile-stone{position:absolute;inset:0}
+.stile-stone svg{width:100%;height:100%;display:block}
+.stile-stone img{width:100%;height:100%;display:block;object-fit:cover}
+/* floor gradient so the name reads on light stones */
+.stile-veil{position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(10,10,13,0.72),rgba(10,10,13,0.14) 46%,rgba(10,10,13,0) 62%),
+             linear-gradient(140deg,rgba(255,255,255,0.08),transparent 34%,transparent 70%,rgba(0,0,0,0.18))}
+.stile-tag{position:absolute;top:12px;left:12px;font-family:var(--sans);font-size:9.5px;
+  letter-spacing:0.22em;text-transform:uppercase;color:var(--bone);
+  background:rgba(10,10,12,0.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  padding:5px 10px;border-radius:2px;border:1px solid var(--hair-soft)}
+.stile-meta{position:absolute;left:14px;right:40px;bottom:12px;display:flex;flex-direction:column;gap:2px}
+.stile-name{font-family:var(--serif);font-weight:400;font-size:clamp(16px,1.5vw,20px);color:var(--bone);
+  text-shadow:0 2px 16px rgba(0,0,0,0.75);line-height:1.15}
+.stile-sup{font-family:var(--sans);font-size:11px;color:rgba(244,241,234,0.66);letter-spacing:0.04em;
+  text-shadow:0 1px 10px rgba(0,0,0,0.7)}
+.stile-go{position:absolute;right:14px;bottom:10px;font-family:var(--serif);font-size:22px;
+  color:var(--gold);opacity:0;transform:translateX(-6px);
+  transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.stile:hover .stile-go{opacity:1;transform:none}
+/* warm sheen sweep on hover, same spirit as the landing page cards */
+.stile::after{content:"";position:absolute;inset:-40% -60%;pointer-events:none;
+  background:linear-gradient(115deg,transparent 42%,rgba(228,205,146,0.16) 50%,transparent 58%);
+  transform:translateX(-70%);transition:transform 1.1s var(--ease)}
+.stile:hover::after{transform:translateX(70%)}
+
+/* empty state */
+.st-empty{padding:clamp(30px,6vh,60px) 0;text-align:center}
+.st-empty-line{font-family:var(--serif);font-size:clamp(19px,2vw,24px);color:var(--bone);margin-bottom:10px}
+.st-empty-sub{color:var(--muted);font-size:14.5px}
+.st-empty-sub a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--hair)}
+.st-empty-sub a:hover{border-color:var(--gold)}
+
+/* ---------- stone page hero ---------- */
+.stp-hero{padding:clamp(30px,5vh,64px) 0 clamp(30px,5vh,56px)}
+.stp-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:clamp(26px,4vw,58px);align-items:center}
+@media(max-width:900px){.stp-grid{grid-template-columns:1fr}}
+.stp-slab{position:relative;aspect-ratio:3/4;max-height:560px;width:100%;margin:0;
+  border:1px solid var(--hair-soft);border-radius:4px;overflow:hidden;
+  box-shadow:0 46px 92px -38px rgba(0,0,0,0.95)}
+@media(max-width:900px){.stp-slab{max-width:420px;margin:0 auto}}
+.stp-stone{position:absolute;inset:0}
+.stp-stone svg{width:100%;height:100%;display:block}
+/* a photographed slab fills the frame exactly as the drawn one does, so the hero cannot change
+   shape depending on which of the two the stone has */
+.stp-stone img{width:100%;height:100%;display:block;object-fit:cover}
+.stp-glass{position:absolute;inset:0;
+  background:linear-gradient(140deg,rgba(255,255,255,0.10),transparent 34%,transparent 66%,rgba(0,0,0,0.28))}
+.stp-tag{position:absolute;top:14px;left:14px;font-family:var(--sans);font-size:10px;
+  letter-spacing:0.22em;text-transform:uppercase;color:var(--bone);
+  background:rgba(10,10,12,0.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  padding:6px 11px;border-radius:2px;border:1px solid var(--hair-soft)}
+.stp-copy .eyebrow{display:inline-block;font-family:var(--brand);font-size:10px;letter-spacing:0.32em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.stp-copy h1{font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:0.01em;
+  font-size:clamp(30px,4vw,50px);line-height:1.06}
+.stp-copy .lede{margin-top:16px;max-width:56ch;font-size:clamp(14.5px,1.25vw,16.5px);color:var(--muted);line-height:1.7}
+.stp-facts{list-style:none;margin:22px 0 26px;border-top:1px solid var(--hair-soft)}
+.stp-facts li{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:11px 0;
+  border-bottom:1px solid var(--hair-soft);font-size:13.5px;color:rgba(244,241,234,0.82);line-height:1.55}
+.stp-facts li span{font-family:var(--brand);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--gold);padding-top:3px}
+.stp-copy .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.stp-copy .trust{margin-top:22px;display:flex;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.stp-copy .trust b{color:var(--gold);letter-spacing:2px;font-weight:500}
+.stp-tel{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--hair)}
+.stp-tel:hover{border-color:var(--gold)}
+.stp-all{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--hair)}
+.stp-all:hover{border-color:var(--gold)}
+.block .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+
+/* related minis reuse the tile dress at a smaller scale */
+.st-grid.related .stile-name{font-size:16px}
+@media(max-width:600px){.st-grid.related{grid-template-columns:1fr}}
+
+/* ---------- the page floor (10 Aug) ----------
+   ⭐ The SAME floor as the landing page (§4l), not a lookalike: the same Portoro photograph,
+   the same veil colour and the same veil strength. Client, 10 Aug: the stone pages "should
+   have the same background as the landing page, that same faded black background." Before
+   this they sat on flat --ink, which is why they read as a different site once you left the
+   home page.
+   ⚠️ THE URL IS ROOT-RELATIVE AND MUST STAY THAT WAY. index.html can write
+   url('assets/stone-floor.webp') because it sits at the site root; every page here is one
+   level down, so a relative path 404s and leaves a plain dark veil that looks close enough
+   to be missed.
+   ⚠️ --floorVeil 0.70 on 2,2,4 is the landing page's measured value, arrived at by measuring
+   median/p90/max luminance rather than by eye (§4l says do not eyeball it). If it is ever
+   retuned there, retune it here: these are meant to be one floor, not two similar ones.
+   ⛔ NO THICK VEINING, of any colour — the same rule that governs the landing page. The image
+   is shared, so it already satisfies it. */
+:root{ --marbleBG:url('/assets/stone-floor.webp'); --floorVeil:0.70; --floorVeilRGB:2,2,4; }
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 80% -10%, rgba(198,166,100,0.06), transparent 55%),
+    radial-gradient(90% 70% at 10% 110%, rgba(198,166,100,0.04), transparent 55%),
+    linear-gradient(rgba(var(--floorVeilRGB),var(--floorVeil)), rgba(var(--floorVeilRGB),var(--floorVeil))),
+    var(--marbleBG) center / cover no-repeat;
+}
+/* ⚠️ The floor is fixed at z-index 0, so everything that is not the sticky header has to be
+   lifted over it. On these pages main and the footer are SIBLINGS, not nested, so both need
+   it — the landing page only needs `main` because its footer lives inside. Do not do this by
+   giving body > * a position, that would break the header's position:sticky. */
+/* ⛔ EVERY DIRECT CHILD OF BODY THAT CARRIES CONTENT MUST BE LISTED HERE. The floor is fixed at
+   z-index 0, and a positioned element at z-index 0 paints ABOVE static content in normal flow,
+   so anything left off this list disappears completely.
+   ⚠️ `nav.crumb` was left off when the floor went in, and the breadcrumb was invisible on all
+   127 stone pages until the back button was added beside it and did not show up either. Nothing
+   errored, nothing 404'd, the markup was correct and present in the DOM — it was simply painted
+   over. Check what is a direct child of <body> before adding a fixed background to a page. */
+main, body > nav.crumb, body > footer{position:relative;z-index:1}
+
+/* ---------- "we can source it" (10 Aug) ----------
+   ⭐ Client: "we must make it very clear and obvious somewhere to say if you don't find your
+   stone, we can source it... because if they think this is the only range that we have, that
+   wouldn't make sense, because there is more. So in all those spaces where they have to choose
+   a stone." The same note is on the landing page's wheel and in the estimator's picker.
+   ⚠️ On the collection this was previously the last clause of the lede paragraph, where it read
+   as a footnote. It is its own line now, with its own rule above it.
+   ⛔ HEDGED ON PURPOSE: "where we can", "usually". §2 rule 12 forbids an absolute, and this is a
+   promise about other people's quarries and stock. ⛔ Never name the suppliers here (D8). */
+.st-source{margin-top:16px;padding-top:15px;border-top:1px solid var(--hair-soft);
+  max-width:62ch;font-size:14px;font-weight:300;line-height:1.7;color:var(--muted)}
+.st-source a{color:var(--gold);text-decoration:underline;text-underline-offset:4px;
+  text-decoration-thickness:1px;transition:color .35s var(--ease)}
+.st-source a:hover{color:var(--bone)}
+/* on a stone page it closes the "more to consider" block, so it centres with that block */
+.block .st-source{margin-left:auto;margin-right:auto;text-align:center;margin-top:26px;
+  padding-top:22px}
