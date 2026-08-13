@@ -1,117 +1,133 @@
-# START HERE — 13 August 2026, end of the PERFORMANCE AND HERO ROUND
+# START HERE — 13 August 2026, end of the INTERNAL PAGES ROUND
 
 Read this, then `HANDOVER.md` **§D** (the decision register, newest first — this round is
-**D162–D178**) and **§2** (the standing rules, especially **rule 9** and **rule 15**). That is about
+**D179–D196**) and **§2** (the standing rules, especially **rule 9** and **rule 15**). That is about
 fifteen minutes and it is enough to work safely.
 
-> ⚠️ **This replaces the previous version of this same file**, which covered the eighteen-ask
-> mobile round (D144–D161). Everything in it that still matters is carried below.
+> ⚠️ **This replaces the previous version of this same file**, which covered the performance and
+> hero round (D162–D178). Everything in it that still matters is carried below.
 
 ---
 
-## 0. ⛔⛔ THE ONE THING TO READ FIRST: THE LAG WAS REAL, IT WAS MEASURED, AND THE FIX IS UNVERIFIED
+## 0. ⛔⛔ THE ONE THING TO READ FIRST: THE SITE IS SEVEN PAGES NOW, AND ONE SCRIPT BUILDS SIX OF THEM
 
-He said three things in one message: *"the review section, the animation, is extremely laggy… as you
-scroll down some of the rest of the site is also laggy… and when I scroll too quickly, for some
-reason, it's just reloading the site on my side. It could be a problem on my phone, it could not."*
+**`Website Demo/build_pages.py`** composes `/services/`, `/projects/`, `/estimate/`, `/about/`,
+`/contact/` and `/trade/` **out of the landing page's own parts**:
 
-⭐⭐ **HE WAS RIGHT AND IT WAS NOT HIS PHONE.** Measured at 375×812 **before** any edit:
+```
+index.html  ──┬─→ assets/site.css   (the whole <style>, verbatim)
+              ├─→ assets/site.js    (the whole <script>, verbatim)
+              └─→ header / mobile nav / sticky bar / WhatsApp / footer / <section> blocks
+```
 
-| Signal | Before | After |
-|---|---|---|
-| elements carrying a live `filter` | **431** | **231** |
-| `feTurbulence` (per-pixel fractal noise) | **63** | **0** |
-| `feGaussianBlur` | **42** | **0** |
-| elements holding `will-change` (permanent GPU layers) | **107** | **18** |
-| DOM elements | 2,590 | 1,991 |
+⭐⭐ **NOTHING IS COPIED AND NOTHING IS RE-WRITTEN.** There is exactly one source for the chrome, so
+a page cannot drift from the design, and a fix reaches all seven on the next run.
 
-⭐ **WHY THE REVIEWS WERE WORST, WHICH IS THE PART THAT NAMES THE BUG:** `marbleSVG()` stacks THREE
-`feTurbulence` (octaves 3, 3, 4) plus two displacement maps, and it was called with a DIFFERENT SEED
-for 16 review cards and 6 Why tiles, so nothing could be cached between them. **A live SVG filter is
-re-evaluated whenever its element is re-rasterised, and a transform re-rasterises** — so every frame
-of the review roll was recomputing fractal noise for the card in flight.
+```bash
+cd "Website Demo" && python3 build_pages.py
+```
 
-⭐ **WHY THE TAB RELOADED:** iOS Safari kills and silently reloads a tab whose renderer exceeds its
-memory budget, and a promoted layer costs `w × h × 4` bytes whether or not anything moves. **67 of
-the 107 were the stone wheel's slabs**, most of them off-screen. It presents as "it reloaded", never
-as "out of memory", which is why it read as a phone problem for three rounds.
+⛔⛔ **TO CHANGE AN INTERNAL PAGE'S LOOK, EDIT `index.html`'s `<style>` AND RE-RUN THE SCRIPT.
+NEVER HAND-EDIT A GENERATED FILE — IT IS OVERWRITTEN.** Each one says so in its first line.
 
-⚠️⚠️ **THE COUNTS ARE MEASURED. THE EVICTION IS THE DOCUMENTED BEHAVIOUR THAT FITS THEM, AND IT IS
-NOT VERIFIED ON HIS DEVICE. ASK HIM WHETHER IT STILL RELOADS.** That is open item 1.
-
-⭐ **THE FIX CHANGED THE RENDERING PATH, NOT ONE PIXEL.** `marbleFill()` hands the same SVG string to
-the image decoder as a `data:` URI, so it is rasterised once and cached as a bitmap. Same seeds, same
-marbles. ⛔ **That mattered: D156 and D160 tuned this texture BY EYE, twice.** Anything that re-cut
-the noise would have quietly undone both.
+⭐ New page components (`.page-head`, `.nav-menu`, `.mn-sub`) live in `index.html`'s stylesheet even
+though the landing page never renders them. That costs it nothing — no element matches — and it is
+what keeps one stylesheet for the whole site.
 
 ---
 
-## 1. ⭐ THE FREEZE PROBE — NEW BASELINE, RE-MEASURED AFTER EVERY EDIT TODAY
+## 1. ⛔⛔ THE THREE BUGS THIS ARCHITECTURE PRODUCED — ALL THREE WILL COME BACK
 
-**Final state verified at 1440×900 and 768×1024:**
+### 1. ⛔⛔⛔ THE SHARED SCRIPT IS FLAT TOP-LEVEL CODE, SO ONE NULL KILLS THE WHOLE FILE
 
-| Signal | 1440×900 | 768×1024 |
-|---|---|---|
-| document height | **14641** | **18418** |
-| element count | **2577** | **2577** |
-| gallery cards | `413.2×273 ×4, 199.9×132.1 ×4` | `210.1 / 210.5 / 210.9 / 211.4` and `105.4 / 105.6 / 105.8 / 106.1` |
-| `.gal-scroll` height | — | **5632** |
-| `--galMode` / `--svcMode` / `--stoneRaster` | `(unset)` | `(unset)` |
-| `.gal-static` class on `#gallery` | **false** | **false** |
-| `feTurbulence` in document | **60** | **60** |
-| review card | dark, `rgb(21,21,27) → rgb(14,14,18)` | same |
+`assets/site.js` is not a series of IIFEs. One `wheel.addEventListener(...)` on a null throws at the
+top level and **every `const` declared below it stays in the temporal dead zone for the life of the
+page**.
 
-⚠️ **THE 768 HEIGHT MOVED FROM 18385 TO 18418 AND THAT IS EXPECTED, NOT DRIFT** — the footer's new
-social row (D178) adds 33px there and nothing at 1440. **Element count moved 2,590 → 2,541 → 2,577**:
-−49 for Tabrez's review card (D168), then +9 for the Google chip markup, +10 for the CTA labels and
-the WhatsApp button, +17 for the subtitle spans, the score and the social row. Every step accounted.
+⭐⭐ **THE SYMPTOM NAMES THE WRONG THING.** It reports
+`Cannot access 'glowItems' before initialization` from three unrelated subsystems. The real fault is
+the first throw, hundreds of lines earlier.
+
+⭐ **`orNull()` at the top of the script is the fix**: it hands back a **detached element inside a
+detached parent**, so `addEventListener`, `classList`, `style`, `innerHTML` and one step up to
+`parentElement` all answer harmlessly. ⛔ **Do NOT use it where the code already tests truthiness** —
+a stub is truthy, so it turns a deliberately skipped block into a running one.
+
+⚠️ **THE PARENT HALF ONLY FAILED ABOVE 720px**, because that is the branch of `metrics()` that reads
+the rail width. **Test every width before believing this file.**
+
+### 2. ⛔⛔ RELATIVE PATHS DO NOT SURVIVE MOVING TO A SUBDIRECTORY
+
+`assets/site/…` from `/services/` asks for `/services/assets/…`. Worse: **a `url()` resolves against
+the STYLESHEET's address, not the page's**, so `url('assets/stone-floor.webp')` inside
+`/assets/site.css` asked for `/assets/assets/…` and the page floor silently vanished on every
+internal page. **51 references are root-relative now. Keep them that way.**
+
+### 3. ⛔⛔ THE FIVE-MINUTE ASSET CACHE SERVED A JS ERROR THAT WAS ALREADY FIXED ON DISK
+
+Assets are `public, max-age=300`; `index.html` is `no-cache`. Three rounds were spent looking at a
+stale `site.js`. ⭐ **Closed permanently: the asset URLs are content-hashed** (`site.js?v=<sha1>`), so
+a changed file always has a changed URL — on the dev server, on his phone, and on whatever host this
+ends up on.
+
+---
+
+## 2. ⭐ THE FREEZE PROBE — RE-MEASURED AFTER EVERY EDIT THIS ROUND
+
+**The landing page, verified at the end of the round:**
+
+| Signal | 375×812 | 768×1024 | 1440×900 |
+|---|---|---|---|
+| document height | **14285** | **18418** | **14641** |
+| element count | — | **2622** | **2622** |
+| `.gal-scroll` height | (static) | **5632** | **4950** |
+| `--galMode` | `phone` | `(unset)` | `(unset)` |
+| `.gal-static` on `#gallery` | **true** | **false** | **false** |
+| `feTurbulence` in document | — | — | **60** |
+
+⭐⭐ **768 AND 1440 ARE THE SAME NUMBERS THEY WERE BEFORE THIS ROUND STARTED.** Everything structural
+landed either on the phone or on the new pages. Element count moved 2577 → 2622: the `.gs-swap`
+wrapper, the nav menu's eight links, the menu's three CTAs and the two mobile submenus. Every step
+accounted.
 
 ### ⛔ THE PROCEDURE — USE THIS VERSION
 
 **1. Probe with `scrollTo({top:y, behavior:'instant'})`. Always.** `<html>` carries
 `scroll-behavior:smooth`, so every plain `scrollTo()` in a probe ANIMATES.
-**2. At 768, park at `galScrollTop + 2000` and CONVERGE — poll card widths until three consecutive
-reads agree.** Settles in ~9s. A fixed wait passes spuriously.
-**3. The tells differ.** 1440 must be FLAT (all four big cards equal); **768 is a clean rising
-progression** (210.1 → 211.4) and that is the real layout — do not "fix" it.
-**4. Sample in ≤24s chunks** — `javascript_tool` times out at 30s.
-⭐ **CHECK `--galMode` AND `.gal-static` FIRST AND YOU MAY NOT NEED ANY OF IT.** Both are
-unset/false above 720px, which proves the phone branch never ran.
+**2. At 768, park at `galScrollTop + 2000` and CONVERGE** — poll card widths until three consecutive
+reads agree. Settles in ~9s. A fixed wait passes spuriously.
+**3. Sample in ≤24s chunks** — `javascript_tool` times out at 30s.
+⭐ **CHECK `--galMode` AND `.gal-static` FIRST AND YOU MAY NOT NEED ANY OF IT.**
 
 ---
 
-## 2. ⛔ SCOPE
+## 3. ⛔ SCOPE — THE TABLET IS NEXT, AND HE HAS NOT CALLED IT YET
 
-**DESKTOP AND TABLET ARE FROZEN. THE WORK IS MOBILE, ON HIS PHONE, OVER THE LAN LINK.**
+**HE SAID: *"we are now going to work on the tablet version of the site, after you have created the
+internal pages."* THE PAGES ARE DONE. ⛔ HE STILL HAS NOT SAID GO — and mid-round he said
+*"we haven't started working on the tablet version, so don't worry about that."* WAIT FOR IT.**
 
 | Band | What it gets | Status |
 |---|---|---|
 | **≤ 720px** | the mobile build | ⭐ live scope |
-| **721–1120px** | the old tablet/fallback layouts | ⛔ **frozen** |
+| **721–1120px** | the old tablet/fallback layouts | ⛔ **frozen — NEXT, on his word** |
 | **≥ 1121px** | the desktop composition | ⛔ **frozen, signed off (D91)** |
 
-⚠️ `index.html` is one file with **inline CSS**, so nearly every rule is unscoped. ⛔ **Mobile work
-goes inside `@media(max-width:720px)`. Never edit a base rule to fix mobile.**
+⭐⭐ **THE INTERNAL PAGES ARE THE ONE EXEMPTION AND HE GRANTED IT EXPLICITLY:** *"when I spoke about
+the internal dedicated pages, I mean, this happens for desktop, tablet, and mobile."* Work on the
+PAGES at any width. Work on the LANDING PAGE only on the phone.
 
-⭐ **HE UNFREEZES BY NAMING AN ITEM, MID-MESSAGE.** This round he named the footer (D178) and "the
-site" for the WhatsApp button (D173) — both were built at every width **because they are ADDITIVE**:
-a new row and a fixed overlay that re-compose nothing. ⚠️ **When the boundary is unclear, take the
-reversible reading and tell him you did.**
+⚠️ `index.html` is one file with **inline CSS**, so nearly every rule is unscoped. ⛔ **Landing-page
+mobile work goes inside `@media(max-width:720px)`. Never edit a base rule to fix mobile** — unless
+the element does not render above 720px at all (`.nav-burger`, `.mbar`), which is why D184's burger
+change was safe in the base rule.
 
-⭐ **NEW MARKUP CANNOT BE SCOPED BY A MEDIA QUERY (D120).** Default it to `display:none` in the base
-rule and let the phone opt in. This round it carried the Google mark, the reason bubbles, the two
-CTA label lengths and the phone's own subtitle — **five separate uses, all in `.g-mark,.g-stack,
-.chip-reason,.cta-short,.hs-phone{display:none}`.**
-⭐ **AND FOR A COPY CHANGE, THE IDIOM IS TWO SPANS, ONE SHOWN** — `.svc-sub-long`/`.svc-sub-short`
-(D96) is the precedent, and `.hs-wide`/`.hs-phone` (D175) now follows it.
-
-⚠️ **`--faqMode` / `--galMode` / `--svcMode` / `--hxMode` / `--stoneRaster` ARE THE IDIOM FOR "IS
-THIS A PHONE?"** — declared in CSS, read back by script. ⛔ A second `matchMedia` in JS is this
-project's most repeated bug (D51, D59, D68, D78, D93, D105).
+⭐ **HE UNFREEZES BY NAMING AN ITEM, MID-MESSAGE** — this round the desktop nav bar's quote button
+(D181). ⚠️ **When the boundary is unclear, take the reversible reading and tell him you did.**
 
 ---
 
-## 3. ⛔ THE LINK
+## 4. ⛔ THE LINK, AND THE HOST QUESTION HE HAS NOT ANSWERED
 
 ```bash
 cd "Website Demo" && nohup caffeinate -ims node dev-server.js > /tmp/topcat-server.log 2>&1 &
@@ -120,39 +136,39 @@ cd "Website Demo" && nohup caffeinate -ims node dev-server.js > /tmp/topcat-serv
 **Give him `http://192.168.1.102:5501`** — re-check with `ipconfig getifaddr en0`.
 
 ⭐ **THE SERVER IS DETACHED ON PURPOSE (PPID 1).** ⛔ **DO NOT `preview_stop` IT, DO NOT KILL IT TO
-RESTART.** Verify with `lsof -nP -iTCP:5501 -sTCP:LISTEN`. **PID 5158, untouched across five rounds.**
+RESTART.** Verify with `lsof -nP -iTCP:5501 -sTCP:LISTEN`. **PID 5158, untouched across six rounds.**
 
 ⭐⭐ **EVERY SAVE TO `index.html` RELOADS HIS PHONE.** Tell him before a run of edits.
 
-### ⛔ `stone.css` IS CACHED FOR FIVE MINUTES
-`index.html` is `no-cache`; **assets are `public, max-age=300`**. Prove it before debugging anything:
-`fetch('/stones/stone.css?bust='+n)` against `document.styleSheets`. ⚠️ Warn the client too.
+### ⚠️⚠️ HE IS REVIEWING ON `thadeusg3.sg-host.com`, NOT ON THE LAN LINK
 
-⛔ **ALL OF §3 IS DEV-SERVER ONLY.** No production host is chosen.
+His screenshot on 13 Aug carried that URL. **It was serving the END OF THE PREVIOUS ROUND** —
+verified by diffing markers against the local file. **ASK HIM AGAIN HOW FILES GET THERE.** Until that
+is answered, anything you build may be invisible to him, and he will report bugs you already fixed.
+
+⛔ Otherwise **all of §4 is dev-server only.** No production host is chosen.
 
 ---
 
-## 4. ⭐ THE CODE IS ON GITHUB, AND IT IS PUBLIC
+## 5. ⭐ THE CODE IS ON GITHUB, AND IT IS PUBLIC
 
-**https://github.com/ThadGC/topcatwork** — **4 commits on `main`, HEAD `d10d8ec`, 13 Aug.**
+**https://github.com/ThadGC/topcatwork** — **5 commits on `main`, HEAD `4e123a6`, 13 Aug.**
 
 ⚠️ **HE CHOSE PUBLIC KNOWINGLY.** Do not re-litigate it unprompted. ⛔ 18 files name Nile Stone and
 Next Stone Slabs — §2 rule 9's buying list, now indexed. A private repo with collaborators gives his
 devs identical access; the offer stands.
 
-⭐ **USE `git status --porcelain` AS A SCOPE PROOF.** Every round this week it confirmed only
-`Website Demo/index.html` and `HANDOVER.md` changed, and **nothing under `stones/*.html`**.
+⭐ **USE `git status --porcelain` AS A SCOPE PROOF** before every commit.
 
 ⛔ **GITIGNORE PATTERNS MUST BE `**/`-ANCHORED** — a pattern with a slash is anchored to the repo
 root and the site lives at `Topcat-Worktops-main/Website Demo/…`.
 
-⚠️⚠️ **"NOT RENDERED" IS NOT "REMOVED", AND THIS REPO IS PUBLIC.** D168 was nearly shipped by adding
-a name to a runtime `.filter()`, which took the card off the deck **and left the review verbatim in
-the page source**. If he asks for content to come off, delete it from what ships.
+⚠️⚠️ **"NOT RENDERED" IS NOT "REMOVED", AND THIS REPO IS PUBLIC.** If he asks for content to come
+off, delete it from what ships.
 
 ---
 
-## 5. ⛔ THE INTEGRITY RULE — still the one that matters most
+## 6. ⛔ THE INTEGRITY RULE — still the one that matters most
 
 > "These names cannot be wrong. If someone googles it and sees it looks different here, then we
 > have a big problem."
@@ -163,15 +179,14 @@ cd "Website Demo/stones" && python3 harvest/verify.py
 
 > 132 stones, 132 with a photograph, 132 pages on disk — ✅ PASS *(last run 13 Aug)*
 
-⚠️ It covers the STONES only. **Nothing in it looks at the landing page**, which is where all of this
-round's work landed. `NOT_A_STONE` is the exemption list — keep it exact.
+⚠️ It covers the STONES only. **Nothing in it looks at the landing page or the new pages.**
+`NOT_A_STONE` is the exemption list — keep it exact.
 
-⭐ Both go-live copy scans pass: rule 1 (in-house fabrication) returns nothing, and rule 11's
-centimetres scan returns only `index.html` — **Judy Z.'s "10cm", the documented exception.**
-⚠️ Run the centimetres scan with `grep -Ev "(^|/)v2/|\.removed"` or it also reports an archived file
-under `stones/.removed-2026-08-10/`, which is not live.
+⭐ Both go-live copy scans pass: rule 1 returns nothing, rule 11's centimetres scan returns only
+`index.html` — **Judy Z.'s "10cm", the documented exception.**
+⚠️ Run the scans with `grep -Ev "(^|/)v2/|\.removed|\.bak"` or archived files report as live.
 
-### ⭐⭐ AND A NEW GATE — RUN IT AFTER EVERY CSS EDIT
+### ⭐⭐ AND THE CSS GATE — RUN IT AFTER EVERY CSS EDIT
 
 ```bash
 cd "Website Demo" && python3 -c "
@@ -188,101 +203,107 @@ while i<len(css):
 print('comment issues:',bad,'| braces:',css.count('{')-css.count('}'))"
 ```
 
-**It must print `0` and `0`.** See §7.1 — this caught a live bug twice in one day.
+**It must print `0` and `0`.** See §8.1.
 
 ---
 
-## 6. ⭐ WHERE THE PHONE STANDS
+## 7. ⭐ WHERE THINGS STAND
+
+### The pages
+
+| Page | State |
+|---|---|
+| **`/`** | the landing page, unchanged above 720px |
+| **`/services/`** | hub: the six service tiles, process, why, reviews, enquiry |
+| **`/projects/`** | ⭐ the gallery as a **plain column at every width** (D195), reviews, process, enquiry |
+| **`/estimate/`** | the estimator **and its stone-picker modal**, the wheel, process, enquiry |
+| **`/about/`** | Nick and Rimsha, why, reviews, FAQ, enquiry |
+| **`/contact/`** | the enquiry block, FAQ, reviews |
+| **`/trade/`** | ⭐ **rebuilt** — six benefit cards, four audiences, reviews, process, its own trade form |
+| **`/stones/`** | ⚠️ **NOT rebuilt.** The collection page already IS the stones page; the nav points at it |
+| `/materials/` `/guides/` `/worktops/` `/sitemap.html` | the SEO layer, nav repointed only |
+
+### The phone
 
 | Section | State |
 |---|---|
-| **Top nav** | burger is three bare stripes, no box (D132) |
-| **Hero** | ⭐ **REBUILT THIS ROUND.** Title 80px under the nav; its own subtitle *"Quartz, granite and marble worktops, chosen with you and fitted by our own team."* (D175); **Free quote stacked above Call us** (D177); four bubbles — **Google / ★★★★★ 5.0** with the real Google mark (D170/D176), **10 year guarantee**, **72-hour aftercare**, **Quick turnaround time** (D172); **no scroll arrow** (D174); even 35/34/35 gaps. The three icon facts are `display:none`, not deleted |
-| **Reviews** | ⛔ **BACK TO THE DARK CARD** (D167, reversing D116/D156/D160). No entrance (D134/D145). **15 reviews — Tabrez Chaudhry removed** (D168) |
-| **Services** | popularity order, tiles link to their page, gold rim, 7px corners (D146). ⭐ **Photographs at FULL BRIGHTNESS** — the scrim only covers the two type bands (D162) |
-| **Project gallery** | ⛔⛔ **NO ANIMATION AT ALL. A plain natively-scrolled column of 8 cards, 331×145** (D163). No pin, no runway, no rAF. **No gold rim, nothing on finger-touch** (D164/D165). Tapping still opens the project |
-| **Stone wheel** | bend 30, card 0.80, cap 390, bare gold arrows (D135–D138) — ⛔ untouched for three rounds. ⭐ `will-change` dropped from its 67 slabs (D166) |
-| **Estimator** | rebuilt: one piece = one labelled card (D148) |
-| **Process** | title 89.5px under the divider (D149) |
-| **About** | Nick and Rimsha only, two 3:4 plates — **DESKTOP TOO** (D150); copy centred, phone only (D151) |
-| **FAQ** | plain accordion; nothing open on arrival (D152/D154) |
-| **Footer** | centred head, badge pills, full-width contact pills (D153/D159). ⭐ **NEW: a social row — Instagram, LinkedIn, WhatsApp** (D178) |
-| **Floating button** | ⭐ **NEW: WhatsApp, black and gold, bottom-right, clears the sticky bar by 14px** (D173). Number `447464940287` |
-| Page floor | veil 0.46 (D123). ⛔ Every section dark — light bands were built and rejected (D161) |
-| Sticky bottom bar | Get a quote · Email · Call (D99/D106) |
-| Everything else | ⛔ untouched — still the desktop-era layout at phone width |
+| **Top nav** | three bare stripes sized to the logo, no box (D184); bottom line carries the hero's curve, small (D183); **logo goes to `/`** (D194) |
+| **Burger menu** | seven links; **Services and Stones have expanding carets** (D194); three CTAs at the foot — Get a free quote / WhatsApp / Call us (D185) |
+| **Hero** | photo 30% darker (D187); **both buttons 76%** — "Get a free quote" over "Give us a call" (D188); four bubbles in a **2×2 grid** (D186) |
+| **Reviews** | dark card, 15 reviews, no entrance |
+| **Services** | popularity order, tiles link to their page, photographs at full brightness |
+| **Stone selector** | ⭐ **now ABOVE the project gallery** (D179), phone only |
+| **Project gallery** | plain natively-scrolled column of 8 cards, no animation |
+| **Estimator** | one piece = one labelled card |
+| **Footer** | centred head, badge pills, social row; **logo goes to `/`** |
+| **Floating button** | WhatsApp, **bottom corner**, rides the sticky bar when it appears (D180) |
+| Sticky bottom bar | Get a quote · Email · Call — quote button now **flat, not milled** (D181) |
 
 ---
 
-## 7. ⛔ THE LESSONS THAT COST THE MOST
+## 8. ⛔ THE LESSONS THAT COST THE MOST
 
 ### 1. ⛔⛔⛔ PROSE APPENDED AFTER A CLOSED `*/` IS BARE CSS, AND IT EATS THE NEXT RULE
 
-Twice in one day, both mine. A comment was extended by typing under it — but the `*/` was already
-there, so the new text sat in the stylesheet as garbage. **The parser discarded it AND the rule
-immediately after it.** `#hero .hero-cue{display:none}` silently did nothing while the rules further
-down applied normally.
+The parser discards it AND the rule immediately after it. ⭐⭐ **IT LOOKS EXACTLY LIKE A SPECIFICITY
+PROBLEM AND IS NOT ONE.** The tell: the rule is **absent from `document.styleSheets` altogether**.
+§6 has the gate.
 
-⭐⭐ **IT LOOKS EXACTLY LIKE A SPECIFICITY PROBLEM AND IS NOT ONE.** The tell: the rule is **absent
-from `document.styleSheets` altogether**, not merely outranked. Walk the sheet and check
-`el.matches(selectorText)` — if nothing matches, it was never parsed.
-⛔ **The first instance had been live for a whole round before it was found.** §5 now has the gate.
+### 2. ⛔⛔ MOVING A CSS BLOCK: CHECK THE DESTINATION, NOT JUST THE DIFF
 
-### 2. ⛔⛔ WHEN A CHANGE HAS A COST SOMEWHERE ELSE, THE COST STAYS BEHIND — FOURTH TIME
+D195 lifted the static-gallery rules out of the phone media query — and the first attempt deleted the
+block and re-inserted it **at the same index**, so it never left. The diff looked right. The tell was
+`.gal-mid` still computing to `display:block` instead of `contents`.
 
-`#gallery` carried `margin-top:-70px`, written by D129 purely to cancel a nav reserve inside
-`.gal-mid`. The gallery rebuild deleted the reserve and **left the compensation**, so the section rode
-up and **the divider ran straight through "View our project gallery"**. He found it in a screenshot.
+### 3. ⛔⛔ A FLEX COLUMN SQUASHES ITS ROWS BEFORE IT SCROLLS
 
-⭐ **EVERY MEASUREMENT I TOOK WAS INSIDE THE GALLERY; THAT NUMBER DESCRIBES THE JOIN TO THE SECTION
-ABOVE IT.** After changing a value, grep for what was derived from it — and look at the seams.
-Previous three: D142/`animPx`, D156/`--gold-lo`, D154/the FAQ drawer.
+The menu's sixth submenu link was cut in half. Raising the height cap changed nothing: the panel was
+**asking for 216px and rendering at 194**, because the default `flex-shrink:1` let the browser take
+22px out of it. ⭐ `flex:none` on every row is the fix; the overflow then goes to the container's
+`overflow-y`, which is what it is for.
 
-### 3. ⛔ REMOVING A THING LEAVES ITS SPACE BEHIND, AND THE HERO TOOK THREE PASSES
+### 4. ⛔ A COMPONENT LIFTED OUT OF THE HERO BRINGS ITS ENTRANCE WITH IT
 
-Cutting the fact row freed ~101px, and because `.hero-inner` is a block in normal flow it **all
-pooled at the bottom as one hole**. Pass 1 spent it on the gaps; pass 2 respent it after the layout
-changed again; pass 3 he said *"the gaps in between is just too big"* — because the scroll arrow was
-a hard floor forcing the space between elements rather than above them. **Removing the arrow was what
-finally let the space go where he wanted it.**
+The trust bubbles rendered at **opacity 0** on the new pages — present, 89px tall, holding their
+space, invisible. `.hero-el` is released by a class the HERO gets on load, and there is no hero on
+those pages. It reads as "the markup was not inserted", which is the wrong thing to go looking for.
 
-### 4. ⛔ "REMOVE THE ANIMATION" AND "IT IS LAGGING" WERE ONE FIX, AND FREEZING WOULD HAVE FAILED BOTH
+### 5. ⛔ A DIALOG IS A SIBLING OF ITS SECTION, NOT A CHILD
 
-Pinning the accordion at `q=1` would have removed the animation and kept the machine — a sticky pin,
-a viewport-tall stage and eight absolutely-positioned cards moved by a scroll-derived transform every
-frame. **That answers his words and not his complaint.** The engine is stopped instead: `measure()`
-returns early, and **both `frame()` AND `render()` bail** — `render()` needed its own guard because
-it is called directly at boot, and **an inline style beats a stylesheet rule**.
+The estimator's stone-picker lives outside `#estimator` (a full-screen dialog has to, or the
+section's stacking context traps it), so extracting the section left it behind and the estimator
+wired itself against nulls. **It threw at the IIFE's closing brace — a line number that points at
+nothing.**
 
-### 5. ⚠️ A LAYOUT CHANGE CAN COST A LINE ITS BREAK POINT
+### 6. ⚠️⚠️ THE PREVIEW PANE GOES `visibilityState:'hidden'` AND FREEZES EVERY TRANSITION AT ZERO
 
-Putting the hero subtitle in a bordered pill stranded "by us" on a line alone: `.nowrap` holds a
-283px phrase together and the first sentence measures 290px, so the measure had to land in a **7px
-window**. ⭐ **`text-wrap:balance` was the obvious reach and is WRONG here** — it evens the lines it
-CAN break and cannot break the locked phrase, producing a ragged ascending wedge. The pill was
-removed the next message and the problem went with it.
+Twenty minutes went into a menu that read `opacity:0` on every row and was styled perfectly. ⭐ **The
+proof is `el.getAnimations()`** — a transition sitting at `currentTime:0` in state `running` is a
+stopped clock, not a cascade problem. ⭐ **Check `document.visibilityState` FIRST.** A screenshot
+still forces a paint; computed styles of animated properties do not.
 
-### 6. ⚠️ A BRAND-NAME SEARCH IS ACTIVELY DANGEROUS FOR SOCIAL LINKS
+### 7. ⛔ WHEN A CHANGE HAS A COST SOMEWHERE ELSE, THE COST STAYS BEHIND — FIFTH TIME
 
-Searching "TopCat Worktops" surfaces Top Cat Furniture, Top Cat Media Group and unrelated "topcat"
-handles. ⭐ **The two real profiles came off TopCat's own live site and were then checked for a 200.**
-Facebook returned 400 and the TikTok handle serves an empty stub, so neither was added. **Never fill
-a social row by guessing a handle.**
+D179 moved the stone selector above the gallery, and D158's seam compensation — keyed to a DOM
+selector, not a painted position — would have tightened the wrong seam. Previous four: `animPx`,
+`--gold-lo`, the FAQ drawer, `#gallery`'s own `margin-top:-70px`.
 
 ---
 
-## 8. ⚠️ THE ENVIRONMENT TRAPS
+## 9. ⚠️ THE ENVIRONMENT TRAPS
 
-- ⛔⛔⛔ **A STRAY `*/` SILENTLY DELETES THE NEXT CSS RULE.** §7.1, and the gate in §5.
+- ⛔⛔⛔ **A STRAY `*/` SILENTLY DELETES THE NEXT CSS RULE.** §8.1, and the gate in §6.
+- ⛔⛔ **THE PANE GOES `visibilityState:'hidden'`.** §8.6. `tabs_create` + `navigate` sometimes
+  fronts it; often nothing does. Verify by screenshot, not by computed opacity.
 - ⛔⛔ **`scroll-behavior:smooth` IS ON `<html>` — EVERY PROBE `scrollTo` ANIMATES.**
-- ⛔⛔ **THE PANE GOES `visibilityState:'hidden'` AND THEN SILENTLY IGNORES `scrollTo`.** ⭐ Check
-  `document.visibilityState` FIRST. `tabs_select` did not front it; **`tabs_create` + `navigate` did.**
+- ⛔ **THE PANE SILENTLY RESIZES ITSELF.** A probe read `innerWidth:570` after being set to 375.
+  **Read `innerWidth` in the same call as your measurements.**
 - ⛔ **A STALE SCREENSHOT WILL DISAGREE WITH LIVE DOM READS, AND THE DOM IS RIGHT.**
 - ⛔ **`javascript_tool` TIMES OUT AT 30s.** Split long settles into ≤24s calls.
 - ⛔ **THE PANE CANNOT TAP ANYTHING BELOW 768px AND IT FAILS SILENTLY.** Use `el.click()`.
 - ⚠️ **THE PANE DOWNSCALES A 1440px VIEWPORT INTO AN ~800px IMAGE** — measure desktop, don't look.
-- ⚠️ **`zoom` with a `region` is not supported.** Apply a temporary `transform:scale()` with a corner
-  `transform-origin` and screenshot that — 2.3× proved the service-tile numerals this round.
+- ⚠️ **The browser console ACCUMULATES ACROSS NAVIGATIONS.** Filter by the current `?v=` hash or you
+  will chase an error you already fixed.
 - ⛔ **`catalogue_source.py` is a 52-STONE SNAPSHOT, not the range.** `catalogue_active.py` is.
 - ⛔ **AN INVENTED DATA VALUE CAN BLANK THE WHOLE SITE.** Valid presets: calacatta, carrara, crema,
   emperador, eternal, fumo, goldveil, mist, nerogold, statuario.
@@ -291,9 +312,9 @@ a social row by guessing a handle.**
 
 ---
 
-## 9. ⛔ RULES THAT MUST NOT BE BROKEN
+## 10. ⛔ RULES THAT MUST NOT BE BROKEN
 
-1. ⛔ **A stone's NAME and its PHOTOGRAPH must both match the supplier's own** (§5).
+1. ⛔ **A stone's NAME and its PHOTOGRAPH must both match the supplier's own** (§6).
 2. ⛔ **Fabrication is OUTSOURCED. Never claim in-house.** Templating, fitting and aftercare ARE
    theirs and may be claimed freely.
 3. ⛔ **Never state something we cannot guarantee, and never use an absolute.**
@@ -304,122 +325,115 @@ a social row by guessing a handle.**
 8. **No showroom. Never show the review count. Never signal a young company. Value, not cheap.**
 9. **Voice:** quietly confident master. British English, commas not em dashes, no exclamation marks.
 10. ⛔ **The logo is the client's artwork and is never re-drawn. Set HEIGHT only.**
-11. ⛔ **ONE DEVICE AT A TIME. Desktop is frozen and only the client unfreezes it** — see §2.
+11. ⛔ **ONE DEVICE AT A TIME. Only the client unfreezes a band** — see §3.
 12. ⛔ **The Google mark stays in its four official colours and the WhatsApp glyph keeps its shape.**
-    They attribute a rating and a channel to their owners, which is the one thing that makes a
-    third-party mark legitimate here. **The Google "G" is the only multi-colour element on the site,
-    on purpose** — that is what makes it read as somebody else's verdict rather than our decoration.
+    **The Google "G" is the only multi-colour element on the site, on purpose.**
+13. ⭐⭐ **THIS IS A DESIGN BUILD. NEVER RAISE THE MISSING FORM BACKEND AS A BLOCKER.** Client,
+    13 Aug: *"right now, we are mostly working on the design of the site, the buttons and the forms
+    and all those things. We will tie them where they need to be once the time is right, especially
+    the contact forms, especially the WhatsApp working."* Build them so they look and behave right,
+    and stop there. ⛔ The trade form's send button is `type="button"` for exactly this reason — a
+    submit with no action would reload the page under him mid-review.
 
 ---
 
-## 10. OPEN — DO THESE NEXT
+## 11. OPEN — DO THESE NEXT
+
+### ⭐ The one that blocks everything
+
+1. ⭐⭐ **HOW DO FILES GET TO `thadeusg3.sg-host.com`?** §4. He reviews there; it was a full round
+   behind. **Nothing else on this list matters if he cannot see the work.**
 
 ### ⭐ Ask him these, they are cheap
 
-1. ⭐⭐ **DOES IT STILL RELOAD, AND IS IT SMOOTHER?** §0. 89 compositing layers and all 63 turbulence
-   filters are gone, but **the eviction theory is unverified on his handset.** This is the one
-   measurement only he can take.
-2. ⭐⭐ **FACEBOOK, TIKTOK, YOUTUBE?** Only Instagram and LinkedIn exist on his own site. Facebook
-   returns 400 and the TikTok handle is an empty stub. ⛔ **Do not guess handles** (§7.6).
-3. ⭐ **"72-hour aftercare" AND "Quick turnaround time" — two bubbles or one?** His sentence reads
-   either way. Two were built because deleting one is a line and rewriting is not.
-4. ⭐ **SHORT OR LONG BUTTON LABELS?** The phone says "Free quote" / "Call us" — his own words, and
-   forced at the time by a clipping constraint that no longer exists now they are stacked.
-5. ⭐ **THE PHONE'S SUBTITLE DROPPED THE PLACE.** "across London and the Home Counties" is gone from
-   the hero on mobile only. It is still in the footer, FAQ, schema and page title.
-6. ⚠️ **IS IT RIMSHA OR REMSHA?** He said "Remsha" in a voice note; the page says **Rimsha** and that
-   was kept. ⛔ It is a real person's name on a public page. **Same call taken on Jhanzeb.**
-7. ⭐ **Does the brand marquee come off DESKTOP too?** D143 hid it on the phone only.
-8. ⚠️ **HAS HE SEEN `/stones/compare.html` WORKING?** The picker was broken from the day it was built
-   (D155), so he has never used the page as designed.
-
-### ⛔ The two that actually block go-live — neither is design
-
-9. ⭐⭐ **The enquiry form has no backend, and it carries file uploads.** `buildEnquiry()` assembles a
-   `FormData` and has nowhere to POST. **Top open item for seventeen sessions.** ⚠️ Compare sends a
-   shortlist at it via `?stones=` that nothing reads.
-10. **Photography — the STONES are done. The PEOPLE and the PROJECTS are not.** ⚠️ Say out loud that
-    the director portraits and the Why feature shot are placeholders. ⚠️ **Three of the six service
-    tiles show the wrong subject** — Bathrooms a bare slab, Outdoor Kitchens a quarry, Commercial a
-    kitchen. ⭐ **This got more visible this round**, because D162 took those photographs up to full
-    brightness.
+2. ⭐⭐ **DOES IT STILL RELOAD, AND IS IT SMOOTHER?** 89 compositing layers and all 63 turbulence
+   filters went in the performance round, but **the eviction theory is still unverified on his
+   handset.** Asked once, not answered.
+3. ⭐⭐ **FACEBOOK, TIKTOK, YOUTUBE?** Only Instagram and LinkedIn exist on his own site. Facebook
+   returns 400 and the TikTok handle is an empty stub. ⛔ **Do not guess handles.**
+4. ⭐ **THE PHONE'S HERO SUBTITLE DROPPED THE PLACE.** "across London and the Home Counties" is gone
+   from the hero on mobile only. It is still in the footer, FAQ, schema and page title.
+5. ⚠️ **IS IT RIMSHA OR REMSHA?** He said "Remsha" in a voice note; the page says **Rimsha**.
+   ⛔ It is a real person's name on a public page. **Same call taken on Jhanzeb.**
+6. ⭐ **Does the brand marquee come off DESKTOP too?** D143 hid it on the phone only.
+7. ⚠️ **HAS HE SEEN `/stones/compare.html` WORKING?** The picker was broken from the day it was built.
 
 ### The rest
 
-11. ⭐ **The service pages need the global sections** — no project gallery, stone selector or
-    estimator. Extract once into shared files that `build_services.py` wires into all six.
-12. ⚠️ **A live copy problem, flagged and NOT fixed** — `SERVICES[0].long` and the service pages'
-    "Vein-matched by hand" both claim fabrication TopCat outsource (rule 2) and state an absolute
-    (rule 3). ⛔ **Live on the service pages right now.** ⚠️ `verify.py` check 7 does not scan
-    index.html's inline data.
-13. ⭐ **Pick a production host** and give it brotli + long-lived cache headers (§3).
-14. ⭐ Close the licensing question on Caesarstone, CRL and Bloom. ⛔ Classic Quartz Stone is off
+8. ⭐⭐ **THE TABLET ROUND, THE MOMENT HE CALLS IT.** §3. It still has the flip-card grid, black
+   review cards, the brand marquee, **and every desktop-shaped thing the phone has fixed** —
+   including the animated gallery on the landing page.
+9. ⭐ **Photography — the STONES are done. The PEOPLE and the PROJECTS are not.** ⚠️ Say out loud
+   that the director portraits and the Why feature shot are placeholders. ⚠️ **Three of the six
+   service tiles show the wrong subject** — Bathrooms a bare slab, Outdoor Kitchens a quarry,
+   Commercial a kitchen. ⭐ **Now on `/services/` as well as the landing page.**
+10. ⚠️ **A live copy problem, HALF fixed.** `SERVICES[0].long` was corrected on 13 Aug — it claimed
+    fabrication TopCat outsource AND stated an absolute. ⛔ **The same phrase is still live on the
+    six service PAGES** ("Vein-matched by hand"). ⚠️ `verify.py` check 7 does not scan inline data.
+11. ⭐ **Pick a production host** and give it brotli + long-lived cache headers.
+12. ⭐ Close the licensing question on Caesarstone, CRL and Bloom. ⛔ Classic Quartz Stone is off
     limits. ⭐ **Calacatta Gold is UNRESOLVED** — needs the maker's name from his intro video.
-15. **The TABLET round**, when he calls it. ⚠️ It still has the flip-card grid, black review cards,
-    the boxed burger, the brand marquee, **and every desktop-shaped thing the phone has now fixed** —
-    including the whole animated gallery engine this round removed on mobile.
 
 **Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing
 (⚠️ the estimator's thickness toggle currently moves no number, which is correct until he rules),
-brackets for vanity tops / fireplaces / tables, the hero's "Request a call" demotion (asked four
-times), and the £3k vs £3,850 three-slab discrepancy.
+brackets for vanity tops / fireplaces / tables, and the £3k vs £3,850 three-slab discrepancy.
 
 ---
 
-## 11. ⭐ HOW THIS CLIENT WORKS
+## 12. ⭐ HOW THIS CLIENT WORKS
 
 ⛔⛔ **DO THE THING HE ASKED FOR, IN THE MESSAGE HE ASKED FOR IT.** He sends asks in runs of four to
-six and adds more mid-build. Do them in his order. **Say plainly which you are dropping and why.**
+eleven and adds more mid-build. Do them in his order. **Say plainly which you are dropping and why.**
 
-⚠️ **HE CORRECTS THE DIAGNOSIS, NOT JUST THE DESIGN, AND HE IS USUALLY RIGHT.** He said the site was
-lagging and might be his phone; it was 431 filtered elements and 107 compositing layers. He said the
-gaps were too big when two passes had just been spent widening them; he was right, and the arrow was
-why. **Take the report as data even when the explanation is hedged.**
+⛔⛔ **DO NOT ARGUE YOURSELF OUT OF SOMETHING HE ASKED FOR. THIS ROUND'S WORST MISTAKE.** He asked
+for a dropdown in the nav menu; D189 reasoned that a phone cannot hover and that six more links would
+push the sheet past one screen, so it built the desktop menu only and **told him the reasoning**. His
+reply: *"did I not fucking ask you to create a drop down in the menu?"* ⭐ **The reasoning was
+sound and the answer was still wrong**, because it answered a question he had not asked. If he names
+a thing, build the thing.
+
+⚠️ **HE CORRECTS THE DIAGNOSIS, NOT JUST THE DESIGN, AND HE IS USUALLY RIGHT.** **Take the report as
+data even when the explanation is hedged** — and go and MEASURE before deciding he is describing the
+thing you think he is. The "two dividers" was two dividers. The "gigantic gap" was 5632px of runway.
 
 ⚠️⚠️ **HE REVERSES HIMSELF FREELY AND FAST — SOMETIMES ONE MESSAGE LATER — AND THAT IS FINE. LOG
-IT.** This round: **D167** reversed D116 and took D156 and D160 with it; **D171** reversed D169's
-subtitle ring the next message; **D177** reversed D171's side-by-side buttons the message after that
-and partly reversed D174. ⛔ **Write the reversal into §D WITH THE REASON THE OLD DECISION EXISTED**,
-or the next session helpfully rebuilds the thing he just rejected.
+IT.** This round: **D180** reversed D173; **D188** reversed D186 one message later; **D194** reversed
+D189's own reasoning. ⛔ **Write the reversal into §D WITH THE REASON THE OLD DECISION EXISTED**, or
+the next session helpfully rebuilds the thing he just rejected.
 
-⭐ **DELETE, DO NOT OVERRIDE, WHEN REVERTING.** D167 and D171 both removed the rules rather than
-out-specifying them. Two competing descriptions of one element is how D106, D113 and D114 each lost a
-rule to a later one at equal specificity.
+⭐ **DELETE, DO NOT OVERRIDE, WHEN REVERTING.** Two competing descriptions of one element is how
+D106, D113 and D114 each lost a rule to a later one at equal specificity.
 
-⭐ **HE WILL COMMISSION SOMETHING SPECULATIVELY IF YOU GIVE HIM A WAY OUT** — D161 was asked for with
-*"if it doesn't look good, I want to be able to revert it"*, built as one fenced block, and removed in
-one command. ⭐ Offer that shape for anything open-ended.
+⭐ **HE WILL COMMISSION SOMETHING SPECULATIVELY IF YOU GIVE HIM A WAY OUT.** Offer that shape for
+anything open-ended.
 
-⭐ **HE DESCRIBES THE ANIMATION HE WANTS, NOT THE SHAPE.** *"It just plays"*, *"like an accordion"*,
-*"almost works like a parallax"*.
-
-⚠️ **HE SOMETIMES SAYS "just push to GitHub, don't tell me you're going to."** Push, then report what
-went up.
+⚠️ **HE SWEARS WHEN SOMETHING LOOKS WRONG, AND THE COMPLAINT IS ALWAYS REAL.** Do not get defensive
+and do not over-apologise. Find it, name the actual cause, fix it, say what it was.
 
 - **Walk the journey, do not check the page.**
-- ⭐ **LOOK AT THE RESULT BEFORE REPORTING IT DONE.** The divider through the title, and the faint
-  service-tile numerals, were both invisible to every measurement and obvious in a picture.
-- **Measure, then claim.** ⚠️ **And if you could not measure it, say so** — §0's eviction theory and
-  D173's WhatsApp number both shipped with an explicit "not verified".
+- ⭐ **LOOK AT THE RESULT BEFORE REPORTING IT DONE.** Every fault he found this round was invisible
+  to measurement and obvious in a picture.
+- **Measure, then claim.** ⚠️ **And if you could not measure it, say so.**
+- ⚠️ **HE SOMETIMES SAYS "just push to GitHub, don't tell me you're going to."** Push, then report.
 
 ---
 
-## 12. BUDGET AND THE DOCUMENT SET
+## 13. BUDGET AND THE DOCUMENT SET
 
 - **~82 credits** of the client's **100-credit ceiling** spent. About **18 left**. ⭐ **This round
-  cost none** — layout, CSS and script work only, no image generation.
+  cost none** — layout, CSS, script and build tooling only, no image generation.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D178**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** — do not reuse the number |
-| `HANDOVER-2026-08-12-ten-ask-mobile-round-start-here.md` | The START HERE two rounds back |
-| `HANDOVER-2026-08-12-search-compare-untied-gallery-start-here.md` | The one before that |
-| `Website Demo/index.html.pre-review-card-revert.bak` | ⭐ **This round's baseline** — the file before the review card went back to dark (D167) |
-| `Website Demo/index.html.pre-stone-sections.bak` | ⭐ **Holds the LIGHT STONE BANDS version (D161), which he rejected.** Keep it — it is the only copy |
-| `Website Demo/index.html.pre-hero-fold-round.bak` | Baseline before D144–D161 |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D196**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** |
+| **`Website Demo/build_pages.py`** | ⭐⭐ **NEW — builds the six internal pages and the shared assets.** Read its docstring before touching any generated page |
+| `Website Demo/assets/site.css` `site.js` | ⛔ **GENERATED. Never edit.** Change `index.html` and re-run |
+| `HANDOVER-2026-08-12-ten-ask-mobile-round-start-here.md` | the START HERE two rounds back |
+| `Website Demo/index.html.pre-internal-pages.bak` | ⭐ **This round's baseline** — before the pages existed |
+| `Website Demo/index.html.pre-galstatic-lift.bak` | before the static-gallery rules left the phone query |
+| `Website Demo/index.html.pre-stone-sections.bak` | ⭐ **Holds the LIGHT STONE BANDS version (D161), which he rejected.** Keep it — the only copy |
 | `Website Demo/stones/build_stones.py` | Builds the collection, compare.html and 132 stone pages |
 | `Website Demo/stones/harvest/verify.py` | ⭐ The nine-check gate. `NOT_A_STONE` is the exemption list |
-| `Website Demo/stones/stone.css` | Collection + stone + compare styles. ⚠️ Cached 5 minutes (§3) |
 | `Website Demo/dev-server.js` | Compression, caching, and the reload that keeps scroll position |
 | `stones/supplier_names.py` | ⭐ The seven authorised name differences |
 | `Docs/topcat-worktops-SEO-LOG.md` | Every URL, title, target query and SEO change |
@@ -428,4 +442,4 @@ went up.
 ⚠️ **Section numbers in `HANDOVER.md` are referenced from code comments** (`§3`, `§4`, `§5a`, `§6.7`,
 `§7.5` are live in `index.html`). **Do not renumber.**
 
-⚠️ **`Website Demo/` holds 66 `index.html.pre-*.bak` files** — and a git repo (§4).
+⚠️ **`Website Demo/` holds 68 `index.html.pre-*.bak` files** — gitignored, and a git repo (§5).
