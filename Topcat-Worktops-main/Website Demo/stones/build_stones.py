@@ -142,9 +142,9 @@ FAVICON = "/assets/brand/favicon.svg"
 # buyers need a door they can find in seconds. It is the one nav item that is a real page
 # rather than a homepage anchor.
 NAV_LINKS = [
-    ("/index.html#services", "Services"), ("/index.html#gallery", "Projects"),
-    ("/index.html#stones", "Stones"), ("/index.html#estimator", "Estimate"),
-    ("/index.html#about", "About us"), ("/trade/", "Trade"), ("/index.html#cta", "Contact"),
+    ("/services/", "Services"), ("/projects/", "Projects"),
+    ("/stones/", "Stones"), ("/estimate/", "Estimate"),
+    ("/about/", "About us"), ("/trade/", "Trade"), ("/contact/", "Contact"),
 ]
 
 # ---------------------------------------------------------------------------
@@ -332,7 +332,7 @@ def nav_html():
     return f"""<header class="bar">
   <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO}</a>
   <nav class="top">{links}</nav>
-  <a class="bar-cta" href="/index.html#cta">Get a quote</a>
+  <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
 
 
@@ -347,11 +347,11 @@ def footer_html():
     <div class="foot-col">
       <div class="foot-k">Explore</div>
       <ul>
-        <li><a href="/index.html#services">Services</a></li>
-        <li><a href="/index.html#gallery">Projects</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/projects/">Projects</a></li>
         <li><a href="/stones/">Stones</a></li>
-        <li><a href="/index.html#estimator">Estimate</a></li>
-        <li><a href="/index.html#about">About us</a></li>
+        <li><a href="/estimate/">Estimate</a></li>
+        <li><a href="/about/">About us</a></li>
         <li><a href="/trade/">For the trade</a></li>
       </ul>
     </div>
@@ -374,7 +374,7 @@ def footer_html():
   </div>
   <div class="foot-bar">
     <span>&copy; 2026 TopCat Worktops Ltd. All rights reserved.</span>
-    <div class="foot-legal"><a href="/index.html#cta">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
+    <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
   </div>
 </footer>"""
 
@@ -826,7 +826,7 @@ document.addEventListener('DOMContentLoaded',function(){
            is the only range that we have, that wouldn't make sense, because there is more."
            ⛔ Hedged deliberately, §2 rule 12 — "usually", "where we can", never an absolute. -->
       <p class="st-source">These are the stones we hold photographs of, not the limit of what we
-        can get. If the one you have in mind is not here, <a href="/index.html#cta">tell us what
+        can get. If the one you have in mind is not here, <a href="/contact/">tell us what
         you are after</a> and we will source it where we can.</p>
     </div>
   </section>
@@ -862,7 +862,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <div class="st-grid">{tiles}</div>
       <div class="st-empty" id="stEmpty" hidden>
         <p class="st-empty-line">No stone by that name in the collection.</p>
-        <p class="st-empty-sub">We can usually source it. Call <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a> or <a href="/index.html#cta">get in touch</a> and tell us what you are after.</p>
+        <p class="st-empty-sub">We can usually source it. Call <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a> or <a href="/contact/">get in touch</a> and tell us what you are after.</p>
       </div>
       </div>
   </section>
@@ -871,7 +871,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <h2>Can't choose from a screen?</h2>
     <p>Nobody should. Book a free home visit and we bring samples to you, in your light, against your cabinets. You approve photographs of your actual slab before a single cut. Prefer to talk it through? Ask for Nick.</p>
     <div class="cta-row">
-      <a class="btn-gold" href="/index.html#cta">Book a free home visit</a>
+      <a class="btn-gold" href="/contact/">Book a free home visit</a>
       <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
     </div>
   </div></section>
@@ -1237,7 +1237,7 @@ def compare_page():
       cabinets, and talk through what each one is like to live with. You approve photographs of
       your actual slab before a single cut.</p>
     <div class="cta-row">
-      <a class="btn-gold" id="cmpEnquire" href="/index.html#cta">Ask for these samples</a>
+      <a class="btn-gold" id="cmpEnquire" href="/contact/">Ask for these samples</a>
       <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
     </div>
     <p class="cmp-cta-note" id="cmpCtaNote"></p>
@@ -1248,7 +1248,7 @@ def compare_page():
     <p>Nobody should. Book a free home visit and we bring samples to you. Prefer to talk it
       through? Ask for Nick.</p>
     <div class="cta-row">
-      <a class="btn-gold" href="/index.html#cta">Book a free home visit</a>
+      <a class="btn-gold" href="/contact/">Book a free home visit</a>
       <a class="btn-ghost" href="/stones/">Back to the collection</a>
     </div>
   </div></section>

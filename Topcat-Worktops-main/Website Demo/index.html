@@ -9,7 +9,7 @@
      two sides. ⚠️ It is a FILE now, not a data-URI: the old one pasted the hand-rebuilt mark
      into the head of all 155 pages, which is 155 copies of a drawing to correct next time. -->
 <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="preload" as="image" fetchpriority="high" href="assets/site/hero-kitchen-2000.webp" imagesrcset="assets/site/hero-kitchen-1400.webp 1400w, assets/site/hero-kitchen-2000.webp 2000w, assets/site/hero-kitchen-2750.webp 2750w" imagesizes="(max-width:720px) 1000px, 1739px">
+<link rel="preload" as="image" fetchpriority="high" href="/assets/site/hero-kitchen-2000.webp" imagesrcset="/assets/site/hero-kitchen-1400.webp 1400w, /assets/site/hero-kitchen-2000.webp 2000w, /assets/site/hero-kitchen-2750.webp 2750w" imagesizes="(max-width:720px) 1000px, 1739px">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
@@ -55,7 +55,11 @@
        contrast, which is what keeps the two from reading as a patchwork (§4).
        122KB WebP, 2048x1152. One shared asset — the nav glass, the CTA card, the modal and
        the trade prompt all draw on this same variable, so there is only ever one stone. */
-    --marbleBG:url('assets/stone-floor.webp');
+    /* ⚠️ ROOT-RELATIVE, AND IT HAS TO BE (D190). A `url()` resolves against the STYLESHEET's own
+       address, not the page's — and this block is lifted to `/assets/site.css`, so a relative
+       `assets/stone-floor.webp` there asks for `/assets/assets/stone-floor.webp` and the page
+       floor silently disappears on every internal page. */
+    --marbleBG:url('/assets/stone-floor.webp');
     /* The same stone with gold in it, drawn tall and stretched to fill a multi-viewport
        backdrop (preserveAspectRatio="none"). Broad grey structure first, then fine grey
        hairlines, then the gold threads — all at very low opacity so it reads as material
@@ -235,6 +239,38 @@
     header.bar::before{opacity:1}
     header.bar::after{opacity:1;transform:scaleX(1)}
     .bar-flare{display:none}
+
+    /* ⭐ THE BAR'S BOTTOM LINE TAKES THE HERO'S CURVE — 13 August 2026 (D183).
+       Client: *"the same curve we have at the bottom of the hero section, I want the nav bar on
+       mobile to have that same curve to it, but much smaller. The curve just happens at the ends
+       on that gold line at the bottom."*
+       ⭐ **SAME MECHANISM AS `.hero::after`, NOT A LOOKALIKE** — a 1px BORDER on a box that carries
+       `border-bottom-left/right-radius`, hanging out past the screen by `--navCurveOut` so the arc
+       is cut at the edge mid-sweep. A border follows `border-radius` exactly and stays 1px doing it;
+       a gradient can only ever draw a straight band, which is the lesson written up in full on the
+       hero's own rule. Read that comment before touching either.
+       ⛔ **THE GRADIENT RAMP IS THE PRICE, AND IT IS PAID KNOWINGLY.** The straight version fades
+       from 0.08 alpha at the edges to pale champagne at the centre. A border takes ONE colour, so
+       the ramp cannot survive the change — the colour picked is the ramp's own midpoint so the line
+       reads at the same weight it did. ⚠️ Do not try to keep both: that needs two stacked
+       pseudo-elements and the header only has two.
+       ⭐ **"MUCH SMALLER" IS `--navCurveR:18px` AGAINST THE HERO'S 48px**, with the same
+       out-hang-to-radius proportion, so the two curves are the same gesture at different scales:
+       the line stays dead flat across the middle 340px of a 375px screen and only turns in the last
+       ~13px at each end.
+       ⚠️ The out-hang creates 5px of horizontal overflow either side — `html`/`body` already carry
+       `overflow-x:clip`, which is what makes this safe. Do not remove that.
+       ⚠️ `transform:scaleX(1)` from the rule above still applies and is what this replaces the
+       draw-in with on the phone; the box is wider than the screen, so scaleX must stay at 1. */
+    header.bar{--navCurveR:18px;--navCurveOut:5px}
+    header.bar::after{
+      left:calc(-1 * var(--navCurveOut));right:calc(-1 * var(--navCurveOut));
+      height:calc(var(--navCurveR) + 1px);
+      background:none;
+      border:0 solid rgba(198,166,100,0.5);
+      border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
+      border-bottom-left-radius:var(--navCurveR);border-bottom-right-radius:var(--navCurveR);
+    }
   }
 
   /* ⭐ THE REAL LOGO — client's own artwork, supplied 10 Aug 2026, in assets/brand/.
@@ -265,53 +301,239 @@
   nav.top a:hover{color:var(--bone)}
   nav.top a:hover::after{transform:scaleX(1);opacity:1}
   nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:var(--bone)}
-  /* The bar's one filled element — the primary CTA, cut like a small slab of polished champagne
-     stone: a clean brand-gradient metal fill (⚠️ the veining that used to drift through it was
-     REMOVED at the client's request — "just the pure gold gradient", don't put threads back),
-     a milled top-light/bottom-shade bevel, and the travelling shine on hover. Ink text,
-     antique-gold edge: THE action beside the quiet uppercase links. */
+  /* The bar's one filled element — the primary CTA.
+     ⛔⛔ **FLAT, NOT MILLED — 13 August 2026 (D181), AND THE OLD RECIPE IS DESCRIBED HERE SO NOBODY
+     REBUILDS IT.** It used to be cut like a small slab of polished champagne stone: a vertical
+     `gold-hi → gold → #A98A48` metal ramp, a `inset 0 1px 0` top light with a matching
+     `inset 0 -1px 0` bottom shade — a milled bevel — and a coloured drop-glow beneath. Those three
+     together are what made it read as a raised physical object. The client: *"the get your free
+     quote in the desktop nav bar and in the mobile sticky bar has that three d pattern on it.
+     Remove the three dness of it and just make it two d again."*
+     ⭐ **ALL THREE HAD TO GO TOGETHER.** Removing the bevel alone leaves the vertical ramp, which
+     still shades top-to-bottom and still reads as a curved surface; removing the ramp alone leaves
+     the bevel drawing a lit edge on a flat fill, which reads as a mistake rather than a decision.
+     What is left is one flat champagne fill and the antique-gold edge.
+     ⭐ **THE HOVER SWEEP STAYS.** It is a travelling highlight, not dimensionality — a 2D animation
+     across a 2D surface, and it is the only hover affordance this button has.
+     ⚠️ He named the DESKTOP nav bar himself, which is what unfreezes this base rule (§2 rule 15).
+     ⚠️ The veining that used to drift through the fill was REMOVED earlier at his request — "just
+     the pure gold gradient" — don't put threads back either. */
   .bar-cta{
     position:relative;overflow:hidden;
     font-family:var(--brand);font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;
     color:var(--ink);text-decoration:none;padding:12px 22px;border:1px solid rgba(140,107,52,0.9);border-radius:2px;
-    background:linear-gradient(180deg,var(--gold-hi),var(--gold) 58%,#A98A48);
-    box-shadow:inset 0 1px 0 rgba(255,251,238,0.55),inset 0 -1px 0 rgba(74,52,16,0.45),
-      0 10px 26px -14px rgba(198,166,100,0.55);
-    transition:filter .45s var(--ease),box-shadow .45s var(--ease),border-color .45s var(--ease);
+    background:var(--gold);
+    transition:filter .45s var(--ease),border-color .45s var(--ease);
     white-space:nowrap;
   }
   .bar-cta::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,0.34) 50%,transparent 68%);
     transform:translateX(-130%);transition:transform .9s var(--ease)}
-  .bar-cta:hover{filter:brightness(1.07);border-color:var(--gold-hi);
-    box-shadow:inset 0 1px 0 rgba(255,251,238,0.6),inset 0 -1px 0 rgba(74,52,16,0.4),
-      0 14px 32px -12px rgba(198,166,100,0.7)}
+  .bar-cta:hover{filter:brightness(1.07);border-color:var(--gold-hi)}
   .bar-cta:hover::after{transform:translateX(130%)}
   .bar-cta:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   @media(prefers-reduced-motion:reduce){.bar-cta::after{display:none}}
+  /* ⭐ THE SERVICES MENU — D189. Opens on hover AND on `:focus-within`, so a keyboard reaches it
+     without a script; there is no JS behind this at all.
+     ⛔ **THE `::before` BRIDGE IS LOAD-BEARING, NOT PADDING.** The header carries 18px of bottom
+     padding, so between the link's box and the panel's top there is dead space the pointer must
+     cross — and a pointer that leaves the trigger before it enters the panel closes the menu
+     mid-travel. The bridge is an invisible 16px band that belongs to the panel, so the hover never
+     breaks. This is the single most common way a CSS dropdown ships broken.
+     ⚠️ `visibility` is transitioned with a DELAY on close and none on open: without it the panel is
+     still in the accessibility tree and still tabbable while invisible, which puts eight links in
+     the tab order that nobody can see. Same reasoning as `.mbar`'s own `visibility` (D99).
+     ⚠️ `.nav-menu a::after{display:none}` because `nav.top a::after` is a DESCENDANT selector — the
+     hover underline would otherwise be inherited by all eight items in the panel and draw itself
+     under each one at nav width. */
+  .nav-item{position:relative;display:flex;align-items:center}
+  .nav-caret{display:inline-flex;align-items:center;margin-left:7px;color:var(--gold);vertical-align:middle}
+  .nav-caret svg{width:9px;height:6px;transition:transform .35s var(--ease)}
+  .nav-item:hover .nav-caret svg,.nav-item:focus-within .nav-caret svg{transform:rotate(180deg)}
+  .nav-menu{
+    position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(6px);
+    display:flex;flex-direction:column;min-width:216px;padding:9px 0;z-index:60;
+    background:linear-gradient(180deg,rgba(14,14,18,0.975),rgba(9,9,12,0.975));
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border:1px solid var(--hair);border-radius:3px;
+    box-shadow:0 26px 54px -22px rgba(0,0,0,0.9);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .3s var(--ease),transform .3s var(--ease),visibility 0s .3s;
+  }
+  .nav-menu::before{content:"";position:absolute;left:0;right:0;top:-16px;height:16px}
+  .nav-item:hover .nav-menu,
+  .nav-item:focus-within .nav-menu{
+    opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);
+    transition:opacity .3s var(--ease),transform .3s var(--ease),visibility 0s;
+  }
+  .nav-menu a{
+    padding:9px 20px;font-size:10.5px;letter-spacing:0.15em;white-space:nowrap;
+    transition:color .3s var(--ease),background .3s var(--ease);
+  }
+  .nav-menu a::after{display:none}
+  .nav-menu a:hover{color:var(--gold);background:rgba(198,166,100,0.07)}
+  .nav-menu-sep{height:1px;margin:7px 16px;background:var(--hair)}
+  .nav-menu .nav-menu-all{color:var(--gold)}
+
+  /* ============================================================================================
+     ⭐ THE INTERNAL PAGE HEAD — D190. Used by /services/, /projects/, /estimate/, /about/,
+     /contact/ and /trade/, and by nothing on this page.
+     ⛔ **IT LIVES HERE, IN THE LANDING PAGE'S OWN STYLESHEET, AND THAT IS THE ARCHITECTURE.**
+     `build_pages.py` lifts this whole `<style>` block out to `assets/site.css` and every internal
+     page links it, so there is exactly ONE stylesheet for the site and it cannot drift from the
+     design the client has signed off. Adding a page component means adding it here.
+     ⚠️ Costs this page nothing: no `.page-head` element exists in index.html, so not one of these
+     rules matches and not one of them paints.
+     ⭐ **A SHORTER RELATIVE OF THE HERO, NOT A COPY OF IT.** It takes the same curved bottom edge
+     (`--curveR`/`--curveOut`, the border-on-a-rounded-box trick documented on `.hero::after`) so an
+     internal page arrives feeling like the same site, but it is sized to introduce rather than to
+     sell: no photograph, no CTA pair, no chips. The page's own first section does the selling. */
+  /* ⛔⛔ **REBUILT 13 August 2026 (D193) AFTER THE CLIENT REJECTED THE FIRST VERSION OUTRIGHT.**
+     What was wrong, in his words: *"if they click on services, the main title is services with a
+     description of the services that they do. Then it's not two dividers. It's just the one
+     divider, and it has to have the same thing from the hero section like the Google, the ten year
+     guarantee, those buttons also go below the subtitle text."*
+     ⭐⭐ **THE THREE FAULTS, NAMED, SO NOBODY REBUILDS ANY OF THEM.**
+     1. **TWO RULES ACROSS THE PAGE, ~35px APART.** This block draws a curved hairline at its
+        bottom (`::after`), and `build_pages.py` was ALSO emitting a `.section-divider` before the
+        first section. He photographed it. The builder now skips the divider before section one —
+        this block's own edge IS that seam. Dividers between later sections are untouched.
+     2. **THE TITLE WAS A SLOGAN WHERE A LABEL WAS WANTED.** "Every kitchen began as one slab" over
+        /projects/ is hero copy on a page whose job is to say where you are. The H1 is the page's
+        NAME now, and the selling line moved into the description under it.
+     3. **IT WAS TEXT ALONE ON BLACK.** Crumb, eyebrow, huge title, paragraph, then dead space —
+        nothing to look at and nothing to trust. The hero's four bubbles now sit under the
+        description, exactly as they do on the landing page, and the eyebrow is gone because the
+        title had become the label it was duplicating.
+     ⚠️ Padding came down hard with it: 9vh → 6vh at the top and 8vh → 5vh at the bottom. The gap
+     was reading as an empty screen because there was nothing in it. */
+  .page-head{
+    position:relative;padding:calc(76px + clamp(42px,6vh,72px)) clamp(20px,5vw,64px) clamp(34px,5vh,58px);
+    text-align:center;overflow:hidden;
+    --curveR:48px;--curveOut:14px;
+    /* D196 — the landing hero's own night kitchen. Declared here rather than per page so a new
+       page cannot be built without it, and so there is one place to change the picture. */
+    --pageHeadImg:url('/assets/site/hero-kitchen-2000.webp');
+  }
+  /* ⚠️ the head is ~340px tall on a phone; cover-scaling the 2000px master to it wastes most of
+     the download, and this file is the ONE image on these pages (the performance rule from
+     11 Aug: size by the cover-scaled render width, not the element width) */
+  @media(max-width:720px){
+    .page-head{--pageHeadImg:url('/assets/site/hero-kitchen-1400.webp')}
+  }
+  /* ⭐⭐ THE PROJECTS PAGE RUNS THE GALLERY AS A COLUMN AT EVERY WIDTH — D195.
+     `build_pages.py` puts `.pg-col` on that page's <main>. Setting `--galMode` is the whole
+     switch: the gallery IIFE reads it through `galPhone()`, `measure()` returns early, and the
+     script adds `.gal-static` — the same path the phone has taken since D163.
+     ⛔ **A SECOND `matchMedia` IN JS WOULD HAVE BEEN THE OBVIOUS REACH AND IS THIS PROJECT'S MOST
+     REPEATED BUG** (D51, D59, D68, D78, D93, D105). The stylesheet stays the only thing that
+     decides, exactly as `--faqMode` / `--svcMode` / `--stoneRaster` do. */
+  .pg-col #gallery{--galMode:phone}
+  /* ⚠️ The bubbles are the hero's own `.hero-chips` markup, so they inherit every rule that shapes
+     them there — including the phone's 2×2 grid (D186). The cap keeps them from stretching to a
+     desktop measure, where four pills across a 1320px page would read as a toolbar. */
+  .page-head .hero-chips{justify-content:center;margin:clamp(20px,3vh,30px) auto 0;
+    max-width:520px;width:100%}
+  /* ⭐⭐ THE PHOTOGRAPH BEHIND THE INTERNAL PAGE HEAD — 13 August 2026 (D196).
+     Client: *"the hero section of the new internal pages have to have an image behind it. So the
+     image of the kitchen may be the nighttime or the daytime one, but possibly the nighttime one."*
+     ⭐ **THE NIGHT KITCHEN, WHICH IS THE LANDING HERO'S OWN PHOTOGRAPH** — same file, same
+     `srcset` sizes, so it is already in the browser's cache from the home page and costs a repeat
+     visitor nothing. It also means an internal page cannot end up showing a different kitchen from
+     the one that sold the customer thirty seconds earlier.
+     ⛔ **IT IS A BACKGROUND, NOT AN `<img>`, AND THAT IS DELIBERATE.** The head is decorative here —
+     the page's meaning is in the H1 — so it carries no alt text and must stay out of the
+     accessibility tree. A background also cannot be dragged or long-pressed on a phone.
+     ⚠️ **THE SHADE IS HEAVIER THAN THE HERO'S ON PURPOSE.** The landing hero puts its copy on the
+     left against a ramp that thins to 0.06 on the right; the page head CENTRES everything over the
+     middle of the frame, which is the brightest part of this photograph. 0.62 flat plus the
+     existing champagne wash is what keeps a 34px title legible over the pendant lights.
+     ⚠️ `background-attachment` stays `scroll`. `fixed` costs a full-viewport repaint on every
+     scroll frame, which is the exact class of thing D162–D166 spent a round removing. */
+  .page-head::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      linear-gradient(180deg,rgba(198,166,100,0.055),rgba(198,166,100,0) 62%),
+      linear-gradient(rgba(7,7,9,0.62),rgba(7,7,9,0.62)),
+      linear-gradient(to bottom,rgba(7,7,9,0.55) 0%,rgba(7,7,9,0) 26%),
+      linear-gradient(to top,rgba(7,7,9,0.72) 0%,rgba(7,7,9,0) 34%),
+      var(--pageHeadImg,none) center 42% / cover no-repeat;
+  }
+  /* the same hairline arc the hero's bottom edge draws — see `.hero::after` for why it is a border */
+  .page-head::after{
+    content:"";position:absolute;
+    left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));bottom:0;
+    height:calc(var(--curveR) + 1px);
+    border:0 solid var(--hair);border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
+    border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
+    z-index:2;pointer-events:none;
+  }
+  .page-head-in{position:relative;z-index:1;max-width:860px;margin:0 auto}
+  .page-head .eyebrow{margin-bottom:14px}
+  /* ⚠️ `--serif` and `--gold-soft`, the same two the `.section-title` uses — an internal page's
+     title is the same kind of object as a section's and must not invent a second heading style. */
+  .page-head h1{
+    font-family:var(--serif);font-weight:400;line-height:1.07;color:var(--bone);
+    font-size:clamp(32px,min(4.8vw,6vh),58px);letter-spacing:0.01em;margin:0 0 clamp(14px,2.2vh,22px);
+  }
+  .page-head h1 em{font-style:normal;color:var(--gold-soft)}
+  .page-head p{
+    font-size:clamp(14px,min(1.4vw,2.2vh),16.5px);line-height:1.72;color:var(--muted);font-weight:300;
+    max-width:64ch;margin:0 auto;
+  }
+  /* the crumb sits above the title, quiet, and names where the customer is */
+  .page-crumb{
+    display:flex;justify-content:center;align-items:center;gap:9px;margin-bottom:18px;
+    font-family:var(--brand);font-size:9.5px;letter-spacing:0.22em;text-transform:uppercase;
+    color:rgba(244,241,234,0.42);
+  }
+  .page-crumb a{color:rgba(244,241,234,0.42);text-decoration:none;transition:color .3s var(--ease)}
+  .page-crumb a:hover{color:var(--gold)}
+  .page-crumb span{color:rgba(198,166,100,0.5)}
+  @media(max-width:720px){
+    .page-head{padding:calc(66px + clamp(40px,6.4vh,66px)) 20px clamp(38px,6vh,60px);
+      --curveR:30px;--curveOut:9px}
+    .page-head h1{font-size:clamp(30px,8.6vw,40px)}
+    .page-crumb{margin-bottom:14px;font-size:9px;letter-spacing:0.18em}
+  }
   @media(max-width:1120px){nav.top{display:none}}
 
   /* ---------- mobile / tablet navigation ----------
      Below 1120px the inline nav is hidden, which used to leave NO way to move around a very
      tall page. A burger after the CTA opens a full-screen overlay with the same eight links
      plus the quote CTA — same type treatment as nav.top, just sized for thumbs. */
+  /* ⭐ THREE BARE STRIPES, SIZED TO THE LOGO — 13 August 2026 (D184).
+     Client, asking a second time: *"in the mobile nav bar there are those three lines that it
+     currently has a box around those three lines for the drop down menu. Remove the box around
+     those three lines and resize the three lines to match the size of the logo."*
+     ⛔⛔ **THE BOX COMES OFF IN THE BASE RULE NOW, AND THAT IS THE CHANGE FROM D132.** D132 undressed
+     it inside the phone query ONLY, deliberately, to keep the frozen tablet untouched — which is why
+     he saw it a second time and why he thinks it was never done. ⭐ **THIS CANNOT REACH THE FROZEN
+     DESKTOP: `.nav-burger` is `display:none` in the base rule and only switched on at
+     `max-width:1120px`,** so the base rule and the tablet band are the same surface here. Editing it
+     changes the phone and the tablet, and there is nowhere else for it to land.
+     ⭐ **"MATCH THE SIZE OF THE LOGO" IS TAKEN AS THE LOGO'S HEIGHT, WHICH IS 34px** (`.brand-logo`,
+     one rule up — the single number that sizes the client's own artwork). The stripes run the full
+     34px and the block stands 26px tall, against 24 × 15.6 before. ⚠️ **The 44px box stays and is
+     NOT decoration** — it is the tap target, and 44px is the size a thumb is designed against.
+     ⚠️ The stripes are 2px now rather than 1.5/1.6: a 24px stripe and a 34px stripe at the same
+     weight read as the same mark stretched, not as a bigger one. Weight scales with length.
+     ⚠️ The X state pivots on `top:21px`, the middle stripe's own position — derive it from the
+     stripe geometry if these numbers change, or the cross closes off-centre. */
   .nav-burger{
-    display:none;flex:none;width:42px;height:42px;border:1px solid var(--hair);border-radius:2px;
-    background:rgba(8,8,10,0.4);cursor:pointer;position:relative;z-index:80;
-    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-    transition:border-color .35s var(--ease);
+    display:none;flex:none;width:44px;height:44px;border:0;border-radius:0;
+    background:none;cursor:pointer;position:relative;z-index:80;padding:0;
   }
-  .nav-burger:hover{border-color:var(--gold)}
   .nav-burger span{
-    position:absolute;left:11px;right:11px;height:1.5px;background:var(--gold);border-radius:1px;
+    position:absolute;left:5px;right:5px;height:2px;background:var(--gold);border-radius:1px;
     transition:transform .35s var(--ease),opacity .3s var(--ease),top .35s var(--ease);
   }
-  .nav-burger span:nth-child(1){top:14px}
-  .nav-burger span:nth-child(2){top:20px}
-  .nav-burger span:nth-child(3){top:26px}
-  .nav-burger[aria-expanded="true"] span:nth-child(1){top:20px;transform:rotate(45deg)}
+  .nav-burger span:nth-child(1){top:9px}
+  .nav-burger span:nth-child(2){top:21px}
+  .nav-burger span:nth-child(3){top:33px}
+  .nav-burger[aria-expanded="true"] span:nth-child(1){top:21px;transform:rotate(45deg)}
   .nav-burger[aria-expanded="true"] span:nth-child(2){opacity:0}
-  .nav-burger[aria-expanded="true"] span:nth-child(3){top:20px;transform:rotate(-45deg)}
+  .nav-burger[aria-expanded="true"] span:nth-child(3){top:21px;transform:rotate(-45deg)}
   @media(max-width:1120px){.nav-burger{display:block}}
   /* the very narrowest screens: the burger + logo matter more than the header CTA
      (the overlay repeats the CTA anyway) */
@@ -322,6 +544,12 @@
        sitting the sheet above it would bury the close X — below it, logo and X stay visible */
     position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:4px;
+    /* ⚠️ D194: two open submenus can outgrow a short handset, so the sheet scrolls. `safe center`
+       is the load-bearing half — a plain centred flex column with overflow puts the FIRST rows
+       above the scroll origin, where they cannot be reached at all. Browsers that do not know
+       `safe` keep the plain `center` on the line above. */
+    justify-content:safe center;overflow-y:auto;
+    padding:84px 0 32px;overscroll-behavior:contain;
     background:linear-gradient(rgba(8,8,10,0.94),rgba(8,8,10,0.97));
     -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
     opacity:0;visibility:hidden;pointer-events:none;
@@ -337,25 +565,89 @@
   }
   .mobile-nav a:hover{color:var(--gold)}
   html.nav-open .mobile-nav a{opacity:1;transform:none}
-  /* stagger the links in, top to bottom */
-  html.nav-open .mobile-nav a:nth-child(1){transition-delay:.05s}
-  html.nav-open .mobile-nav a:nth-child(2){transition-delay:.09s}
-  html.nav-open .mobile-nav a:nth-child(3){transition-delay:.13s}
-  html.nav-open .mobile-nav a:nth-child(4){transition-delay:.17s}
-  html.nav-open .mobile-nav a:nth-child(5){transition-delay:.21s}
-  html.nav-open .mobile-nav a:nth-child(6){transition-delay:.25s}
-  html.nav-open .mobile-nav a:nth-child(7){transition-delay:.29s}
-  html.nav-open .mobile-nav a:nth-child(8){transition-delay:.33s}
-  html.nav-open .mobile-nav a:nth-child(9){transition-delay:.38s}
-  /* same polished-stone slab as .bar-cta, sized for thumbs — the overlay's one filled element */
+
+  /* ⭐⭐ THE MENU'S EXPANDING SUBMENUS — 13 August 2026 (D194).
+     ⛔ **THE STAGGER HAD TO MOVE FROM `a:nth-child` TO `> *:nth-child`, AND THAT IS NOT COSMETIC.**
+     Two of the seven rows are `.mn-group` wrappers now (a link plus its caret), so `a:nth-child(n)`
+     stopped matching them — the wrapped rows would have kept `opacity:0` from the base rule and
+     the menu would have opened with Services and Stones simply MISSING. Counting the rows rather
+     than the anchors is what makes the entrance survive the structure change.
+     ⭐ `.mn-group` carries the entrance itself and its anchor opts out, because a transition-delay
+     set on a parent does nothing for a child's own transition. */
+  .mn-group{display:flex;align-items:center;justify-content:center;gap:2px;
+    opacity:0;transform:translateY(10px);
+    transition:opacity .45s var(--ease),transform .45s var(--ease)}
+  html.nav-open .mn-group{opacity:1;transform:none}
+  .mn-group > a{opacity:1;transform:none;padding-right:8px}
+  /* ⚠️ 44px square and OUTSIDE the anchor: the word goes to the hub and the caret opens the list,
+     which is the split the client described, and neither can steal the other's tap target. */
+  .mn-toggle{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;
+    background:none;border:0;padding:0;cursor:pointer;color:var(--gold);
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .mn-toggle svg{width:13px;height:8px;transition:transform .35s var(--ease)}
+  .mn-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+  /* ⚠️ `max-height` rather than `height:auto`: auto cannot be transitioned, and the grid-rows trick
+     needs a wrapper this markup does not have. The cap is generous enough for six rows and is only
+     ever a ceiling — the panel is sized by its content. */
+  /* ⛔⛔ **`flex:none` IS THE ACTUAL FIX FOR THE CLIPPED SIXTH LINK, AND THE CAP WAS A RED HERRING.**
+     Raising `max-height` changed nothing: the panel was asking for 216px and RENDERING at 194.
+     `.mobile-nav` is a flex COLUMN, so every row is a flex item with the default `flex-shrink:1` —
+     once the open panel pushed the sheet past the viewport, the browser did exactly what it was
+     told and squashed the flexible items to fit, taking 22px out of this one and cutting "Outdoor
+     kitchens" in half. ⭐ With shrinking off, the overflow goes to the sheet's own `overflow-y`
+     instead, which is what it is there for. ⚠️ It belongs on EVERY row, not just this one, or the
+     squash simply moves to whichever row is still flexible. */
+  .mobile-nav > a,.mn-group,.mn-sub,.mn-row{flex:none}
+  .mn-sub{
+    display:flex;flex-direction:column;align-items:center;
+    max-height:0;overflow:hidden;opacity:1;transform:none;
+    transition:max-height .45s var(--ease),opacity .3s var(--ease);
+  }
+  /* ⛔ **NO FIXED OPEN HEIGHT — THE PANEL IS SIZED FROM ITS OWN CONTENT BY THE TOGGLE.** A guessed
+     cap clipped "Outdoor kitchens", the sixth of six, halfway through the word: 320px looked
+     generous against six 36px rows until the padding was counted. The handler writes
+     `scrollHeight` inline, which is exact, cannot be outgrown by a seventh link, and still
+     animates because it is a real pixel value rather than `auto`. */
+  .mn-sub a{font-size:12px;letter-spacing:0.18em;padding:9px 22px;color:var(--muted)}
+  .mn-sub a:hover{color:var(--gold)}
+
+  /* stagger the ROWS in, top to bottom */
+  html.nav-open .mobile-nav > *:nth-child(1){transition-delay:.05s}
+  html.nav-open .mobile-nav > *:nth-child(2){transition-delay:.09s}
+  html.nav-open .mobile-nav > *:nth-child(3){transition-delay:.13s}
+  html.nav-open .mobile-nav > *:nth-child(4){transition-delay:.17s}
+  html.nav-open .mobile-nav > *:nth-child(5){transition-delay:.21s}
+  html.nav-open .mobile-nav > *:nth-child(6){transition-delay:.25s}
+  html.nav-open .mobile-nav > *:nth-child(7){transition-delay:.29s}
+  html.nav-open .mobile-nav > *:nth-child(8){transition-delay:.33s}
+  html.nav-open .mobile-nav > *:nth-child(9){transition-delay:.38s}
+  /* ⚠️ the collapsed panels must NOT be delayed — they are not part of the entrance, and a delay
+     on them makes the first tap of a caret feel broken */
+  html.nav-open .mobile-nav > .mn-sub{transition-delay:0s}
+  /* ⭐ THE MENU'S ACTION BLOCK — D185. One filled slab over a pair of ringed buttons.
+     ⚠️ The row is width-capped at 320px rather than left to the sheet: the links above it are
+     centred type with no box, so an action block running to the screen edges would read as a
+     different page rather than as the foot of this one. */
+  .mn-row{display:flex;flex-direction:column;gap:10px;width:min(320px,78vw);margin-top:22px}
+  .mn-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  /* the overlay's one filled element — flat champagne, same as .bar-cta since D181 */
   .mobile-nav .mn-cta{
-    margin-top:18px;font-family:var(--brand);font-size:12px;font-weight:600;letter-spacing:0.22em;
-    color:var(--ink);border:1px solid rgba(140,107,52,0.9);border-radius:2px;padding:14px 34px;
-    background:linear-gradient(180deg,var(--gold-hi),var(--gold) 58%,#A98A48);
-    box-shadow:inset 0 1px 0 rgba(255,251,238,0.55),inset 0 -1px 0 rgba(74,52,16,0.45),
-      0 16px 34px -16px rgba(198,166,100,0.5);
+    margin-top:0;font-family:var(--brand);font-size:12px;font-weight:600;letter-spacing:0.22em;
+    color:var(--ink);border:1px solid rgba(140,107,52,0.9);border-radius:2px;padding:15px 20px;
+    background:var(--gold);text-align:center;
   }
   .mobile-nav .mn-cta:hover{color:var(--ink);filter:brightness(1.07)}
+  /* ⚠️ These two take `.mbar-a`'s dress rather than a new one — the sheet and the sticky bar are
+     the same three actions, and a customer who has seen one should recognise the other. */
+  .mobile-nav .mn-alt{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-family:var(--brand);font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--bone);border:1px solid var(--hair);border-radius:2px;padding:13px 8px;
+    background:rgba(244,241,234,0.045);white-space:nowrap;
+    transition:border-color .35s var(--ease),color .35s var(--ease);
+  }
+  .mobile-nav .mn-alt svg{flex:none;width:16px;height:16px;fill:currentColor}
+  .mobile-nav .mn-alt:hover{border-color:var(--gold);color:var(--gold)}
 
   /* ============================================================================
      ⭐ THE STICKY ACTION BAR — PHONE ONLY, 11 Aug 2026.
@@ -410,10 +702,11 @@
     .mbar-a svg{flex:none;width:15px;height:15px;fill:currentColor}
     .mbar-a svg[stroke],.mbar-a svg path[stroke]{fill:none}
     /* the quote button is the one filled element, exactly as in the header and the overlay —
-       and it takes the extra width, because it is the action the page is asking for */
+       and it takes the extra width, because it is the action the page is asking for.
+       ⛔ FLAT, NOT MILLED (D181) — the client named this button and the header's together. The
+       vertical metal ramp and the top-light/bottom-shade bevel are both gone; see `.bar-cta`. */
     .mbar-cta{flex:1.35 1 0;color:var(--ink);border-color:rgba(140,107,52,0.9);
-      background:linear-gradient(180deg,var(--gold-hi),var(--gold) 58%,#A98A48);
-      box-shadow:inset 0 1px 0 rgba(255,251,238,0.5),inset 0 -1px 0 rgba(74,52,16,0.42)}
+      background:var(--gold)}
     .mbar-a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
     /* the bar floats over the page, so the last thing on it has to clear the bar's own height —
        otherwise the footer's final line sits permanently underneath it */
@@ -1281,10 +1574,34 @@
      because a new element exists at every width the moment it is added (D120); the phone query
      turns it on. Above 720px the marquee is still the seam and this must stay invisible. */
   .strip-swap{display:none}
+  /* ⭐ the projects/stones order wrapper (D179). ⛔ `display:contents` is the BASE default for the
+     same D120 reason as .strip-swap above: the element exists at every width the moment it is
+     added, and a box here would change the frozen desktop and tablet compositions. It generates
+     no box, so those widths lay the four children out unchanged; the phone query below makes it
+     a flex column and re-orders it. */
+  .gs-swap{display:contents}
   .sd-line{position:absolute;inset:0;
     background:linear-gradient(90deg,rgba(198,166,100,0.34),rgba(198,166,100,0.6) 50%,rgba(198,166,100,0.34))}
+  /* ⭐ THE TRAVELLING HIGHLIGHT.
+     ⛔⛔ **`--shineA` IS THE FIX FOR THE CORNER DEFECT AND IT IS NOT DECORATION — 13 Aug 2026 (D182).**
+     Client, with a screenshot: *"the divider has this weird thing that's wrong on the side of it,
+     in the corner. It's making these two lines one above one at the bottom."*
+     ⭐⭐ **WHAT HE PHOTOGRAPHED WAS THIS PSEUDO-ELEMENT PARKED AT THE EDGE.** It is `top:-2px;
+     bottom:-2px` on a 2px line, so it is **6px tall against a 2px rule** — it deliberately blooms
+     above and below. Mid-travel that is invisible, because it is a soft moving highlight. But the
+     travel is clamped to [0,1], so **every divider below the fold sits at 0% and every one above it
+     at 100%** — and at those two values the 97.5px lozenge is parked half off the screen with its
+     rounded, blurred cap showing. A bright edge 2px above the gold line and another 2px below it is
+     exactly "two lines, one above one at the bottom", and it is permanent, not transient.
+     ⭐ Fading the highlight out before it reaches either end fixes it at the cause: nothing is ever
+     parked at a corner, and the sweep itself is untouched through the middle 80% where it is seen.
+     ⛔ **NOT `overflow:hidden` ON THE DIVIDER.** That would clip the bloom to the 2px line for the
+     whole travel and flatten the effect everywhere to fix it in two places.
+     ⚠️ Applied at every width: the parked lozenge is a defect on desktop too, and leaving it there
+     only means it gets reported again from a different device. */
   .sd-line::after{content:"";position:absolute;top:-2px;bottom:-2px;left:var(--shine,50%);width:26%;transform:translateX(-50%);
-    background:linear-gradient(90deg,transparent,rgba(255,244,214,0.95) 50%,transparent);border-radius:3px;filter:blur(1px)}
+    background:linear-gradient(90deg,transparent,rgba(255,244,214,0.95) 50%,transparent);border-radius:3px;filter:blur(1px);
+    opacity:var(--shineA,1)}
   @media (prefers-reduced-motion:reduce){ .sd-line::after{left:50%!important} }
   /* ⚠️ An ORNATE Victorian-style divider was tried here over three rounds (29 July) and the
      client rejected all of it — the plain shine line above is the one divider the site uses,
@@ -2478,7 +2795,9 @@
      fading the marquee's names in and out — masking the parent faded the lines' ends too. */
   .strip-rule{position:relative;
     border-top:1px solid rgba(198,166,100,0.34);border-bottom:1px solid rgba(198,166,100,0.34)}
-  .strip-rule::after{content:"";position:absolute;left:var(--shine,50%);bottom:-1px;height:2px;width:26%;
+  /* ⚠️ `--shineA` (D182) rides along here too — this rule is driven by the same IIFE and the same
+     clamp, so it parks at the corners for the same reason. See `.sd-line::after`. */
+  .strip-rule::after{content:"";position:absolute;left:var(--shine,50%);bottom:-1px;height:2px;width:26%;opacity:var(--shineA,1);
     transform:translateX(-50%);border-radius:3px;filter:blur(1px);pointer-events:none;
     background:linear-gradient(90deg,transparent,rgba(255,244,214,0.95) 50%,transparent)}
   @media (prefers-reduced-motion:reduce){ .strip-rule::after{left:50%!important} }
@@ -4059,13 +4378,35 @@
      This is exactly the class of violation §7.8 says to expect more of. */
   .cta-form{display:grid;gap:clamp(7px,1.2vh,11px);align-content:start}
   .cta-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}      /* horizontal, leave flat */
-  .cta-form input,.cta-form textarea{
+  .cta-form input,.cta-form textarea,.cta-form select{
     width:100%;font:inherit;font-size:14px;font-weight:300;color:var(--bone);
     background:rgba(255,255,255,0.045);border:1px solid var(--hair-soft);border-radius:11px;
     padding:clamp(9px,1.5vh,12px) 15px;transition:border-color .35s var(--ease),background .35s var(--ease);
   }
   .cta-form textarea{min-height:clamp(52px,8.4vh,76px);resize:vertical}
   .cta-form input::placeholder,.cta-form textarea::placeholder{color:rgba(244,241,234,0.38)}
+  /* ⭐ THE SELECT HAD TO BE UNDRESSED BY HAND — 13 August 2026 (D191), and it is not pedantry.
+     The trade form is the first form on this site with a `<select>`, and a select is one of the
+     few controls a browser paints ITSELF: left alone it arrives as a WHITE box with a system
+     chevron, sitting on a near-black card between two dark inputs. It does not read as "a slightly
+     different field", it reads as a broken page.
+     ⛔ `appearance:none` is what surrenders the native paint, and it takes the arrow with it — so
+     the chevron is drawn back as an inline SVG in the site's own champagne, and the right padding
+     is opened up to keep the text off it.
+     ⚠️ `color-scheme:dark` is the second half and is easy to miss: it is what makes the OPTION
+     LIST — which the browser draws outside the page and which no CSS of ours can reach — come up
+     dark rather than white. Without it the field looks right until it is opened.
+     ⚠️ The `<option>`s get an explicit background because Windows draws them from the control's
+     own colours rather than the scheme. */
+  .cta-form select{
+    -webkit-appearance:none;appearance:none;color-scheme:dark;cursor:pointer;
+    padding-right:40px;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23C6A664' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 15px center;background-size:10px 6px;
+  }
+  .cta-form select option{background:#15151A;color:var(--bone)}
+  /* an unchosen select shows its own label, so it should read as a placeholder, not as an answer */
+  .cta-form select:invalid,.cta-form select option[value=""]{color:rgba(244,241,234,0.38)}
   /* the picked-stone chip: quiet gold band above the message, dismissible */
   .cta-stone{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--hair);border-radius:8px;background:rgba(198,166,100,0.08)}
   .cta-stone[hidden]{display:none}
@@ -4449,6 +4790,162 @@
      now lost a mobile override to a base rule sitting LATER in the file at equal
      specificity (D106, D113, D114). Nothing can come after this, so nothing can.
      ============================================================================ */
+
+  /* ⛔⛔ LIFTED OUT OF `@media(max-width:720px)` — 13 August 2026 (D195), AND THE REASON MATTERS.
+     Client, on /projects/: *"why the fuck is there a gigantic gap between the title of our project
+     gallery and the actual project gallery?"* — measured at 768px: a **5632px runway** with the
+     stage pinned and the cards choreographed by scroll progress, so the heading sat alone above
+     five thousand pixels of nothing.
+     ⭐⭐ **THE PINNED ACCORDION IS A LANDING-PAGE SET PIECE AND IT CANNOT LEAD A PAGE.** On the
+     landing page you arrive at it having already scrolled, so the choreography has run. On the
+     Projects page the gallery is the FIRST section — you arrive at the START of its runway, which
+     is precisely the frame where the cards are gathered off-stage. Nothing was broken; the section
+     was simply doing its job in a place that job makes no sense.
+     ⭐ These rules were already the answer — they are the plain column the phone has used since
+     D163 — but they were locked inside the phone query, so a page that wanted the column at any
+     other width could not have it. **EVERY RULE BELOW IS GATED ON `.gal-static`**, a class the
+     script only adds when `--galMode` reads `phone`, so the frozen desktop and tablet landing page
+     cannot see any of this. Moving them changes WHERE they can apply, not WHEN they do.
+     ⚠️ `build_pages.py` sets `--galMode:phone` on the Projects page at every width, which is what
+     turns the engine off there (`measure()` returns early) and adds the class. */
+    /* ============================================================================================
+       12. ⭐⭐ THE PROJECT GALLERY IS A PLAIN, NATIVELY-SCROLLED COLUMN — 13 August 2026
+       ============================================================================================
+       Client: *"completely remove the animation from the view our project gallery… it doesn't look
+       good on mobile. So remove that."* Plus: *"it's also especially lagging on the view our
+       project gallery section."* ⭐ **ONE CHANGE ANSWERS BOTH** — see the long note on the `return`
+       in the gallery IIFE's `measure()`.
+       ⛔ **THIS IS SWITCHED ON BY A CLASS THE SCRIPT ADDS (`gal-static`), NOT BY THE MEDIA QUERY
+       ALONE, AND THAT IS DELIBERATE.** The class is written in the same breath as the early return,
+       so the layout below and the dead engine can never disagree: if the script ever fails to reach
+       that line the cards keep the old absolute positioning and the old engine, which is a working
+       page. A media-query-only version would strip the positioning while JS was still driving it,
+       and eight cards would pile up in the corner. ⚠️ It also gives every rule here one extra class
+       of specificity, which is what lets it out-rank `#gallery .gal-pin` at 2739 without `!important`.
+       ⛔ Above 720px `--galMode` is unset, the branch never runs, the class is never added, and the
+       desktop pin, runway, accordion and hallway are untouched (D91). */
+
+    /* 12a. the machine comes apart: no runway, no pin, no viewport-tall stage. `display:contents`
+       on `.gal-mid` and `.gal-set` is what does the real work — it dissolves the two wrapper boxes
+       so their children become flex items of the stage itself, which is how the copy, the eight
+       cards and the buttons end up in ONE flow without a line of DOM surgery.
+       ⭐ It also neutralises the engine for free: `mid.style.opacity` and the set transforms are
+       written to elements that no longer generate a box, so a stale inline style from a resize
+       cannot show through. */
+    /* ⛔⛔ **`.gal-stage` MUST BE TAKEN OUT OF `position:absolute` AND THAT IS THE WHOLE THING.**
+       Built without this line the section collapsed to 35.7px and every card computed to
+       `331 × 0`, which looks like a broken height rule and is not one: `.gal-stage{position:
+       absolute;inset:0}` was resolving against a `.gal-pin` that had just lost its `height:100vh`,
+       so the stage inherited a near-zero containing block, and eight flex items with the default
+       `flex-shrink:1` obediently shrank to nothing inside it. ⭐ The `flex-shrink:0` on the card
+       below is the belt to this braces — a definite `height` on a column flex item is still only
+       a starting point until shrink is switched off. */
+    #gallery.gal-static .gal-scroll{height:auto}
+    #gallery.gal-static .gal-pin{position:static;height:auto;overflow:visible}
+    #gallery.gal-static .gal-stage{position:static;height:auto;perspective:none;
+      display:flex;flex-direction:column;align-items:center;
+      padding:clamp(28px,4.6vh,48px) 22px clamp(30px,4.4vh,44px)}
+
+    /* ⛔⛔⛔ **THE SECTION'S −70px PULL MUST GO WITH THE RESERVE IT WAS CANCELLING — 13 August 2026.**
+       **THE DIVIDER RAN STRAIGHT THROUGH "View our project gallery" AND THIS IS WHY.** D129 gave
+       `#gallery` a `margin-top:calc(clamp(28px,4.6vh,48px) − var(--galNavH,78px) − clamp(22px,3.6vh,42px))`
+       — about **−70px** — for one reason: `.gal-mid` reserved the fixed nav's height plus its own air
+       INSIDE a 100vh sticky stage, and before the pin engaged that reserve was dead space in the
+       flow. Pulling the section up by exactly what it added cancelled it, and cost nothing once
+       pinned, because a pinned element is positioned against the viewport rather than its own margin.
+       ⛔ **§12 DELETED BOTH SUBTRACTED TERMS AND LEFT THE SUBTRACTION.** `.gal-mid` is
+       `display:contents` now and the stage had no top padding, so the −70px had nothing left to
+       cancel and simply dragged the whole section up over the divider — measured: gallery top 2130
+       against a divider at 2149–2151, a **21px overlap straight through the title**.
+       ⭐⭐ **THIS IS THE EXACT FAILURE THE HANDOVER NAMES: "when a change has a cost somewhere else,
+       the cost stays behind — after changing a value, grep for what was derived from it."** D142
+       left `animPx` behind, D156 left `--gold-lo` behind, and this left D129's pull behind. It was
+       found by his screenshot, not by any of my measurements, because every number I checked was
+       inside the gallery and this one describes the join to the section above it.
+       ⭐ **THE SPACE IS NOW PADDING ON THE STAGE, NOT MARGIN ON THE SECTION, AND THAT IS LOAD-BEARING.**
+       Adjacent margins collapse: `#gallery` with a positive `margin-top` next to the divider's 48.7px
+       `margin-bottom` collapses to the LARGER of the two, so the gap would have come out at 48.7 and
+       never at the 86 the composition wants. Padding does not collapse. ⭐ It also restores D124's
+       symmetry properly — above the divider, 37.4px of the services section's own bottom padding plus
+       the divider's 48.7px margin = **86.1px**; below it, the same 48.7px plus this 37.4px of stage
+       padding = **86.1px**. The leading term is deliberately the same `clamp(28px,4.6vh,48px)` D129
+       used, so the two sides still track each other at every screen height rather than agreeing once. */
+    #gallery.gal-static{margin-top:0}
+    #gallery.gal-static .gal-mid,
+    #gallery.gal-static .gal-set{display:contents}
+
+    /* 12b. the reading order. h2 and the subtitle keep the default 0, the cards take 1 and the
+       buttons 2 — which is D113's split ("title and subtitle above, then the cards, then the
+       buttons below") expressed as flex order instead of as a stretched absolute overlay.
+       ⚠️ The cards' DOM order is `s*PER_SET+i`, the order the projects are authored in, so a plain
+       flow prints them in reading order without anything having to sort them. */
+    #gallery.gal-static .gal-card{order:1}
+    #gallery.gal-static .gal-mid-actions{order:2;pointer-events:auto;opacity:1;
+      margin-top:clamp(26px,3.6vh,42px)}
+    /* ⭐ **D147 SURVIVES THE REBUILD, AND AS THE SAME EXPRESSION RATHER THAN A COPIED NUMBER.**
+       Client, on the old build: "the first card should be slightly closer to the subtitle like on
+       the surfaces for every space section… same distance." That was JS reading the services
+       grid's `clamp(18px,3vh,30px)` and adding it to `colTop`; with the column in normal flow the
+       same clamp is simply the subtitle's bottom margin, which is what `#services .services-grid`
+       does with its `margin-top`. ⛔ Do not replace it with the ~24px it evaluates to — two
+       numbers describing one distance is this project's most repeated bug (D107).
+       ⚠️ Built without this the first card touched the subtitle's last line: the engine used to
+       own that gap and it went with the engine. */
+    #gallery.gal-static .section-sub{margin-bottom:clamp(18px,3vh,30px)}
+
+    /* 12c. the card itself. `--cw`/`--ch` arrive already multiplied by the old `colSc`, so the card
+       is the same 331×145 he has been looking at, drawn at its real size instead of a 157px card
+       under a 2.1× transform. ⛔ `transform:none` is what stops any inline transform left over from
+       a width change above 720px; the engine cannot write a new one. ⭐ `will-change:auto` on both
+       the card and the door drops SIXTEEN permanently promoted compositing layers off this section
+       — see §13, that is the memory this page could not afford. */
+    #gallery.gal-static .gal-card{
+      position:relative;left:auto;top:auto;flex:0 0 auto;
+      width:var(--cw,331px);height:var(--ch,145px);
+      margin:0 0 var(--colGap,14px);
+      transform:none;opacity:1;will-change:auto;perspective:none}
+    #gallery.gal-static .gal-set:last-child .gal-card:last-child{margin-bottom:0}
+    #gallery.gal-static .gal-door{transform:none;will-change:auto}
+    /* the caption was revealed by the engine one card at a time as the accordion dealt them out.
+       With no accordion every card simply has its name on, which is what D128 was reaching for. */
+    #gallery.gal-static .gal-meta{opacity:1;transform:none}
+
+    /* 12d. ⛔ **THE GOLD OUTLINE COMES OFF THE CARDS — client, 13 August 2026:** *"remove the golden
+       outline around the blocks in the view our project gallery."*
+       ⚠️ **IT IS NOT A BORDER, WHICH IS WHY LOOKING FOR ONE FINDS NOTHING.** `.gal-door` carries
+       `glow-card`, so the rim is the shared `::after`/`::before` pair — the cursor-reactive gold
+       halo the review cards, process steps and services faces all use, driven by `attachGlow`'s
+       `--gx/--gy/--ga`. On a desktop it lights under the pointer; on a touch screen there is no
+       pointer, so it either sat on at full strength or lit up under his finger, which is also half
+       of what he was reporting in 12e. ⭐ Killing the two pseudos removes the rim AND the spill.
+       ⚠️ There WAS a second gold edge: `render()` wrote an `inset 0 0 0 3px rgba(198,166,100,…)`
+       box-shadow onto the two peeking cards while the pile was stacked. That is gone with the
+       engine — no rule needed, but do not be surprised to find the string in the file.
+       ⛔ The neutral `1px solid var(--hair-soft)` on `.gal-door` is NOT gold and stays: it is what
+       stops a dark photograph bleeding into a dark page with no edge at all. */
+    #gallery.gal-static .gal-door::after,
+    #gallery.gal-static .gal-door::before{display:none}
+
+    /* 12e. ⛔⛔ **NOTHING HAPPENS WHEN A FINGER TOUCHES A CARD — client, 13 August 2026:** *"any
+       animation must not happen when someone's finger touches it. Only when they click in must it
+       gloss over and go into that section."*
+       ⚠️ **`:hover` IS THE BUG ON A TOUCH SCREEN AND IT IS NOT OBVIOUS FROM READING THE RULE.** iOS
+       fires `:hover` on the first tap and then LEAVES IT LATCHED until you touch something else, so
+       `.gal-set.settled .gal-card:hover img{filter:…}` and `:hover .sheen{transform:translateX(120%)}`
+       both ran on a finger-down and stayed run — the brightness lift and the polish sweep he is
+       describing. They were written for a mouse, where the pointer leaving takes them back off.
+       ⭐ The sweep is removed on the phone rather than re-timed: the `.sheen` element is a
+       full-card gradient layer that exists only to be transformed, so hiding it is one fewer
+       painted surface per card as well as one fewer thing that moves under a finger.
+       ⭐ **THE OPEN ITSELF IS UNTOUCHED** — tapping a card still runs `openFocus()` and the project
+       detail still transitions in over the page, which is the "gloss over and go into that section"
+       half of the ask. Only the touch-down states are gone. */
+    #gallery.gal-static .gal-card .sheen{display:none}
+    #gallery.gal-static .gal-card:hover img,
+    #gallery.gal-static .gal-card:active img,
+    #gallery.gal-static .gal-set.settled .gal-card:hover img{
+      filter:saturate(0.86) brightness(0.84) contrast(1.02)}
+
   @media(max-width:720px){
 
     /* --- 1. THE BURGER LOSES ITS BOX ------------------------------------------------
@@ -4465,11 +4962,14 @@
        (24 x 15.6). ⚠️ The insets are 8px, not 9px: the border is still 1px, only transparent,
        so the content box is 40px and 8px a side yields 24. Same family as D126 — a number
        that was right for one container is rarely right once the container goes. */
-    .nav-burger{background:transparent;border-color:transparent;
-      -webkit-backdrop-filter:none;backdrop-filter:none}
-    .nav-burger span{left:8px;right:8px;height:1.6px}
-    .nav-burger span:nth-child(1){top:13px}
-    .nav-burger span:nth-child(3){top:27px}
+    /* ⛔⛔ **THIS BLOCK IS NOW EMPTY ON PURPOSE — 13 August 2026 (D184).** Everything it used to
+       carry (transparent fill and border, no blur, the 24px stripe geometry) has MOVED INTO THE
+       BASE RULE, because the client asked for the box a second time and the base rule is the only
+       place that also reaches the tablet. `.nav-burger` is `display:none` above 1120px, so the base
+       rule cannot touch the frozen desktop — see the note there.
+       ⭐ **DELETED RATHER THAN LEFT AS AN OVERRIDE**, which is this project's own rule for reverting:
+       two competing descriptions of one element at equal specificity is how D106, D113 and D114 each
+       lost a rule to a later one. The comment above stays as the record of why the box went. */
 
     /* --- 2. THE HERO'S ROUNDED CORNER, ON HIS PHONE ---------------------------------
        Client: "I can still see the black corners going through the divider. The rounded
@@ -4889,8 +5389,29 @@
        balanced, and 48.7px shorter. ⛔ **SCOPED TO `#gallery +`, NEVER THE SHARED RULE**: there are
        eight `.section-divider`s on this page and the other seven sit between sections that do not
        reserve a sticky bar. D149 had just made the estimator → process seam symmetric on exactly
-       this principle; trimming the shared margin would have broken it again. */
-    #gallery + .section-divider{margin-top:0}
+       this principle; trimming the shared margin would have broken it again.
+       ⚠️⚠️ **13 Aug 2026 (D179): THIS RULE MOVED, IT WAS NOT DROPPED.** D179 puts the stone
+       selector above the gallery on the phone, so `#gallery + .section-divider` — which is a DOM
+       selector — now names the divider ABOVE the gallery, where there is no sticky-bar reserve to
+       double up with. The divider that now sits BELOW the gallery is `.strip-swap`, so the
+       compensation goes there. ⛔ **THIS IS THE COST-STAYS-BEHIND TRAP** (START HERE §7.2, four
+       times now): the seam fix belongs to the gallery's BOTTOM EDGE, not to that one element. */
+    .strip-band .strip-swap{margin-top:0}
+
+    /* --- 13. THE STONE SELECTOR AND THE PROJECT GALLERY TRADE PLACES — 13 Aug 2026 (D179) ----
+       Client: "swop the chose your stone and project gallery section."
+       ⛔ **PHONE ONLY, AND THE MARKUP DID NOT MOVE.** §2 rule 15 — desktop and tablet stay exactly
+       as they are until he calls them, and a section swap re-composes the page rather than adding
+       to it. `.gs-swap` is `display:contents` in the base rule (no box, no effect); here it becomes
+       a flex column and the four children are re-ordered inside it.
+       ⭐ Source order is divider · gallery · divider · stones. Painted order below is
+       divider · STONES · divider · GALLERY, so both seams keep a rule and the brand strip stays
+       where it is — on the phone it is only the plain divider anyway (D143). */
+    .gs-swap{display:flex;flex-direction:column}
+    .gs-swap > .section-divider:first-child{order:1}
+    .gs-swap > #stones{order:2}
+    .gs-swap > #gallery + .section-divider{order:3}
+    .gs-swap > #gallery{order:4}
 
     /* --- 11. THE FOOTER: A CENTRED HEAD, TWO PACKED COLUMNS, A CENTRED FOOT — D153 -----------
        Client: "for the footer, the footer parts should be centre. So the logo should be centre, and
@@ -5009,143 +5530,6 @@
     #footer .foot-bar{flex-direction:column;align-items:center;text-align:center;gap:12px}
     #footer .foot-legal{justify-content:center;flex-wrap:wrap;gap:8px 18px}
 
-    /* ============================================================================================
-       12. ⭐⭐ THE PROJECT GALLERY IS A PLAIN, NATIVELY-SCROLLED COLUMN — 13 August 2026
-       ============================================================================================
-       Client: *"completely remove the animation from the view our project gallery… it doesn't look
-       good on mobile. So remove that."* Plus: *"it's also especially lagging on the view our
-       project gallery section."* ⭐ **ONE CHANGE ANSWERS BOTH** — see the long note on the `return`
-       in the gallery IIFE's `measure()`.
-       ⛔ **THIS IS SWITCHED ON BY A CLASS THE SCRIPT ADDS (`gal-static`), NOT BY THE MEDIA QUERY
-       ALONE, AND THAT IS DELIBERATE.** The class is written in the same breath as the early return,
-       so the layout below and the dead engine can never disagree: if the script ever fails to reach
-       that line the cards keep the old absolute positioning and the old engine, which is a working
-       page. A media-query-only version would strip the positioning while JS was still driving it,
-       and eight cards would pile up in the corner. ⚠️ It also gives every rule here one extra class
-       of specificity, which is what lets it out-rank `#gallery .gal-pin` at 2739 without `!important`.
-       ⛔ Above 720px `--galMode` is unset, the branch never runs, the class is never added, and the
-       desktop pin, runway, accordion and hallway are untouched (D91). */
-
-    /* 12a. the machine comes apart: no runway, no pin, no viewport-tall stage. `display:contents`
-       on `.gal-mid` and `.gal-set` is what does the real work — it dissolves the two wrapper boxes
-       so their children become flex items of the stage itself, which is how the copy, the eight
-       cards and the buttons end up in ONE flow without a line of DOM surgery.
-       ⭐ It also neutralises the engine for free: `mid.style.opacity` and the set transforms are
-       written to elements that no longer generate a box, so a stale inline style from a resize
-       cannot show through. */
-    /* ⛔⛔ **`.gal-stage` MUST BE TAKEN OUT OF `position:absolute` AND THAT IS THE WHOLE THING.**
-       Built without this line the section collapsed to 35.7px and every card computed to
-       `331 × 0`, which looks like a broken height rule and is not one: `.gal-stage{position:
-       absolute;inset:0}` was resolving against a `.gal-pin` that had just lost its `height:100vh`,
-       so the stage inherited a near-zero containing block, and eight flex items with the default
-       `flex-shrink:1` obediently shrank to nothing inside it. ⭐ The `flex-shrink:0` on the card
-       below is the belt to this braces — a definite `height` on a column flex item is still only
-       a starting point until shrink is switched off. */
-    #gallery.gal-static .gal-scroll{height:auto}
-    #gallery.gal-static .gal-pin{position:static;height:auto;overflow:visible}
-    #gallery.gal-static .gal-stage{position:static;height:auto;perspective:none;
-      display:flex;flex-direction:column;align-items:center;
-      padding:clamp(28px,4.6vh,48px) 22px clamp(30px,4.4vh,44px)}
-
-    /* ⛔⛔⛔ **THE SECTION'S −70px PULL MUST GO WITH THE RESERVE IT WAS CANCELLING — 13 August 2026.**
-       **THE DIVIDER RAN STRAIGHT THROUGH "View our project gallery" AND THIS IS WHY.** D129 gave
-       `#gallery` a `margin-top:calc(clamp(28px,4.6vh,48px) − var(--galNavH,78px) − clamp(22px,3.6vh,42px))`
-       — about **−70px** — for one reason: `.gal-mid` reserved the fixed nav's height plus its own air
-       INSIDE a 100vh sticky stage, and before the pin engaged that reserve was dead space in the
-       flow. Pulling the section up by exactly what it added cancelled it, and cost nothing once
-       pinned, because a pinned element is positioned against the viewport rather than its own margin.
-       ⛔ **§12 DELETED BOTH SUBTRACTED TERMS AND LEFT THE SUBTRACTION.** `.gal-mid` is
-       `display:contents` now and the stage had no top padding, so the −70px had nothing left to
-       cancel and simply dragged the whole section up over the divider — measured: gallery top 2130
-       against a divider at 2149–2151, a **21px overlap straight through the title**.
-       ⭐⭐ **THIS IS THE EXACT FAILURE THE HANDOVER NAMES: "when a change has a cost somewhere else,
-       the cost stays behind — after changing a value, grep for what was derived from it."** D142
-       left `animPx` behind, D156 left `--gold-lo` behind, and this left D129's pull behind. It was
-       found by his screenshot, not by any of my measurements, because every number I checked was
-       inside the gallery and this one describes the join to the section above it.
-       ⭐ **THE SPACE IS NOW PADDING ON THE STAGE, NOT MARGIN ON THE SECTION, AND THAT IS LOAD-BEARING.**
-       Adjacent margins collapse: `#gallery` with a positive `margin-top` next to the divider's 48.7px
-       `margin-bottom` collapses to the LARGER of the two, so the gap would have come out at 48.7 and
-       never at the 86 the composition wants. Padding does not collapse. ⭐ It also restores D124's
-       symmetry properly — above the divider, 37.4px of the services section's own bottom padding plus
-       the divider's 48.7px margin = **86.1px**; below it, the same 48.7px plus this 37.4px of stage
-       padding = **86.1px**. The leading term is deliberately the same `clamp(28px,4.6vh,48px)` D129
-       used, so the two sides still track each other at every screen height rather than agreeing once. */
-    #gallery.gal-static{margin-top:0}
-    #gallery.gal-static .gal-mid,
-    #gallery.gal-static .gal-set{display:contents}
-
-    /* 12b. the reading order. h2 and the subtitle keep the default 0, the cards take 1 and the
-       buttons 2 — which is D113's split ("title and subtitle above, then the cards, then the
-       buttons below") expressed as flex order instead of as a stretched absolute overlay.
-       ⚠️ The cards' DOM order is `s*PER_SET+i`, the order the projects are authored in, so a plain
-       flow prints them in reading order without anything having to sort them. */
-    #gallery.gal-static .gal-card{order:1}
-    #gallery.gal-static .gal-mid-actions{order:2;pointer-events:auto;opacity:1;
-      margin-top:clamp(26px,3.6vh,42px)}
-    /* ⭐ **D147 SURVIVES THE REBUILD, AND AS THE SAME EXPRESSION RATHER THAN A COPIED NUMBER.**
-       Client, on the old build: "the first card should be slightly closer to the subtitle like on
-       the surfaces for every space section… same distance." That was JS reading the services
-       grid's `clamp(18px,3vh,30px)` and adding it to `colTop`; with the column in normal flow the
-       same clamp is simply the subtitle's bottom margin, which is what `#services .services-grid`
-       does with its `margin-top`. ⛔ Do not replace it with the ~24px it evaluates to — two
-       numbers describing one distance is this project's most repeated bug (D107).
-       ⚠️ Built without this the first card touched the subtitle's last line: the engine used to
-       own that gap and it went with the engine. */
-    #gallery.gal-static .section-sub{margin-bottom:clamp(18px,3vh,30px)}
-
-    /* 12c. the card itself. `--cw`/`--ch` arrive already multiplied by the old `colSc`, so the card
-       is the same 331×145 he has been looking at, drawn at its real size instead of a 157px card
-       under a 2.1× transform. ⛔ `transform:none` is what stops any inline transform left over from
-       a width change above 720px; the engine cannot write a new one. ⭐ `will-change:auto` on both
-       the card and the door drops SIXTEEN permanently promoted compositing layers off this section
-       — see §13, that is the memory this page could not afford. */
-    #gallery.gal-static .gal-card{
-      position:relative;left:auto;top:auto;flex:0 0 auto;
-      width:var(--cw,331px);height:var(--ch,145px);
-      margin:0 0 var(--colGap,14px);
-      transform:none;opacity:1;will-change:auto;perspective:none}
-    #gallery.gal-static .gal-set:last-child .gal-card:last-child{margin-bottom:0}
-    #gallery.gal-static .gal-door{transform:none;will-change:auto}
-    /* the caption was revealed by the engine one card at a time as the accordion dealt them out.
-       With no accordion every card simply has its name on, which is what D128 was reaching for. */
-    #gallery.gal-static .gal-meta{opacity:1;transform:none}
-
-    /* 12d. ⛔ **THE GOLD OUTLINE COMES OFF THE CARDS — client, 13 August 2026:** *"remove the golden
-       outline around the blocks in the view our project gallery."*
-       ⚠️ **IT IS NOT A BORDER, WHICH IS WHY LOOKING FOR ONE FINDS NOTHING.** `.gal-door` carries
-       `glow-card`, so the rim is the shared `::after`/`::before` pair — the cursor-reactive gold
-       halo the review cards, process steps and services faces all use, driven by `attachGlow`'s
-       `--gx/--gy/--ga`. On a desktop it lights under the pointer; on a touch screen there is no
-       pointer, so it either sat on at full strength or lit up under his finger, which is also half
-       of what he was reporting in 12e. ⭐ Killing the two pseudos removes the rim AND the spill.
-       ⚠️ There WAS a second gold edge: `render()` wrote an `inset 0 0 0 3px rgba(198,166,100,…)`
-       box-shadow onto the two peeking cards while the pile was stacked. That is gone with the
-       engine — no rule needed, but do not be surprised to find the string in the file.
-       ⛔ The neutral `1px solid var(--hair-soft)` on `.gal-door` is NOT gold and stays: it is what
-       stops a dark photograph bleeding into a dark page with no edge at all. */
-    #gallery.gal-static .gal-door::after,
-    #gallery.gal-static .gal-door::before{display:none}
-
-    /* 12e. ⛔⛔ **NOTHING HAPPENS WHEN A FINGER TOUCHES A CARD — client, 13 August 2026:** *"any
-       animation must not happen when someone's finger touches it. Only when they click in must it
-       gloss over and go into that section."*
-       ⚠️ **`:hover` IS THE BUG ON A TOUCH SCREEN AND IT IS NOT OBVIOUS FROM READING THE RULE.** iOS
-       fires `:hover` on the first tap and then LEAVES IT LATCHED until you touch something else, so
-       `.gal-set.settled .gal-card:hover img{filter:…}` and `:hover .sheen{transform:translateX(120%)}`
-       both ran on a finger-down and stayed run — the brightness lift and the polish sweep he is
-       describing. They were written for a mouse, where the pointer leaving takes them back off.
-       ⭐ The sweep is removed on the phone rather than re-timed: the `.sheen` element is a
-       full-card gradient layer that exists only to be transformed, so hiding it is one fewer
-       painted surface per card as well as one fewer thing that moves under a finger.
-       ⭐ **THE OPEN ITSELF IS UNTOUCHED** — tapping a card still runs `openFocus()` and the project
-       detail still transitions in over the page, which is the "gloss over and go into that section"
-       half of the ask. Only the touch-down states are gone. */
-    #gallery.gal-static .gal-card .sheen{display:none}
-    #gallery.gal-static .gal-card:hover img,
-    #gallery.gal-static .gal-card:active img,
-    #gallery.gal-static .gal-set.settled .gal-card:hover img{
-      filter:saturate(0.86) brightness(0.84) contrast(1.02)}
 
     /* ============================================================================================
        13. ⭐⭐ THE PAGE STOPS COSTING MORE THAN THE PHONE HAS — 13 August 2026
@@ -5238,14 +5622,30 @@
        one row at 320px, which is the narrowest handset this site targets.
        ⚠️ `align-items:stretch` matters: the Google chip is two lines tall and the guarantee is one,
        and two pills of different heights side by side read as a mistake rather than as a pair. */
-    #hero .hero-chips{flex-wrap:wrap;justify-content:center;align-items:stretch;
+    /* ⭐⭐ **THE FOUR BUBBLES ARE A 2×2 GRID NOW — 13 August 2026 (D186).**
+       Client: *"I want the buttons below the call us on the hero section to be visually balanced out
+       somehow that it looks neat in the way that it's put up."*
+       ⭐⭐ **WRAPPED FLEX IS WHAT MADE IT UNTIDY, AND IT COULD NOT BE TUNED INTO TIDINESS.** Each
+       bubble was `flex:0 1 auto`, so every one sized to its own text: "Google ★ 5.0" against "10 year
+       guarantee" on the first row and "72-hour aftercare" against "Quick turnaround time" on the
+       second, four different widths with the rows centred, so no two edges below the buttons lined
+       up with each other or with the buttons themselves. That is not a spacing problem — it is what
+       content-sized boxes DO, and no gap value fixes it.
+       ⭐ A grid makes the column the authority instead of the text: two equal columns, one shared
+       left edge, one shared right edge, both flush with the full-width quote button above.
+       ⚠️ `align-items:stretch` still matters, and now does more work: the Google bubble is two lines
+       tall and the guarantee beside it is one, and two pills of different heights side by side read
+       as a mistake rather than as a pair.
+       ⚠️ Padding comes in 13px → 10px because the box is no longer sized to the text — the text now
+       has to fit the box, and "Quick turnaround time" is the longest of the four. */
+    #hero .hero-chips,.page-head .hero-chips{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;
       gap:9px;width:100%}
-    #hero .hero-chips .chip{padding:8px 13px;gap:8px;flex:0 1 auto;min-width:0}
+    #hero .hero-chips .chip,.page-head .hero-chips .chip{padding:8px 10px;gap:8px;min-width:0;justify-content:center;text-align:center}
     /* ⭐ **THE REASON BUBBLES — D172.** Nothing new is styled: they take `.chip` whole, which is what
        "all in the same bubble style as the Google and 10 year guarantee" asks for literally. They are
        `display:none` in the base rule (D120) and only come on here. ⚠️ `align-items:center` because a
        one-line chip beside the two-line Google chip would otherwise sit its text at the top. */
-    #hero .chip-reason{display:inline-flex;align-items:center;white-space:nowrap}
+    #hero .chip-reason,.page-head .chip-reason{display:inline-flex;align-items:center;white-space:nowrap}
 
     /* 14c-ii. ⭐ **THE TWO BUTTONS SIT SIDE BY SIDE — D171.** Client: *"then we will have the free
        quote and call us buttons right next to each other."*
@@ -5267,8 +5667,18 @@
        against the fact row (`--hfGap`, `--hfIcon`), which has been `display:none` since D169, so it
        would be sizing to something the customer cannot see. */
     #hero .hero-ctas{flex-direction:column;flex-wrap:nowrap;gap:10px;align-items:center}
+    /* ⛔⛔ **BOTH BUTTONS ARE 76% — 13 August 2026 (D188), REVERSING D186 ONE MESSAGE LATER.**
+       Client: *"you can make the get a free quote and call us button the same size again and make it
+       the same size as what the call us button is now."*
+       ⭐ **HE KEPT THE NARROWER MEASURE AND THREW AWAY THE HIERARCHY, WHICH IS THE OPPOSITE OF WHAT
+       D186 ASSUMED HE WANTED.** D186 read "the call us button can be smaller" as a request to state
+       the primary action in the shape; what he actually wanted was the pair off the screen edges.
+       So the 76% survives and the DIFFERENCE goes: one measure, both buttons, centred.
+       ⚠️ `width` is written once on both selectors now — do NOT reintroduce a second rule that
+       out-specifies one of them. Two competing descriptions of one element is how D106, D113 and
+       D114 each lost a rule to a later one at equal specificity. */
     #hero .hero-ctas .btn-gold,
-    #hero .hero-ctas .btn-ghost{width:100%;flex:0 0 auto;min-width:0;padding-left:12px;padding-right:12px}
+    #hero .hero-ctas .btn-ghost{width:76%;flex:0 0 auto;min-width:0;padding-left:12px;padding-right:12px}
     /* the short labels, and the long ones out of the way — see the markup note */
     #hero .hero-ctas .cta-long{display:none}
     #hero .hero-ctas .cta-short{display:inline}
@@ -5280,31 +5690,31 @@
        the same 26px with `justify-content:space-between`, so the cap-line of "Google" and the
        baseline of the stars land on the mark's own top and bottom edges however the two type sizes
        are later nudged. Setting two font sizes and hoping they add up to 26 is what would drift. */
-    #hero .chip-google{align-items:center}
-    #hero .g-mark{display:block;flex:none;width:26px;height:26px}
-    #hero .g-stack{display:flex;flex-direction:column;justify-content:space-between;
+    #hero .chip-google,.page-head .chip-google{align-items:center}
+    #hero .g-mark,.page-head .g-mark{display:block;flex:none;width:26px;height:26px}
+    #hero .g-stack,.page-head .g-stack{display:flex;flex-direction:column;justify-content:space-between;
       height:26px;line-height:1;text-align:left}
-    #hero .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
+    #hero .g-word,.page-head .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
       color:rgba(244,241,234,0.92)}
     /* ⭐ **THE RATING IS ONE LINE NOW: ★★★★★ 5.0 (D176).** The stars keep the chip's own gold and
        come down to 9px with tighter tracking, because they no longer own the line — the score sits
        beside them and the pair still has to fit inside the mark's 26px. ⚠️ `align-items:baseline`
        rather than `center`: star glyphs and lining numerals have very different vertical centres,
        and centring them leaves the score visibly riding high. */
-    #hero .g-rating{display:flex;align-items:baseline;gap:5px}
-    #hero .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
-    #hero .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
+    #hero .g-rating,.page-head .g-rating{display:flex;align-items:baseline;gap:5px}
+    #hero .g-stars,.page-head .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
+    #hero .g-score,.page-head .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
       color:rgba(244,241,234,0.92)}
     /* the phone's own subtitle copy (D175) */
     #hero .hs-wide{display:none}
     #hero .hs-phone{display:inline}
     /* ⚠️ CLIPPED, NOT `display:none` — see the markup note. "5.0 on Google" stays in the
        accessibility tree because a logo and five star glyphs do not say it on their own. */
-    #hero .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
+    #hero .chip-legacy,.page-head .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
       clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
     /* the guarantee's "10" is the chip's gold numeral; it only needs to stop the two words
        wrapping now that the pair share a row */
-    #hero .chip-guarantee{white-space:nowrap;align-items:center}
+    #hero .chip-guarantee,.page-head .chip-guarantee{white-space:nowrap;align-items:center}
 
     /* 14e. ⭐ **THE SPACING, RE-CUT ROUND WHAT IS LEFT.** Client: *"optimise the spacing inside the
        hero section."* ⛔ **THIS IS NOT A TIDY-UP, IT IS THE CONSEQUENCE OF 14b:** the fact row was
@@ -5358,6 +5768,21 @@
     #hero .hero-sub{margin-bottom:clamp(24px,4.2vh,36px)}
     #hero .hero-ctas{gap:10px;margin-bottom:clamp(24px,4.2vh,36px)}
 
+    /* ⭐ THE PHOTOGRAPH GOES DOWN A STOP BEHIND THE COPY — 13 August 2026 (D187).
+       Client: *"we might need to make the background image slightly darker so that the words stand
+       out."*
+       ⭐⭐ **ONE FLAT WASH, NOT A RE-TUNED GRADIENT STACK.** `.hero-shade` carries four layers, and
+       the big one is a LEFT-TO-RIGHT ramp — 0.94 at the left edge down to 0.06 at 74% — because the
+       desktop composition puts its copy on the left and its photograph on the right. The phone
+       centres everything, so on a 375px screen the title sits over the ramp's THIN end while the
+       shading is spent on an edge with nothing on it. Re-weighting those stops for the phone would
+       mean maintaining two versions of a hand-tuned four-layer stack for one device.
+       ⭐ `background-color` is a separate longhand, so it lands UNDER all four gradients without
+       touching any of them: one number, one place, and the desktop stack is not edited at all.
+       ⚠️ 0.30 is deliberately modest — he asked for *slightly* darker, and the photograph is the one
+       thing on this screen that says what the business sells. Turn it up here if he wants more. */
+    #hero .hero-shade{background-color:rgba(7,7,9,0.30)}
+
     /* ============================================================================================
        15. ⭐ THE WHATSAPP BUTTON CLEARS THE STICKY BAR — 13 August 2026 (D173)
        ============================================================================================
@@ -5365,14 +5790,29 @@
        plus the safe-area inset (D99/D110), so the default `bottom:24px` would put the button
        squarely on top of "Call". 73px is the bar's real height plus 14px of air, and `env()` is
        added on top so it clears the home indicator on a notched handset rather than sitting under
-       it. ⚠️ It holds that position whether or not the bar is currently shown — the bar slides in on
-       scroll, and a button that moved down every time it left would read as a glitch.
+       it.
+       ⛔⛔ **REVERSED 13 August 2026 (D180), AND THE OLD REASONING IS KEPT ABOVE ON PURPOSE.** D173
+       parked the button at 73px PERMANENTLY, on the theory that a button which moved every time the
+       bar left would read as a glitch. The client looked at it and said the opposite: *"the WhatsApp
+       button is way too high up. It needs to stay in the bottom corner. And then as the sticky bottom
+       bar pops up, it stays just above that in its position."* He is right — parked at 73px with no
+       bar under it, the button floats in the middle of nothing and the corner looks broken.
+       ⭐ **IT NOW RIDES THE BAR'S OWN STATE, WHICH COSTS NO NEW MACHINERY.** `.mbar` already gets
+       `.on` from the IIFE at the foot of the file, and `.wa-fab` is its LATER SIBLING, so the
+       general sibling combinator reads that state directly — no second scroll listener, no class on
+       `<html>`, nothing for a media query to disagree with. ⛔ The two elements must stay siblings
+       in that order for this to work; if either moves, this rule dies silently.
+       ⭐ `bottom` is transitioned over the same .5s the bar uses, so the two move together as one
+       gesture rather than the button jumping after the bar has arrived.
        ⭐ **AND IT STANDS DOWN WITH EVERYTHING ELSE WHEN THE MENU OPENS**, exactly as `.mbar` does
        four rules up: a contact shortcut floating over a full-screen menu is the classic version of
        this bug, and z-index alone would not have saved it here because the button is a sibling of
        the sheet rather than inside it. */
-    .wa-fab{right:14px;bottom:calc(73px + env(safe-area-inset-bottom,0px));
-      width:50px;height:50px}
+    .wa-fab{right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));
+      width:50px;height:50px;
+      transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
+                 opacity .3s var(--ease),transform .35s var(--ease)}
+    .mbar.on ~ .wa-fab{bottom:calc(73px + env(safe-area-inset-bottom,0px))}
     .wa-fab svg{width:25px;height:25px}
     html.nav-open .wa-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
 
@@ -5457,7 +5897,7 @@
   <i class="bar-flare" aria-hidden="true"></i>
   <!-- The link carries the accessible name, so the image is decorative and takes alt="" rather
        than announcing the brand a second time. -->
-  <a class="brand" href="#hero" aria-label="TopCat Worktops, back to top">
+  <a class="brand" href="/" aria-label="TopCat Worktops, home">
     <img class="brand-logo" src="/assets/brand/topcat-horizontal.svg" alt="" width="1455" height="323" decoding="async">
   </a>
   <!-- ⚠️ Trade is a REAL PAGE, not a hash. It is the only nav item that leaves the page, and
@@ -5466,14 +5906,47 @@
        `a[href^="#"]`, so this passes straight through as a normal navigation.
        It went back in on 7 Aug: it had been pulled on 1 Aug, but B2B is the client's stated
        first priority and trade buyers have to be able to self-identify in seconds. -->
+  <!-- ⭐⭐ THE NAV POINTS AT PAGES NOW, NOT AT SECTIONS — 13 August 2026 (D189).
+       Client: *"we need to now restructure the website to have the internal pages… then projects,
+       its own dedicated page, stones, its own dedicated page, the estimate, also its own dedicated
+       page, the about us also dedicated page, trade… and then the contact page also a dedicated
+       page… you can have a drop down in the nav bar menu showing that they can choose a specific
+       one, not just go to the services page alone, and let's say click on the word services instead
+       of clicking on the drop down… just understand how websites are laid out and do it perfectly."*
+       ⭐ **THE WORD IS A LINK AND THE MENU IS A MENU** — that is his sentence, and it is also the
+       convention: the parent goes to the hub, the children go to the leaves. Nothing here is a
+       button that only opens something; every item is reachable.
+       ⛔ **THE HASHES ARE GONE, WHICH CHANGES THE LANDING PAGE'S BEHAVIOUR TOO.** The smooth-scroll
+       IIFE only intercepts `a[href^="#"]`, so these now navigate normally. That is the point — he
+       has unfrozen desktop and tablet for exactly this work — but it means the landing sections are
+       no longer what the nav is FOR. They stay on the page as the story; the nav goes to the rooms.
+       ⚠️ `/stones/` is the collection page that already exists (132 stones, search, compare), not a
+       new build. It was already the footer's target and is now the nav's.
+       ⚠️ Service order is `SERVICES[]`'s own — the client's popularity order (D45). Keep them in
+       step; two orders for one list is how a menu starts disagreeing with the page it opens. -->
   <nav class="top">
-    <a href="#services">Services</a>
-    <a href="#gallery">Projects</a>
-    <a href="#stones">Stones</a>
-    <a href="#estimator">Estimate</a>
-    <a href="#about">About us</a>
+    <div class="nav-item">
+      <!-- ⚠️ D194: the desktop trigger gets the same caret the phone's does. Without it the panel
+           is undiscoverable — nothing on the word says it opens anything until a pointer happens
+           to rest on it, and a keyboard user has no signal at all. -->
+      <a href="/services/">Services<span class="nav-caret" aria-hidden="true"><svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></a>
+      <div class="nav-menu" role="group" aria-label="Services">
+        <a href="/services/kitchen-worktops.html">Bespoke worktops</a>
+        <a href="/services/kitchen-islands.html">Kitchen islands</a>
+        <a href="/services/splashbacks.html">Splashbacks</a>
+        <a href="/services/bathroom-worktops.html">Bathrooms</a>
+        <a href="/services/commercial-worktops.html">Commercial</a>
+        <a href="/services/outdoor-kitchens.html">Outdoor kitchens</a>
+        <span class="nav-menu-sep" aria-hidden="true"></span>
+        <a class="nav-menu-all" href="/services/">All services</a>
+      </div>
+    </div>
+    <a href="/projects/">Projects</a>
+    <a href="/stones/">Stones</a>
+    <a href="/estimate/">Estimate</a>
+    <a href="/about/">About us</a>
     <a href="/trade/">Trade</a>
-    <a href="#cta">Contact</a>
+    <a href="/contact/">Contact</a>
   </nav>
   <a class="bar-cta" href="#cta">Get a quote</a>
   <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
@@ -5482,15 +5955,90 @@
 </header>
 
 <!-- full-screen menu for the burger (≤1120px) — same links as nav.top, sized for thumbs -->
+<!-- ⚠️ SAME SEVEN DESTINATIONS AS `nav.top`, AND DELIBERATELY WITHOUT THE SERVICES SUBMENU (D189).
+     The desktop panel exists because a pointer can hover a row of words; a phone cannot, and
+     stacking six more links here would push the sheet past one screen to save a customer a single
+     tap — the services page opens with all six on it. **Tapping Services goes to the hub, which is
+     the same promise the desktop's word makes.** -->
 <nav class="mobile-nav" id="mobileNav" aria-label="Site menu">
-  <a href="#services">Services</a>
-  <a href="#gallery">Projects</a>
-  <a href="#stones">Stones</a>
-  <a href="#estimator">Estimate</a>
-  <a href="#about">About us</a>
+  <!-- ⭐⭐ THE PHONE GETS THE SUBMENUS TOO — 13 August 2026 (D194), REVERSING D189's OWN REASONING.
+       Client: *"did I not fucking ask you to create a drop down in the menu? So, like, for
+       instance, on mobile, when someone clicks the menu, there is a little arrow next to the word
+       services so they can go to the individual pages for bespoke worktops or for this or for
+       that in the services. And for every other option that that needs to be there."*
+       ⛔ **D189 ARGUED ITSELF OUT OF THIS AND WAS WRONG.** The reasoning was that a phone cannot
+       hover and six more links would push the sheet past one screen — so tapping Services would
+       open the hub, which lists them. That answers a question he did not ask: **he wants to reach
+       a service page from the menu, in one gesture, without loading a hub first.** A caret that
+       expands in place costs nothing until it is tapped, and the sheet scrolls.
+       ⭐ **THE WORD AND THE ARROW ARE TWO SEPARATE CONTROLS, ON PURPOSE.** Tapping "Services" goes
+       to the hub; tapping the caret opens the list. That is exactly the split he described on the
+       desktop nav — *"click on the word services instead of clicking on the drop down"* — and it
+       means neither action can steal the other's tap target.
+       ⭐ **STONES GETS ONE TOO** — "every other option that needs to be there". The collection page
+       already reads `#quartz` / `#marble` / `#granite` off the URL to preselect a range (its own
+       footer links have used that for weeks), so these are real destinations, not invented ones.
+       ⚠️ Projects, Estimate, About, Trade and Contact have NO child pages, so they stay plain
+       links. A caret that opens one item is worse than no caret. -->
+  <div class="mn-group">
+    <a href="/services/">Services</a>
+    <button class="mn-toggle" type="button" aria-expanded="false" aria-controls="mnSubServices"
+            aria-label="Show the service pages">
+      <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="mn-sub" id="mnSubServices">
+    <a href="/services/kitchen-worktops.html">Bespoke worktops</a>
+    <a href="/services/kitchen-islands.html">Kitchen islands</a>
+    <a href="/services/splashbacks.html">Splashbacks</a>
+    <a href="/services/bathroom-worktops.html">Bathrooms</a>
+    <a href="/services/commercial-worktops.html">Commercial</a>
+    <a href="/services/outdoor-kitchens.html">Outdoor kitchens</a>
+  </div>
+  <a href="/projects/">Projects</a>
+  <div class="mn-group">
+    <a href="/stones/">Stones</a>
+    <button class="mn-toggle" type="button" aria-expanded="false" aria-controls="mnSubStones"
+            aria-label="Show the stone ranges">
+      <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="mn-sub" id="mnSubStones">
+    <a href="/stones/#quartz">Quartz</a>
+    <a href="/stones/#marble">Marble &amp; Quartzite</a>
+    <a href="/stones/#granite">Granite</a>
+    <a href="/stones/compare.html">Compare stones</a>
+  </div>
+  <a href="/estimate/">Estimate</a>
+  <a href="/about/">About us</a>
   <a href="/trade/">Trade</a>
-  <a href="#cta">Contact</a>
-  <a class="mn-cta" href="#cta">Get a quote</a>
+  <a href="/contact/">Contact</a>
+  <!-- ⭐ THE MENU'S THREE ACTIONS — 13 August 2026 (D185).
+       Client: *"on that drop down page, there needs to be a get a free quote, call us, or the
+       WhatsApp icon. So free quote, WhatsApp, or phone, just three CTAs. Doesn't have to be the way
+       that I say they need to look. Just needs to look great."*
+       ⭐ **ONE FILLED, TWO OUTLINED, WHICH IS THE PAGE'S OWN GRAMMAR.** The header, the sticky bar
+       and the hero all say the same thing: exactly one gold slab, and the quieter actions ringed
+       beside it. Three filled buttons would give the sheet three equal shouts and no answer to
+       "what does this page want me to do".
+       ⛔ **THE NUMBERS ARE THE SITE'S EXISTING ONES AND ARE NOT RE-TYPED HERE BY HAND** — WhatsApp
+       goes to the mobile `447464940287` and the call goes to the 0800 landline, which is D178's
+       two-numbers-on-purpose rule. Do not tidy them into one.
+       ⚠️ `.mn-row` REPLACES the old single `.mn-cta`, so the `:nth-child` stagger above still counts
+       the seven links and then this row as one item — it does not need re-numbering. -->
+  <div class="mn-row">
+    <a class="mn-cta" href="#cta">Get a free quote</a>
+    <div class="mn-pair">
+      <a class="mn-alt" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.688-1.48-1.538-1.653-1.835-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0m0 21.784h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.437-9.884 9.888-9.884a9.82 9.82 0 0 1 6.988 2.896 9.825 9.825 0 0 1 2.892 6.995c-.002 5.45-4.437 9.886-9.885 9.886"/></svg>
+        <span>WhatsApp</span>
+      </a>
+      <a class="mn-alt" href="tel:+448000982812">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/></svg>
+        <span>Call us</span>
+      </a>
+    </div>
+  </div>
 </nav>
 
 <!-- ⭐ THE STICKY ACTION BAR — PHONE ONLY, 11 Aug 2026.
@@ -5584,7 +6132,7 @@
       </defs>
     </svg>
     <div class="hero-bg" aria-hidden="true">
-      <img src="assets/site/hero-kitchen-2750.webp" srcset="assets/site/hero-kitchen-1400.webp 1400w, assets/site/hero-kitchen-2000.webp 2000w, assets/site/hero-kitchen-2750.webp 2750w" sizes="(max-width:720px) 1000px, 1739px" width="2750" height="1536" alt="" id="heroImg" draggable="false" fetchpriority="high" decoding="async">
+      <img src="/assets/site/hero-kitchen-2750.webp" srcset="/assets/site/hero-kitchen-1400.webp 1400w, /assets/site/hero-kitchen-2000.webp 2000w, /assets/site/hero-kitchen-2750.webp 2750w" sizes="(max-width:720px) 1000px, 1739px" width="2750" height="1536" alt="" id="heroImg" draggable="false" fetchpriority="high" decoding="async">
       <div class="hero-shade"></div>
     </div>
     <div class="hero-inner">
@@ -5694,8 +6242,12 @@
              ⛔ `display:none` in the base rule, phone opts in (D120) — every width above 720px keeps
              the full labels, unchanged to the character. -->
         <div class="hero-ctas hero-el" style="--hd:900ms">
-          <a href="#cta" class="btn-gold"><span class="cta-long">Get your free quote</span><span class="cta-short">Free quote</span></a>
-          <a href="tel:+448000982812" class="btn-ghost hero-call-mobile"><span class="cta-long">Give us a call</span><span class="cta-short">Call us</span></a>
+          <!-- ⚠️ `.cta-short` is the PHONE's label (D120's two-spans-one-shown idiom) — it reads
+               "Get a free quote" as of 13 Aug (D186), the client's own words, answering the open
+               question D177 left. The `.cta-long` beside it is the frozen desktop's and is
+               deliberately still "Get your free quote". -->
+          <a href="#cta" class="btn-gold"><span class="cta-long">Get your free quote</span><span class="cta-short">Get a free quote</span></a>
+          <a href="tel:+448000982812" class="btn-ghost hero-call-mobile"><span class="cta-long">Give us a call</span><span class="cta-short">Give us a call</span></a>
           <a href="#cta" class="btn-ghost hero-call-desktop">Request a call</a>
         </div>
         <div class="hero-chips hero-el" style="--hd:1040ms">
@@ -5825,7 +6377,24 @@
     <p class="svc-catchall">Not seeing your space here? <a href="#cta">Contact us</a></p>
   </section>
 
-  <!-- gold divider: services → projects (was the gallery sheet climbing over the frozen grid) -->
+  <!-- ⭐ .gs-swap — THE ORDER OF THESE TWO SECTIONS IS PHONE-ONLY, 13 Aug 2026 (D179).
+       Client: "swop the chose your stone and project gallery section."
+       ⛔ **THE DOM ORDER IS UNCHANGED ON PURPOSE.** A section swap is NOT additive — it
+       re-composes the page — and desktop and tablet are frozen (§2 rule 15), so moving the
+       markup would have silently reordered a composition the client signed off (D91). The
+       wrapper is `display:contents` in the base rule, which generates NO BOX AT ALL, so above
+       720px the four children lay out as direct children of <main> exactly as before; the phone
+       query turns the wrapper into a flex column and re-orders it there. Same D120 idiom as
+       `.strip-swap`: new markup exists at every width the moment it is added, so it defaults to
+       a no-op and the phone opts in.
+       ⭐ Visual order on the phone becomes: divider · STONES · divider · GALLERY.
+       ⛔ The two dividers stay where they are in the flow, so every seam keeps its rule — but
+       the SEAM COMPENSATION had to travel with the gallery, see D158's rule in the phone
+       block. To revert: delete this wrapper's two tags and the `.gs-swap` rules. -->
+  <div class="gs-swap">
+
+  <!-- gold divider: services → the next section (was the gallery sheet climbing over the frozen
+       grid). Above 720px that is projects; on the phone it is the stone selector — see .gs-swap -->
   <div class="section-divider" aria-hidden="true"><span class="sd-line"></span></div>
 
   <!-- ===================== PROJECT GALLERY (gathered card deck) =====================
@@ -5980,7 +6549,7 @@
                the price. An unmarked stone is unmarked, not "probably fine". Getting this
                backwards would put a fabricator at risk, which is the whole point of the
                silica guide the site already carries. -->
-          <div class="sf-group"><span class="sf-label">Silica <a class="sf-help" href="guides/is-quartz-safe-silica.html">what is this</a></span>
+          <div class="sf-group"><span class="sf-label">Silica <a class="sf-help" href="/guides/is-quartz-safe-silica.html">what is this</a></span>
             <div class="sf-chips" data-f="silica">
               <button class="sf-chip" type="button" data-v="free">Silica free</button>
               <button class="sf-chip" type="button" data-v="low">Low silica</button>
@@ -6008,6 +6577,8 @@
         after</a> and we will source it where we can.</p>
     </div>
   </section>
+
+  </div><!-- /.gs-swap -->
 
   <!-- ===================== BRAND STRIP = the stones → ESTIMATOR divider =====================
        The band is pushed down onto the seam (the taller top padding) and there is NO
@@ -6363,7 +6934,7 @@
            on the page is doubled. The real brief for this slot is unchanged and still owed:
            the whole team together, or a finished install (§7.5). -->
       <figure class="wy-tile wy-p glow-card">
-        <img src="assets/site/team-team-900.webp" alt="The TopCat team" draggable="false" loading="lazy" decoding="async">
+        <img src="/assets/site/team-team-900.webp" alt="The TopCat team" draggable="false" loading="lazy" decoding="async">
         <div class="wy-p-veil"></div>
         <div class="sheen"></div>
       </figure>
@@ -6633,7 +7204,7 @@
         <!-- ⚠️ The old footer mark filled itself from a gradient defined inside the NAV's inline
              SVG at the top of the document, so it rendered only because the two shared one page.
              That coupling is gone: each lockup is a self-contained file. -->
-        <a class="brand brand-stack" href="#hero" aria-label="TopCat Worktops, back to top">
+        <a class="brand brand-stack" href="/" aria-label="TopCat Worktops, home">
           <img class="brand-logo" src="/assets/brand/topcat-vertical.svg" alt="" width="528" height="495" decoding="async">
         </a>
         <p class="foot-tag">Bespoke stone worktops, from slab selection to a flawless fit.</p>
@@ -6705,15 +7276,13 @@
       <div class="foot-col foot-explore">
         <div class="foot-k">Explore</div>
         <ul>
-          <!-- ⚠️ There is no /services/ index page, so this points at the landing section,
-               which lists all six services and links to each. The client described clicking
-               this and landing on "the services page", so a real hub is now wanted — see the
-               open item in the handover. Repoint this the day it exists. -->
-          <li><a href="#services">Services</a></li>
-          <li><a href="#gallery">Projects</a></li>
+          <!-- ⭐ REPOINTED 13 August 2026 (D189): `/services/` is a real hub page now, which is
+               what this comment had been waiting for. Every item below goes to its own page. -->
+          <li><a href="/services/">Services</a></li>
+          <li><a href="/projects/">Projects</a></li>
           <li><a href="/stones/">Stones</a></li>
-          <li><a href="#estimator">Estimate</a></li>
-          <li><a href="#about">About us</a></li>
+          <li><a href="/estimate/">Estimate</a></li>
+          <li><a href="/about/">About us</a></li>
           <li><a href="/trade/">For the trade</a></li>
         </ul>
       </div>
@@ -6750,6 +7319,40 @@
 </main>
 
 <script>
+/* ⭐⭐ `orNull` — SHARED-SCRIPT SAFETY, 13 August 2026 (D190). Read this before deleting it.
+   ⛔ **THIS SCRIPT RUNS ON THE INTERNAL PAGES NOW.** `build_pages.py` lifts it to
+   `/assets/site.js` and /services/, /projects/, /estimate/, /about/ and /contact/ all link it, so
+   a subsystem it wires may simply not be on the page — /services/ has no stone wheel, /contact/
+   has no gallery, none of them carry the brand strip.
+   ⛔⛔ **A NULL HERE DOES NOT BREAK ONE FEATURE, IT BREAKS THE WHOLE FILE.** This script is FLAT
+   top-level code rather than a series of IIFEs, so one `x.addEventListener(...)` on a null throws
+   at the top level and every `const` declared BELOW it stays in the temporal dead zone for the
+   life of the page. The symptom is not "the wheel is missing" — it is
+   `Cannot access 'glowItems' before initialization` reported from three unrelated subsystems,
+   which is exactly what the first build of these pages printed.
+   ⭐ **A DETACHED ELEMENT IS THE WHOLE FIX.** It answers addEventListener, classList, style,
+   innerHTML and getBoundingClientRect just as a real one does, and nothing it is told is ever
+   seen, because nothing can see it. The flat code below then runs end to end on every page.
+   ⚠️ It is NOT in the document, so `offsetParent` is null and every rect is zero — which is what
+   the `galleryOn` / `wheelPlayed` / `.mbar` guards already test before doing anything real.
+   ⛔ **DO NOT USE IT WHERE THE CODE ALREADY TESTS TRUTHINESS.** A stub is truthy, so putting one
+   behind an existing `if(el)` turns a deliberately skipped block into a running one. It belongs
+   only where the very next statement dereferences the element unconditionally. */
+/* ⛔⛔ **THE STUB IS GIVEN A PARENT, AND THAT IS NOT TIDINESS — IT IS THE SECOND HALF OF THE FIX.**
+   A bare `createElement` is an ORPHAN: `stub.parentElement` is `null`, so any code that walks one
+   step up — and this file does, in `metrics()`:
+       getComputedStyle(wheel.parentElement).getPropertyValue('--railW')
+   — hands `null` to `getComputedStyle` and throws `parameter 1 is not of type 'Element'`, which
+   takes the whole file down exactly as the original null did.
+   ⚠️ **IT ONLY FIRED ABOVE 720px**, because that is the branch of `metrics()` that reads the rail
+   width — so the internal pages looked clean on the phone and were broken on the desktop the
+   client had just asked for. Test every width before believing this file.
+   ⭐ Wrapping the stub in a detached parent makes one step up safe for every caller at once,
+   instead of guarding each dereference as it is discovered. */
+const orNull=el=>{ if(el) return el;
+  const holder=document.createElement('div'), stub=document.createElement('div');
+  holder.appendChild(stub); return stub; };
+
 /* ============================================================================
    ⭐ attachSwipe — THE ONE GESTURE ARBITER BOTH PHONE CAROUSELS USE. 11 Aug 2026.
    ⛔ PHONE ONLY. Every caller gates it on the same CSS-declared phone test it already uses
@@ -6920,25 +7523,31 @@ function attachSwipe(el,opts){
    ⛔ Do not hand-edit this table. It is written by build_images.py; re-run that instead.
    ⚠️ Keys are the exact `.img` URL a record carries, so `SS[u]` is a lookup, not a guess. */
 const SS={
- "assets/site/hero-kitchen-2750.webp":"assets/site/hero-kitchen-1400.webp 1400w, assets/site/hero-kitchen-2000.webp 2000w, assets/site/hero-kitchen-2750.webp 2750w",
- "assets/site/cta-slab-2752.webp":"assets/site/cta-slab-1958.webp 1958w, assets/site/cta-slab-2752.webp 2752w",
- "assets/site/kitchen-day-1188.webp":"assets/site/kitchen-day-626.webp 626w, assets/site/kitchen-day-1188.webp 1188w",
- "assets/site/quarry-955.webp":"assets/site/quarry-518.webp 518w, assets/site/quarry-955.webp 955w",
- "assets/team/handshake.jpg":"assets/site/team-handshake-600.webp 600w, assets/site/team-handshake-900.webp 900w",
- "assets/team/samples.jpg":"assets/site/team-samples-248.webp 248w, assets/site/team-samples-386.webp 386w",
- "assets/team/fitting.jpg":"assets/site/team-fitting-248.webp 248w, assets/site/team-fitting-386.webp 386w"
+ "/assets/site/hero-kitchen-2750.webp":"/assets/site/hero-kitchen-1400.webp 1400w, /assets/site/hero-kitchen-2000.webp 2000w, /assets/site/hero-kitchen-2750.webp 2750w",
+ "/assets/site/cta-slab-2752.webp":"/assets/site/cta-slab-1958.webp 1958w, /assets/site/cta-slab-2752.webp 2752w",
+ "/assets/site/kitchen-day-1188.webp":"/assets/site/kitchen-day-626.webp 626w, /assets/site/kitchen-day-1188.webp 1188w",
+ "/assets/site/quarry-955.webp":"/assets/site/quarry-518.webp 518w, /assets/site/quarry-955.webp 955w",
+ "assets/team/handshake.jpg":"/assets/site/team-handshake-600.webp 600w, /assets/site/team-handshake-900.webp 900w",
+ "assets/team/samples.jpg":"/assets/site/team-samples-248.webp 248w, /assets/site/team-samples-386.webp 386w",
+ "assets/team/fitting.jpg":"/assets/site/team-fitting-248.webp 248w, /assets/site/team-fitting-386.webp 386w"
 };
 /* Returns ` srcset="…" sizes="…"` for a URL the table knows, or '' for one it does not.
    ⚠️ `z` is the COVER-SCALED RENDER WIDTH at each breakpoint, not the element's width — see
    the header of patch_images.py for why those are not the same number here. */
 function ss(u,z){ const s=SS[u]; return s?` srcset="${s}" sizes="${z}"`:''; }
 const SERVICES=[
-  {t:"Bespoke Worktops",long:"Kitchen worktops cut from a single slab, vein-matched across every joint, templated to the millimetre and fitted by our own team.",href:"services/kitchen-worktops.html",img:"assets/site/service-worktops-554.webp"},
-  {t:"Kitchen Islands",long:"Islands with mitred waterfall ends that fold the stone to the floor, the veining planned around every corner so it runs unbroken down each side.",href:"services/kitchen-islands.html",img:"assets/site/service-islands-468.webp"},
-  {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"services/splashbacks.html",img:"assets/site/service-splashbacks-706.webp"},
-  {t:"Bathrooms",long:"Vanity tops, shower surrounds and bathroom surfaces in stone that handles water and daily wear, matched to your tiles.",href:"services/bathroom-worktops.html",img:"assets/site/cta-slab-2752.webp"},
-  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"services/commercial-worktops.html",img:"assets/site/kitchen-day-1188.webp"},
-  {t:"Outdoor Kitchens",long:"Weatherproof stone for garden kitchens and barbecue runs, cut to fit around sinks, hobs and built-in appliances.",href:"services/outdoor-kitchens.html",img:"assets/site/quarry-955.webp"}
+  /* ⚠️ THIS LINE BROKE TWO STANDING RULES AND WAS LIVE — corrected 13 August 2026 while the
+     services hub was being built. It read "vein-matched across every joint", which claims work
+     TopCat OUTSOURCE (§2 rule 2 — cutting and polishing are not theirs) and states an ABSOLUTE
+     (§2 rule 12 — "every" is not something we can guarantee). ⛔ Templating and fitting ARE theirs
+     and stay. ⚠️ `verify.py` check 7 does not scan this file's inline data, which is why it
+     survived; the same phrase on the service PAGES is a separate live instance. */
+  {t:"Bespoke Worktops",long:"Kitchen worktops cut from a single slab where the run allows, templated to the millimetre and fitted by our own team.",href:"/services/kitchen-worktops.html",img:"/assets/site/service-worktops-554.webp"},
+  {t:"Kitchen Islands",long:"Islands with mitred waterfall ends that fold the stone to the floor, the veining planned around every corner so it runs unbroken down each side.",href:"/services/kitchen-islands.html",img:"/assets/site/service-islands-468.webp"},
+  {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splashbacks-706.webp"},
+  {t:"Bathrooms",long:"Vanity tops, shower surrounds and bathroom surfaces in stone that handles water and daily wear, matched to your tiles.",href:"/services/bathroom-worktops.html",img:"/assets/site/cta-slab-2752.webp"},
+  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/kitchen-day-1188.webp"},
+  {t:"Outdoor Kitchens",long:"Weatherproof stone for garden kitchens and barbecue runs, cut to fit around sinks, hobs and built-in appliances.",href:"/services/outdoor-kitchens.html",img:"/assets/site/quarry-955.webp"}
 ];
 const flipIcon='<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>';
 const backIcon='<svg viewBox="0 0 24 24"><path d="M9 5l-7 7 7 7"/><path d="M2 12h20"/></svg>';
@@ -6959,6 +7568,11 @@ function phImg(label){
 }
 const moreIcon='<svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>';
 function buildCards(container, items, opts){
+  /* ⚠️ D190: the container may not be on this page — the shared script runs on the internal pages
+     now and only some of them carry the services grid. Guarding HERE rather than at each call site
+     is deliberate: `buildCards` is called from top-level code, so a throw takes the rest of the
+     file down with it (see `orNull` at the top for why that is fatal rather than local). */
+  if(!container) return;
   opts=opts||{};
   items.forEach((s,i)=>{
     const el=document.createElement('article');
@@ -7000,16 +7614,16 @@ function buildCards(container, items, opts){
   });
 }
 const PROCESS=[
-  {t:"Consultation",img:"assets/site/process-consultation-547.webp",d:"We visit, understand the space, and guide you to the right stone.",
+  {t:"Consultation",img:"/assets/site/process-consultation-547.webp",d:"We visit, understand the space, and guide you to the right stone.",
    d:"Understanding your space and style.",
    long:"We start at your kitchen, understanding the space, how you live in it, and the look you're after, then guide you to the material and finish that fit, with no pressure and no jargon."},
-  {t:"Design & Quote",img:"assets/site/process-quote-675.webp",d:"Layout, edges and a clear quote with no hidden costs.",
+  {t:"Design & Quote",img:"/assets/site/process-quote-675.webp",d:"Layout, edges and a clear quote with no hidden costs.",
    d:"A clear, itemised plan and price.",
    long:"We plan the layout, edge profiles, joints and cut-outs, then give you a clear, itemised quote covering template, fabrication and installation, the price you see is the price you pay."},
-  {t:"Template & Craft",img:"assets/site/process-template-678.webp",d:"Laser-templated to the millimetre, then precision-cut and polished.",
+  {t:"Template & Craft",img:"/assets/site/process-template-678.webp",d:"Laser-templated to the millimetre, then precision-cut and polished.",
    d:"Measured and cut to the millimetre.",
    long:"Once your units are level we laser-template the space to a fraction of a millimetre. Your slab is then precision-cut and polished at the fabrication workshop we place it with, cut wet to full safety standards, with the veining matched across every joint before we fit it ourselves."},
-  {t:"Install & Enjoy",img:"assets/site/process-install-600.webp",d:"Fitted cleanly and precisely, usually within days.",
+  {t:"Install & Enjoy",img:"/assets/site/process-install-600.webp",d:"Fitted cleanly and precisely, usually within days.",
    d:"Fitted cleanly, usually within days.",
    long:"Our team fits your worktop cleanly and precisely, usually within days of templating, squared, sealed and ready to use. Then the kitchen is yours to enjoy."}
 ];
@@ -8121,7 +8735,7 @@ const SLAB_TILES=/*BEGIN-SLAB-TILES*/{"absolute-black-brushed":"absolute-black-b
    picker, the cut plan and the collection grid can never disagree with each other. */
 function tileURL(slug){
   const t=slug&&Object.prototype.hasOwnProperty.call(SLAB_TILES,slug)?SLAB_TILES[slug]:null;
-  return t?'assets/slabs/'+t+'.webp':null;
+  return t?'/assets/slabs/'+t+'.webp':null;
 }
 /* ⭐ TWO SIZES, AND THE BROWSER PICKS. slabify writes a master (up to 1600px) and a -s thumb (up
    to 800px). Until 10 Aug NOTHING ASKED FOR THE THUMB — every surface loaded the master, so a
@@ -8131,7 +8745,7 @@ function tileURL(slug){
    ("extremely clear with no blurriness, but yet everything must all be optimized"). */
 function tileSrcset(slug){
   const t=slug&&Object.prototype.hasOwnProperty.call(SLAB_TILES,slug)?SLAB_TILES[slug]:null;
-  return t?'assets/slabs/'+t+'-s.webp 800w, assets/slabs/'+t+'.webp 1600w':null;
+  return t?'/assets/slabs/'+t+'-s.webp 800w, assets/slabs/'+t+'.webp 1600w':null;
 }
 /* markup form, for the wheel cards (which hold an inline <svg>, not a background) */
 function stoneMarkup(s){
@@ -8290,8 +8904,26 @@ function fanOrder(list){
 let SLABS_UNIQUE=MATERIALS[currentMat];
 let SLABS=SLABS_UNIQUE;
 const LAND=3;
-const wheel=document.getElementById('wheel'),readout=document.getElementById('readout');
-const prevBtn=document.getElementById('prev'),nextBtn=document.getElementById('next');
+/* ⭐⭐ SHARED-SCRIPT SAFETY — 13 August 2026 (D190), AND `orNull` IS NOT DEFENSIVE PADDING.
+   ⛔ **THIS SCRIPT RUNS ON THE INTERNAL PAGES NOW.** `build_pages.py` lifts it to
+   `assets/site.js` and every page links it, so a section it wires may simply not be on the page —
+   `/services/` has no stone wheel, `/contact/` has no gallery.
+   ⛔⛔ **A NULL HERE DOES NOT BREAK ONE FEATURE, IT BREAKS THE WHOLE FILE.** This script is FLAT
+   top-level code, not a series of IIFEs, so the first `wheel.addEventListener(...)` on a null
+   throws at the top level — and every `const` declared BELOW that point stays in the temporal dead
+   zone forever. The symptom is not "the wheel is missing", it is "Cannot access 'glowItems' before
+   initialization" from three unrelated subsystems, which is what the first build of these pages
+   actually printed.
+   ⭐ **A DETACHED ELEMENT IS THE ONE-LINE FIX.** It answers `addEventListener`, `classList`,
+   `style` and `getBoundingClientRect` exactly as a real one does and does nothing observable,
+   because nothing can see it. The flat code below then runs harmlessly end to end.
+   ⚠️ It is NOT in the document, so `offsetParent` is null and every rect is zero — which is what
+   the `galleryOn` / `wheelPlayed` guards already test before they do anything real.
+   ⛔ **DO NOT REACH FOR THIS WHERE THE CODE ALREADY TESTS TRUTHINESS.** A stub is truthy, so
+   swapping one in behind an existing `if(el)` turns a skipped block into a running one. It belongs
+   only where the very next statement dereferences the element unconditionally. */
+const wheel=orNull(document.getElementById('wheel')),readout=orNull(document.getElementById('readout'));
+const prevBtn=orNull(document.getElementById('prev')),nextBtn=orNull(document.getElementById('next'));
 /* [data-mat] matters: the rail also holds the "All stones" LINK, which must not bind the
    material-switch handler (loadMaterial(undefined) would crash mid-navigation) */
 const matBtns=[...document.querySelectorAll('#matTabs .mat-tab[data-mat]')];
@@ -8354,7 +8986,7 @@ function metrics(){
     const railW=parseFloat(getComputedStyle(wheel.parentElement).getPropertyValue('--railW'))||190;
     /* the rails are docked to the VIEWPORT edge (outside the stage box by the section pad),
        so the fan's clearance gains that pad back */
-    const stonesPad=parseFloat(getComputedStyle(document.getElementById('stones')).paddingLeft)||0;
+    const stonesPad=parseFloat(getComputedStyle(orNull(document.getElementById('stones'))).paddingLeft)||0;
     const allowed=Math.max(stageW/2-railW-28+stonesPad,cw*1.2);
     step=Math.max((allowed-cw/2)/3,cw*0.42);
   }else{
@@ -8896,11 +9528,13 @@ const REVIEWS=[
   .map(r=>({...r,a:r.n,img:phImg("PROJECT PHOTO")}));
 
 const SENSITIVITY=160;                        // px you must throw a card before it's sent to the back
-const deck=document.getElementById('revDeck');
-const dotsEl=document.getElementById('revDots');
-const revSection=document.getElementById('reviews');
-const revStage=document.getElementById('revStage');   /* was relying on the implicit id-global */
-const revHint=document.getElementById('revHint');
+/* ⚠️ D190: /estimate/ carries no reviews section, and `revNodes` appends to this deck at the
+   top level — see `orNull` for why an unguarded append there kills the whole file. */
+const deck=orNull(document.getElementById('revDeck'));
+const dotsEl=orNull(document.getElementById('revDots'));
+const revSection=orNull(document.getElementById('reviews'));
+const revStage=orNull(document.getElementById('revStage'));   /* was relying on the implicit id-global */
+const revHint=orNull(document.getElementById('revHint'));
 let order=REVIEWS.map((_,i)=>i);              // order[0] is the top card of the stack
 let revMode='grid';                           // 'grid' (browse all) or 'stack' (read + throw)
 const TILT=[-4,2.5,-2,3.5,-3];                // gentle resting tilt per depth, so it reads as a real stack
@@ -9892,6 +10526,9 @@ window.addEventListener('resize',checkRevSequence);
 const GLOW_EASE=0.1;                     // lower = softer, laggier light
 const glowItems=[];
 function attachGlow(el){
+  /* ⚠️ D190: called at the top level with elements that only some pages carry. A throw here is not
+     a missing glow, it is the rest of the file never running — see `orNull` at the top. */
+  if(!el) return;
   const g={el,tx:0,ty:0,x:0,y:0,a:0,ta:0,init:false};
   el.addEventListener('pointerenter',()=>{ g.ta=1; });
   el.addEventListener('pointermove',e=>{
@@ -9937,10 +10574,10 @@ requestAnimationFrame(glowTick);
     {img:SERVICES[1].img, name:'Waterfall Kitchen',    place:'Richmond'},
     {img:SERVICES[2].img, name:'Full-height Splashback',place:'Islington'},
     {img:SERVICES[3].img, name:'Template & Fit',       place:'St Albans'},
-    {img:'assets/site/kitchen-day-1188.webp', name:'Family Kitchen', place:'Hertford'},
+    {img:'/assets/site/kitchen-day-1188.webp', name:'Family Kitchen', place:'Hertford'},
     {img:PROCESS[1].img,  name:'Bespoke Layout',        place:'Welwyn'},
     {img:PROCESS[2].img,  name:'Vein-matched Joints',    place:'Enfield'},
-    {img:'assets/hero-kitchen.jpg', name:'Clean Install', place:'Barnet'}
+    {img:'/assets/hero-kitchen.jpg', name:'Clean Install', place:'Barnet'}
   ];
 
   const PER_SET=4;
@@ -10908,9 +11545,9 @@ requestAnimationFrame(glowTick);
   function closeLightbox(){ lightbox.classList.remove('on'); lightbox.setAttribute('aria-hidden','true'); }
   function lbNext(){ lbIndex=(lbIndex+1)%MEDIA.length; renderLb(); }
   function lbPrev(){ lbIndex=(lbIndex-1+MEDIA.length)%MEDIA.length; renderLb(); }
-  document.getElementById('plNext').addEventListener('click',lbNext);
-  document.getElementById('plPrev').addEventListener('click',lbPrev);
-  document.getElementById('plClose').addEventListener('click',closeLightbox);
+  orNull(document.getElementById('plNext')).addEventListener('click',lbNext);
+  orNull(document.getElementById('plPrev')).addEventListener('click',lbPrev);
+  orNull(document.getElementById('plClose')).addEventListener('click',closeLightbox);
 
   function openFocus(el){
     const img=el.querySelector('img');
@@ -10923,7 +11560,7 @@ requestAnimationFrame(glowTick);
     focused=true;                                  // lets Escape close the detail
   }
   function closeFocus(){ if(lightbox.classList.contains('on'))closeLightbox(); detail.classList.remove('on'); detail.setAttribute('aria-hidden','true'); stopHero(); focused=false; }
-  document.getElementById('projClose').addEventListener('click',closeFocus);
+  orNull(document.getElementById('projClose')).addEventListener('click',closeFocus);
 
   /* ---- "View as grid": a fullscreen overlay with all 8 projects, each still clickable ---- */
   (function(){
@@ -11297,7 +11934,7 @@ if(faqIndex && panel && faqBody){
    ⚠️ Naming a brand in this band implies we can supply it. Do not add a brand the client has
    not confirmed access to. */
 const SUPPLIERS=["Silestone","Caesarstone","Technistone","Unistone","Compac","Cimstone","Ceralsio","Noble Stone","iStone","CQ Stone","Dekton","Neolith"];
-document.getElementById('strip').innerHTML=[...SUPPLIERS,...SUPPLIERS].map(s=>`<span>${s}</span>`).join('');
+orNull(document.getElementById('strip')).innerHTML=[...SUPPLIERS,...SUPPLIERS].map(s=>`<span>${s}</span>`).join('');
 
 /* ---------- in-page navigation ----------
    A raw anchor jump is wrong for most of this page, for two different reasons:
@@ -11415,7 +12052,18 @@ document.getElementById('strip').innerHTML=[...SUPPLIERS,...SUPPLIERS].map(s=>`<
     divs.forEach(d=>{
       const r=d.getBoundingClientRect();
       const p=1-(r.top+r.height/2)/vh;                 // 0 as it enters bottom, 1 as it exits top
-      d.style.setProperty('--shine',(Math.max(0,Math.min(1,p))*100).toFixed(1)+'%');
+      const c=Math.max(0,Math.min(1,p));
+      d.style.setProperty('--shine',(c*100).toFixed(1)+'%');
+      /* ⭐ FADE IT OUT BEFORE EITHER END — D182, and the reasoning is on `.sd-line::after`.
+         `p` is CLAMPED, so a divider that has not been reached sits at exactly 0 and one already
+         passed sits at exactly 1, forever. At those two values the highlight is parked half off the
+         screen edge with its blurred cap showing above and below the 2px line, which is the "two
+         lines in the corner" the client photographed. Alpha reaches full only once the highlight is
+         clear of the edge, and it is back to zero before it arrives at the other one.
+         ⚠️ 0.04 is where the fade STARTS and 0.14 is where it completes — the lozenge is 26% of the
+         width and centred on `--shine`, so its trailing cap has to be past x=0 before it is lit. */
+      d.style.setProperty('--shineA',
+        Math.max(0,Math.min(1,(c-0.04)/0.10,(0.96-c)/0.10)).toFixed(3));
     });
   };
   shine();
@@ -12090,7 +12738,7 @@ document.addEventListener('topcat:files',renderUploads);
     }
 
     const pcs=pieces.length;
-    const nx=EXTRAS.reduce((s,id)=>s+(document.getElementById(id).checked?1:0),0);
+    const nx=EXTRAS.reduce((s,id)=>s+(orNull(document.getElementById(id)).checked?1:0),0);
     const meta=stone.name+' · '+(pcs===1?'1 piece':pcs+' pieces')+' · '+(n===1?'1 slab':n+' slabs')+
       (nx?' · '+(nx===1?'1 extra':nx+' extras'):'');
     metaEl.textContent=meta;
@@ -12113,7 +12761,7 @@ document.addEventListener('topcat:files',renderUploads);
     /* the two that move the bracket. They are NAMED under the price rather than priced beside
        their switches, so the panel reads as one number rather than a running bill. */
     const added=[];
-    if(document.getElementById('exRemoval').checked){ lo+=REMOVAL; hi+=REMOVAL; added.push('taking your old worktop away'); }
+    if(orNull(document.getElementById('exRemoval')).checked){ lo+=REMOVAL; hi+=REMOVAL; added.push('taking your old worktop away'); }
     const m=edgeMetres();
     if(m){ lo+=m*EDGE_RATE[0]; hi+=m*EDGE_RATE[1];
       added.push(m+' m of '+EDGES[edgeIdx][0].toLowerCase()+' edging'); }
@@ -12246,7 +12894,7 @@ document.addEventListener('topcat:files',renderUploads);
        visitor actually chose, not one we defaulted them into. */
     setStone(bestFor(mat),false);
   }));
-  EXTRAS.forEach(id=>document.getElementById(id).addEventListener('change',()=>{
+  EXTRAS.forEach(id=>orNull(document.getElementById(id)).addEventListener('change',()=>{
     if(id==='exEdge')renderEdge();
     compute();
   }));
@@ -12639,6 +13287,37 @@ function viewSequence(host,tiles,apply,opts){
   burger.addEventListener('click',()=>setOpen(!document.documentElement.classList.contains('nav-open')));
   sheet.addEventListener('click',e=>{ if(e.target.closest('a')) setOpen(false); });
   window.addEventListener('keydown',e=>{ if(e.key==='Escape') setOpen(false); });
+
+  /* ⭐ THE SUBMENU CARETS — D194.
+     ⛔ **DELEGATED, AND BOUND BEFORE THE `a` HANDLER ABOVE CAN SEE IT.** The caret sits inside the
+     sheet, and the rule two lines up closes the whole menu on any click that lands on a link. A
+     caret is a `<button>`, not an `<a>`, so `closest('a')` misses it — but only because the markup
+     keeps them SEPARATE. ⛔ Do not nest the toggle inside the anchor to tidy the markup: it would
+     both navigate and expand on one tap, and the menu would shut on the way out.
+     ⭐ Opening one closes the other. Two panels open at once is how the sheet outgrows a short
+     handset, and the client asked for a way IN to a section, not for the whole tree at once. */
+  sheet.addEventListener('click',e=>{
+    const t=e.target.closest('.mn-toggle');
+    if(!t) return;
+    const panel=document.getElementById(t.getAttribute('aria-controls'));
+    if(!panel) return;
+    const open=!panel.classList.contains('open');
+    closeSubs();
+    if(open){
+      panel.classList.add('open');
+      /* the exact content height — see the note on `.mn-sub` for why this is not a constant */
+      panel.style.maxHeight=panel.scrollHeight+'px';
+      t.setAttribute('aria-expanded','true');
+    }
+  });
+  function closeSubs(){
+    sheet.querySelectorAll('.mn-sub').forEach(p=>{ p.classList.remove('open'); p.style.maxHeight=''; });
+    sheet.querySelectorAll('.mn-toggle').forEach(b=>b.setAttribute('aria-expanded','false'));
+  }
+  /* every close of the sheet resets the panels, so it never reopens mid-expansion */
+  burger.addEventListener('click',()=>{
+    if(!document.documentElement.classList.contains('nav-open')) closeSubs();
+  });
 })();
 
 /* ---------- final CTA: demo enquiry form ----------
@@ -12758,7 +13437,7 @@ function viewSequence(host,tiles,apply,opts){
      ⚠️ Keep the D21 trigger phrases out of this file entirely, comments included — the go-live
      scan in §2 rule 1 is a plain grep and cannot tell a comment from a claim.
      AI-generated placeholders in assets/team/ until the real shoot (§7.5). */
-  const picks=['assets/team/handshake.jpg','assets/team/samples.jpg','assets/team/fitting.jpg'];
+  const picks=['/assets/team/handshake.jpg','/assets/team/samples.jpg','/assets/team/fitting.jpg'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */
       if(SS[picks[i]]){ im.srcset=SS[picks[i]]; im.sizes='(max-width:720px) 240px, 375px'; }

@@ -54,9 +54,9 @@ FAVICON = "/assets/brand/favicon.svg"
 # buyers need a door they can find in seconds. It is the one nav item that is a real page
 # rather than a homepage anchor.
 NAV_LINKS = [
-    ("/index.html#services", "Services"), ("/index.html#gallery", "Projects"),
-    ("/index.html#stones", "Stones"), ("/index.html#estimator", "Estimate"),
-    ("/index.html#about", "About us"), ("/trade/", "Trade"), ("/index.html#cta", "Contact"),
+    ("/services/", "Services"), ("/projects/", "Projects"),
+    ("/stones/", "Stones"), ("/estimate/", "Estimate"),
+    ("/about/", "About us"), ("/trade/", "Trade"), ("/contact/", "Contact"),
 ]
 
 WHY = [
@@ -235,7 +235,7 @@ def nav_html():
     return f"""<header class="bar">
   <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO}</a>
   <nav class="top">{links}</nav>
-  <a class="bar-cta" href="/index.html#cta">Get a quote</a>
+  <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
 
 
@@ -250,11 +250,11 @@ def footer_html():
     <div class="foot-col">
       <div class="foot-k">Explore</div>
       <ul>
-        <li><a href="/index.html#services">Services</a></li>
-        <li><a href="/index.html#gallery">Projects</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/projects/">Projects</a></li>
         <li><a href="/stones/">Stones</a></li>
-        <li><a href="/index.html#estimator">Estimate</a></li>
-        <li><a href="/index.html#about">About us</a></li>
+        <li><a href="/estimate/">Estimate</a></li>
+        <li><a href="/about/">About us</a></li>
         <li><a href="/trade/">For the trade</a></li>
       </ul>
     </div>
@@ -277,7 +277,7 @@ def footer_html():
   </div>
   <div class="foot-bar">
     <span>&copy; 2026 TopCat Worktops Ltd. All rights reserved.</span>
-    <div class="foot-legal"><a href="/index.html#cta">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
+    <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
   </div>
 </footer>"""
 
@@ -311,7 +311,7 @@ def jsonld(s):
          "areaServed": AREAS_SERVED},
         {"@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{BASE}/index.html"},
-            {"@type": "ListItem", "position": 2, "name": "Services", "item": f"{BASE}/index.html#services"},
+            {"@type": "ListItem", "position": 2, "name": "Services", "item": f"{BASE}/services/"},
             {"@type": "ListItem", "position": 3, "name": s["h1"], "item": url}]},
         # ⛔ FAQPage schema REMOVED 7 Aug 2026. Google deprecated it, FAQ rich results
         # stopped appearing 7 May 2026 and the documentation was deleted 15 June 2026, so
@@ -373,10 +373,10 @@ def page(s):
 {nav_html()}
 
 <nav class="crumb" aria-label="Breadcrumb">
-  <a class="crumb-back" href="/index.html#services" aria-label="Back to Services" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <a class="crumb-back" href="/services/" aria-label="Back to Services" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   <ol>
     <li><a href="/index.html#hero">Home</a></li>
-    <li><a href="/index.html#services">Services</a></li>
+    <li><a href="/services/">Services</a></li>
     <li aria-current="page">{e(s['h1'])}</li>
   </ol>
 </nav>
@@ -389,7 +389,7 @@ def page(s):
       <h1>{e(s['h1'])}</h1>
       <p class="lede">{e(s['lede'])}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/index.html#cta">Get your free quote</a>
+        <a class="btn-gold" href="/contact/">Get your free quote</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
       <div class="trust">
@@ -447,7 +447,7 @@ def page(s):
     <h2>Tell us about your project</h2>
     <p>Book a free home visit and we will measure up, talk through the stone and give you a fixed, itemised quote. We reply within one working day. Prefer to talk it through? Ask for Nick.</p>
     <div class="cta-row">
-      <a class="btn-gold" href="/index.html#cta">Get your free quote</a>
+      <a class="btn-gold" href="/contact/">Get your free quote</a>
       <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
     </div>
   </div></section>
@@ -460,8 +460,8 @@ def page(s):
 
 
 def related_intro_materials():
-    mats = [("Marble", "/index.html#stones"), ("Quartz", "/index.html#stones"),
-            ("Granite", "/index.html#stones")]
+    mats = [("Marble", "/stones/"), ("Quartz", "/stones/"),
+            ("Granite", "/stones/")]
     return '<div class="mats">' + "".join(f'<a href="{h}">{e(t)}</a>' for t, h in mats) + "</div>"
 
 

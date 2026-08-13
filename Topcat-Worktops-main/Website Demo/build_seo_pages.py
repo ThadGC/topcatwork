@@ -62,7 +62,7 @@ GUARANTEE_YEARS = 10
 # role. Nick is the client-approved public name and the front-of-house contact.
 AUTHOR = "Nick"
 AUTHOR_ROLE = "Managing Director, TopCat Worktops"
-AUTHOR_URL = f"{BASE}/index.html#about"
+AUTHOR_URL = f"{BASE}/about/"
 # ⚠️ Shown as "Last reviewed" on every guide. Bump when the copy is genuinely
 # re-checked, not on every rebuild, or the date stops meaning anything.
 LAST_REVIEWED = "7 August 2026"
@@ -93,9 +93,9 @@ FAVICON = "/assets/brand/favicon.svg"
 
 # Matches the landing page nav exactly. Trade is a real page, not a hash.
 NAV_LINKS = [
-    ("/index.html#services", "Services"), ("/index.html#gallery", "Projects"),
-    ("/index.html#stones", "Stones"), ("/index.html#estimator", "Estimate"),
-    ("/index.html#about", "About us"), ("/trade/", "Trade"), ("/index.html#cta", "Contact"),
+    ("/services/", "Services"), ("/projects/", "Projects"),
+    ("/stones/", "Stones"), ("/estimate/", "Estimate"),
+    ("/about/", "About us"), ("/trade/", "Trade"), ("/contact/", "Contact"),
 ]
 
 HERO_IMG = "/assets/kitchen-day.jpg"
@@ -114,7 +114,7 @@ def nav_html(depth):
     return f"""<header class="bar">
   <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops, home">{BRAND_LOGO}</a>
   <nav class="top" aria-label="Primary">{links}</nav>
-  <a class="bar-cta" href="/index.html#cta">Get a quote</a>
+  <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
 
 
@@ -130,11 +130,11 @@ def footer_html():
     <div class="foot-col">
       <div class="foot-k">Explore</div>
       <ul>
-        <li><a href="/index.html#services">Services</a></li>
-        <li><a href="/index.html#gallery">Projects</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/projects/">Projects</a></li>
         <li><a href="/stones/">Stones</a></li>
-        <li><a href="/index.html#estimator">Estimate</a></li>
-        <li><a href="/index.html#about">About us</a></li>
+        <li><a href="/estimate/">Estimate</a></li>
+        <li><a href="/about/">About us</a></li>
         <li><a href="/trade/">For the trade</a></li>
       </ul>
     </div>
@@ -245,7 +245,7 @@ def cta_band(heading, line):
     <h2>{e(heading)}</h2>
     <p>{e(line)}</p>
     <div class="cta-row">
-      <a class="btn-gold" href="/index.html#cta">Get your free quote</a>
+      <a class="btn-gold" href="/contact/">Get your free quote</a>
       <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
     </div>
     <p class="cta-note">Free home visit with samples. Every cut-out included. Ten year guarantee.</p>
@@ -1494,7 +1494,7 @@ APPLICATIONS = [
    "Porcelain or hard granite, both of which take weather and sunlight."),
   ("Commercial surfaces", "/services/commercial-worktops.html",
    "Reception desks, bar tops, office kitchens and hospitality fit-outs."),
-  ("Fireplaces, hearths and tables", "/index.html#cta",
+  ("Fireplaces, hearths and tables", "/contact/",
    "Made to order from your drawings or measurements, priced by hand."),
 ]
 
@@ -1615,7 +1615,7 @@ def material_page(m):
       <h1>{e(m['h1'])}</h1>
       <p class="lede">{e(m['lede'])}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/index.html#estimator">Price it in a minute</a>
+        <a class="btn-gold" href="/estimate/">Price it in a minute</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
       <div class="trust">
@@ -1797,7 +1797,7 @@ def county_page(c):
       <h1>{e(c['h1'])}</h1>
       <p class="lede">{e(c['lede'])}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/index.html#cta">Book a free home visit</a>
+        <a class="btn-gold" href="/contact/">Book a free home visit</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
       <div class="trust">
@@ -1895,7 +1895,7 @@ def town_page(t):
       <h1>{e(t['h1'])}</h1>
       <p class="lede">{e(t['lede'])}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/index.html#cta">Book a free home visit</a>
+        <a class="btn-gold" href="/contact/">Book a free home visit</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
       <div class="trust">

@@ -67,9 +67,9 @@ FAVICON = "/assets/brand/favicon.svg"
 # it needs a findable door. On THIS page it points at its own path, which is fine — a current
 # link to the page you are on is standard, and it keeps the nav identical everywhere.
 NAV_LINKS = [
-    ("/index.html#services", "Services"), ("/index.html#gallery", "Projects"),
-    ("/index.html#stones", "Stones"), ("/index.html#estimator", "Estimate"),
-    ("/index.html#about", "About us"), ("/trade/", "Trade"), ("/index.html#cta", "Contact"),
+    ("/services/", "Services"), ("/projects/", "Projects"),
+    ("/stones/", "Stones"), ("/estimate/", "Estimate"),
+    ("/about/", "About us"), ("/trade/", "Trade"), ("/contact/", "Contact"),
 ]
 
 # one of the four shared images in /assets (the process photos are inlined base64 in
@@ -176,7 +176,7 @@ def nav_html():
     return f"""<header class="bar">
   <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO}</a>
   <nav class="top">{links}</nav>
-  <a class="bar-cta" href="/index.html#cta">Get a quote</a>
+  <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
 
 
@@ -191,11 +191,11 @@ def footer_html():
     <div class="foot-col">
       <div class="foot-k">Explore</div>
       <ul>
-        <li><a href="/index.html#services">Services</a></li>
-        <li><a href="/index.html#gallery">Projects</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/projects/">Projects</a></li>
         <li><a href="/stones/">Stones</a></li>
-        <li><a href="/index.html#estimator">Estimate</a></li>
-        <li><a href="/index.html#about">About us</a></li>
+        <li><a href="/estimate/">Estimate</a></li>
+        <li><a href="/about/">About us</a></li>
         <li><a href="/trade/">For the trade</a></li>
       </ul>
     </div>
@@ -218,7 +218,7 @@ def footer_html():
   </div>
   <div class="foot-bar">
     <span>&copy; 2026 TopCat Worktops Ltd. All rights reserved.</span>
-    <div class="foot-legal"><a href="/index.html#cta">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
+    <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
   </div>
 </footer>"""
 
@@ -319,7 +319,7 @@ def page():
       <h1>A worktop partner that behaves like your team</h1>
       <p class="lede">{e(LEDE)}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/index.html#cta">Open a trade account</a>
+        <a class="btn-gold" href="/contact/">Open a trade account</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
       <div class="trust">
@@ -365,7 +365,7 @@ def page():
     <h2>Open a trade account</h2>
     <p>Send us a drawing or a plot schedule and we will come back with materials, dates and a fixed, itemised price. One conversation sets your terms for every job after it. Ask for Nick.</p>
     <div class="cta-row">
-      <a class="btn-gold" href="/index.html#cta">Open a trade account</a>
+      <a class="btn-gold" href="/contact/">Open a trade account</a>
       <a class="btn-ghost" href="tel:{PHONE_TEL}">Talk to our trade team</a>
     </div>
   </div></section>
