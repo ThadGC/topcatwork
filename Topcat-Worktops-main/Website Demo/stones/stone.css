@@ -388,6 +388,17 @@ html.cmp-locked,html.cmp-locked body{overflow:hidden}
   .cmp-baractions{flex-wrap:wrap;width:100%;margin-left:0}
   .cmp-add{width:100%;justify-content:center;order:3}
   .cmp-pick-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+  /* ⛔ D197: TITLE AND SUBTITLE ONLY ON THE PHONE. Client: "you can also remove eyebrows from
+     the title. So it's just title and subtitle for all the internal pages."
+     ⭐ Both of this stylesheet's eyebrows are page-head labels, which is why both go: `.st-hero`
+     is the collection and compare heads ("The collection", "Side by side"), `.stp-copy` is a
+     stone page's own head ("Granite &middot; Brushed").
+     ⚠️ NOTHING IS LOST BY HIDING THE STONE ONE: the material is already on the slab itself as
+     `.stp-tag` and again in `.stp-facts` below the lede, so the phone still says what it is.
+     ⛔ The breadcrumb is NOT hidden here — it is `.crumb` in /services/service.css, which every
+     one of these pages loads, and it comes off there in one place for all six families. */
+  .st-hero .eyebrow,
+  .stp-copy .eyebrow{display:none}
 }
 /* the collection page's compare door — same chrome as Refine, so the control row reads as one */
 .st-compare{text-decoration:none;display:inline-flex;align-items:center;gap:9px}

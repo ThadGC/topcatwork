@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=f54a7799d4">
+<link rel="stylesheet" href="/assets/site.css?v=3a1ae26f28">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -530,6 +530,14 @@
         <div class="foot-c-hours"><span class="foot-ck">Hours</span><span class="foot-cv">Monday to Friday, 8am to 6pm</span></div>
       </div>
     </div>
+    <!-- ⭐⭐ THE TABLET'S HOME FOR "AREA" AND "HOURS" — 13 Aug 2026 (D200). Client, twice:
+         *"the footer area and hours have to go at the bottom, like, above just that bottom line."*
+         ⛔ **EMPTY IN THE MARKUP ON PURPOSE.** The two blocks live inside `.foot-contact` for every
+         other width, and no CSS can lift a nested element out of its grid parent — `display:contents`
+         on that column dissolves Phone and Email along with them. So the footer IIFE MOVES the two
+         nodes in here when the stylesheet says to, and moves them back when it does not. One copy of
+         the markup, so nothing is duplicated into the page source (§4, D168's lesson). -->
+    <div class="foot-tail" id="footTail"></div>
     <div class="foot-bar">
       <span>© 2026 TopCat Worktops Ltd. All rights reserved.</span>
       <!-- Sitemap is the only one of these four that is a real page. Privacy, Terms and
@@ -545,6 +553,6 @@
 
 </main>
 
-<script src="/assets/site.js?v=e38a181ddd" defer></script>
+<script src="/assets/site.js?v=2cce961492" defer></script>
 </body>
 </html>

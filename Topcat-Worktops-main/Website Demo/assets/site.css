@@ -222,7 +222,18 @@
      centre AS IT FORMS (D33). A bar that is already formed has nothing to form, so leaving the
      flare armed would fire a flash across a finished line 40px into the first scroll.
      ⚠️ These rules must stay AFTER the base ones — same specificity, so order is what decides. */
-  @media(max-width:720px){
+  /* ⭐⭐ LIFTED FROM `max-width:720px` TO `max-width:1120px` — 13 August 2026 (D198), THE TABLET
+     ROUND. Client: *"for tablet, the NavBar, let's remove the get a quote inside the NavBar, and
+     just make it look more like the mobile navbar."*
+     ⭐ **LIFTED, NOT COPIED.** This block is nav-bar-only — every selector in it is `header.bar`
+     or `.bar-flare` — so widening its own condition is safe and gives the tablet the phone's bar
+     from ONE source. A second copy for the tablet would have been this project's signature bug for
+     the seventh time (D51, D59, D68, D78, D93, D105).
+     ⛔ Widening a `max-width` is ADDITIVE FOR THE PHONE and INVISIBLE TO THE DESKTOP: every rule
+     still applies at ≤720 in the same source order, and ≥1121 never matched it and still does not.
+     ⚠️ The tablet's own sizes are the small block directly below this one — the radius is bigger
+     there, because the phone's 18px arc on a 768px bar reads as a straight line. */
+  @media(max-width:1120px){
     header.bar::before{opacity:1}
     header.bar::after{opacity:1;transform:scaleX(1)}
     .bar-flare{display:none}
@@ -259,6 +270,7 @@
       border-bottom-left-radius:var(--navCurveR);border-bottom-right-radius:var(--navCurveR);
     }
   }
+
 
   /* ⭐ THE REAL LOGO — client's own artwork, supplied 10 Aug 2026, in assets/brand/.
      It replaces a hand-rebuilt approximation of the mark sitting beside a type-set wordmark
@@ -410,7 +422,7 @@
   }
   /* ⭐⭐ THE PROJECTS PAGE RUNS THE GALLERY AS A COLUMN AT EVERY WIDTH — D195.
      `build_pages.py` puts `.pg-col` on that page's <main>. Setting `--galMode` is the whole
-     switch: the gallery IIFE reads it through `galPhone()`, `measure()` returns early, and the
+     switch: the gallery IIFE reads it through `galStatic()`, `measure()` returns early, and the
      script adds `.gal-static` — the same path the phone has taken since D163.
      ⛔ **A SECOND `matchMedia` IN JS WOULD HAVE BEEN THE OBVIOUS REACH AND IS THIS PROJECT'S MOST
      REPEATED BUG** (D51, D59, D68, D78, D93, D105). The stylesheet stays the only thing that
@@ -481,7 +493,14 @@
     .page-head{padding:calc(66px + clamp(40px,6.4vh,66px)) 20px clamp(38px,6vh,60px);
       --curveR:30px;--curveOut:9px}
     .page-head h1{font-size:clamp(30px,8.6vw,40px)}
-    .page-crumb{margin-bottom:14px;font-size:9px;letter-spacing:0.18em}
+    /* ⛔ D197: NO BREADCRUMB ON THE PHONE. Client: "there's a directory that says home services
+       slash kitchen worktops, we don't need the directory... on mobile, we don't need a directory
+       of which page you're on or going back to pages, only on desktop."
+       ⭐ The phone dressing that was here (margin-bottom:14px, font-size:9px, letter-spacing) is
+       DELETED rather than left to be out-specified — the element does not render at this width, so
+       a second live description of it is exactly how D106, D113 and D114 each lost a rule.
+       ⚠️ These six pages keep the burger menu, so the trail is not the only way to move. */
+    .page-crumb{display:none}
   }
   @media(max-width:1120px){nav.top{display:none}}
 
@@ -1167,6 +1186,16 @@
      pinned to the card's previous height curve so the cards stay exactly as wide as they were,
      and only the height comes down (~12%). */
   #reviews{--revCardH:clamp(264px,38.5vh,362px);--revCardW:calc(clamp(300px,44vh,412px) * 0.98)}
+  /* ⭐⭐ HOW MANY REVIEWS A PAGE HOLDS, DECLARED ONCE PER BAND — 13 August 2026 (D198).
+     `perPage()` reads this instead of testing `innerWidth` in JS, so the stylesheet and the layout
+     maths can never hold separate opinions about what a phone is. See the comment on `perPage()`.
+     ⛔ **1 IS THE PHONE *AND* THE TABLET.** Client: *"the hear it from your neighbour section [should]
+     look like an increased version of the mobile version. Same functionality, just bigger."* One
+     card at a time with its neighbours peeking in IS the mobile version; at 768 it simply arrives
+     bigger, because `--revCardW`/`--revCardH` above are vh-led and were never phone numbers.
+     ⚠️ 3 stays the desktop deck and is untouched — `revSolo()` also guards on `isDesktopRev()`. */
+  #reviews{--revPer:3}
+  @media(max-width:1120px){ #reviews{--revPer:1} }
   /* DESKTOP: the section fills a full screen and centres its content. Not for looks alone — the
      hero's bottom hairline and the gold divider under this section are both full-bleed lines,
      and at less than a viewport apart they read as a double border. A full-viewport section
@@ -3391,7 +3420,21 @@
      are all going to be center with the icon on top and the text below, and they're all three
      going to be in line. So pretty much everything is going to be centered."
      ============================================================================ */
-  @media(max-width:720px){
+  /* ⭐⭐ LIFTED FROM `max-width:720px` TO `max-width:1120px` — 13 August 2026 (D198), THE TABLET
+     ROUND. Client: *"just like mobile, we're gonna form the tablet version the same way we formed
+     the mobile version. So it's gonna be centre. Everything is just gonna be bigger. Same text as
+     on the mobile version, same styling as on the mobile version, and that's what we're gonna do
+     for the tablet home page."*
+     ⭐ **THIS BLOCK IS HERO-ONLY** — every selector in it is `.hero*` or `.hf*` — which is what
+     makes widening its own condition safe. It cannot reach the reviews, the services grid, the
+     stone selector, the Why tiles or the FAQ, all of which the client says are already right on
+     tablet and none of which is in scope this round.
+     ⛔ Widening a `max-width` is ADDITIVE FOR THE PHONE and INVISIBLE TO THE DESKTOP.
+     ⚠️ **MOST OF WHAT IS IN HERE IS ALREADY SIZE-RELATIVE AND NEEDED NO TABLET NUMBER**: the type
+     is `min(px, vw)`, the paddings are `clamp(px, vh, px)` and the button width is a percentage of
+     the icon row. They were written that way for a range of handsets and they simply keep going up
+     the tablet band. Measure before adding a tablet override — most of them are not needed. */
+  @media(max-width:1120px){
     /* --- everything centred --------------------------------------------------------- */
     .hero-copy{text-align:center}
     /* ⚠️ .hl is an overflow:hidden MASK for the line reveal and carried .08em of padding on the
@@ -4504,6 +4547,10 @@
      listing columns are gone; those families are reached through their hubs in Browse. */
   .foot-grid{max-width:1320px;margin:0 auto;display:grid;
     grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:clamp(22px,2.4vw,44px)}
+  /* ⭐ D200: the tablet's landing place for Area and Hours. It holds nothing at any other width, and
+     `:empty` is what keeps it completely inert there — no box, no gap, no margin contributed to the
+     frozen desktop footer. See the footer IIFE at the foot of the script for what fills it. */
+  .foot-tail:empty{display:none}
   @media(max-width:1000px){.foot-grid{grid-template-columns:1fr 1fr}}
   @media(max-width:560px){.foot-grid{grid-template-columns:1fr}}
   .foot-brand .brand{margin-bottom:22px}
@@ -4734,10 +4781,41 @@
     .about-wrap{grid-template-columns:1fr;grid-template-areas:"collage" "copy";
       gap:clamp(24px,4vh,36px);--sideW:min(86vw,420px)}
     .about-copy,.about-collage{align-self:auto}
+
+    /* ⭐⭐ THE COPY CENTRES WHEREVER IT IS STACKED UNDER THE COLLAGE — moved here 13 Aug 2026 (D198)
+       from the phone block, for the tablet round. Client: *"the about us section, we can find the
+       best way to optimise that for tablet because I don't really know what to tell you, but it
+       definitely needs to change."*
+       ⭐⭐ **THE CONDITION THAT MATTERS IS "IS IT STACKED", AND THAT IS THIS QUERY — 880px.** Three
+       lines up, `.about-wrap` becomes one column with the collage above the copy. A 420px centred
+       image block sitting on top of 691px of LEFT-aligned text is the mismatch the client is looking
+       at; it was already solved for the phone, and the fix was locked at ≤720 for no reason other
+       than that the phone got there first. Scoping it to the ARRANGEMENT rather than to a DEVICE is
+       what stops it being right on one and wrong on the other again.
+       ⛔ **NOT WIDENED TO THE WHOLE TABLET BAND.** From 881px `.about-wrap` is TWO columns, copy
+       beside collage, and centred body text in a narrow column next to an image reads worse than left.
+       ⚠️ `.about-cta` needs `align-self`, not `text-align` — it is a flex item carrying
+       `align-self:flex-start`, so that is the property holding it left. The auto margins are needed
+       too: `max-width:22ch` on the title makes its BOX narrower than the column, and text-align only
+       centres the line inside that box, not the box itself. */
+    #about .about-copy{text-align:center}
+    #about .about-copy .section-title,
+    #about .about-copy .section-sub{margin-left:auto;margin-right:auto}
+    #about .about-cta{align-self:center}
   }
   /* --- hero: responsive call button (mobile dials, desktop requests a call) --- */
+  /* ⭐ WIDENED 760px → 1120px — 13 August 2026 (D198), THE TABLET ROUND. Client: *"same text as on
+     the mobile version, same styling as on the mobile version."* ⛔⛔ **WITHOUT THIS THE TABLET KEPT
+     THE DESKTOP BUTTON AND IT LOOKED RIGHT WHILE BEING WRONG** — the hero centred, the labels
+     shortened and the chips became a 2×2 grid, but the second button still read "Request a call"
+     and still went to `#cta` instead of dialling. ⭐ **THE TELL WAS A ZERO-WIDTH ELEMENT**, not a
+     visible fault: `.hero-call-mobile` was in the DOM at 0×0 while its desktop twin painted at
+     426px, so every measurement of "the call button" answered about the wrong one.
+     ⚠️ 760 was one of this file's pre-device-band numbers, not a considered edge. The tablet band
+     is 721–1120, so 721–760 already had the mobile button and 761–1120 did not — a split nobody
+     chose. ⛔ Phone (≤720) and desktop (≥1121) are both untouched by the change. */
   .hero-call-mobile{display:none}
-  @media(max-width:760px){
+  @media(max-width:1120px){
     .hero-call-mobile{display:inline-flex}
     .hero-call-desktop{display:none}
   }
@@ -5242,10 +5320,9 @@
        centre the box; text-align centres the line within it. Both are needed.
        ⚠️ The CTA needs neither: it is a flex item with `align-self:flex-start`, so it is that
        property, not text-align, that has to change. */
-    #about .about-copy{text-align:center}
-    #about .about-copy .section-title,
-    #about .about-copy .section-sub{margin-left:auto;margin-right:auto}
-    #about .about-cta{align-self:center}
+    /* ⭐ MOVED to the `max-width:880px` block that stacks `.about-wrap` — 13 Aug 2026 (D198).
+       That query, not this one, decides whether the copy sits UNDER the collage, which is the
+       only arrangement centring is right for. Search `#about .about-copy`. */
 
     /* --- 10. "ANSWERS, SET IN STONE" BECOMES A PLAIN ACCORDION — 12 Aug 2026 (D152) ---------
        Client: "for mobile only, we have to completely redesign the way the answers set in stone
@@ -5385,20 +5462,6 @@
        times now): the seam fix belongs to the gallery's BOTTOM EDGE, not to that one element. */
     .strip-band .strip-swap{margin-top:0}
 
-    /* --- 13. THE STONE SELECTOR AND THE PROJECT GALLERY TRADE PLACES — 13 Aug 2026 (D179) ----
-       Client: "swop the chose your stone and project gallery section."
-       ⛔ **PHONE ONLY, AND THE MARKUP DID NOT MOVE.** §2 rule 15 — desktop and tablet stay exactly
-       as they are until he calls them, and a section swap re-composes the page rather than adding
-       to it. `.gs-swap` is `display:contents` in the base rule (no box, no effect); here it becomes
-       a flex column and the four children are re-ordered inside it.
-       ⭐ Source order is divider · gallery · divider · stones. Painted order below is
-       divider · STONES · divider · GALLERY, so both seams keep a rule and the brand strip stays
-       where it is — on the phone it is only the plain divider anyway (D143). */
-    .gs-swap{display:flex;flex-direction:column}
-    .gs-swap > .section-divider:first-child{order:1}
-    .gs-swap > #stones{order:2}
-    .gs-swap > #gallery + .section-divider{order:3}
-    .gs-swap > #gallery{order:4}
 
     /* --- 11. THE FOOTER: A CENTRED HEAD, TWO PACKED COLUMNS, A CENTRED FOOT — D153 -----------
        Client: "for the footer, the footer parts should be centre. So the logo should be centre, and
@@ -5564,6 +5627,103 @@
     .wy-tile{will-change:auto}
     .phb-slide{will-change:opacity}
 
+
+    /* ============================================================================================
+       15. ⭐ THE WHATSAPP BUTTON CLEARS THE STICKY BAR — 13 August 2026 (D173)
+       ============================================================================================
+       ⛔ **THE PHONE ALREADY OWNS THIS CORNER.** `.mbar` is fixed to the bottom edge at 59px tall
+       plus the safe-area inset (D99/D110), so the default `bottom:24px` would put the button
+       squarely on top of "Call". 73px is the bar's real height plus 14px of air, and `env()` is
+       added on top so it clears the home indicator on a notched handset rather than sitting under
+       it.
+       ⛔⛔ **REVERSED 13 August 2026 (D180), AND THE OLD REASONING IS KEPT ABOVE ON PURPOSE.** D173
+       parked the button at 73px PERMANENTLY, on the theory that a button which moved every time the
+       bar left would read as a glitch. The client looked at it and said the opposite: *"the WhatsApp
+       button is way too high up. It needs to stay in the bottom corner. And then as the sticky bottom
+       bar pops up, it stays just above that in its position."* He is right — parked at 73px with no
+       bar under it, the button floats in the middle of nothing and the corner looks broken.
+       ⭐ **IT NOW RIDES THE BAR'S OWN STATE, WHICH COSTS NO NEW MACHINERY.** `.mbar` already gets
+       `.on` from the IIFE at the foot of the file, and `.wa-fab` is its LATER SIBLING, so the
+       general sibling combinator reads that state directly — no second scroll listener, no class on
+       `<html>`, nothing for a media query to disagree with. ⛔ The two elements must stay siblings
+       in that order for this to work; if either moves, this rule dies silently.
+       ⭐ `bottom` is transitioned over the same .5s the bar uses, so the two move together as one
+       gesture rather than the button jumping after the bar has arrived.
+       ⭐ **AND IT STANDS DOWN WITH EVERYTHING ELSE WHEN THE MENU OPENS**, exactly as `.mbar` does
+       four rules up: a contact shortcut floating over a full-screen menu is the classic version of
+       this bug, and z-index alone would not have saved it here because the button is a sibling of
+       the sheet rather than inside it. */
+    .wa-fab{right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));
+      width:50px;height:50px;
+      transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
+                 opacity .3s var(--ease),transform .35s var(--ease)}
+    .mbar.on ~ .wa-fab{bottom:calc(73px + env(safe-area-inset-bottom,0px))}
+    .wa-fab svg{width:25px;height:25px}
+    html.nav-open .wa-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
+
+  }
+
+  /* ============================================================================================
+     ⭐⭐ THE STONE SELECTOR LEADS ON THE TABLET TOO — LIFTED TO `max-width:1120px`, 13 Aug 2026 (D198)
+     ============================================================================================
+     Client, opening the tablet round: *"for the view our project gallery, here we're also going to
+     have the choose your stone go first. And then it switches with the view our project gallery."*
+     ⭐ **THE SAME FOUR ORDERS D179 WROTE FOR THE PHONE, LIFTED RATHER THAN RETYPED.** The markup
+     still does not move: `.gs-swap` is `display:contents` in the base rule — an element that
+     generates NO BOX AT ALL — so above 1120px the wrapper is invisible to layout and the frozen
+     desktop composition (D91) is untouched, exactly as it was when only the phone opted in.
+     ⛔ **THE SEAM COMPENSATION ABOVE TRAVELS WITH IT AND MUST STAY ABOVE THIS BLOCK.**
+     `.strip-band .strip-swap{margin-top:0}` is D179's cost-stays-behind fix: `#gallery +
+     .section-divider` is a DOM selector, so after the swap it names the divider ABOVE the gallery,
+     where there is no sticky-bar reserve to double up with. That rule is inside the phone block and
+     therefore does NOT reach the tablet — see the tablet band at the foot of this stylesheet, where
+     the tablet's own seam is measured and set. ⚠️ Getting this wrong tightens the wrong seam by
+     ~49px and it is invisible in a diff (D179, five times now).
+     ============================================================================================ */
+  @media(max-width:1120px){
+    /* --- 13. THE STONE SELECTOR AND THE PROJECT GALLERY TRADE PLACES — 13 Aug 2026 (D179) ----
+       Client: "swop the chose your stone and project gallery section."
+       ⛔ **PHONE ONLY, AND THE MARKUP DID NOT MOVE.** §2 rule 15 — desktop and tablet stay exactly
+       as they are until he calls them, and a section swap re-composes the page rather than adding
+       to it. `.gs-swap` is `display:contents` in the base rule (no box, no effect); here it becomes
+       a flex column and the four children are re-ordered inside it.
+       ⭐ Source order is divider · gallery · divider · stones. Painted order below is
+       divider · STONES · divider · GALLERY, so both seams keep a rule and the brand strip stays
+       where it is — on the phone it is only the plain divider anyway (D143). */
+    .gs-swap{display:flex;flex-direction:column}
+    .gs-swap > .section-divider:first-child{order:1}
+    .gs-swap > #stones{order:2}
+    .gs-swap > #gallery + .section-divider{order:3}
+    .gs-swap > #gallery{order:4}
+  }
+
+  /* ============================================================================================
+     ⭐⭐ THE HERO, LIFTED OUT OF THE PHONE BLOCK TO `max-width:1120px` — 13 August 2026 (D198).
+     ============================================================================================
+     Client, opening the tablet round: *"just like mobile, we're gonna form the tablet version the
+     same way we formed the mobile version. So it's gonna be centre. Everything is just gonna be
+     bigger. Same text as on the mobile version, same styling as on the mobile version."*
+
+     ⭐⭐ **MOVED, NOT COPIED, AND THE DESTINATION IS THE POINT.** These rules used to sit inside the
+     `max-width:720px` block above, which also governs the estimator, the FAQ and the footer — none
+     of which the client wants changed to the phone's treatment. So the hero region was LIFTED OUT
+     WHOLE and re-parented to a 1120px condition, rather than the block's own condition being
+     widened (which would have dragged those three sections along with it).
+
+     ⛔⛔ **IT IS PLACED IMMEDIATELY AFTER THE BLOCK IT CAME OUT OF, AND THAT IS LOAD-BEARING.**
+     Every rule in here is `#hero …`, and several are at IDENTICAL specificity to base rules further
+     up the file — so only SOURCE ORDER separates them. Moved earlier, D186/D187/D188 would silently
+     lose to the very rules they were written to override. **This is D195's lesson (check the
+     destination, not just the diff) and D106/D113/D114's (equal specificity is decided by order).**
+
+     ⚠️ **THE `.page-head` HALF COMES ALONG DELIBERATELY.** Ten of these selectors are paired
+     `#hero .x, .page-head .x` because the internal pages lift the hero's own chip markup verbatim
+     (D193). Widening them to 1120 gives those pages the same 2×2 chip grid at tablet size, which is
+     the consistency that pairing exists to guarantee — a page head cannot show a different Google
+     mark from the hero that sold the customer thirty seconds earlier.
+     ⚠️ The nested `@media(max-width:360px)` inside still means 360px. Nesting narrows, never widens.
+     ============================================================================================ */
+  @media(max-width:1120px){
     /* ============================================================================================
        14. ⭐⭐ THE HERO — 13 August 2026
        ============================================================================================
@@ -5769,38 +5929,255 @@
        ⚠️ 0.30 is deliberately modest — he asked for *slightly* darker, and the photograph is the one
        thing on this screen that says what the business sells. Turn it up here if he wants more. */
     #hero .hero-shade{background-color:rgba(7,7,9,0.30)}
-
-    /* ============================================================================================
-       15. ⭐ THE WHATSAPP BUTTON CLEARS THE STICKY BAR — 13 August 2026 (D173)
-       ============================================================================================
-       ⛔ **THE PHONE ALREADY OWNS THIS CORNER.** `.mbar` is fixed to the bottom edge at 59px tall
-       plus the safe-area inset (D99/D110), so the default `bottom:24px` would put the button
-       squarely on top of "Call". 73px is the bar's real height plus 14px of air, and `env()` is
-       added on top so it clears the home indicator on a notched handset rather than sitting under
-       it.
-       ⛔⛔ **REVERSED 13 August 2026 (D180), AND THE OLD REASONING IS KEPT ABOVE ON PURPOSE.** D173
-       parked the button at 73px PERMANENTLY, on the theory that a button which moved every time the
-       bar left would read as a glitch. The client looked at it and said the opposite: *"the WhatsApp
-       button is way too high up. It needs to stay in the bottom corner. And then as the sticky bottom
-       bar pops up, it stays just above that in its position."* He is right — parked at 73px with no
-       bar under it, the button floats in the middle of nothing and the corner looks broken.
-       ⭐ **IT NOW RIDES THE BAR'S OWN STATE, WHICH COSTS NO NEW MACHINERY.** `.mbar` already gets
-       `.on` from the IIFE at the foot of the file, and `.wa-fab` is its LATER SIBLING, so the
-       general sibling combinator reads that state directly — no second scroll listener, no class on
-       `<html>`, nothing for a media query to disagree with. ⛔ The two elements must stay siblings
-       in that order for this to work; if either moves, this rule dies silently.
-       ⭐ `bottom` is transitioned over the same .5s the bar uses, so the two move together as one
-       gesture rather than the button jumping after the bar has arrived.
-       ⭐ **AND IT STANDS DOWN WITH EVERYTHING ELSE WHEN THE MENU OPENS**, exactly as `.mbar` does
-       four rules up: a contact shortcut floating over a full-screen menu is the classic version of
-       this bug, and z-index alone would not have saved it here because the button is a sibling of
-       the sheet rather than inside it. */
-    .wa-fab{right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));
-      width:50px;height:50px;
-      transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
-                 opacity .3s var(--ease),transform .35s var(--ease)}
-    .mbar.on ~ .wa-fab{bottom:calc(73px + env(safe-area-inset-bottom,0px))}
-    .wa-fab svg{width:25px;height:25px}
-    html.nav-open .wa-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
-
   }
+
+  /* ============================================================================================
+     ⭐⭐⭐ THE TABLET BAND — 721px to 1120px. Opened by the client on 13 August 2026 (D198).
+     *"Now we're gonna move on to working on the tablet version and the tablet version only right
+     now. So just like mobile, we're gonna form the tablet version the same way we formed the
+     mobile version. So it's gonna be centre. Everything is just gonna be bigger. Same text as on
+     the mobile version, same styling as on the mobile version."*
+
+     ⛔⛔ **THIS IS THE ONLY PLACE TABLET-ONLY RULES GO, AND THE CONDITION IS BOTH-ENDED ON PURPOSE.**
+     A bare `max-width:1120px` block reaches the PHONE, which is signed off and out of scope; a bare
+     `min-width:721px` block reaches the DESKTOP, which is frozen (D91, §2 rule 15). Every tablet
+     rule needs both halves. ⚠️ The file's older blocks use 600/640/760/900/980/1000/1040/1100 —
+     that scheme predates the device bands and NONE of those numbers is the tablet edge.
+
+     ⭐ **"THE SAME AS MOBILE" IS DONE BY WIDENING THE PHONE RULE'S OWN QUERY TO 1120, NOT BY
+     WRITING IT AGAIN HERE.** Widening a `max-width` is additive for the phone and invisible to the
+     desktop. This block therefore carries only what is genuinely DIFFERENT at tablet size — which,
+     per the client, is mostly "bigger". If you find yourself typing a declaration that already
+     exists in a phone block, stop and lift that block instead.
+     ============================================================================================ */
+  @media(min-width:721px) and (max-width:1120px){
+    /* ⛔ D198: THE QUOTE BUTTON COMES OUT OF THE BAR. Client: *"let's remove the get a quote inside
+       the NavBar."* ⚠️ Tablet-only on purpose — the phone shows it from 431px up and the client has
+       signed that off; `@media(max-width:430px)` further down is the phone's own rule and is
+       deliberately left alone. With the button gone the bar is logo + burger, which is the mobile
+       bar he asked it to look like. */
+    header.bar .bar-cta{display:none}
+    /* ⭐ D198: THE CURVE SCALES WITH THE BAR. 18px of radius on a 375px screen turns the line in
+       its last ~13px; the same 18px on a 768px bar is 2.3% of the run and reads as dead straight,
+       so the gesture would be present in the code and absent on the screen. 26px against the
+       phone's 18 keeps the same out-hang-to-radius proportion (3.6:1) the hero's own curve uses. */
+    header.bar{--navCurveR:26px;--navCurveOut:7px}
+
+    /* --- ⛔⛔⛔ THE HERO IS ACTUALLY CENTRED NOW — 13 August 2026 (D199) ------------------------
+       Client: *"the hero section isn't even centred, so do that much better. Make the title bigger.
+       Make the subtitle better. Move the button centre. Everything. Why is it not centre?"*
+       ⭐⭐ **HE IS RIGHT, IT WAS ONE CAUSE, AND `text-align:center` IS WHAT HID IT.** `.hero-copy`
+       carries `max-width:clamp(560px,48vw,720px)` from the desktop composition, where the copy sits
+       LEFT against a photograph on the right, so it has no auto margins. At 768 the clamp floors at
+       560px and the box parks at **x=38 with 170px of empty screen on its right** — while every
+       child centres neatly INSIDE it. **So the hero looked centred to itself and sat in the left
+       three-quarters of the screen**, and every measurement I took of the children said "centred".
+       ⛔ **THE FIX IS THE BOX, NOT THE CHILDREN.** One `margin-inline:auto`. The buttons were
+       already centred within the box — 67px of slack a side, measured — so nothing about them
+       needed touching; they were 131px off-centre on the SCREEN purely because their parent was.
+       ⭐ **AND THE BOX WIDENS**, because 560px was the desktop clamp's floor rather than a decision
+       about a tablet: 660px leaves ~54px a side at 768 instead of 38 and 170.
+       ⭐ **THE TITLE WAS SITTING ON ITS OWN FLOOR.** `clamp(38px,min(4.7vw,8.6vh),64px)` — at 768,
+       4.7vw is 36px, so the min() lost to the 38px floor and the tablet was rendering the SMALLEST
+       size the expression can produce, the same 38px a 500px window gets. A vw term that only ever
+       loses is not a size, so the band gets its own. ⚠️ The subtitle takes a real measure with it:
+       at 14.5px in a 660px box the line ran to ~90 characters, which is twice a comfortable one. */
+    #hero .hero-copy{max-width:min(92vw,660px);margin-left:auto;margin-right:auto}
+    #hero .hero-sub{font-size:clamp(16px,2.1vw,18.5px);max-width:46ch;
+      margin-left:auto;margin-right:auto}
+    /* ⭐ D200: THE TITLE RISES AND GROWS AGAIN. Client: *"lift the title higher and make the title
+       bigger, and space everything out nicely."* ⭐ **THE TWO ARE ONE EDIT AND THE ORDER MATTERS:**
+       the block is centred in the hero by its top padding, so taking 30px off the padding lifts
+       everything, and the space that frees is then spent on the gaps BETWEEN the elements rather
+       than pooled at the bottom — the D169/D157 lesson (removing a thing leaves its slack in one
+       hole unless you deliberately place it). ⚠️ `.hero-inner`'s padding was `clamp(84px,13.5vh,132px)`,
+       which pinned at its 132px ceiling on a 1024-tall window; 10vh gives 102px there. */
+    #hero .hero-title{font-size:clamp(52px,7.4vw,72px)}
+    /* ⚠️ **THE FLOOR IS 96px AND IT IS THE FIXED NAV, NOT A TASTE DECISION.** `header.bar` is ~69px
+       tall and sits over this section, so a padding under ~100px puts the title under the nav rather
+       than below it. At a 64px floor the landing measured a title top of **77px on a 1024×768
+       landscape tablet — 8px of clearance.** 96px floors it there while 10vh still gives the lift he
+       asked for on a portrait iPad: 132px → 102px. */
+    #hero .hero-inner{padding-top:clamp(96px,10vh,110px)}
+    #hero .hero-title{margin-bottom:clamp(30px,4vh,44px)}
+    #hero .hero-sub{margin-bottom:clamp(32px,4.4vh,48px)}
+    #hero .hero-ctas{gap:14px;margin-bottom:clamp(32px,4.4vh,48px)}
+    #hero .hero-chips{gap:14px}
+
+    /* --- ⭐⭐ THE PROJECT GALLERY IS A TWO-UP GRID, AND THE ENGINE IS OFF -----------------------
+       Client: *"the project gallery is going to be two projects next to each other in a grid
+       layout, just like the surfaces for every space."*
+       ⭐⭐ **`--galMode:grid` STOPS THE ACCORDION, AND STOPPING IT IS THE WHOLE CHANGE.** This is
+       D163's reasoning arriving at a second device: pinning the accordion at its finished frame
+       would have removed the ANIMATION and left the MACHINE — `.gal-pin` sticky, `.gal-stage` a
+       viewport tall, eight absolutely-positioned cards moved by scroll-derived transforms every
+       frame. ⛔ It would also have kept the **5632px runway**, which is the "gigantic gap" the
+       client photographed on /projects/ (D195). Measured here before the change: 5632px.
+       ⭐ Every static rule already exists and is gated on `.gal-static` (D195 lifted them to global
+       scope for exactly this). Only the COLUMN COUNT is new, which is why this block is short.
+       ⚠️ `.gal-mid` and `.gal-set` are `display:contents`, so the real grid items are the title,
+       the subtitle, the eight cards and the actions row — NOT those two wrappers. `.gal-mid > *`
+       is what reaches the three full-width ones; a `.gal-stage > *` selector would match the
+       boxless wrappers instead and silently do nothing. */
+    #gallery{--galMode:grid}
+    #gallery.gal-static .gal-stage{
+      display:grid;grid-template-columns:repeat(2,1fr);
+      column-gap:clamp(16px,2.6vw,26px);row-gap:clamp(16px,2.6vw,26px);
+      justify-items:center;align-items:start;
+      max-width:940px;margin-left:auto;margin-right:auto}
+    #gallery.gal-static .gal-mid > *{grid-column:1/-1}
+    /* ⭐ `--cw` IS SET ON THE CARD, NOT LEFT TO THE STAGE'S INLINE VALUE. `measure()` still writes
+       `--cw`/`--ch` inline on `.gal-stage` from the phone formula (`min(w*0.42,300)`), and the card
+       inherits them — but `.gal-name`, `.gal-place` and `.gal-meta` size their insets off
+       `calc(var(--cw) * k)`, so the caption would be drawn for a 300px card sitting inside a 340px
+       one. A rule on the card beats an inherited value, so declaring it here fixes the card and its
+       caption in one go. ⛔ Do not switch this to a percentage: `--ch` multiplies it, and a
+       percentage height resolves against the parent's HEIGHT, not its width. */
+    #gallery.gal-static .gal-card{
+      --cw:clamp(300px,42vw,440px);--ch:calc(var(--cw) * 0.62);
+      width:var(--cw);height:var(--ch);margin:0}
+
+    /* --- ⭐ THE THICKNESS HEADER GOES BACK ONTO ONE LINE ---------------------------------------
+       Client: *"we just need to optimise the way the estimator looks so that the thickness MM thing
+       doesn't sit on two lines where the rest sits on one line."*
+       ⭐ **MEASURED, AND HE IS DESCRIBING A COLUMN WIDTH, NOT A TYPE SIZE.** At 768 the header cells
+       are `Length mm` 146px, `Width mm` 146px, `Used for` 190px — all one line at 14px tall — and
+       `Thickness mm` **88px, wrapping to 29px**. That one cell sets the height of the whole header
+       row. ⛔ The 88px track is sized to the `.est-seg` toggle BELOW it (88×32), so the label was
+       never given a say in its own column's width.
+       ⛔⛔ **TWO ARRANGEMENTS LIVE INSIDE THIS ONE BAND, AND ONLY THE TRACK MAY CHANGE.** Below
+       981px `.est-grid` is a single column so the panel is full width and takes six columns; from
+       981px it is a ~48% grid column, and the existing `(min-width:981px) and (max-width:1279px)`
+       rule drops it to five and moves "Used for" onto its own line. Restating six columns across
+       the whole band would undo that and crush the row at 1024. So each arrangement keeps its own
+       shape and only the thickness track widens. ⚠️ That 981–1279 rule also governs 1121–1279,
+       which is FROZEN DESKTOP — these overrides are inside the tablet band and cannot reach it. */
+    @media(max-width:980px){
+      #estimator .est-rowhead,#estimator .est-row{
+        grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) 106px minmax(0,1.3fr) 22px}
+    }
+    @media(min-width:981px){
+      #estimator .est-rowhead,#estimator .est-row{
+        grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) 106px 22px}
+    }
+
+    /* --- ⭐ THE PROCESS TILES GET AIR ----------------------------------------------------------
+       Client: *"in the process section, we just need to space out the sections a little bit."*
+       ⚠️ Scoped to ≤980 because that is where `#procFlow` is the stacked flex column; from 981px
+       it is the twelve-column bento whose `grid-template-areas` are tuned against its own gaps, and
+       changing `gap` there would re-cut the composition rather than space it out.
+       ⭐ The rule it overrides carries the comment "serviceable; proper mobile pass comes later" —
+       12px was a placeholder, and this is that pass arriving for the tablet. vh-led so a short
+       landscape window does not push the section past a screen. */
+    @media(max-width:980px){
+      #procFlow{gap:clamp(16px,2.6vh,26px)}
+    }
+
+    /* --- ⭐ THE ENQUIRY BLOCK IS CENTRED -------------------------------------------------------
+       Client: *"and then I believe we should just centre the form on tablet."*
+       ⚠️ **THE COPY CENTRES; THE FIELDS DO NOT.** `text-align:center` on the card would centre the
+       field labels and the placeholder text inside every input, which reads as broken rather than
+       as centred — a form is read down its left edge. So the card centres its two blocks and the
+       copy, and `.cta-form` takes its alignment back for its own contents.
+       ⭐ The form is capped rather than left full-bleed: at 768 an uncapped form is a 641px slab of
+       inputs under centred copy, which is the composition the centring was meant to fix. */
+    /* --- ⭐⭐ THE ENQUIRY BLOCK: ONE MEASURE INSTEAD OF FOUR — 13 Aug 2026 (D200) ----------------
+       Client: *"the one price one visit one team form still looks terrible. You have to optimise
+       the spacing. It looks half empty."*
+       ⭐⭐ **HE IS DESCRIBING FOUR DIFFERENT WIDTHS STACKED DOWN ONE CENTRELINE, AND MEASURING IT IS
+       WHAT FOUND IT.** In a 691px card: the title and line sat at **381px**, the contact block at
+       **246px**, the form at **520px**. Four centred blocks of four different widths leave ragged
+       empty gutters down both sides that belong to nothing — which is exactly what "half empty"
+       looks like. ⛔ It was never about vertical spacing, which is why the last two attempts at
+       spacing failed to touch it.
+       ⭐ **SO EVERYTHING TAKES THE FORM'S 520px MEASURE.** One column edge down the whole card.
+       ⭐⭐ **AND THAT IS ALSO WHAT MAKES THE CONTACT ROW WORK AT LAST.** D199 recorded the flex row
+       as a dead end after it measured WORSE twice — the cause was that `.cta-reach` was only 246px
+       wide, so its two blocks could never sit side by side and wrapped anyway, paying the gap for
+       nothing. At 520px they fit. **The earlier failure was a width problem wearing a layout
+       problem's clothes.** ⚠️ `.cta-or` keeps its own full-width row above them as the label. */
+    .cta-card{justify-items:center;text-align:center}
+    .cta-copy{align-items:center;width:min(100%,520px)}
+    .cta-form{width:min(100%,520px);text-align:left}
+    .cta-title,.cta-line{width:100%}
+    .cta-reach{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;
+      width:100%;gap:14px clamp(20px,4vw,44px)}
+    .cta-reach .cta-or{flex:1 1 100%}
+    .cta-reach .cta-lines,.cta-reach .cta-trust{flex:0 1 auto;text-align:center}
+
+    /* --- ⭐ AREA AND HOURS SIT ACROSS THE FOOT OF THE FOOTER — D200 -----------------------------
+       Client, twice: *"the footer area and hours have to go at the bottom, like, above just that
+       bottom line, and then everything else can stay exactly the way that it is."*
+       ⭐ `--footTail` is the switch the footer IIFE reads — the same declared-in-CSS idiom as
+       `--galMode`, `--revPer` and `--hxMode`, so the stylesheet stays the only thing that decides
+       which band gets this and no `matchMedia` gets a second opinion (D51/D59/D68/D78/D93/D105).
+       ⛔ **NO RULE ACROSS ITS TOP.** A divider here is the top hairline §2 rule 10 forbids outright
+       ("don't ever use that fingernail design on top of sections"), so the two blocks are separated
+       from the columns above by SPACE alone. */
+    #footer{--footTail:on}
+    .foot-tail{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;
+      text-align:center;gap:12px clamp(28px,5vw,64px);
+      margin-top:clamp(28px,3.8vh,44px)}
+    #footer .foot-tail .foot-ck{display:block}
+    /* ⭐ D199: THE SECTION USES ITS WIDTH INSTEAD OF ITS HEIGHT. Client: *"the form, we need to
+       optimise that space much better. Find a way to make that section smaller and spread everything
+       out."* ⭐⭐ **MEASURED FIRST: THE FORM WAS NOT THE TALL PART.** `#cta` is 1063px at 768, and the
+       COPY column above it accounts for 405 of that — of which `.cta-reach` alone is **227px**,
+       because its contact routes stack one per row in a 660px-wide block. Laying them across the
+       row is the "spread out" he is asking for and it is also the biggest single saving available.
+       ⚠️ The FIELDS are deliberately NOT put two-up: at 520px a split row gives ~250px per input,
+       and this form's rows already pair their own inputs (`.cta-row` is 47px, not 94). */
+    /* ⚠️⚠️ **THE `.cta-reach` ROW WAS TRIED, MEASURED AND DELETED — DO NOT RE-PROPOSE IT.**
+       Laying the contact routes across the row looked like the obvious saving (227px of a 1063px
+       section). Two attempts: `flex-direction` alone is inert on a block and changed nothing; adding
+       `display:flex` made it **WORSE — 227→232px at 768 and 198→251px at 1024**, because each route
+       is a wide two-line block that wraps to one per row anyway and then pays the flex gap on top.
+       ⭐ The height is in the ROUTES' OWN WIDTH, not in their stacking, so the next attempt has to
+       narrow or re-cut them, not re-flow them. Deleted rather than left in at a net loss (§12).
+       ⭐ The section padding stays — it is a real saving and it is independent of the above. */
+    /* ⚠️ **CHECK WHAT A CLAMP EVALUATES TO BEFORE CALLING IT A REDUCTION.** The first value here was
+       `clamp(32px,4.6vh,48px)`, which at a 1024px-tall window is 47px against the base rule's 43 —
+       so the "trim" made the section 8px TALLER. Measured, not assumed. 3.2vh gives 33px. */
+    #cta{padding-top:clamp(24px,3.2vh,40px);padding-bottom:clamp(24px,3.2vh,40px)}
+
+    /* ⭐ D199: MORE AIR THROUGH THE REVIEWS. Client: *"we need to get a little bit more spacing in
+       between the sections in the hear it from your neighbours."* ⚠️ D95 cut these numbers hard for
+       a 375px handset, where every pixel was owed to the fold; at 768 the same 14px between the
+       subtitle and the card reads as crowding rather than as tightness. The pager air goes up with
+       it so the card is not pinched top and bottom by different amounts. */
+    #reviews.rev-solo .section-head{margin-bottom:clamp(24px,3.4vh,38px)}
+    #reviews.rev-solo{--revAir:clamp(38px,5vh,56px);--revPagerH:60px}
+
+    /* --- ⭐ THE FOOTER CENTRES AND BREATHES ----------------------------------------------------
+       Client: *"optimise the way the tablet footer looks with the area and those things, you know,
+       kind of in the centre, and optimise the spacing of everything just to make it look better."*
+       ⚠️ At 768 the footer is a 2×2 grid of four left-aligned columns, each 335px in a 691px row —
+       so the two right-hand columns start at the middle of the page with a ragged left edge against
+       nothing. Centring each column's contents is what makes the pairs read as a block.
+       ⭐ The row gap is raised well above the column gap on purpose: side by side the columns are
+       separated by their own width, but stacked they had the same 22–44px between "Contact" and the
+       column above it as between two whole columns, so the four blocks ran together vertically. */
+    #footer .foot-grid{justify-items:center;text-align:center;
+      column-gap:clamp(22px,3vw,44px);row-gap:clamp(34px,4.6vh,54px)}
+    #footer .foot-brand{display:flex;flex-direction:column;align-items:center}
+    #footer .foot-bar{flex-direction:column;align-items:center;gap:14px;text-align:center}
+
+    /* --- ⭐ THE ABOUT COLLAGE TAKES THE ROOM IT HAS ---------------------------------------------
+       ⚠️ **IT IS NOT BROKEN, IT IS UNDERSIZED — AND THE FIRST READING OF IT WAS WRONG.** Probed
+       off-screen it reported every tile at `opacity:0` and at nonsense widths (61px portraits,
+       a 262×14 strip), which reads as a collapsed grid. Scrolled to and measured live it is
+       correct and even: both directors 205×275, the big work tile 277×275. **That was the frozen-
+       entrance trap — a transition parked at `currentTime:0` is a stopped clock, not a layout
+       fault.** The collage is scroll-sequenced, so it must be IN VIEW before it means anything.
+       ⭐ So the change is size, not structure: `--sideW` is capped at 420px by the ≤880 block, a
+       number chosen for a phone. On a 768px screen that leaves the collage occupying 55% of a row
+       whose copy runs the full 691px. 560px puts the two blocks on comparable measures.
+       ⚠️ Scoped to ≤880 to match the stacked arrangement — from 881px the collage sits BESIDE the
+       copy in its own grid column and takes its width from that column, not from `--sideW`'s cap.
+       ⛔ The phone keeps 420px: at 375 the cap never binds (86vw = 322px), so raising it there
+       would have widened the phone's collage by 8px for nothing, and the phone is signed off. */
+    @media(max-width:880px){
+      .about-wrap{--sideW:min(88vw,560px)}
+    }
+  }
+

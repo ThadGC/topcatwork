@@ -2392,7 +2392,27 @@ let entryOff=900;                             // how far off-screen a waiting ca
 let gridPage=0;
 const pagePrevBtn=document.getElementById('revPagePrev');
 const pageNextBtn=document.getElementById('revPageNext');
-function perPage(){ return window.innerWidth<720?1:3; }   // one at a time on a phone — three would be unreadable
+/* ⭐⭐ THE STYLESHEET DECIDES HOW MANY REVIEWS A PAGE HOLDS — 13 August 2026 (D198).
+   Client, opening the tablet round: *"we're also gonna have the hear it from your neighbour section
+   look like an increased version of the mobile version. Same functionality, just obviously bigger."*
+   ⛔⛔ **THIS FUNCTION WAS THE SECOND OPINION THIS MODULE'S OWN COMMENTS WARN ABOUT.** It hard-coded
+   720 in JS while the stylesheet held its own view of what a phone is — the D51/D59/D68/D78/D93/D105
+   family, and the comment fourteen lines up already says the two "disagree at exactly 720px".
+   Adding the tablet by writing `<1121` here would have made that worse, not better: the desktop
+   deck genuinely wants 3, so the number is now a per-band DECLARATION rather than a test.
+   ⭐ `--revPer` is declared on `#reviews` by the media queries — 3 in the base rule, 1 at
+   `max-width:1120px`, which is the phone AND the tablet. Everything downstream is unchanged:
+   `revSolo()` is still `perPage()===1`, `gridLayout()` still writes `.rev-solo`, and the whole
+   phone carousel — the peeking neighbours, the swipe, the pager below the card — arrives at tablet
+   size for free, because every one of those rules hangs off that class and not off a width.
+   ⚠️ **THE FALLBACK IS NOT DECORATION.** This is called before first paint and from a resize
+   handler; if `#reviews` is not in the DOM yet, or the property is missing, it must still answer
+   with the old behaviour rather than NaN — a NaN here divides `pageCount()` into Infinity. */
+function perPage(){
+  const el=document.getElementById('reviews');
+  const v=el?parseInt(getComputedStyle(el).getPropertyValue('--revPer'),10):NaN;
+  return Number.isFinite(v)&&v>0 ? v : (window.innerWidth<720?1:3);
+}
 function pageCount(){ return Math.ceil(REVIEWS.length/perPage()); }
 function cardPage(i){ return Math.floor(i/perPage()); }
 function pageCards(){ return revNodes.map((_,i)=>i).filter(i=>cardPage(i)===gridPage); }
@@ -3416,11 +3436,25 @@ requestAnimationFrame(glowTick);
      `barH` is 0 there because the element does not render. */
   const mBar=document.querySelector('.mbar');
   /* the stylesheet's own answer to "is this a phone" — see the #gallery rule in the 720px query */
-  const galPhone=()=>getComputedStyle(stage.closest('#gallery')||stage).getPropertyValue('--galMode').trim()==='phone';
+  /* ⭐⭐ "IS THE ACCORDION OFF?" — THE STYLESHEET'S ANSWER, NOW WITH TWO STATIC MODES (D198).
+     ⛔ **RENAMED FROM `galPhone` ON PURPOSE.** It never asked "is this a phone", it asked "has the
+     stylesheet switched the engine off", and on 13 Aug 2026 that became true of the tablet as well:
+     client, *"the project gallery is going to be two projects next to each other in a grid layout,
+     just like the surfaces for every space."* A name that says `phone` would have made the next
+     reader believe the tablet still runs the pinned accordion.
+     ⭐ **TWO VALUES, ONE MEANING, AND THE DIFFERENCE IS PURELY CSS**: `phone` (≤720) lays the cards
+     out as one column, `grid` (721–1120) as two. Both stop the engine and both take `.gal-static`,
+     so no second branch is needed here — the layout difference lives entirely in the stylesheet,
+     which is the whole point of the `--galMode`/`--hxMode`/`--svcMode` idiom (D96, D105, D117).
+     ⛔ Unset (≥1121) is still the desktop: pin, runway, accordion and hallway, frozen at D91. */
+  const galStatic=()=>{
+    const m=getComputedStyle(stage.closest('#gallery')||stage).getPropertyValue('--galMode').trim();
+    return m==='phone'||m==='grid';
+  };
   let cw=340, ch=224, stackY=0, bandY=0, phone=false, M={w:1000,h:700};
   function measure(){
     const w=stage.clientWidth||1000, h=stage.clientHeight||700;
-    phone=galPhone();          // read once per measure, not once per frame — render() reads no styles
+    phone=galStatic();         // read once per measure, not once per frame — render() reads no styles
     /* ⚠️ Centre on the band BELOW THE NAV, not on the viewport. The nav is fixed and always
        over this section, so centring on the raw viewport looks wrong even when the numbers are
        equal: at 1366×610 the top row cleared the nav by 6px while the bottom had 82. The nav is
@@ -3844,7 +3878,7 @@ requestAnimationFrame(glowTick);
      height, and an inline height here would fight it. Cleared rather than left stale, because
      this same element keeps its desktop runway across a resize. */
   function sizeRunway(){
-    if(galPhone()){ scroll.style.height=''; return; }
+    if(galStatic()){ scroll.style.height=''; return; }
     scroll.style.height=(window.innerHeight*RUNWAY)+'px';
   }
 
@@ -6216,4 +6250,43 @@ document.querySelectorAll('.rise').forEach(el=>io.observe(el));
       /* else: same material, wheel not yet entered — pendingIdx is consumed when it does */
     }
   }
+})();
+
+/* ============================================================================================
+   ⭐⭐ AREA AND HOURS RIDE TO THE FOOT OF THE FOOTER ON A TABLET — 13 August 2026 (D200)
+   ============================================================================================
+   Client, twice: *"the footer area and hours have to go at the bottom, like, above just that
+   bottom line, and then everything else can stay exactly the way that it is."*
+
+   ⛔⛔ **WHY THIS IS SCRIPT AND NOT CSS, WHICH IS THE ONLY REASON IT EXISTS.** The two blocks are
+   nested inside `.foot-contact`, a grid ITEM. CSS cannot lift a nested element out of its grid
+   parent: `display:contents` on that column dissolves Phone and Email along with them, and there
+   is no property that re-parents a node. The alternatives were a second copy of the markup —
+   duplicate text shipped to every visitor and into view-source, which is D168's exact lesson on a
+   PUBLIC repo — or moving the markup outright, which would change the FROZEN desktop footer
+   (§2 rule 15). Moving the one copy of the node is the only option that costs neither.
+
+   ⭐ **THE STYLESHEET STILL DECIDES.** `--footTail` is declared `on` in the tablet band and read
+   back here — the `--galMode`/`--revPer`/`--hxMode` idiom (D96, D105, D198). ⛔ A `matchMedia`
+   here would be a second opinion about what a tablet is, and the two would disagree at the edge.
+
+   ⭐ **IT MOVES BACK.** A resize down to a phone or up to the desktop returns both nodes to
+   `.foot-contact`, in their original order, because they were its last two children and
+   `appendChild` restores that. ⚠️ Verified across the 720/721 and 1120/1121 edges in both
+   directions — a one-way move would leave the desktop footer permanently altered after a rotate.
+   ============================================================================================ */
+(function(){
+  const foot=document.querySelector('#footer')||document.querySelector('footer');
+  const tail=document.getElementById('footTail');
+  const contact=document.querySelector('.foot-contact');
+  const area=document.querySelector('.foot-c-area');
+  const hours=document.querySelector('.foot-c-hours');
+  if(!foot||!tail||!contact||!area||!hours) return;
+  function place(){
+    const on=getComputedStyle(foot).getPropertyValue('--footTail').trim()==='on';
+    const host=on?tail:contact;
+    if(area.parentElement!==host){ host.appendChild(area); host.appendChild(hours); }
+  }
+  place();
+  window.addEventListener('resize',place,{passive:true});
 })();

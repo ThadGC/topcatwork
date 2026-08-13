@@ -87,12 +87,27 @@ nav.top a:hover{color:var(--bone)}
 .crumb-back svg{width:22px;height:22px;display:block}
 .crumb-back:hover{transform:translateX(-3px)}
 .crumb-back:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:2px}
-@media(max-width:600px){.crumb{gap:10px}.crumb-back svg{width:20px;height:20px}}
 .crumb ol{list-style:none;display:flex;flex-wrap:wrap;gap:9px;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--faint)}
 .crumb a{color:var(--muted);text-decoration:none}
 .crumb a:hover{color:var(--gold)}
 .crumb li+li::before{content:"/";margin-right:9px;color:var(--faint)}
 .crumb [aria-current]{color:var(--gold)}
+/* ⛔ D197: THE WHOLE TRAIL STANDS DOWN ON THE PHONE, BACK ARROW INCLUDED.
+   Client: "at the top, there's a directory that says home services slash kitchen worktops, we
+   don't need the directory... on mobile, we don't need a directory of which page you're on or
+   going back to pages, only on desktop."
+   ⭐ He named BOTH halves — "which page you're on" is the trail, "going back to pages" is the
+   arrow — so this hides `.crumb` rather than only its `ol`. The arrow lives INSIDE the nav (see
+   the note above), which is why one rule takes both.
+   ⭐ ONE RULE REACHES SIX FAMILIES: the service, material, guide, area and stone pages and the
+   sitemap all load this stylesheet, so the trail cannot come off one family and stay on another.
+   ⚠️ 720px is the site's own mobile band (§2 rule 15), NOT this stylesheet's 600/640 scheme. The
+   tablet band is frozen and unnamed, so it keeps the trail; that is one number when he calls it.
+   ⚠️ `.svc-hero` carries its own clamp(40px,7vh,84px) of top padding, so losing the crumb's 22px
+   does not push the title under the header. Measured after.
+   ⭐ The 600px block that dressed the crumb here is DELETED, not left dead below a hidden
+   element — the D106/D113/D114 rule about two live descriptions of one thing. */
+@media(max-width:720px){.crumb{display:none}}
 
 /* ---------- hero ---------- */
 .svc-hero{position:relative;overflow:hidden;padding:clamp(40px,7vh,84px) 0 clamp(36px,5vh,60px)}
@@ -108,6 +123,13 @@ nav.top a:hover{color:var(--bone)}
                                   linear-gradient(90deg,rgba(11,11,13,0.82),rgba(11,11,13,0.55))}
 }
 .svc-hero .eyebrow{display:inline-block;font-family:var(--brand);font-size:10px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+/* ⛔ D197: TITLE AND SUBTITLE ONLY ON THE PHONE. Client: "you can also remove eyebrows from the
+   title. So it's just title and subtitle for all the internal pages." This is the label above the
+   H1 on the service, material and area pages ("Bespoke Worktops", "Sintered stone", "Areas we
+   cover"). ⛔⛔ IT MUST STAY BELOW THE RULE IT OVERRIDES: both selectors are `.svc-hero .eyebrow`,
+   so they are IDENTICAL specificity and only source order separates them. Written up with the
+   breadcrumb block instead, it lost to the base rule and the eyebrow stayed on — measured. */
+@media(max-width:720px){.svc-hero .eyebrow{display:none}}
 .svc-hero h1{
   font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:0.01em;
   font-size:clamp(34px,5.2vw,60px);line-height:1.05;max-width:16ch;
