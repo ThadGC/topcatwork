@@ -1346,92 +1346,43 @@
   .face.back::after,.rev-face.back::after,.pface.back::after,.face.back::before,.rev-face.back::before,.pface.back::before{--gx:var(--gxb,50%)}
 
   /* ============================================================================
-     ⭐ THE PHONE'S REVIEW CARD IS CREAM, NOT BLACK — 12 Aug 2026 (D116). MOBILE ONLY.
-     Client: "give the reviews a cream white design instead of the black design, so it'll have
-     black text and the cream white card, instead of having the black cards, just so that the
-     review part stands out a little bit more."
-     ⭐ **NO NEW COLOUR IS INVENTED HERE. It is the brand's own two, swapped over**: the card
-     takes `--bone` (#F4F1EA, the limestone the type is normally set in) and the type takes
-     `--ink` (#0B0B0D, the obsidian the page is normally built from). A cream card on a black
-     page is the strongest contrast the palette can make without adding to it, which is exactly
-     the "stands out more" he asked for.
-     ⛔ **THE SCOPE IS `.rev-solo`, NOT A MEDIA QUERY, AND THAT IS DELIBERATE (D93).** `.rev-solo`
-     is set by gridLayout() from `perPage()===1` — `innerWidth<720` — the same test the layout
-     maths already uses. A `@media(max-width:720px)` here would be a SECOND opinion about what a
-     phone is, this project's most repeated bug (D51, D59, D68, D78), and the two already
-     disagree at exactly 720px. ⭐ It also guarantees tablet cannot catch this: perPage() returns
-     3 from 720px up, so 721–1120px keeps the black card it was signed off with.
-     ⚠️ EVERY VALUE BELOW IS HERE BECAUSE IT WOULD VANISH OTHERWISE. `--muted`, `--faint` and
-     `--hair-soft` are all *white* at low alpha — on cream they are invisible, not merely subtle.
-     The same is true of `--gold` (#C6A664) for anything that has to be READ: it carries about
-     1.9:1 against #F4F1EA. `--gold-lo` (#8C6B34) is the palette's own antique champagne and
-     carries ~4.6:1, so the stars and the seal move to it. ⛔ Do not "restore" --gold here.
+     ⛔⛔⛔ THE PHONE'S REVIEW CARD IS BLACK AGAIN — 13 August 2026 (D167).
+     **REVERSES D116, AND WITH IT D156 AND D160, WHICH ONLY EXISTED TO REPAIR D116.**
+     ============================================================================
+     Client: *"let's revert the review cards back to what it was before. It had the darker stone
+     design background, the lighter gold stars, and the white grey text that it had."*
+
+     ⭐⭐ **THE WHOLE LIGHT-CARD BLOCK IS DELETED RATHER THAN NEUTRALISED, AND THE PHONE NOW SIMPLY
+     FALLS THROUGH TO THE BASE RULES** — `.rev-face{background:linear-gradient(155deg,#15151b,
+     #0e0e12)}`, `.stars{color:var(--gold)}`, `.quote{color:var(--bone)}` and the near-black
+     `.rev-stone::after` veil at 0.55→0.72. That is precisely the three things he named: the darker
+     stone ground, the lighter gold stars, the white-grey type. ⛔ **Nothing was re-specified to
+     achieve it.** Overriding an override would have left two competing descriptions of one card in
+     the file, which is how D106, D113 and D114 each lost a rule to a later one at equal specificity.
+
+     ⛔⛔ **KEEP THIS RECORD. THE REASON D116 EXISTED IS THE REASON NOBODY SHOULD REBUILD IT.**
+     It was his own decision, 12 Aug: *"give the reviews a cream white design instead of the black
+     design… just so that the review part stands out a little bit more."* It was built exactly as
+     asked, from the brand's own two colours swapped over, and then took **two further rounds of
+     repair that were both real faults, not fussiness**:
+       • **D156** — the card was the only pure white on the page and read as paper, not stone, so it
+         came down to #EFECE5→#E0DCD3. That move also forced the champagne from `--gold-lo` to
+         #6F5327, because `--gold-lo` measured **3.42:1** against the new base and would have
+         shipped under AA.
+       • **D160** — on the grey card `marbleSVG()`'s cream hairlines became the highest-contrast
+         thing on the face and ran diagonally through the paragraph. Body text measured **13.7:1**
+         and he still could not read it comfortably. The veil went back up to 0.90/0.94.
+     ⭐ **THAT IS THE USEFUL LESSON AND IT SURVIVES THE REVERT: a light card on this page has to
+     fight the page's own stone texture, and a veil alpha is not portable between two base colours.**
+     ⚠️ The dark card has none of that problem — the veil it falls back to was designed for exactly
+     this ground and has been on the frozen widths untouched throughout.
+
+     ⭐ **WHAT IS NOT AFFECTED, SO NOBODY GOES LOOKING:** D119's arrows in the gutters, D145's
+     removal of the entrance and D166's rasterised marble are all separate rules and all stay. The
+     stone texture itself is unchanged — only the wash over it reverts.
+     ⛔ Desktop and tablet never had the cream card (D116 was scoped to `.rev-solo`, i.e.
+     `perPage()===1`, i.e. below 720px), so **nothing above 720px moves by one pixel.**
      ============================================================================ */
-  /* The dark card is a 155deg gradient between two near-blacks, not a flat fill — the cream one
-     is built the same way between two off-whites so it keeps the same modelled surface.
-     ⭐⭐ **TONED DOWN TO STONE — 12 Aug 2026 (D156). THIS IS A REFINEMENT OF D116, NOT A REVERSAL:
-     the cream card stays, it simply stops being white.** Client: "I don't want the review cards to
-     be such a sharp white, it currently stands out a bit too much… maybe we need to add some sort
-     of design, but more stone, more grey. It's just very shocking white right now, and nothing else
-     on the side is that shocking white."
-     ⚠️ **HE IS RIGHT ABOUT THE COMPARISON AND THAT IS THE POINT.** D116 asked for the strongest
-     contrast the palette could make (`--bone` on `--ink`), and it delivered exactly that — the
-     card was #FBF9F4→#EFEBE1, i.e. brighter than `--bone` itself, on a page whose next lightest
-     element is muted limestone at 55% alpha. It was the only pure white on the page.
-     ⭐ Now #EDEAE3→#DBD7CD: still unmistakably a light card on a dark page, but it reads as
-     limestone rather than as paper. ⛔ Do NOT take it further down without re-checking the
-     champagne below — 4.97:1 is not much headroom. */
-  #reviews.rev-solo .rev-face{
-    background:linear-gradient(155deg,#EFECE5,#E0DCD3);
-    border-color:rgba(11,11,13,0.13);
-    box-shadow:0 40px 80px -34px rgba(0,0,0,0.95);
-  }
-  #reviews.rev-solo .rev.top .rev-face{
-    box-shadow:0 48px 90px -32px rgba(0,0,0,0.98),0 0 0 1px rgba(11,11,13,0.12) inset;
-  }
-  /* ⭐ THE STONE STAYS, ITS VEIL FLIPS. `.rev-stone` is marbleSVG() at card scale — the same
-     generator the Why tiles and the helix backs use, and it is what stops a card reading as a
-     plain rectangle (§4). Its veil is a near-black wash tuned to keep type legible on a DARK
-     face; left standing it would grey the cream card into putty. Inverted to a cream wash at the
-     same job, the veining reads as the faint mottling of real stone instead. */
-  /* ⛔⛔ **THE VEIL GOES BACK UP — 12 Aug 2026 (D160). D156 OPENED IT TOO FAR AND THE VEINS LANDED
-     ON THE WORDS.** Client, on the D156 build: *"the newer grey card makes the text in the review
-     card hard to read, so you need to fix that."*
-     ⭐⭐ **THE CAUSE IS NOT THE CONTRAST RATIO, WHICH IS WHY THIS NEEDED LOOKING AT RATHER THAN
-     CALCULATING.** Body text measured **13.7:1** on the D156 card — comfortably AAA. What he is
-     reading is `marbleSVG()`'s hairlines running diagonally THROUGH the paragraph: local light and
-     dark inside the letterforms, which breaks up a line of type however good the average is.
-     ⛔ **AND IT BITES HARDER ON A GREY CARD THAN IT EVER DID ON A WHITE ONE.** The veins are cream;
-     against the old near-white face they were nearly invisible, so 0.74 "felt" like a small step
-     from 0.88. Against a grey face the same veins are the highest-contrast thing on the card.
-     **A veil alpha is not portable between two base colours — re-judge it whenever the base moves.**
-     ⭐ 0.90/0.94 puts the stone back to a whisper. ⚠️ **THE GREY BASE STAYS** — that was the half of
-     D156 he asked for and has not complained about; only the texture is walked back. Base lifted
-     one step (#EFECE5→#E0DCD3) to buy a little more separation, which also takes the champagne from
-     4.97:1 to **5.22:1**. */
-  #reviews.rev-solo .rev-stone::after{
-    background:linear-gradient(180deg,rgba(239,236,229,0.90) 0%,rgba(224,220,211,0.94) 100%);
-  }
-  /* ⛔⛔ **THE CHAMPAGNE HAD TO GO DOWN WITH THE CARD — D156, AND THIS IS THE PART THAT WOULD HAVE
-     SHIPPED BROKEN IF THE COLOUR HAD BEEN CHANGED ON ITS OWN.** The header above records that
-     `--gold-lo` (#8C6B34) was chosen over `--gold` because it carries ~4.6:1 against the old card.
-     **Measured against the new one it is 3.42:1 — under AA**, because the card came down and the
-     ink did not. #6F5327 (the palette's own deeper champagne, already used here for `.rev-more`'s
-     hover) restores it to **4.97:1**. ⚠️ One token so the three marks below cannot drift apart, and
-     so the next person who retunes the card has one number to re-check rather than three. */
-  #reviews.rev-solo{--revChampagne:#6F5327}
-  #reviews.rev-solo .quote{color:var(--ink)}
-  #reviews.rev-solo .rev-author{color:var(--ink)}
-  #reviews.rev-solo .stars{color:var(--revChampagne)}
-  #reviews.rev-solo .rev-seal{color:var(--revChampagne);opacity:1}
-  #reviews.rev-solo .rev-src{color:rgba(11,11,13,0.58)}
-  #reviews.rev-solo .rev-foot{border-top-color:rgba(11,11,13,0.14)}
-  /* "Read more" ends the sentence inside the quote, so it has to sit on the quote's own colour
-     terms — the antique champagne, underlined, rather than the pale gold that disappears here. */
-  #reviews.rev-solo .rev-more{color:var(--revChampagne);text-decoration-color:rgba(111,83,39,0.6)}
-  #reviews.rev-solo .rev-more:hover{color:#54401E;text-decoration-color:currentColor}
-  /* the scrollbar inside an expanded review, which is otherwise pale gold on cream */
-  #reviews.rev-solo .rev.expanded .quote::-webkit-scrollbar-thumb{background:rgba(11,11,13,0.28)}
 
   /* ============================================================================
      ⭐ THE ARROWS MOVE INTO THE GUTTERS BESIDE THE CARD, AND THE STRAP COMES UP TO MEET IT
@@ -1785,6 +1736,57 @@
     }
     #services .services-grid .svc .front-text{padding:10px}
     #services .services-grid .svc .desc{display:none}
+
+    /* ⭐⭐ **THE TILE PHOTOGRAPHS COME UP TO FULL BRIGHTNESS — 13 Aug 2026.** Client: "there is
+       some sort of dark radiant across each one of the blocks… I want the images to be full
+       brightness, but the wording must still be clear on it."
+       ⛔⛔ **THE DARKENING WAS TWO SEPARATE THINGS AND ONLY ONE OF THEM LOOKS LIKE A GRADIENT.**
+       This is the D157 lesson again — a fault with two causes reads as one vague impression.
+         (1) `.face.front .stone{opacity:0.5}` — the PHOTOGRAPH ITSELF is half transparent over
+             `.face`'s `background:var(--ink-2)` (measured rgb(21,21,26)). That is a flat 50%
+             mix with near-black across the whole tile, and it is the bigger of the two. It is
+             not a gradient at all, which is why looking for one finds only the veil.
+         (2) `.face.front .veil` — a bottom-up ramp that was still 0.15 opaque at the TOP of the
+             tile, so even the clearest corner carried a wash.
+       ⭐ **BOTH HAD TO GO OR THE OTHER STILL READS AS "dark radiant".** Fixing the veil alone
+       would have left the 50% mix and looked like nothing had happened.
+       ⛔ THE VEIL IS NOT DELETED, IT IS RE-AIMED. The tile carries type in two places and they
+       are measured, not guessed: on a 146×106 tile the number sits 10→22px down (top 21%) and
+       the name 71→85px down (67→80%). So the scrim is opaque only where those two bands are and
+       is FULLY TRANSPARENT from 44% to 78% — the middle of the frame, which is where the subject
+       of every one of these six photographs actually is. That is what "full brightness" has to
+       mean on a tile that also has to carry a name.
+       ⚠️ Stops are eased rather than two-stop, the same technique as `.pt-scrim` and the hero's
+       nav shade — a plain ramp leaves a visible band edge for the eye to find. */
+    #services .services-grid .svc .face.front .stone{opacity:1}
+    #services .services-grid .svc .face.front .veil{
+      background:linear-gradient(to top,
+        rgba(8,8,10,0.88) 0%,
+        rgba(8,8,10,0.72) 14%,
+        rgba(8,8,10,0.34) 30%,
+        rgba(8,8,10,0.08) 41%,
+        rgba(8,8,10,0) 47%,
+        rgba(8,8,10,0) 76%,
+        rgba(8,8,10,0.20) 88%,
+        rgba(8,8,10,0.38) 100%)}
+    /* ⭐ THE TYPE CARRIES ITS OWN CONTRAST NOW, so the scrim does not have to do all of it.
+       The same shadow pair `.hx-name` uses on the desktop helix, which sits on photographs of
+       exactly this kind: a tight 1px shadow for edge definition against busy detail, and a wide
+       soft one that lifts the letterform off a light patch without reading as a glow.
+       ⚠️ This is what buys the middle of the photograph its transparency — without it the scrim
+       would have to reach further up the tile and we would be back where we started. */
+    #services .services-grid .svc h3{
+      text-shadow:0 1px 2px rgba(0,0,0,0.92),0 2px 14px rgba(0,0,0,0.72)}
+    /* ⚠️ **THE NUMBER NEEDED MORE THAN THE NAME, AND IT SHOWED UP ONLY BY LOOKING.** It is 9.5px
+       champagne — a third the size of the name and a colour two stops closer to a bright worktop
+       than bone is — sitting in the tile's TOP band, which is the part deliberately left almost
+       clear. On the four dark photographs it was never in question; on Bespoke Worktops and Outdoor
+       Kitchens it nearly vanished. ⭐ The extra stop here is a tight opaque halo rather than more
+       blur: it buys a hard edge against busy stone detail without spreading a grey cloud around
+       nine pixels of type, and it costs the photograph nothing, which is the whole point of
+       solving this on the type instead of on the scrim. */
+    #services .services-grid .svc .idx{
+      text-shadow:0 1px 2px rgba(0,0,0,0.96),0 0 9px rgba(0,0,0,0.88),0 2px 14px rgba(0,0,0,0.70)}
 
     /* ⭐ THE BLOCKS COME TOGETHER. Client, correcting a first attempt that rotated them like
        doors: "I did not tell you to make it look like doors, I told you the animation. The
@@ -3028,6 +3030,34 @@
     font-size:12px;color:rgba(244,241,234,0.85);font-weight:300;letter-spacing:0.02em;white-space:nowrap;
   }
   .chip b{color:var(--gold);font-weight:500;letter-spacing:2.5px;font-size:11.5px}
+  /* ⛔ THE PHONE'S GOOGLE ARRANGEMENT IS OFF BY DEFAULT (D120). Above 720px the chip shows
+     `.chip-legacy` exactly as it always has; these two only come on inside the phone block. */
+  .g-mark,.g-stack,.chip-reason,.cta-short{display:none}
+
+  /* ---------- the floating WhatsApp button (D173) ----------
+     ⛔ **z-index 38 IS CHOSEN, NOT ARBITRARY.** It sits just UNDER `.mbar` (39) so the two never
+     argue about the bottom-right corner, and therefore also under `.mobile-nav` (40), the project
+     overlay (120) and the estimator modal (200) — each of which owns the screen outright while it is
+     open. A contact shortcut floating over a full-screen menu is the classic version of this bug.
+     ⚠️ The dark ground is the review card's own gradient and the rim is the chips' champagne at the
+     strength `.svc .face` uses, so the button is made of parts the page already contains rather than
+     being a new object with new colours. */
+  .wa-fab{
+    position:fixed;right:18px;bottom:24px;z-index:38;
+    width:54px;height:54px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(155deg,#15151b,#0e0e12);
+    border:1px solid rgba(198,166,100,0.55);
+    box-shadow:0 16px 36px -14px rgba(0,0,0,0.92);
+    color:var(--gold);
+    -webkit-tap-highlight-color:transparent;
+    transition:border-color .35s var(--ease),color .35s var(--ease),
+               transform .35s var(--ease),box-shadow .35s var(--ease);
+  }
+  .wa-fab svg{width:27px;height:27px;fill:currentColor;display:block}
+  .wa-fab:hover{border-color:var(--gold);color:var(--gold-hi,#E4CD92);
+    transform:translateY(-2px);box-shadow:0 20px 42px -14px rgba(0,0,0,0.95)}
+  .wa-fab:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   .hero-cue{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:2}
   /* Under ~560px of viewport there is no honest room for both the copy and the cue. The cue is
      decorative — the page obviously continues — so it stands down rather than crushing the
@@ -4958,6 +4988,347 @@
     #footer .foot-bar{flex-direction:column;align-items:center;text-align:center;gap:12px}
     #footer .foot-legal{justify-content:center;flex-wrap:wrap;gap:8px 18px}
 
+    /* ============================================================================================
+       12. ⭐⭐ THE PROJECT GALLERY IS A PLAIN, NATIVELY-SCROLLED COLUMN — 13 August 2026
+       ============================================================================================
+       Client: *"completely remove the animation from the view our project gallery… it doesn't look
+       good on mobile. So remove that."* Plus: *"it's also especially lagging on the view our
+       project gallery section."* ⭐ **ONE CHANGE ANSWERS BOTH** — see the long note on the `return`
+       in the gallery IIFE's `measure()`.
+       ⛔ **THIS IS SWITCHED ON BY A CLASS THE SCRIPT ADDS (`gal-static`), NOT BY THE MEDIA QUERY
+       ALONE, AND THAT IS DELIBERATE.** The class is written in the same breath as the early return,
+       so the layout below and the dead engine can never disagree: if the script ever fails to reach
+       that line the cards keep the old absolute positioning and the old engine, which is a working
+       page. A media-query-only version would strip the positioning while JS was still driving it,
+       and eight cards would pile up in the corner. ⚠️ It also gives every rule here one extra class
+       of specificity, which is what lets it out-rank `#gallery .gal-pin` at 2739 without `!important`.
+       ⛔ Above 720px `--galMode` is unset, the branch never runs, the class is never added, and the
+       desktop pin, runway, accordion and hallway are untouched (D91). */
+
+    /* 12a. the machine comes apart: no runway, no pin, no viewport-tall stage. `display:contents`
+       on `.gal-mid` and `.gal-set` is what does the real work — it dissolves the two wrapper boxes
+       so their children become flex items of the stage itself, which is how the copy, the eight
+       cards and the buttons end up in ONE flow without a line of DOM surgery.
+       ⭐ It also neutralises the engine for free: `mid.style.opacity` and the set transforms are
+       written to elements that no longer generate a box, so a stale inline style from a resize
+       cannot show through. */
+    /* ⛔⛔ **`.gal-stage` MUST BE TAKEN OUT OF `position:absolute` AND THAT IS THE WHOLE THING.**
+       Built without this line the section collapsed to 35.7px and every card computed to
+       `331 × 0`, which looks like a broken height rule and is not one: `.gal-stage{position:
+       absolute;inset:0}` was resolving against a `.gal-pin` that had just lost its `height:100vh`,
+       so the stage inherited a near-zero containing block, and eight flex items with the default
+       `flex-shrink:1` obediently shrank to nothing inside it. ⭐ The `flex-shrink:0` on the card
+       below is the belt to this braces — a definite `height` on a column flex item is still only
+       a starting point until shrink is switched off. */
+    #gallery.gal-static .gal-scroll{height:auto}
+    #gallery.gal-static .gal-pin{position:static;height:auto;overflow:visible}
+    #gallery.gal-static .gal-stage{position:static;height:auto;perspective:none;
+      display:flex;flex-direction:column;align-items:center;
+      padding:clamp(28px,4.6vh,48px) 22px clamp(30px,4.4vh,44px)}
+
+    /* ⛔⛔⛔ **THE SECTION'S −70px PULL MUST GO WITH THE RESERVE IT WAS CANCELLING — 13 August 2026.**
+       **THE DIVIDER RAN STRAIGHT THROUGH "View our project gallery" AND THIS IS WHY.** D129 gave
+       `#gallery` a `margin-top:calc(clamp(28px,4.6vh,48px) − var(--galNavH,78px) − clamp(22px,3.6vh,42px))`
+       — about **−70px** — for one reason: `.gal-mid` reserved the fixed nav's height plus its own air
+       INSIDE a 100vh sticky stage, and before the pin engaged that reserve was dead space in the
+       flow. Pulling the section up by exactly what it added cancelled it, and cost nothing once
+       pinned, because a pinned element is positioned against the viewport rather than its own margin.
+       ⛔ **§12 DELETED BOTH SUBTRACTED TERMS AND LEFT THE SUBTRACTION.** `.gal-mid` is
+       `display:contents` now and the stage had no top padding, so the −70px had nothing left to
+       cancel and simply dragged the whole section up over the divider — measured: gallery top 2130
+       against a divider at 2149–2151, a **21px overlap straight through the title**.
+       ⭐⭐ **THIS IS THE EXACT FAILURE THE HANDOVER NAMES: "when a change has a cost somewhere else,
+       the cost stays behind — after changing a value, grep for what was derived from it."** D142
+       left `animPx` behind, D156 left `--gold-lo` behind, and this left D129's pull behind. It was
+       found by his screenshot, not by any of my measurements, because every number I checked was
+       inside the gallery and this one describes the join to the section above it.
+       ⭐ **THE SPACE IS NOW PADDING ON THE STAGE, NOT MARGIN ON THE SECTION, AND THAT IS LOAD-BEARING.**
+       Adjacent margins collapse: `#gallery` with a positive `margin-top` next to the divider's 48.7px
+       `margin-bottom` collapses to the LARGER of the two, so the gap would have come out at 48.7 and
+       never at the 86 the composition wants. Padding does not collapse. ⭐ It also restores D124's
+       symmetry properly — above the divider, 37.4px of the services section's own bottom padding plus
+       the divider's 48.7px margin = **86.1px**; below it, the same 48.7px plus this 37.4px of stage
+       padding = **86.1px**. The leading term is deliberately the same `clamp(28px,4.6vh,48px)` D129
+       used, so the two sides still track each other at every screen height rather than agreeing once. */
+    #gallery.gal-static{margin-top:0}
+    #gallery.gal-static .gal-mid,
+    #gallery.gal-static .gal-set{display:contents}
+
+    /* 12b. the reading order. h2 and the subtitle keep the default 0, the cards take 1 and the
+       buttons 2 — which is D113's split ("title and subtitle above, then the cards, then the
+       buttons below") expressed as flex order instead of as a stretched absolute overlay.
+       ⚠️ The cards' DOM order is `s*PER_SET+i`, the order the projects are authored in, so a plain
+       flow prints them in reading order without anything having to sort them. */
+    #gallery.gal-static .gal-card{order:1}
+    #gallery.gal-static .gal-mid-actions{order:2;pointer-events:auto;opacity:1;
+      margin-top:clamp(26px,3.6vh,42px)}
+    /* ⭐ **D147 SURVIVES THE REBUILD, AND AS THE SAME EXPRESSION RATHER THAN A COPIED NUMBER.**
+       Client, on the old build: "the first card should be slightly closer to the subtitle like on
+       the surfaces for every space section… same distance." That was JS reading the services
+       grid's `clamp(18px,3vh,30px)` and adding it to `colTop`; with the column in normal flow the
+       same clamp is simply the subtitle's bottom margin, which is what `#services .services-grid`
+       does with its `margin-top`. ⛔ Do not replace it with the ~24px it evaluates to — two
+       numbers describing one distance is this project's most repeated bug (D107).
+       ⚠️ Built without this the first card touched the subtitle's last line: the engine used to
+       own that gap and it went with the engine. */
+    #gallery.gal-static .section-sub{margin-bottom:clamp(18px,3vh,30px)}
+
+    /* 12c. the card itself. `--cw`/`--ch` arrive already multiplied by the old `colSc`, so the card
+       is the same 331×145 he has been looking at, drawn at its real size instead of a 157px card
+       under a 2.1× transform. ⛔ `transform:none` is what stops any inline transform left over from
+       a width change above 720px; the engine cannot write a new one. ⭐ `will-change:auto` on both
+       the card and the door drops SIXTEEN permanently promoted compositing layers off this section
+       — see §13, that is the memory this page could not afford. */
+    #gallery.gal-static .gal-card{
+      position:relative;left:auto;top:auto;flex:0 0 auto;
+      width:var(--cw,331px);height:var(--ch,145px);
+      margin:0 0 var(--colGap,14px);
+      transform:none;opacity:1;will-change:auto;perspective:none}
+    #gallery.gal-static .gal-set:last-child .gal-card:last-child{margin-bottom:0}
+    #gallery.gal-static .gal-door{transform:none;will-change:auto}
+    /* the caption was revealed by the engine one card at a time as the accordion dealt them out.
+       With no accordion every card simply has its name on, which is what D128 was reaching for. */
+    #gallery.gal-static .gal-meta{opacity:1;transform:none}
+
+    /* 12d. ⛔ **THE GOLD OUTLINE COMES OFF THE CARDS — client, 13 August 2026:** *"remove the golden
+       outline around the blocks in the view our project gallery."*
+       ⚠️ **IT IS NOT A BORDER, WHICH IS WHY LOOKING FOR ONE FINDS NOTHING.** `.gal-door` carries
+       `glow-card`, so the rim is the shared `::after`/`::before` pair — the cursor-reactive gold
+       halo the review cards, process steps and services faces all use, driven by `attachGlow`'s
+       `--gx/--gy/--ga`. On a desktop it lights under the pointer; on a touch screen there is no
+       pointer, so it either sat on at full strength or lit up under his finger, which is also half
+       of what he was reporting in 12e. ⭐ Killing the two pseudos removes the rim AND the spill.
+       ⚠️ There WAS a second gold edge: `render()` wrote an `inset 0 0 0 3px rgba(198,166,100,…)`
+       box-shadow onto the two peeking cards while the pile was stacked. That is gone with the
+       engine — no rule needed, but do not be surprised to find the string in the file.
+       ⛔ The neutral `1px solid var(--hair-soft)` on `.gal-door` is NOT gold and stays: it is what
+       stops a dark photograph bleeding into a dark page with no edge at all. */
+    #gallery.gal-static .gal-door::after,
+    #gallery.gal-static .gal-door::before{display:none}
+
+    /* 12e. ⛔⛔ **NOTHING HAPPENS WHEN A FINGER TOUCHES A CARD — client, 13 August 2026:** *"any
+       animation must not happen when someone's finger touches it. Only when they click in must it
+       gloss over and go into that section."*
+       ⚠️ **`:hover` IS THE BUG ON A TOUCH SCREEN AND IT IS NOT OBVIOUS FROM READING THE RULE.** iOS
+       fires `:hover` on the first tap and then LEAVES IT LATCHED until you touch something else, so
+       `.gal-set.settled .gal-card:hover img{filter:…}` and `:hover .sheen{transform:translateX(120%)}`
+       both ran on a finger-down and stayed run — the brightness lift and the polish sweep he is
+       describing. They were written for a mouse, where the pointer leaving takes them back off.
+       ⭐ The sweep is removed on the phone rather than re-timed: the `.sheen` element is a
+       full-card gradient layer that exists only to be transformed, so hiding it is one fewer
+       painted surface per card as well as one fewer thing that moves under a finger.
+       ⭐ **THE OPEN ITSELF IS UNTOUCHED** — tapping a card still runs `openFocus()` and the project
+       detail still transitions in over the page, which is the "gloss over and go into that section"
+       half of the ask. Only the touch-down states are gone. */
+    #gallery.gal-static .gal-card .sheen{display:none}
+    #gallery.gal-static .gal-card:hover img,
+    #gallery.gal-static .gal-card:active img,
+    #gallery.gal-static .gal-set.settled .gal-card:hover img{
+      filter:saturate(0.86) brightness(0.84) contrast(1.02)}
+
+    /* ============================================================================================
+       13. ⭐⭐ THE PAGE STOPS COSTING MORE THAN THE PHONE HAS — 13 August 2026
+       ============================================================================================
+       Client: *"as you scroll down, some of the rest of the parts of the site is also laggy. And
+       when I scroll too quickly, for some reason, it's just reloading the site on my side. It could
+       be a problem on my phone, it could not, but something's just wrong."*
+       ⭐⭐ **HE IS RIGHT AND IT IS NOT HIS PHONE.** Measured at 375×812 before any of this:
+         • **431 elements carrying a live `filter`**, including **63 `feTurbulence`** and **42
+           `feGaussianBlur`** — see the note on `marbleFill()`, which takes the 22 worst off the
+           per-frame path entirely.
+         • **107 elements holding `will-change`**, i.e. 107 permanently promoted compositing layers,
+           **67 of them the stone wheel's slabs alone**.
+       ⛔ **A RELOAD ON A FAST SCROLL IS NOT A BUG IN THE PAGE'S LOGIC, IT IS THE TAB BEING EVICTED.**
+       iOS Safari kills and silently re-loads a tab whose renderer exceeds its memory budget, and a
+       promoted layer costs `width × height × 4 bytes` of GPU memory whether or not anything is
+       moving. Sixty-seven full-size slab layers that exist only so a drag can be smooth are the
+       single largest thing on that bill. ⭐ It presents as "it reloaded", never as "it ran out of
+       memory", which is why it has read as a phone problem for three rounds.
+       ⚠️ **THIS IS NOT A MEASURED FIX ON HIS DEVICE AND I AM SAYING SO.** The layer and filter
+       counts are measured; the eviction is the documented behaviour that fits them. It needs his
+       phone to confirm. */
+
+    /* 13a. the switch `marbleFill()` reads. ⛔ Declared here, in the stylesheet, so the script never
+       forms a second opinion about what a phone is (D51/D59/D68/D78/D93/D105). */
+    body{--stoneRaster:on}
+
+    /* 13b. ⛔⛔ **SIXTY-SEVEN PERMANENT COMPOSITING LAYERS COME OFF THE STONE WHEEL.**
+       `.wheel .slab` carries `will-change:transform,opacity`, which is correct advice on a desktop
+       with memory to spare and actively harmful here: it is a standing promise to the compositor
+       for all 67 slabs at once, including the ~60 that are off-screen and the whole wheel while the
+       customer is nowhere near it. The wheel's rAF still transforms the visible cards and the
+       browser still composites them — it just does so on demand instead of reserving for everything
+       in advance.
+       ⭐ **THIS IS THE MOVE D133 ALREADY MADE AND PROVED**, four rules down the file: `.hero-bg img{
+       will-change:auto}`, dropping "a permanent compositing layer" from the hero. Same reasoning,
+       sixty-seven times the saving. ⛔ Desktop keeps the hint (D91). */
+    .wheel .slab{will-change:auto}
+
+    /* 13c. the same reserve on the six Why tiles and the five project-hero slides. The Why tiles
+       animate once, on arrival, and then never again; the hero slides only exist inside the project
+       detail overlay, which is closed almost all of the time. ⚠️ `.gal-card`/`.gal-door` are dealt
+       with in §12c, and `.rev.dragging` is deliberately LEFT ALONE — it is scoped to a class that
+       only exists during an actual drag, which is what a will-change should look like. */
+    .wy-tile{will-change:auto}
+    .phb-slide{will-change:opacity}
+
+    /* ============================================================================================
+       14. ⭐⭐ THE HERO — 13 August 2026
+       ============================================================================================
+       Four asks in one message: the subtitle takes the chips' ring, the three icon facts come out,
+       the Google chip is rebuilt around the Google mark, the guarantee sits beside it, and the
+       spacing is re-cut around what is left. ⛔ Phone only; the hero above 720px is frozen (D91)
+       and every rule here is inside the 720px block or hangs off a class the phone alone shows. */
+
+    /* 14a. ⛔⛔ **THE SUBTITLE HAS NO BORDER — 13 August 2026 (D171). REVERSES D169's RING, ASKED FOR
+       ONE MESSAGE EARLIER.** Client: *"then we're gonna have the normal subtitle text with no border
+       around it."* ⭐ **THE RULES ARE DELETED RATHER THAN OVERRIDDEN**, so the line falls back to the
+       base `.hero-sub` exactly as it was before D169 — the same reason D167's card revert deleted
+       rather than out-specified.
+       ⭐⭐ **AND THE LINE BREAKS BETTER WITHOUT THE BOX, WHICH IS WORTH KNOWING.** D169 had to fight a
+       stranded "by us" through a 7px padding window: `.nowrap` holds "across London and the Home
+       Counties." at 283px and "Chosen from the slab you approve, fitted by us" measures **332px**.
+       With no pill the measure is the full **335px**, so the whole first sentence fits on one line
+       and it sets as a clean TWO lines with no window to defend and nothing riding on Montserrat's
+       metrics. The problem D169 solved was one D169 created. */
+
+    /* ⛔ **320px STILL NEEDS THE TYPE STEP, AND IT IS NOT LEFT OVER FROM THE PILL.** The line box is
+       280px there against a 283px unbreakable phrase, so `.nowrap` spilled ~3px through the old
+       borderless subtitle too — the pill only made an existing overflow visible. 13px takes the
+       phrase to ~254 and it fits with room to spare. ⚠️ 320px is a real target here, not a
+       theoretical one — D118 sizes the service tile's name against it as well. */
+    @media(max-width:360px){
+      #hero .hero-sub{font-size:13px}
+    }
+
+    /* 14b. ⛔ **THE THREE ICON FACTS COME OUT.** Client: *"remove the three icons with the service
+       second to none, every cutout, and the aftercare — remove those icons and text."*
+       ⚠️ **HIDDEN, NOT DELETED, AND THE REASON IS NOT SENTIMENT.** The same `<ul>` is what every
+       width above 720px shows, and the medal, the L-plan and the clock are drawn inline in the hero
+       markup — the L-plan alone took five attempts and its comment records why it is an L and not a
+       rectangle. Deleting the markup to satisfy a phone-only ask would take the desktop row with it.
+       ⭐ It also takes three inline SVGs out of the phone's first paint. */
+    #hero .hero-facts{display:none}
+
+    /* 14c. ⭐ **THE GUARANTEE SITS BESIDE THE GOOGLE CHIP.** Client: *"have the ten year guarantee
+       next to the Google review part."* They were already siblings and already `flex`, but
+       `flex-wrap:wrap` on a 375px screen put the guarantee on its own line underneath — which is
+       what he is looking at. `nowrap` plus the tighter chip padding below is what fits the pair on
+       one row at 320px, which is the narrowest handset this site targets.
+       ⚠️ `align-items:stretch` matters: the Google chip is two lines tall and the guarantee is one,
+       and two pills of different heights side by side read as a mistake rather than as a pair. */
+    #hero .hero-chips{flex-wrap:wrap;justify-content:center;align-items:stretch;
+      gap:9px;width:100%}
+    #hero .hero-chips .chip{padding:8px 13px;gap:8px;flex:0 1 auto;min-width:0}
+    /* ⭐ **THE REASON BUBBLES — D172.** Nothing new is styled: they take `.chip` whole, which is what
+       "all in the same bubble style as the Google and 10 year guarantee" asks for literally. They are
+       `display:none` in the base rule (D120) and only come on here. ⚠️ `align-items:center` because a
+       one-line chip beside the two-line Google chip would otherwise sit its text at the top. */
+    #hero .chip-reason{display:inline-flex;align-items:center;white-space:nowrap}
+
+    /* 14c-ii. ⭐ **THE TWO BUTTONS SIT SIDE BY SIDE — D171.** Client: *"then we will have the free
+       quote and call us buttons right next to each other."*
+       ⛔⛔ **THE 11 AUG DERIVED WIDTH HAS TO GO WITH THE STACK, AND IT IS NOT AN ARBITRARY OVERRIDE.**
+       `.hero-ctas .btn-*` carries `width:calc(66.667% + var(--hfGap)*0.667 + var(--hfIcon))` — the
+       distance from the first fact icon's left edge to the last one's right edge, so a full-width
+       button lined up with the icon row. **That row has been `display:none` since D169**, so the
+       width was already measuring against something the customer cannot see; side by side it also
+       overflows the screen outright. Each button simply takes an equal share of the row now.
+       ⚠️ `min-width:0` is load-bearing on a flex item — without it the button refuses to shrink
+       below its content and the pair pushes past the screen edge. */
+    #hero .hero-ctas{flex-direction:row;flex-wrap:nowrap;gap:10px}
+    #hero .hero-ctas .btn-gold,
+    #hero .hero-ctas .btn-ghost{width:auto;flex:1 1 0;min-width:0;padding-left:8px;padding-right:8px}
+    /* the short labels, and the long ones out of the way — see the markup note */
+    #hero .hero-ctas .cta-long{display:none}
+    #hero .hero-ctas .cta-short{display:inline}
+
+    /* 14d. ⭐⭐ **THE GOOGLE CHIP: THE MARK, THEN "Google" OVER FIVE STARS, THE STACK EXACTLY AS TALL
+       AS THE MARK.** Client, precisely: *"the Google icon, then it will have the word Google on top
+       and the five stars below, and it's all the same height as the Google icon."*
+       ⭐ **"THE SAME HEIGHT" IS BUILT, NOT APPROXIMATED.** The mark is 26px and the stack is given
+       the same 26px with `justify-content:space-between`, so the cap-line of "Google" and the
+       baseline of the stars land on the mark's own top and bottom edges however the two type sizes
+       are later nudged. Setting two font sizes and hoping they add up to 26 is what would drift. */
+    #hero .chip-google{align-items:center}
+    #hero .g-mark{display:block;flex:none;width:26px;height:26px}
+    #hero .g-stack{display:flex;flex-direction:column;justify-content:space-between;
+      height:26px;line-height:1;text-align:left}
+    #hero .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
+      color:rgba(244,241,234,0.92)}
+    /* the stars keep the chip's own gold and its wide tracking — this is the same rating the
+       `.chip b` rule has always drawn, only stacked under the word instead of running before it */
+    #hero .g-stars{color:var(--gold);font-size:11px;letter-spacing:1.6px}
+    /* ⚠️ CLIPPED, NOT `display:none` — see the markup note. "5.0 on Google" stays in the
+       accessibility tree because a logo and five star glyphs do not say it on their own. */
+    #hero .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
+      clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+    /* the guarantee's "10" is the chip's gold numeral; it only needs to stop the two words
+       wrapping now that the pair share a row */
+    #hero .chip-guarantee{white-space:nowrap;align-items:center}
+
+    /* 14e. ⭐ **THE SPACING, RE-CUT ROUND WHAT IS LEFT.** Client: *"optimise the spacing inside the
+       hero section."* ⛔ **THIS IS NOT A TIDY-UP, IT IS THE CONSEQUENCE OF 14b:** the fact row was
+       ~190px of the composition and the chip row gives back another ~70, so leaving the old gaps
+       standing would have left the hero looking half-empty rather than better spaced — the D157
+       lesson, where the cost of a removal stayed behind.
+       ⭐ Every gap is `vh`-based so the hero re-proportions on a small handset instead of running
+       the CTAs under the fold, which is what fixed pixels did here before D92.
+       ⛔⛔ **THE SPACE IS SPENT ON THE GAPS RATHER THAN TAKEN OFF THE HERO'S HEIGHT, AND THAT IS A
+       DELIBERATE CHOICE ABOUT SOMEBODY ELSE'S DECISION.** `.hero{min-height:90vh}` is D97, tuned so
+       the bevel and the top of the reviews both land on the first screen — *"I don't want it to say
+       scroll, and that means we can also move that divider or bottom border higher up."* Removing
+       the fact row left the content 101px short of that height, and because `.hero-inner` is a block
+       in normal flow all 101px pooled at the BOTTOM as one hole. Shrinking the hero would have been
+       the easy fix and would have silently re-opened a question he has already answered.
+       ⭐ **THE CEILING IS THE SCROLL CUE, NOT THE HERO.** `.hero-cue` is absolutely positioned at
+       `bottom:30px` (689–709px here), so the gaps can only take back ~60 of the 101 before the chips
+       would run into it. That is what these three numbers add up to, with ~21px left clear.
+       ⚠️ Centring `.hero-inner` instead was measured and rejected: its box is 629.5px in a 731px
+       hero, so centring moves the content DOWN 50px — a bigger gap above the title and a smaller one
+       below the chips, which is the opposite of the complaint. */
+
+    /* ⛔⛔ **RE-CUT A THIRD TIME, AND THIS TIME THE GAPS COME DOWN — 13 August 2026 (D174).**
+       Client: *"remove the scroll arrow at the bottom of the hero section and optimise the spacing…
+       move the surfaces worth building around down, and get some even spacing in there where things
+       don't look cluttered, but right now the gaps in between is just too big."*
+       ⭐⭐ **THE TWO HALVES OF THAT ARE ONE FIX, AND THE ARROW IS WHY.** The previous two passes both
+       spent the slack on the gaps because `.hero-cue` was a hard floor — an absolutely-positioned
+       arrow at `bottom:30px` that the content could not run into, so the only place to put 100px of
+       spare height was between the elements. **Removing the arrow removes the floor**, and the same
+       space can now go where he actually wants it: above the title, moving the whole block down,
+       with tight even gaps inside it.
+       ⭐ **"EVEN" IS BUILT, NOT ASSUMED.** One value drives all three gaps, and the title carries
+       +5px because a display serif's line box sits ~4.5px inside its own margin — measured, three
+       passes running. Equal margins would have rendered as a visibly smaller first gap.
+       ⚠️ The block is pushed down by `.hero-inner`'s own padding rather than by a margin, so it
+       cannot collapse against anything, and it stays vh-led so a short handset in landscape
+       re-proportions instead of pushing the buttons off the fold. */
+    #hero .hero-cue{display:none}
+    #hero .hero-inner{padding-top:clamp(118px,21vh,190px);padding-bottom:clamp(40px,6vh,72px)}
+    #hero .hero-copy{gap:0}
+    #hero .hero-title{margin-bottom:clamp(28px,4.8vh,42px)}
+    #hero .hero-sub{margin-bottom:clamp(24px,4.2vh,36px)}
+    #hero .hero-ctas{gap:10px;margin-bottom:clamp(24px,4.2vh,36px)}
+
+    /* ============================================================================================
+       15. ⭐ THE WHATSAPP BUTTON CLEARS THE STICKY BAR — 13 August 2026 (D173)
+       ============================================================================================
+       ⛔ **THE PHONE ALREADY OWNS THIS CORNER.** `.mbar` is fixed to the bottom edge at 59px tall
+       plus the safe-area inset (D99/D110), so the default `bottom:24px` would put the button
+       squarely on top of "Call". 73px is the bar's real height plus 14px of air, and `env()` is
+       added on top so it clears the home indicator on a notched handset rather than sitting under
+       it. ⚠️ It holds that position whether or not the bar is currently shown — the bar slides in on
+       scroll, and a button that moved down every time it left would read as a glitch.
+       ⭐ **AND IT STANDS DOWN WITH EVERYTHING ELSE WHEN THE MENU OPENS**, exactly as `.mbar` does
+       four rules up: a contact shortcut floating over a full-screen menu is the classic version of
+       this bug, and z-index alone would not have saved it here because the button is a sibling of
+       the sheet rather than inside it. */
+    .wa-fab{right:14px;bottom:calc(73px + env(safe-area-inset-bottom,0px));
+      width:50px;height:50px}
+    .wa-fab svg{width:25px;height:25px}
+    html.nav-open .wa-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
+
   }
 </style>
 <script type="application/ld+json">
@@ -5097,6 +5468,37 @@
   </a>
 </div>
 
+<!-- ===================== FLOATING WHATSAPP BUTTON — 13 August 2026 (D173) =====================
+     Client: *"add a floating WhatsApp icon button in the black and gold style in the bottom corner
+     of the site for people to click on it and go straight to WhatsApp."*
+
+     ⛔⛔⛔ **THE NUMBER BELOW IS THE 0800 LANDLINE AND IT IS ALMOST CERTAINLY NOT A WHATSAPP ACCOUNT.
+     THIS MUST BE REPLACED BEFORE GO-LIVE — IT IS THE ONE THING ON THIS BUTTON THAT IS NOT FINISHED.**
+     WhatsApp accounts sit on mobile numbers; UK 0800 freephone numbers cannot normally register one,
+     so `wa.me/448000982812` will most likely open WhatsApp and report that the number is not on
+     WhatsApp — which looks worse than having no button at all. It is wired to the only number this
+     project holds so the button is complete and testable; **swap the digits in the `href` for the
+     real WhatsApp business number in full international form, no `+` and no spaces** (e.g. a UK
+     mobile 07123 456789 becomes `447123456789`). Nothing else needs to change.
+
+     ⚠️ **IT IS ON EVERY WIDTH, WHICH IS A READING OF "the site" AND IS ONE LINE TO UNDO.** Desktop is
+     frozen (D91) and only the client unfreezes it, so this is deliberately the ADDITIVE kind of
+     change: a fixed overlay that displaces nothing and alters no frozen composition. If he wants it
+     on the phone alone, give `.wa-fab` `display:none` in the base rule and switch it on in the 720px
+     block — the D120 idiom every other new element here uses.
+
+     ⛔ NOT WHATSAPP GREEN. He asked for "the black and gold style", and the site has exactly one
+     multi-colour element on purpose (the Google mark, D170) — a green badge would take that meaning
+     away from it. WhatsApp's brand terms are satisfied by the glyph's own shape, which is
+     unmodified. -->
+<a class="wa-fab" href="https://wa.me/448000982812" target="_blank" rel="noopener noreferrer"
+   aria-label="Message TopCat Worktops on WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0zm-.001 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/>
+  </svg>
+</a>
+
 <main>
 
     <!-- ===================== HERO =====================
@@ -5215,14 +5617,67 @@
           </li>
         </ul>
 
+        <!-- ⚠️ **TWO LABELS PER BUTTON, ONE SHOWN — 13 August 2026 (D171).** The pair sit SIDE BY
+             SIDE on the phone now, which halves each button to ~162px, and "Get your free quote"
+             needs 224px of run at its 12.5px tracked size. ⛔ These buttons are `white-space:nowrap`
+             inside `overflow:hidden`, so a label that does not fit is **not a wrap, it is a silently
+             clipped word** — the trap the 11 Aug comment on `.hero-ctas .btn-*` already records.
+             ⭐ The short forms are the client's OWN words for these two buttons ("the free quote and
+             call us buttons"), so nothing is being invented to make a layout work.
+             ⛔ `display:none` in the base rule, phone opts in (D120) — every width above 720px keeps
+             the full labels, unchanged to the character. -->
         <div class="hero-ctas hero-el" style="--hd:900ms">
-          <a href="#cta" class="btn-gold">Get your free quote</a>
-          <a href="tel:+448000982812" class="btn-ghost hero-call-mobile">Give us a call</a>
+          <a href="#cta" class="btn-gold"><span class="cta-long">Get your free quote</span><span class="cta-short">Free quote</span></a>
+          <a href="tel:+448000982812" class="btn-ghost hero-call-mobile"><span class="cta-long">Give us a call</span><span class="cta-short">Call us</span></a>
           <a href="#cta" class="btn-ghost hero-call-desktop">Request a call</a>
         </div>
         <div class="hero-chips hero-el" style="--hd:1040ms">
-          <span class="chip glow-card"><b>★★★★★</b> 5.0 on Google</span>
-          <span class="chip glow-card"><b>10</b> year guarantee</span>
+          <!-- ⭐ **THE GOOGLE CHIP CARRIES TWO ARRANGEMENTS OF THE SAME FACT — 13 August 2026.**
+               Client: *"put the Google icon next to the five stars… the Google icon, then it will
+               have the word Google on top and the five stars below, and it's all the same height as
+               the Google icon."*
+               ⛔ **NEW MARKUP CANNOT BE SCOPED BY A MEDIA QUERY (D120)**, and desktop is frozen (D91),
+               so the mark and the stack are `display:none` in the base rule and the phone opts in —
+               the same shape D148, D152 and D153 all use. `.chip-legacy` is the original wording and
+               is what every width above 720px still shows, unchanged to the character.
+               ⚠️ On the phone `.chip-legacy` is CLIPPED rather than `display:none`d, so "5.0 on
+               Google" is still read out. The visible arrangement is a logo and five glyphs, which
+               says nothing to a screen reader on its own. -->
+          <span class="chip chip-google glow-card">
+            <!-- The Google "G" in its four official colours. ⛔ **DO NOT RECOLOUR IT TO THE SITE'S
+                 GOLD.** It is Google's trademark and it is here to attribute the rating to its
+                 source, which is the one use that makes a third-party mark legitimate on a page like
+                 this — recolouring or restyling it is exactly what Google's brand terms prohibit,
+                 and a gold "G" would also quietly stop reading as proof. It is the only multi-colour
+                 element on the site, on purpose: that is what makes it read as somebody else's
+                 verdict rather than as our own decoration. -->
+            <svg class="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <span class="g-stack" aria-hidden="true">
+              <span class="g-word">Google 5.0</span>
+              <span class="g-stars">★★★★★</span>
+            </span>
+            <span class="chip-legacy"><b>★★★★★</b> 5.0 on Google</span>
+          </span>
+          <span class="chip chip-guarantee glow-card"><b>10</b> year guarantee</span>
+          <!-- ⭐ **THE REASONS RETURN AS BUBBLES — 13 August 2026 (D172).** Client: *"then we have
+               the more reasons, like, we will list it out in the same bubble kind of way… it's a
+               seventy two hour aftercare, we will say quick turnaround time, all in the same bubble
+               style as the Google and 10 year guarantee."*
+               ⚠️ **THIS IS THE SAME CONTENT D169 TOOK OUT, IN A DIFFERENT DRESS, AND THAT IS THE
+               POINT** — what he rejected was three icons with a heading and a sub-line each, not the
+               facts themselves. The icon row is still `display:none` and still intact for desktop.
+               ⛔ Phone only: `display:none` in the base rule, the phone opts in (D120). Above 720px
+               the chip row is still exactly the two chips it has always been.
+               ⚠️ **NEITHER LINE STATES AN ABSOLUTE (§2 rule 12).** "72-hour aftercare" is the
+               existing, already-live promise from the fact row; "Quick turnaround time" is
+               deliberately vague rather than a number we would have to keep. -->
+          <span class="chip chip-reason glow-card">72-hour aftercare</span>
+          <span class="chip chip-reason glow-card">Quick turnaround time</span>
         </div>
       </div>
     </div>
@@ -7250,6 +7705,52 @@ function veinPath(rand, w, h, y0){
   }
   return d;
 }
+/* ⭐⭐⭐ **THE MARBLE IS RASTERISED ON A PHONE INSTEAD OF LIVING AS A FILTER — 13 August 2026.**
+   Client: *"the review section, the animation, is extremely laggy… as you scroll down some of the
+   rest of the site is also laggy… and when I scroll too quickly it's just reloading the site."*
+
+   ⛔⛔ **MEASURED BEFORE GUESSING, AND THE NUMBER IS THE WHOLE STORY: the page had 63 live
+   `feTurbulence` filters and 42 `feGaussianBlur`, across 431 elements carrying a `filter`.**
+   `feTurbulence` is procedural fractal noise computed PER PIXEL, and `marbleSVG()` stacks three of
+   them (octaves 3, 3 and 4) plus two displacement maps — then hands the result to 16 review cards
+   and 6 Why tiles, each with its own seed so nothing can be cached between them. ⛔ **A live SVG
+   filter is re-run whenever its element is re-rasterised, and a transform re-rasterises.** The
+   review deck's whole job is to transform, so every frame of the roll was re-computing fractal
+   noise for the card in flight. That is his "extremely laggy", exactly, and it is why the reviews
+   are the worst of it rather than merely one more section.
+
+   ⭐ **THE FIX CHANGES THE RENDERING PATH, NOT ONE PIXEL OF THE DESIGN.** The same string this
+   function already returns is handed to the image decoder as a `data:` URI instead of being
+   injected as live DOM. The browser rasterises it ONCE and caches a bitmap; transforms then scale
+   a bitmap, which is what a phone is actually good at. ⚠️ It is a straight swap because the SVG is
+   already self-contained — its own `<defs>`, its own `viewBox`, and `preserveAspectRatio="xMidYMid
+   slice"`, which is precisely `background-size:cover`. Same seeds, same 16 unique marbles, same
+   veining. ⭐ **This matters more than it looks: D156 and D160 tuned this texture BY EYE against
+   the card's stone and its veil, twice. Anything that re-cut the noise would have quietly undone
+   that** — so the requirement was a change that cannot alter the image, and this is one.
+
+   ⛔ **PHONE ONLY, AND THE SWITCH IS DECLARED IN THE STYLESHEET** (`--stoneRaster` on `body`, in the
+   720px block) rather than tested with a `matchMedia` here — a second opinion in JS about what a
+   phone is has been this project's most repeated bug (D51, D59, D68, D78, D93, D105). Desktop is
+   frozen and keeps the live filters it was signed off with (D91). */
+function marbleRasterOn(){
+  return getComputedStyle(document.body).getPropertyValue('--stoneRaster').trim()==='on';
+}
+/* Fill an element with the marble: a cached bitmap on a phone, live SVG everywhere else.
+   ⚠️ `encodeURIComponent` and not a bare interpolation — the markup carries `"` and `#`, and an
+   unescaped `#` truncates a data URI at the fragment, which fails silently as a blank panel. */
+function marbleFill(el,seed){
+  if(!el) return;
+  if(marbleRasterOn()){
+    el.innerHTML='';
+    el.style.backgroundImage='url("data:image/svg+xml;charset=utf-8,'+encodeURIComponent(marbleSVG(seed))+'")';
+    el.style.backgroundSize='cover';
+    el.style.backgroundPosition='center';
+    el.style.backgroundRepeat='no-repeat';
+  }else{
+    el.innerHTML=marbleSVG(seed);
+  }
+}
 function marbleSVG(seed){
   const rand = rng(seed);
   const W = 900, H = 480;
@@ -8252,7 +8753,6 @@ const REVIEWS=[
   {n:"Judy Z.", q:"10/10 experience!! I had Nick as my point of contact for the end to end stone worktop work, it was extremely smooth process with minimal hustle. From the beginning, Nick was very professional, responsive and polite, which was a great customer experience for me. The team came in the next week to measure and Nick ordered the stone right away, so it was ready for installation 3-4 days after they templated the worktop. On the installation day, the team spent about 1.5h to complete the work and has done a clean job. The 2 workers on the day were absolutely brilliant, and have done a great service! 🙏 Basically, there was a window corner which was not originally planned to install any 10cm stone cover, but they brought the extra materials and cut the bit of window frame perfectly and installed it on the day (as I was there in person and they checked with me before making any adjustments). Very happy with my experience"},
   {n:"Jhanzeb Chaudhry", q:"I’m so happy I went with TopCat Worktops for my kitchen! I had visited a few kitchen showrooms before and was honestly shocked at how expensive the quotes were. TopCat came in at least £1,200 cheaper than the others, and the quality and service were absolutely amazing. Nik was brilliant from the start, super helpful, always available to answer my questions (even out of hours), and guided me through the whole process with real care. On installation day, the team arrived on time and did a fantastic job. The finish is flawless, and everything was done to a really high standard. Highly recommend TopCat Worktops, great prices, great service, and a beautiful end result!"},
   {n:"Maheen Amjad", q:"TopCat Worktops came highly recommended by our interior designer, and they certainly didn't disappoint. As we're based in Scotland, everything was handled over the phone and email, but Nick made the whole process incredibly easy. He was always quick to respond, answered all our questions, and helped us choose the right worktop for our kitchen without any pressure. The service was professional from start to finish, and we always felt well looked after despite being hundreds of miles away. The TopCat Worktops team installed the worktop and the quality is excellent. We're delighted with the finished result and wouldn't hesitate to recommend TopCat Worktops to others."},
-  {n:"Tabrez Chaudhry", q:"Spoke to Nik who was transparent and responsive. The pricing is SUPER competitive we actually ended up saving near a grand on our quartz worktop. The only thing i could fault was that the install team arrived 10 minutes late on the install day but they called me ahead of time to let me know. The kitchen looks stunning and is the envy of all of our friends. Easy 5 STARS THANK YOU TOP CAT!"},
   {n:"Cherif", q:"Excellent service, quick responses and my Quartz kitchen worktop was installed within 48 hours from my initial conversation with Nick"},
   {n:"Joel Brizman", q:"Highly recommended: Topcat Worktops replaced our old kitchen worktop with a new quartz worktop. The process was quick and seamless. From the initial visit, their friendly staff took care to understand our vision and our requirements, which included a one-source A-to-Z solution (including removal and disposal of the old worktop and a complete refit of our existing plumbing and electric hob). The installation was carried out very quickly after ordering - and was smooth, efficient with the installers taking great care to ensure there was no damage to surroundings. We are very satisfied with the process and the outcome."},
   {n:"Abbas", q:"We recently chose a Calacatta Viola worktop from Topcat Worktops Ltd and couldn't be happier with the result. The team were helpful throughout the whole process and made everything easy from start to finish. The installation was carried out professionally and the worktop looks absolutely stunning in our kitchen. Would definitely recommend Topcat Worktops to anyone looking for quality products and excellent service."},
@@ -8266,7 +8766,26 @@ const REVIEWS=[
   {n:"Megan Webb", q:"Excellent service and a wonderful company to work with - I would recommend to anyone."},
   {n:"Han L.", q:"Splashback was phenomenal, quick responses, reasonable pricing. Would recommend."},
 ]
-  .filter(r=>!/luke|copley|thadeus/i.test(r.n))
+  /* ⛔ **TABREZ CHAUDHRY IS SUPPRESSED — 13 August 2026 (D168).** Client: *"remove the review from
+     Tabrez because there is another one of his family members in the review as well. So Janzeb you
+     can keep, and Tabrez you can take away."* The two are **Jhanzeb Chaudhry** and **Tabrez
+     Chaudhry**, and one surname carrying two reviews reads as a family vouching for itself.
+     ⚠️ He said "Janzeb"; the page has always said **Jhanzeb**, which is the spelling on the Google
+     review. A phonetic spelling in a voice note is not an instruction to rename a real person, so
+     it stays as it is — the same call taken on Rimsha/Remsha (still open, §10).
+     ⛔⛔ **THE ROW IS DELETED FROM THE ARRAY, NOT JUST FILTERED, AND THE FIRST ATTEMPT GOT THIS
+     WRONG.** Adding `tabrez` to the filter below removed the card from the deck — 15 instead of 16,
+     verified — while leaving the review VERBATIM in the page source, because `REVIEWS` is an inline
+     array literal in the document and the filter runs at load. "Removed from the site" and "not
+     rendered" are not the same thing: the text still shipped to every visitor, was still there in
+     view-source, and **this repo is public**. ⭐ The row is gone from what ships; `git` and this
+     note are the record if he wants it back.
+     ⭐ `tabrez` STAYS in the filter as a guard, so re-importing the Google reviews wholesale cannot
+     quietly put it back. It now matches nothing, which is the point.
+     ⛔ **THE COUNT IS NOT AFFECTED AND MUST NOT BECOME VISIBLE.** §2 rule 4: the review count is
+     never shown anywhere, and no `reviewCount` or `aggregateRating` exists in the schema — so the
+     deck simply builds 15 cards instead of 16 and nothing on the page states a number. */
+  .filter(r=>!/luke|copley|thadeus|tabrez/i.test(r.n))
   .map(r=>({...r,a:r.n,img:phImg("PROJECT PHOTO")}));
 
 const SENSITIVITY=160;                        // px you must throw a card before it's sent to the back
@@ -8288,7 +8807,7 @@ const revNodes=REVIEWS.map((r,i)=>{
   el.innerHTML=`
     <div class="rev-inner">
       <div class="rev-face front">
-        <div class="rev-stone">${marbleSVG(4100+i*7)}</div>
+        <div class="rev-stone" data-marble="${4100+i*7}"></div>
         <div class="rev-front">
           <div class="rev-top"><div class="stars">★★★★★</div><span class="rev-src">Google review</span></div>
           <p class="quote"><span class="qt"></span><button type="button" class="rev-more">Read more</button></p>
@@ -8317,6 +8836,11 @@ const revNodes=REVIEWS.map((r,i)=>{
     ev.stopPropagation();          // its own toggle; don't also fire the deck click
     toggleExpand(el);              // extend the card in place to read the whole review
   });
+  /* ⭐ The card's stone is filled AFTER the markup exists, not interpolated into it, so the phone
+     can take a cached bitmap and the frozen widths keep the live SVG — see `marbleFill()`. The
+     seed rides on `data-marble` so the two paths cannot drift out of agreement about which marble
+     belongs to which card. */
+  marbleFill(el.querySelector('.rev-stone'), +el.querySelector('.rev-stone').dataset.marble);
   deck.appendChild(el);return el;
 });
 if(dotsEl){ REVIEWS.forEach(()=>{const d=document.createElement('span');d.className='rev-dot';dotsEl.appendChild(d);}); }
@@ -9537,6 +10061,60 @@ requestAnimationFrame(glowTick);
       colSc=colW/cw;                       // the zoom, applied to the SAME card element
       colH=ch*colSc;
       colGap=Math.round(Math.min(18,Math.max(10,vhNow*0.018)));
+
+      /* ⛔⛔⛔ **THE PHONE GALLERY IS A STATIC COLUMN AND THE ENGINE DOES NOT RUN — 13 August 2026.**
+         Client: *"completely remove the animation from the view our project gallery. It's not
+         working on mobile, well, it doesn't look good on mobile. So remove that."* And, separately,
+         that the section is where the page lags worst.
+         ⭐⭐ **THE TWO ARE ONE FIX, AND THAT IS WHY THIS RETURNS EARLY RATHER THAN SETTING q=1.**
+         Pinning the accordion at its finished state would have removed the *animation* and left
+         the *machine*: `.gal-pin` is `position:sticky`, `.gal-stage` is one viewport tall, and all
+         eight cards are `position:absolute` and moved by `travel` — a scroll-derived transform
+         written to eight promoted layers on every frame. On a phone that is the whole section's
+         scroll being hand-rolled in JS, which is exactly what a phone is worst at. Removing the
+         animation but keeping that would have answered his words and not his complaint.
+         ⭐ **SO THE CARDS GO INTO NORMAL FLOW AND THE BROWSER SCROLLS THEM.** No runway, no pin,
+         no rAF, no per-frame writes — `frame()` bails on `phone` (see its head) and this branch
+         clears every inline height the engine used to set.
+         ⭐ **THE CARD KEEPS THE EXACT SIZE HE HAS BEEN LOOKING AT, and not by copying a number.**
+         The engine drew a 157.5px card and scaled it by `colSc` (2.102) to 331×145 on his screen.
+         Here `--cw`/`--ch` are handed the ALREADY-MULTIPLIED size, so the card is 331×145 natively
+         with no transform at all. ⚠️ `--cw` is not just the width — `.gal-name`, `.gal-place` and
+         `.gal-meta`'s insets are all `calc(var(--cw) * k)`, so passing the scaled value is what
+         keeps the caption the same size it was when the scale did that job. Passing the raw 157.5
+         would shrink every label to 47% and look like a separate bug.
+         ⛔ **`--galMode` STAYS `phone` AND THIS BRANCH STAYS INSIDE IT.** Desktop and tablet keep
+         the pin, the runway, the accordion and the hallway exactly as signed off (D91). Nothing
+         above 720px reads a line of this.
+         ⚠️ Everything below in this branch — `colTop`, `travelMax`, `animPx`, `stackY`, the fan —
+         is now dead on a phone. It is LEFT IN PLACE, not deleted: it is the desktop-shaped path
+         this section has been rebuilt on five times, and he has reversed himself on this section
+         more than any other. One `return` is the whole difference. */
+      const galEl=stage.closest('#gallery');
+      if(galEl) galEl.classList.add('gal-static');
+      scroll.style.height='';
+      stage.style.height='';
+      if(mid) mid.style.height='';
+      /* ⚠️ **CLEAR WHAT THE ENGINE ALREADY WROTE, DO NOT ONLY STOP IT WRITING MORE.** A resize
+         across 720px runs the desktop path first, so by the time this branch is reached the cards
+         can already be carrying an inline transform and opacity from a frame that has been drawn.
+         The guards above stop new writes; these lines remove the old ones. ⛔ `.gal-mid`'s inline
+         opacity is cleared too — it is `display:contents` here and therefore boxless, so the 0 it
+         is often left holding is harmless today, but it stops being harmless the moment anyone
+         gives that element a box again. */
+      stage.querySelectorAll('.gal-card').forEach(c=>{ c.style.transform=''; c.style.opacity=''; });
+      stage.querySelectorAll('.gal-door').forEach(d=>{ d.style.transform=''; d.style.boxShadow=''; });
+      stage.querySelectorAll('.gal-meta').forEach(m=>{ m.style.opacity=''; });
+      if(mid){ mid.style.opacity=''; mid.style.transform=''; }
+      const midAct=mid&&mid.querySelector('.gal-mid-actions');
+      if(midAct) midAct.style.opacity='';
+      stage.style.setProperty('--cw',Math.round(colW)+'px');
+      stage.style.setProperty('--ch',Math.round(colH)+'px');
+      stage.style.setProperty('--colGap',colGap+'px');
+      stage.style.setProperty('--galNavH',navH+'px');
+      stage.style.setProperty('--galBarH',barH+'px');
+      M={w,h:vhNow};
+      return;
       /* the title and subtitle sit above the first card; reserve their real measured height plus
          the nav the section scrolls under, so slot 0 never lands on the words (D110's fault) */
       /* ⛔ **READ THE SUBTITLE'S REAL BOTTOM, DO NOT REBUILD IT FROM PARTS (D124).** This used to
@@ -9895,6 +10473,14 @@ requestAnimationFrame(glowTick);
   }
 
   function render(){
+    /* ⛔⛔ **AND NOTHING DRAWS HERE ON A PHONE EITHER — 13 August 2026.** Guarding `frame()` alone
+       was not enough and the reason is worth keeping: `render()` is called DIRECTLY at boot and
+       after the grid overlay closes, not only from the loop. Those two calls still ran, wrote
+       `translate3d(…) scale(2.102)` to all eight cards as inline styles, and an inline style beats
+       a stylesheet rule — so the static column was laid out correctly and then transformed on top
+       of itself. ⭐ **THAT IS WHY THE FIX IS A GUARD RATHER THAN `transform:none !important`**: the
+       goal is for nothing to be written at all, not to out-shout it afterwards. */
+    if(phone) return;
     const vh=window.innerHeight;
     const gRaw=gCur, p=pCur;
     /* ⚠️ `phone` is the stylesheet's own answer via --galMode, set in measure(), NOT a width
@@ -10112,6 +10698,15 @@ requestAnimationFrame(glowTick);
      while the page is idle — a scroll event just starts it again. */
   function frame(now){
     raf=null;
+    /* ⛔⛔ **NOTHING RUNS HERE ON A PHONE — 13 August 2026.** The column is static flow now (see
+       the `return` in measure()'s phone branch), so there is no playhead to ease, no clock to
+       advance and no transform to write. ⭐ Bailing BEFORE `readScroll()` is the point: that is
+       the function that calls `getBoundingClientRect()` on the runway and starts the accordion's
+       clock, so leaving it in would keep a forced layout on every scroll event for a scene that
+       no longer moves. `kick()` is still bound to scroll and still fires — it just costs one
+       function call and returns, which is cheaper than unbinding a listener whose `phone` answer
+       can change under a resize. ⛔ Above 720px `phone` is false and this line does nothing. */
+    if(phone) return;
     const dt=Math.min(Math.max((now-last)/1000,0),0.1); last=now;   // clamp both ways — a backwards timestamp must not explode the damp
     readScroll();
     const f=reduce?1:1-Math.pow(1-SCRUB,dt*60);        // frame-rate independent catch-up
@@ -11906,7 +12501,9 @@ function viewSequence(host,tiles,apply,opts){
      safe to call from here. This is NOT true of marble()'s STONES presets, which are a const
      further down — that is the TDZ that killed the helix IIFE once already (§4e). If you ever
      swap this for marble(preset,seed), it has to move into a deferred setTimeout(...,0). */
-  m.querySelectorAll('.wy-stone').forEach((el,i)=>{ el.innerHTML=marbleSVG(5200+i*13); });
+  /* same rasterised path as the review cards on a phone — six more turbulence stacks that were
+     being re-computed whenever a tile transformed (`.wy-tile` carries will-change:transform) */
+  m.querySelectorAll('.wy-stone').forEach((el,i)=>{ marbleFill(el, 5200+i*13); });
   /* ⚠️ viewSequence, NOT scrollSequence (client, 7 Aug — see the engine's header for the
      defect). Do not move it back: on any screen tall enough to frame the whole section the
      scroll-driven version could never finish, so the last tiles never reached full brightness.
