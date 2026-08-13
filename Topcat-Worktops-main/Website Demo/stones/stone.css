@@ -225,3 +225,170 @@ main, body > nav.crumb, body > footer{position:relative;z-index:1}
 /* on a stone page it closes the "more to consider" block, so it centres with that block */
 .block .st-source{margin-left:auto;margin-right:auto;text-align:center;margin-top:26px;
   padding-top:22px}
+
+/* ==========================================================================
+   ⭐ COMPARE — /stones/compare.html, 12 Aug 2026 (D141)
+   Client: "a compare stones page with a world class design where you can select multiple
+   stones and see them next to each other. You can always add a new stone onto that page."
+
+   ⛔ THE WHOLE TABLE IS ONE CSS GRID INSIDE ONE HORIZONTAL SCROLLER, AND THAT IS THE DESIGN
+   DECISION EVERYTHING ELSE FOLLOWS FROM. The obvious build — a row of stone columns with the
+   fact labels down the left, each fact its own flex line — makes the labels and the columns
+   two separate scrollers that a script has to keep in sync on every frame, on the one device
+   already complaining that animation is not smooth. One grid in one scroller moves as a single
+   unit for free, and `position:sticky;left:0` holds the label column still while the stones
+   slide beneath it. No JS touches scroll at all.
+   ⚠️ TWO STONES FIT A 375px PHONE WITH NO SCROLLING, which is the common case and the case he
+   described. The third is what the scroll is for, and the hint line says so rather than
+   leaving it to be discovered.
+   ========================================================================== */
+.cmp-hero .lede{max-width:60ch}
+
+.cmp-wrap{padding:0 0 clamp(28px,5vh,56px)}
+.cmp-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  margin-bottom:16px}
+.cmp-count{font-family:var(--brand);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);margin:0}
+.cmp-baractions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.cmp-clear,.cmp-share{font-family:var(--brand);font-size:11px;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--muted);background:none;border:0;padding:8px 2px;
+  cursor:pointer;text-decoration:underline;text-underline-offset:5px;
+  text-decoration-color:var(--hair);transition:color .35s var(--ease)}
+.cmp-clear:hover,.cmp-share:hover{color:var(--bone)}
+.cmp-add{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.cmp-add span{font-size:15px;line-height:1}
+
+/* ---- the empty state is the invitation, so it carries the only control that matters ---- */
+.cmp-empty{text-align:center;padding:clamp(34px,7vh,64px) 20px;border:1px dashed var(--hair);
+  border-radius:3px}
+.cmp-empty-mark{display:block;width:64px;margin:0 auto 18px;color:var(--gold);opacity:.7}
+.cmp-empty-mark svg{width:100%;height:auto;display:block}
+.cmp-empty-line{font-family:var(--serif);font-size:clamp(19px,2.4vw,24px);color:var(--bone);margin:0 0 8px}
+.cmp-empty-sub{color:var(--faint);font-size:14px;line-height:1.7;max-width:46ch;margin:0 auto 22px}
+
+/* ---- the cards: two across, wrapping down ----
+   ⛔ THIS REPLACED A HORIZONTAL SCROLLER WITH A STICKY LABEL COLUMN, AND THE DELETION IS THE
+   POINT. All of that apparatus existed to carry ten fact rows across n columns; the client cut
+   the page back to "only the name and the material", and two-across-that-wrap needs no scroller
+   at all. It also removed the one place on this page where a phone scrolled sideways. */
+.cmp-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(12px,3vw,22px)}
+.cmp-cards[hidden]{display:none}
+.cmp-card{position:relative;min-width:0}
+.cmp-thumb{display:block;position:relative;aspect-ratio:1/1.24;overflow:hidden;border-radius:3px;
+  border:1px solid var(--hair-soft);margin-bottom:12px;
+  box-shadow:0 30px 60px -34px rgba(0,0,0,0.9);transition:border-color .4s var(--ease)}
+.cmp-card:hover .cmp-thumb{border-color:var(--gold)}
+.cmp-img{width:100%;height:100%;object-fit:cover;display:block}
+.cmp-tag{display:block;font-family:var(--brand);font-size:9.5px;letter-spacing:0.24em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.cmp-name{display:block;font-family:var(--serif);font-size:clamp(16px,3.6vw,20px);line-height:1.22;
+  color:var(--bone);text-decoration:none;transition:color .35s var(--ease)}
+.cmp-name:hover{color:var(--gold)}
+.cmp-drop{position:absolute;top:9px;right:9px;z-index:2;width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--hair);background:rgba(8,8,10,0.72);color:var(--bone);cursor:pointer;
+  display:grid;place-items:center;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  transition:border-color .35s var(--ease),color .35s var(--ease)}
+.cmp-drop svg{width:13px;height:13px}
+.cmp-drop:hover{border-color:var(--gold);color:var(--gold)}
+
+.cmp-cta-note{color:var(--faint);font-size:13px;margin:16px 0 0;line-height:1.6}
+
+/* ---- the picker: the collection, in a sheet ---- */
+html.cmp-locked,html.cmp-locked body{overflow:hidden}
+.cmp-pick{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;
+  justify-content:center;background:rgba(4,4,6,0.72);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.cmp-pick[hidden]{display:none}
+.cmp-pick-panel{width:min(940px,100%);max-height:92vh;display:flex;flex-direction:column;
+  background:linear-gradient(rgba(12,12,15,0.99),rgba(9,9,12,0.99));
+  border:1px solid var(--hair);border-bottom:0;border-radius:6px 6px 0 0;
+  padding:18px clamp(14px,4vw,26px) 0;box-shadow:0 -30px 80px -30px rgba(0,0,0,0.9)}
+.cmp-pick-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:14px}
+.cmp-pick-head h2{font-family:var(--serif);font-size:clamp(19px,2.4vw,25px);font-weight:400;
+  color:var(--bone);margin:0}
+.cmp-pick-x{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);
+  background:transparent;color:var(--bone);cursor:pointer;display:grid;place-items:center;
+  flex:none;transition:border-color .35s var(--ease),color .35s var(--ease)}
+.cmp-pick-x svg{width:15px;height:15px}
+.cmp-pick-x:hover{border-color:var(--gold);color:var(--gold)}
+.cmp-pick-search{margin-bottom:12px}
+.cmp-pick-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.cmp-pick-count{font-family:var(--brand);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 12px}
+.cmp-pick-grid{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;
+  padding-bottom:22px;overscroll-behavior:contain}
+/* ⛔⛔ THE TILE'S HEIGHT COMES FROM PERCENTAGE PADDING, NOT FROM `aspect-ratio`, AND THAT IS A BUG
+   FIX — 12 Aug 2026 (D155). Client: "the add stone is completely broken, doesn't matter what option
+   you click on."
+   ⭐ **THE DIAGNOSIS: `aspect-ratio` GAVE THE TILE A HEIGHT BUT CONTRIBUTED NOTHING TO THE GRID
+   ROW.** Every child of this tile is `position:absolute` (the image, the veil and the meta), so the
+   tile's in-flow content height is 0 and its intrinsic contribution to an auto-sized grid row was
+   its borders alone. Measured: rows resolved to **2px** while the tiles themselves resolved to
+   129.2px from the ratio — so every row overflowed 117px into the row below and all 132 stones
+   stacked on top of each other, which is exactly the screenshot.
+   ⭐⭐ **THE PRECISE CONDITION, BECAUSE `.stile` ON THE COLLECTION PAGE IS BUILT THE SAME WAY AND IS
+   FINE:** an aspect-ratio only yields a definite block size — and therefore a row contribution — if
+   the item's INLINE size is definite before rows are sized. `.st-grid` uses a fixed `335px` column,
+   so it is; this grid uses `minmax(…,1fr)`, a FLEXIBLE track whose width is not resolved at
+   row-sizing time, so the contribution falls back to in-flow content, which is zero here. **Both
+   tiles have five absolutely-positioned children; only the one in the `1fr` track collapses.** Keep
+   that pairing in mind before "simplifying" either of them.
+   ⚠️ **`align-items:start` / `align-content:start` DO NOT FIX THIS — both were measured and the rows
+   stayed at 2px.** Nor does moving the image into flow. Do not spend a round on those.
+   ⭐ **WHY PADDING WORKS WHERE THE RATIO DOES NOT:** padding is part of the border box, so it is
+   counted in the item's intrinsic contribution, and a percentage padding resolves against the
+   item's own INLINE size — the `1fr` column's width. So the shape tracks the column at every
+   width, which a `grid-auto-rows:129px` would not (that was measured working too, and rejected for
+   exactly that reason: it is a magic number that goes wrong the moment the column changes).
+   ⚠️ 120% is the old 1/1.2 ratio. The box comes out 2px taller than the ratio did, because
+   box-sizing is border-box and the 1px borders now sit outside a 120% pad — invisible, and not
+   worth a calc() that the next person has to decode. */
+.cmp-pick-tile{position:relative;display:block;border:1px solid var(--hair-soft);
+  border-radius:2px;overflow:hidden;background:none;cursor:pointer;text-align:left;
+  height:0;padding:0 0 120%;transition:border-color .35s var(--ease)}
+.cmp-pick-tile:hover{border-color:var(--gold)}
+.cmp-pick-tile.on{border-color:var(--gold)}
+.cmp-pick-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cmp-pick-veil{position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(8,8,10,0.86) 6%,rgba(8,8,10,0.18) 46%,rgba(8,8,10,0) 66%)}
+.cmp-pick-meta{position:absolute;left:9px;right:9px;bottom:8px;z-index:2;display:block}
+.cmp-pick-name{display:block;font-family:var(--serif);font-size:13px;line-height:1.2;
+  color:var(--bone)}
+.cmp-pick-sup{display:block;font-size:10px;letter-spacing:0.08em;color:var(--faint);margin-top:2px}
+.cmp-pick-on{position:absolute;top:8px;left:8px;z-index:2;font-family:var(--brand);font-size:9px;
+  letter-spacing:0.18em;text-transform:uppercase;color:var(--ink);background:var(--gold);
+  padding:4px 8px;border-radius:2px}
+.cmp-pick-empty{color:var(--faint);font-size:14px;text-align:center;padding:28px 0 34px}
+
+/* ⭐ THE ENTRY POINT ON A STONE PAGE. It sits with "more to consider", not with the CTA row:
+   that strip already offers three near-identical alternatives and until now gave no way to
+   weigh them, which is exactly the job this page does. Putting it beside "Get an estimate"
+   would have set a browse control against the conversion path. */
+.stp-compare{display:inline-flex;align-items:center;gap:9px;margin-top:20px;
+  font-family:var(--brand);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--gold);text-decoration:underline;text-underline-offset:6px;
+  text-decoration-color:rgba(198,166,100,0.4);transition:color .35s var(--ease)}
+.stp-compare:hover{color:var(--gold-hi)}
+.stp-compare svg{width:17px;height:13px;flex:none}
+
+@media(max-width:720px){
+  /* ⭐ THE HERO'S DEAD SPACE — client: "there's a gigantic open space below the nav bar and
+     the title, that needs to fix." .st-hero is shared with the collection page, which he has
+     not complained about and which is not in scope, so this is scoped to .cmp-hero rather than
+     trimmed at the shared rule. */
+  .cmp-hero{padding-top:18px;padding-bottom:6px}
+  .cmp-hero h1{margin-bottom:10px}
+  .cmp-hero .lede{font-size:14px;line-height:1.65}
+  /* ⚠️ `order` alone did nothing here: .cmp-baractions is a NON-WRAPPING flex row, so the
+     full-width button simply squeezed "Clear all" and "Copy link" into two lines each. It
+     needs wrap on the container as well as width on the item to earn its own line. */
+  .cmp-bar{gap:10px}
+  .cmp-baractions{flex-wrap:wrap;width:100%;margin-left:0}
+  .cmp-add{width:100%;justify-content:center;order:3}
+  .cmp-pick-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+}
+/* the collection page's compare door — same chrome as Refine, so the control row reads as one */
+.st-compare{text-decoration:none;display:inline-flex;align-items:center;gap:9px}
+.st-compare svg{width:19px;height:13px;flex:none}

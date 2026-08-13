@@ -29,7 +29,7 @@
 </header>
 
 <nav class="crumb" aria-label="Breadcrumb">
-  <a class="crumb-back" href="/stones/" aria-label="Back to The collection" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){history.back();return false}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <a class="crumb-back" href="/stones/" aria-label="Back to The collection" onclick="if(history.length>1&&document.referrer&&new window.URL(document.referrer,location).origin===location.origin){history.back();return false}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   <ol>
     <li><a href="/index.html#hero">Home</a></li>
     <li><a href="/stones/">The collection</a></li>
@@ -90,6 +90,16 @@
     <h2>More quartz to consider</h2>
     <p class="sub">Three that look closest to it, or <a class="stp-all" href="/stones/">browse the full collection</a>.</p>
     <div class="st-grid related"><a class="stile mini" href="/stones/azul-shimmer.html" aria-label="Azul Shimmer"><span class="stile-stone"><img src="/assets/slabs/azul-shimmer.webp" srcset="/assets/slabs/azul-shimmer-s.webp 800w, /assets/slabs/azul-shimmer.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Azul Shimmer quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Azul Shimmer</span><span class="stile-sup">Polished</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a><a class="stile mini" href="/stones/calacatta-supreme.html" aria-label="Calacatta Supreme"><span class="stile-stone"><img src="/assets/slabs/calacatta-supreme.webp" srcset="/assets/slabs/calacatta-supreme-s.webp 800w, /assets/slabs/calacatta-supreme.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Calacatta Supreme quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Calacatta Supreme</span><span class="stile-sup">Polished</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a><a class="stile mini" href="/stones/bianco-starlight.html" aria-label="Bianco Starlight"><span class="stile-stone"><img src="/assets/slabs/bianco-starlight.webp" srcset="/assets/slabs/bianco-starlight-s.webp 800w, /assets/slabs/bianco-starlight.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Bianco Starlight quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Bianco Starlight</span><span class="stile-sup">Polished</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a></div>
+    <!-- ⭐ THE COMPARE DOOR, AND IT OPENS ALREADY HOLDING THIS STONE (D141). It belongs here
+         and not in the CTA row: this strip offers three near-identical alternatives and until
+         now gave no way to weigh them, which is precisely the job compare does. Putting it
+         beside "Get an estimate" would set a browse control against the conversion path. -->
+    <a class="stp-compare" href="/stones/compare.html?s=bianco-glacier">
+      <svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="19" height="29" rx="2"/>
+        <rect x="27.5" y="1.5" width="19" height="29" rx="2" stroke-dasharray="4 4"/>
+      </svg>
+      Compare Bianco Glacier with another stone</a>
     <!-- ⭐ The range on show is not the range (client, 10 Aug). This is the right place for it on
          a stone page: somebody reading "more to consider" is looking for an alternative, and
          that is the moment to say the collection is not the ceiling. -->

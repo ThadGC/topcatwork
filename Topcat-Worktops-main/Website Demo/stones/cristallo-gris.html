@@ -29,7 +29,7 @@
 </header>
 
 <nav class="crumb" aria-label="Breadcrumb">
-  <a class="crumb-back" href="/stones/" aria-label="Back to The collection" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){history.back();return false}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <a class="crumb-back" href="/stones/" aria-label="Back to The collection" onclick="if(history.length>1&&document.referrer&&new window.URL(document.referrer,location).origin===location.origin){history.back();return false}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   <ol>
     <li><a href="/index.html#hero">Home</a></li>
     <li><a href="/stones/">The collection</a></li>
@@ -89,6 +89,16 @@
     <h2>More quartz to consider</h2>
     <p class="sub">Three that look closest to it, or <a class="stp-all" href="/stones/">browse the full collection</a>.</p>
     <div class="st-grid related"><a class="stile mini" href="/stones/royal-grey.html" aria-label="Royal Grey"><span class="stile-stone"><img src="/assets/slabs/royal-grey.webp" srcset="/assets/slabs/royal-grey-s.webp 800w, /assets/slabs/royal-grey.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Royal Grey quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Royal Grey</span><span class="stile-sup">Polished</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a><a class="stile mini" href="/stones/umbra-marron.html" aria-label="Umbra Marron"><span class="stile-stone"><img src="/assets/slabs/umbra-marron.webp" srcset="/assets/slabs/umbra-marron-s.webp 800w, /assets/slabs/umbra-marron.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Umbra Marron quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Umbra Marron</span><span class="stile-sup">Polished</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a><a class="stile mini" href="/stones/black-tempal.html" aria-label="Black Tempal"><span class="stile-stone"><img src="/assets/slabs/black-tempal.webp" srcset="/assets/slabs/black-tempal-s.webp 800w, /assets/slabs/black-tempal.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Black Tempal quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Black Tempal</span><span class="stile-sup">Polished</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a></div>
+    <!-- ⭐ THE COMPARE DOOR, AND IT OPENS ALREADY HOLDING THIS STONE (D141). It belongs here
+         and not in the CTA row: this strip offers three near-identical alternatives and until
+         now gave no way to weigh them, which is precisely the job compare does. Putting it
+         beside "Get an estimate" would set a browse control against the conversion path. -->
+    <a class="stp-compare" href="/stones/compare.html?s=cristallo-gris">
+      <svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="19" height="29" rx="2"/>
+        <rect x="27.5" y="1.5" width="19" height="29" rx="2" stroke-dasharray="4 4"/>
+      </svg>
+      Compare Cristallo Gris with another stone</a>
     <!-- ⭐ The range on show is not the range (client, 10 Aug). This is the right place for it on
          a stone page: somebody reading "more to consider" is looking for an alternative, and
          that is the moment to say the collection is not the ceiling. -->

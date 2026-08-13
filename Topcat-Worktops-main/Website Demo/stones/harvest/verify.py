@@ -206,8 +206,14 @@ def main():
     # 5 · a page on disk for a stone the catalogue no longer sells
     pages_dir = os.path.dirname(HERE)
     live = {s["slug"] for s in S}
+    # ⚠️ Pages in /stones/ that are NOT a stone. Keep this list exact rather than loosening the
+    # check: its whole job is to catch a page for a stone we have stopped selling still sitting
+    # on disk and indexable, and every name excused here is a name it can no longer catch.
+    # `compare.html` joined it on 12 Aug (D141) — the check fired the moment that page was
+    # built, which is the guard working, not the guard being in the way.
+    NOT_A_STONE = {"index.html", "compare.html"}
     on_disk = {f[:-5] for f in os.listdir(pages_dir)
-               if f.endswith(".html") and f != "index.html"}
+               if f.endswith(".html") and f not in NOT_A_STONE}
     for orphan in sorted(on_disk - live):
         fails.append(("5 · page for a stone we no longer sell",
                       f"{orphan}.html is on disk and indexable, but is not in the catalogue"))

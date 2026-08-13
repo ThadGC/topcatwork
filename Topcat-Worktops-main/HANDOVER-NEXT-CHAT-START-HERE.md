@@ -1,400 +1,431 @@
-# START HERE — 11 August 2026, end of the PERFORMANCE + THIRD MOBILE ROUND
+# START HERE — 12 August 2026, end of the EIGHTEEN-ASK MOBILE ROUND
 
-Read this, then `HANDOVER.md` **§D** (the decision register, start at **D109–D114**) and **§2**
-(the standing rules, especially **rule 15**). That is about fifteen minutes and it is enough to
-work safely.
+Read this, then `HANDOVER.md` **§D** (the decision register, newest first — this round is
+**D144–D161**) and **§2** (the standing rules, especially **rule 9** and **rule 15**). That is about
+fifteen minutes and it is enough to work safely.
 
-> ⚠️ **This replaces the version written after the SECOND mobile round**, now archived as
-> `HANDOVER-2026-08-11-mobile-round-2-start-here.md`. That file described a site shipping **3 MB
-> on the first screen**, a phone whose services section was a **helix**, and a gallery whose copy
-> sat **below** the cards. ⚠️ It also gives the freeze probe a **2.6s** settle, which is wrong —
-> see §0.
+> ⚠️ **This replaces `HANDOVER-2026-08-12-ten-ask-mobile-round-start-here.md`**, which was itself a
+> patched copy of the previous round's doc and had gone stale in three places. Prefer this file.
 
 ---
 
-## 0. ⛔ SCOPE, BEFORE ANYTHING ELSE
+## 0. ⛔⛔ THE ONE THING TO READ FIRST: D161 WAS BUILT AND REVERTED THE SAME DAY
+
+He commissioned a **light stone background** for Services, the estimator, About and the FAQ — with
+the escape hatch stated up front (*"if it doesn't look good, I want to be able to revert it"*) —
+looked at the result and said **"revert it"**. It is gone. **Every section is dark, as it always was.**
+
+⛔ **DO NOT PROPOSE LIGHT SECTIONS AGAIN AS A FRESH IDEA.** Read D161 first. It was measured on
+brand, it passed the freeze at both frozen widths, and every fault found during the build was fixed
+before he saw it — **it failed on his eye, not on execution.** That is the most useful kind of
+rejection to have on record, and re-suggesting it would waste his time and yours.
+
+⚠️ Only the fenced CSS block was removed. **D160's review-card readability fix, made in the same
+message, was deliberately KEPT** — that was a fault he reported, not part of the trial.
+⭐ `Website Demo/index.html.pre-stone-sections.bak` still holds the version with the bands.
+
+⭐⭐ **THE TWO FINDINGS FROM THAT ATTEMPT SURVIVE IT AND ARE GENERAL:**
+- **`.section-title em` IS PAINTED BY A GRADIENT WITH `background-clip:text`.** Setting `color` on
+  it does nothing and looks like it worked. Its ramp measured **2.42:1** on a light ground.
+- **When you invert a ground, an OPAQUE panel can be left alone but a TRANSLUCENT one cannot** — it
+  is by definition a function of what is behind it. That is what caught the FAQ drawer (white text
+  on a light frosted panel, invisible). **Check every `rgba()` surface.**
+
+---
+
+## 1. ⭐ THE FREEZE PROBE — RUN THREE TIMES TODAY, PASSED EVERY TIME
+
+**Final state verified at 1440×900 and 768×1024 after the revert:**
+
+| Signal | 1440×900 | 768×1024 |
+|---|---|---|
+| document height | **14641** | **18385** |
+| gallery cards | `413.2×273 ×4, 199.9×132.1 ×4` | `210.1 / 210.5 / 210.9 / 211.4` and `105.4 / 105.6 / 105.8 / 106.1` |
+| `.gal-scroll` height | 4950px | 5632px |
+| element count | **2590** | **2590** |
+| services/estimator/about/faq grounds | `none` | `none` |
+| `#services .section-title` | `rgb(244,241,234)` | `rgb(244,241,234)` |
+| `.rev-face` | `rgb(21,21,27) → rgb(14,14,18)` (dark) | same |
+| FAQ plate | 1184×196, one row open | one row open |
+
+⭐ **+8 ELEMENTS AGAINST THE PRE-ROUND BASELINE, FULLY ACCOUNTED**: 3 estimator field labels + 12 FAQ
+question spans + the footer guarantee span **and its `<b>`**, less the 9 elements of Ali's figure
+(D150). Nothing else was added.
+
+### ⛔⛔ THE PROCEDURE, CORRECTED TWICE — USE THIS VERSION
+
+**1. Probe with `scrollTo({top:y, behavior:'instant'})`. Always.**
+`<html>` carries `scroll-behavior:smooth`, so **every plain `scrollTo()` in a probe ANIMATES** and
+the playhead chases a moving target. ⚠️ **The previous doc's claim that 768 "converges
+asymptotically over ~60s" was my own probe, not the page** — with instant scrolls the same
+measurement settles in **9 seconds** on identical values. It never affected the client; a finger is
+not a programmatic scroll.
+
+**2. Park at `galScrollTop + 2000`, then converge — do not just wait.**
+The old "settle 5s, snap twice 1.2s apart" test **passes spuriously**: `frame()` shuts itself off
+above 720px the moment it thinks it has caught the scroll and can stall short of rest, so two snaps
+agree on a wrong value. It did exactly that on the BASELINE at 1440.
+
+**3. The tells are different at the two widths.**
+- **1440 must be FLAT** — all four big cards the same size. Any spread means mid-flight.
+- **768 is a clean rising PROGRESSION** (210.1 → 211.4). That is the real layout, the column is
+  walking. Do not "fix" it.
+
+**4. At 1440, jiggle to wake the rAF loop** (`target+1`, back to `target`, ×5) then settle 4s.
+**5. Sample in ≤24s chunks** — `javascript_tool` times out at 30s.
+**6. Give both files the same scroll history** — scroll to 0 first, then one instant jump.
+
+⭐ **CHECK `--galMode` FIRST AND YOU MAY NOT NEED ANY OF IT.** It is `(unset)` above 720px, which is
+proof the phone branch of `measure()` never ran. If your gallery edits are inside `if(phone){…}`,
+that one read beats a card hash.
+
+---
+
+## 2. ⛔ SCOPE
 
 **DESKTOP AND TABLET ARE FROZEN. THE WORK IS MOBILE, ON HIS PHONE, OVER THE LAN LINK.**
-
-> Client, 11 Aug: *"When I talk about the service stopping, I'm only talking about mobile. This
-> is the only place I'm viewing things now. And when I say mobile, I mean on my phone separately
-> on the link you sent me."* And: *"the helix stays on desktop. I'm only talking about mobile."*
 
 | Band | What it gets | Status |
 |---|---|---|
 | **≤ 720px** | the mobile build | ⭐ live scope |
 | **721–1120px** | the old tablet/fallback layouts | ⛔ **frozen, untouched** |
-| **≥ 1121px** | the desktop composition | ⛔ **frozen, signed off (D91)** |
+| **≥ 1121px** | the desktop composition | ⛔ **frozen, signed off (D91)** — one authorised exception this round, **D150** |
 
-⚠️ `index.html` is one file with **inline CSS**, so nearly every rule is unscoped. ⛔ **Mobile
-work goes inside `@media(max-width:720px)`. Never edit a base rule to fix mobile.**
+⚠️ `index.html` is one file with **inline CSS**, so nearly every rule is unscoped. ⛔ **Mobile work
+goes inside `@media(max-width:720px)`. Never edit a base rule to fix mobile.**
 
-### ⛔ ORDER DECIDES, AND IT HAS NOW BITTEN THREE TIMES
+⭐ **HE DOES UNFREEZE DESKTOP, ONE NAMED ITEM AT A TIME, MID-MESSAGE.** D150: *"this part also
+applies to the desktop version… but nothing else that I mentioned here, only the about us section
+part."* One item promoted, nine still phone-only. **"Frozen" means "changes only where he names
+one".** ⚠️ **When the boundary of that sentence is unclear, take the reversible reading and tell
+him you did** — that is why D151's centring is phone-only and is question 1 below.
 
-`.gal-mid-actions{margin-top:auto}` inside the mobile query **lost** to a base
-`.gal-mid-actions{margin-top:clamp(...)}` that sits *later in the file* at equal specificity.
-Same fault as D106, and again in D114 with the two-column grid. ⭐ **When a mobile override does
-not take, check what comes AFTER it before you touch anything else** — add a parent to the
-selector (`.gal-mid .gal-mid-actions`) rather than moving code.
+⭐ **NEW MARKUP CANNOT BE SCOPED BY A MEDIA QUERY (D120).** Default it to `display:none` in the base
+rule and let the phone opt in — D148, D152 and D153 all do this.
+⭐⭐ **AND IT IS SAFE FOR GRIDS: a `display:none` grid item is not a grid item at all**, so adding
+three spans to a six-column row leaves the desktop template receiving exactly six. Verified.
 
-### ⭐ PROVE THE FREEZE — AND THE OLD PROCEDURE IS WRONG
+⭐ **ADDING A CLASS TO AN EXISTING ELEMENT IS FREE.** `foot-explore`, `foot-browse`, `foot-c-*` are
+name hooks no base rule references — far better than positional `:nth-child()` against a markup
+order nobody would know was load-bearing.
 
-1. `cp index.html.pre-<thing>.bak _regress-before.html` and serve both.
-2. Walk the whole page in each, then **settle 8 SECONDS**, then probe rects + computed styles.
-3. Diff. ⚠️ **Delete the temp copy afterwards** (D60's failure mode).
+⭐ **THE PHONE BLOCK IS THE LAST THING IN THE STYLESHEET, ON PURPOSE.** Sections 1–11 live in it.
+Three rounds lost a mobile override to a base rule at equal specificity sitting later (D106, D113,
+D114). Nothing comes after it, so nothing can.
 
-⛔ **2.6s IS NOT ENOUGH AND IT PRODUCED A 415-DIFF FALSE ALARM (D113).** The stone wheel's
-one-shot entrance is still running well past that, and **335 of those 415 were its 67 slabs at a
-different rotation**. At 8s the same comparison gave 31.
-
-⛔ **AND WHEN THE PROBE IS STILL NOISY, DO NOT ARGUE WITH IT — REPLACE IT (D114).** A later run
-returned **653** diffs with the wheel *and* the gallery both mid-flight. The answer was to stop
-diffing the whole document and instead **compare the exact computed properties the round
-touched**, on both frozen widths:
-
-```js
-// deterministic, animation-proof, and it is what proved D114 safe
-pick(helixStage, ['display','perspective','height','touchAction','webkitMaskImage'])
-pick(grid,       ['display','gridTemplateColumns','gap','maxWidth','perspective','padding'])
-pick(svcCard,    ['aspectRatio','minHeight','transformOrigin'])
-```
-
-Byte-for-byte identical at 1440×900 **and** 768×1024 is the evidence. ⭐ **Element count and
-document height matching is a strong signal on its own** — a real layout regression moves one of
-them.
-
-⚠️ **Baseline noise floor:** grab the same page twice, 3s apart, touching nothing → **29 diffs**,
-all the brand marquee and the bouncing scroll cue. That is the floor to compare against.
+⚠️ **`--faqMode` / `--galMode` / `--svcMode` / `--hxMode` ARE THE IDIOM FOR "IS THIS A PHONE?"** —
+declared in CSS, read back by script. ⛔ A second `matchMedia` in JS is this project's most repeated
+bug (D51, D59, D68, D78, D93, D105). ⚠️ But note `--faqMode` (720) and the FAQ's own `narrow`
+matchMedia (760) are **two different questions**: where the phone build starts, and where the plate
+moves inline. Both are correct.
 
 ---
 
-## 1. ⛔ RUN THIS BEFORE YOU DEPLOY, AND BEFORE YOU CALL ANYTHING DONE
-
-```bash
-cd "Website Demo/stones" && python3 harvest/verify.py
-```
-
-> 132 stones, 132 with a photograph, 132 pages on disk — ✅ PASS
-
-**Nine checks**, every one of which exists because it caught something already live. ⭐ Checks 8
-and 9 — the photograph's supplier, and the name against the supplier's own title — matter most.
-⚠️ **It covers the STONES only.** Nothing in it looks at the landing page.
-
----
-
-## 2. ⛔ THE LINK — READ THIS BEFORE HE SAYS IT IS BROKEN AGAIN
+## 3. ⛔ THE LINK
 
 ```bash
 cd "Website Demo" && nohup caffeinate -ims node dev-server.js > /tmp/topcat-server.log 2>&1 &
 ```
 
-**Give him `http://<lan-ip>:5501`** — `ipconfig getifaddr en0`. It was `192.168.1.102:5501`.
+**Give him `http://192.168.1.102:5501`** — re-check with `ipconfig getifaddr en0`.
 
-⭐ **THE SERVER IS DETACHED ON PURPOSE (PPID 1).** ⛔ **DO NOT `preview_stop` IT, DO NOT KILL IT
-TO RESTART, AND DO NOT LET THE PREVIEW TOOLING OWN IT.** The single biggest cause of "the link
-keeps closing" was **this session's agent killing it repeatedly** — at one check nothing was
-listening at all. Verify with `lsof -nP -iTCP:5501 -sTCP:LISTEN` before blaming his phone.
+⭐ **THE SERVER IS DETACHED ON PURPOSE (PPID 1).** ⛔ **DO NOT `preview_stop` IT, DO NOT KILL IT TO
+RESTART.** Verify with `lsof -nP -iTCP:5501 -sTCP:LISTEN` before blaming his phone. **PID 5158,
+untouched across four rounds.**
 
-⚠️ **THREE SERVERS ONCE RAN AT ONCE** (5501, 57144, 58295) and the two older ones were still
-running the **pre-compression code**. If he opens the "normal" port and reports no improvement,
-check which process is actually serving it.
+⭐⭐ **EVERY SAVE TO `index.html` RELOADS HIS PHONE.** The reload restores scroll position. **Tell him
+before a run of edits** — this round carried roughly fifty.
 
-### What the dev server now does, and what does NOT travel to production
+### ⛔ `stone.css` IS CACHED FOR FIVE MINUTES
 
-| | |
-|---|---|
-| brotli / gzip on text | HTML **1,084 KB → ~205 KB** over the wire |
-| `Cache-Control: no-cache` + ETag on HTML | 0-byte 304s, **and the tab survives backgrounding** |
-| `public, max-age=300` + ETag on assets | a repeat photo fetch is 0 bytes |
-| reload keeps scroll position | ⭐ see below |
+`index.html` is `no-cache`; **assets are `public, max-age=300`**, so a change to `/stones/stone.css`
+does not reach the browser for up to five minutes. ⭐ Prove it before debugging anything:
+`fetch('/stones/stone.css?bust='+n)` and compare against `document.styleSheets`; force with
+`link.href='/stones/stone.css?bust='+n`. ⚠️ **Warn the client too** — it looks exactly like a broken
+build. It bit again this round on D155.
 
-⛔ **`no-store` WAS THE BUG THAT KILLED HIS BACKGROUNDED TAB (D111).** It does not merely skip
-the cache — **it makes a page ineligible for the back/forward cache**, so Chrome discarded the
-tab and coming back meant a fresh network fetch, which is the one that fails while a phone's
-Wi-Fi re-associates. ⚠️ The names mislead: `no-cache` means *revalidate*, `no-store` means
-*never keep it*. Only the second breaks the phone.
-
-⭐⭐ **EVERY SAVE TO `index.html` RELOADS HIS PHONE.** Twelve reloads in one working session.
-Each one used to dump him at the hero, which from the far end of a phone is indistinguishable
-from the page glitching — it explained more of "it takes me right back to the hero" than any page
-code did. The reload now **saves and restores scroll position** (verified: parked at 6000,
-reloaded, still 6000). ⚠️ **Tell him when you are about to do a run of edits.**
-
-⛔ **ALL OF §2 IS DEV-SERVER ONLY.** No production host is chosen. Whatever is picked must do
-brotli on text and long-lived cache headers on assets or the whole gain is lost.
-
-**⚠️ There is no git.** Take a dated `index.html.pre-<thing>.bak` before any large edit — **50 of
-them now**. This round's: `pre-image-optim`, `pre-gallery-round3`, `pre-gal-copy-and-svc-grid`.
+⛔ **ALL OF §3 IS DEV-SERVER ONLY.** No production host is chosen.
 
 ---
 
-## 3. ⛔ THE INTEGRITY RULE — still the one that matters most
+## 4. ⭐ THE CODE IS ON GITHUB, AND IT IS PUBLIC
+
+**https://github.com/ThadGC/topcatwork** — one commit on `main`, pushed 12 Aug.
+
+⚠️ **HE CHOSE PUBLIC KNOWINGLY, AFTER BEING TOLD WHAT IT PUBLISHES.** Do not re-litigate it
+unprompted. ⛔ 18 files name Nile Stone and Next Stone Slabs — that is §2 rule 9's buying list, now
+indexed. A private repo with collaborators gives his devs identical access; the offer stands.
+
+⭐ **USE `git status --porcelain` AS A SCOPE PROOF.** Today it confirms only `Website Demo/index.html`
+and `Website Demo/stones/stone.css` changed — **and nothing under `stones/*.html`**, which is the
+proof that D155's picker fix touched no generated page.
+
+⛔ **GITIGNORE PATTERNS MUST BE `**/`-ANCHORED** — a pattern with a slash is anchored to the repo
+root and the site lives at `Topcat-Worktops-main/Website Demo/…`.
+
+---
+
+## 5. ⛔ THE INTEGRITY RULE — still the one that matters most
 
 > "These names cannot be wrong. If someone googles it and sees it looks different here, then we
-> have a big problem. And if someone chooses this one by this name and TopCat somehow shows up at
-> the house with a wrong looking slab, then we are fucked."
+> have a big problem."
 
-⭐ **A stone name is only meaningful RELATIVE TO A SUPPLIER.** The only defensible test is that
-the photograph shipped under a name is the one **that supplier** publishes under **that name**.
-Checks 8 and 9 enforce exactly that.
+```bash
+cd "Website Demo/stones" && python3 harvest/verify.py
+```
 
-**Four ways this has already gone wrong:** a finish word dropped from a plain name (15 stones); the
-right stone at the wrong **VIEW** (a tight zoom on a quiet patch — no check catches this, only the
-eye); a rename made by the agent; and ⛔ **a SUBSTITUTION made by the agent** — search the
-supplier's own search box before concluding a product does not exist, and never substitute.
+> 132 stones, 132 with a photograph, 132 pages on disk — ✅ PASS *(last run 12 Aug, post-revert)*
 
-⚠️ `stones/supplier_names.py` holds **seven authorised name differences** and records the exact
-string an order must be placed against. ⛔ It is not a licence to rename a different product.
+⚠️ It covers the STONES only. **Nothing in it looks at the landing page**, which is where nearly all
+of this round's work landed. `NOT_A_STONE` is the exemption list — keep it exact.
+
+⭐ The two go-live copy scans also pass: §2 rule 1 (in-house fabrication) returns nothing, and rule
+11's centimetres scan returns only `index.html` — **Judy Z.'s "10cm", the one documented exception,
+which must stay.**
 
 ---
 
-## 4. ⭐ WHERE THE PHONE STANDS
+## 6. ⭐ WHERE THE PHONE STANDS
 
 | Section | State |
 |---|---|
-| **Top nav** | formed at scroll 0, flare off (D106) |
-| **Hero** | centred, 30° bevel, CTAs matched to the icon row (D92–D100) |
-| **Reviews** | drum carousel, interruptible, swipe works (D101/D102/D107) |
-| **Services** | ⭐ **NEW: the helix is GONE. Six square 152×152 blocks, two across, that slide together into place (D114)** |
-| **Project gallery** | ⭐ pile centred; arrives while the divider is still crossing; **title + subtitle ABOVE the cards, buttons BELOW** (D110, D113) |
-| **Sticky bottom bar** | Get a quote · Email · Call (D99/D106) |
+| **Top nav** | burger is three bare stripes, no box (D132) |
+| **Hero** | the gold line runs OFF the screen at 45°, R:48, overhang 14px (D144). ⭐ **D133's black-corner leak is CONFIRMED FIXED by his own screenshot** |
+| **Reviews** | no entrance at all, head or cards (D134/D145). Card is STONE not white: #EFECE5→#E0DCD3, veil 0.90/0.94, champagne #6F5327 (D156 + D160) |
+| **Services** | popularity order, tiles link to their page, gold rim, 7px corners, tiles run to the subtitle's edges (D146) |
+| **Project gallery** | 1600ms clock (D142); card 0 at 25.2px and still during the deal (D147); **no held run and no playhead damping — tracks the finger 1:1** (D157); foot tightened, last card → divider 256.6 → 168.9px (D158) |
+| **Stone wheel** | bend 30, card 0.80, cap 390, bare gold arrows (D135–D138) — ⛔ untouched for two rounds |
+| **Stones → estimator seam** | brand marquee replaced by a plain divider (D143) |
+| **Estimator** | rebuilt: one piece = one labelled card, stats are rows, every caption/hint pair stacked (D148) |
+| **Process** | title 89.5px under the divider, matching the gap above it exactly (D149) |
+| **About** | Nick and Rimsha only, two 3:4 plates — **DESKTOP TOO** (D150); title, copy and CTA centred, phone only (D151) |
+| **FAQ** | plain accordion (D152); rows take the enquiry form's grey, drawer is frosted glass, **nothing open on arrival and a re-tap closes** (D154) |
+| **Footer** | centred head; both marks are hero-style badge pills; phone and email are full-width centred pills out of the column; Explore/Browse centred in their halves (D153 + D159) |
+| **The collection** | search narrows properly (D139) |
+| **`/stones/compare.html`** | **the "Add a stone" picker was broken from the day it was built and is now fixed** (D155) |
+| Page floor | veil 0.46 (D123). ⛔ Every section dark — see §0 |
+| Sticky bottom bar | Get a quote · Email · Call (D99/D106) |
 | Everything else | ⛔ untouched — still the desktop-era layout at phone width |
 
-### ⭐ THE HELIX IS GONE ON MOBILE, AND NOTE WHAT THAT DELETED (D114)
+---
 
-`--hxMode` is no longer set to `phone`, so `hxPhone()` is false and **the phone's entire gesture
-path switches itself off**: `attachSwipe`'s `enabled` gate never opens, the stage's
-`touch-action:none` stops applying, and that section scrolls like any other. ⭐ **D102, D103 and
-D112 all existed to make a hand-rolled scroll behave on that one component. On a phone there is
-now nothing to hand-roll.** ⛔ **The helix stays on desktop and is untouched** (his words, and
-D91 anyway).
+## 7. ⛔ THE LESSONS THAT COST THE MOST
 
-⚠️ `attachSwipe` is still live for the **reviews** carousel — D112's fixes still matter.
+### 1. ⛔⛔ A COMPUTED-STYLE SWEEP CANNOT SEE AN ENTRANCE DRIVEN BY INLINE TRANSFORMS
 
-### ⛔ THE LESSONS THAT COST TIME THIS ROUND
+He asked twice for the reviews entrance to go. D134 measured the section, found the deck and all
+sixteen cards already at `opacity:1`, and concluded the entrance was the section head alone. Right
+about the CSS, wrong about the section: the cards are positioned by `soloRender()`, whose
+`!revEntered` branch parks them ~400px off-screen. **Nothing in the computed style says so.**
+⭐ **Look for the flag, not the class. And when he repeats a complaint you have already "fixed",
+assume you fixed a different thing.**
 
-1. ⛔ **A GLIDE THE CUSTOMER CANNOT STOP IS A RACE, NOT A FEEL PROBLEM (D112).** `stopGlide()`
-   was reachable only from a `pointerdown` **on the stage**, so a thumb down anywhere else did
-   nothing — measured **406px of further travel after the touch**, with the native scroll that
-   touch started running at the same time. Two things driving `window.scrollTop` sixty times a
-   second. Now killed by a capture-phase `pointerdown`/`touchstart`/`wheel` on the **window**.
-2. ⛔ **RELEASE SPEED FROM ONE EVENT PAIR IS A LIE (D112).** `vy=step/dt` with dt floored at 1ms,
-   and a phone delivers a move every 4–8ms: a **40px flick threw the page 309px**. Now averaged
-   over a 70ms window, which also means a pause-then-lift does not fling at all.
-3. ⛔ **`min-height` + `aspect-ratio` SOLVES A TILE BACKWARDS (D114).** A rule written for the old
-   one-column phone (`min-height:420px`) honoured both the ratio and the floor and derived the
-   **WIDTH** from the height: a **375px card in a 146px column**, hanging off both edges. The
-   client photographed it. `min-height:0` is the whole fix, and it is now `!important` because
-   this was got wrong twice.
-4. ⛔ **`space-between` NEEDS TWO CHILDREN (D113).** The gallery copy column has three, so it put
-   the **subtitle in the middle of the screen**. `flex-start` + `margin-top:auto` on the actions.
-5. ⛔ **A BLOCK THAT SPANS THE STAGE MUST BE `pointer-events:none` (D113)** or the cards under it
-   stop being tappable.
-6. ⚠️ **`.hx-front` IS A CARD FACE, NOT A POSITION.** A test that read it as "which card is in
-   front" reported the helix swipe broken — on the *unchanged baseline* too. **Measure card
-   rects.**
+### 2. ⛔⛔ WHEN A CHANGE HAS A COST SOMEWHERE ELSE, THE COST STAYS BEHIND
+
+Three times in one day. **D142 put the gallery on a clock but left `animPx`** — 690px of scroll that
+existed only so the animation could be scrubbed, so the section pinned and did nothing for three
+flicks (D157). **D116 made the review card the brightest thing on the page; D156 toned it down but
+`--gold-lo` had been chosen for the OLD card's luminance**, which would have shipped 3.42:1 text.
+**D154 made the FAQ drawer light for a dark page**, and it went invisible the moment the ground
+changed (D161). ⭐ **After changing a value, grep for what was derived from it.** All three were
+found by asking "what did the old number justify?", never by looking at the change.
+
+### 3. ⛔ THE CLIENT'S TWO CLAUSES WERE TWO DIFFERENT BUGS
+
+"It feels stuck" and "it still feels like it's moving" sound like one vague impression. They were
+`animPx` (a dead pinned run) and `SCRUB` (a mouse-wheel damping constant on a touch screen) —
+unrelated code, both real. ⭐ **Do not collapse a client's two clauses into one fault.**
+
+### 4. ⛔ ONE ITEM WEARING THREE NAMES LOOKS LIKE BAD STYLING
+
+The FAQ "looked terrible" because the row said "What it costs", the plate's eyebrow said "Pricing"
+and its heading said "How much does a stone worktop cost?" — fine as index-then-detail in separate
+columns, incoherent stacked on a phone. ⭐ **The mechanism was already right**; it was wearing
+desktop clothes.
+
+### 5. ⛔ THE SAME FAULT SIX TIMES READS AS SIX DESIGN PROBLEMS
+
+"So much text" in the estimator was one idiom repeated: `justify-content:space-between` pairs that
+want ~420px and get 294px of panel. ⭐ **Count the shapes before redesigning any of them.** The
+answer was fewer things per line, never smaller type.
+
+### 6. ⚠️ A VEIL ALPHA IS NOT PORTABLE BETWEEN TWO BASE COLOURS
+
+D156 opened the review card's stone from 0.88 to 0.74 — a small step on a near-white card, but the
+veins are cream and on a GREY card they became the highest-contrast thing on it, running straight
+through the paragraph. **Contrast measured 13.7:1 and the text was still hard to read** (D160).
+⭐ **Re-judge a texture whenever its base moves, and look at it — do not calculate it.**
+
+### 7. ⚠️ A TRANSITION MEASURED TOO SOON WILL LIE ABOUT ITS DIRECTION
+
+The FAQ chevrons read INVERTED 1.2s after a tap — the base rule's `.55s` on `--ease` has a long
+tail. ⭐ Anything eased needs converging on, not waiting on. Same family as §1.
 
 ---
 
-## 5. ⚠️ THE TRAPS THAT WILL WASTE YOUR SESSION
+## 8. ⚠️ THE ENVIRONMENT TRAPS
 
-### ⛔ The environment lies — three ways, all cost real time this round
-
-- ⛔ **`requestAnimationFrame` DOES NOT RUN WHILE THE BROWSER PANE IS HIDDEN.** The gallery loop
-  shuts itself off when caught up and restarts only from a scroll event, so a hidden pane leaves
-  every card frozen and reads exactly like a broken build. **It caused a full false diagnosis of
-  "I broke the gallery".** ⭐ Check `document.visibilityState` before believing a still scene.
-- ⛔ **THE EDITOR HOOK OPENS A `file://` TAB** of `index.html`, and `javascript_tool` will happily
-  run there instead of on `http://localhost:5501`. Several measurements landed on it. ⭐ Check
-  `location.href` in the probe itself, and `tabs_context` when a result looks impossible.
-- ⚠️ **The console REPLAYS STALE ENTRIES.** A `barH is not defined` error was read as live and
-  came from the gap between two saves; a fresh instrumented run returned zero. ⭐ Write
-  `_debug.html` with an error probe as the first thing in `<head>`, drive it, read `__ERRS__`.
-  ⚠️ **Delete `_debug.html` afterwards.**
-
-### Still true from earlier rounds
-
-- ⛔ **`catalogue_source.py` is a 52-STONE SNAPSHOT. It is not the range.** `catalogue_active.py`
-  is. Four live defects came from reading the wrong one.
-- ⛔ **AN INVENTED DATA VALUE CAN BLANK THE WHOLE SITE.** Valid presets: calacatta, carrara,
-  crema, emperador, eternal, fumo, goldveil, mist, nerogold, statuario.
-- ⛔ **`[hidden]` LOSES TO ANY AUTHOR `display` RULE.**
-- ⛔ **THE RANGE IS ALPHABETICAL EVERYWHERE (D85).** ⛔ **NO DARK STONE ON THE FIRST SCREEN (D86).**
-- ⚠️ `10cm` in Judy Z.'s review trips the millimetres scan and must stay. A real customer's words.
-- ⛔ **SUPER-RESOLUTION DESTROYS SPECKLE (D88a).** For a speckled stone, **resample**.
-- ⚠️ **`-s.webp` IS 800px, NOT 300.** ⛔ **Do NOT run `expand.py`.**
-- ⚠️ **`vh` behaves differently on a real phone.** The hero is `min-height:90vh` on mobile.
+- ⛔⛔ **`scroll-behavior:smooth` IS ON `<html>` — EVERY PROBE `scrollTo` ANIMATES.** See §1.
+- ⛔⛔ **THE PANE GOES `visibilityState:'hidden'` AND THEN SILENTLY IGNORES `scrollTo`.** `scrollY`
+  stayed 0 against a 15521px document with no locks and `scrollingElement` correct. ⭐ **Check
+  `document.visibilityState` FIRST when a scroll will not take.** `tabs_select` did not front it;
+  **`tabs_create` + `navigate` did.**
+- ⛔ **A STALE SCREENSHOT WILL DISAGREE WITH LIVE DOM READS, AND THE DOM IS RIGHT.** Same cause.
+  ⭐ Trust the measurement; open a fresh tab for the picture.
+- ⛔ **`javascript_tool` TIMES OUT AT 30s.** Split long settles into ≤24s calls.
+- ⛔ **THE PANE CANNOT TAP ANYTHING BELOW 768px AND IT FAILS SILENTLY.** Use `el.click()` — it drove
+  the estimator's shapes, island, add/remove and all twelve FAQ rows fine.
+- ⚠️ **THE PANE DOWNSCALES A 1440px VIEWPORT INTO AN ~800px IMAGE**, so desktop screenshots are
+  near-useless for detail. Measure instead.
+- ⚠️ **`zoom` with a `region` is not supported.** To inspect a detail on the phone, apply a temporary
+  `transform:scale()` with a corner `transform-origin` and screenshot that — 7× proved the hero arc.
+- ⚠️ **A `reload()` in the same call as the probe kills the call.** Reload, then probe separately.
+- ⛔ **`catalogue_source.py` is a 52-STONE SNAPSHOT, not the range.** `catalogue_active.py` is.
+- ⛔ **AN INVENTED DATA VALUE CAN BLANK THE WHOLE SITE.** Valid presets: calacatta, carrara, crema,
+  emperador, eternal, fumo, goldveil, mist, nerogold, statuario.
+- ⛔ **THE RANGE IS ALPHABETICAL EVERYWHERE (D85). NO DARK STONE ON THE FIRST SCREEN (D86).**
+- ⚠️ **`-s.webp` IS 800px, NOT 300.** ⛔ Do NOT run `expand.py`.
 
 ---
 
-## 6. THE PIPELINE
+## 9. ⛔ RULES THAT MUST NOT BE BROKEN
 
-```bash
-cd "Website Demo/stones"
-python3 apply_catalogue.py            # MATERIALS + SLAB_TILES into ../index.html, with guards
-python3 harvest/similar.py            # measures tiles -> similar.json. BEFORE build.
-python3 build_stones.py               # 132 stone pages + the collection grid
-python3 harvest/verify.py             # ⛔ the gate, nine checks
-cd .. && python3 build_seo_pages.py   # 26 pages incl. the sitemap
-```
-
-### ⭐ NEW: the responsive-image pipeline (D109)
-
-```bash
-cd "Website Demo"
-python3 build_images.py     # extracts + builds the WebP ladders into assets/site/
-python3 patch_images.py     # wires index.html to them. EVERY replacement is asserted
-```
-
-⛔ **THE ORIGINALS IN `assets/` ARE NEVER TOUCHED OR DELETED** — `kitchen-day.jpg` is referenced
-by 20 other files. Ladders are written alongside into `assets/site/` (23 variants, 1.3 MB).
-⛔ `patch_images.py` aborts and writes nothing if any pattern matches an unexpected number of
-times — a partial patch of a 1 MB file with no git is the worst outcome available.
-
-⚠️ **SIZE AN IMAGE BY ITS COVER-SCALED RENDER WIDTH, NOT ITS ELEMENT WIDTH.** Every photo here is
-`object-fit:cover` in a box taller than it is wide, so the browser scales to the box's HEIGHT and
-crops the sides. Judging by width said `cta-slab.jpg` was 6× oversized when it was *under*-sized.
-⚠️ **PSNR lies on downscales** — quarry scored 33 dB at 764px and 41 dB at 1000px, the same
-picture one crop-pixel apart. **Judge by eye at 4× zoom.**
-
-**Where it landed:** first screen **3,037 KB → 286 KB**; photographs **2,158 KB → 445 KB**;
-99 MB of decoded image memory on the phone largely gone. ⭐ **That memory figure, not the
-download, was the original "glitching and jumping".**
-
----
-
-## 7. ⛔ RULES THAT MUST NOT BE BROKEN
-
-1. ⛔ **A stone's NAME and its PHOTOGRAPH must both match the supplier's own** (§3).
+1. ⛔ **A stone's NAME and its PHOTOGRAPH must both match the supplier's own** (§5).
 2. ⛔ **Fabrication is OUTSOURCED. Never claim in-house.** Templating, fitting and aftercare ARE
    theirs and may be claimed freely.
 3. ⛔ **Never state something we cannot guarantee, and never use an absolute.**
-4. ⛔ **Every measurement in millimetres.** The estimator's linear metres of edging is the
-   exception, because it is a pricing unit.
-5. ⛔ **A stone is called what it is; the range is named for what it contains** — "Marble &
-   Quartzite".
+4. ⛔ **Every measurement in millimetres.** The estimator's linear metres of edging is the exception.
+5. ⛔ **A stone is called what it is; the range is named for what it contains** — "Marble & Quartzite".
 6. ⛔ **Never a bright or gold line across the TOP of a card or section**, anywhere.
-7. ⛔ **Suppliers are never named publicly.** Porcelain never goes on the stone wheel.
+7. ⛔ **Suppliers are never named publicly.** ⚠️ The retired marquee held BRANDS, not suppliers — read
+   D143 before "restoring" anything.
 8. **No showroom. Never show the review count. Never signal a young company. Value, not cheap.**
-9. **Voice:** quietly confident master. British English, commas not em dashes, no exclamation
-   marks.
+9. **Voice:** quietly confident master. British English, commas not em dashes, no exclamation marks.
 10. ⛔ **The logo is the client's artwork and is never re-drawn. Set HEIGHT only.**
-11. ⛔ **ONE DEVICE AT A TIME. Desktop is frozen and only the client unfreezes it.**
+11. ⛔ **ONE DEVICE AT A TIME. Desktop is frozen and only the client unfreezes it** — see §2.
 
 ---
 
-## 8. ⚠️ WHAT THE CLIENT HAS AND HAS NOT SEEN
+## 10. OPEN — DO THESE NEXT
 
-⭐ **He is reviewing on his phone only, over the LAN link.** He is not looking at the desktop
-build at all right now.
+### ⭐ Ask him these, they are cheap and three are one-word answers
 
-**Not yet seen — everything desktop from 7 August onwards:** the real logo, the page floor, About
-and Why by scrolling, the stones (wheel, collection, a stone page), and the SEO layer.
+1. ⭐⭐ **DOES THE ABOUT CENTRING GO TO DESKTOP TOO (D151)?** He said the About change "also applies
+   to desktop… only the about us section part", but the change he had just described was cutting
+   Ali. The removal went in at every width; **the centring is phone-only** until he says otherwise.
+   He was told this plainly. If yes, move three rules out of the phone block and nothing else changes.
+2. ⚠️ **IS IT RIMSHA OR REMSHA?** He said "Remsha" in a voice note; the page has always said
+   **Rimsha** and that was kept — a phonetic spelling is not an instruction to rename a real person.
+   ⛔ It is a real person's name on a public page.
+3. ⭐ **DOES HE WANT A "the price is below" CUE IN THE ESTIMATOR?** He raised it and answered himself
+   ("or we don't have to say anything"). Nothing was added. One line if he asks.
+4. ⚠️ **HAS HE SEEN `/stones/compare.html` WORKING?** The picker was broken from the day the page was
+   built (D155), at every width — **so he has never used the page as designed.** Worth putting in
+   front of him, and worth asking whether it still earns its place given he chose it over the form
+   backend. ⛔ `stone.css` is cached 5 minutes; warn him.
+5. ⭐ **Does the brand marquee come off DESKTOP too?** D143 hid it on the phone only. ⚠️ He may want it
+   back with brands alone — it never held his buying list.
+6. ⚠️ **The "keep scrolling" indicator may be OBSOLETE.** D142/D157 mean the animation needs no
+   scrolling at all now. **Ask before building it.**
 
-⚠️ **Say out loud that the three director portraits and the Why feature shot are placeholders.**
+### ⭐ The one prediction still unmeasured
 
----
+7. ⭐ **The animations on his iPhone.** Raised three times, never diagnosed. **This round should help
+   and for measurable reasons:** D145 removed three permanently-transitioned cards, D157 removed a
+   damped per-frame playhead **and** 690px of pinned runway, D148/D152 removed a framed plate and a
+   min-height from the phone's paint, and D133 dropped a permanent compositing layer. **That is still
+   a prediction, not a measurement — ask him.**
 
-## 9. OPEN — DO THESE NEXT
+### ⛔ The two that actually block go-live — unchanged, and neither is design
 
-### ⭐ His live list, in his words, none of it done
+8. ⭐⭐ **The enquiry form has no backend, and it carries file uploads.** `buildEnquiry()` assembles a
+   `FormData` and has nowhere to POST. **Top open item for fifteen sessions.** ⚠️ Compare sends a
+   shortlist at it via `?stones=` that nothing reads.
+9. **Photography — the STONES are done. The PEOPLE and the PROJECTS are not.** ⚠️ Say out loud that
+   the director portraits and the Why feature shot are placeholders. ⭐ **There are TWO portrait
+   plates now, not three, and they are 3:4 rather than 1:2** — the shoot brief changed with D150.
+   ⚠️ **Three of the six service tiles show the wrong subject** — Bathrooms a bare slab, Outdoor
+   Kitchens a quarry, Commercial a kitchen.
 
-1. ⭐⭐ **The project gallery: ONE SWIPE from four cards to eight.** *"it should take one swipe to
-   go from showing four cards to showing eight cards."* Today the second set arrives on **scroll**
-   (`WALK_START`/`WALK_END` on the pinned progress). Making it a swipe means wiring `attachSwipe`
-   to the gallery — ⚠️ read D112 first, all of it.
-2. ⭐⭐ **And make it obvious more exist.** *"it should be clear that there's more cards… right
-   now, as a new user, I'd only see the four projects done."* No affordance exists at all.
-3. ⭐ **The gap before the cards arrive.** *"there's one giant opening when you scroll before it
-   comes up."*
-4. ⭐ **The divider looks wrong.** *"the divider is not just a straight line, it looks like there's
-   some design error there."* ⚠️ There is a bright bloom sitting on that line in his screenshot —
-   **look at it before assuming it is the flare.**
-5. ⚠️ **The animations are not smooth on his iPhone.** He parked it, twice. **NOT diagnosed.**
-   Frames measure 8ms p50 on the Mac, so it is device-side — the coasting rAF playhead and the
-   composited card layers are the first places to look.
+### The rest
 
-### The two that actually block go-live — unchanged, and neither is design
+10. ⭐ **The service pages need the global sections** — no project gallery, stone selector or
+    estimator. Extract once into shared files that `build_services.py` wires into all six.
+11. ⚠️ **A live copy problem, flagged and NOT fixed** — `SERVICES[0].long` and the service pages'
+    "Vein-matched by hand" both claim fabrication TopCat outsource (rule 2) and state an absolute
+    (rule 3). ⛔ **Live on the service pages right now.** ⚠️ `verify.py` check 7 does not scan
+    index.html's inline data.
+12. ⭐ **Pick a production host** and give it brotli + long-lived cache headers (§3).
+13. ⭐ Close the licensing question on Caesarstone, CRL and Bloom. ⛔ Classic Quartz Stone is off
+    limits. ⭐ **Calacatta Gold is UNRESOLVED** — needs the maker's name from his intro video.
+14. **The TABLET round**, when he calls it. ⚠️ It still has the flip-card grid with "click for
+    details", black review cards, the boxed burger, the ringed wheel arrows, the brand marquee, **and
+    every desktop-shaped thing this round fixed on the phone** — the estimator's colliding captions,
+    the index-and-plate FAQ and the stacked footer are all still there at 721–1120px.
 
-6. ⭐⭐ **The enquiry form has no backend, and it carries file uploads.** `buildEnquiry()` assembles
-   a `FormData` and has nowhere to POST. The client was burned by a previous agency whose site
-   produced **one client in nine months**, and this engagement will be judged on **measurable
-   leads**. **Top open item for eleven sessions.**
-7. **Photography — the STONES are done. The PEOPLE and the PROJECTS are not.**
-
-### Everything else
-
-8. ⚠️ **A live copy problem, flagged and NOT fixed** — `SERVICES[0].long` promises worktops *"cut
-   from a single slab, vein-matched across every joint"*: both a claim to fabrication TopCat
-   outsource (rule 2) and an absolute (rule 3). ⛔ **Live on tablet widths right now.**
-   ⚠️ `verify.py` check 7 does not scan index.html's inline data.
-9. ⭐ **Pick a production host** and give it brotli + cache headers (§2).
-10. ⭐ Close the licensing question on Caesarstone, CRL and Bloom. Walk the name-and-image audit
-    sheet. Harvest AKG, Cosentino/Silestone, Fugen. ⛔ Classic Quartz Stone is off limits.
-11. ⭐ **Calacatta Gold is UNRESOLVED** — needs the maker's name from his intro video.
-12. **Build `/services/`**, have TopCat read the 132 descriptions, real project photographs.
-13. **The TABLET round**, when he calls it. ⚠️ The services flip-card grid and the reviews'
-    side-arrow rule still dress 721–1120px, and the nav still forms on scroll there.
-
-**Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing,
+**Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing
+(⚠️ the estimator's thickness toggle currently moves no number, which is correct until he rules),
 brackets for vanity tops / fireplaces / tables, the hero's "Request a call" demotion (asked four
 times), and the £3k vs £3,850 three-slab discrepancy.
 
 ---
 
-## 10. ⭐ HOW THIS CLIENT WORKS, AND WHAT IT MEANS FOR YOU
+## 11. ⭐ HOW THIS CLIENT WORKS
 
-⛔⛔ **DO THE THING HE ASKED FOR, IN THE MESSAGE HE ASKED FOR IT.** This round's worst moment was
-not a bug. He said *"for mobile, we're no longer going to do the helix, I want a two by two
-grid"*; the agent did a different item from the same message and reported the helix as "next".
-He was rightly furious. ⭐ **If a message contains two asks, do the one he named first, or say
-plainly which you are dropping and why — before you start, not after.**
+⛔⛔ **DO THE THING HE ASKED FOR, IN THE MESSAGE HE ASKED FOR IT.** This round was **three messages
+and eighteen asks**, and he sent later ones while earlier work was still being built. They were done
+in his order, and the order mattered — the process gap (#6) had to be measured *after* the estimator
+(#5) because it is measured against the estimator's own last line. **Say plainly which you are
+dropping and why, before you start.**
 
-⚠️ **He corrects the DIAGNOSIS, not just the design, and he is usually right.** *"It's not my Mac
-that's sleeping, it's when I go off of Chrome on my phone"* pointed straight at `no-store` and
-bfcache, which no measurement had suggested. **Take his correction as data.**
+⚠️ **HE CORRECTS THE DIAGNOSIS, NOT JUST THE DESIGN, AND HE IS USUALLY RIGHT.** He said the review
+cards animate; a previous round had "proved" they do not. He said the FAQ looked terrible; the fault
+was three labels, not styling. He said the gallery felt stuck; it was two separate bugs. **Take the
+report as data even when the explanation is wrong — and especially when you have already answered it
+once.**
 
-⚠️ **He describes the ANIMATION he wants, not the shape.** *"I did not tell you to make it look
-like doors, I told you the animation."* Doors were his simile for how they should move; the
-blocks were supposed to keep looking like blocks.
+⚠️ **HE REVERSES HIMSELF FREELY AND THAT IS FINE — BUT LOG IT.** Four reversals in one day: D158 part
+of D129, D159 of D153, D160 of D156, and D161 of itself. ⛔ **Write the reversal into §D WITH THE
+REASON THE OLD DECISION EXISTED**, or the next session helpfully rebuilds the thing he just rejected.
 
-**Every defect of the last nine sessions rendered perfectly.** A page showing `322 x 162 mm` looks
-no different from `3220 x 1620 mm`. A swipe handler bound to the wrong event type looks exactly
-like a swipe handler. Three lines of editor's notes as body text looked like nothing and moved the
-whole site 48px.
+⭐ **HE WILL COMMISSION SOMETHING SPECULATIVELY IF YOU GIVE HIM A WAY OUT.** D161 was asked for with
+"if it doesn't look good, I want to be able to revert it" — so it was built as one fenced block with
+a stated revert path, shown, and removed in one command. ⭐ **Offer that shape for anything
+open-ended; it is why a rejected experiment cost almost nothing.**
+
+⭐ **HE DESCRIBES THE ANIMATION HE WANTS, NOT THE SHAPE.** *"It just plays"*, *"like an accordion"*,
+*"fold or go almost out of the screen"*, *"almost works like a parallax"*.
 
 - **Walk the journey, do not check the page.**
-- ⭐ **LOOK AT THE RESULT BEFORE REPORTING IT DONE**, and **drive the input at the SPEED a person
-  will use**. A synthesised event proves the handler works, not that anyone can reach it.
-- **Measure, then claim.** **Write the check that fails the build**, not the note that warns.
-- ⚠️ **A guard that fires is usually right** — and a probe that returns nonsense usually means the
-  probe is wrong, not the site (§5).
+- ⭐ **LOOK AT THE RESULT BEFORE REPORTING IT DONE.** Two faults this round were invisible to a
+  measurement and obvious in a screenshot.
+- **Measure, then claim.** ⚠️ **And if you could not measure it, say so** — D133 and D161's
+  `background-attachment` caveat both shipped with an explicit "not verified on the device".
 
 ---
 
-## 11. BUDGET AND THE DOCUMENT SET
+## 12. BUDGET AND THE DOCUMENT SET
 
 - **~82 credits** of the client's **100-credit ceiling** spent. About **18 left**. ⭐ **This round
-  cost none** — layout, script and delivery work, no image generation.
+  cost none** — layout, CSS and script work only, no image generation.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D114**, including every reversal. §2 the standing rules, §2a the supplier list |
-| `HANDOVER-2026-08-11-mobile-round-2-start-here.md` | The previous START HERE. ⚠️ Superseded — pre-performance, pre-grid, and its 2.6s settle is wrong |
-| `HANDOVER-2026-08-11-mobile-round-2.md` | The narrative of the second mobile round: the gesture arbiter and the drum |
-| **`Website Demo/build_images.py`** | ⭐ The image pipeline, with the cover-scale and PSNR reasoning in its header |
-| **`Website Demo/patch_images.py`** | ⭐ Wires the ladders into index.html. Every replacement asserted |
-| **`Website Demo/dev-server.js`** | ⭐ Compression, caching and the reload that keeps scroll position. Read its header before changing headers |
-| **`stones/supplier_names.py`** | ⭐ The seven authorised name differences |
-| `stones/catalogue_mirror.py` / `catalogue_dark.py` | The Mirror range and the substitution write-up; the dark quartz and the six rejected |
-| `stones/descriptions.py` | The 132 descriptions, with the rules for writing them |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D161**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** — reconstruct from the archive if needed, but **do not reuse the number** |
+| `HANDOVER-2026-08-12-ten-ask-mobile-round-start-here.md` | The previous START HERE, superseded by this file |
+| `HANDOVER-2026-08-12-search-compare-untied-gallery-start-here.md` | The one before that |
+| `Website Demo/index.html.pre-stone-sections.bak` | ⭐ **Holds the LIGHT STONE BANDS version (D161), which he rejected.** Keep it — it is the only copy |
+| `Website Demo/index.html.pre-hero-fold-round.bak` | ⭐ **This round's freeze baseline** — the file as it was before any of D144–D161 |
+| `Website Demo/index.html.pre-gallery-untied.bak` | Baseline before the gallery came off the scroll |
+| `Website Demo/stones/build_stones.py` | Builds the collection, compare.html and 132 stone pages. `scoped_words()` and `_haystacks()` are the search |
+| `Website Demo/stones/harvest/verify.py` | ⭐ The nine-check gate. `NOT_A_STONE` is the exemption list — keep it exact |
+| `Website Demo/stones/stone.css` | Collection + stone + compare styles. ⚠️ Cached 5 minutes (§3) |
+| `Website Demo/dev-server.js` | Compression, caching, and the reload that keeps scroll position |
+| `stones/supplier_names.py` | ⭐ The seven authorised name differences |
 | `Docs/topcat-worktops-SEO-LOG.md` | Every URL, title, target query and SEO change |
-| `HANDOVER-2026-08-10-slab-photography-complete.md` | ⭐ How the photography pipeline works |
 | `HANDOVER-archive-to-2026-08-06.md` | ⚠️ **Every design the client rejected, in his words.** Read before redesigning anything |
 
-⚠️ **Section numbers in `HANDOVER.md` are referenced from code comments** (`§3`, `§4`, `§5a`,
-`§6.7`, `§7.5` are live in `index.html`). **Do not renumber.**
+⚠️ **Section numbers in `HANDOVER.md` are referenced from code comments** (`§3`, `§4`, `§5a`, `§6.7`,
+`§7.5` are live in `index.html`). **Do not renumber.**
 
-⚠️ **`Website Demo/` holds 50 `index.html.pre-*.bak` files.** They are the only version control
-there is. This round's are `pre-image-optim`, `pre-gallery-round3` and
-`pre-gal-copy-and-svc-grid`.
+⚠️ **`Website Demo/` holds 58 `index.html.pre-*.bak` files** — and a git repo (§4).

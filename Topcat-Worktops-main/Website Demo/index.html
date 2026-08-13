@@ -107,14 +107,43 @@
      crop chosen by ERODING the vein mask and keeping only a window where nothing survives —
      measured thick-vein content is 0.0000%, so what is left is hairlines and grain. If you
      ever swap the image, run that erosion check, do not eyeball it. */
-  :root{ --floorVeil:0.70; --floorVeilRGB:2,2,4; }
+  /* ⚠️ `--floorGlowA/B` are the two warm corner glows, lifted out of the shorthand ONLY so the
+     phone can raise them (D123). The values here are the originals to the digit, so desktop and
+     tablet render byte-for-byte as before — verified by probe. */
+  :root{ --floorVeil:0.70; --floorVeilRGB:2,2,4; --floorGlowA:0.06; --floorGlowB:0.04; }
   body::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
-      radial-gradient(120% 80% at 80% -10%, rgba(198,166,100,0.06), transparent 55%),
-      radial-gradient(90% 70% at 10% 110%, rgba(198,166,100,0.04), transparent 55%),
+      radial-gradient(120% 80% at 80% -10%, rgba(198,166,100,var(--floorGlowA)), transparent 55%),
+      radial-gradient(90% 70% at 10% 110%, rgba(198,166,100,var(--floorGlowB)), transparent 55%),
       linear-gradient(rgba(var(--floorVeilRGB),var(--floorVeil)), rgba(var(--floorVeilRGB),var(--floorVeil))),
       var(--marbleBG) center / cover no-repeat;
+  }
+  /* ============================================================================
+     ⭐ THE FLOOR IS LIFTED ON A PHONE — 12 Aug 2026 (D123). MOBILE ONLY.
+     Client: "the stone background with the gradient is almost completely not visible on the
+     mobile version. It needs to be more visible on mobile than it is on desktop, so we can see
+     there's an actual background and it's not just black. Some sections just look black."
+     ⭐ **HE IS RIGHT, AND THE MEASUREMENT SAYS WHY IT IS WORSE HERE THAN ON DESKTOP.** Sampled
+     the real `cover` crop at 375×812: the graded slab is median 12.9 / p90 19.9 / max 44.9, and
+     under the 0.70 veil the phone was rendering **median 5.4 / p90 7.5 / max 15**. Site ink is
+     luminance **11.3** — so the brightest tenth of the entire background still sat BELOW the
+     colour the sections are made of, and **0.1%** of it out-brightened them. It was not a subtle
+     background, it was one hidden underneath the black.
+     ⚠️ **THE VEIL IS THE ONLY LEVER THAT HELPS. The crop is not the problem** — `cover` at this
+     width DOWN-scales the 2048px slab to 0.705 and shows a 26% slice, so the grain is at full
+     resolution, not magnified. Reaching for background-size would only tile a photographed slab
+     and put seams down the page.
+     ⭐ **0.46 IS MEASURED, NOT PICKED**: median 7.9 / p90 11.7 / max 25.2, with 11% of the floor
+     above ink. Against desktop's 5.4 / 7.5 / 15 at 0.1%, that is a background you can plainly
+     see, which is what he asked for, and the max at 25 keeps the hairlines and crystalline
+     sparkle alive rather than flattening them into a grey wash.
+     ⛔ **DO NOT TAKE THIS BELOW ~0.40 WITHOUT RE-MEASURING.** At 0.34 the figure above ink is
+     23% and the sections stop standing proud of the floor — which is the exact complaint the
+     0.70 veil was introduced to fix on desktop (9 Aug). This is a DEVICE-SCOPED reversal of that
+     number, not a reversal of the decision. ⚠️ Re-measure, do not eyeball (§ the floor comment). */
+  @media(max-width:720px){
+    :root{ --floorVeil:0.46; --floorGlowA:0.10; --floorGlowB:0.07; }
   }
 
 
@@ -559,6 +588,11 @@
   #services .services-grid{grid-template-columns:repeat(3,1fr);max-width:1160px}
   @media(max-width:1100px){#services .services-grid{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:600px){#services .services-grid{grid-template-columns:1fr}}
+  /* ⛔ THE CATCH-ALL LINE IS OFF EVERYWHERE BY DEFAULT — D120, 12 Aug 2026. It is switched on
+     only inside the phone query. New MARKUP cannot be scoped by a media query the way a new
+     RULE can: the element exists at every width from the moment it is added, so the default has
+     to be "hidden" and the phone has to opt in. Desktop and tablet are frozen (§2 rule 15). */
+  .svc-catchall{display:none}
 
   /* ================= SLAB WHEEL ================= */
   /* The STAGE (30 July decrowd): position context for the two control rails. The wheel and the
@@ -1243,6 +1277,10 @@
   /* gold section divider — a bright shine slides along it as the line scrolls up the viewport */
   /* full-bleed: the line spans the whole viewport, touching both edges; the shine still sweeps it */
   .section-divider{position:relative;height:2px;width:100vw;margin:clamp(26px,6vh,74px) calc(50% - 50vw);overflow:visible;z-index:2}
+  /* the phone's replacement for the brand marquee (D143). ⛔ display:none is the BASE default
+     because a new element exists at every width the moment it is added (D120); the phone query
+     turns it on. Above 720px the marquee is still the seam and this must stay invisible. */
+  .strip-swap{display:none}
   .sd-line{position:absolute;inset:0;
     background:linear-gradient(90deg,rgba(198,166,100,0.34),rgba(198,166,100,0.6) 50%,rgba(198,166,100,0.34))}
   .sd-line::after{content:"";position:absolute;top:-2px;bottom:-2px;left:var(--shine,50%);width:26%;transform:translateX(-50%);
@@ -1330,10 +1368,22 @@
      carries ~4.6:1, so the stars and the seal move to it. ⛔ Do not "restore" --gold here.
      ============================================================================ */
   /* The dark card is a 155deg gradient between two near-blacks, not a flat fill — the cream one
-     is built the same way between two off-whites so it keeps the same modelled surface. */
+     is built the same way between two off-whites so it keeps the same modelled surface.
+     ⭐⭐ **TONED DOWN TO STONE — 12 Aug 2026 (D156). THIS IS A REFINEMENT OF D116, NOT A REVERSAL:
+     the cream card stays, it simply stops being white.** Client: "I don't want the review cards to
+     be such a sharp white, it currently stands out a bit too much… maybe we need to add some sort
+     of design, but more stone, more grey. It's just very shocking white right now, and nothing else
+     on the side is that shocking white."
+     ⚠️ **HE IS RIGHT ABOUT THE COMPARISON AND THAT IS THE POINT.** D116 asked for the strongest
+     contrast the palette could make (`--bone` on `--ink`), and it delivered exactly that — the
+     card was #FBF9F4→#EFEBE1, i.e. brighter than `--bone` itself, on a page whose next lightest
+     element is muted limestone at 55% alpha. It was the only pure white on the page.
+     ⭐ Now #EDEAE3→#DBD7CD: still unmistakably a light card on a dark page, but it reads as
+     limestone rather than as paper. ⛔ Do NOT take it further down without re-checking the
+     champagne below — 4.97:1 is not much headroom. */
   #reviews.rev-solo .rev-face{
-    background:linear-gradient(155deg,#FBF9F4,#EFEBE1);
-    border-color:rgba(11,11,13,0.10);
+    background:linear-gradient(155deg,#EFECE5,#E0DCD3);
+    border-color:rgba(11,11,13,0.13);
     box-shadow:0 40px 80px -34px rgba(0,0,0,0.95);
   }
   #reviews.rev-solo .rev.top .rev-face{
@@ -1344,21 +1394,100 @@
      plain rectangle (§4). Its veil is a near-black wash tuned to keep type legible on a DARK
      face; left standing it would grey the cream card into putty. Inverted to a cream wash at the
      same job, the veining reads as the faint mottling of real stone instead. */
+  /* ⛔⛔ **THE VEIL GOES BACK UP — 12 Aug 2026 (D160). D156 OPENED IT TOO FAR AND THE VEINS LANDED
+     ON THE WORDS.** Client, on the D156 build: *"the newer grey card makes the text in the review
+     card hard to read, so you need to fix that."*
+     ⭐⭐ **THE CAUSE IS NOT THE CONTRAST RATIO, WHICH IS WHY THIS NEEDED LOOKING AT RATHER THAN
+     CALCULATING.** Body text measured **13.7:1** on the D156 card — comfortably AAA. What he is
+     reading is `marbleSVG()`'s hairlines running diagonally THROUGH the paragraph: local light and
+     dark inside the letterforms, which breaks up a line of type however good the average is.
+     ⛔ **AND IT BITES HARDER ON A GREY CARD THAN IT EVER DID ON A WHITE ONE.** The veins are cream;
+     against the old near-white face they were nearly invisible, so 0.74 "felt" like a small step
+     from 0.88. Against a grey face the same veins are the highest-contrast thing on the card.
+     **A veil alpha is not portable between two base colours — re-judge it whenever the base moves.**
+     ⭐ 0.90/0.94 puts the stone back to a whisper. ⚠️ **THE GREY BASE STAYS** — that was the half of
+     D156 he asked for and has not complained about; only the texture is walked back. Base lifted
+     one step (#EFECE5→#E0DCD3) to buy a little more separation, which also takes the champagne from
+     4.97:1 to **5.22:1**. */
   #reviews.rev-solo .rev-stone::after{
-    background:linear-gradient(180deg,rgba(249,247,242,0.88) 0%,rgba(249,247,242,0.94) 100%);
+    background:linear-gradient(180deg,rgba(239,236,229,0.90) 0%,rgba(224,220,211,0.94) 100%);
   }
+  /* ⛔⛔ **THE CHAMPAGNE HAD TO GO DOWN WITH THE CARD — D156, AND THIS IS THE PART THAT WOULD HAVE
+     SHIPPED BROKEN IF THE COLOUR HAD BEEN CHANGED ON ITS OWN.** The header above records that
+     `--gold-lo` (#8C6B34) was chosen over `--gold` because it carries ~4.6:1 against the old card.
+     **Measured against the new one it is 3.42:1 — under AA**, because the card came down and the
+     ink did not. #6F5327 (the palette's own deeper champagne, already used here for `.rev-more`'s
+     hover) restores it to **4.97:1**. ⚠️ One token so the three marks below cannot drift apart, and
+     so the next person who retunes the card has one number to re-check rather than three. */
+  #reviews.rev-solo{--revChampagne:#6F5327}
   #reviews.rev-solo .quote{color:var(--ink)}
   #reviews.rev-solo .rev-author{color:var(--ink)}
-  #reviews.rev-solo .stars{color:var(--gold-lo)}
-  #reviews.rev-solo .rev-seal{color:var(--gold-lo);opacity:1}
-  #reviews.rev-solo .rev-src{color:rgba(11,11,13,0.52)}
+  #reviews.rev-solo .stars{color:var(--revChampagne)}
+  #reviews.rev-solo .rev-seal{color:var(--revChampagne);opacity:1}
+  #reviews.rev-solo .rev-src{color:rgba(11,11,13,0.58)}
   #reviews.rev-solo .rev-foot{border-top-color:rgba(11,11,13,0.14)}
   /* "Read more" ends the sentence inside the quote, so it has to sit on the quote's own colour
      terms — the antique champagne, underlined, rather than the pale gold that disappears here. */
-  #reviews.rev-solo .rev-more{color:var(--gold-lo);text-decoration-color:rgba(140,107,52,0.55)}
-  #reviews.rev-solo .rev-more:hover{color:#6F5327;text-decoration-color:currentColor}
+  #reviews.rev-solo .rev-more{color:var(--revChampagne);text-decoration-color:rgba(111,83,39,0.6)}
+  #reviews.rev-solo .rev-more:hover{color:#54401E;text-decoration-color:currentColor}
   /* the scrollbar inside an expanded review, which is otherwise pale gold on cream */
   #reviews.rev-solo .rev.expanded .quote::-webkit-scrollbar-thumb{background:rgba(11,11,13,0.28)}
+
+  /* ============================================================================
+     ⭐ THE ARROWS MOVE INTO THE GUTTERS BESIDE THE CARD, AND THE STRAP COMES UP TO MEET IT
+     — 12 Aug 2026 (D119). MOBILE ONLY (`.rev-solo`, D93).
+     Client: "remove the arrows from the bottom of the cards, then move the CTA part a little
+     bit closer up, so it's the same length the way as the subtitle. Then add the arrows in
+     between the gaps of the cards with some transparency, making them gold, and only have the
+     arrows or something just showing them to swipe without it being too obvious."
+     ⭐ **THE THREE ASKS ARE ONE CHANGE, AND THIS IS WHY.** `--revPagerH` is not decoration, it is
+     a RESERVED BAND: `.rev-stage` grows by exactly that much (`height: card×scale + air + band`)
+     to hold the arrows under the card. Taking the arrows out of the bottom therefore hands back
+     50px on its own, and the strap line moves up by that much before a single margin is touched.
+     Setting it to 0 is what "closer up" actually is — the alternative, pulling the strap up with
+     a negative margin, would have left it sitting inside a 50px band of nothing.
+     ⭐ **"THE SAME LENGTH AS THE SUBTITLE" IS NOW LITERALLY THE SAME NUMBER.** The gap above the
+     card is `.section-head`'s 14px margin plus half of `--revAir` (16px) = **30px**. With the
+     band gone the stage's bottom edge sits exactly half-air below the card, so the strap needs
+     the same 14px to land at the same 30px. ⚠️ The two 14s are a matched pair — change one and
+     the card stops being centred between its own copy. Measured before: 30px above, 110px below.
+     ============================================================================ */
+  #reviews.rev-solo{--revPagerH:0px}
+  /* ⭐ **THE GUTTER IS 22px AND IT IS NOT A FIXED NUMBER** — it is the peek, and it comes out of
+     `--revScale`, which gridLayout() measures and publishes. The card is transform-scaled inside
+     the deck, so it sits `deckW × (1 − scale) / 2` in from each deck edge, and the visible gap
+     between it and the neighbour behind it is that inset. The arrow wants the MIDDLE of that gap:
+     the deck's own offset inside the stage, plus half the inset, less half the arrow.
+     ⛔ A hard `left:20px` was measured and rejected — correct at 375px, but the inset scales with
+     the card, so on a 320px handset the same 20px lands ON the card instead of beside it. */
+  #reviews.rev-solo .rev-page{
+    top:50%;bottom:auto;transform:translateY(-50%);
+    width:26px;height:44px;border-radius:0;
+    /* ⛔ ALL THE BUTTON CHROME GOES. The base rule is a 46px filled disc with a hairline border
+       and a backdrop blur — that is a control, and he asked for a hint. What is left is the
+       glyph. */
+    background:none;border:0;-webkit-backdrop-filter:none;backdrop-filter:none;
+    color:var(--gold);opacity:.42;
+  }
+  #reviews.rev-solo .rev-page.prev{
+    left:calc((100% - min(86vw, var(--revCardW))) / 2
+              + (min(86vw, var(--revCardW)) * (1 - var(--revScale,1))) / 4 - 13px);
+    right:auto;margin-left:0;
+  }
+  #reviews.rev-solo .rev-page.next{
+    right:calc((100% - min(86vw, var(--revCardW))) / 2
+               + (min(86vw, var(--revCardW)) * (1 - var(--revScale,1))) / 4 - 13px);
+    left:auto;margin-right:0;
+  }
+  /* thin and small: a chevron at 2px would read as a button glyph, at 1.6px it reads as a mark */
+  #reviews.rev-solo .rev-page svg{width:15px;height:15px;stroke-width:1.6}
+  /* ⚠️ `:hover` on the base rule repaints these gold-on-gold; harmless on a phone, but the
+     disabled state is not — a 0.22 knock-down on top of 0.42 would make an end-of-run arrow
+     invisible rather than quiet. Held at a floor it can still be seen at. */
+  #reviews.rev-solo .rev-page:disabled{opacity:.16}
+  #reviews.rev-solo .rev-page:hover{border-color:transparent}
+  /* the matched half of `.section-head{margin-bottom:14px}` above the card */
+  #reviews.rev-solo .rev-cta{margin-top:14px}
 
   /* ================= SERVICES ================= */
 
@@ -1579,9 +1708,21 @@
        same idiom as `--hxMode` (D96) and `--galMode` (D105). The arrangement below is a PHONE
        arrangement and the script has to know when it applies; a width test in JS would be a
        second opinion about what a phone is, which is this project's most repeated bug. */
+    /* ⭐ **THE TILES RUN TO THE SUBTITLE'S OWN EDGES — 12 Aug 2026 (D146).** Client: "make those
+       cards wider so that they match up with the widest part of the subtitle."
+       ⛔ **THE GRID WAS CARRYING A SECOND INSET ON TOP OF THE SECTION'S.** `.section` already
+       pads 20px a side, which is what puts the head at 20…370 on a 390px handset; this rule then
+       added `5vw` (19.5px) INSIDE that, so the tiles sat at 39.5…350.5 — a 19.5px ledge either
+       side that nothing else on the page shares. Measured: subtitle box 350 wide, tile row 311.
+       ⭐ **MATCH THE SUBTITLE'S BOX, NOT ITS LONGEST LINE.** Its widest line happens to run
+       22.9…367.1, but that is where this particular sentence wraps at this particular width —
+       align to it and the tiles move the next time a word changes. The box is the real edge and
+       the longest line sits 3px inside it, which is what "match up with" looks like.
+       ⚠️ The columns go 150.5 → 170 and the 1.38/1 ratio takes the tiles 109 → 123 tall with
+       them, which is more room for "Outdoor Kitchens" on two lines, not less. */
     #services .services-grid{display:grid;grid-template-columns:repeat(2,1fr);
       --svcMode:phone;
-      gap:10px;max-width:none;padding:0 5vw;margin-top:clamp(18px,3vh,30px)}
+      gap:10px;max-width:none;padding:0;margin-top:clamp(18px,3vh,30px)}
     /* ⛔ `min-height:0` IS THE WHOLE FIX, AND IT IS NOT OBVIOUS. `@media(max-width:600px){.svc{
        aspect-ratio:auto;min-height:420px}}` up the file was written for a ONE-column phone
        layout. Left in place it combines with an aspect-ratio to solve the card the wrong way
@@ -1610,6 +1751,13 @@
        ⛔ **THE WHOLE BORDER, NEVER A TOP EDGE ALONE** — §2 rule 10 forbids a bright or gold line
        across the top of a card anywhere on this site, and it has been built by mistake twice. */
     #services .services-grid .svc .face{border-color:rgba(198,166,100,0.62)}
+    /* ⭐ SQUARER CORNERS — 12 Aug 2026 (D126). Client: "all four corners of each block is rounded
+       just a bit too much. Make the roundness a bit less — it's almost going to look square with
+       a little bit of a rounded corner, but not too square."
+       ⚠️ The base `.face` radius is 14px, drawn for a 300px+ card; on a 129px tile the same 14px
+       is more than twice the proportion of the edge, which is why it reads as rounded here and
+       not on desktop. 7px is half of it — visibly a corner, not a pill, and not a hard square. */
+    #services .services-grid .svc .face{border-radius:7px}
     /* the type was sized for a 300px+ card and has to come down for a 146px one, or the name
        alone fills the tile. ⚠️ Sizes are clamped against the CARD, not the viewport, so the
        two columns stay legible on a 320px handset. */
@@ -1621,6 +1769,20 @@
        flips. ⚠️ Hidden rather than removed from `buildCards`, because the SAME function builds
        the tablet grid (721–1120px) and the process tiles, where the flip is still the design. */
     #services .services-grid .svc .flip-hint{display:none}
+    /* ⭐ THE CATCH-ALL, SWITCHED ON FOR THE PHONE ONLY (D120). Quiet by design: the six tiles are
+       the offer, this is the line for the space that is not one of them. Body type in the muted
+       limestone, with the ask itself in champagne and underlined, exactly as he described it. */
+    .svc-catchall{
+      display:block;text-align:center;margin:clamp(16px,2.8vh,26px) 5vw 0;
+      font-family:var(--sans);font-weight:300;font-size:13.5px;line-height:1.5;color:var(--muted);
+    }
+    .svc-catchall a{
+      color:var(--gold);text-decoration:underline;text-underline-offset:3px;
+      text-decoration-thickness:1px;text-decoration-color:rgba(198,166,100,0.55);
+      /* ⛔ iOS reads a second quick tap as zoom on anything that has not said otherwise — the
+         same fault the reviews pager hit (client: "it automatically zooms in my phone"). */
+      touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+    }
     #services .services-grid .svc .front-text{padding:10px}
     #services .services-grid .svc .desc{display:none}
 
@@ -2201,6 +2363,10 @@
     line-height:1.3;letter-spacing:0.005em;transition:color .4s var(--ease);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
+  /* ⛔ THE PHONE'S FULL QUESTION IS OFF EVERYWHERE ELSE (D152). It rides in every row's markup at
+     every width, and this is what keeps the desktop contents-page index untouched — the short
+     label above is what makes that an index rather than a paragraph list. The phone swaps them. */
+  .faq-qf{display:none}
 
   /* ============ THE ANSWER PLATE ============
      A framed card, so it may carry its own surface without breaking the one-background rule
@@ -2413,10 +2579,43 @@
        ⚠️ The padding reads the REAL nav and sticky-bar heights, written out by measure(), rather
        than restating 78 and 59 here — two numbers describing one distance drift the moment
        either is tuned (D107's lesson, and D110 was the sticky bar being forgotten entirely). */
+    /* ⭐ **THE TOP PADDING IS NO LONGER THE NAV'S — 12 Aug 2026 (D124).** Client: "that title is
+       too far away from the divider. Look where it says not seeing your space here, and how far
+       that is from the divider — the view our project gallery should be the same distance away."
+       ⛔ **IT WAS 102px OF DEAD SPACE LEFT BEHIND BY THE PIN.** `--galNavH + 24` existed because
+       this block sat inside a 100vh sticky window welded to the top of the screen, where the
+       fixed nav really did cover its first 78px. D122 released that pin, so the section now
+       scrolls under the nav like every other section on the page and needs no such reserve —
+       but the padding stayed, and it is exactly the gap he is pointing at.
+       ⭐ **THE TARGET IS SYMMETRY ABOUT THE DIVIDER, AND IT IS MEASURED.** Above it: 37px of the
+       services section's own bottom padding, then the divider's 49px top margin = **86px**.
+       Below it: the same 49px bottom margin, so the gallery owes 37px — and 4.6vh is 37px on his
+       812px screen, so the pair stays matched as the viewport changes rather than at one height.
+       Measured before: 86 above, 151 below.
+       ⚠️ The BOTTOM padding still reads the sticky bar and must keep doing so — Get in touch sits
+       on it (D110 was that bar being forgotten entirely). */
     .gal-mid{top:0;right:0;bottom:0;left:0;transform:none;width:auto;
       display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
-      padding:calc(var(--galNavH,78px) + 24px) 6vw calc(var(--galBarH,59px) + 24px);
+      /* ⛔ **THE NAV RESERVE IS BACK — 12 Aug 2026 (D128), UNDOING D124'S 4.6vh.** Client: "the
+         title is not stopping in its right position, it's stopping too high up, or you can't even
+         see the title. Bring it down with enough spacing."
+         ⭐ **D124 WAS RIGHT WHEN IT WAS WRITTEN AND WRONG THE MOMENT THE PIN CAME BACK.** With the
+         section scrolling freely, the title's distance from the DIVIDER is what the eye judges,
+         and the nav never parks over it. Pinned (D127), the copy sits at the top of the viewport
+         for the entire animation, so the fixed 78px nav covers it — which is exactly the cut-off
+         "GALLERY" in his screenshot. ⚠️ The two asks are not in conflict, they belong to two
+         different structures; whichever is live decides which rule applies. */
+      padding:calc(var(--galNavH,78px) + clamp(22px,3.6vh,42px)) 6vw calc(var(--galBarH,59px) + 24px);
       pointer-events:none}
+    /* ⛔ **THE NAMES ARE VISIBLE FROM THE START ON A PHONE — D128.** Client: "the cards don't have
+       their names or details on it like it should." `.gal-meta` is `opacity:0` until
+       `.gal-set.settled`, and on a phone `settled` needs `open > 0.96` — i.e. the accordion
+       essentially finished. So every card was anonymous for the whole stack, which is the one
+       beat where the customer is looking straight at them. */
+    /* ⚠️ Opacity is driven per card by render() (D128) — see the loop. The transition is killed
+       because that value is written every frame; a 0.5s ease on a per-frame write lags the card
+       it belongs to and smears the reveal. */
+    #gallery .gal-meta{transform:none;transition:none}
     /* ⛔ NOT `justify-content:space-between` — that was tried and it is wrong, because this
        column has THREE children, not two. Space-between put the heading at the top, the
        SUBTITLE in the middle of the screen and the buttons at the bottom, which reads as a
@@ -2428,6 +2627,87 @@
        specificity the later rule wins. Measured: the buttons stayed tucked under the subtitle.
        The descendant selector outranks it without moving anything (D106's ordering lesson). */
     .gal-mid .gal-mid-actions{margin-top:auto}
+    /* ⛔ "VIEW AS GRID" IS GONE ON THE PHONE — 12 Aug 2026 (D121). Client: "we will remove the
+       viewer's grid CTA." That is `.gal-grid-btn`, the ghost button paired with "Get in touch".
+       ⭐ **HIDDEN, NOT DELETED, AND THE REASON IS THE HANDLER.** `openGrid()` is bound at load to
+       EVERY `.gal-grid-btn` on the page, and the same grid overlay is reachable from elsewhere;
+       removing the element from the markup would take it off desktop too, which is frozen (§2
+       rule 15). `display:none` inside the phone query leaves the desktop pairing untouched and
+       leaves the binding harmlessly attached to an element nobody can reach here.
+       ⚠️ This makes `.gal-mid-actions` a ONE-child column on a phone. It is `flex-direction:
+       column`, so that is safe — but if a second control is ever added back, re-read D113: this
+       same block put the subtitle in the middle of the screen when a `space-between` met three
+       children instead of two. */
+    #gallery .gal-grid-btn{display:none}
+
+    /* ========================================================================
+       ⭐⭐ THE PHONE GALLERY IS A SCROLLING COLUMN — 12 Aug 2026 (D122). MOBILE ONLY.
+       Client: "it will come up along with the animation like it is now. But before it splits out
+       into four corners, what it's gonna do is it's just gonna zoom and extend and be one below
+       the other, all the gallery. All eight of them right below each other. Not all visible on
+       one screen — you can scroll to get through the rest of them, and then it will be Get in
+       touch."
+       ⛔ **THE PIN IS RELEASED, AND THAT IS THE WHOLE STRUCTURAL CHANGE.** Everything below is
+       the consequence. The section was a 100vh `position:sticky` window with the stage pinned
+       inside it (`inset:0`) and eight cards flown around in 3D by the scroll. A column of eight
+       full-width cards is ~1,900px — it cannot live in a 100vh window, and he asked to SCROLL
+       through it rather than have it scrubbed past him.
+       ⭐ **AND RELEASING IT IS ALSO THE ANSWER TO A COMPLAINT THAT IS STILL OPEN.** "The
+       animations are not smooth on my iPhone" (§9.5, twice, never diagnosed). A pinned section
+       drives eight large composited layers from a rAF playhead every frame; a released one hands
+       the scrolling back to the browser, which does it on the compositor. After the cards land,
+       this section costs nothing per frame at all.
+       ⚠️ `height:auto` here is belt-and-braces: `sizeRunway()` writes an INLINE height, and an
+       inline style beats a stylesheet rule. The real fix is in the script, which now clears it on
+       a phone — this line only stops a stale inline value surviving a resize into phone width. */
+    /* ⛔⛔ **THE PIN IS BACK — 12 Aug 2026 (D127), REVERSING D122's RELEASE.** Client: "as the
+       animation comes up, the View our project gallery must not move from its finished position…
+       the screen is gonna stay on the exact same position so they can see the first one, and it
+       doesn't scroll past. Right now when I'm scrolling I can't see the title any more, and I can
+       see half the animation happening, and then I can only see the last ones — I have to scroll
+       back to see the first one."
+       ⭐ **HE IS DESCRIBING THE UNAVOIDABLE COST OF AN UNPINNED ANIMATION, AND THERE IS NO WAY TO
+       KEEP BOTH.** If the page is really scrolling while the cards animate, then by the time the
+       last card lands the viewport has travelled the whole length of the animation — the title is
+       gone off the top and you are looking at the END of the column. Holding the screen still
+       while a scroll-driven animation plays is exactly what a pin IS.
+       ⭐ **AND SCROLLING STILL FEELS NATIVE AFTERWARDS, WHICH IS WHY THIS IS NOT SIMPLY A REVERT
+       TO THE OLD HALLWAY.** Phase 1 holds everything still and plays the animation; phase 2
+       translates the cards and the copy together by the scroll distance, which is pixel-for-pixel
+       what the browser would have done anyway. The join is seamless because at the end of phase 1
+       the translation is exactly 0 — so the frame the animation finishes on is the frame that
+       shows the first card at the top, which is what he asked for. */
+    /* ⭐⭐ **THE SECTION IS PULLED UP BY ITS OWN NAV RESERVE — 12 Aug 2026 (D129). THIS IS HOW
+       BOTH OF HIS ASKS ARE TRUE AT ONCE, AND I GOT IT WRONG TWICE BY TREATING THEM AS A CHOICE.**
+       Client, for the second time: "the title must come up earlier and settle closer to that
+       divider — the same amount of space as the not seeing your space here."
+       ⛔ The two requirements live in DIFFERENT frames and that is why they looked contradictory.
+       `padding-top` is measured from the SECTION, so once pinned it holds the title clear of the
+       fixed nav (D128) — necessary, and it must stay. But before the pin engages that same
+       padding is dead space in the FLOW, stacked on top of the divider's 49px margin: 49 + 107 =
+       **156px** from the divider to the title, against the 86px he is asking for.
+       ⭐ **Pulling the section up by exactly the reserve it adds cancels it in the flow and
+       changes nothing once pinned**, because a pinned element is positioned against the viewport,
+       not against its own margin. 37 − 78 − 29 = **−70px**, and 156 − 70 = 86.
+       ⚠️ Written in the same tokens as the things it cancels, so it cannot drift out of step:
+       the leading term is the services section's bottom padding (the 37px above the divider), and
+       the two subtracted terms are exactly this block's own padding-top. */
+    #gallery{margin-top:calc(clamp(28px,4.6vh,48px) - var(--galNavH,78px) - clamp(22px,3.6vh,42px))}
+    #gallery .gal-pin{position:sticky;top:0;height:100vh;overflow:hidden}
+    #gallery .gal-stage{position:absolute;inset:0;perspective:none}
+    /* ⚠️ `.gal-mid` is no longer the stage's height — it is the COLUMN's, written by measure().
+       It has to be, or `margin-top:auto` would park Get in touch at the bottom of the SCREEN
+       instead of at the end of the column, and it would sit there through the whole scroll. */
+    #gallery .gal-mid{bottom:auto}
+    /* ⛔ NO 3D LEFT ON THIS SECTION. The card carries its own `perspective:1500px` for the door
+       swing, and the doors do not swing here — leaving it on would keep every card on its own
+       composited layer for a transform that is now always identity. */
+    #gallery .gal-card{perspective:none}
+    /* ⭐ `.gal-mid` is `inset:0` on a phone already (D113) and lays its children out in a column
+       with `margin-top:auto` on the actions. Over a TALL stage that does exactly what he asked
+       for free: the title and subtitle sit at the top of the column, and Get in touch is carried
+       to the very bottom, below the eighth card. ⚠️ It stays `pointer-events:none` — it now spans
+       nineteen hundred pixels of cards, and without that none of them would be tappable (D113). */
     /* the heading keeps its own rhythm; only its PLACE in the column has changed */
     .gal-mid .section-sub{margin-top:12px}
     /* ⭐ THE GOLDEN RIM, client's request, 11 Aug 2026. ⚠️ NOT a top-edge seam — §2 rule 10
@@ -2865,7 +3145,30 @@
        (D97). ⛔ **A rounded CORNER is not that ellipse** — the ellipse curved the entire bottom
        edge and had no flat run at all, which is the thing he rejected. Keep 2R well under the
        screen width or this becomes that ellipse again. */
-    .hero{--curveR:26px;border-bottom:0}
+    /* --- ⭐ THE CURVE NOW RUNS OFF THE SCREEN — 12 Aug 2026 (D144) -------------------
+       Client, with a screenshot of the two corners: "the gold line should fold or go almost out
+       of the screen. Shouldn't just go straight up so that the corners aren't visible."
+       ⛔⛔ **THE "CORNER" HE CAN SEE IS THE ARC'S TERMINUS, NOT A CORNER AT ALL.** A quarter
+       circle turns through a full 90°, so its last point has a VERTICAL tangent — and at
+       `--curveOut:0` that point sits exactly on the screen edge, where the gold line stops dead
+       in mid-air against the dark hero. That stop is the mark he is pointing at, and no amount
+       of tuning R moves it: a bigger R only makes the vertical stub taller.
+       ⭐ **SO THE BOX HANGS PAST THE VIEWPORT AND THE TERMINUS GOES WITH IT.** With the arc's
+       flat-tangent point at `R − curveOut` from the screen edge, the line crossing x=0 is still
+       mid-turn: `sin φ = 1 − curveOut/R`, so 14/48 puts it at **45.1°, 14px above the bottom**,
+       climbing as it leaves the frame. `.hero` is `overflow:hidden` in the base rule, so the rest
+       of the arc is cut precisely at the screen edge — nothing to clean up, and `html`/`body`
+       already carry `overflow-x:clip` so there is no sideways scroll to introduce either.
+       ⭐ **R GOES 26 → 48 AND THE FLAT RUN SURVIVES**, which is the constraint that matters:
+       the visible flat is `390 − 2(R − curveOut)` = **322px of 390**, against 338px at R:26. 16px.
+       ⛔ **THAT 16px IS THE WHOLE SAFETY MARGIN AND IT IS NOT PEDANTRY.** This edge was a
+       full-width ellipse (`border-radius:50% 30px`) until 11 Aug and the client threw it out
+       (D97) precisely because it curved the ENTIRE bottom edge with no flat run at all. A soft
+       corner and that ellipse differ only by how much flat is left. Keep `2(R − curveOut)` well
+       under the screen width or this walks back into the design he rejected.
+       ⚠️ `--curveOut` IS NOT A FREE PARAMETER — it is read by three rules that must agree (the
+       photo's box, its border-radius and the hairline). Change it in one place only, here. */
+    .hero{--curveR:48px;--curveOut:14px;border-bottom:0}
     /* The PHOTOGRAPH is what gets cut — .hero-shade lives inside .hero-bg, so one clip takes the
        image and its shading together and the page floor shows through the two corners.
        ⛔ The clip is deliberately NOT on .hero itself: a pseudo-element is clipped by its own
@@ -2875,7 +3178,16 @@
        would not clip it and would need `overflow:hidden` added to a base rule — which at this
        width would be a new property on an element desktop shares. The clip stays one property,
        in one place, exactly as the bevel was. */
-    .hero-bg{clip-path:inset(0 round 0 0 var(--curveR) var(--curveR))}
+    /* ⭐ **THE BOX IS WIDENED RATHER THAN THE CLIP BEING GIVEN NEGATIVE INSETS**, and that is a
+       deliberate choice between two things that both work. `inset(0 -14px …)` does parse and does
+       apply (checked), but D133 put a SECOND clip on this element — `overflow:hidden` plus a
+       matching `border-radius`, the mechanism that actually cuts the corner on his iPhone — and a
+       border-radius can only ever round the element's OWN box. Left at `inset:0` it would round at
+       x=0 while the clip-path rounded at x=−14, and the tighter of the two wins: the photograph
+       would be bitten 48px up at the screen edge, along an arc the hairline does not trace.
+       ⭐ Widening the box moves all three together and keeps one number in charge. */
+    .hero-bg{left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));
+      clip-path:inset(0 round 0 0 var(--curveR) var(--curveR))}
     /* The hairline that traces the cut, in the same --hair gold the straight desktop edge uses.
        ⭐ **A BORDER ON A ROUNDED BOX, NOT GRADIENTS — and the reason is the whole lesson here.**
        The bevel drew its two diagonals with `linear-gradient`, which can only ever draw a
@@ -2890,8 +3202,12 @@
        same box, so the 1px band lies just inside the cut and traces it. Change `--curveR` and
        both follow it; there is no second number to keep in step, which is what the bevel needed
        a paragraph of derivation to protect. */
+    /* ⚠️ The hairline's box hangs out by the same `--curveOut` so its arc is the SAME arc as the
+       clip's. `.hero` is overflow:hidden, so both are cut at the screen edge together and the
+       1px band stays just inside the cut all the way out of the frame. */
     .hero::after{
-      content:"";position:absolute;left:0;right:0;bottom:0;
+      content:"";position:absolute;
+      left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));bottom:0;
       height:calc(var(--curveR) + 1px);
       border:0 solid var(--hair);border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
       border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
@@ -2991,6 +3307,11 @@
     .est-rowhead .rh-use{display:none}
   }
   .est-rowhead span{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  /* ⛔ THE PHONE'S PER-FIELD LABELS ARE OFF BY DEFAULT AND THIS LINE IS WHAT KEEPS THE FROZEN
+     WIDTHS FROZEN (D148). They sit in the row markup at every width; `display:none` removes them
+     from the grid entirely, so the six-column template above still receives exactly six items.
+     The phone switches them on and replaces `.est-rowhead` with them. */
+  .est-fl{display:none}
   .est-pl{font-family:var(--serif);font-size:15px;color:var(--gold);text-align:center}
   /* the two selects (thickness, used for). appearance:none so the chevron and the dark glass
      match the number fields — a native control here reads as a different site. option needs an
@@ -3832,6 +4153,10 @@
   .foot-tag{color:var(--muted);font-weight:300;font-size:14px;line-height:1.7;max-width:30ch;margin-bottom:20px}
   .foot-stars{display:inline-flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
   .foot-stars b{color:var(--gold);font-weight:500;letter-spacing:3px;font-size:12.5px}
+  /* ⛔ THE GUARANTEE MARK IS PHONE-ONLY AND OFF BY DEFAULT (D153) — see its note in the markup.
+     ⚠️ The 3px tracking above is for the five star glyphs; on "10" it reads as a trailing space. */
+  .foot-guar{display:none}
+  .foot-guar b{letter-spacing:normal}
   /* the spacing was tuned for six narrow stacks of nine rows; at four columns of six it can
      afford to be tighter, and tighter is the whole point of the 9 Aug cut */
   .foot-k{font-family:var(--brand);font-size:10px;letter-spacing:.32em;text-transform:uppercase;
@@ -3918,29 +4243,41 @@
        window, so the vh one still governs at ~610px (the clamp-floor rule). */
     width:var(--sideW);
     aspect-ratio:3/4;
-    /* ⭐ SIX ROWS, three columns. ⚠️ THE OWNERS ARE THE TOP BAND (client, 9 Aug, second pass:
-       "the three owners must be on the top of the collage and then the team below"). They were
-       the bottom band for the first half of that day — the order was flipped on review, and
-       flipping it back means flipping the DOM too, see below.
-       The three directors are three IDENTICAL tiles (client: "three of those images can be the
-       same size"). Equal is the whole point: three people at three sizes is a hierarchy nobody
-       asked for. Each portrait comes out 1:2, a standing crop, and six rows are what make that
-       fall out of the 3/4 frame exactly. Under them the work — one big square, a short
-       landscape and a portrait stacked against it.
-       ⚠️ AREA NAMES ARE p1..p3 (people) and w1..w3 (work), not a..f. They were letters until
-       the order flipped, at which point "d, e, f" sitting above "a, b, c" was actively
-       misleading about what builds first.
-       ⚠️ Still SIX tiles. scrollSequence's bound is 5*step + span < 1 and a seventh tile
-       would break it (see the ABOUT COLLAGE IIFE). */
-    display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(6,1fr);
-    grid-template-areas:"p1 p2 p3" "p1 p2 p3" "p1 p2 p3" "w1 w1 w2" "w1 w1 w3" "w1 w1 w3";
+    /* ⭐ SIX ROWS. ⚠️ THE OWNERS ARE THE TOP BAND (client, 9 Aug, second pass: "the owners must be
+       on the top of the collage and then the team below"). They were the bottom band for the first
+       half of that day — the order was flipped on review, and flipping it back means flipping the
+       DOM too, see below.
+       The directors are IDENTICAL tiles (client: "those images can be the same size"). Equal is the
+       whole point: people at different sizes is a hierarchy nobody asked for. Under them the work —
+       one big square, a short landscape and a portrait stacked against it.
+       ⚠️ FIVE tiles since D150. scrollSequence's bound is `(n−1)*step + span < 1`, so the ceiling
+       is now SIX rather than the old six-tile squeeze (see the ABOUT COLLAGE IIFE). */
+    /* ⭐⭐ **SIX COLUMNS, NOT THREE — 12 Aug 2026 (D150), AND THE SWITCH IS FREE.** The client cut
+       the team to two: "we are only gonna have Nick and Remsha, we're not gonna have Ali, so you
+       can divide that into two sections instead of the three that are there." Two equal tiles do
+       not divide into three columns, so the track count doubles — and doubling changes NOTHING
+       about the work band below, which is the reason to do it this way rather than re-proportioning
+       by hand. With W the width and g the gap: at 3 columns w1 spanned `2col+g = (2W−g)/3` and w2
+       spanned `col = (W−2g)/3`; at 6 columns w1 spans `4col+3g` and w2 `2col+g`, which reduce to
+       exactly the same two expressions. **The work tiles are pixel-identical either way** — only
+       the top band changes, from thirds to halves at `3col+2g = (W−g)/2`.
+       ⚠️ **THE PORTRAIT CROP CHANGES WITH IT, AND THAT IS THE POINT.** Each was 1 column by 3 rows,
+       so 1:2 — a very tall, narrow standing crop. Half the width over the same 3 rows is `(W−g)/2`
+       by `(H−g)/2`, i.e. the collage's own 3/4. A pair at 3:4 is a portrait; a pair at 1:2 would be
+       two slivers with a hole where the third used to be. Six rows still make both bands fall out
+       of the 3/4 frame exactly.
+       ⚠️ AREA NAMES ARE p1..p2 (people) and w1..w3 (work), not a..f — see the note above. */
+    display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);
+    grid-template-areas:
+      "p1 p1 p1 p2 p2 p2" "p1 p1 p1 p2 p2 p2" "p1 p1 p1 p2 p2 p2"
+      "w1 w1 w1 w1 w2 w2" "w1 w1 w1 w1 w3 w3" "w1 w1 w1 w1 w3 w3";
     gap:clamp(10px,1vw,14px);
     /* The tiles hinge in 3D as you scroll (scrollSequence, driven from the ABOUT COLLAGE IIFE),
        so the cluster needs a viewing distance — without a perspective every rotation reads as
        a flat vertical squash rather than a panel swinging on an edge. The origin sits above
        centre because the build runs top-to-bottom and the eye is on the tile that is landing. */
     perspective:1250px;perspective-origin:50% 42%}
-  .ac-p1{grid-area:p1}.ac-p2{grid-area:p2}.ac-p3{grid-area:p3}
+  .ac-p1{grid-area:p1}.ac-p2{grid-area:p2}
   .ac-w1{grid-area:w1}.ac-w2{grid-area:w2}.ac-w3{grid-area:w3}
   .ac-tile{position:relative;overflow:hidden;border-radius:10px;margin:0;
     border:1px solid var(--hair-soft);background:var(--ink-2);
@@ -3954,7 +4291,7 @@
   .ac-tile:hover img{transform:scale(1.05);filter:brightness(1) saturate(1)}
   .ac-tile:hover .sheen{transform:translateX(120%)}
 
-  /* ===== the three directors, INSIDE the collage (client, 9 Aug) =====
+  /* ===== the directors, INSIDE the collage (client, 9 Aug; cut to two 12 Aug, D150) =====
      Replaces the .about-team credit strip that used to sit under the story. The client's read
      was that the collage was the half of this section that worked, so the people moved into
      it rather than sitting beside it apologetically.
@@ -3995,9 +4332,11 @@
      and the extra tracking pushed it wider than a third of the collage.
      ⚠️ It is ALLOWED to wrap to two lines, and min-height RESERVES BOTH whether they are used
      or not. Without that reservation "Operations Director" wraps, Rimsha's plate grows one
-     line taller than the other two, and her name sits visibly above Nick's and Ali's — which
-     is the same ragged-baseline fault the old credit strip had, just moved. Reserving the
-     second line also makes the row robust to a role title nobody has thought of yet. */
+     line taller than Nick's, and her name sits visibly above his — which is the same
+     ragged-baseline fault the old credit strip had, just moved. ⚠️ **KEEP THE RESERVATION EVEN
+     THOUGH THE HALF-WIDTH TILES OF D150 GIVE THE ROLE ROOM TO FIT ON ONE LINE NOW.** It is what
+     makes the pair robust to a role title nobody has thought of yet, and it costs nothing when
+     the second line goes unused. */
   .acp-role{margin-top:3px;font-size:clamp(7.5px,calc(var(--sideW) * 0.027),10px);
     letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);opacity:0.85;
     line-height:1.3;min-height:2.6em}
@@ -4052,6 +4391,574 @@
   /* hero ghost keeps the V2 fill-on-hover; other ghosts keep their own colours, just resized */
   .hero-ctas .btn-ghost{color:var(--bone);border-color:var(--hair)}
   .hero-ctas .btn-ghost:hover{background:var(--bone);color:#0B0B0D;border-color:var(--bone);letter-spacing:0.24em}
+
+  /* ============================================================================
+     ⭐ PHONE ROUND — 12 Aug 2026. Five asks in one message, in his order:
+     the burger's box, the hero's rounded corner, the reviews entrance, the stone
+     wheel's curve and card size, and the wheel's arrows.
+     ⛔ MOBILE ONLY. Desktop and tablet are frozen (§2 rule 15, D91).
+     ⭐ THIS BLOCK IS DELIBERATELY THE LAST THING IN THE STYLESHEET. Three rounds have
+     now lost a mobile override to a base rule sitting LATER in the file at equal
+     specificity (D106, D113, D114). Nothing can come after this, so nothing can.
+     ============================================================================ */
+  @media(max-width:720px){
+
+    /* --- 1. THE BURGER LOSES ITS BOX ------------------------------------------------
+       Client: "I don't like the current design where it has a square around the three
+       stripes. I just want the stripes by itself and just make it fit nicely."
+       ⛔ THE BASE RULE IS NOT TOUCHED, AND THAT IS THE WHOLE CARE HERE: .nav-burger is
+       switched on at `max-width:1120px`, so undressing it in the base rule would strip the
+       box off the FROZEN tablet too, where the header still carries its CTA beside it.
+       ⭐ The 42px box stays — it is the TAP TARGET, and it is the one thing here that is
+       not decoration. Only its border, fill and blur go.
+       ⚠️ Stripes were 18px wide inside a 42px box, drawn to sit comfortably INSIDE a
+       border. With the border gone that reads as the leftovers of a button rather than a
+       mark, so they run to 24px and the pitch opens 6px → 7px to keep the block square-ish
+       (24 x 15.6). ⚠️ The insets are 8px, not 9px: the border is still 1px, only transparent,
+       so the content box is 40px and 8px a side yields 24. Same family as D126 — a number
+       that was right for one container is rarely right once the container goes. */
+    .nav-burger{background:transparent;border-color:transparent;
+      -webkit-backdrop-filter:none;backdrop-filter:none}
+    .nav-burger span{left:8px;right:8px;height:1.6px}
+    .nav-burger span:nth-child(1){top:13px}
+    .nav-burger span:nth-child(3){top:27px}
+
+    /* --- 2. THE HERO'S ROUNDED CORNER, ON HIS PHONE ---------------------------------
+       Client: "I can still see the black corners going through the divider. The rounded
+       corner should be perfect with no black corners past the roundedness. You should only
+       see the stone behind it."
+       ⛔⛔ **THE GEOMETRY WAS NEVER WRONG AND CHROME RENDERS IT PERFECTLY — THIS IS A
+       COMPOSITING LEAK, AND IT IS WHY D115 SHIPPED LOOKING CORRECT.** Verified here at 6x
+       magnification: the arc is clean, the hairline traces it, and the page floor shows
+       through outside it. `.hero-bg img` carries `will-change:transform` and a scale(1.08),
+       which promotes it to its own compositing layer — and a promoted child is composited
+       AFTER its parent's clip-path is rasterised, so on iOS Safari it paints past the
+       corner. The photograph is near-black at its foot, so what escapes is exactly the
+       "black corners" he can see and this Mac cannot.
+       ⭐ Three independent mechanisms, because the failure is invisible from here:
+       `overflow:hidden` + a matching `border-radius` clip the box in the normal paint pass,
+       and `translateZ(0)` makes .hero-bg own the layer so the corner is cut in the
+       compositor where the img actually lives. Dropping the child's `will-change` removes
+       the promotion that causes it in the first place — it only ever bought a one-shot 3s
+       load zoom, which is not worth a permanent layer on the device that is already the
+       one complaining about smoothness (§9.3).
+       ⚠️ Adding a transform to .hero-bg changes no containing block: .hero-shade is
+       position:absolute and .hero-bg was already its nearest positioned ancestor. */
+    .hero-bg{
+      border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
+      overflow:hidden;transform:translateZ(0);
+    }
+    .hero-bg img{will-change:auto}
+
+    /* --- 3. THE REVIEWS ARE ALREADY THERE -------------------------------------------
+       Client: "remove the animation of the 'hear it from your neighbours' coming in. I
+       want it just to already be there."
+       ⭐ MEASURED FIRST, AND ONLY ONE THING IN THE SECTION ACTUALLY MOVES. The deck and all
+       sixteen cards are already opacity:1 with no transform before the section is reached —
+       the entrance is the section head alone, .rise, which holds opacity:0 and a 34px offset
+       until the shared IntersectionObserver adds .in. So this is the whole change.
+       ⛔ Scoped to #reviews. `.rise` dresses every section head on the page; killing it
+       globally would strip the reveal off About, Why, the FAQ and the rest. */
+    #reviews .section-head.rise{opacity:1;transform:none}
+
+    /* --- 4. THE STONE WHEEL: A SHALLOW FAN AND A SMALLER CARD -----------------------
+       Client, twice. First: "it's very curved where you can see the bottom corners of the
+       design. Make the blocks, the actual centre block, slightly smaller and have the sides
+       go less curved. So still almost like a half moon kind of shape, but going out of the
+       screen, not curving down like it currently is." Then, on the result: "on the third
+       slab, the one that's just going off the screen, and the one on the other side, you can
+       see their bottom corners. I don't actually want the bottom corners to be visible. Make
+       the half moon curve even less, and you can make the main stone even slightly smaller."
+       ⭐ **"LESS CURVED" IS ONE NUMBER, AND THE PHONE WAS NEVER GIVEN ITS OWN.** See the
+       wheelBend() comment in the script: the sag is a constant 120px while the half-width it
+       sits over is not, so the phone was carrying ~4x the desktop's curve from a value that
+       was only ever tuned on a wide screen.
+       ⛔⛔ **AND THE VISIBLE CORNER IS THE ROTATION, NOT THE SAG — WHICH IS WHY THE FIRST
+       PASS AT 64px DID NOT FIX IT.** The outermost card's CENTRE is already off-screen at
+       x=379 on a 375px phone, but the card is tilted asin(ax/R), and at 37.7° its bottom
+       corner swings back INWARD to x=363 — on screen. Flattening the arc raises R, drops the
+       tilt, and swings that corner back out past the edge: measured off-screen at 44px and
+       below. **A corner that is off-screen at rest is the only kind that cannot be seen.**
+       ⚠️ **THE SECOND RING CANNOT BE SOLVED THAT WAY AND DO NOT KEEP FLATTENING TRYING.** Its
+       half-width is smaller than its distance to the screen edge, so its outer bottom corner
+       is on-screen at EVERY bend — it is exposed by construction, because z-order runs
+       centre-highest and the card outboard of it sits BEHIND. What can be fixed is how far it
+       hangs: measured below the centre card's bottom, it drops 9px at bend 44, 2px at 28 and
+       **−1px at 22**, where it comes level and the fan's foot reads as one continuous line
+       with the centre card proud of it, rather than a row of points.
+       ⛔ **AND THERE IS A FLOOR — DO NOT KEEP FLATTENING.** By bend 12 the outermost card
+       sits 4px ABOVE the centre card and the fan stops being a fan at all, which loses the
+       "almost like a half moon" he has asked to keep in every message about this section.
+       ⭐ **SETTLED AT 30**, after he saw 22: *"add a little bit more of that curve back. So I
+       don't want you to revert back to what it was, but I want to see slightly more of that
+       half moon curve than there is now."* 22 read as very nearly a straight row. At 30 the
+       second ring hangs **3px** below the centre card — still level to the eye, still no
+       protruding corner — and the outermost is 20px down and off-screen. Verified with the
+       corner hit-test at 26, 30 and 34: the exposed set does not change.
+       ⭐ **THE CARD IS SCALED, NOT RESHAPED, AND IT IS ONE TOKEN.** `--stoneScale` multiplies
+       all three phone constants, so the slab keeps its proportion exactly and object-fit
+       re-crops the photograph rather than squashing it (D125's lesson from the gallery:
+       change the ratio or change the size, never scaleY a picture). 210x342 → **169x275**.
+       ⚠️ **THE CONSTANTS ARE THE PHONE'S OWN, NOT THE BASE 0.76/0.583/56vw, AND THEY HAVE TO
+       BE** — see --wheelH below. Once the wheel's cap moved, holding the card still through
+       the shared constants was impossible: `--stoneScale` multiplies the vw arm too, and that
+       arm does not track --wheelH, so shrinking the box would have made the card WIDER.
+       ⚠️ --stoneW's `min()` is load-bearing and both arms take the scale. They are equal at
+       375x812 by construction; the --wheelH arm takes over on a short screen, which is the
+       original protection — the wheel must never shrink faster than the slab inside it.
+       ⚠️ The card size feeds `step` (cw*0.52), so shrinking it also closed the fan up: the
+       ring moved from ±192 to ±176. Five stones still show, which is D48's decrowd.
+
+       ⭐ **THE WHEEL'S CAP DROPS 450 → 390, AND THAT IS THE WHOLE SPACING FIX.** Client:
+       *"move the name of the stone closer, where it says quartz, and the buttons also go
+       closer… and move it slightly closer to the granite and all stones buttons. So just the
+       gap in between, make it slightly smaller."*
+       ⛔ **BOTH GAPS WERE ONE FAULT AND NEITHER WAS A MARGIN.** The wheel is a fixed-height
+       box with the card centred in it, so taking 20% off the card (D137) left the difference
+       as dead air, split evenly above and below: measured **68px over the cards and 74px
+       under them, inside the box**. The margins around it were already 18px and 8px. Reaching
+       for those margins would have moved the readout while leaving the hole, and there was
+       nothing to take off the top gap at all. **Measured 86/82 before, 55/41 after.**
+       ⭐ Only the CAP changes; the `clamp(272px, 100vh − 310px, …)` shape is untouched, so
+       the short-screen behaviour that keeps the section inside one viewport is exactly as it
+       was — 390 simply binds instead of 450 on a tall phone. Nothing was cut (client's rule):
+       the section gets 60px SHORTER, which can only help. */
+    #stones{
+      --wheelH:clamp(272px,calc(100vh - 310px),390px);
+      --stoneScale:1;
+      --stoneH:calc(var(--wheelH) * 0.705 * var(--stoneScale));
+      --stoneW:min(calc(45vw * var(--stoneScale)),calc(var(--wheelH) * 0.433 * var(--stoneScale)));
+      --wheelBend:30px;
+    }
+
+    /* --- 5. THE WHEEL'S ARROWS LOSE THE DISC ----------------------------------------
+       Client: "remove the circle around those arrows and just make the arrows there as they
+       are just with the arrow part and make that gold or gold gradient arrows."
+       ⭐ Same move D119 made on the review arrows, now on the wheel's: the disc is a
+       CONTROL and he asked for a mark. The 52px box stays as the tap target, exactly as the
+       burger's does above; the border, the fill and the hover fill go.
+       ⭐ The gradient is the site's own `#tcGoldSolid`, the paint server already in the
+       .tc-defs sprite — champagne at the top through to antique gold at the foot, so the
+       arrow is lit the same way every other gold mark on the page is. It resolves against
+       each arrow's own bounding box, so both chevrons light identically.
+       ⚠️ The glyph grows 18px → 26px. Without its disc an 18px chevron has nothing to give
+       it presence and simply reads as small. */
+    /* --- 6. THE BRAND MARQUEE BECOMES A PLAIN DIVIDER ON THE PHONE (D143) -------------
+       Client: "remove the words 'brands we work with', and move the rolling bar based on all
+       the supplier links I sent you, add their names in here" — then, once told that the trade
+       yards cannot be named: "if we cannot name the suppliers, then remove that rolling bar
+       divider completely and just make it a regular divider."
+       ⛔ **THE STRIP WAS NEVER HIS BUYING LIST AND THAT IS WORTH KNOWING BEFORE ANYONE
+       "RESTORES" IT.** `SUPPLIERS` in the script is a misleading variable name: it holds twelve
+       MANUFACTURER BRANDS (Silestone, Caesarstone, Dekton, Neolith…), which are safe to name
+       and were never in tension with §2 rule 9. What could not go in were Nile Stone and Next
+       Stone Slabs, the yards TopCat BUY from (D8) — naming those tells a customer where to go
+       direct. He chose to drop the band rather than run it with brands alone.
+       ⚠️ THIS BAND WAS THE SECTION BOUNDARY BY DESIGN (client, 30 July): there is deliberately
+       no .section-divider after the stones section because the strip itself was the seam. Hide
+       it without putting something in its place and stones runs into the estimator with no
+       break at all — which is why the swap adds a divider rather than just deleting.
+       ⭐ The band's own top padding is dropped to nothing so the divider's own symmetric margin
+       (clamp(26px,6vh,74px) top and bottom) is the ONLY spacing, which is what "perfectly in
+       between the two sections" means — one number either side rather than a 13vh pad above
+       and #estimator's padding below. */
+    .strip-band{padding-top:0 !important}
+    .strip-head,.strip-rule{display:none}
+    .strip-swap{display:block}
+
+    .wbtn{background:transparent;border-color:transparent}
+    .wbtn:hover{background:transparent;border-color:transparent;transform:none;color:var(--bone)}
+    .wbtn svg{width:26px;height:26px;stroke-width:1.7;stroke:url(#tcGoldSolid)}
+
+    /* --- 7. THE ESTIMATOR, REBUILT FOR THE PHONE — 12 Aug 2026 (D148) --------------------
+       Client: "the estimator, what would yours cost, we're gonna have to redesign it for mobile so
+       that it looks better because we have so much text. Some text is next to each other, like the
+       word width mm, and the word length mm is below. So we have to make the whole thing look
+       neater and function better for mobile, because they can put all their settings there, and
+       then they have to scroll down and see what they're actually doing there and the actual price."
+       ⛔⛔ **NEARLY EVERY FAULT IN HERE IS ONE FAULT REPEATED: A LABEL AND ITS HINT SHARING A LINE.**
+       The panel is built out of `justify-content:space-between` pairs — caption left, explanation
+       right — which is a desktop idiom that wants ~420px and collapses at the 294px of panel a
+       390px handset gives. Six of them do it. `.est-labelrow` ("Your worktops" against "Most
+       kitchens are two or three pieces"), `.est-rowfoot`, `.est-bhead` and the piece list's shared
+       header are all the same shape, and stacking each one fixes it outright.
+       ⭐ **THE ANSWER IS FEWER THINGS PER LINE, NOT SMALLER TYPE.** Shrinking captions to make them
+       fit is how this arrived at 9.5px on .18em tracking; another pass of that reads as fine print
+       and still would not have fitted "Thickness mm" into an 88px column.
+       ⛔ **THE ORDER WAS ALREADY RIGHT AND IS DELIBERATELY UNTOUCHED.** `@media(max-width:980px)`
+       already drops `.est-grid` to one column, so the settings sit above the cutting plan and the
+       price — which is the flow he describes rather than a change he is asking for.
+       ⚠️ No "the price is below" cue was added: he raised one and then answered himself — "or we
+       don't have to say anything, I'm sure the user will know to scroll further down and see" —
+       and the panel already opens with "Your cutting plan" and closes on "Your estimate" in gold.
+       It is one line to add if he asks. */
+
+    /* 7a. every caption/explanation pair stacks. ⚠️ `display:block` keeps .est-labelrow's own
+       margin-bottom, which is the gap to the control group under it — do not switch to grid here
+       and re-state it. */
+    #estimator .est-labelrow{display:block}
+    #estimator .est-labelrow .est-hint{display:block;margin-top:5px}
+
+    /* 7b. ⭐⭐ ONE PIECE IS ONE CARD, AND EVERY FIELD CARRIES ITS OWN LABEL.
+       This is the line he actually pointed at. The shared `.est-rowhead` had to fit three uppercase
+       captions across two 1fr columns and an 88px one — at 390px that is 67px a column against the
+       ~75px "Length mm" needs, so the first two crowded together and "Thickness mm" wrapped inside
+       its 88px. ⭐ Deleting the header row and labelling each field where it stands costs one line
+       per piece and removes the collision rather than negotiating with it.
+       ⭐ The letter and "what it is for" share the top line, which is how a cut-list reads out loud
+       — "A, worktop run" — and puts the two things that identify the piece together.
+       ⚠️ **THE COLUMNS ARE `24px 1fr 1fr 24px` AND THE FIELD PAIRS SPAN 1-2 AND 3-4**, so the two
+       inputs come out exactly equal (24+gap+1fr against 1fr+gap+24) while the letter and the ×
+       keep narrow gutters of their own. A plain two-column template would have made the letter's
+       column as wide as an input.
+       ⛔ These selectors carry #estimator on purpose: `@media(max-width:620px)` further up the file
+       sets both a five-column template and `.est-use{grid-column:2/5}`, and an id is what outranks
+       it. `grid-area` also resets all four placement longhands, which is what clears that span. */
+    #estimator .est-rowhead{display:none}
+    #estimator .est-rows{gap:10px}
+    #estimator .est-row{
+      grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 24px;
+      grid-template-areas:
+        "pl   use  use  x"
+        "flen flen fwid fwid"
+        "len  len  wid  wid"
+        "fth  fth  seg  seg";
+      gap:5px 10px;align-items:center;
+      border:1px solid var(--hair-soft);border-radius:10px;padding:9px 10px 11px;
+    }
+    #estimator .est-row .est-fl{display:block;font-family:var(--brand);font-size:9.5px;
+      letter-spacing:.18em;text-transform:uppercase;color:var(--muted);line-height:1.2}
+    #estimator .est-row .est-pl{grid-area:pl}
+    #estimator .est-row .est-use{grid-area:use}
+    #estimator .est-row .est-x{grid-area:x;justify-self:end}
+    #estimator .est-row .est-fl-len{grid-area:flen;margin-top:6px}
+    #estimator .est-row .est-fl-wid{grid-area:fwid;margin-top:6px}
+    #estimator .est-row .est-fl-th{grid-area:fth;margin-top:5px}
+    #estimator .est-row .est-in[data-f=len]{grid-area:len}
+    #estimator .est-row .est-in[data-f=wid]{grid-area:wid}
+    #estimator .est-row .est-seg{grid-area:seg;margin-top:5px}
+
+    /* 7c. the add button's three words were wrapping to leave room for the millimetres note beside
+       them. Stacked, both sit on one line each. ⚠️ `.est-mm` is `text-align:right` for the
+       space-between layout it was written for, and has to be cleared or it hangs off to one side
+       under a left-aligned button. */
+    #estimator .est-rowfoot{flex-direction:column;align-items:flex-start;gap:9px}
+    #estimator .est-mm{text-align:left}
+
+    /* 7d. "Your cutting plan" against the "Indicative range" stamp is the same pair again, and the
+       stamp is a bordered box, so it wrapped INSIDE its own border and read as two stacked words in
+       a frame. Given the full width it stays one line. */
+    #estimator .est-bhead{display:block}
+    #estimator .est-bhead .est-stamp{display:inline-block;margin-top:9px}
+
+    /* 7e. ⭐ THE THREE FIGURES BECOME THREE ROWS, NOT THREE BOXES. `repeat(3,1fr)` gives 91px a
+       column at this width, which wraps "Slab needed" and "Of worktop"; the `max-width:420px`
+       fallback up the file avoids the wrap by going 2+1 and leaves the third figure stranded across
+       the full width, which is what he is looking at. A caption-left / figure-right row needs no
+       column arithmetic at all, reads in one pass, and comes out shorter than the boxes it replaces.
+       ⚠️ `row-reverse` rather than reordering the markup: the DOM is <b>figure</b> then
+       <span>caption</span>, which is the order a screen reader should hear, and it is already right. */
+    #estimator .est-stats{grid-template-columns:1fr;gap:0}
+    #estimator .est-stats .est-stat{grid-column:auto;display:flex;flex-direction:row-reverse;
+      align-items:baseline;justify-content:space-between;gap:14px;
+      border:0;border-top:1px solid var(--hair-soft);border-radius:0;background:none;padding:10px 2px}
+    #estimator .est-stats .est-stat:first-child{border-top:0;padding-top:2px}
+    #estimator .est-stats .est-stat b{display:inline;font-size:19px}
+
+    /* --- 8. THE PROCESS TITLE SITS AS FAR BELOW THE DIVIDER AS THE ESTIMATOR'S LAST LINE SITS
+       ABOVE IT — 12 Aug 2026 (D149) ------------------------------------------------------------
+       Client: "the process without surprises section, the title is too far away from the divider.
+       It should be the same distance away as the last words in the section above."
+       ⭐⭐ **THE WHOLE THING REDUCES TO ONE SENTENCE: THE TWO SECTIONS SHOULD CARRY THE SAME
+       PADDING.** `.section-divider` has a symmetric margin — `clamp(26px,6vh,74px)`, 50.64px top
+       AND bottom on an 844px screen — so the gap above it is `#estimator`'s padding-bottom + 50.64
+       and the gap below it is 50.64 + `#process`'s padding-top. Equal paddings, equal gaps, and
+       there is no arithmetic left to get wrong.
+       ⛔ **#process WAS THE ODD ONE OUT, AND FOR A DESKTOP REASON.** It carries
+       `padding-top:clamp(64px,10vh,104px)` against `.section`'s own `clamp(30px,4.6vh,84px)` —
+       84.4px against 38.8 — because it is a `min-height:100vh` composition that centres itself and
+       wanted headroom on a wide screen. Measured on the phone: 89.5px above the divider, 135px
+       below it. Restoring `.section`'s own value closes it to 89.46 against 89.5.
+       ⛔ **DO NOT REPLACE THIS WITH THE 39px IT EVALUATES TO.** It is the same clamp `.section`
+       uses, so the two track each other at every screen height — the same reason D147 kept the
+       gallery's air as an expression rather than the number it happened to produce.
+       ⚠️ Only the TOP changes. `padding-bottom` is a different seam he has not mentioned, and the
+       `min-height:100vh` and the centring are untouched — this only lowers the floor the padding
+       sets, and the section's content is taller than one screen here anyway. */
+    #process{padding-top:clamp(30px,4.6vh,84px)}
+
+    /* --- 9. THE ABOUT STORY IS CENTRED ON THE PHONE — 12 Aug 2026 (D151) -------------------
+       Client: "the title for about us and the text below must also be centre, as well as the CTA."
+       ⚠️⚠️ **PHONE ONLY, AND THAT IS A DELIBERATE READING OF AN AMBIGUOUS INSTRUCTION.** In the same
+       message he said the About change "also applies to desktop, but nothing else that I mentioned
+       here on the other changes applies to desktop, only the about us section part" — and the About
+       change he had just described was cutting Ali (D150). Centring came after that sentence, so it
+       is genuinely unclear whether "only the about us section part" reaches it. ⛔ Desktop is frozen
+       and only the client unfreezes it (§2 rule 15), so the reversible reading wins: the removal is
+       done at every width because he named it, the centring is scoped to the phone until he says
+       otherwise. **He was told this explicitly rather than left to discover it.** If he confirms,
+       move these three rules out of this block — nothing else needs to change.
+       ⛔ **`text-align` ALONE IS NOT ENOUGH AND THIS IS THE PART THAT WOULD HAVE LOOKED FINE HERE
+       AND WRONG ON A NARROWER HANDSET.** `.about-copy` is a flex COLUMN, so each child is a flex
+       item: `text-align` centres the words INSIDE each box, but the boxes themselves are placed by
+       flex. The title carries `max-width:22ch` and the copy `52ch`, and the moment either binds —
+       22ch computes to ~350px against exactly 350px of room here, so it is on the very edge at
+       390px and binds below it — the box shrinks and flex parks it at the START. The auto margins
+       centre the box; text-align centres the line within it. Both are needed.
+       ⚠️ The CTA needs neither: it is a flex item with `align-self:flex-start`, so it is that
+       property, not text-align, that has to change. */
+    #about .about-copy{text-align:center}
+    #about .about-copy .section-title,
+    #about .about-copy .section-sub{margin-left:auto;margin-right:auto}
+    #about .about-cta{align-self:center}
+
+    /* --- 10. "ANSWERS, SET IN STONE" BECOMES A PLAIN ACCORDION — 12 Aug 2026 (D152) ---------
+       Client: "for mobile only, we have to completely redesign the way the answers set in stone
+       section functions. It looks terrible now. So we can have it in a more basic row with the
+       things as a dropdown that all makes it part of it. So we can make it grey with a name in it,
+       and then it just drops down to show that part. But this doesn't have to be centre."
+       ⛔⛔ **WHAT MADE IT LOOK TERRIBLE WAS NOT THE STYLING, IT WAS THAT ONE QUESTION WORE THREE
+       DIFFERENT NAMES.** The 7 Aug design is a CONTENTS PAGE for a wide screen: the row shows a
+       short scannable label ("What it costs"), and a big framed plate beside it carries an eyebrow
+       ("Pricing") plus the real question ("How much does a stone worktop cost?"). Three labels for
+       one item is fine when they sit in separate columns and read as index-then-detail. Stacked on
+       a phone the plate lands directly under the row, so the same item announces itself three times
+       in a vertical column and the framed card reads as a floating panel rather than as that row's
+       answer. ⭐ **The mechanism was already right — `place()` has moved the plate inline below 760px
+       since it was built. It was only ever wearing desktop clothes.**
+       ⭐ **SO: THE ROW TAKES THE QUESTION AND THE PLATE TAKES ONLY THE ANSWER.** One name per item.
+       The row is grey, the panel is welded to its bottom edge, and the pair reads as one control.
+       ⚠️ Left-aligned, per his "this doesn't have to be centre".
+       ⚠️ ONE ROW IS ALWAYS OPEN — that is the existing `select()` behaviour (a re-click on the live
+       row returns early), and it is deliberately NOT changed here: he described opening, not
+       closing, and arriving with the first answer already showing is what teaches the pattern. If
+       he wants tap-to-close it is a real change to the selection logic, not a style. */
+
+    /* ⭐ `--faqMode` DECLARES THE PHONE IN THE STYLESHEET AND THE SCRIPT READS IT BACK — the
+       `--hxMode`/`--galMode`/`--svcMode` idiom (D96, D105, D117), used here for a real reason.
+       The FAQ module already has a `matchMedia('(max-width:760px)')` called `narrow`, and it is
+       load-bearing for `place()` — 760 is where the plate moves inline, because that is the
+       one-column breakpoint of the index. **720 is a different question with a different answer:
+       where the phone BUILD starts.** Hard-coding a second matchMedia would be the second-opinion
+       bug (D51); reading the stylesheet cannot disagree with the stylesheet. */
+    #faq{--faqMode:phone}
+
+    /* 10a. ⭐ THE ROW TAKES THE ENQUIRY FORM'S GREY — 12 Aug 2026 (D154). Client: "I want the top
+       to have that gray color from the form look… the one visit, one price, one team form section."
+       ⛔ **IT HAD TO STOP BEING TRANSLUCENT, AND THAT IS THE WHOLE POINT OF THE CHANGE.** The row
+       was `rgba(244,241,234,0.055)` — 5.5% white — which over `.cta-card`'s panel grey renders as
+       a grey, but over the FAQ's own backdrop (the page's marble floor) renders as *see-through
+       marble*. Same declaration, two completely different results, and his words for it were
+       "that see through top part".
+       ⭐ **SO IT IS BUILT FROM THE FORM'S OWN TWO LAYERS RATHER THAN FROM A SAMPLED HEX.**
+       `.cta-form input` is `rgba(255,255,255,0.045)` sitting on `.cta-card`'s `--ink-2`, so that
+       pair is stated literally here as a flat gradient over the token. It composites to ≈rgb(32,32,36)
+       and, crucially, **it follows `--ink-2` if that token is ever retuned** — a hex copied out of
+       a screenshot would not. */
+    #faq .faq-q{
+      background:linear-gradient(rgba(255,255,255,0.045),rgba(255,255,255,0.045)),var(--ink-2);
+      border:1px solid var(--hair-soft);border-radius:11px;
+      padding:12px 12px;margin-top:7px;gap:10px;align-items:flex-start;
+      transition:background .35s var(--ease),border-color .35s var(--ease);
+    }
+    /* ⛔ the index's own furniture goes: the diamond marks a row in a list of many, and the short
+       label is the thing being replaced. Both would be a second name beside the question. */
+    #faq .faq-q .faq-dot,#faq .faq-q .faq-qt{display:none}
+    #faq .faq-q .faq-qf{
+      display:block;flex:1 1 auto;min-width:0;
+      font-size:13.5px;font-weight:400;line-height:1.4;color:var(--bone);
+      transition:color .35s var(--ease);
+    }
+    #faq .faq-q.on .faq-qf{color:var(--gold-soft,#F6D269)}
+    /* ⛔ the champagne wash and the gold left edge are "this is the live row in a column" language.
+       An open accordion row says that by being open, and by the panel hanging off it. */
+    #faq .faq-q::before{display:none}
+    /* ⭐ ::after IS REPURPOSED AS THE CHEVRON rather than a new element being added — it was the
+       gold left edge, which is going anyway. ⚠️ It has to come out of `position:absolute` to
+       become a flex item; a pseudo-element in a flex container is one once it is in flow. */
+    #faq .faq-q::after{
+      position:static;flex:none;width:8px;height:8px;margin:4px 2px 0 0;
+      background:none;opacity:.7;
+      border-right:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);
+      transform:rotate(45deg);transform-origin:center;
+      transition:transform .35s var(--ease),opacity .35s var(--ease);
+    }
+    #faq .faq-q.on::after{transform:rotate(-135deg);opacity:1}
+    /* ⚠️ the hover nudge has to go or a tapped row keeps a sticky 7px indent on iOS */
+    #faq .faq-q:hover{padding-left:12px}
+    /* the open row squares off its foot so the panel welds to it. ⚠️ The lift goes to 0.075 rather
+       than staying at the closed 0.045 — the open row has to read as pressed, and it is the only
+       thing distinguishing it now that the champagne wash and the gold edge are gone. */
+    #faq .faq-q.on{
+      background:linear-gradient(rgba(255,255,255,0.075),rgba(255,255,255,0.075)),var(--ink-2);
+      border-bottom-color:transparent;border-radius:11px 11px 0 0}
+
+    /* 10b. ⭐ THE DRAWER IS FROSTED GLASS — D154. Client: "I want the drop down to have the see
+       through frosted glass text version, and then I want the top to have that gray color."
+       ⛔ **THE TWO SURFACES SWAP ROLES, WHICH IS WHY BOTH HALVES OF THAT SENTENCE MATTER.** Before
+       this the ROW was the see-through one and the drawer was a near-solid tint; he wants it the
+       other way round — an opaque grey handle with a translucent panel hanging off it.
+       ⭐ `backdrop-filter` is what makes it glass rather than merely transparent: the page's marble
+       floor stays visible THROUGH the drawer but is blurred, so the answer sits on softened stone
+       instead of on legible veining competing with it. The slight `saturate` keeps the warm stone
+       from going grey under the blur. ⚠️ It needs the `-webkit-` pair for iOS Safari, which is the
+       only device this is for. */
+    #faq .faq-plate{
+      display:block;min-height:0;overflow:visible;
+      margin:-1px 0 0;padding:4px 12px 14px;
+      border:1px solid var(--hair-soft);border-top:0;border-radius:0 0 11px 11px;
+      background:rgba(244,241,234,0.055);box-shadow:none;
+      -webkit-backdrop-filter:blur(16px) saturate(1.25);backdrop-filter:blur(16px) saturate(1.25);
+    }
+    /* ⛔ CLOSED ON ARRIVAL, AND CLOSABLE — D154. Client: "currently, the first one stays open."
+       The script writes `.faq-shut` on #faq whenever nothing is selected; `display:none` rather
+       than a height animation because the plate is ONE reused element that moves between rows, so
+       there is no per-row box to collapse. */
+    #faq.faq-shut .faq-plate{display:none}
+    #faq .faq-plate::before{display:none}
+    /* ⛔ THE HEAD IS THE DUPLICATION — eyebrow, repeated question and rule all go. Safe for
+       assistive tech: the panel is `aria-labelledby` the row's button, which carries the question
+       as its accessible name, so the region is still named after this change. */
+    #faq .faq-plate .fp-head{display:none}
+    #faq .faq-plate .fp-a{font-size:13.5px;line-height:1.66}
+
+    /* 10c. the group headings stay — they are real structure, not decoration — but they need air
+       above them now that the rows are boxes rather than hairline-separated lines. */
+    #faq .faq-group + .faq-group{margin-top:clamp(18px,2.6vh,28px)}
+    #faq .faq-gk{margin-bottom:2px}
+
+    /* --- 12. THE GALLERY → STONES SEAM LOSES ITS DOUBLED-UP AIR — 12 Aug 2026 (D158) --------
+       Client: "the get in touch and the cards and the border or the section divider have too much
+       space in between them."
+       ⭐⭐ **THE DIVIDER'S OWN MARGINS ARE SYMMETRIC AND WERE NEVER THE FAULT.** Measured across this
+       seam: **131.7px above the rule, 64.2px below it** — yet `margin:48.72px 0` is equal on both
+       sides. The difference is what each section leaves at its own edge: `#stones` starts its title
+       20px after its box begins, while `.gal-mid` ends **83px** after its last visible element,
+       because its bottom padding reserves the sticky bar so Get in touch cannot be sat on at full
+       travel. That reservation already does exactly the job a divider margin does, so the seam was
+       paying for the gap twice.
+       ⭐ Dropping this ONE divider's top margin leaves 83px above the rule against ~69px below —
+       balanced, and 48.7px shorter. ⛔ **SCOPED TO `#gallery +`, NEVER THE SHARED RULE**: there are
+       eight `.section-divider`s on this page and the other seven sit between sections that do not
+       reserve a sticky bar. D149 had just made the estimator → process seam symmetric on exactly
+       this principle; trimming the shared margin would have broken it again. */
+    #gallery + .section-divider{margin-top:0}
+
+    /* --- 11. THE FOOTER: A CENTRED HEAD, TWO PACKED COLUMNS, A CENTRED FOOT — D153 -----------
+       Client: "for the footer, the footer parts should be centre. So the logo should be centre, and
+       then the subtitle also centre, then the Google reviews and ten year guarantee also there. And
+       then we should put browse and contact next to explore, so it fits in one of the parts, not all
+       below each other. And then also contact the phone and the email below browse next to explore.
+       Then we can have the location and the hours centre, as well as the last part, all rights
+       reserved, sitemap privacy terms and cookies, also centred."
+       ⛔ **`@media(max-width:560px)` COLLAPSES THIS TO ONE COLUMN, WHICH IS THE "ALL BELOW EACH
+       OTHER" HE IS DESCRIBING** — brand, then Explore, then Browse, then Contact, four stacked
+       blocks and a very long footer. His instruction is precise about the fix: two columns, Explore
+       on one side, Browse with Contact beneath it on the other, and the three centred bands (head,
+       location/hours, legal) running full width.
+       ⭐⭐ **`display:contents` ON `.foot-contact` IS THE LOAD-BEARING TRICK.** Area and Hours have to
+       leave their column and centre full-width while Phone and Email stay in column 2 under Browse —
+       but all four are children of one `.foot-contact` div, so as long as that div is a grid item
+       they can only ever go where it goes. `display:contents` dissolves the wrapper and promotes its
+       five children to grid items in their own right, which is what lets four of them be placed
+       independently. ⚠️ It also means `.foot-contact div{...}` still matches them (the selector never
+       cared about the parent's display), so the label-over-value stacking is inherited unchanged.
+       ⚠️ The area map has one row per contact line rather than a single "contact" cell, because
+       several items sharing one grid area would OVERLAP rather than stack. `explore` spans the four
+       rows beside them, which is a rectangle and therefore legal. */
+    /* ⭐ **SECOND PASS, 12 Aug 2026 (D159).** Client, on the D153 build: "we need to have the five
+       star Google reviews and the ten year guarantee as having like a block or a border, like the
+       hero section, because currently it just looks like too much text stacked on top of each
+       other. Then the email and phone number maybe needs to stand out in a different way, because
+       currently the email takes up two lines on mobile. And then the explore and browse don't feel
+       centred — the explore feels too close to the side of the screen, the browse feels too far
+       away from the other side." */
+    #footer .foot-grid{
+      grid-template-columns:1fr 1fr;
+      grid-template-areas:
+        "brand   brand"
+        "explore browse"
+        "phone   phone"
+        "email   email"
+        "area    area"
+        "hours   hours";
+      column-gap:16px;row-gap:0;
+    }
+    /* 11a. the head, centred as one block */
+    #footer .foot-brand{grid-area:brand;display:flex;flex-direction:column;align-items:center;
+      text-align:center;margin-bottom:clamp(22px,3.4vh,34px)}
+    #footer .foot-tag{max-width:32ch;margin-left:auto;margin-right:auto;margin-bottom:16px}
+
+    /* 11a-ii. ⭐⭐ **THE TWO MARKS BECOME BADGES — D159, AND THIS REVERSES D153's OWN REASONING.**
+       That round deliberately gave the guarantee the footer's quiet `.foot-stars` treatment and
+       argued against the hero pill on the grounds that "a bordered badge is hero furniture and
+       would be the loudest thing down here". ⛔ **He looked at it and said the opposite**, and he is
+       right for a reason D153 missed: two unbordered lines of small type, one directly under the
+       other, do not read as two marks at all — they read as a paragraph. The border is what makes
+       each one an object.
+       ⭐ It is the hero's `.chip` verbatim — same radius, border, glass and tracking — rather than a
+       new footer badge, because he asked for "like the hero section" and because a second, nearly
+       identical pill style is how a palette drifts. ⚠️ They stack rather than sitting side by side:
+       measured, the pair needs ~397px against 335px of footer. Two centred pills is still the fix —
+       what he objected to was untreated stacked TEXT. */
+    #footer .foot-stars{
+      display:inline-flex;align-items:center;gap:9px;padding:9px 16px;border-radius:999px;
+      border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
+      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+      font-size:11.5px;color:rgba(244,241,234,0.85);white-space:nowrap;
+    }
+    #footer .foot-guar{display:inline-flex;margin-top:9px}
+
+    /* 11b. ⭐ EXPLORE AND BROWSE, CENTRED AS A PAIR — D159. Each list is narrower than its half of
+       the grid, so left-aligning both put Explore hard against the screen edge while Browse left a
+       wide gap on the right — measured 0px of air on the left against ~32px on the right, which is
+       exactly what he describes. Shrink-wrapping each list and centring it inside its own half
+       gives both the SAME inset from their outer edge, whatever the longest link happens to be.
+       ⚠️ `align-self:start` too, or Explore's six links stretch and the pair stops reading as two
+       lists. ⚠️ The text stays left-aligned INSIDE each list — a centred nav list is unreadable;
+       it is the block that is centred, not the words. */
+    #footer .foot-explore{grid-area:explore;align-self:start;width:max-content;margin-inline:auto}
+    #footer .foot-browse{grid-area:browse;align-self:start;width:max-content;margin-inline:auto}
+
+    /* 11c. ⭐⭐ **THE PHONE AND EMAIL LEAVE THE COLUMN ALTOGETHER — D159.** They were in a 160px
+       half-column, which is why the address wrapped no matter how small the type went; D153 got it
+       onto one line at 12px and he still saw two lines, because his handset is narrower than the
+       one it was measured on. **A number and an address are not a nav list and do not belong in a
+       nav column.** Full width, centred, and shaped as the same badge the marks above use — so they
+       "stand out in a different way", which is what he asked for.
+       ⭐ `white-space:nowrap` is now a GUARANTEE rather than a hope: at full width the address has
+       ~200px of room it does not need, so no wrap is possible at any handset size.
+       ⛔ The "Contact" heading and the "Phone"/"Email" micro-labels are dropped here. They were
+       structure for a column that no longer exists, and a phone number and an email address
+       announce themselves — three stacked labels is the thing he objected to at the top of this
+       same message. */
+    #footer .foot-contact{display:contents}
+    #footer .foot-contact .foot-k{display:none}
+    #footer .foot-c-phone .foot-ck,#footer .foot-c-email .foot-ck{display:none}
+    #footer .foot-c-phone{grid-area:phone;margin-top:clamp(20px,3vh,30px)}
+    #footer .foot-c-email{grid-area:email;margin-bottom:0}
+    #footer .foot-c-phone,#footer .foot-c-email{align-items:center}
+    #footer .foot-c-phone .foot-cv,#footer .foot-c-email .foot-cv{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:9px 18px;border-radius:999px;
+      border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
+      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+      font-size:13px;color:var(--bone);white-space:nowrap;
+      transition:border-color .35s var(--ease),color .35s var(--ease);
+    }
+    #footer .foot-c-email .foot-cv{margin-top:9px}
+    #footer a.foot-cv:hover{border-color:var(--gold);color:var(--gold)}
+
+    /* 11d. location and hours, centred and full width */
+    #footer .foot-c-area,#footer .foot-c-hours{align-items:center;text-align:center}
+    #footer .foot-c-area{grid-area:area;margin-top:clamp(22px,3.2vh,32px)}
+    #footer .foot-c-hours{grid-area:hours;margin-bottom:0}
+
+    /* 11e. the legal foot, stacked and centred rather than justified to the two edges */
+    #footer .foot-bar{flex-direction:column;align-items:center;text-align:center;gap:12px}
+    #footer .foot-legal{justify-content:center;flex-wrap:wrap;gap:8px 18px}
+
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -4379,6 +5286,16 @@
       </div>
     </div>
     <div class="services-grid" id="svcGridServices"></div>
+    <!-- ⭐ THE CATCH-ALL UNDER THE SIX TILES — 12 Aug 2026 (D120). Client: "we just need to add a
+         CTA below that says, not seeing your space here? Contact us. Then we have that contact us
+         underlined as well."
+         ⛔ MOBILE ONLY, and this is MARKUP, which is the part that needs care: CSS scopes itself
+         to a media query, but a new element exists at EVERY width the moment it is added. It is
+         `display:none` in the base rule and switched on only inside `@media(max-width:720px)`, so
+         the frozen tablet and desktop compositions never see it (§2 rule 15).
+         ⚠️ It is a real <a> to the enquiry block, not a button — the sticky bar's "Get a quote"
+         already points at #cta, so this stays consistent with it. -->
+    <p class="svc-catchall">Not seeing your space here? <a href="#cta">Contact us</a></p>
   </section>
 
   <!-- gold divider: services → projects (was the gallery sheet climbing over the frozen grid) -->
@@ -4571,13 +5488,22 @@
        ⚠️ It used to close stones → process. The estimator moved in between on 6 Aug, and the
        strip stayed WITH THE STONE SHOWROOM, because brands-we-work-with is stone content.
        The space BELOW the seam is now #estimator's own padding-top. -->
-  <section style="padding:clamp(74px,13vh,150px) 0 0">
-    <div style="max-width:1320px;margin:0 auto 22px;padding:0 clamp(20px,5vw,64px)">
+  <section class="strip-band" style="padding:clamp(74px,13vh,150px) 0 0">
+    <div class="strip-head" style="max-width:1320px;margin:0 auto 22px;padding:0 clamp(20px,5vw,64px)">
       <span class="eyebrow rise">Brands we work with</span>
     </div>
     <div class="strip-rule">
       <div class="strip"><div class="strip-track" id="strip"></div></div>
     </div>
+    <!-- ⭐ THE PHONE GETS A PLAIN DIVIDER INSTEAD OF THE MARQUEE — 12 Aug 2026 (D143).
+         Client: "if we cannot name the suppliers, then remove that rolling bar divider
+         completely and just make it a regular divider."
+         ⛔ NEW MARKUP CANNOT BE SCOPED BY A MEDIA QUERY (D120) — the element exists at every
+         width the moment it is added, so it defaults to `display:none` in the base rule and
+         the phone query opts in. ⚠️ Scoped to the phone and NOT removed above 720px: the strip
+         is an index.html element at every width and desktop is frozen (§2 rule 15) — his own
+         instruction is that the other devices stay exactly as they are until he calls them. -->
+    <div class="section-divider strip-swap" aria-hidden="true"><span class="sd-line"></span></div>
   </section>
 
     <!-- ===================== ESTIMATOR =====================
@@ -4831,13 +5757,13 @@
            (see the ABOUT COLLAGE IIFE), and .rise holds opacity:0 until its own observer fires,
            which would fight the opacity written here every frame. -->
       <!-- ⭐ THE PEOPLE ARE NOW IN THE COLLAGE (client, 9 Aug). The separate credit strip that
-           used to sit under the story is gone; the three directors are three EQUAL tiles across
-           the foot of the mosaic, each carrying its own name and role. Three work photographs
-           sit above them, so the block reads: this is what we do, and these are the people who
-           do it. DOM order is still top-to-bottom by grid row, which is what the build order
-           depends on. -->
+           used to sit under the story is gone; the directors are EQUAL tiles across the top band
+           of the mosaic, each carrying its own name and role. Three work photographs sit below
+           them, so the block reads: these are the people, and this is what they do. DOM order is
+           still top-to-bottom by grid row, which is what the build order depends on.
+           ⚠️ TWO directors since 12 Aug 2026 (D150), not three — see the note on the tiles. -->
       <div class="about-collage" id="aboutCollage">
-        <!-- ⚠️ The three portraits are PLACEHOLDERS and are deliberately not filled with stock
+        <!-- ⚠️ Both portraits are PLACEHOLDERS and are deliberately not filled with stock
              faces: a real name against someone else's photograph is a lie the page cannot
              afford. The plate is built at its finished size, so when the shoot lands the only
              change is an <img> dropped in above the figcaption.
@@ -4858,13 +5784,13 @@
           <div class="sheen"></div>
           <figcaption class="acp-who"><b class="acp-name">Rimsha</b><span class="acp-role">Operations Director</span></figcaption>
         </figure>
-        <figure class="ac-tile ac-p ac-p3 glow-card">
-          <span class="acp-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20c1.4-4.2 12.9-4.2 14.4 0"/></svg>
-          </span>
-          <div class="sheen"></div>
-          <figcaption class="acp-who"><b class="acp-name">Ali</b><span class="acp-role">Sales Consultant</span></figcaption>
-        </figure>
+        <!-- ⛔ THERE IS NO THIRD PORTRAIT. Removed 12 Aug 2026 (D150) on the client's instruction —
+             "we are only gonna have Nick and Remsha, we're not gonna have Ali, so you can divide
+             that into two sections instead of the three that are there" — and this is the ONE
+             change in that round he authorised for DESKTOP as well as the phone (§2 rule 15).
+             ⚠️ Do not re-add a tile here without also restoring the third column in the grid
+             (`.about-collage`) and the third entry in `HINGE` (the ABOUT COLLAGE IIFE). All three
+             are indexed by DOM position and they must agree. -->
         <figure class="ac-tile ac-w1 glow-card"><img alt="The owner shaking hands with a customer" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
         <figure class="ac-tile ac-w2 glow-card"><img alt="Choosing stone samples together" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
         <figure class="ac-tile ac-w3 glow-card"><img alt="Fitting a worktop" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
@@ -5185,6 +6111,16 @@
         </a>
         <p class="foot-tag">Bespoke stone worktops, from slab selection to a flawless fit.</p>
         <span class="foot-stars"><b>★★★★★</b> 5.0 · Google reviews</span>
+        <!-- ⭐ THE GUARANTEE MARK, ASKED FOR IN THE FOOTER ON 12 Aug 2026 (D153): "then the Google
+             reviews and ten year guarantee also there". Only the Google line was ever here; the
+             pair has lived in the HERO since the start (`.hero-chips`), so this is the second half
+             of a set arriving where he expects it, not a new claim — the ten year guarantee is
+             stated in the CTA copy, the stone readout, the process copy and the FAQ.
+             ⛔ It takes the footer's own quiet `.foot-stars` treatment, NOT the hero's `.chip`
+             pill: a bordered badge is hero furniture and would be the loudest thing down here.
+             ⛔ `display:none` in the base rule — new markup exists at every width the moment it is
+             added (D120), and the footer above 720px is frozen (§2 rule 15). -->
+        <span class="foot-stars foot-guar"><b>10</b> year guarantee</span>
       </div>
       <!-- ⭐ CUT FROM FIVE LINK COLUMNS TO TWO, 9 Aug (client: "completely clean up the footer,
            it is way too big... you won't have to list everything out, you'll have those main
@@ -5199,7 +6135,12 @@
            hub, and let the hub link its own children. That is cleaner hub-and-spoke than 25
            sitewide links were, and it keeps every family reachable. Do not remove the Browse
            column; if it has to shrink further, take rows from Explore instead. -->
-      <div class="foot-col">
+      <!-- ⚠️ `foot-explore` / `foot-browse` / `foot-c-*` below are NAME HOOKS ONLY, added 12 Aug
+           2026 for the phone's two-column footer (D153). No base rule references any of them, so
+           they are inert at every width above 720px — which is the point: the alternative was
+           positional `:nth-child()` selectors against a markup order nobody would know was
+           load-bearing. -->
+      <div class="foot-col foot-explore">
         <div class="foot-k">Explore</div>
         <ul>
           <!-- ⚠️ There is no /services/ index page, so this points at the landing section,
@@ -5214,7 +6155,7 @@
           <li><a href="/trade/">For the trade</a></li>
         </ul>
       </div>
-      <div class="foot-col">
+      <div class="foot-col foot-browse">
         <div class="foot-k">Browse</div>
         <ul>
           <li><a href="/materials/">Materials</a></li>
@@ -5225,10 +6166,10 @@
       </div>
       <div class="foot-col foot-contact">
         <div class="foot-k">Contact</div>
-        <div><span class="foot-ck">Phone</span><a class="foot-cv" href="tel:+448000982812">0800 098 2812</a></div>
-        <div><span class="foot-ck">Email</span><a class="foot-cv" href="mailto:info@topcatworktops.co.uk">info@topcatworktops.co.uk</a></div>
-        <div><span class="foot-ck">Area</span><span class="foot-cv">London, Hertfordshire, Essex &amp; Berkshire, plus nationwide templating</span></div>
-        <div><span class="foot-ck">Hours</span><span class="foot-cv">Monday to Friday, 8am to 6pm</span></div>
+        <div class="foot-c-phone"><span class="foot-ck">Phone</span><a class="foot-cv" href="tel:+448000982812">0800 098 2812</a></div>
+        <div class="foot-c-email"><span class="foot-ck">Email</span><a class="foot-cv" href="mailto:info@topcatworktops.co.uk">info@topcatworktops.co.uk</a></div>
+        <div class="foot-c-area"><span class="foot-ck">Area</span><span class="foot-cv">London, Hertfordshire, Essex &amp; Berkshire, plus nationwide templating</span></div>
+        <div class="foot-c-hours"><span class="foot-ck">Hours</span><span class="foot-cv">Monday to Friday, 8am to 6pm</span></div>
       </div>
     </div>
     <div class="foot-bar">
@@ -6812,8 +7753,33 @@ function metrics(){
     step=Math.max(cw*0.52,W*0.085,(W+cw*2)/SLABS.length);
   }
   const H=Math.max(wheel.clientWidth/2,1);
-  const R=(H*H+BEND_PX*BEND_PX)/(2*BEND_PX);
+  const bend=wheelBend();
+  const R=(H*H+bend*bend)/(2*bend);
   return {step,H,R};
+}
+/* ⭐ THE BEND IS THE SAG AT THE EDGE OF THE FAN, AND IT IS THE ONLY CURVE CONTROL THERE IS.
+   R is derived from it as a sagitta: at ax = H the arc term is exactly `bend` px, so `bend` is
+   how far the outermost lit card hangs below the centre one. Everything else — the tilt, which
+   is asin(ax/R) — follows from the same circle, so one number moves the whole shape.
+   ⛔ **BEND_PX IS ABSOLUTE AND H IS NOT, WHICH IS WHY THE PHONE CURLED SO HARD.** The same
+   120px of sag sits over a 720px half-width on a 1440 desktop (a ratio of 0.17) and over a
+   187px half-width on a 375 phone (0.64) — very nearly four times the curve, from a constant
+   nobody changed. The cards at the edges dived instead of running off the sides.
+   ⭐ Declared in CSS and read back here — the --hxMode/--galMode/--svcMode idiom (D96, D105,
+   D117) — so the script keeps ONE opinion about what a phone is. It is declared ONLY inside
+   @media(max-width:720px); unset, which is desktop and tablet, falls back to BEND_PX exactly.
+   ⚠️ **CACHED, AND THAT IS NOT A MICRO-OPTIMISATION.** metrics() is called from layout(), which
+   runs on EVERY rAF frame, and getComputedStyle() forces a style resolve. The one complaint
+   still open on this build is that the animations are not smooth on his iPhone (§9.3); a
+   per-frame style read on the wheel is precisely the thing not to add. Invalidated on resize,
+   which is the only moment the media query can flip. */
+let bendCache=null;
+function wheelBend(){
+  if(bendCache===null){
+    const v=parseFloat(getComputedStyle(wheel).getPropertyValue('--wheelBend'));
+    bendCache=(isFinite(v)&&v>0)?v:BEND_PX;
+  }
+  return bendCache;
 }
 /* how many times the range has to go round before the belt covers the screen. Desktop only:
    below 1121px metrics() already carries a (W+cw*2)/n coverage term of its own, and repeating
@@ -7248,7 +8214,7 @@ if(sfPanel&&sfBtn){
   if(sfClear)sfClear.addEventListener('click',()=>{ clearStoneFilters(); applyStoneFilter(); });
   refreshFilterUI();
 }
-window.addEventListener('resize',()=>{ if(galleryOn)layout(current); else if(!wheelPlayed)primeWheel(); });
+window.addEventListener('resize',()=>{ bendCache=null; if(galleryOn)layout(current); else if(!wheelPlayed)primeWheel(); });
 
 /* build once to get a real card width on the page, then rebuild against the belt that width
    implies. Two passes only at boot, never per frame. */
@@ -7454,7 +8420,26 @@ function collapseAllReviews(){
    the next three ride in from the right (and the reverse going back), so you work through the
    reviews a handful at a time instead of seeing the whole wall at once. */
 const reduceRev=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let revEntered=reduceRev;                     // reduced motion skips the entrance — straight to the settled grid
+/* ⭐⭐ THE PHONE HAS NO ENTRANCE AT ALL — 12 Aug 2026 (D145). Client: "I don't want the 'hear it
+   from your neighbours' review cards to have an animation that comes up when the user scrolls to
+   that section. It must already be there and then just function the exact same way that it does
+   now."
+   ⛔⛔ **D134 ANSWERED THE SAME COMPLAINT AND ONLY GOT HALF OF IT, WHICH IS WHY HE IS ASKING
+   TWICE.** That round measured the section, found the deck and all sixteen cards already at
+   opacity:1 with no transform, and concluded the entrance was the section HEAD alone (`.rise`).
+   That reading was right about the CSS and wrong about the section: the cards are not dressed by
+   a stylesheet at all, they are positioned by `soloRender()`, and its `!revEntered` branch parks
+   all three ~400px off-screen until a scroll watcher flips the flag. Nothing in the computed
+   style says so, which is exactly how it survived a measurement.
+   ⭐ **THE PRECEDENT WAS ALREADY HERE AND IT IS REUSED RATHER THAN INVENTED**: `reduceRev` has
+   always meant "skip the entrance, start seated". A phone now means the same thing.
+   ⚠️ **THE TEST IS `revSolo()`, NOT A MEDIA QUERY, AND THAT IS D93's RULE.** This module already
+   decides what a phone is in exactly one place — `perPage()===1`, which also sets the `.rev-solo`
+   class the stylesheet dresses off. A `matchMedia` here would be a second opinion, and the two
+   already disagree at exactly 720px. ⛔ Nothing above 720px reads this: `revSolo()` is false
+   there and desktop keeps its own criss-cross deal, untouched (§2 rule 15). */
+function revNoEntrance(){ return reduceRev || revSolo(); }
+let revEntered=revNoEntrance();               // reduced motion AND the phone skip it — straight to the settled deck
 let gridSlots=[];                             // each card's resting place, kept so the entrance can seat them one by one
 let entryOff=900;                             // how far off-screen a waiting card parks (set in gridLayout)
 let gridPage=0;
@@ -7838,7 +8823,13 @@ function soloPlace(drag,settle){
      loop takes over once that ride is done. ⚠️ A swipe during that window is not stranded: the
      drag branch below claims `.rev-live` immediately, which is the correct answer anyway — the
      customer's finger outranks the entrance. */
-  if(settle && !deck.classList.contains('rev-live')){
+  /* ⛔ …AND WITH NO ENTRANCE THERE IS NOTHING TO BORROW CSS FOR (D145). Skipping this branch is
+     the half of that change that makes it look like nothing happened: fall through and `.rev-live`
+     goes on SYNCHRONOUSLY, which is what `#reviews.rev-solo .rev-deck.rev-live .rev{transition:none}`
+     keys off. Leave the branch in and the first seat writes a transform with the stylesheet still
+     in charge — the cards would ease from identity into their slots on load, which is a different
+     animation in the same place rather than no animation at all. */
+  if(settle && !deck.classList.contains('rev-live') && !revNoEntrance()){
     soloStop(); soloAnim=0; soloRender();
     clearTimeout(soloLiveT);
     soloLiveT=setTimeout(()=>{ if(revEntered) deck.classList.add('rev-live'); },820);   // ⚠️ ≥ --revRoll
@@ -8244,6 +9235,12 @@ const REV_EXIT_LINE=0.68;
 let revLastY=window.scrollY, revDir=0;
 function checkRevSequence(){
   if(reduceRev)return;                                   // reduced motion stays on the settled grid
+  /* ⭐ PHONE: the deck is seated and STAYS seated (D145). The early return is what stops the
+     EXIT half from running too — without it a scroll back up past REV_EXIT_LINE would set
+     revEntered=false and throw the three cards off-screen again, so the section would be empty
+     on the way back down. ⚠️ It seats rather than merely returning, because a resize from a
+     desktop width into a phone one arrives here with revEntered already false. */
+  if(revSolo()){ if(!revEntered){ revEntered=true; soloPlace(0,true); } return; }
   if(isDesktopRev())return;                              // desktop uses the backflip module instead
   /* a mode-change re-centre is driving the scroll — keep the baseline fresh but don't read a
      direction from it, or the automated travel would fire the exit and empty the wall */
@@ -8356,7 +9353,15 @@ requestAnimationFrame(glowTick);
      the pile forming — happens on the approach, while the border above is still coming down the
      screen. The hold on the formed pile before SPREAD_START then reads as a beat before the
      break-out rather than as the tail of an arrival. ⛔ Desktop keeps 0.40/1.86 untouched. */
-  const GATHER_FROM_P=0.02, GATHER_TO_P=0.72;
+  /* ⭐ THE PHONE'S GATHER STARTS LATER AND RUNS LONGER — 12 Aug 2026 (D125). Client: "the
+     animation is not coming in correctly, it must follow slower. As the View our project gallery
+     comes to the top, then just delay when the first card comes in."
+     ⚠️ These are fractions of the APPROACH — 0 as the section's top enters the bottom of the
+     screen, 1 as it reaches the top. At 0.02 the first card was already flying before the title
+     had cleared the fold, which is why it read as arriving ahead of its own heading. 0.30 holds
+     every card back until the heading is most of the way up the screen, and 0.98 spends the rest
+     of the approach on the gather instead of finishing it a third of the way in. */
+  const GATHER_FROM_P=0.30, GATHER_TO_P=0.98;
   const SPREAD_START=0.27, SPREAD_END=0.47;      // hold on the FORMED pile (the gather finishes ~0.19), then break straight
                                                  // out: front four onto the walls, rear four back down the corridor
   /* ⭐ THE PHONE BREAKS OUT SOONER TOO — 11 Aug 2026. Pulling only the gather earlier would have
@@ -8368,7 +9373,26 @@ requestAnimationFrame(glowTick);
      ⛔ Desktop keeps 0.27/0.47. ⚠️ WALK_START is deliberately NOT moved: the four settled cards
      are clickable between SPREAD_END and WALK_START, and bringing the spread forward without
      the walk simply makes that settled, usable state last longer. */
-  const SPREAD_START_P=0.08, SPREAD_END_P=0.28;
+  /* ⭐ WIDENED FOR THE ACCORDION — D125. The old 0.08→0.28 opened the whole pile inside 0.15 of
+     a viewport, which with every card moving at once is the "it's just jumping into position"
+     he described. The window now spans 0.10→0.88 of the phone clock, and COL_STAG below spends
+     part of it dealing the cards out one at a time. */
+  const SPREAD_START_P=0.10, SPREAD_END_P=0.88;
+  /* ⭐ THE ACCORDION — D125. Client: "it should then slowly one by one, just like an accordion,
+     just filtered down." Each card's own opening is offset by its place in the column, so the
+     first is already extending while the eighth has not started. 0.58 of the window is spent on
+     the deal and 0.42 on any one card's travel — enough that they clearly follow one another
+     rather than sliding as a block, without the last card lagging so far it arrives after the
+     first has left the screen. ⚠️ Fraction of the SPREAD window, not of the page. */
+  const COL_STAG=0.58;
+  /* ⭐ ONE THIRD OFF THE HEIGHT — D125. Client: "the blocks are too big, make them one third
+     smaller than they are now only on the height, not on the width. The width is fine."
+     ⛔ **THIS IS THE CARD'S OWN RATIO, NOT A `scaleY` ON THE TRANSFORM, AND THAT IS THE WHOLE
+     POINT.** Squashing the card with a non-uniform scale squashes the PHOTOGRAPH inside it with
+     it — kitchens and people visibly stretched. Changing the ratio leaves `object-fit:cover` to
+     re-crop the same picture into a shorter window, which is what "smaller on the height" means
+     to anyone looking at it. */
+  const COL_SQ=2/3;
   const WALK_START=0.56,  WALK_END=0.70;         // hold the layout, then walk forward — window tightened
                                                  // (was 0.58–0.82) so the set-to-set walk is quicker/smoother
   /* the hallway — the stage's perspective is 1500px, and all of this is depth along it:
@@ -8423,6 +9447,8 @@ requestAnimationFrame(glowTick);
      still clears the pinned header on a short screen (checked at 1200×655 / 1366×610). */
   const STACK_SC=1.18;
   const PEEK=0.062;              // upward nudge per depth step, fraction of card height
+  const PEEK_PHONE=0.17;         // ⭐ D125 — see stackPos: the phone's card is a third shorter,
+                                 // so the same fraction would give a third of the peek
   const PEEK_CARDS=[1,2];        // which cards wear a gold edge while stacked, to accent the stack's peeking edges
 
   /* Sizing only changes with the viewport, so it's measured on resize rather than per frame —
@@ -8468,7 +9494,10 @@ requestAnimationFrame(glowTick);
     const byH=(avail-2*margin-PAIR_G)/2/0.66;
     const byW=w*(0.5-SIDE_MARGIN-MID_BAND/2)-MID_GAP;
     cw = phone ? Math.min(w*0.42,300) : Math.min(w*0.30,byH,byW,430);
-    ch=Math.round(cw*0.66);
+    /* ⭐ the phone's card is a third shorter than its 0.66 ratio would make it (D125, COL_SQ).
+       It applies to the PILE as well as the column, deliberately — they are the same elements,
+       and a pile of tall cards that became short ones on opening would read as two designs. */
+    ch=Math.round(cw*0.66*(phone?COL_SQ:1));
     /* Centre the PILE on the stage as well. Its raw extent is lopsided — the peek nudges run
        upward while the front card is the biggest and hangs lowest — so measure the real top and
        bottom of the eight and take out the difference. Cheap, and exact at any card size. */
@@ -8493,21 +9522,181 @@ requestAnimationFrame(glowTick);
        ⛔ Desktop keeps the extent-centring above, untouched — it composes eight peeking edges
        against a header-less stage and was signed off that way (D91). */
     if(phone) stackY=(navH-barH)/2;
+    /* ================= ⭐ THE COLUMN (D122) — phone only =================
+       ⛔ **`M.h` MUST STAY THE VIEWPORT, NOT THE STAGE, AND THIS IS THE TRAP.** Every other
+       function here reads `M.h` as "one screen": entryPos launches a card `M.h*0.62` below the
+       pile, sidePos shifts by `M.h*0.07`. The stage is about to become ~1,900px tall, so if M.h
+       became the stage the cards would launch from two thousand pixels below and the gather would
+       play out entirely off-screen — the section would look empty. M.h is pinned to innerHeight
+       on a phone and the tall number is kept separately, in colStageH. */
+    if(phone){
+      const vhNow=window.innerHeight;
+      /* full-bleed rectangle: the stage width less one margin a side, and the card's own 0.66
+         ratio carried with it, which is what makes each slot a landscape band rather than a crop */
+      const colW=Math.min(w-2*22,460);
+      colSc=colW/cw;                       // the zoom, applied to the SAME card element
+      colH=ch*colSc;
+      colGap=Math.round(Math.min(18,Math.max(10,vhNow*0.018)));
+      /* the title and subtitle sit above the first card; reserve their real measured height plus
+         the nav the section scrolls under, so slot 0 never lands on the words (D110's fault) */
+      /* ⛔ **READ THE SUBTITLE'S REAL BOTTOM, DO NOT REBUILD IT FROM PARTS (D124).** This used to
+         be `navH + copyH + air`, which silently assumed `.gal-mid` still padded itself by the
+         nav. D124 took that padding out, and a formula holding the old assumption would have
+         left a 41px hole between the subtitle and the first card — the same class of fault as
+         two numbers describing one distance (D107). `offsetTop` is relative to `.gal-mid`, which
+         sits at the stage's top edge, so this IS the offset from the stage top. */
+      const subEl=mid&&mid.querySelector('.section-sub');
+      const copyBottom=subEl ? (subEl.offsetTop+subEl.offsetHeight) : (navH+140);
+      /* ⛔ **THE FAN HANGS UPWARD, SO THE COLUMN HAS TO START A HALF-FAN LOWER — D128.** Every
+         peeking edge is nudged ABOVE the front card, so a pile centred on slot 0 reaches
+         `(N−1) × peek / 2` higher than slot 0 does — 41px — and that is what put the back of the
+         deck through the subtitle in the client's screenshot. Reserving it here, in the column's
+         own start, keeps the pile clear of the copy AND leaves the gap below the subtitle honest
+         once the cards have dealt out. */
+      /* ⭐⭐ **THE FIRST CARD SITS THE SAME DISTANCE BELOW THE SUBTITLE AS THE SERVICE TILES DO —
+         12 Aug 2026 (D147).** Client: "the first card, the book matched island, should be slightly
+         closer to the subtitle like on the surfaces for every space section where those cards are
+         also close to the subtitle. Same distance."
+         ⭐ **IT IS THE SAME EXPRESSION, NOT A COPIED NUMBER.** `#services .services-grid` carries
+         `margin-top:clamp(18px,3vh,30px)`, so this is that clamp written in JS. Measured 25.3px in
+         both places on an 844px screen, and the two now track each other at every screen height
+         instead of agreeing once. ⛔ Do not replace it with the 25 it happens to evaluate to —
+         two numbers describing one distance is D107, and this project's most repeated bug.
+         ⛔⛔ **AND THE 42.8px THAT WAS ADDED HERE WAS NOT SPACING, IT WAS A RESERVATION FOR THE
+         PILE — READ THE stackY NOTE BELOW BEFORE TOUCHING EITHER.** D128 pushed the whole column
+         down by half the fan's depth because the pile is centred on slot 0 and therefore reaches
+         `fan/2` ABOVE it, which is what put the back of the deck through the subtitle. Measured
+         here: card 0 started 35.4px under the copy and drifted DOWN to 78.2 as the deal played.
+         That reservation is now unnecessary — the fan hangs entirely downward instead. */
+      const colAir=Math.min(30,Math.max(18,vhNow*0.03));
+      colTop=Math.round(copyBottom+colAir);
+      /* and the actions ride the bottom of .gal-mid, so the stage has to end BELOW the eighth
+         card with room for them and the sticky bar */
+      const actH=(midActions&&midActions.offsetHeight)||56;
+      /* ⭐ **GET IN TOUCH SITS BELOW THE LAST CARD — D129, TIGHTENED 12 Aug 2026 (D158).**
+         Client (D129): "move the get in touch CTA below the last card, slightly further away from
+         the last card, in the middle between the last card and the divider." Then, on the result:
+         *"the get in touch and the cards and the section divider have too much space in between
+         them."*
+         ⚠️ **D129 IS PARTLY REVERSED HERE AND THE REASON MATTERS.** Its air term was solved to make
+         the CTA sit exactly HALFWAY: the gap above it is `F − 24` and the gap below it is
+         `barH + 24` = 83px (the actions ride `.gal-mid`'s bottom padding, which reserves the sticky
+         bar), so equalising them means `F = 107`. Measured, that came out at **82.4px above and
+         83.0px below — perfectly centred, and too much of both.** Centring was the right answer to
+         the question he asked then; it is not a reason to keep the total this large now.
+         ⭐ 0.082 gives ~67 on an 812px screen, so the gap above the CTA drops **82.4 → ~44** and the
+         column gets ~38px shorter. ⛔ The `barH` term is NOT touched: it is what stops the CTA
+         sitting under the sticky bar at the instant the column finishes travelling, which is a
+         functional clearance, not spacing. The doubled-up air below it is dealt with at the divider
+         instead — see `#gallery + .section-divider` in the phone block. */
+      const foot=Math.round(actH+barH+Math.max(56,vhNow*0.082));
+      colStageH=Math.round(colTop+PROJECTS.length*(colH+colGap)-colGap+foot);
+      /* ⭐ D127: the stage is a 100vh window again. The COLUMN's height lives on `.gal-mid` (so
+         Get in touch lands at the column's end, not the screen's) and on `travelMax`. */
+      stage.style.height='';
+      if(mid) mid.style.height=colStageH+'px';
+      travelMax=Math.max(0,colStageH-vhNow);
+      /* the scroll spent holding the screen still while the cards arrive and open out. ⚠️ Long
+         enough that the accordion is not a flick — he asked for it slower twice (D125) — and
+         short enough that a customer does not think the page has frozen. */
+      /* ⛔⛔ **animPx IS 0 ON A PHONE — 12 Aug 2026 (D157). THE HELD RUN WAS SCROLL THAT BOUGHT
+         NOTHING, AND IT IS THE "STUCK" HE CAN FEEL.** Client: "the view our project gallery section
+         just feels like it's stuck somehow… I can still feel like something is tied to the scroll.
+         I have to scroll three times before it actually starts letting me go through that section."
+         ⭐ **THIS IS THE OTHER HALF OF D142 AND IT SHOULD HAVE GONE WITH IT.** `animPx` is the scroll
+         reserved for the animation to be SCRUBBED against — it existed only so `q` had a runway to
+         be read off. D142 moved the accordion onto a wall clock, so nothing reads that runway any
+         more, but the runway stayed: `0.85 × 844` = **717px of scrolling on an 844px screen during
+         which the page is pinned and, by construction, nothing moves at all.** Three flicks that do
+         nothing, which is exactly the count he reports.
+         ⭐ At 0, `animFrac` is 0 and `travel` becomes `p × travelMax` — the column moves the instant
+         the finger does, while the deal plays out on its own clock beside it. That is what "the
+         animation just plays, it's not tied to scroll at all" actually asks for.
+         ⚠️ **WHAT THIS GIVES UP, SO NOBODY IS SURPRISED**: D127's promise that "travel is 0 at the
+         moment the animation ends", i.e. that the accordion finishes on the frame showing the FIRST
+         card at the top. It cannot survive a page that is free to scroll during the animation, and
+         he has asked for the freedom. ⭐ If he ever wants a short beat back, this is the one number
+         — a small fraction of vh, not 0.85. */
+      animPx=0;
+      scroll.style.height=(vhNow+animPx+travelMax)+'px';
+      /* ⭐ THE PILE FORMS AT SLOT 0 AND SIMPLY GROWS INTO IT — "zoom and extend", his words. The
+         eight fly in and stack essentially where the first card is going to live, so nothing has
+         to travel sideways to start the column; cards 2-8 just slide down out of it.
+         ⚠️ **THE FAN HANGS UPWARD, SO THE PILE IS DROPPED BY HALF OF IT.** Every peeking edge is
+         nudged ABOVE the front card, so a pile whose front card sits exactly on slot 0 reaches
+         `7 × peek` higher — with D125's larger peek that is 82px, and it put the back of the deck
+         through the subtitle. Lowering by half centres the whole fan on the slot instead, which
+         costs the opening move 41px and keeps the copy clear. */
+      /* ⭐⭐ **THE FAN NOW HANGS ENTIRELY BELOW SLOT 0 RATHER THAN BEING CENTRED ON IT — D147.**
+         This is the line that lets the gap above be honest. Dropping the pile by the WHOLE fan
+         instead of half of it puts its topmost card exactly ON slot 0, so nothing in the pile can
+         ever reach above where card 0 is going to live — and therefore nothing has to be reserved
+         above it. D128's `fan/2` bought clearance by moving the column down forever to make room
+         for a pile that exists for a fraction of one second; this buys the same clearance for free.
+         ⭐ **IT ALSO MAKES THE MOVE MORE LITERALLY WHAT HE ASKED FOR.** Centred on the slot, card 0
+         started 42.8px HIGH and drifted down into place — measured. Now it starts on its slot and
+         never moves at all, and cards 2-8 slide down out from under it. D142: "it will just go
+         straight down." ⚠️ Nothing about the pile's SHAPE changes: same peek, same depth order,
+         same z-order. Only where the stack as a whole is anchored. */
+      const fanFull=(PROJECTS.length-1)*ch*PEEK_PHONE;
+      stackY=colTop+colH/2-vhNow/2+fanFull;
+    }else{
+      stage.style.height='';
+    }
     stage.style.setProperty('--cw',cw+'px'); stage.style.setProperty('--ch',ch+'px');
     stage.style.setProperty('--galBandY',bandY+'px');   // the title block rides the same band
     /* D113: the phone's copy block spans the stage and pads itself clear of the fixed nav and
        the sticky bar. It reads these rather than restating 78/59 in the stylesheet. */
     stage.style.setProperty('--galNavH',navH+'px');
     stage.style.setProperty('--galBarH',barH+'px');
-    M={w,h};
+    M={w,h:phone?window.innerHeight:h};
+  }
+
+  /* ⭐ THE COLUMN SLOT — D122, phone only. One below the other, in PROJECT order.
+     ⚠️ `SLOTS[i].ord` is the GATHER order (rear set first, so the pile builds back to front and
+     the front card caps it off). That is not the reading order, and using it here would print the
+     projects down the page in the sequence they happened to fly in. The column is `s*PER_SET+i`,
+     which is the order the projects are authored in. */
+  function columnPos(i,s){
+    const n=s*PER_SET+i;
+    /* ⚠️ D127: measured against the 100vh STAGE, not the column's own height — the column is
+       brought past the window by `travel` on the set planes, not by living inside a tall box. */
+    return {x:0, y:colTop+n*(colH+colGap)+colH/2-M.h/2, rot:0, sc:colSc};
   }
 
   /* the three states a card moves between:
      flies in from its side → lands on the pile of eight → slides straight out to its side
      of the stage (front set) or recedes with its plane down the corridor (rear set) */
+  /* ⭐⭐ **THE PILE AND THE COLUMN ARE ONE ORDER NOW — 12 Aug 2026 (D128).** Client: "the top card
+     should be the one that's at the back, and then the one that's in the front at the end of the
+     first part of the animation must go all the way down. Then the second one is second last, and
+     the third one is third last, and so on."
+     ⭐ **HE IS DESCRIBING A DECK BEING DEALT, AND IT MAKES THE TWO ORDERS ONE FUNCTION.** The card
+     at the BACK of the pile (its edge peeking highest) becomes the FIRST card of the column; the
+     card in front — the whole one you are looking at — travels all the way to the bottom. So the
+     pile's depth is simply the column slot counted backwards, and nothing else has to be kept in
+     step: arrival, stacking and dealing all read off `colOrd`.
+     ⚠️ Before this, the column used project order and the pile used a desktop dealing order that
+     had no relationship to it, so the deck opened into a sequence with no visible logic. */
+  const colOrd=(i,s)=>s*PER_SET+i;                                  // the card's place in the column
+  const pileDepth=(i,s)=> phone ? (PROJECTS.length-1)-colOrd(i,s)   // column slot 0 = deepest = top of the fan
+                                : (PER_SET-1)-i + s*PER_SET;
   function stackPos(i,s){
-    const d=(PER_SET-1)-i + s*PER_SET;              // depth behind the front card: set 0 is the front
+    const d=pileDepth(i,s);                         // depth behind the front card: set 0 is the front
                                                     // of the pile (0..3), set 1 stacks behind/above (4..7)
+    /* ⭐ **THE PHONE'S PEEK IS A BIGGER FRACTION BECAUSE ITS CARD IS SHORTER — D125.** The nudge
+       is a share of card HEIGHT, and D125 took a third off that height, which quietly took a
+       third off the peek with it: 6.4px became 4.3px and the pile closed up into what looked
+       like one card. Client: "we need it to stack evenly so you can see the cards behind the
+       first one." 0.17 puts it back to ~12px a step, so seven edges fan clearly above the front
+       card. ⚠️ Desktop keeps 0.062 against its own taller card — do not merge the two. */
+    /* ⭐ **THE PILE IS ALREADY AT FULL COLUMN SIZE ON A PHONE — 12 Aug 2026 (D127).** Client:
+       "the card stack animation as it's coming in should already be in its full size, not as a
+       smaller version of it." So the cards do not grow on opening any more; they arrive the size
+       they will stay and simply slide apart. ⛔ The per-depth `1 − d*0.022` shrink goes with it —
+       that existed to fake depth in the pile, and eight cards at eight different sizes is the
+       opposite of "already full size". Every card is `colSc`, offset only. */
+    if(phone) return {x:0, y:stackY-d*(ch*PEEK_PHONE), rot:0, sc:colSc};
     return {x:0, y:stackY-d*(ch*PEEK), rot:0, sc:STACK_SC*(1-d*0.022)};  // dead centre, straight, rear edges peeking up
   }
   function sidePos(i){
@@ -8549,8 +9738,27 @@ requestAnimationFrame(glowTick);
        enough for eight separate trails and far too little to read as "from the side".
        ⚠️ It starts a clear card-height BELOW the stage floor, so the rise begins off-screen and
        the card is already moving when it appears — a firework, not a card fading up in place. */
+    /* ⭐⭐ **THE RIFFLE — 12 Aug 2026 (D130). ⛔ THIS REVERSES D105's "FIREWORK FROM BELOW".**
+       Client: "the animation is not going to come up from the bottom any more. It's now going to
+       almost shuffle, like two sides of a deck of cards, and they're going to shuffle into each
+       other from the sides."
+       ⭐ **ALTERNATE SIDES BY PILE DEPTH, WHICH IS WHAT MAKES IT A RIFFLE RATHER THAN A QUEUE.**
+       The cards already arrive strictly back to front (D128), so alternating on depth means each
+       consecutive arrival comes from the opposite side and the two halves interleave as they
+       land — a deck being bridged. Alternating on anything else (the set, the DOM index) would
+       deal four from one side and then four from the other, which is two queues, not a shuffle.
+       ⛔ **D105 REJECTED A SIDE ENTRY FOR A REAL REASON, AND THAT REASON IS NOW GONE — DO NOT
+       READ THIS AS THE OLD BUG COMING BACK.** Then, each card started a full stage width out PLUS
+       most of its own width (~450px off a 375px screen) because the cards were SMALL and
+       centred, so most of every flight happened where nobody could see it. The card is now
+       full-bleed, so `(stage + card) / 2` is **361px** — the exact distance at which its trailing
+       edge clears the frame and not one pixel more. Every moment of the flight is on screen.
+       ⚠️ `y` is the pile's own y and `sc` is the pile's own scale, both untouched: the cards
+       arrive at full size (D127) and slide in flat, so nothing grows, tilts or rises. */
     if(phone){
-      return {x:p.x+dir*M.w*f.ed*0.10, y:p.y+M.h*0.62+ch, rot:0, sc:p.sc*0.74};
+      const side=(pileDepth(i,s)%2===0)?-1:1;
+      const off=(M.w + cw*p.sc)/2 + 8;
+      return {x:p.x+side*off, y:p.y, rot:0, sc:p.sc};
     }
     // each card starts clear of its own side, at its own distance/height — straight in, no tilt;
     // the rear set flies in from the OPPOSITE sides so the eight flights alternate rather than
@@ -8559,7 +9767,22 @@ requestAnimationFrame(glowTick);
   }
   /* each card gets its own slice of the gather, so the eight land one at a time — REAR set
      first, so the pile builds back to front and the front card caps it off last */
-  function cardGather(gRaw,i,s){ return ss(clamp01(gRaw*GTOTAL - ((NSETS-1-s)*PER_SET + SLOTS[i].ord)*STAGGER)); }
+  /* ⛔ **STRICTLY BACK TO FRONT, ONE AT A TIME, ON A PHONE — 12 Aug 2026 (D127).** Client: "the
+     card stack animation must work back to front. Currently the front one is coming in first,
+     then the third one is coming in and not the second one."
+     ⭐ **HE IS READING THE ORDER OFF THE SCREEN AND IT REALLY WAS SCRAMBLED.** `SLOTS[i].ord` is
+     a DESKTOP dealing order, tuned so eight cards flying in from alternating sides do not cross
+     each other's paths — it has no relationship to the pile's depth. Combined with
+     `(NSETS-1-s)*PER_SET` it dealt set 1 before set 0 but shuffled within each, so cards landed
+     4th, 2nd, 3rd, 1st by depth. On a phone the pile is the ONLY thing on screen and the depth
+     order is plainly visible, so the ordinal is simply the card's depth counted from the back:
+     `d` is 0 at the front, so `(N-1) − d` puts the deepest card first and the front card last. */
+  function cardGather(gRaw,i,s){
+    /* ⭐ D128: back to front is now simply the column order, because the deepest card IS column
+       slot 0 (see pileDepth). Card 0 lands first and the front card last, one at a time. */
+    const ord = phone ? colOrd(i,s) : ((NSETS-1-s)*PER_SET + SLOTS[i].ord);
+    return ss(clamp01(gRaw*GTOTAL - ord*STAGGER));
+  }
 
   /* ONE title block for the whole hallway, in the static markup and OUTSIDE the sets. It used to
      be a per-set flavour line that travelled with its plane; now it's the section's own heading,
@@ -8603,7 +9826,23 @@ requestAnimationFrame(glowTick);
     sets.push({el:setEl,nodes,doors:nodes.map(n=>n.querySelector('.gal-door'))});
   }
 
-  function sizeRunway(){ scroll.style.height=(window.innerHeight*RUNWAY)+'px'; }
+  /* ⭐ THE PHONE COLUMN'S GEOMETRY (D122), all written by measure() and read by columnPos().
+     colSc is the ZOOM: the card is built `cw` wide and the column wants it full-bleed, so every
+     slot is the same card scaled by colSc — which is exactly the "zoom and extend" he asked for
+     rather than a second set of elements at a second size. */
+  let colSc=1, colH=0, colGap=14, colTop=0, colStageH=0;
+  /* D127: how the pinned run is divided. `animPx` is the scroll spent on the animation with the
+     screen held still; `travelMax` is how far the column then has to move to reach its end. */
+  let animPx=0, travelMax=0;
+
+  /* ⛔ ON A PHONE THERE IS NO ARTIFICIAL RUNWAY ANY MORE. The 5.5-viewport scroll existed to give
+     the pin something to consume; with the pin released the COLUMN's own height is the section's
+     height, and an inline height here would fight it. Cleared rather than left stale, because
+     this same element keeps its desktop runway across a resize. */
+  function sizeRunway(){
+    if(galPhone()){ scroll.style.height=''; return; }
+    scroll.style.height=(window.innerHeight*RUNWAY)+'px';
+  }
 
   /* ---- the playhead ----
      Scroll position doesn't drive the scene directly — it only says where the scene *should* be.
@@ -8615,6 +9854,15 @@ requestAnimationFrame(glowTick);
   const SCRUB=0.045;                     // low on purpose: after the wheel stops, the scene should
                                          // visibly coast on for a beat and ease to rest, not freeze
   let gTarget=0, gCur=0, pTarget=0, pCur=0, raf=null, last=0;
+  /* ---- the accordion's own clock (D142) ----
+     ⛔ NOT A SCRUB. Everything else on this component eases toward a scroll-derived target;
+     this one is wall-clock time from the moment the section sets in place, because the client
+     asked for an animation that plays rather than one you drive. `animQ` only ever increases,
+     so a flick upward cannot rewind the deal, and once it reaches 1 it stays there.
+     ⚠️ ANIM_MS is the whole deal from the first card leaving the pile to the last one landing;
+     the per-card stagger (COL_STAG) still slices it, so raising this slows every card equally. */
+  const ANIM_MS=1600;
+  let animT0=null, animQ=0;
 
   function readScroll(){
     const vh=window.innerHeight;
@@ -8626,9 +9874,24 @@ requestAnimationFrame(glowTick);
     const gt=1-r.top/vh;
     const gF=phone?GATHER_FROM_P:GATHER_FROM, gT=phone?GATHER_TO_P:GATHER_TO;
     gTarget=reduce?1:clamp01((gt-gF)/(gT-gF));
+    /* ⛔ ON A PHONE `p` IS NO LONGER "HOW FAR THROUGH THE PINNED RUN", BECAUSE THERE IS NO PINNED
+       RUN — D122. Measured against the section's full height it would stretch the pile's opening
+       across all nineteen hundred pixels of column, so the cards would still be unfolding when
+       the fourth one was already off the top of the screen. It is re-based on a SHORT window,
+       just over half a viewport past the moment the section's top reaches the top of the screen,
+       which is the beat he described: stack, then extend, then you are simply scrolling.
+       ⭐ Everything downstream (`spread`, and therefore the opacity of the copy) keeps working
+       unchanged — only the clock behind it is different. */
     // pinned run: the stack opens out, you walk the hallway, and it ends on the second four
+    // (D127: on a phone the same clock now covers the held animation and then the column's travel)
     const len=Math.max(1,scroll.offsetHeight-vh);
     pTarget=clamp01(-r.top/len);
+    /* ⭐ "AS SOON AS THE SECTION SETS IN PLACE" IS THE MOMENT THE PIN ENGAGES — the runway's
+       top edge reaching the top of the viewport, which is exactly `r.top <= 0` and is the same
+       instant `p` leaves 0. Starting the clock here rather than on an IntersectionObserver
+       threshold means it fires when the section is FRAMED, not when a pixel of it appears at
+       the bottom of the screen. ⚠️ Phone only: on the frozen widths `q` is not read at all. */
+    if(phone && animT0===null && r.top<=0) animT0=performance.now();
   }
 
   function render(){
@@ -8638,8 +9901,54 @@ requestAnimationFrame(glowTick);
        test here — a second opinion about what a phone is has been this project's most repeated
        bug (D51/D59/D68/D78/D93/D105). */
     const sS=phone?SPREAD_START_P:SPREAD_START, sE=phone?SPREAD_END_P:SPREAD_END;
-    const spread=reduce?1:ss(clamp01((p-sS)/(sE-sS)));                            // pile → walls (front four) / corridor (rear four)
-    const walk=ss(clamp01((p-WALK_START)/(WALK_END-WALK_START)));                 // forward, down the hallway
+    /* `spreadLin` is the RAW linear progress through the window; `spread` is the eased one the
+       rest of the scene uses. The accordion needs the raw value, because each card offsets its
+       own slice of it and then eases that — easing first and slicing afterwards would compress
+       every card's travel into the same curve and undo the stagger. */
+    /* ⭐⭐ D127 — THE PINNED RUN IS TWO PHASES, AND THE JOIN IS THE POINT.
+       `animFrac` is the share of the pin spent with the screen held still. Inside it the cards
+       arrive and open out; after it, `travel` slides the whole scene up by exactly the scroll
+       distance, which is what the browser would have done unpinned — so it reads as ordinary
+       scrolling. ⛔ **`travel` IS 0 AT THE MOMENT THE ANIMATION ENDS**, which is the client's
+       actual requirement: the frame the accordion finishes on is the frame showing the FIRST
+       card at the top of the screen, not the last one. */
+    const animFrac = (animPx+travelMax)>0 ? animPx/(animPx+travelMax) : 1;
+    /* ⭐⭐ THE ACCORDION IS ON A CLOCK, NOT ON THE SCROLL — 12 Aug 2026 (D142).
+       Client, twice: "as soon as the view our project gallery sets in place, the animation will
+       play and it will just go straight down. The scroll does not change the speed or the up or
+       the down. The animation just plays. So it's not tied to scroll at all."
+       ⛔ `q` USED TO BE `p/animFrac` — scroll position, scrubbed. Now it is `animQ`, a time
+       clock started the moment the pin engages (see readScroll) and run to 1 in ANIM_MS
+       whatever the finger does. Scrolling cannot speed it up, slow it down or run it backwards.
+       ⚠️ `travel` below is DELIBERATELY still scroll-derived, and that is not an inconsistency:
+       travel is the column moving up the screen, which is the page scrolling and must follow
+       the finger. The ANIMATION is what he asked to untie, not the page.
+       ⭐ It plays ONCE and stays played — the D26/viewSequence precedent, where "tied to the
+       view" means the mosaic is left built rather than replaying on the way back up. */
+    const q      = phone ? animQ : 0;                                  // 0..1 through the held animation
+    const travel = phone ? clamp01((p-animFrac)/Math.max(1-animFrac,0.0001))*travelMax : 0;
+    /* ⛔ **THERE IS NO GATHER ON A PHONE ANY MORE — 12 Aug 2026 (D131). ONE ANIMATION, NOT TWO.**
+       Client: "we're going to remove the first half of the animation. It is already going to be
+       stacked there as the user scrolls, and then the second half will play. So there's not two
+       animations — it just stays stacked, and then as the user scrolls it spreads out."
+       ⭐ **THE HELD PHASE IS NOW ENTIRELY THE ACCORDION**, where it used to be 56% gather and 44%
+       spread. That is why `animPx` came down with it: the same scroll distance spent on half the
+       work would have made the spread crawl.
+       ⚠️ This retires the riffle (D130), the firework (D105) and the whole entry path on this
+       device after one day — `entryPos`'s phone branch is now unreachable because `g` is pinned
+       at 1 below. ⛔ **It is deliberately LEFT IN PLACE, not deleted**: desktop still uses that
+       function, and the phone branch is one `g` away from being live again if he changes his
+       mind, which on this section he has now done five times. */
+    const sPhase = phone ? q : 0;
+    const spreadLin=reduce?1:(phone?sPhase:clamp01((p-sS)/(sE-sS)));
+    const spread=reduce?1:ss(spreadLin);                                          // pile → walls (front four) / corridor (rear four)
+    /* ⛔ NO HALLWAY ON A PHONE — D122. The walk is what sent the rear four down a corridor and
+       swung the front four open like doors as you passed through them; the client replaced that
+       whole beat with one column. Pinned at 0 rather than deleted, because every line below is
+       still written in terms of `u`, and u = walk − s. With walk 0, set 0 sits at u=0 (in front of
+       you) and set 1 at u=−1 (which used to mean "deep down the corridor") — so the rear plane's
+       z/opacity are forced flat below as well. */
+    const walk=phone?0:ss(clamp01((p-WALK_START)/(WALK_END-WALK_START)));         // forward, down the hallway
     const open=spread;                            // 1 only when fully broken out
     const stackAmt=1-spread;                      // 1 while gathered into the pile
 
@@ -8658,6 +9967,9 @@ requestAnimationFrame(glowTick);
     mid.style.opacity=(phone ? clamp01((gRaw*GTOTAL-0.04)/0.34)
                              : clamp01((spread-0.72)/0.28)).toFixed(3);
     if(midActions) midActions.style.opacity = phone ? clamp01((spread-0.55)/0.45).toFixed(3) : '';
+    /* the copy rides the column in phase 2, so the heading leaves the screen and Get in touch
+       arrives at the foot of the eighth card exactly as the cards do (D127) */
+    if(mid) mid.style.transform = phone ? `translateY(${(-travel).toFixed(1)}px)` : '';
 
     let anySettled=false;
 
@@ -8674,19 +9986,47 @@ requestAnimationFrame(glowTick);
          to its u-driven waiting slot — "the others spread to the back out of sight". Once the
          walk starts, spread is pinned at 1, so this blend is inert and u alone drives the set. */
       const hold=(s===0)?1:spread;
-      const zP=z*hold, yP=y*hold, opP=lerp(1,op,hold);
+      /* ⛔ BOTH PLANES STAY FLAT, SOLID AND PUT ON A PHONE — D122. The set is a stage-sized plane
+         and its transform is the hallway; with the walk gone the rear set must NOT recede or fade,
+         or projects 5–8 would be invisible halfway down the column. Every card's position is now
+         its own, in columnPos. */
+      /* ⭐ D127: `-travel` is how the column is brought past a 100vh window. Applied to the PLANE,
+         once, rather than to eight cards — the cards keep their static column slots and the whole
+         scene moves, which is why phase 2 is indistinguishable from ordinary scrolling. */
+      const zP=phone?0:z*hold, yP=phone?-travel:y*hold, opP=phone?1:lerp(1,op,hold);
       const set=sets[s];
       set.el.style.transform=`translate3d(0,${yP.toFixed(1)}px,${zP.toFixed(1)}px)`;
       set.el.style.opacity=opP.toFixed(3);
       set.el.style.visibility=opP<0.001?'hidden':'visible';  // don't composite a huge invisible plane
-      set.el.style.zIndex=String(10+Math.round(u*5));        // nearer segment paints in front
+      /* ⛔⛔ **THE REAR FOUR WERE PAINTING OVER THE FRONT FOUR IN THE PILE — 12 Aug 2026 (D125).
+         THIS IS THE "UNEVEN STACKING" THE CLIENT PHOTOGRAPHED, AND I CAUSED IT IN D122.**
+         The planes used to be ordered by `10 + u*5`, which put set 0 at z 10 and set 1 at z 5 —
+         the rear set genuinely behind. Flattening both to a constant 10 for the column left the
+         paint order to the DOM, and set 1 comes LAST, so the four cards that are supposed to be
+         peeking out BEHIND the front card were drawn ON TOP of it. In the column nothing
+         overlaps so it costs nothing there; in the pile it is the whole illusion.
+         ⚠️ It looks like a spacing fault and is not one — the geometry was always right, and
+         `x` is 0 for every card in the pile. Measure the paint order, not the offsets. */
+      /* ⛔ **THE PLANE ORDER FOLLOWS THE DEPTH MAPPING, AND D128 INVERTED THAT MAPPING.** D125 set
+         this to `10 − s` because set 0 then held the front of the pile. D128 made the pile's depth
+         the column slot counted backwards, which moves the FRONT card into set 1 — so the higher
+         plane has to be set 1 now, or the deepest cards paint over the card you are looking at.
+         ⚠️ Seen as the wrong photograph on the front card with the right card's name showing
+         underneath it; the geometry was correct and only the paint order was wrong. Second time
+         this exact trap has bitten in two days (D125) — **whenever the depth mapping changes,
+         change this line with it.** */
+      set.el.style.zIndex=phone?String(10+s):String(10+Math.round(u*5));        // nearer segment paints in front
 
       // the double doors: only the set being walked through swings open (u>0), finishing
       // before it has fully passed so you read the fold while the cards are still large
       const fold=reduce?0:ss(clamp01(u*DOOR_SPEED));
 
-      // clickable only when this set is parked at the front AND fully laid out — never mid-move
-      const settled=Math.abs(u)<0.05 && open>0.96;
+      /* clickable only when this set is parked at the front AND fully laid out — never mid-move.
+         ⛔ **ON A PHONE THE `u` TEST WOULD SILENTLY KILL HALF THE GALLERY.** `u = walk − s`, and
+         with the walk pinned at 0 the rear set sits at u = −1 forever, so `Math.abs(u)<0.05` is
+         false for it and projects 5–8 would render perfectly and refuse every tap. There is no
+         hallway to be parked in here: once the column is laid out, all eight are in front of you. */
+      const settled=phone ? open>0.96 : (Math.abs(u)<0.05 && open>0.96);
       set.el.classList.toggle('settled',settled);
       if(settled) anySettled=true;
 
@@ -8694,13 +10034,58 @@ requestAnimationFrame(glowTick);
       // cards rest as one pile of eight, then break STRAIGHT out onto the walls — no column in
       // between — and stay there until you walk through them into the next four.
       set.nodes.forEach((el,i)=>{
-        const g=cardGather(gRaw,i,s);               // this card's own arrival
-        const A=entryPos(i,s), B=stackPos(i,s), D=sidePos(i);
-        const x  =lerp(lerp(A.x,B.x,g), D.x, spread);
-        const yy =lerp(lerp(A.y,B.y,g), D.y, spread);
-        const sc =lerp(lerp(A.sc,B.sc,g), D.sc, spread);
+        /* ⭐ D127: on a phone the arrival is driven by the HELD phase of the pin, not by the
+           approach. That is the client's "the title goes and sits where it needs to sit, THEN
+           the card stack animation should finish" — on the approach clock the cards were flying
+           while the heading was still travelling up the screen. */
+        /* ⭐ D131: on a phone every card is ALREADY ARRIVED. `g` is the blend between the entry
+           position and the pile, so pinning it at 1 means the lerp below collapses to the pile —
+           the stack is simply there as the section scrolls in, and only the spread plays. */
+        const g=phone?1:cardGather(gRaw,i,s);       // this card's own arrival
+        /* ⭐ THE ONE LINE THAT IS THE WHOLE FEATURE (D122): the third state a card moves to is its
+           COLUMN SLOT on a phone, and its wall slot everywhere else. The lerp chain underneath —
+           fly in, land on the pile, then open out — is untouched, which is why the gather still
+           looks exactly as it did. Only the destination changed. */
+        const A=entryPos(i,s), B=stackPos(i,s), D=phone?columnPos(i,s):sidePos(i);
+        /* ⭐ THE ACCORDION (D125): this card's OWN share of the opening. Card n cannot begin
+           until the deal has reached it, so the pile unfolds one card at a time from the front
+           instead of every card sliding at once — "just like an accordion, filtered down".
+           ⚠️ `n` is the COLUMN ordinal, not the gather ordinal: the deal has to run down the
+           page in the order the eye reads it, not in the order the cards flew in. */
+        const n=s*PER_SET+i;
+        /* ⛔ **THE DEAL RUNS FROM THE FRONT OF THE PILE, NOT THE BACK — 12 Aug 2026 (D129).**
+           Client: "when the stack is supposed to go back down, it's going back down from the
+           middle or the back. It should go down one by one from the front card — the one the user
+           can see, where it says Clean Install. Then the second, then the third, and the one at
+           the back stays there."
+           ⭐ **AND IT IS THE PHYSICALLY HONEST ORDER, WHICH IS WHY IT READS WRONG THE OTHER WAY.**
+           The pile's front card is the LAST column slot, so it has the whole column to travel;
+           the back card is slot 0 and is already where it belongs. Dealing from the back sent the
+           card with the shortest journey first and left the visible one sitting still — the
+           opposite of a deck being dealt. `(N−1−n)` starts the front card immediately and reaches
+           the back card last, by which point it barely moves at all. */
+        const spC = phone
+          ? ss(clamp01((spreadLin*(1+COL_STAG) - ((PROJECTS.length-1-n)/(PROJECTS.length-1))*COL_STAG)))
+          : spread;
+        const x  =lerp(lerp(A.x,B.x,g), D.x, spC);
+        const yy =lerp(lerp(A.y,B.y,g), D.y, spC);
+        const sc =lerp(lerp(A.sc,B.sc,g), D.sc, spC);
         el.style.transform=`translate3d(${x.toFixed(1)}px,${yy.toFixed(1)}px,0) scale(${sc.toFixed(3)})`;
         el.style.opacity=g.toFixed(3);
+        /* ⛔ **EIGHT CAPTIONS IN A PILE 11px APART ALL LAND ON TOP OF EACH OTHER — D128.** Turning
+           the names on for the whole stack (his ask) printed all eight over one another in the
+           gap below the front card: "Template & Fit" and "Clean Install" were legible through
+           each other. ⭐ In the pile only the FRONT card is actually visible — the rest are a
+           peeking edge — so its name shows from the start and every other caption arrives with
+           its own card as the accordion deals it out. That satisfies "the cards should have their
+           names on" without stacking eight of them in one place. */
+        if(phone && el._meta!==null){
+          el._meta = el._meta || el.querySelector('.gal-meta');
+          /* the front of the pile is the LAST column slot (D128's one order), and it is the only
+             card whose face you can read before the deal starts */
+          const isFront = (n===PROJECTS.length-1);
+          if(el._meta) el._meta.style.opacity = Math.max(spC, isFront ? g : 0).toFixed(3);
+        }
         // two rear cards per set wear a gold edge while stacked, fading out as the pile breaks out
         if(PEEK_CARDS.indexOf(i)>=0){
           const a=stackAmt.toFixed(3);
@@ -8710,8 +10095,11 @@ requestAnimationFrame(glowTick);
         // it's the shallow inward tilt (eased in with the spread); walking through, it opens
         // toward flat — left cards turn their right edge away, right cards their left, so
         // the pair parts like double doors around the vanishing point.
+        /* ⛔ THE DOORS DO NOT SWING ON A PHONE — D122. The tilt exists to make a pair read as
+           double doors around a vanishing point as you walk between them; a column has neither
+           pair nor vanishing point, and a card turned 8° in a flat list just looks skewed. */
         const side=(i%2===0)?-1:1;
-        const ry=-side*(WALL_TILT*spread + (DOOR_ANG-WALL_TILT)*fold);
+        const ry=phone?0:-side*(WALL_TILT*spread + (DOOR_ANG-WALL_TILT)*fold);
         set.doors[i].style.transform=`rotateY(${ry.toFixed(2)}deg)`;
       });
     }
@@ -8728,11 +10116,38 @@ requestAnimationFrame(glowTick);
     readScroll();
     const f=reduce?1:1-Math.pow(1-SCRUB,dt*60);        // frame-rate independent catch-up
 
-    const dg=gTarget-gCur, dp=pTarget-pCur;
-    if(Math.abs(dg)<0.0002 && Math.abs(dp)<0.0002){    // caught up — settle exactly and stop
+    /* ⛔ THE CLOCK IS ADVANCED HERE AND IT IS WHAT KEEPS THE LOOP ALIVE (D142). The loop used
+       to shut itself off the moment the playhead caught the scroll, which was safe while
+       everything was scroll-derived — nothing could change without a scroll event to restart
+       it. An animation on a clock CAN, so `playing` has to hold the loop open, or the deal
+       freezes mid-air the instant the finger stops, which is the exact opposite of the ask. */
+    const playing = animT0!==null && animQ<1;
+    if(playing){
+      const raw=Math.min(1,(now-animT0)/ANIM_MS);
+      animQ=reduce?1:raw;
+    }
+
+    /* ⛔⛔ **ON A PHONE THE PLAYHEAD IS NOT DAMPED — 12 Aug 2026 (D157). THIS IS THE SECOND HALF OF
+       "IT FEELS LIKE IT'S STILL MOVING UP".** Client: "even after going through that section, it
+       feels like it's still moving up, so something feels like it's still tied to the scroll there,
+       which is wrong."
+       ⭐ **HE IS DESCRIBING SCRUB EXACTLY.** `SCRUB` is 0.045 and its own comment says it is "low on
+       purpose: after the wheel stops, the scene should [keep easing]" — a MOUSE-WHEEL behaviour,
+       written for a device where momentum is the browser's, not the finger's. At 0.045 the playhead
+       needs ~50 frames to close 90% of a gap, so the column keeps drifting for the best part of a
+       second after the finger has lifted. On a touch screen that reads as the page not obeying you.
+       ⭐ `travel` is documented (D127) as sliding the scene "by exactly the scroll distance, which
+       is what the browser would have done unpinned — so it reads as ordinary scrolling". **Damping
+       is what stopped that from being true.** Exact tracking makes the promise real.
+       ⛔ Phone only: `gCur` keeps its damping, and above 720px `phone` is false so both are exactly
+       as they were on the frozen widths. */
+    const dg=gTarget-gCur;
+    if(phone) pCur=pTarget;
+    const dp=pTarget-pCur;
+    if(!playing && Math.abs(dg)<0.0002 && Math.abs(dp)<0.0002){    // caught up — settle exactly and stop
       gCur=gTarget; pCur=pTarget; render(); return;
     }
-    gCur+=dg*f; pCur+=dp*f;
+    gCur+=dg*f; if(!phone) pCur+=dp*f;
     render();
     raf=requestAnimationFrame(frame);
   }
@@ -8991,6 +10406,13 @@ if(faqIndex && panel && faqBody){
   /* ⚠️ 760, not 860: that is the ONE-column breakpoint. Moving the plate inline while the index
      is still two columns would drop it inside a half-width group. See the FAQ CSS. */
   const narrow = window.matchMedia('(max-width:760px)');
+  /* ⭐ THE PHONE IS READ BACK OFF THE STYLESHEET, NOT TESTED AGAIN HERE (D154). `--faqMode:phone`
+     is declared in the `max-width:720px` block. ⛔ `narrow` above is a DIFFERENT question — 760 is
+     where the plate goes inline, 720 is where the phone build starts — and answering the second one
+     with a second matchMedia is exactly the disagreement D51/D93 keep costing this project. */
+  const faqSection = document.getElementById('faq');
+  const faqPhone = () => faqSection &&
+    getComputedStyle(faqSection).getPropertyValue('--faqMode').trim() === 'phone';
 
   /* group in array order — entries sharing a `g` are contiguous by contract (see FAQS) */
   const groups=[];
@@ -9020,7 +10442,14 @@ if(faqIndex && panel && faqBody){
       b.style.setProperty('--fi',i);
       const dot=document.createElement('span'); dot.className='faq-dot'; dot.setAttribute('aria-hidden','true');
       const txt=document.createElement('span'); txt.className='faq-qt'; txt.textContent=f.label;
-      b.append(dot,txt);
+      /* ⭐ THE FULL QUESTION, FOR THE PHONE'S ACCORDION ROW (D152). On a phone the row IS the
+         dropdown, so it has to carry the question rather than the index's short teaser — and the
+         answer panel below it then stops repeating it. `display:none` in the base rule keeps the
+         desktop index exactly as it was; markup cannot be scoped by a media query (D120).
+         ⚠️ aria-hidden because the button already carries `aria-label=f.q` — the same words. */
+      const full=document.createElement('span'); full.className='faq-qf'; full.textContent=f.q;
+      full.setAttribute('aria-hidden','true');
+      b.append(dot,txt,full);
       wrap.appendChild(b);
       tabs[i]=b; groupOf[i]=gi; posInGroup[i]=row;
     });
@@ -9037,13 +10466,31 @@ if(faqIndex && panel && faqBody){
     else faqBody.appendChild(panel);
   }
 
-  function select(k,focus){
-    if(k<0 || k>=tabs.length || k===cur) return;
+  /* ⭐ CLOSE EVERYTHING — PHONE ONLY (D154). Client: "currently, the first one stays open."
+     ⛔ **DESKTOP MUST NEVER REACH THIS.** The plate there is a fixed-height panel beside the index
+     with `min-height` locked to the tallest answer (see lockPlate) — closing it would leave a
+     ~200px hole in a signed-off composition. On the phone the plate is an inline drawer and its
+     absence is simply a collapsed accordion. */
+  function deselect(){
     if(cur>=0){
       tabs[cur].classList.remove('on');
       tabs[cur].removeAttribute('aria-current');
+      tabs[cur].setAttribute('aria-expanded','false');
+    }
+    cur=-1;
+    if(faqSection) faqSection.classList.add('faq-shut');
+    place();                      // parks the plate back under the index while it is hidden
+  }
+  function select(k,focus){
+    if(k<0 || k>=tabs.length || k===cur) return;
+    if(faqSection) faqSection.classList.remove('faq-shut');
+    if(cur>=0){
+      tabs[cur].classList.remove('on');
+      tabs[cur].removeAttribute('aria-current');
+      tabs[cur].setAttribute('aria-expanded','false');
     }
     cur=k;
+    tabs[k].setAttribute('aria-expanded','true');
     const t=tabs[k], f=FAQS[k];
     t.classList.add('on');
     t.setAttribute('aria-current','true');
@@ -9087,7 +10534,11 @@ if(faqIndex && panel && faqBody){
   }
   const relock=()=>{ clearTimeout(lockT); lockT=setTimeout(lockPlate,120); };
 
-  tabs.forEach((b,i)=>b.addEventListener('click',()=>select(i,false)));
+  /* ⭐ ON THE PHONE THE LIVE ROW TOGGLES SHUT; everywhere else a re-click is a no-op exactly as
+     before, because `select()` returns early on `k===cur` (D154). */
+  tabs.forEach((b,i)=>b.addEventListener('click',()=>{
+    if(faqPhone() && i===cur) deselect(); else select(i,false);
+  }));
 
   /* Arrows as an enhancement on top of Tab. Up/Down walk the flat order, which runs down a
      column and on to the top of the next — the same path the eye takes. Left/Right jump to the
@@ -9112,7 +10563,13 @@ if(faqIndex && panel && faqBody){
   });
   narrow.addEventListener('change',()=>{ place(); lockPlate(); });
   window.addEventListener('resize',relock);
-  select(0,false);
+  /* ⛔ **A RESIZE OFF THE PHONE MUST RE-OPEN SOMETHING** — otherwise dragging a desktop window
+     narrow, collapsing the accordion and widening it again leaves the frozen composition with an
+     empty 200px plate. */
+  window.addEventListener('resize',()=>{ if(!faqPhone() && cur<0) select(0,false); });
+  /* ⭐ THE PHONE ARRIVES CLOSED (D154); every other width still opens on the first question, which
+     is what the desktop contents-page design needs — a plate with nothing in it is a hole. */
+  if(faqPhone()) deselect(); else select(0,false);
   lockPlate();
   /* a height measured in the fallback font is the wrong height */
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(lockPlate);
@@ -9971,10 +11428,19 @@ document.addEventListener('topcat:files',renderUploads);
       '<span>Width mm</span><span>Thickness mm</span><span class="rh-use">Used for</span><span></span></div>'+
       pieces.map((p,i)=>{
         const lab=LAB(i), wr=widRange(p);
+        /* ⭐ THE PER-FIELD LABELS ARE FOR THE PHONE (D148), AND THEY ARE EMITTED AT EVERY WIDTH
+           BECAUSE MARKUP CANNOT BE SCOPED BY A MEDIA QUERY (D120). They are `display:none` in the
+           base rule, and a `display:none` grid item is not a grid item at all — so above 720px
+           this row's six columns are exactly the six they always were, untouched.
+           ⚠️ aria-hidden, like `.est-rowhead` above: every field already carries its own
+           aria-label, and these would read the same words a second time. */
         return '<div class="est-row" data-i="'+i+'">'+
           '<span class="est-pl">'+lab+'</span>'+
+          '<span class="est-fl est-fl-len" aria-hidden="true">Length mm</span>'+
           '<input class="est-in" data-f="len" type="number" inputmode="numeric" min="'+LIM.len[0]+'" max="'+LIM.len[1]+'" step="10" value="'+p.len+'" aria-label="Piece '+lab+' length in millimetres">'+
+          '<span class="est-fl est-fl-wid" aria-hidden="true">Width mm</span>'+
           '<input class="est-in" data-f="wid" type="number" inputmode="numeric" min="'+wr[0]+'" max="'+wr[1]+'" step="10" value="'+p.wid+'" aria-label="Piece '+lab+' width in millimetres">'+
+          '<span class="est-fl est-fl-th" aria-hidden="true">Thickness mm</span>'+
           '<span class="est-seg" role="group" aria-label="Piece '+lab+' thickness">'+
             THICK.map(t=>'<button type="button" data-th="'+t+'" aria-pressed="'+(p.th===t)+
               '" aria-label="'+t+' millimetre">'+t+'</button>').join('')+'</span>'+
@@ -10574,8 +12040,10 @@ function viewSequence(host,tiles,apply,opts){
    are NO LONGER .rise — they are placed per frame by scrollSequence (client, 6 Aug). */
 (function(){
   const collage=document.getElementById('aboutCollage'); if(!collage)return;
-  /* ⭐ THREE work photographs since 9 Aug, not six: p1, p2 and p3 are the directors now and
-     carry no <img> at all (§4a). ⚠️ This list maps to `.ac-tile img` in DOM ORDER, and the
+  /* ⭐ THREE work photographs since 9 Aug, not six: p1 and p2 are the directors and carry no
+     <img> at all (§4a), which is also why cutting the third portrait in D150 left this list
+     alone — `querySelectorAll('.ac-tile img')` never matched a portrait tile in the first place.
+     ⚠️ This list maps to `.ac-tile img` in DOM ORDER, and the
      three images are the LAST three tiles, so it fills w1, w2, w3 in that order:
      w1=owner handshake (the big square), w2=samples consultation (short landscape),
      w3=fitting (portrait). Read in order they are the job — we meet you, we help you choose,
@@ -10605,10 +12073,16 @@ function viewSequence(host,tiles,apply,opts){
      left one swings off its left edge, the middle falls off its top, the right one swings off
      its right edge, so the row opens outward from the centre. The three work tiles below take
      the varied set — six identical flips read as a machine, which is why they alternate. */
+  /* ⭐ FIVE TILES SINCE 12 Aug 2026 (D150) — the third portrait went with Ali. The top band is a
+     PAIR now, not a triptych, so it opens like two doors from the centre line: left tile off its
+     left edge, right tile off its right edge. Rimsha's used to fall off its TOP edge because it
+     was the middle of three and had no outward side to open on; as one of two it does.
+     ⚠️ scrollSequence's bound is `(n−1)*step + span < 1`. At five tiles that is
+     4*0.112 + 0.42 = 0.868, comfortably inside — it had less headroom at six, not more, so the
+     timings below are untouched and still valid. */
   const HINGE=[
     {ax:'Y',deg: 78,org:'0% 50%'},    // p1 Nick   — swings in off its LEFT edge
-    {ax:'X',deg:-84,org:'50% 0%'},    // p2 Rimsha — falls forward off its TOP edge
-    {ax:'Y',deg:-78,org:'100% 50%'},  // p3 Ali    — swings in off its RIGHT edge
+    {ax:'Y',deg:-78,org:'100% 50%'},  // p2 Rimsha — swings in off its RIGHT edge
     {ax:'X',deg:-84,org:'50% 0%'},    // w1 the big square, falls forward off its top edge
     {ax:'Y',deg:-78,org:'100% 50%'},  // w2 swings in off its right edge
     {ax:'Y',deg: 78,org:'0% 50%'}     // w3 the other way, off its left edge
