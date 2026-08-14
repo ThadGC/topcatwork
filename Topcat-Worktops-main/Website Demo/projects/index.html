@@ -238,7 +238,7 @@
         <a href="/">Home</a><span>/</span>Projects
       </nav>
       <h1>Projects</h1>
-      <p>A finished kitchen is the only honest sample. These are ours, across London and the Home Counties, with the stone named on every one and the story of how it was cut and fitted.</p>
+      <p>A finished kitchen is the only honest sample. These are ours, real installations with the place, the work and the date on every one.</p>
       <div class="hero-chips">
           <!-- ⭐ **THE GOOGLE CHIP CARRIES TWO ARRANGEMENTS OF THE SAME FACT — 13 August 2026.**
                Client: *"put the Google icon next to the five stars… the Google icon, then it will
@@ -330,29 +330,25 @@
       </div>
       <div class="proj-body">
         <div class="proj-intro">
+          <!-- ⭐ EVERY VALUE IS PER PROJECT SINCE 14 Aug 2026 (D211). These four used to be
+               hard-coded — "Calacatta Gold Quartz", "Spring 2025" — and were shown for EVERY
+               card, so eight different jobs all claimed the same stone and the same date.
+               ⛔ Material is gone: his portfolio does not record one per project, and inventing
+               a stone name for a real installation is the same class of error as inventing a
+               stone's photograph (§6, the integrity rule). PROJECT TYPE is what he publishes. -->
           <div class="proj-meta">
             <div><span class="pm-k">Location</span><span class="pm-v" id="projMetaPlace"></span></div>
-            <div><span class="pm-k">Material</span><span class="pm-v">Calacatta Gold Quartz</span></div>
-            <div><span class="pm-k">Scope</span><span class="pm-v">Template · Fabrication · Install</span></div>
-            <div><span class="pm-k">Completed</span><span class="pm-v">Spring 2025</span></div>
+            <div id="projTypeRow"><span class="pm-k">Project type</span><span class="pm-v" id="projMetaType"></span></div>
+            <div id="projDateRow"><span class="pm-k">Completed</span><span class="pm-v" id="projMetaDate"></span></div>
           </div>
-          <div class="proj-desc">
+          <!-- ⚠️ THE STORY IS WRITTEN BY THE CLIENT OR IT IS NOT SHOWN. Five of his seven have no
+               description on his own site; for those this whole column is hidden and the intro
+               becomes a single column, so there is no empty gutter where prose would have been.
+               ⛔ Do not fill it with generated copy — it would read as his account of a real job
+               he did for a real customer. -->
+          <div class="proj-desc" id="projDesc">
             <p class="proj-lead">What we did</p>
-            <p class="big">A tired galley kitchen reimagined around a single bookmatched island, the veining runs unbroken from the waterfall edge, across the top, and down the other side.</p>
-            <!-- ⛔⛔ THIS PARAGRAPH CLAIMED THE SEAMS "ALL BUT DISAPPEAR" AND THE CLIENT HAD ALREADY
-                 KILLED THAT CLAIM THE SAME DAY (D203): *"seams will always be visible and never
-                 invisible, we do our best to make it invisible."* The FAQ answer was corrected and
-                 **this one was missed**, because the earlier scan looked for the FAQ's own wording
-                 ("cannot find them once the worktop is installed") and this said it differently.
-                 ⭐ **THE LESSON IS THE SCAN, NOT THE SENTENCE:** when a claim is retired, search for
-                 the CLAIM in every phrasing it could take, not for the string you just replaced.
-                 ⚠️ "across each joint" was also an absolute (§2 rule 12). The wording now says what
-                 is actually done — the joint is placed and the veining matched through it — and
-                 promises nothing about what the customer will or will not see.
-                 ⛔ The two reviews that use the word "seamless" are CUSTOMERS' OWN WORDS and are
-                 not ours to edit. -->
-            <p>We began with a full templating session, capturing every measurement to a fraction of a millimetre once the units were levelled. The slab was cut and polished to that template in our own workshop, with the joints placed where they interrupt the pattern least and the veining matched through them.</p>
-            <p>The finished worktops were installed in a single day, squared, sealed and ready to use, with a full-height splashback tying the run together and a honed finish chosen to keep glare down under the pendant lights.</p>
+            <p class="big" id="projStory"></p>
           </div>
         </div>
         <div class="proj-media" id="projMedia"></div>
@@ -658,6 +654,6 @@
 
 </main>
 
-<script src="/assets/site.js?v=84c4180263" defer></script>
+<script src="/assets/site.js?v=fbf9e300f5" defer></script>
 </body>
 </html>

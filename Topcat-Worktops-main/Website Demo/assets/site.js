@@ -205,6 +205,16 @@ function attachSwipe(el,opts){
    ⛔ Do not hand-edit this table. It is written by build_images.py; re-run that instead.
    ⚠️ Keys are the exact `.img` URL a record carries, so `SS[u]` is a lookup, not a guess. */
 const SS={
+ /* ⭐ THE PROJECT PHOTOGRAPHS — D211. Registered here so the gallery cards serve the 560px
+    file to a phone instead of the 1400px one; `ss()` returns an empty string for anything it
+    does not know, so an unregistered path silently ships the big file to a handset. */
+ "/assets/projects/ruislip-1400.webp":"/assets/projects/ruislip-560.webp 560w, /assets/projects/ruislip-1400.webp 1400w",
+ "/assets/projects/central-london-1400.webp":"/assets/projects/central-london-560.webp 560w, /assets/projects/central-london-1400.webp 1400w",
+ "/assets/projects/hornchurch-1400.webp":"/assets/projects/hornchurch-560.webp 560w, /assets/projects/hornchurch-1400.webp 1400w",
+ "/assets/projects/harrow-1400.webp":"/assets/projects/harrow-560.webp 560w, /assets/projects/harrow-1400.webp 1400w",
+ "/assets/projects/harlow-1400.webp":"/assets/projects/harlow-560.webp 560w, /assets/projects/harlow-1400.webp 1400w",
+ "/assets/projects/rickmansworth-1400.webp":"/assets/projects/rickmansworth-560.webp 560w, /assets/projects/rickmansworth-1400.webp 1400w",
+ "/assets/projects/watford-1400.webp":"/assets/projects/watford-560.webp 560w, /assets/projects/watford-1400.webp 1400w",
  "/assets/site/hero-kitchen-2750.webp":"/assets/site/hero-kitchen-1400.webp 1400w, /assets/site/hero-kitchen-2000.webp 2000w, /assets/site/hero-kitchen-2750.webp 2750w",
  "/assets/site/cta-slab-2752.webp":"/assets/site/cta-slab-1958.webp 1958w, /assets/site/cta-slab-2752.webp 2752w",
  "/assets/site/kitchen-day-1188.webp":"/assets/site/kitchen-day-626.webp 626w, /assets/site/kitchen-day-1188.webp 1188w",
@@ -3359,21 +3369,59 @@ requestAnimationFrame(glowTick);
      he changed the names only, the design carries a two-line meta, and "Bookmatched Worktops /
      Hampstead" still reads as a real job in a real town. ⛔ Do not renumber or reorder — the
      first four are the front panel and the second four are the panel you walk into. */
+  /* ⭐⭐⭐ THE CLIENT'S REAL PORTFOLIO — 14 August 2026 (D211). Scraped from his own live site
+     (topcatworktops.co.uk/portfolio) at his instruction: *"go scrape all of that… same names,
+     same details, same images."* **These are seven real installations, his photographs, his
+     project names, his locations, dates and project types.** Nothing here is invented.
+     ⛔⛔ **`story` IS ONLY FILLED WHERE HE HAS ACTUALLY WRITTEN ONE.** Five of the seven have no
+     description on his site, and the detail view collapses to the facts and the photographs for
+     those rather than having something written for him — inventing a project narrative is
+     exactly the class of claim §2 rule 3 forbids, and it would be presented as his own words.
+     ⚠️ **ONE SENTENCE WAS DROPPED FROM HORNCHURCH AND HE WAS TOLD:** his own copy reads "we
+     outdid competitors by being £1000 cheaper", which is discount language and argues on price
+     — §2 rule 5, the rule that keeps biting. The rest of that description is his, verbatim.
+     ⚠️ **THE EIGHTH CARD IS A DELIBERATE PLACEHOLDER.** He said there are eight projects and his
+     site lists seven, and that he would send the missing one. It carries no photograph so it
+     shows the "photo to come" plate rather than pretending to be a job. ⛔ Do not fill it with a
+     repeat of another project's picture.
+     ⭐ `key` is what the detail overlay looks the project up by — the cards carry it in
+     `dataset.key`, so the meta, the story and the media grid are all per project now instead of
+     one hard-coded Calacatta Gold story shown for every card. */
   const PROJECTS=[
-    /* ⛔ NAMED FILES, NOT `SERVICES[n].img` — 14 Aug 2026 (D206). These four used to read the
-       first four services by INDEX, which quietly tied the gallery's photography to the ORDER
-       OF THE RANGE: the client re-ordering his services would have re-photographed the project
-       gallery as a side effect, with nothing in either place to say so. */
-    {img:'/assets/site/service-worktops-554.webp',   name:'Bookmatched Worktops',  place:'Hampstead'},
-    {img:'/assets/site/service-islands-468.webp',    name:'Waterfall Edges',       place:'Richmond'},
-    {img:'/assets/site/service-splashbacks-706.webp',name:'Full Height Splashbacks',place:'Islington'},
-    {img:'/assets/site/cta-slab-2752.webp',          name:'Bespoke Layout',        place:'St Albans'},
-    {img:'/assets/site/kitchen-day-1188.webp', name:'Bespoke Features', place:'Hertford'},
-    {img:PROCESS[1].img,  name:'Bespoke Edge Profiles', place:'Welwyn'},
-    {img:PROCESS[2].img,  name:'Dining Tables',         place:'Enfield'},
-    {img:'/assets/hero-kitchen.jpg', name:'Exclusive Fireplaces', place:'Barnet'}
-  ];
+    {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
+     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches', date:'October 2025',
+     story:'Our recent project, The Ruislip project, showcases our expertise in installing a Calacatta Sydney Black 20mm quartz worktop, island, and splashbacks along with a bespoke breakfast bar. Along with this, we lined the doorway entering the kitchen to match. Our experienced team can bring your vision to life, no matter how bespoke.',
+     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/ruislip-g'+n+'-1100.webp')},
 
+    {key:'central-london', name:'The Central London Project', place:'London',
+     img:'/assets/projects/central-london-1400.webp', type:'Worktop', date:'October 2025', story:'',
+     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/central-london-g'+n+'-1100.webp')},
+
+    {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
+     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks', date:'February 2025',
+     story:'Our recent project, The Hornchurch project, showcases our expertise in installing a Taj Mahal 30mm quartz worktop, island, and splashbacks in a large house in Essex, incorporating a complicated Single Ogee edging. Trust our experienced team to provide a range of edge profiles to suit your needs.',
+     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/hornchurch-g'+n+'-1100.webp')},
+
+    {key:'harrow', name:'The Harrow Project', place:'Harrow',
+     img:'/assets/projects/harrow-1400.webp', type:'Worktop', date:'January 2025', story:'',
+     gallery:[1,2].map(n=>'/assets/projects/harrow-g'+n+'-1100.webp')},
+
+    {key:'harlow', name:'The Harlow Project', place:'Essex',
+     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', date:'May 2025', story:'',
+     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/harlow-g'+n+'-1100.webp')},
+
+    {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
+     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', date:'April 2025', story:'',
+     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/rickmansworth-g'+n+'-1100.webp')},
+
+    {key:'watford', name:'The Watford Project', place:'Watford',
+     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', date:'July 2025', story:'',
+     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/watford-g'+n+'-1100.webp')},
+
+    /* ⚠️ THE EIGHTH — HIS, AND STILL TO COME. No `img`, so it renders the "photo to come" plate. */
+    {key:'eighth', name:'Project eight', place:'Details to come',
+     ph:'PHOTO TO COME', type:'', date:'', story:'', gallery:[]}
+  ];
   const PER_SET=4;
   const NSETS=Math.ceil(PROJECTS.length/PER_SET);   // 8 projects → two panels of four
   let focused=false;                     // set by openFocus — the Escape handler below reads it
@@ -3929,13 +3977,13 @@ requestAnimationFrame(glowTick);
       el.className='gal-card';
       el.tabIndex=0; el.setAttribute('role','button');
       el.setAttribute('aria-label',p.name+', '+p.place);
-      el.dataset.name=p.name; el.dataset.place=p.place;
+      el.dataset.name=p.name; el.dataset.place=p.place; el.dataset.key=p.key||'';
       el.style.zIndex=10+i;
       /* .sheen is the polish sweep lifted straight from the services/process cards — same
          element, same 1.1s ease. It sits over the photo and under .gal-meta (equal z-index,
          later in the DOM wins), so the label never gets washed out by it. */
       el.innerHTML=`<div class="gal-door glow-card">
-        <img src="${p.img}"${ss(p.img,"(max-width:720px) 440px, 1160px")} alt="${p.name}, ${p.place}" draggable="false" loading="lazy" decoding="async">
+        <img src="${p.img||phImg(p.ph||p.name.toUpperCase())}"${ss(p.img,"(max-width:720px) 440px, 1160px")} alt="${p.name}, ${p.place}" draggable="false" loading="lazy" decoding="async">
         <div class="gal-veil"></div>
         <div class="sheen"></div>
         <div class="gal-meta"><span class="gal-name">${p.name}</span><span class="gal-place">${p.place}</span></div>
@@ -4309,14 +4357,22 @@ requestAnimationFrame(glowTick);
   const heroBg=document.getElementById('projHeroBg');
   const mediaWrap=document.getElementById('projMedia');
 
-  const SAMPLE=PROJECTS.map(p=>p.img);              // sample photos — swap for real per-project media later
+  /* ⛔ `SAMPLE` IS GONE. It was every card's photo shared by every project, which is why one
+     Calacatta Gold story and one set of pictures appeared behind all eight. The hero slideshow
+     and the media grid are both rebuilt per project by `loadMedia()` below (D211). */
+  let MEDIA=[];                                    // the OPEN project's media — rebuilt per open
 
   // hero: crossfading slideshow behind the title
   const HERO_N=5, heroSlides=[];
   for(let i=0;i<HERO_N;i++){ const s=document.createElement('div'); s.className='phb-slide'; heroBg.appendChild(s); heroSlides.push(s); }
   let heroIdx=0, heroTimer=null;
-  function startHero(clickedSrc){
-    const imgs=[clickedSrc,...SAMPLE.filter(s=>s!==clickedSrc)].slice(0,HERO_N);
+  function startHero(clickedSrc, pool){
+    const src=(pool&&pool.length?pool:[clickedSrc]);
+    /* ⚠️ The hero cycles the project's OWN photographs, and repeats them when it has fewer than
+       HERO_N — Harrow has three in total. A slideshow that borrowed another job's kitchen to
+       fill the gap would be showing a customer someone else's worktop. */
+    const imgs=[clickedSrc,...src.filter(s=>s!==clickedSrc)];
+    while(imgs.length<HERO_N && imgs.length) imgs.push(imgs[imgs.length%imgs.length===0?0:imgs.length-1]);
     heroSlides.forEach((s,i)=>{ s.style.backgroundImage=`url(${imgs[i%imgs.length]})`; s.classList.remove('active'); });
     heroIdx=0; void heroSlides[0].offsetWidth; heroSlides[0].classList.add('active');
     clearInterval(heroTimer);
@@ -4324,23 +4380,29 @@ requestAnimationFrame(glowTick);
   }
   function stopHero(){ clearInterval(heroTimer); heroTimer=null; }
 
-  // media grid — images + a video placeholder; clicking opens the lightbox
-  const MEDIA=[
-    {type:'image',src:SAMPLE[0],label:'Full view',cls:'wide'},
-    {type:'image',src:SAMPLE[1],label:'Island detail',cls:''},
-    {type:'video',src:SAMPLE[2],label:'Walkthrough',cls:''},
-    {type:'image',src:SAMPLE[3],label:'Edge profile',cls:''},
-    {type:'image',src:SAMPLE[4],label:'Splashback',cls:''},
-    {type:'image',src:SAMPLE[5],label:'The full run',cls:'wide'}
-  ];
-  MEDIA.forEach((m,i)=>{
-    const el=document.createElement('div');
-    el.className='proj-ph'+(m.cls?' '+m.cls:'')+(m.type==='video'?' video':'');
-    el.innerHTML=`<div class="ph-media"></div>${m.type==='video'?'<span class="ph-play"></span>':''}<span class="ph-label">${m.label}</span>`;
-    el.querySelector('.ph-media').style.backgroundImage=`url(${m.src})`;
-    el.addEventListener('click',()=>openLightbox(i));
-    mediaWrap.appendChild(el);
-  });
+  /* ⭐⭐ THE MEDIA GRID IS BUILT PER PROJECT — 14 Aug 2026 (D211). It used to be a fixed six
+     slots pulling from every card's photo, with invented labels ("Island detail", "Edge
+     profile") and a fake "Walkthrough" video tile. Both were fine while the pictures were
+     placeholders and are not fine now that these are real jobs: a label that names a feature
+     the photograph does not show is a caption we made up, and a play button on a video that
+     does not exist is a broken promise the moment it is clicked.
+     ⛔ **NO LABELS AND NO VIDEO TILE.** The photographs are numbered by the client's own gallery
+     order and nothing is claimed about what is in them. */
+  function loadMedia(proj){
+    mediaWrap.innerHTML='';
+    MEDIA=(proj&&proj.gallery?proj.gallery:[]).map((src,i)=>({type:'image',src,label:proj.name+' '+(i+1)}));
+    /* the first and last run full width when there are enough of them to make a rhythm */
+    MEDIA.forEach((m,i)=>{
+      const el=document.createElement('div');
+      const wide=(MEDIA.length>=4)&&(i===0||i===MEDIA.length-1);
+      el.className='proj-ph'+(wide?' wide':'');
+      el.innerHTML='<div class="ph-media"></div>';
+      el.querySelector('.ph-media').style.backgroundImage='url('+m.src+')';
+      el.addEventListener('click',()=>openLightbox(i));
+      mediaWrap.appendChild(el);
+    });
+    mediaWrap.style.display=MEDIA.length?'':'none';
+  }
 
   // lightbox
   const lightbox=document.getElementById('projLightbox');
@@ -4359,10 +4421,24 @@ requestAnimationFrame(glowTick);
 
   function openFocus(el){
     const img=el.querySelector('img');
+    /* ⭐ THE CARD CARRIES ITS KEY, SO THE OVERLAY SHOWS THAT PROJECT AND NOT A SHARED STORY. */
+    const proj=PROJECTS.find(p=>p.key===el.dataset.key)||{};
     dName.textContent=el.dataset.name;
     dPlace.textContent=el.dataset.place;
     if(dMetaPlace) dMetaPlace.textContent=el.dataset.place;
-    startHero(img.src);
+    const setRow=(rowId,valId,val)=>{const r=document.getElementById(rowId),v=document.getElementById(valId);
+      if(v) v.textContent=val||''; if(r) r.style.display=val?'':'none';};
+    setRow('projTypeRow','projMetaType',proj.type);
+    setRow('projDateRow','projMetaDate',proj.date);
+    /* ⛔ NO STORY MEANS NO COLUMN — see the markup note. The intro drops to one column so the
+       facts sit on their own rather than beside an empty half. */
+    const desc=document.getElementById('projDesc'), story=document.getElementById('projStory'),
+          intro=detail.querySelector('.proj-intro');
+    if(story) story.textContent=proj.story||'';
+    if(desc) desc.style.display=proj.story?'':'none';
+    if(intro) intro.style.gridTemplateColumns=proj.story?'':'1fr';
+    loadMedia(proj);
+    startHero(img.src, proj.gallery);
     detail.scrollTop=0;
     detail.classList.add('on'); detail.setAttribute('aria-hidden','false');
     focused=true;                                  // lets Escape close the detail
@@ -4383,8 +4459,8 @@ requestAnimationFrame(glowTick);
       const it=document.createElement('article');
       it.className='gal-grid-item glow-card'; it.tabIndex=0; it.setAttribute('role','button');
       it.setAttribute('aria-label',p.name+', '+p.place);
-      it.dataset.name=p.name; it.dataset.place=p.place;
-      it.innerHTML=`<img src="${p.img}"${ss(p.img,"(max-width:720px) 440px, 1160px")} alt="${p.name}, ${p.place}" draggable="false" loading="lazy" decoding="async"><div class="gg-veil"></div><div class="sheen"></div><span class="gg-name">${p.name}</span><span class="gg-place">${p.place}</span>`;
+      it.dataset.name=p.name; it.dataset.place=p.place; it.dataset.key=p.key||'';
+      it.innerHTML=`<img src="${p.img||phImg(p.ph||p.name.toUpperCase())}"${ss(p.img,"(max-width:720px) 440px, 1160px")} alt="${p.name}, ${p.place}" draggable="false" loading="lazy" decoding="async"><div class="gg-veil"></div><div class="sheen"></div><span class="gg-name">${p.name}</span><span class="gg-place">${p.place}</span>`;
       attachGlow(it);
       it.addEventListener('click',()=>openFocus(it));
       it.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();openFocus(it);} });

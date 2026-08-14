@@ -326,7 +326,12 @@ PAGES = [
              "stone, the space and how each one was templated and fitted.",
         crumb="Projects",
         h1="Projects",
-        lead="A finished kitchen is the only honest sample. These are ours, across London and the Home Counties, with the stone named on every one and the story of how it was cut and fitted.",
+        # ⚠️ REWRITTEN 14 Aug 2026 (D211) BECAUSE IT HAD BECOME UNTRUE. It promised "the stone
+        # named on every one and the story of how it was cut and fitted" — written when the cards
+        # were placeholders sharing one invented story. The real portfolio names no stone on most
+        # projects and five of the seven have no written story at all, so the page was advertising
+        # something the gallery below it does not contain. ⛔ The fix is the sentence, not the data.
+        lead="A finished kitchen is the only honest sample. These are ours, real installations with the place, the work and the date on every one.",
         stack=["s_gallery", "s_reviews", "s_process", "s_cta"],
     ),
     dict(
