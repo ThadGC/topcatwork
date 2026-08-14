@@ -9053,10 +9053,32 @@ if(svcReduce){
     STEP=Math.max(96,Math.min(165,r.height*0.26));       // taller rise per step, so above/below really curve away
   }
   const mod=(v,n)=>((v%n)+n)%n;
+  /* ⛔⛔⛔ **THE ARC STEP IS A FIXED 60° AND `360/N` BROKE THIS SAME HELIX A SECOND TIME.**
+     D226 fixed the YAW and left `th=d*2π/N` alone on the written reassurance that the spiral
+     "genuinely does absorb any count". ⭐⭐ **IT DOES NOT, AND THE CLIENT SENT A SIX-SERVICE
+     SCREENSHOT BACK AS THE TARGET** (14 Aug 2026): *"I asked you to fix the helix and you got it
+     wrong… that is what it's supposed to look like."* Only five slots are ever visible — the
+     front card and two steps either side — so `360/N` does not spread the same picture over more
+     cards, it RESHAPES those five. Measured at 1200 with R 218.2 and STEP 165:
+
+              x        z        scale   brightness
+       ±2   218.2   -218.2      0.840     0.750     ← eight services, 45° per step
+       ±2   189.0   -327.3      0.760     0.625     ← six services, 60° per step
+
+     The poles sat **15% further out sideways, a third as deep, 11% larger and 20% brighter** —
+     big flat slabs hung off the corners instead of small, dim cards turned away behind the
+     stack. ⭐⭐ **AND AT 60° THE ±1 AND ±2 CARDS SHARE ONE SIDEWAYS OFFSET** (`sin60 == sin120`),
+     which is what gives the column its single clean silhouette; at 45°/90° they splay apart.
+     The phone branch's own R was tuned on that symmetry and says so in its comment.
+     ⭐ **ONE GESTURE, TWO ANGLES, BOTH N-INDEPENDENT:** the wind is 90% of the arc, which is
+     where the original `(d*360/N)*0.9` got its 54° at six services. A ninth service cannot move
+     either of them now. ⛔ Do not re-derive either from `items.length`. */
+  const ANG_STEP=60;                                    // degrees around the spiral, per step out
+  const YAW_STEP=ANG_STEP*0.9;                          // 54° — the wind; >90° by two steps out
   function render(){
     for(let j=0;j<N;j++){
       let d=mod(j-cur,N); if(d>N/2)d-=N;
-      const th=d*Math.PI*2/N;
+      const th=d*ANG_STEP*Math.PI/180;
       const c=(Math.cos(th)+1)/2;                       // 1 front → 0 back
       const x=Math.sin(th)*R, z=(Math.cos(th)-1)*R, y=-d*STEP;
       /* the wind: side-to-side ONLY — no pitch, the cards stay upright as they climb (client's
@@ -9079,10 +9101,12 @@ if(svcReduce){
          |yaw| **81°** across all eight.
          ⚠️⚠️ **NOTHING ABOUT THE RANGE CHANGE LOOKED LIKE IT TOUCHED THIS.** D206's own comment
          says the geometry "is written from `items.length`, so it absorbed six → seven → eight
-         with no tuning" — true of the SPIRAL (x/z/y still use `360/N`, and should), and false of
-         the wind, because this angle is a fixed visual gesture and not a share of the circle.
+         with no tuning". It absorbed NEITHER, and this row's first fix believed half of that
+         sentence: the yaw was corrected and the spiral's own `360/N` was left alone on the same
+         false reassurance, so the poles came back turned but still splayed out to the corners
+         and the client rejected it on sight. **Both angles are fixed gestures now** — see
+         `ANG_STEP` and `YAW_STEP` where they are declared, above `render()`.
          ⭐ **A CONSTANT PER-STEP ANGLE IS N-INDEPENDENT**, so a ninth service cannot repeat this. */
-      const YAW_STEP=54;                                // degrees per step out; >90° by two steps
       const yaw=d*YAW_STEP;
       const s=0.68+0.32*c;
       const edge=Math.max(0,Math.abs(d)-2);             // 0 until 2 steps out → 1 at the back pole

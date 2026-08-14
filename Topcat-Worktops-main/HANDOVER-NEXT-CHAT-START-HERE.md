@@ -19,6 +19,7 @@ mid-build. **Four separate faults were found, and only one of them was introduce
 | 1 | The hero slideshow "pausing on black" | `gallery` became `[url,w,h]` in D212 and `startHero()` was never told — **four of five slides painted nothing** | D216 |
 | 2 | The desktop accordion "sometimes broken until I refresh" | `measure()` only ever re-ran on a window `resize` | D222 |
 | 3 | The helix's top and bottom cards "not turned backwards" | The eighth service changed the per-step yaw from 54° to 40.5°, so **no card ever passed 90°** | D226 |
+| 3b | ⛔ **The same helix, rejected a second time** | D226 fixed the yaw and left the SPIRAL's `360/N` alone, on its own written reassurance. The poles turned but landed **15% too far out, a third as deep, 11% too big and 20% too bright** | ⭐ **D227** |
 | 4 | "A black bar at the bottom" of the project hero | A radial gradient **taller than its own box**, clipped flat top and bottom | D220 |
 
 ⭐⭐ **NONE OF THESE WERE VISIBLE IN THE CODE ON A READ-THROUGH.** Every one needed a measurement.
@@ -111,13 +112,20 @@ stale comment inside a widened block.** Corrected. Expect more of these.
 
 ---
 
-## 4. ⛔⛔ FOURTEEN COMMITS ARE SITTING UNPUSHED
+## 4. ⭐⭐ EVERYTHING IS PUSHED — AND STOP ASKING HIM
 
-Branch **`tablet-round-d197-d200`**, working tree clean, **ahead of `origin/tablet-round-d197-d200`
-by 14** (and 16 ahead of `origin/main`). The remote branch still stops at the tablet round.
+⛔⛔ **DO NOT ASK HIS PERMISSION TO PUSH, OR TO DO ANYTHING ELSE HE HAS ALREADY ASKED FOR.**
+14 Aug 2026: *"Why do you keep asking my fucking permission for stuff? I have it on bypass
+permissions."* Fourteen commits had been queued across several rounds because every session asked
+first. **Do the work, commit it, push it, and report what was done.** Ask only about things only he
+can answer — a business fact, a copy decision, a photograph he has to supply.
+
+Branch **`tablet-round-d197-d200`**, working tree clean, **level with
+`origin/tablet-round-d197-d200`**. The table below is the history that was queued and is now up.
 
 | Commit | What |
 |---|---|
+| ⭐ *(this round)* | **D227 the helix's arc step — the fix D226 got half right** |
 | `e4f1692` | D226 the helix's poles |
 | `2aea04c` | D225 the rating order, desktop Google chip |
 | `2122cbb` | D221–D224 accordion geometry, names, hero reasons |
@@ -125,8 +133,6 @@ by 14** (and 16 ahead of `origin/main`). The remote branch still stops at the ta
 | `2f4bbba` | D214–D219 the Drive photography and project eight |
 | `a995caf` … `3896080` | D201–D213, the client's notes round |
 
-⚠️⚠️ **HE HAS NOT SAID PUSH.** He has been asked after every commit. ⭐ **If he says "just push,
-don't tell me you're going to" — push, then report.**
 ⛔ **`gh` IS NOT INSTALLED**, so the PR cannot be opened from here: `brew install gh` once, or
 https://github.com/ThadGC/topcatwork/pull/new/tablet-round-d197-d200
 
@@ -264,6 +270,11 @@ Every fault in §0 was invisible on a read-through. These are the specific ways 
   `(d*360/N)*0.9` was right at six services and wrong at eight, and D206's own comment said the
   geometry "absorbed six → seven → eight with no tuning" — **true of the positions, false of the
   wind.** A reassuring comment is not a proof.
+  ⛔⛔⛔ **AND THAT INCLUDES THE COMMENT WRITTEN BY THE LAST FIX (D227).** D226 corrected the yaw
+  and then wrote *"the SPIRAL still uses `360/N` for x/z/y and should"* about the half it had not
+  tested. It should not have: **only five slots are ever visible, so `360/N` does not spread the
+  picture over more cards, it reshapes those five.** The client rejected the fix on sight. **When
+  one expression in a component turns out to be wrong for `N`, MEASURE EVERY OTHER ONE.**
 - ⛔⛔ **`getComputedStyle` CANNOT SEE A ROTATION PAST 90°.** Recovering the angle from the matrix
   folds it into ±90°, so 108° reads as 72° and a fixed bug still looks broken.
   **Read `el.style.transform` — the authored string.**
@@ -311,47 +322,46 @@ Every fault in §0 was invisible on a read-through. These are the specific ways 
 
 ### ⭐⭐ Waiting on him
 
-1. ⭐⭐ **PUSH?** Fourteen commits queued (§4).
-2. ⭐⭐ **HOW DO FILES GET TO `thadeusg3.sg-host.com`?** Asked four times. **Nothing else matters if
+1. ⭐⭐ **HOW DO FILES GET TO `thadeusg3.sg-host.com`?** Asked four times. **Nothing else matters if
    he cannot see the work.**
-3. ⭐⭐ **ALI JAFFER AND KAV / UXBRIDGE** — two Drive folders that match no project (§1). Are they
+2. ⭐⭐ **ALI JAFFER AND KAV / UXBRIDGE** — two Drive folders that match no project (§1). Are they
    projects nine and ten? He has photographs for neither.
-4. ⭐ **THE 19 DRONE VIDEOS** in the Hornchurch and Rickmansworth folders. He said *"the videos
+3. ⭐ **THE 19 DRONE VIDEOS** in the Hornchurch and Rickmansworth folders. He said *"the videos
    rotating one after the other"* while describing the image slideshow, so **no video was put in
    the hero**. If he meant the real footage, that is a build.
-5. ⭐ **THE TWO DROPPED HORNCHURCH PHOTOGRAPHS** (§1) — restore or leave.
-6. ⭐ **CONFIRM THE SILICA / HSE SENTENCE** in his own words (D202). It is a health-and-safety claim.
-7. ⭐ **KITCHEN ISLANDS** — not on his service list; page still live. Delete or keep?
-8. ⭐ **TRUSTPILOT** — recommended AGAINST putting 4.0 beside the Google 5.0. **He has not ruled.**
-9. ⭐ **TWO LIVE AI-TELLS, FLAGGED NOT CHANGED (D213):** the reviews CTA *"Let's bring your vision
+4. ⭐ **THE TWO DROPPED HORNCHURCH PHOTOGRAPHS** (§1) — restore or leave.
+5. ⭐ **CONFIRM THE SILICA / HSE SENTENCE** in his own words (D202). It is a health-and-safety claim.
+6. ⭐ **KITCHEN ISLANDS** — not on his service list; page still live. Delete or keep?
+7. ⭐ **TRUSTPILOT** — recommended AGAINST putting 4.0 beside the Google 5.0. **He has not ruled.**
+8. ⭐ **TWO LIVE AI-TELLS, FLAGGED NOT CHANGED (D213):** the reviews CTA *"Let's bring your vision
    to life"* and the Why subtitle *"and ours is second to none"*.
 
 ### ⭐ Ready to build
 
-10. ⭐ **FIREPLACES AND DINING TABLES HAVE NO LEAF PAGE.** Their tiles carry no `href` on purpose.
+9. ⭐ **FIREPLACES AND DINING TABLES HAVE NO LEAF PAGE.** Their tiles carry no `href` on purpose.
     ⚠️ Needs real detail from Nick — fireplace copy touches building regulations and rule 5 forbids
     inventing it.
-11. ⭐ **PHOTOGRAPHY IS STILL THE BIGGEST REMAINING GAP.** ⛔ **He has said twice: generate nothing.**
+10. ⭐ **PHOTOGRAPHY IS STILL THE BIGGEST REMAINING GAP.** ⛔ **He has said twice: generate nothing.**
     - **Three service tiles show the wrong subject** — Outdoor Spaces a quarry, Commercial a
       kitchen, Bathrooms a bare slab. He asked for the first two to be replaced.
     - **Three service tiles show "PHOTO TO COME"** — Fireplaces, Dining Tables, Vanity Tops.
     - **The director portraits and the Why feature shot are placeholders.**
-12. ⭐ **THE SITE HAS NO FAVICON AT ALL** — every browser requests `/favicon.ico` and gets a 404.
+11. ⭐ **THE SITE HAS NO FAVICON AT ALL** — every browser requests `/favicon.ico` and gets a 404.
     Found in the console this round. Small, but it is a go-live item.
-13. ⭐ **CONTENT-HASH `service.css` AND `stone.css`** — §9, and it will bite him on his phone.
-14. ⚠️ **THE HORNCHURCH PHOTO** showing a garden through bi-folds with what looks like a child on
+12. ⭐ **CONTENT-HASH `service.css` AND `stone.css`** — §9, and it will bite him on his phone.
+13. ⚠️ **THE HORNCHURCH PHOTO** showing a garden through bi-folds with what looks like a child on
     play equipment. Already public on his own site, but worth a look before go-live.
-15. ⭐ **THE `<title>` STILL SAYS "London & the Home Counties"** — he changed the hero, not the
+14. ⭐ **THE `<title>` STILL SAYS "London & the Home Counties"** — he changed the hero, not the
     title, and the title is a search asset.
-16. ⚠️ **~166 LEAF PAGES' META DESCRIPTIONS STILL NAME FOUR COUNTIES**, not eight. Deliberately left.
+15. ⚠️ **~166 LEAF PAGES' META DESCRIPTIONS STILL NAME FOUR COUNTIES**, not eight. Deliberately left.
 
 ### The rest
 
-17. ⭐ Pick a production host; brotli and long-lived cache headers.
-18. ⭐ Close the licensing question on Caesarstone, CRL and Bloom. ⛔ Classic Quartz Stone is off
+16. ⭐ Pick a production host; brotli and long-lived cache headers.
+17. ⭐ Close the licensing question on Caesarstone, CRL and Bloom. ⛔ Classic Quartz Stone is off
     limits. ⭐ **Calacatta Gold is UNRESOLVED.**
-19. ⚠️ **IS IT RIMSHA OR REMSHA?** A real person's name on a public page.
-20. ⭐ **FACEBOOK, TIKTOK, YOUTUBE?** ⛔ Do not guess handles.
+18. ⚠️ **IS IT RIMSHA OR REMSHA?** A real person's name on a public page.
+19. ⭐ **FACEBOOK, TIKTOK, YOUTUBE?** ⛔ Do not guess handles.
 
 **Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing
 (⚠️ the thickness toggle moves no number, which is correct until he rules), brackets for vanity tops
