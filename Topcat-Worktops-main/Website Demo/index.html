@@ -3256,35 +3256,55 @@
     border:1px solid rgba(198,166,100,0.45);color:var(--bone);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
     cursor:pointer;box-shadow:0 12px 30px -12px rgba(0,0,0,0.8);transition:border-color .4s var(--ease),color .4s var(--ease),background .4s var(--ease)}
   .proj-close:hover{border-color:var(--gold);color:var(--gold);background:rgba(10,10,12,0.95)}
-  /* ⭐ THE HERO COPY IS CENTRED — 14 Aug 2026, client: *"also add the text center."* The block
-     still sits on the floor of the hero; only its horizontal alignment changed. */
-  .proj-hero{position:relative;height:100vh;min-height:520px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+  /* ⭐⭐ THE HERO COPY SITS IN THE MIDDLE OF THE SCREEN — 14 Aug 2026, SECOND PASS.
+     ⛔ **THE FIRST PASS READ "CENTER" AS HORIZONTAL ONLY AND LEFT THE BLOCK ON THE FLOOR OF THE
+     HERO.** Client, with a screenshot: *"when I said text in the middle, I meant, like, in the
+     middle of the screen, and then just add a shadow behind the text so that it stands out, and
+     don't add this kind of black bar or whatever to the bottom. Just straight up in the center of
+     the screen. That's what I meant. For all projects."* Both axes now. */
+  .proj-hero{position:relative;height:100vh;min-height:520px;overflow:hidden;display:flex;align-items:center;justify-content:center}
   .proj-hero-bg{position:absolute;inset:0;background:var(--ink)}
   .phb-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s var(--ease);will-change:opacity,transform}
   .phb-slide.active{animation:phbZoom 6s var(--ease) forwards}
   @keyframes phbZoom{from{transform:scale(1.10)}to{transform:scale(1)}}
-  .proj-hero-veil{position:absolute;inset:0;z-index:3;background:linear-gradient(to top,rgba(8,8,10,0.96) 3%,rgba(8,8,10,0.3) 42%,rgba(8,8,10,0.55))}
-  .proj-hero-copy{position:relative;z-index:4;padding:0 clamp(28px,6vw,92px) clamp(46px,7vh,86px);max-width:1080px;text-align:center;
+  /* ⛔⛔ NO BAND ACROSS THE BOTTOM — client, 14 Aug 2026: *"don't add this kind of black bar or
+     whatever to the bottom."* The veil used to be bottom-weighted (0.96 at 3%) because the copy
+     sat on the floor and needed a footing. **The copy is in the middle now, so a dark bar at the
+     bottom holds nothing up — it is just a bar.** An EVEN wash instead: no edge, no band, no
+     direction, and the photograph keeps its shape top to bottom. The words are carried by their
+     own shadow (`.proj-eyebrow` / `.proj-title`), which is what he asked for. */
+  .proj-hero-veil{position:absolute;inset:0;z-index:3;background:rgba(8,8,10,0.34)}
+  .proj-hero-copy{position:relative;z-index:4;padding:0 clamp(28px,6vw,92px);max-width:1080px;text-align:center;
     opacity:0;transform:translateY(26px);transition:opacity .9s .25s var(--ease),transform .9s .25s var(--ease)}
-  /* ⚠️⚠️ THE COPY CARRIES ITS OWN SHADE, BECAUSE THE VEIL ALONE COULD NOT — measured 14 Aug 2026
-     while centring this block. Across the 97 photographs that can appear behind it, the gold
-     eyebrow measured **1.42:1 against its own background on the worst of them** (a bright white
-     splashback filling the frame) and under 2:1 on fifteen. Gold on pale grey: present, unreadable.
-     ⛔ **DEEPENING THE PAGE VEIL WAS TRIED FIRST AND REVERTED, AND THAT IS THE PART TO REMEMBER.**
-     Getting the worst case to 3:1 that way needed about 0.65 alpha across the middle of the frame
-     — it fixed the label by flattening the photograph, and on this site the photograph IS the
-     product. **The words needed shade, not the picture.**
-     ⭐ A soft ellipse behind the text block only, so the rest of the frame keeps its light. It is
-     wide and feathered to zero, which reads as a natural pool of shade rather than a panel.
-     ⛔ NOT A BOX, NOT A PANEL, AND NO LINE ANYWHERE ON IT (§2 rule 10). */
-  .proj-hero-copy::before{content:"";position:absolute;z-index:-1;pointer-events:none;
-    inset:-70px -12vw -46px;
-    background:radial-gradient(66% 78% at 50% 50%,rgba(8,8,10,0.80),rgba(8,8,10,0.55) 56%,rgba(8,8,10,0) 100%)}
   .proj-detail.on .proj-hero-copy{opacity:1;transform:none}
-  .proj-eyebrow{display:block;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
-  .proj-title{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,94px);line-height:0.98;color:var(--bone)}
-  /* ⛔ THE CUE IS AN ARROW AND NOTHING ELSE (client, 14 Aug 2026). It keeps the bob it always had. */
-  .proj-scrollcue{display:inline-flex;margin-top:30px;color:var(--faint);animation:projBob 2s ease-in-out infinite}
+  /* ⭐⭐ THE WORDS ARE CARRIED BY A SHADOW, NOT BY A PANEL — client, 14 Aug 2026: *"just add a
+     shadow behind the text so that it stands out."*
+     ⛔⛔ **AN EARLIER PASS PUT A SOFT DARK ELLIPSE BEHIND THIS BLOCK AND IT IS DELETED, NOT
+     OVERRIDDEN — AND THE REASON IT FAILED IS WORTH KEEPING.** A radial gradient is clipped by its
+     own box, and the ellipse was taller than the box it sat in, so it was cut off flat at the top
+     and bottom edges: a soft pool everywhere except two dead straight horizontal lines. **That is
+     the "black bar" in his screenshot.** ⭐ **A GRADIENT THAT REACHES ITS BOX EDGE STILL CARRYING
+     COLOUR DRAWS AN EDGE THERE.** Feather to zero INSIDE the box or do not use one.
+     ⭐ Three layers, tight to loose: a hairline that separates the letterform from anything
+     directly behind it, a mid halo that does the work on a bright photograph, and a wide soft
+     one that seats the block in the picture. No box, no panel, no line (§2 rule 10). */
+  /* ⚠️ THE FIRST SHADOW ON EACH WAS OFFSET-ONLY AND THE SMALL GOLD LINE STAYED WEAK ON A WHITE
+     WALL — a dropped shadow sits BELOW a letter and leaves its top edge naked against the
+     photograph. The `0 0` layer is a centred blur, so it rims the letterform on all four sides.
+     ⭐ Small text needs the rim more than the drop; the display face needs the drop more than the
+     rim. Both carry both, weighted accordingly. */
+  .proj-eyebrow{display:block;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;
+    text-shadow:0 0 3px rgba(0,0,0,0.88),0 0 9px rgba(0,0,0,0.72),0 1px 2px rgba(0,0,0,0.8),0 4px 22px rgba(0,0,0,0.6)}
+  .proj-title{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,94px);line-height:0.98;color:var(--bone);
+    text-shadow:0 0 4px rgba(0,0,0,0.5),0 2px 4px rgba(0,0,0,0.6),0 4px 20px rgba(0,0,0,0.66),0 10px 54px rgba(0,0,0,0.55)}
+  /* ⛔ THE CUE IS AN ARROW AND NOTHING ELSE (client, 14 Aug 2026). It keeps the bob it always had.
+     ⭐ It is pinned to the FOOT of the hero now rather than travelling with the copy: the copy
+     moved to the middle of the screen, and a "scroll down" cue floating under the title reads as
+     part of the title. ⚠️ Centred with `left:0;right:0` and not with `translateX(-50%)`, because
+     the bob animates `transform` and the two would fight. */
+  .proj-scrollcue{position:absolute;z-index:4;bottom:clamp(26px,5vh,54px);left:0;right:0;
+    display:flex;justify-content:center;color:var(--faint);
+    filter:drop-shadow(0 2px 8px rgba(0,0,0,0.7));animation:projBob 2s ease-in-out infinite}
   @keyframes projBob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(8px);opacity:1}}
   .proj-body{max-width:1180px;margin:0 auto;padding:clamp(56px,9vh,116px) clamp(24px,5vw,60px) 130px}
   .proj-intro{display:grid;grid-template-columns:1fr 1.7fr;gap:clamp(30px,5vw,72px);align-items:start;margin-bottom:clamp(48px,8vh,88px)}
@@ -7054,15 +7074,17 @@
         <div class="proj-hero-copy">
           <span class="proj-eyebrow" id="projPlace">Project</span>
           <h2 class="proj-title" id="projName">Project</h2>
-          <!-- ⛔ NO WORDS ON THE CUE — 14 Aug 2026. Client: *"don't say scroll to view the full
-               story. Just add the arrow down jumping. Nothing else."* The bob animation is
-               unchanged; only the sentence is gone. `aria-hidden` because an arrow that says
-               nothing to the eye should not announce "scroll for the full story" to a screen
-               reader either — the heading and the body below it are the real navigation. -->
-          <span class="proj-scrollcue" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15"/><path d="M5.5 12.5L12 19l6.5-6.5"/></svg>
-          </span>
         </div>
+        <!-- ⛔ NO WORDS ON THE CUE — 14 Aug 2026. Client: *"don't say scroll to view the full
+             story. Just add the arrow down jumping. Nothing else."* The bob animation is
+             unchanged; only the sentence is gone. `aria-hidden` because an arrow that says
+             nothing to the eye should not announce "scroll for the full story" to a screen
+             reader either — the heading and the body below it are the real navigation.
+             ⚠️ IT IS A CHILD OF `.proj-hero`, NOT OF `.proj-hero-copy`, so it can sit at the foot
+             of the screen while the copy sits in the middle of it. -->
+        <span class="proj-scrollcue" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15"/><path d="M5.5 12.5L12 19l6.5-6.5"/></svg>
+        </span>
       </div>
       <div class="proj-body">
         <div class="proj-intro">
