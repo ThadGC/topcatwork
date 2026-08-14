@@ -1,6 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+⛔⛔⛔ SUPERSEDED — DO NOT RUN THIS. `../build_pages.py` OWNS `/trade/index.html`.
+================================================================================
+Marked 14 August 2026 (D233). This builder still writes `/trade/index.html`, and
+running it would silently REPLACE the live page with the 1 August version:
+  • the section title back to "One trade off your critical path", which the client
+    named and rejected outright ("I hate the title... what does that even mean?"),
+  • the two sections D232 added — `#tradeScope` and `#tradeFaq` — gone,
+  • the cards back to the `<strong>`/`<span>` markup whose CSS never matched (D231),
+  • the enquiry card back on a section id with no padding, sitting on the footer (D230).
+Nothing points at it and nothing imports it. It is kept only because it is the
+record of how the page was first built. ⛔ If you need to change the trade page,
+change `build_pages.py` and re-run THAT.
+⚠️ Its copy below was left in step with the live page on 14 Aug so that a mistaken
+run does less damage, but that is a seatbelt, not a reason to run it.
+================================================================================
+
 Generates the Topcat Worktops trade page (/trade/index.html). Run from inside
 this folder:
 
@@ -15,7 +31,9 @@ here, and the landing page carries only a slim prompt band that points at it.
 Shares /services/service.css (the base: tokens, header, buttons, crumbs, blocks,
 cta-band, footer, .rise) exactly as the service and stone pages do.
 
-House rules honoured: ⛔ fabrication is OUTSOURCED, never claim in-house (reversed 7 Aug 2026),
+House rules honoured: ⚠️ THIS LINE IS OUT OF DATE AND IS LEFT AS EVIDENCE OF WHY THIS FILE IS
+FROZEN — it read "fabrication is OUTSOURCED, never claim in-house", which was the 7 Aug position
+and was REVERSED on 14 Aug (D202): fabrication is IN-HOUSE, "by our experienced fabricators".
 no showroom, no
 founding year, value not cheap, 5.0 on Google with no review count and no
 aggregateRating in schema, service area = London, Hertfordshire, Essex &
@@ -117,8 +135,8 @@ WORK_WITH = [
      "Samples and drawings to close the sale, honest steers on what suits the client's life, and "
      "a fit that reflects on your design rather than on our diary."),
     ("Builders and fit-out contractors",
-     "One trade off your critical path. We template when the units are genuinely ready and fit "
-     "when we said we would."),
+     "One less trade to manage. We template when the units are genuinely ready and fit when we "
+     "said we would."),
     ("Property developers",
      "Repeatable specification across plots, reserved slabs so the last unit matches the first, "
      "and pricing held for the length of the scheme."),

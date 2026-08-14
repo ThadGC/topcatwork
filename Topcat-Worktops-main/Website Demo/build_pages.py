@@ -186,8 +186,8 @@ TRADE_WHO = [
      "Samples and drawings to close the sale, honest steers on what suits the client's life, and a "
      "fit that reflects on your design rather than on our diary."),
     ("Builders and fit-out contractors",
-     "One trade off your critical path. We template when the units are genuinely ready and fit "
-     "when we said we would."),
+     "One less trade to manage. We template when the units are genuinely ready and fit when we "
+     "said we would."),
     ("Property developers",
      "Repeatable specification across plots, reserved slabs so the last unit matches the first, "
      "and pricing held for the length of the scheme."),
@@ -230,7 +230,20 @@ def trade_cards(items, cls="trade-card"):
 # down column two reads as an orphan.
 TRADE_WHAT_SECTION = """  <section class="section" id="tradeWhat">
     <div class="section-head rise">
-      <h2 class="section-title">One trade off your <em>critical path</em></h2>
+      <!-- ⛔⛔ "ONE TRADE OFF YOUR CRITICAL PATH" IS DEAD — 14 Aug 2026 (D233). Client: *"I hate the
+           title that says one trade off your critical path. What does that even mean? The trade
+           page is for essentially other people to use Topcat to do the work for them, and also for
+           bigger companies to buy their services. So there should be, like, something trade with
+           Topcat, something that just speaks to what this is for."*
+           ⭐⭐ HE IS RIGHT TWICE OVER. "Critical path" is construction programme jargon, and half
+           the audience he just named — kitchen designers, developers — do not talk that way. And
+           "One trade off" reads as "one trade-off" on first sight, which says the opposite of what
+           it means. **A heading that has to be parsed is a heading that has failed.**
+           ⭐ HIS OWN WORDS, AND THE BRAND TAKES THE GOLD. It sits under an H1 that says "Trade", so
+           this answers the H1 rather than repeating it: trade WITH US, and the paragraph below says
+           what that gets you. ⛔ Do not put the jargon back anywhere on this page — it was in four
+           places and all four are changed. -->
+      <h2 class="section-title">Trade with <em>Topcat</em></h2>
     </div>
     <div class="trade-lede rise">
       <p class="section-sub">Most of the problems we get called in to solve are not stone problems,
@@ -240,8 +253,8 @@ TRADE_WHAT_SECTION = """  <section class="section" id="tradeWhat">
         reputation. That is exactly what we are here to prevent. With Topcat, we manage the process
         from advice and templating through to fabrication and installation, keeping the
         responsibility with us rather than passing it down the line.</p>
-      <p class="section-sub trade-lede-close"><b>One team. One point of contact. One less thing on
-        your critical path.</b></p>
+      <p class="section-sub trade-lede-close"><b>One team. One point of contact. One less thing to
+        chase.</b></p>
     </div>
     <div class="trade-grid">
 {cards}
