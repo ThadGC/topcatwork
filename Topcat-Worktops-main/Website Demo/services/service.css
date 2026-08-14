@@ -78,6 +78,29 @@ nav.top a:hover{color:var(--bone)}
    that sits in the line of text it belongs to. */
 .crumb{max-width:var(--maxw);margin:0 auto;padding:22px clamp(20px,5vw,64px) 0;
   display:flex;align-items:center;gap:14px}
+/* ⭐⭐ ON THE PHOTOGRAPH, NOT ON A STRIP ABOVE IT — 14 Aug 2026 (D229). Client: *"there's no need
+   to have a black bar, like in the screenshot for the directory you have on the top. It can just
+   be on screen as long as it's easy to read."*
+   ⚠️⚠️ THERE WAS NEVER A BAR. `.crumb` was a SIBLING of `.svc-hero`, so it occupied a band of the
+   page background and the hero photograph started beneath it — a black strip by arithmetic, not
+   by decoration. The trail is a CHILD of the hero now (moved in both builders' templates), so
+   this rule only has to lift it over `.svc-hero-bg`, which is `position:absolute;inset:0`.
+   ⛔ NOT `position:absolute`: the trail keeps its own height in the flow, so the title below it
+   cannot slide up underneath it at a width nobody measured.
+   ⚠️ READABILITY IS MEASURED, NOT ASSUMED (his condition). The hero veil is heaviest exactly
+   where the trail sits — 0.95 alpha at the left edge, and the vertical veil adds nothing at the
+   top — so the current-page word (gold, #C6A664) and the muted links both clear 4.5:1 there.
+   ⭐ The stone pages do NOT get this: their trail is not inside a hero, and this selector cannot
+   reach it. Deliberate — one component changed, not every page that loads this stylesheet. */
+.svc-hero>.crumb{position:relative;z-index:1;padding-top:0;margin-bottom:18px}
+/* ⚠️ THE HERO'S TOP PADDING COMES DOWN ONLY WHERE THE TRAIL IS ACTUALLY THERE. `.svc-hero` runs
+   clamp(40px,7vh,84px) of top padding, which used to sit above the TITLE; with the trail moved
+   inside, that same padding sat above the TRAIL and pushed the title 40px further down the
+   photograph. ⛔⛔ IT CANNOT COME DOWN GLOBALLY: the trail is `display:none` below 720px (D197),
+   so on a phone this padding is the only thing holding the title off the header — which is the
+   exact trap D197's own comment warned about. Scoped to 721px up, the band where the trail
+   exists. ⚠️ The measured gap between the trail and the title was 0px before this rule. */
+@media(min-width:721px){.svc-hero{padding-top:clamp(22px,3.4vh,40px)}}
 /* ⭐ THE ARROW AND NOTHING ELSE (client, 10 Aug): "make it a simple golden gradient back arrow,
    not a circle around it, not anything, just simple." No ring, no plate, no background. The gold
    is the brand gradient carried by the stroke itself, defined inside the SVG so the button stays
@@ -122,14 +145,25 @@ nav.top a:hover{color:var(--bone)}
   .svc-hero-bg::after{background:linear-gradient(0deg,rgba(11,11,13,0.93),rgba(11,11,13,0.5)),
                                   linear-gradient(90deg,rgba(11,11,13,0.82),rgba(11,11,13,0.55))}
 }
-.svc-hero .eyebrow{display:inline-block;font-family:var(--brand);font-size:10px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
-/* ⛔ D197: TITLE AND SUBTITLE ONLY ON THE PHONE. Client: "you can also remove eyebrows from the
-   title. So it's just title and subtitle for all the internal pages." This is the label above the
-   H1 on the service, material and area pages ("Bespoke Worktops", "Sintered stone", "Areas we
-   cover"). ⛔⛔ IT MUST STAY BELOW THE RULE IT OVERRIDES: both selectors are `.svc-hero .eyebrow`,
-   so they are IDENTICAL specificity and only source order separates them. Written up with the
-   breadcrumb block instead, it lost to the base rule and the eyebrow stayed on — measured. */
-@media(max-width:720px){.svc-hero .eyebrow{display:none}}
+/* ⛔⛔ THE EYEBROW IS GONE FROM THIS HERO AT EVERY WIDTH — 14 Aug 2026 (D229). Client: *"I want
+   you to remove the eyebrow from each of the services sections in the pages, and then just keep
+   the title, the name of the section."*
+   ⭐ HE ASKED FOR THIS ONCE BEFORE AND ONLY THE PHONE GOT IT. D197: *"you can also remove eyebrows
+   from the title. So it's just title and subtitle for all the internal pages"* — which was built
+   as `@media(max-width:720px){.svc-hero .eyebrow{display:none}}`. "All the internal pages" was
+   the instruction and one breakpoint was the delivery.
+   ⛔⛔ DELETED IN THE TEMPLATES, NOT HIDDEN HERE. Both rules are gone and so is the `<span>` in
+   `build_services.py` and the three hero blocks in `build_seo_pages.py`, because a hidden element
+   is a second live description of a thing that no longer exists (D106/D113/D114).
+   ⚠️ `.eyebrow` SURVIVES ELSEWHERE and must: the stone pages carry their own inside `.stp-copy`
+   ("Granite &middot; Leathered"), which this selector never reached. */
+/* ⭐⭐ THE LAST WORD OF THE TITLE IS GOLD (D229). Client: *"the first word is gonna be white, and
+   then second word is gonna be gold. And if it's just one word, it's gonna be a white word."*
+   The landing page's own hero does this ("Surfaces for every SPACE"), so the internal pages now
+   read as the same family. ⛔ The split is made in the builders, by `gold_last()`; a one-word
+   title is emitted with no span at all, so there is nothing here that could colour it by
+   accident. ⚠️ Inherits weight and size — colour is the ONLY thing that changes. */
+.svc-hero h1 .h1-gold{color:var(--gold)}
 .svc-hero h1{
   font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:0.01em;
   font-size:clamp(34px,5.2vw,60px);line-height:1.05;max-width:16ch;

@@ -83,7 +83,7 @@ TOWNS = ("St Albans, Harpenden, Watford, Hemel Hempstead, Welwyn Garden City, He
 # ---------------------------------------------------------------------------
 SERVICES = [
   dict(
-    slug="kitchen-worktops", eyebrow="Kitchen Worktops", h1="Kitchen Worktops",
+    slug="kitchen-worktops", h1="Kitchen Worktops",
     title="Kitchen Worktops in London, Hertfordshire, Essex & Berkshire | Topcat Worktops",
     metadesc="Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
     lede="Quartz, granite and marble kitchen worktops, chosen from the slab you approve, cut to your kitchen and fitted by the same team that measured it. Free home visit, fixed pricing and a ten-year guarantee.",
@@ -105,7 +105,7 @@ SERVICES = [
     ],
   ),
   dict(
-    slug="kitchen-islands", eyebrow="Kitchen Islands", h1="Kitchen Islands & Waterfall Ends",
+    slug="kitchen-islands", h1="Kitchen Islands",
     title="Kitchen Island Worktops & Waterfall Ends | Topcat Worktops",
     metadesc="Stone kitchen islands with mitred waterfall ends, vein-matched around every corner and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
     lede="The island is the centre of the kitchen, so it earns a little more attention. We build islands with mitred waterfall ends that fold the stone to the floor, with the veining planned around every corner.",
@@ -127,7 +127,7 @@ SERVICES = [
     ],
   ),
   dict(
-    slug="splashbacks", eyebrow="Splashbacks", h1="Stone Splashbacks & Upstands",
+    slug="splashbacks", h1="Splashbacks",
     title="Stone Splashbacks & Upstands | Quartz, Granite & Marble | Topcat Worktops",
     metadesc="Vein-matched stone splashbacks and upstands cut to fit around sockets and hobs, with no grout lines. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
     lede="Carry the same stone up the wall for a clean, vein-matched finish behind the hob and along the run. No grout lines to scrub and no visual break between the worktop and the wall.",
@@ -155,7 +155,7 @@ SERVICES = [
   # and its ranking, is unchanged; the basin content moved out and shower surrounds, sills and
   # thresholds moved in, so the two pages no longer compete for the same words.
   dict(
-    slug="bathroom-worktops", eyebrow="Bathrooms", h1="Bathroom Worktops & Shower Surrounds",
+    slug="bathroom-worktops", h1="Bathrooms",
     title="Bathroom Worktops & Shower Surrounds in Stone | Topcat Worktops",
     metadesc="Stone shower surrounds, thresholds, window sills and bath surrounds cut from one material and fitted by our own team. Free home visit across London, Hertfordshire, Essex and Berkshire.",
     lede="Shower surrounds, thresholds, window sills and bath panels cut from one stone, so a bathroom reads as a single material rather than a set of parts. Basin tops have a page of their own.",
@@ -182,7 +182,7 @@ SERVICES = [
   # page… vanity tops should take me to vanity tops."* This is the content that used to live on the
   # bathroom page, written out properly rather than lifted across.
   dict(
-    slug="vanity-tops", eyebrow="Vanity Tops", h1="Stone Vanity Tops",
+    slug="vanity-tops", h1="Vanity Tops",
     title="Stone Vanity Tops for Undermount & Countertop Basins | Topcat Worktops",
     metadesc="Vanity tops cut in quartz, granite or marble for undermount and countertop basins, with the tap holes where you want them. Templated by hand and fitted by our own team across London and the Home Counties.",
     lede="Basin tops cut for the basin you have chosen, with the tap holes where you want them and the edges finished to match. One stone can carry the vanity, the sill and the shelf above the bath.",
@@ -206,7 +206,7 @@ SERVICES = [
     ],
   ),
   dict(
-    slug="commercial-worktops", eyebrow="Commercial", h1="Commercial Stone Surfaces",
+    slug="commercial-worktops", h1="Commercial",
     title="Commercial Worktops & Stone Surfaces | Topcat Worktops",
     metadesc="Hard-wearing stone worktops and surfaces for offices, bars, restaurants and shops, fitted to your programme by one team from template to install. Serving London, Hertfordshire, Essex and Berkshire.",
     lede="Reception desks, counters, tables and washroom surfaces for offices, bars, restaurants and shops. Hard-wearing stone, fitted to your programme by one team from template to install.",
@@ -228,7 +228,7 @@ SERVICES = [
     ],
   ),
   dict(
-    slug="outdoor-kitchens", eyebrow="Outdoor Spaces", h1="Outdoor Kitchen Worktops",
+    slug="outdoor-kitchens", h1="Outdoor Spaces",
     title="Outdoor Kitchen Worktops in Stone | Topcat Worktops",
     metadesc="Weatherproof stone worktops for garden kitchens and barbecue runs, chosen to hold colour outdoors and cut around sinks, hobs and appliances. Serving London, Hertfordshire, Essex and Berkshire.",
     lede="Weatherproof stone for garden kitchens and barbecue runs, chosen to hold its colour outdoors and cut to fit around sinks, hobs and built-in appliances.",
@@ -260,7 +260,7 @@ SERVICES = [
   # ⚠️ THE QUARTZ-AND-HEAT ANSWER IS TRUE AND LOAD-BEARING: engineered quartz is resin-bound, so
   # recommending it for a hearth under an appliance would be wrong. Do not "simplify" that FAQ.
   dict(
-    slug="fireplaces", eyebrow="Fireplaces", h1="Stone Fireplaces",
+    slug="fireplaces", h1="Fireplaces",
     title="Stone Fireplace Surrounds, Hearths & Mantels | Topcat Worktops",
     metadesc="Fireplace hearths, surrounds and mantel shelves cut from granite, marble or quartz to your opening, templated by hand and fitted by our own team across London and the Home Counties.",
     lede="Hearths, surrounds and mantel shelves cut to your opening and finished by hand. We work in the same stones as the kitchen, so one room can carry a single material from the worktop to the fire.",
@@ -287,7 +287,7 @@ SERVICES = [
   # heavy, and the page says plainly that Topcat make the top and not the frame. Rule 12 again —
   # promising that any base will carry any top is exactly the kind of claim that cannot be kept.
   dict(
-    slug="dining-tables", eyebrow="Dining Tables", h1="Stone Dining Tables",
+    slug="dining-tables", h1="Dining Tables",
     title="Stone Dining Table & Console Tops | Quartz, Granite & Marble | Topcat Worktops",
     metadesc="Dining table and console tops cut from quartz, granite or marble to your shape and edge profile, on your own base or one being made for you. Free home visit across London and the Home Counties.",
     lede="Table and console tops cut to your shape and your edge profile, in the same stones as the kitchen. Heavy, flat, and made to be eaten off rather than looked after.",
@@ -335,6 +335,20 @@ HERO_IMG = {
 
 def e(s):
     return html.escape(s, quote=True)
+
+
+def gold_last(text):
+    """⭐⭐ THE LAST WORD OF A PAGE TITLE IS GOLD, THE REST IS WHITE — 14 Aug 2026 (D229).
+    Client: *"the first word is gonna be white, and then second word is gonna be gold. And if
+    it's just one word, it's gonna be a white word."* ⭐ It is the landing page's own hero
+    pattern ("Surfaces for every SPACE"), brought to the internal pages, and it is written as
+    LAST word rather than SECOND so a three-word title lands somewhere sensible instead of
+    leaving a gold word stranded in the middle.
+    ⛔ ONE WORD STAYS WHITE. `rsplit` returns a single part, so nothing is wrapped."""
+    parts = text.rsplit(" ", 1)
+    if len(parts) == 1:
+        return e(text)
+    return f'{e(parts[0])} <span class="h1-gold">{e(parts[1])}</span>'
 
 
 def nav_html():
@@ -437,8 +451,10 @@ def related_html(current):
     for s in SERVICES:
         if s["slug"] == current:
             continue
-        label = s["h1"].split(" & ")[0].replace("Stone ", "")
-        items.append(f'<a href="{s["slug"]}.html">{e(label)}</a>')
+        # ⭐ THE H1 IS THE CARD'S OWN NAME NOW (D229), so this is just the h1. It used to be
+        # `h1.split(" & ")[0].replace("Stone ", "")` — a formula that trimmed a long SEO title
+        # back down to something a link could carry. There is nothing left to trim.
+        items.append(f'<a href="{s["slug"]}.html">{e(s["h1"])}</a>')
     return '<div class="mats">' + "".join(items) + "</div>"
 
 
@@ -479,21 +495,27 @@ def page(s):
 <body>
 {nav_html()}
 
-<nav class="crumb" aria-label="Breadcrumb">
-  <a class="crumb-back" href="/services/" aria-label="Back to Services" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-  <ol>
-    <li><a href="/index.html#hero">Home</a></li>
-    <li><a href="/services/">Services</a></li>
-    <li aria-current="page">{e(s['h1'])}</li>
-  </ol>
-</nav>
-
 <main>
   <section class="svc-hero">
     <div class="svc-hero-bg" style="background-image:url('{HERO_IMG[s['slug']]}')"></div>
+    <!-- ⭐⭐ THE TRAIL SITS ON THE PHOTOGRAPH NOW, NOT ON A BLACK STRIP ABOVE IT — 14 Aug 2026
+         (D229). Client: *"there's no need to have a black bar, like in the screenshot for the
+         directory you have on the top. It can just be on screen as long as it's easy to read."*
+         The bar he saw was not a bar at all: `.crumb` was a SIBLING of the hero, so it sat on
+         the page background in a strip of its own and the photograph began underneath it.
+         ⛔ MOVED, NOT DUPLICATED, and moved in the markup rather than dragged up with a negative
+         margin, so there is one description of where the trail lives (the D106/D113/D114 rule).
+         ⚠️ It stays hidden on the phone — that is D197 and he named both halves of it. -->
+    <nav class="crumb" aria-label="Breadcrumb">
+      <a class="crumb-back" href="/services/" aria-label="Back to Services" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <ol>
+        <li><a href="/index.html#hero">Home</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li aria-current="page">{e(s['h1'])}</li>
+      </ol>
+    </nav>
     <div class="wrap svc-hero-inner">
-      <span class="eyebrow">{e(s['eyebrow'])}</span>
-      <h1>{e(s['h1'])}</h1>
+      <h1>{gold_last(s['h1'])}</h1>
       <p class="lede">{e(s['lede'])}</p>
       <div class="cta-row">
         <a class="btn-gold" href="/contact/">Get your free quote</a>

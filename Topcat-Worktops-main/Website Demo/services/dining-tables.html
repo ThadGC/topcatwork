@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="service.css">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","name":"Stone Dining Tables","serviceType":"Stone Dining Tables","description":"Dining table and console tops cut from quartz, granite or marble to your shape and edge profile, on your own base or one being made for you. Free home visit across London and the Home Counties.","url":"https://www.topcatworktops.co.uk/services/dining-tables.html","provider":{"@type":"LocalBusiness","name":"Topcat Worktops","@id":"https://www.topcatworktops.co.uk/#business"},"areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topcatworktops.co.uk/index.html"},{"@type":"ListItem","position":2,"name":"Services","item":"https://www.topcatworktops.co.uk/services/"},{"@type":"ListItem","position":3,"name":"Stone Dining Tables","item":"https://www.topcatworktops.co.uk/services/dining-tables.html"}]},{"@type":"LocalBusiness","@id":"https://www.topcatworktops.co.uk/#business","name":"Topcat Worktops","url":"https://www.topcatworktops.co.uk","telephone":"0800 098 2812","email":"info@topcatworktops.co.uk","priceRange":"££","areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"18:00"}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","name":"Dining Tables","serviceType":"Dining Tables","description":"Dining table and console tops cut from quartz, granite or marble to your shape and edge profile, on your own base or one being made for you. Free home visit across London and the Home Counties.","url":"https://www.topcatworktops.co.uk/services/dining-tables.html","provider":{"@type":"LocalBusiness","name":"Topcat Worktops","@id":"https://www.topcatworktops.co.uk/#business"},"areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topcatworktops.co.uk/index.html"},{"@type":"ListItem","position":2,"name":"Services","item":"https://www.topcatworktops.co.uk/services/"},{"@type":"ListItem","position":3,"name":"Dining Tables","item":"https://www.topcatworktops.co.uk/services/dining-tables.html"}]},{"@type":"LocalBusiness","@id":"https://www.topcatworktops.co.uk/#business","name":"Topcat Worktops","url":"https://www.topcatworktops.co.uk","telephone":"0800 098 2812","email":"info@topcatworktops.co.uk","priceRange":"££","areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"18:00"}]}]}</script>
 </head>
 <body>
 <header class="bar">
@@ -27,21 +27,27 @@
   <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>
 
-<nav class="crumb" aria-label="Breadcrumb">
-  <a class="crumb-back" href="/services/" aria-label="Back to Services" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){history.back();return false}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-  <ol>
-    <li><a href="/index.html#hero">Home</a></li>
-    <li><a href="/services/">Services</a></li>
-    <li aria-current="page">Stone Dining Tables</li>
-  </ol>
-</nav>
-
 <main>
   <section class="svc-hero">
     <div class="svc-hero-bg" style="background-image:url('../assets/cta-slab.jpg')"></div>
+    <!-- ⭐⭐ THE TRAIL SITS ON THE PHOTOGRAPH NOW, NOT ON A BLACK STRIP ABOVE IT — 14 Aug 2026
+         (D229). Client: *"there's no need to have a black bar, like in the screenshot for the
+         directory you have on the top. It can just be on screen as long as it's easy to read."*
+         The bar he saw was not a bar at all: `.crumb` was a SIBLING of the hero, so it sat on
+         the page background in a strip of its own and the photograph began underneath it.
+         ⛔ MOVED, NOT DUPLICATED, and moved in the markup rather than dragged up with a negative
+         margin, so there is one description of where the trail lives (the D106/D113/D114 rule).
+         ⚠️ It stays hidden on the phone — that is D197 and he named both halves of it. -->
+    <nav class="crumb" aria-label="Breadcrumb">
+      <a class="crumb-back" href="/services/" aria-label="Back to Services" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){history.back();return false}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <ol>
+        <li><a href="/index.html#hero">Home</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li aria-current="page">Dining Tables</li>
+      </ol>
+    </nav>
     <div class="wrap svc-hero-inner">
-      <span class="eyebrow">Dining Tables</span>
-      <h1>Stone Dining Tables</h1>
+      <h1>Dining <span class="h1-gold">Tables</span></h1>
       <p class="lede">Table and console tops cut to your shape and your edge profile, in the same stones as the kitchen. Heavy, flat, and made to be eaten off rather than looked after.</p>
       <div class="cta-row">
         <a class="btn-gold" href="/contact/">Get your free quote</a>
@@ -95,7 +101,7 @@
   <section class="block"><div class="wrap rise">
     <h2>More of what we do</h2>
     <p class="sub">Explore the rest of our services.</p>
-    <div class="mats"><a href="kitchen-worktops.html">Kitchen Worktops</a><a href="kitchen-islands.html">Kitchen Islands</a><a href="splashbacks.html">Splashbacks</a><a href="bathroom-worktops.html">Bathroom Worktops</a><a href="vanity-tops.html">Vanity Tops</a><a href="commercial-worktops.html">Commercial Surfaces</a><a href="outdoor-kitchens.html">Outdoor Kitchen Worktops</a><a href="fireplaces.html">Fireplaces</a></div>
+    <div class="mats"><a href="kitchen-worktops.html">Kitchen Worktops</a><a href="kitchen-islands.html">Kitchen Islands</a><a href="splashbacks.html">Splashbacks</a><a href="bathroom-worktops.html">Bathrooms</a><a href="vanity-tops.html">Vanity Tops</a><a href="commercial-worktops.html">Commercial</a><a href="outdoor-kitchens.html">Outdoor Spaces</a><a href="fireplaces.html">Fireplaces</a></div>
   </div></section>
 
   <section class="cta-band"><div class="wrap rise">

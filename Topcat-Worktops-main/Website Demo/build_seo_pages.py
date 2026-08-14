@@ -113,6 +113,19 @@ def e(s):
     return html.escape(str(s), quote=True)
 
 
+def gold_last(text):
+    """⭐⭐ THE LAST WORD OF A PAGE TITLE IS GOLD, THE REST WHITE — 14 Aug 2026 (D229).
+    ⛔ THE SAME FUNCTION LIVES IN `services/build_services.py` AND THE TWO MUST AGREE. They are
+    one visual rule on one shared component (`.svc-hero`, which this family and the service
+    pages both use), and the alternative to two copies is importing across builders, which runs
+    the other one's module-level work. ⚠️ If you change one, change the other.
+    ⛔ One word stays white: `rsplit` returns a single part and nothing is wrapped."""
+    parts = str(text).rsplit(" ", 1)
+    if len(parts) == 1:
+        return e(text)
+    return f'{e(parts[0])} <span class="h1-gold">{e(parts[1])}</span>'
+
+
 # ---------------------------------------------------------------------------
 # SHARED SHELL
 # ---------------------------------------------------------------------------
@@ -1618,13 +1631,12 @@ def material_page(m):
         for s in m["guides"])
     ld = ld_block(org_ld(), breadcrumb_ld(cr, url))
     return head_html(m["title"], m["metadesc"], url, 1, ld) + f"""
-{crumbs(cr)}
 <main>
   <section class="svc-hero">
     <div class="svc-hero-bg" style="background-image:url('{HERO_IMG}')"></div>
+    {crumbs(cr)}
     <div class="wrap svc-hero-inner">
-      <span class="eyebrow">{e(m['eyebrow'])}</span>
-      <h1>{e(m['h1'])}</h1>
+      <h1>{gold_last(m['h1'])}</h1>
       <p class="lede">{e(m['lede'])}</p>
       <div class="cta-row">
         <a class="btn-gold" href="/estimate/">Price it in a minute</a>
@@ -1800,13 +1812,12 @@ def county_page(c):
        "figure agreed before anything is cut. Drainer grooves and pencil edges are standard."),
     ]
     return head_html(c["title"], c["metadesc"], url, 2, ld) + f"""
-{crumbs(cr)}
 <main>
   <section class="svc-hero">
     <div class="svc-hero-bg" style="background-image:url('{HERO_IMG}')"></div>
+    {crumbs(cr)}
     <div class="wrap svc-hero-inner">
-      <span class="eyebrow">Areas we cover</span>
-      <h1>{e(c['h1'])}</h1>
+      <h1>{gold_last(c['h1'])}</h1>
       <p class="lede">{e(c['lede'])}</p>
       <div class="cta-row">
         <a class="btn-gold" href="/contact/">Book a free home visit</a>
@@ -1898,13 +1909,12 @@ def town_page(t):
        "extras."),
     ]
     return head_html(t["title"], t["metadesc"], url, 3, ld) + f"""
-{crumbs(cr)}
 <main>
   <section class="svc-hero">
     <div class="svc-hero-bg" style="background-image:url('{HERO_IMG}')"></div>
+    {crumbs(cr)}
     <div class="wrap svc-hero-inner">
-      <span class="eyebrow">{e(c['name'])}</span>
-      <h1>{e(t['h1'])}</h1>
+      <h1>{gold_last(t['h1'])}</h1>
       <p class="lede">{e(t['lede'])}</p>
       <div class="cta-row">
         <a class="btn-gold" href="/contact/">Book a free home visit</a>
