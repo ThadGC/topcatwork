@@ -3553,9 +3553,45 @@
     font-size:12px;color:rgba(244,241,234,0.85);font-weight:300;letter-spacing:0.02em;white-space:nowrap;
   }
   .chip b{color:var(--gold);font-weight:500;letter-spacing:2.5px;font-size:11.5px}
-  /* ⛔ THE PHONE'S GOOGLE ARRANGEMENT IS OFF BY DEFAULT (D120). Above 720px the chip shows
-     `.chip-legacy` exactly as it always has; these two only come on inside the phone block. */
-  .g-mark,.g-stack,.chip-reason,.cta-short,.hs-phone{display:none}
+  /* ⛔ The reason bubbles and the phone's own CTA/subtitle copy are off by default and
+     come on inside the ≤1120 block. ⭐ The Google mark and stack are NOT here any more —
+     they are unscoped below, because the chip is now identical at every width. */
+  .chip-reason,.cta-short,.hs-phone{display:none}
+
+  /* ⭐⭐⭐ THE GOOGLE CHIP IS THE SAME OBJECT AT EVERY WIDTH — 14 August 2026.
+     Client: *"for the desktop version, I want you to have the Google reviews part look the same as
+     it does on mobile and tablet."*
+     ⛔⛔ **THESE RULES WERE INSIDE `@media(max-width:1120px)` AND ARE NOW UNSCOPED — MOVED, NOT
+     COPIED.** The desktop used to show `.chip-legacy` ("★★★★★ 5.0 on Google") as plain text while
+     the phone and tablet showed the mark-and-stack. One component, two appearances, is exactly the
+     rule 13 confusion in another costume.
+     ⚠️ **`.chip-legacy` IS CLIPPED, NOT `display:none`, AT EVERY WIDTH NOW** — it is what a screen
+     reader reads, because a logo and five star glyphs do not say "rated 5.0 on Google" on their own.
+     ⚠️ **`.chip-reason` STAYS HIDDEN ABOVE 1120 and is deliberately NOT part of this move** — the
+     desktop shows the three reasons as the icon fact row instead, and he did not ask to change that. */
+  #hero .chip-google,.page-head .chip-google{align-items:center}
+  #hero .g-mark,.page-head .g-mark{display:block;flex:none;width:26px;height:26px}
+  #hero .g-stack,.page-head .g-stack{display:flex;flex-direction:column;justify-content:space-between;
+    height:26px;line-height:1;text-align:left}
+  #hero .g-word,.page-head .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
+    color:rgba(244,241,234,0.92)}
+  /* ⭐ **THE RATING IS ONE LINE: `5.0 ★★★★★`, SCORE FIRST.** The score sits under the "G" of
+     Google and the stars follow it — client, 14 August 2026, asked more than once.
+     ⛔ **D176 RECORDED THE OPPOSITE ORDER (★★★★★ then 5.0) AND IS SUPERSEDED. Do not restore it
+     from that row.** The order lives in the MARKUP, not here, so this rule is order-agnostic.
+     ⭐ The stars keep the chip's own gold and come down to 9px with tighter tracking, because they
+     no longer own the line — the pair still has to fit inside the mark's 26px.
+     ⚠️ `align-items:baseline` rather than `center`: star glyphs and lining numerals have very
+     different vertical centres, and centring them leaves the score visibly riding high. */
+  #hero .g-rating,.page-head .g-rating{display:flex;align-items:baseline;gap:5px}
+  #hero .g-stars,.page-head .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
+  #hero .g-score,.page-head .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
+    color:rgba(244,241,234,0.92)}
+  /* ⚠️ CLIPPED, NOT `display:none` — see the markup note. "5.0 on Google" stays in the
+     accessibility tree because a logo and five star glyphs do not say it on their own. */
+  #hero .chip-legacy,.page-head .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
+    clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
 
   /* ---------- the floating WhatsApp button (D173) ----------
      ⛔ **z-index 38 IS CHOSEN, NOT ARBITRARY.** It sits just UNDER `.mbar` (39) so the two never
@@ -6107,28 +6143,9 @@
        the same 26px with `justify-content:space-between`, so the cap-line of "Google" and the
        baseline of the stars land on the mark's own top and bottom edges however the two type sizes
        are later nudged. Setting two font sizes and hoping they add up to 26 is what would drift. */
-    #hero .chip-google,.page-head .chip-google{align-items:center}
-    #hero .g-mark,.page-head .g-mark{display:block;flex:none;width:26px;height:26px}
-    #hero .g-stack,.page-head .g-stack{display:flex;flex-direction:column;justify-content:space-between;
-      height:26px;line-height:1;text-align:left}
-    #hero .g-word,.page-head .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
-      color:rgba(244,241,234,0.92)}
-    /* ⭐ **THE RATING IS ONE LINE NOW: ★★★★★ 5.0 (D176).** The stars keep the chip's own gold and
-       come down to 9px with tighter tracking, because they no longer own the line — the score sits
-       beside them and the pair still has to fit inside the mark's 26px. ⚠️ `align-items:baseline`
-       rather than `center`: star glyphs and lining numerals have very different vertical centres,
-       and centring them leaves the score visibly riding high. */
-    #hero .g-rating,.page-head .g-rating{display:flex;align-items:baseline;gap:5px}
-    #hero .g-stars,.page-head .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
-    #hero .g-score,.page-head .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
-      color:rgba(244,241,234,0.92)}
     /* the phone's own subtitle copy (D175) */
     #hero .hs-wide{display:none}
     #hero .hs-phone{display:inline}
-    /* ⚠️ CLIPPED, NOT `display:none` — see the markup note. "5.0 on Google" stays in the
-       accessibility tree because a logo and five star glyphs do not say it on their own. */
-    #hero .chip-legacy,.page-head .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
-      clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
     /* the guarantee's "10" is the chip's gold numeral; it only needs to stop the two words
        wrapping now that the pair share a row */
     #hero .chip-guarantee,.page-head .chip-guarantee{white-space:nowrap;align-items:center}

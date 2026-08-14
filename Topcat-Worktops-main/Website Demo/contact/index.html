@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=bf06465933">
+<link rel="stylesheet" href="/assets/site.css?v=16d0707e01">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -274,7 +274,13 @@
               <!-- ⭐ "Google reviews", not "Google" — client, 14 Aug 2026. ⚠️ The line BELOW it is
                    unchanged (★★★★★ then 5.0): that order is D176, his own earlier instruction. -->
               <span class="g-word">Google reviews</span>
-              <span class="g-rating"><span class="g-stars">★★★★★</span><b class="g-score">5.0</b></span>
+              <!-- ⛔⛔ **5.0 ON THE LEFT, STARS ON THE RIGHT. THE SCORE SITS UNDER THE "G" OF
+                   Google.** Client, 14 Aug 2026, having asked more than once: *"the five point o
+                   goes underneath the g of the Google, and then the stars next to the five point
+                   o. So the five point o is on the left and the stars on the right."*
+                   ⚠️ D176 recorded the opposite order and it is SUPERSEDED — do not restore it
+                   from that row. -->
+              <span class="g-rating"><b class="g-score">5.0</b><span class="g-stars">★★★★★</span></span>
             </span>
             <span class="chip-legacy"><b>★★★★★</b> 5.0 on Google</span>
           </span>
@@ -305,8 +311,14 @@
                hole beside it reads as a card that failed to load — the same fault D205 hit with
                seven service tiles. It takes the same fix, `:last-child:nth-child(odd)`, spanning
                the last one across both columns rather than leaving the gap. -->
+          <!-- ⛔ **"YOUR PROJECT EXPERTLY HANDLED" CAME BACK OUT — 14 Aug 2026, minutes after it
+               went in.** Client: *"remove the your project expertly handled and replace that with
+               every detail included on the mobile version and the tablet version. Desktop, don't
+               worry about that."* ⭐ **THAT RETURNS THE BUBBLES TO FOUR**, which is the even 2×2
+               grid D186 tuned this row for, so the odd-child span below goes quiet on its own.
+               ⚠️ **THE DESKTOP KEEPS ALL THREE REASONS** — they are the icon fact row up there, a
+               different element, and he explicitly excluded it. -->
           <span class="chip chip-reason glow-card">72-hour aftercare</span>
-          <span class="chip chip-reason glow-card">Your project expertly handled</span>
           <span class="chip chip-reason glow-card">Every detail included</span>
         </div>
     </div>
