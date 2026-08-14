@@ -3492,11 +3492,11 @@ requestAnimationFrame(glowTick);
     {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
      img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
      story:'Taj Mahal quartzite at 30mm, across the worktop, the island and the splashbacks, with a single ogee edge worked through the run.',
-     gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g6.webp',882,1177], ['/assets/projects/hornchurch-g7.webp',1200,1600], ['/assets/projects/hornchurch-g8.webp',1200,1600], ['/assets/projects/hornchurch-g9.webp',1200,1600], ['/assets/projects/hornchurch-g10.webp',1200,1600]]},
+     gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g7.webp',1200,1600], ['/assets/projects/hornchurch-g8.webp',1200,1600], ['/assets/projects/hornchurch-g9.webp',1200,1600], ['/assets/projects/hornchurch-g10.webp',1200,1600]]},
 
     {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
      img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446], ['/assets/projects/rickmansworth-g7.webp',1200,1600], ['/assets/projects/rickmansworth-g8.webp',1200,1600], ['/assets/projects/rickmansworth-g9.webp',1200,1600], ['/assets/projects/rickmansworth-g10.webp',1200,1600], ['/assets/projects/rickmansworth-g11.webp',1200,1600], ['/assets/projects/rickmansworth-g12.webp',1200,1600], ['/assets/projects/rickmansworth-g13.webp',1200,1600], ['/assets/projects/rickmansworth-g14.webp',1200,1600], ['/assets/projects/rickmansworth-g15.webp',1200,1600], ['/assets/projects/rickmansworth-g16.webp',1200,1600]]},
+     gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446], ['/assets/projects/rickmansworth-g7.webp',1200,1600], ['/assets/projects/rickmansworth-g8.webp',1200,1600], ['/assets/projects/rickmansworth-g9.webp',1200,1600], ['/assets/projects/rickmansworth-g10.webp',1200,1600], ['/assets/projects/rickmansworth-g11.webp',1200,1600], ['/assets/projects/rickmansworth-g12.webp',1200,1600], ['/assets/projects/rickmansworth-g13.webp',1200,1600], ['/assets/projects/rickmansworth-g14.webp',1200,1600], ['/assets/projects/rickmansworth-g15.webp',1200,1600]]},
     {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
      img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches',
      story:'Calacatta Sydney Black quartz at 20mm, across the worktop, the island and the splashbacks. The breakfast bar was cut to the room, and the doorway into the kitchen lined in the same stone so the run carries through.',
@@ -3504,17 +3504,36 @@ requestAnimationFrame(glowTick);
 
     /* ⭐ THE CLIENT'S OWN DRIVE, 14 Aug 2026 — g7 onwards. Same kitchen as g1–g6: the mint glass
        splashback and the white quartz are in both sets, checked before they were added. */
+    /* ⭐⭐ **`brand` PUTS A TOPCAT PLATE IN THE HOLE THE PHOTOGRAPHS LEAVE — 15 Aug 2026 (D240).**
+       Client, on this project: *"you'll see there's an open gap at the bottom of the page next to
+       the images, I want you to add the vertical Topcat logo into that open gap going across the
+       two spaces… at a big enough size that looks good."*
+       ⭐⭐ **THE FIELD ONLY SAYS "THIS ONE WANTS A PLATE" — THE SIZE IS DERIVED IN `loadMedia`.**
+       A 3-column masonry leaves `(3 - n mod 3) mod 3` empty slots at the foot of the last column,
+       so thirteen photographs leave two and the plate is two slots tall. ⭐ It was a typed number
+       for about an hour and that was wrong: add a photograph and the number is stale, which is the
+       "what was derived from it stays behind" fault this project keeps paying for. */
     {key:'central-london', name:'The Central London Project', place:'London',
      img:'/assets/projects/central-london-1400.webp', type:'Worktop', story:'',
-     reviewBy:'Joel Brizman',
+     reviewBy:'Joel Brizman', brand:true,
      gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067], ['/assets/projects/central-london-g7.webp',1600,1067], ['/assets/projects/central-london-g8.webp',1600,1067], ['/assets/projects/central-london-g9.webp',1600,1067], ['/assets/projects/central-london-g10.webp',1600,1067], ['/assets/projects/central-london-g11.webp',1600,1067], ['/assets/projects/central-london-g12.webp',1600,1067], ['/assets/projects/central-london-g13.webp',1600,1067]]},
 
+    /* ⚠️ **THE PLATE IS HERE BECAUSE THE DUPLICATE CAME OUT, AND HE DID NOT ASK FOR IT — 15 Aug
+       2026 (D240). SAY SO.** Removing `-g7` took the count from 15 to 14, and 14 photographs in a
+       3-column masonry balance 5/5/4 with the hole at the foot of the FIRST column — a gap in the
+       middle of the block rather than at its end. One plate takes it back to fifteen slots and the
+       block closes. ⛔ If he would rather have the hole, this field is the only thing to delete. */
     {key:'harlow', name:'The Harlow Project', place:'Essex',
-     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g7.webp',1200,1600], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]},
+     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'', brand:true,
+     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]},
 
+    /* ⭐ **TWO PHOTOGRAPHS, SO THE PLATE STANDS IN THE THIRD COLUMN — 15 Aug 2026 (D240).** Client:
+       *"the fifth screenshot is from the Harrow project, add the Topcat logo next to it there as
+       well."* `(3 - 2 mod 3) mod 3` is one slot, and one slot beside two photographs is a row of
+       three. ⚠️ At TWO columns the same two photographs already make a square block, so the plate
+       does not render there at all — see `--brandShow2`. */
     {key:'harrow', name:'The Harrow Project', place:'Harrow',
-     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'',
+     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'', brand:true,
      gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]}
   ];
   const PER_SET=4;
@@ -4574,6 +4593,51 @@ requestAnimationFrame(glowTick);
       attachGlow(el);                      // the cursor-tracked gold rim, same as the service faces
       mediaWrap.appendChild(el);
     });
+    /* ⭐⭐⭐ **THE BRAND PLATE FILLS THE HOLE A MASONRY LEAVES — 15 August 2026 (D240).**
+       Client, on Central London: *"there's an open gap at the bottom of the page next to the
+       images, I want you to add the vertical Topcat logo into that open gap going across the two
+       spaces… at a big enough size that looks good"*, and on Harrow: *"add the Topcat logo next to
+       it there as well."*
+       ⭐⭐ **IT LANDS IN THE GAP BY ARITHMETIC, NOT BY POSITIONING.** `column-count` balances, so the
+       browser fills columns in source order to one shared height: give the LAST item exactly the
+       height of the slots that are missing and it can only go where the hole is. **13 photographs +
+       a two-slot plate is 15 slots, five a column; 2 photographs + a one-slot plate is three, one a
+       column.** ⛔ No `order`, no absolute positioning, nothing that could disagree with the
+       balancer at a width nobody checked.
+       ⭐ The height comes from the project's OWN photographs — `--brandAR` is the first file's
+       aspect divided by the slot count — so the plate is exactly as tall as the pictures beside it
+       whatever the column width, and it needs no number typed into the stylesheet.
+       ⚠️ **IT IS NOT A PHOTOGRAPH AND MUST NOT BEHAVE LIKE ONE:** no lightbox, no `role="button"`,
+       no tabindex, and `aria-hidden` — the logo is in the header of every page and a screen reader
+       reading "Topcat" again in the middle of a photo gallery learns nothing.
+       ⛔ **THE LOGO IS THE CLIENT'S ARTWORK AND ITS HEIGHT IS THE ONLY THING SET** (§2 rule 14).
+       ⚠️ `MEDIA` is deliberately NOT extended — it is the lightbox's own list, and a plate in it
+       would open a blank slide between two photographs. */
+    if(proj&&proj.brand&&MEDIA.length){
+      const first=MEDIA[0];
+      /* ⭐⭐ **THE SLOT COUNT IS DERIVED, NOT DECLARED, AND THAT IS THE WHOLE POINT.** A first
+         version carried the number in the data (`brand:2`) and it was wrong the moment a
+         photograph was added — the exact "change a value and the thing derived from it stays
+         behind" fault this project keeps paying for. `(cols − n mod cols) mod cols` IS the hole,
+         so it cannot go stale, and it answers each band separately: **13 photographs leave two
+         slots at three columns and one at two; 2 photographs leave one at three and NONE at two**,
+         where the row is already square and a plate would be an extra tile rather than a repair. */
+      const gap=c=>(c-(MEDIA.length%c))%c;
+      const n3=gap(3), n2=gap(2);
+      const plate=document.createElement('div');
+      plate.className='proj-brand';
+      plate.setAttribute('aria-hidden','true');
+      /* slot height = colW × h/w, so n slots plus their (n−1) gutters is an aspect of w / (n·h) —
+         the 14px gutters are the small remainder and the balancer absorbs them */
+      if(first&&first.w&&first.h){
+        plate.style.setProperty('--brandAR3',first.w+' / '+(first.h*(n3||1)));
+        plate.style.setProperty('--brandAR2',first.w+' / '+(first.h*(n2||1)));
+      }
+      plate.style.setProperty('--brandShow3',n3?'flex':'none');
+      plate.style.setProperty('--brandShow2',n2?'flex':'none');
+      plate.innerHTML='<img src="/assets/brand/topcat-vertical.svg" alt="" draggable="false">';
+      mediaWrap.appendChild(plate);
+    }
     mediaWrap.style.display=MEDIA.length?'':'none';
   }
 

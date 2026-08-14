@@ -3431,6 +3431,38 @@
   .proj-ph:hover img{transform:scale(1.04);filter:saturate(1) brightness(1)}
   .proj-ph:hover .sheen{transform:translateX(120%)}
   .proj-ph:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  /* ⭐⭐ **THE BRAND PLATE (D240)** — the tile that stands in the slots a masonry leaves empty.
+     ⭐ **IT IS BUILT OUT OF PARTS THE PAGE ALREADY HAS**: the photograph tile's own 14px radius and
+     `break-inside:avoid`, the panel gradient the Why tiles and trade cards use, and the GOLD rim at
+     34% (`--hair`) rather than the photographs' `--hair-soft` — a plate with no picture in it needs
+     the stronger edge or it reads as a hole rather than as a card. ⛔ Nothing across its top: §2
+     rule 10, and the rim is a full border, not a band.
+     ⚠️ `aspect-ratio` comes from the JS, computed from the project's own first photograph and the
+     size of the hole at THAT column count — `--brandAR3` for three columns, `--brandAR2` for two —
+     and the fallback is one square slot so a project that ever ships `brand` without a gallery
+     still draws something sane rather than a zero-height box.
+     ⛔ **A BAND WHERE THE PHOTOGRAPHS ALREADY MAKE A SQUARE BLOCK GETS NO PLATE**, which is what
+     `--brandShow2:none` says: two photographs at two columns are a finished row, and a plate there
+     would be an extra tile hanging under nothing. **One column never has a hole at all**, so the
+     phone hides it outright.
+     ⛔ **HEIGHT ONLY ON THE LOGO** (§2 rule 14): the width follows the artwork's intrinsic ratio.
+     ⭐ 46% of the plate's own height, so it scales with the tile at every column width and never
+     needs a second number. `max-width:72%` is the guard for the one-slot case, where a 46%-tall
+     square logo would otherwise reach the side walls. */
+  .proj-brand{break-inside:avoid;margin:0 0 14px;border-radius:14px;overflow:hidden;
+    aspect-ratio:var(--brandAR3,1 / 1);
+    display:var(--brandShow3,flex);align-items:center;justify-content:center;
+    border:1px solid var(--hair);
+    background:linear-gradient(158deg,rgba(30,30,38,0.92),rgba(12,12,16,0.96));
+    box-shadow:0 24px 54px -30px rgba(0,0,0,0.9)}
+  .proj-brand img{height:46%;width:auto;max-width:72%;opacity:0.92;display:block}
+  /* the hole is a different size at two columns, and there is no hole at all at one */
+  @media(max-width:1000px){
+    .proj-brand{aspect-ratio:var(--brandAR2,1 / 1);display:var(--brandShow2,flex)}
+  }
+  @media(max-width:640px){
+    .proj-brand{display:none}
+  }
 
   /* image lightbox */
   .proj-lightbox{position:fixed;inset:0;z-index:130;background:rgba(6,6,8,0.96);display:flex;align-items:center;justify-content:center;pointer-events:none;
