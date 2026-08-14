@@ -4532,6 +4532,27 @@
      the fifth wrapped onto a row of its own — a lopsided second row that cost a whole extra
      ~200px of height and pushed the CTA buttons past the fold on a laptop. 178px fits all five
      across at full width and still steps down to 3-up, then 2-up, then 1-up as it narrows. */
+  /* ⭐⭐ THE TRADE INTRO'S PROSE, OUT OF THE CENTRED RIBBON — 14 Aug 2026 (D230). Client: *"why is
+     it all the text like that? Why don't you just spread it across so it matches up with the rest
+     of the thing and just the title maybe stays like that?"*
+     ⚠️ THE WIDTH IS `1320px` TO MATCH `.section-head`, NOT the 1180px of `.trade-grid` — the head
+     above it is the thing the eye lines this up against, and the grid inside a `.section` already
+     sits inside the same gutter.
+     ⛔ `max-width:none` ON THE PARAGRAPHS IS REQUIRED, NOT TIDYING: `.section-sub` carries
+     `max-width:52ch`, and left in place it would hold each column to 52ch and reopen the same
+     narrow-ribbon problem one level down. The COLUMN is the measure now.
+     ⚠️ `text-align:left` is stated rather than inherited — these paragraphs still sit in a
+     `.section` whose head is centred, and `text-align` inherits. */
+  .trade-lede{max-width:1320px;margin:0 auto clamp(18px,3vh,38px);
+    display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,44px);text-align:left}
+  .trade-lede .section-sub{max-width:none;margin-top:0}
+  /* the closing line is the summary, so it spans both columns rather than orphaning itself
+     halfway down the second one */
+  .trade-lede .trade-lede-close{grid-column:1/-1;color:var(--bone)}
+  /* ⚠️ ONE COLUMN BELOW 860px. Two columns of body copy on a phone gives about 22 characters a
+     line, which is a newspaper column at the wrong scale. The tablet keeps two: at 900px each
+     column is still ~55 characters. */
+  @media(max-width:860px){ .trade-lede{grid-template-columns:1fr;gap:clamp(10px,1.6vh,16px)} }
   .trade-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px}
   .trade-card{border:1px solid var(--hair);border-radius:6px;
     padding:clamp(13px,1.8vh,20px) clamp(14px,1.5vw,20px)}
@@ -4572,7 +4593,18 @@
      dead 100vh out (client: "adjust the space on the final CTA as well"). The two sections are
      read one after the other, so the FAQ getting 300px tighter made this one look loose by
      comparison even though nothing about it had changed. */
-  #cta{position:relative;z-index:1;padding:clamp(18px,4.2vh,64px) clamp(20px,5vw,64px)}
+  /* ⛔⛔ `#tradeCta` IS ON THIS SELECTOR BECAUSE IT WAS SITTING ON THE FOOTER — 14 Aug 2026 (D230).
+     Client: *"the form on the bottom is touching the footer, which it shouldn't."* Measured: the
+     card's bottom and the footer's top were the SAME pixel, 4784, with `#tradeCta` computing
+     `padding:0px`. The trade page copies this whole card but wraps it in a section with a
+     DIFFERENT id, so it inherited none of the spacing that holds the landing page's card off the
+     floor. ⭐ ADDED TO THE SELECTOR, NOT COPIED INTO A SECOND RULE — two live descriptions of one
+     component's padding is how D106, D113 and D114 each lost a rule. The `@media` refinement
+     further down names both ids for the same reason.
+     ⚠️⚠️ AND THE FIRST MEASUREMENT SAID −34px, WHICH WAS A LIE: `.cta-card` carries `.rise`, so a
+     `getBoundingClientRect()` taken mid-reveal includes the animation's `translateY`. **`offsetTop`
+     ignores transforms** and reads the truth (D221, the same trap as the project arrow). */
+  #cta,#tradeCta{position:relative;z-index:1;padding:clamp(18px,4.2vh,64px) clamp(20px,5vw,64px)}
   .cta-card{
     max-width:1180px;margin:0 auto;
     display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,3.4vw,58px);
@@ -5312,6 +5344,43 @@
        ⭐ **THE OPEN ITSELF IS UNTOUCHED** — tapping a card still runs `openFocus()` and the project
        detail still transitions in over the page, which is the "gloss over and go into that section"
        half of the ask. Only the touch-down states are gone. */
+    /* --- ⭐⭐ TWO UP, EVERYWHERE ABOVE THE PHONE — 14 Aug 2026 (D230) ---------------------------
+       Client, on the projects gallery: *"the project I want in the first top corner should be the
+       Wimbledon project. Then below that, the Hornchurch project. Then after that, on the opposite
+       side across the Wimbledon project, needs to be the Watford project. Then below that goes the
+       Rickmansworth project."* **"The opposite side" only exists if there are two columns**, and
+       `/projects/` had one at every width: D195 set `--galMode:phone` on that page to stop the
+       accordion, which also handed it the PHONE'S single-column arrangement. Measured at 1440: one
+       460px column at x=490, with 490px of empty page either side.
+       ⛔⛔ THESE RULES ARE GATED ON `.gal-static`, WHICH IS THE WHOLE SAFETY ARGUMENT. The desktop
+       LANDING page never carries that class — the pinned accordion is running there and the freeze
+       probe's 4950px `.gal-scroll` proves it — so widening this to `min-width:721px` cannot reach
+       the frozen desktop gallery. It reaches the phone-mode pages that ask for it: `/projects/` at
+       every width, and the tablet landing page, which had these exact rules before.
+       ⚠️ THE CARD CAP STEPS UP ON THE DESKTOP, or two 440px cards would leave the same wide
+       margins the client is complaining about, just with a gap down the middle. */
+    @media(min-width:721px){
+      #gallery.gal-static .gal-stage{
+        display:grid;grid-template-columns:repeat(2,1fr);
+        column-gap:clamp(16px,2.6vw,26px);row-gap:clamp(16px,2.6vw,26px);
+        justify-items:center;align-items:start;
+        max-width:940px;margin-left:auto;margin-right:auto}
+      #gallery.gal-static .gal-mid > *{grid-column:1/-1}
+      /* ⭐ `--cw` IS SET ON THE CARD, NOT LEFT TO THE STAGE'S INLINE VALUE. `measure()` still writes
+         `--cw`/`--ch` inline on `.gal-stage` from the phone formula (`min(w*0.42,300)`), and the card
+         inherits them — but `.gal-name`, `.gal-place` and `.gal-meta` size their insets off
+         `calc(var(--cw) * k)`, so the caption would be drawn for a 300px card sitting inside a 340px
+         one. A rule on the card beats an inherited value, so declaring it here fixes the card and its
+         caption in one go. ⛔ Do not switch this to a percentage: `--ch` multiplies it, and a
+         percentage height resolves against the parent's HEIGHT, not its width. */
+      #gallery.gal-static .gal-card{
+        --cw:clamp(300px,42vw,440px);--ch:calc(var(--cw) * 0.62);
+        width:var(--cw);height:var(--ch);margin:0}
+    }
+    @media(min-width:1121px){
+      #gallery.gal-static .gal-stage{max-width:1180px}
+      #gallery.gal-static .gal-card{--cw:clamp(380px,34vw,540px)}
+    }
     #gallery.gal-static .gal-card .sheen{display:none}
     #gallery.gal-static .gal-card:hover img,
     #gallery.gal-static .gal-card:active img,
@@ -6324,22 +6393,13 @@
        is what reaches the three full-width ones; a `.gal-stage > *` selector would match the
        boxless wrappers instead and silently do nothing. */
     #gallery{--galMode:grid}
-    #gallery.gal-static .gal-stage{
-      display:grid;grid-template-columns:repeat(2,1fr);
-      column-gap:clamp(16px,2.6vw,26px);row-gap:clamp(16px,2.6vw,26px);
-      justify-items:center;align-items:start;
-      max-width:940px;margin-left:auto;margin-right:auto}
-    #gallery.gal-static .gal-mid > *{grid-column:1/-1}
-    /* ⭐ `--cw` IS SET ON THE CARD, NOT LEFT TO THE STAGE'S INLINE VALUE. `measure()` still writes
-       `--cw`/`--ch` inline on `.gal-stage` from the phone formula (`min(w*0.42,300)`), and the card
-       inherits them — but `.gal-name`, `.gal-place` and `.gal-meta` size their insets off
-       `calc(var(--cw) * k)`, so the caption would be drawn for a 300px card sitting inside a 340px
-       one. A rule on the card beats an inherited value, so declaring it here fixes the card and its
-       caption in one go. ⛔ Do not switch this to a percentage: `--ch` multiplies it, and a
-       percentage height resolves against the parent's HEIGHT, not its width. */
-    #gallery.gal-static .gal-card{
-      --cw:clamp(300px,42vw,440px);--ch:calc(var(--cw) * 0.62);
-      width:var(--cw);height:var(--ch);margin:0}
+    /* ⭐⭐ THE TWO-UP GRID RULES THAT USED TO SIT HERE HAVE MOVED OUT TO A `min-width:721px` BLOCK
+       BESIDE THE OTHER `.gal-static` RULES — 14 Aug 2026 (D230). They were tablet-only, so
+       `/projects/` — which runs `.gal-static` at EVERY width (D195) — kept a single 460px column
+       on a 1440px desktop, which is the same narrow-ribbon fault the client called terrible on the
+       trade page. ⛔ MOVED, NOT COPIED. `--galMode:grid` stays here because it is genuinely
+       tablet-only: it is what stops the accordion on the tablet LANDING page, and the desktop
+       landing page must keep the accordion. */
 
     /* --- ⭐ THE THICKNESS HEADER GOES BACK ONTO ONE LINE ---------------------------------------
        Client: *"we just need to optimise the way the estimator looks so that the thickness MM thing
@@ -6442,7 +6502,7 @@
     /* ⚠️ **CHECK WHAT A CLAMP EVALUATES TO BEFORE CALLING IT A REDUCTION.** The first value here was
        `clamp(32px,4.6vh,48px)`, which at a 1024px-tall window is 47px against the base rule's 43 —
        so the "trim" made the section 8px TALLER. Measured, not assumed. 3.2vh gives 33px. */
-    #cta{padding-top:clamp(24px,3.2vh,40px);padding-bottom:clamp(24px,3.2vh,40px)}
+    #cta,#tradeCta{padding-top:clamp(24px,3.2vh,40px);padding-bottom:clamp(24px,3.2vh,40px)}
 
     /* ⭐ D199: MORE AIR THROUGH THE REVIEWS. Client: *"we need to get a little bit more spacing in
        between the sections in the hear it from your neighbours."* ⚠️ D95 cut these numbers hard for
@@ -11589,43 +11649,23 @@ requestAnimationFrame(glowTick);
      `dataset.key`, so the meta, the story and the media grid are all per project now instead of
      one hard-coded Calacatta Gold story shown for every card. */
   const PROJECTS=[
-    {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
-     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches',
-     story:'Calacatta Sydney Black quartz at 20mm, across the worktop, the island and the splashbacks. The breakfast bar was cut to the room, and the doorway into the kitchen lined in the same stone so the run carries through.',
-     gallery:[['/assets/projects/ruislip-g1.webp',1067,1600], ['/assets/projects/ruislip-g2.webp',1067,1600], ['/assets/projects/ruislip-g3.webp',1067,1600], ['/assets/projects/ruislip-g4.webp',1067,1600], ['/assets/projects/ruislip-g5.webp',1067,1600], ['/assets/projects/ruislip-g6.webp',1067,1600]]},
+    /* ⭐⭐ THE CLIENT'S OWN ORDER FOR THE GALLERY GRID — 14 Aug 2026 (D230). He gave it as
+       POSITIONS on a two-column grid, not as a list: *"the project I want in the first top corner
+       should be the Wimbledon project. Then below that, the Hornchurch project. Then after that,
+       on the opposite side across the Wimbledon project where it's going to be, needs to be the
+       Watford project. Then below that goes the Rickmansworth project."*
+       ⛔⛔ **A ROW-MAJOR GRID FILLS ACROSS BEFORE IT FILLS DOWN, SO THE ARRAY ORDER IS NOT THE
+       ORDER HE SPOKE.** He described two columns downward; the DOM has to interleave them:
 
-    /* ⭐ THE CLIENT'S OWN DRIVE, 14 Aug 2026 — g7 onwards. Same kitchen as g1–g6: the mint glass
-       splashback and the white quartz are in both sets, checked before they were added. */
-    {key:'central-london', name:'The Central London Project', place:'London',
-     img:'/assets/projects/central-london-1400.webp', type:'Worktop', story:'',
-     reviewBy:'Joel Brizman',
-     gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067], ['/assets/projects/central-london-g7.webp',1600,1067], ['/assets/projects/central-london-g8.webp',1600,1067], ['/assets/projects/central-london-g9.webp',1600,1067], ['/assets/projects/central-london-g10.webp',1600,1067], ['/assets/projects/central-london-g11.webp',1600,1067], ['/assets/projects/central-london-g12.webp',1600,1067], ['/assets/projects/central-london-g13.webp',1600,1067]]},
+           Wimbledon   |  Watford          array: wimbledon, watford,
+           Hornchurch  |  Rickmansworth           hornchurch, rickmansworth, …
 
-    /* ⚠️ TWO OF HIS SITE'S SIX CAME OUT HERE, 14 Aug 2026, and it is a judgement call worth
-       reading: the old `-g2` was a slab on a trolley in a dusty workshop with an air hose across
-       the floor, and the old `-g3` was a half-built room with a stepladder, a mitre saw and loose
-       cables. Client: *"if something doesn't look good, don't use it."* Both files are still on
-       disk — put the two paths back in this array to restore them. g7–g10 are his Drive set. */
-    {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
-     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
-     story:'Taj Mahal quartzite at 30mm, across the worktop, the island and the splashbacks, with a single ogee edge worked through the run.',
-     gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g6.webp',882,1177], ['/assets/projects/hornchurch-g7.webp',1200,1600], ['/assets/projects/hornchurch-g8.webp',1200,1600], ['/assets/projects/hornchurch-g9.webp',1200,1600], ['/assets/projects/hornchurch-g10.webp',1200,1600]]},
+       Reading his sentence into the array literally would have put Hornchurch top-right, which is
+       the one place he said it must not be. ⚠️ The four he did not name keep their existing
+       relative order behind them. ⚠️ This array is also the order the landing page's accordion
+       deals in, so Wimbledon now leads there too — consistent, and nothing else reads it by index
+       (D214). */
 
-    {key:'harrow', name:'The Harrow Project', place:'Harrow',
-     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'',
-     gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]},
-
-    {key:'harlow', name:'The Harlow Project', place:'Essex',
-     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g7.webp',1200,1600], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]},
-
-    {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
-     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446], ['/assets/projects/rickmansworth-g7.webp',1200,1600], ['/assets/projects/rickmansworth-g8.webp',1200,1600], ['/assets/projects/rickmansworth-g9.webp',1200,1600], ['/assets/projects/rickmansworth-g10.webp',1200,1600], ['/assets/projects/rickmansworth-g11.webp',1200,1600], ['/assets/projects/rickmansworth-g12.webp',1200,1600], ['/assets/projects/rickmansworth-g13.webp',1200,1600], ['/assets/projects/rickmansworth-g14.webp',1200,1600], ['/assets/projects/rickmansworth-g15.webp',1200,1600], ['/assets/projects/rickmansworth-g16.webp',1200,1600]]},
-
-    {key:'watford', name:'The Watford Project', place:'Watford',
-     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/watford-g1.webp',1600,1066], ['/assets/projects/watford-g2.webp',1600,1066], ['/assets/projects/watford-g3.webp',1600,1066], ['/assets/projects/watford-g4.webp',1600,1066], ['/assets/projects/watford-g5.webp',1600,1066], ['/assets/projects/watford-g6.webp',1600,1066], ['/assets/projects/watford-g7.webp',1600,1067], ['/assets/projects/watford-g8.webp',1600,1067], ['/assets/projects/watford-g9.webp',1600,1067], ['/assets/projects/watford-g10.webp',1600,1067], ['/assets/projects/watford-g11.webp',1600,1067], ['/assets/projects/watford-g12.webp',1600,1067], ['/assets/projects/watford-g13.webp',1600,1067], ['/assets/projects/watford-g14.webp',1600,1067], ['/assets/projects/watford-g15.webp',1600,1067], ['/assets/projects/watford-g16.webp',1600,1067], ['/assets/projects/watford-g17.webp',1600,1067], ['/assets/projects/watford-g18.webp',1600,1067]]},
 
     /* ⭐⭐ THE EIGHTH IS REAL NOW — 14 Aug 2026. Client: *"the Wimbledon project is project number
        eight… it's quite complicated because it was done in multiple apartments, so it's not all
@@ -11639,7 +11679,44 @@ requestAnimationFrame(glowTick);
      img:'/assets/projects/wimbledon-1400.webp', type:'Worktops and splashbacks, across multiple apartments',
      story:'A development of several apartments, each one templated and fitted on its own. The worktops and full height splashbacks run through every flat in the same stone, so the block reads as one piece of work rather than a set of separate kitchens.',
      reviewBy:'Kinga Skubiszewska',
-     gallery:[['/assets/projects/wimbledon-g1.webp',1067,1600], ['/assets/projects/wimbledon-g2.webp',1067,1600], ['/assets/projects/wimbledon-g3.webp',1067,1600], ['/assets/projects/wimbledon-g4.webp',1067,1600], ['/assets/projects/wimbledon-g5.webp',1067,1600], ['/assets/projects/wimbledon-g6.webp',1067,1600], ['/assets/projects/wimbledon-g7.webp',1067,1600], ['/assets/projects/wimbledon-g8.webp',1067,1600], ['/assets/projects/wimbledon-g9.webp',1067,1600], ['/assets/projects/wimbledon-g10.webp',1067,1600], ['/assets/projects/wimbledon-g11.webp',1067,1600]]}
+     gallery:[['/assets/projects/wimbledon-g1.webp',1067,1600], ['/assets/projects/wimbledon-g2.webp',1067,1600], ['/assets/projects/wimbledon-g3.webp',1067,1600], ['/assets/projects/wimbledon-g4.webp',1067,1600], ['/assets/projects/wimbledon-g5.webp',1067,1600], ['/assets/projects/wimbledon-g6.webp',1067,1600], ['/assets/projects/wimbledon-g7.webp',1067,1600], ['/assets/projects/wimbledon-g8.webp',1067,1600], ['/assets/projects/wimbledon-g9.webp',1067,1600], ['/assets/projects/wimbledon-g10.webp',1067,1600], ['/assets/projects/wimbledon-g11.webp',1067,1600]]},
+
+    {key:'watford', name:'The Watford Project', place:'Watford',
+     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/watford-g1.webp',1600,1066], ['/assets/projects/watford-g2.webp',1600,1066], ['/assets/projects/watford-g3.webp',1600,1066], ['/assets/projects/watford-g4.webp',1600,1066], ['/assets/projects/watford-g5.webp',1600,1066], ['/assets/projects/watford-g6.webp',1600,1066], ['/assets/projects/watford-g7.webp',1600,1067], ['/assets/projects/watford-g8.webp',1600,1067], ['/assets/projects/watford-g9.webp',1600,1067], ['/assets/projects/watford-g10.webp',1600,1067], ['/assets/projects/watford-g11.webp',1600,1067], ['/assets/projects/watford-g12.webp',1600,1067], ['/assets/projects/watford-g13.webp',1600,1067], ['/assets/projects/watford-g14.webp',1600,1067], ['/assets/projects/watford-g15.webp',1600,1067], ['/assets/projects/watford-g16.webp',1600,1067], ['/assets/projects/watford-g17.webp',1600,1067], ['/assets/projects/watford-g18.webp',1600,1067]]},
+
+    /* ⚠️ TWO OF HIS SITE'S SIX CAME OUT HERE, 14 Aug 2026, and it is a judgement call worth
+       reading: the old `-g2` was a slab on a trolley in a dusty workshop with an air hose across
+       the floor, and the old `-g3` was a half-built room with a stepladder, a mitre saw and loose
+       cables. Client: *"if something doesn't look good, don't use it."* Both files are still on
+       disk — put the two paths back in this array to restore them. g7–g10 are his Drive set. */
+    {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
+     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
+     story:'Taj Mahal quartzite at 30mm, across the worktop, the island and the splashbacks, with a single ogee edge worked through the run.',
+     gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g6.webp',882,1177], ['/assets/projects/hornchurch-g7.webp',1200,1600], ['/assets/projects/hornchurch-g8.webp',1200,1600], ['/assets/projects/hornchurch-g9.webp',1200,1600], ['/assets/projects/hornchurch-g10.webp',1200,1600]]},
+
+    {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
+     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446], ['/assets/projects/rickmansworth-g7.webp',1200,1600], ['/assets/projects/rickmansworth-g8.webp',1200,1600], ['/assets/projects/rickmansworth-g9.webp',1200,1600], ['/assets/projects/rickmansworth-g10.webp',1200,1600], ['/assets/projects/rickmansworth-g11.webp',1200,1600], ['/assets/projects/rickmansworth-g12.webp',1200,1600], ['/assets/projects/rickmansworth-g13.webp',1200,1600], ['/assets/projects/rickmansworth-g14.webp',1200,1600], ['/assets/projects/rickmansworth-g15.webp',1200,1600], ['/assets/projects/rickmansworth-g16.webp',1200,1600]]},
+    {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
+     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches',
+     story:'Calacatta Sydney Black quartz at 20mm, across the worktop, the island and the splashbacks. The breakfast bar was cut to the room, and the doorway into the kitchen lined in the same stone so the run carries through.',
+     gallery:[['/assets/projects/ruislip-g1.webp',1067,1600], ['/assets/projects/ruislip-g2.webp',1067,1600], ['/assets/projects/ruislip-g3.webp',1067,1600], ['/assets/projects/ruislip-g4.webp',1067,1600], ['/assets/projects/ruislip-g5.webp',1067,1600], ['/assets/projects/ruislip-g6.webp',1067,1600]]},
+
+    /* ⭐ THE CLIENT'S OWN DRIVE, 14 Aug 2026 — g7 onwards. Same kitchen as g1–g6: the mint glass
+       splashback and the white quartz are in both sets, checked before they were added. */
+    {key:'central-london', name:'The Central London Project', place:'London',
+     img:'/assets/projects/central-london-1400.webp', type:'Worktop', story:'',
+     reviewBy:'Joel Brizman',
+     gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067], ['/assets/projects/central-london-g7.webp',1600,1067], ['/assets/projects/central-london-g8.webp',1600,1067], ['/assets/projects/central-london-g9.webp',1600,1067], ['/assets/projects/central-london-g10.webp',1600,1067], ['/assets/projects/central-london-g11.webp',1600,1067], ['/assets/projects/central-london-g12.webp',1600,1067], ['/assets/projects/central-london-g13.webp',1600,1067]]},
+
+    {key:'harrow', name:'The Harrow Project', place:'Harrow',
+     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'',
+     gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]},
+
+    {key:'harlow', name:'The Harlow Project', place:'Essex',
+     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g7.webp',1200,1600], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]}
   ];
   const PER_SET=4;
   const NSETS=Math.ceil(PROJECTS.length/PER_SET);   // 8 projects → two panels of four

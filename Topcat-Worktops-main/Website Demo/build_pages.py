@@ -197,10 +197,24 @@ def trade_cards(items, cls="trade-card"):
     return "\n".join(out)
 
 
+# ⛔⛔ THE BODY COPY IS NO LONGER INSIDE `.section-head` — 14 Aug 2026 (D230). Client: *"why is it
+# all the text like that? Why don't you just spread it across so it matches up with the rest of the
+# thing and just the title maybe stays like that?"*
+# ⭐⭐ THE CAUSE IS A COMPONENT USED FOR SOMETHING IT WAS NEVER SHAPED FOR. `.section-head` is
+# `text-align:center` and `.section-sub` is `max-width:52ch` — that pairing is built for a title
+# and ONE short line under it, which is all the landing page ever asks of it. Three full paragraphs
+# of body copy poured into it gave a 547px centred ribbon down the middle of a 1200px page.
+# ⭐ The title still centres, which is what he asked for. The prose sits in TWO columns spanning
+# the same width as the cards below it, so it lines up with the rest of the section, and each
+# column is still about one 52ch measure wide — spreading it across as one line would run past 100
+# characters and be harder to read than what it replaced.
+# ⚠️ The closing line spans both columns: it is the summary, and a summary that starts halfway
+# down column two reads as an orphan.
 TRADE_WHAT_SECTION = """  <section class="section" id="tradeWhat">
     <div class="section-head rise">
-      <span class="eyebrow">What you get from us</span>
       <h2 class="section-title">One trade off your <em>critical path</em></h2>
+    </div>
+    <div class="trade-lede rise">
       <p class="section-sub">Most of the problems we get called in to solve are not stone problems,
         they are coordination problems. A supplier who templated too early. A fitter who did not
         turn up. A joint that does not match the sample the client signed off.</p>
@@ -208,8 +222,8 @@ TRADE_WHAT_SECTION = """  <section class="section" id="tradeWhat">
         programme, your client and your reputation. That is exactly what we are here to prevent.
         With Topcat, we manage the process from advice and templating through to fabrication and
         installation, keeping the responsibility with us rather than passing it down the line.</p>
-      <p class="section-sub"><b>One team. One point of contact. One less thing on your critical
-        path.</b></p>
+      <p class="section-sub trade-lede-close"><b>One team. One point of contact. One less thing on
+        your critical path.</b></p>
     </div>
     <div class="trade-grid">
 {cards}
@@ -218,7 +232,6 @@ TRADE_WHAT_SECTION = """  <section class="section" id="tradeWhat">
 
 TRADE_WHO_SECTION = """  <section class="section" id="tradeWho">
     <div class="section-head rise">
-      <span class="eyebrow">Who we work with</span>
       <h2 class="section-title">Built around how you <em>actually work</em></h2>
     </div>
     <div class="trade-grid">

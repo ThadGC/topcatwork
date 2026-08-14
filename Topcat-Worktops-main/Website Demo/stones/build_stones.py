@@ -818,7 +818,6 @@ document.addEventListener('DOMContentLoaded',function(){
 <main>
   <section class="st-hero">
     <div class="wrap">
-      <span class="eyebrow">The collection</span>
       <h1>Choose your <em>stone</em></h1>
       <p class="lede">Every stone we fit, in one place. Search by name, filter by material or tone, and open any stone for the detail and an estimate.</p>
       <!-- ⭐ LIFTED OUT OF THE LEDE, 10 Aug. The sourcing offer was the last clause of the
@@ -1186,7 +1185,6 @@ def compare_page():
 <main>
   <section class="st-hero cmp-hero">
     <div class="wrap">
-      <span class="eyebrow">Side by side</span>
       <h1>Compare your <em>shortlist</em></h1>
       <!-- ⚠️ REWRITTEN when the spec table came out. It used to promise "the finish, the colour
            and how each one lives", which was a fair description of a page with ten fact rows and
