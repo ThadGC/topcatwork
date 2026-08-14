@@ -4627,6 +4627,60 @@
      `:empty` is what keeps it completely inert there — no box, no gap, no margin contributed to the
      frozen desktop footer. See the footer IIFE at the foot of the script for what fills it. */
   .foot-tail:empty{display:none}
+  /* ⭐⭐ THE TAIL'S LAYOUT MOVED TO BASE SCOPE — 14 Aug 2026 (D209). Client: *"in the footer, which
+     shows area and hours, I think we should lay those down horizontally across the bottom line so
+     that it doesn't make the contact row have everything in it, so we can even out or space things
+     out better inside the footer."* ⭐ **HE IS DESCRIBING A BALANCE PROBLEM AND HE IS RIGHT:** the
+     contact column had grown to five rows — Phone, Email, WhatsApp, an eight-county Area string
+     and Hours — against three short rows in each of the other columns, so one column carried most
+     of the footer's text.
+     ⛔ **THIS RULE IS SAFE UNSCOPED BECAUSE `:empty` ALREADY GATES IT.** The tail holds nothing
+     until the IIFE puts something in it, and `.foot-tail:empty{display:none}` above means an
+     unused tail contributes no box, no gap and no margin. So the LAYOUT can live here and only
+     the SWITCH (`--footTail`) needs a width — which keeps one description of this block instead
+     of the two-copies-that-drift shape (§2 rule 15's real point).
+     ⛔ NO RULE ACROSS ITS TOP — space alone separates it from the columns, which is §2 rule 10. */
+  .foot-tail{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;
+    text-align:center;gap:12px clamp(28px,5vw,64px);
+    margin-top:clamp(28px,3.8vh,44px)}
+  /* ⛔⛔ THE CAP IS WHAT MAKES IT ONE LINE, AND WITHOUT IT THE ASK SILENTLY FAILS. Measured at
+     1280: the tail's container is 872px and the Area block took **all 872 of it**, because a
+     flex item sizes to its content and the county list is now eight counties plus "nationwide
+     templating". Hours was pushed onto a second row and the result was still two stacked blocks
+     — the exact thing being fixed, wearing a flex row's clothes. Hours measures 219px, the gap
+     is up to 64px, so Area has to stop around 589px for both to sit on the line together.
+     ⭐ A PERCENTAGE, NOT A PIXEL WIDTH: it resolves against whatever the tail is that width, so
+     the same rule holds at 768 where the container is ~691px. `flex-wrap` stays ON as the
+     safety net — if a narrow band cannot fit both, they stack rather than crush. */
+  .foot-tail .foot-c-area{max-width:min(58%,600px)}
+  #footer .foot-tail .foot-ck{display:block}
+  /* ⛔ THE PHONE IS THE ONE BAND THAT KEEPS THEM IN THE COLUMN. At ≤720 the footer is already a
+     single stack, so "across the bottom" and "in the column" render the same thing, and leaving
+     the switch off there means the signed-off phone footer is not touched at all. */
+  @media(min-width:1121px){
+    #footer{--footTail:on}
+    /* ⭐⭐ NOT CENTRED — IT SITS ON THE FOOTER'S OWN COLUMN LINES (D209, second pass). Client,
+       after seeing the centred version: *"I don't want it to be centered. Keep the word area in
+       line with the ones inside explore and then have it essentially fit left, kind of like the
+       way that everything else is being fitted, and same with the hours. So it starts in line
+       with the e from the word explore."*
+       ⭐⭐ **THE TAIL BORROWS `.foot-grid`'S OWN TEMPLATE INSTEAD OF GUESSING AT AN INDENT.**
+       Measured at 1280 before writing this: Explore's label starts at x=441, Browse at 688,
+       Contact at 935. Repeating the four-column template here puts Area on the Explore line and
+       Hours on the Contact line **by construction**, so they cannot drift out of step when the
+       columns re-proportion at another width. ⛔ A hand-tuned `padding-left` would have been
+       correct at exactly 1280 and wrong at every other desktop width.
+       ⚠️ **THE TEMPLATE AND THE GAP ARE COPIED FROM `.foot-grid` AND MUST STAY IN STEP.** If that
+       template changes, this one changes with it — that is the one maintenance cost of aligning
+       two separate elements to one set of lines.
+       ⚠️ Area takes columns 2–3 rather than 2–4: at the Explore+Browse measure its text sets in
+       two lines, and running it to the Contact line would leave Hours nowhere to sit on the same
+       row. Hours holds column 4, directly under PHONE, EMAIL and WHATSAPP. */
+    #footer .foot-tail{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;
+      gap:clamp(22px,2.4vw,44px);justify-content:initial;text-align:left;align-items:start}
+    #footer .foot-tail .foot-c-area{grid-column:2 / 4;max-width:none}
+    #footer .foot-tail .foot-c-hours{grid-column:4}
+  }
   @media(max-width:1000px){.foot-grid{grid-template-columns:1fr 1fr}}
   @media(max-width:560px){.foot-grid{grid-template-columns:1fr}}
   .foot-brand .brand{margin-bottom:22px}
@@ -6190,11 +6244,11 @@
        ⛔ **NO RULE ACROSS ITS TOP.** A divider here is the top hairline §2 rule 10 forbids outright
        ("don't ever use that fingernail design on top of sections"), so the two blocks are separated
        from the columns above by SPACE alone. */
+    /* ⚠️ ONLY THE SWITCH LIVES HERE NOW — the tail's own layout moved to base scope on 14 Aug
+       2026 (D209) when the desktop was given the same arrangement. Two copies of one block is
+       how D51/D59/D68/D78/D93/D105 each went wrong; the layout is written once and the bands
+       decide only whether the tail is filled. */
     #footer{--footTail:on}
-    .foot-tail{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;
-      text-align:center;gap:12px clamp(28px,5vw,64px);
-      margin-top:clamp(28px,3.8vh,44px)}
-    #footer .foot-tail .foot-ck{display:block}
     /* ⭐ D199: THE SECTION USES ITS WIDTH INSTEAD OF ITS HEIGHT. Client: *"the form, we need to
        optimise that space much better. Find a way to make that section smaller and spread everything
        out."* ⭐⭐ **MEASURED FIRST: THE FORM WAS NOT THE TALL PART.** `#cta` is 1063px at 768, and the

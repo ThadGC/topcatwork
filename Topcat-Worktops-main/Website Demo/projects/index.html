@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=57d78c3fd7">
+<link rel="stylesheet" href="/assets/site.css?v=5a9f0d3023">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -87,7 +87,27 @@
       </div>
     </div>
     <a href="/projects/">Projects</a>
-    <a href="/stones/">Stones</a>
+    <!-- ⭐ STONES GETS THE SAME PANEL AS SERVICES — 14 Aug 2026 (D208). Client: *"I want the
+         stones part word in the nav bar to also have a drop down to where you can select either
+         stone selector or all stones or compare stones. So those three pages."*
+         ⛔ **THE WORD STILL GOES TO `/stones/` AND THE CARET STILL OPENS THE PANEL** — the split
+         D189 established and D194 repeated on the phone. Nothing in here is a control that only
+         opens something.
+         ⚠️ **"Stone selector" IS A SECTION, NOT A PAGE, AND THE HREF HAS TO SAY SO.** It is
+         `#stones` on the LANDING page, so the link is `/#stones` and not `#stones`: a bare hash
+         resolves against whatever page you are already on, and this nav is on all eleven page
+         families. The smooth-scroll IIFE only intercepts `a[href^="#"]`, so `/#stones` navigates
+         home and lands on the section, which is the behaviour wanted from a leaf page.
+         ⚠️ `/stones/` is the collection page and `#stones` is the landing section. Similar names,
+         different things — do not "tidy" one into the other. -->
+    <div class="nav-item">
+      <a href="/stones/">Stones<span class="nav-caret" aria-hidden="true"><svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <div class="nav-menu" role="group" aria-label="Stones">
+        <a href="/#stones">Stone selector</a>
+        <a href="/stones/">All stones</a>
+        <a href="/stones/compare.html">Compare stones</a>
+      </div>
+    </div>
     <a href="/estimate/">Estimate</a>
     <a href="/about/">About us</a>
     <a href="/trade/">Trade</a>
@@ -145,6 +165,16 @@
     </button>
   </div>
   <div class="mn-sub" id="mnSubStones">
+    <!-- ⭐ THE CLIENT'S THREE (D208) LEAD, AND THE MATERIAL SHORTCUTS STAY BELOW THEM.
+         He named the three for the NAV BAR. On the phone the same three are added at the top
+         rather than replacing what is here, because Quartz / Marble & Quartzite / Granite were
+         his own D194 ask and they are not competing destinations — they are filters ON "All
+         stones" (`/stones/#quartz` is that page with a range preselected). Removing them to
+         make the two menus identical would undo an earlier ask to satisfy a later one that did
+         not conflict with it. ⚠️ Six rows: the sheet scrolls and every row is `flex:none`, which
+         is what D194 fixed, so this cannot clip the way "Outdoor kitchens" once did. -->
+    <a href="/#stones">Stone selector</a>
+    <a href="/stones/">All stones</a>
     <a href="/stones/#quartz">Quartz</a>
     <a href="/stones/#marble">Marble &amp; Quartzite</a>
     <a href="/stones/#granite">Granite</a>
