@@ -188,9 +188,17 @@ TRADE_WHO = [
 
 
 def trade_cards(items, cls="trade-card"):
+    # ⭐⭐ `.trade-stone` IS THE SAME BLACK MARBLE THE REVIEW CARDS AND THE WHY TILES CARRY —
+    # 14 Aug 2026 (D231). Client: *"we don't have this kind of design across the entire site…
+    # redesign it based on our design language in the home page."* The home page's answer to a
+    # grid of reason tiles is `.wy-r`: a stone-backed panel, veiled until the copy is the
+    # brightest thing on it. Filled by `marbleFill()` from the IIFE in index.html, per card,
+    # from its own seed, so no two cards carry the same slab.
+    # ⚠️ EMPTY AND `aria-hidden` — it is decoration, and a screen reader reading a slab is noise.
     out = []
     for title, body in items:
         out.append('        <article class="%s rise">\n'
+                   '          <div class="trade-stone" aria-hidden="true"></div>\n'
                    '          <h3>%s</h3>\n'
                    '          <p>%s</p>\n'
                    '        </article>' % (cls, title, body))

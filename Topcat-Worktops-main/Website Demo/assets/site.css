@@ -4540,13 +4540,57 @@
      line, which is a newspaper column at the wrong scale. The tablet keeps two: at 900px each
      column is still ~55 characters. */
   @media(max-width:860px){ .trade-lede{grid-template-columns:1fr;gap:clamp(10px,1.6vh,16px)} }
-  .trade-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px}
-  .trade-card{border:1px solid var(--hair);border-radius:6px;
-    padding:clamp(13px,1.8vh,20px) clamp(14px,1.5vw,20px)}
-  .trade-card strong{font-family:var(--serif);color:var(--gold-soft);display:block;
-    margin-bottom:5px;font-weight:500;letter-spacing:0.02em;font-size:clamp(14.5px,1.25vw,16px)}
-  .trade-card span{color:var(--muted);font-size:clamp(13px,1.1vw,14.5px);line-height:1.55}
-  @media(max-width:900px){ .trade-grid{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))} }
+  /* ⛔⛔⛔ **EVERY DECLARATION IN THE OLD VERSION OF THIS BLOCK WAS DEAD, AND THAT IS THE WHOLE
+     STORY OF WHY IT LOOKED THE WAY IT DID** — 14 Aug 2026 (D231). Client: *"These blocks look
+     absolutely terrible. We don't have this kind of design across the entire site. Why is the
+     title, like, right up against the text and the text sizing… everything is wrong with this.
+     Redesign it based on our design language in the home page."*
+     ⭐⭐ **THE CSS STYLED `.trade-card strong` AND `.trade-card span`. `trade_cards()` EMITS `<h3>`
+     AND `<p>`.** Six declarations, none of them matching anything, since the day it was written.
+     What he was looking at was the browser's defaults with the site reset over them. Measured
+     before: title and body BOTH `rgb(244,241,234)` — the same colour, so no hierarchy at all —
+     the title at **700 weight** (nothing else on this site is), a **0px** gap between title and
+     body, no background, no shadow, a 6px radius, and five 206px columns giving **21 characters
+     a line**. ⭐ **PRINT THE COMPUTED VALUE BEFORE YOU CHANGE THE DECLARATION** (D207): reading
+     this block would have told you it was fine.
+     ⭐⭐ **THE HOME PAGE'S OWN ANSWER TO A GRID OF REASON TILES IS `.wy-r`**, so this is that:
+     14px radius, `--hair-soft` border, the same 158deg panel gradient, the same shadow, the same
+     stone veiled back, and the same type roles — sans 400 bone for the heading, 300 muted for the
+     body. ⛔ Nothing gold across the top of a card (§2 rule 10); the stone is what stops it
+     reading flat, exactly as it does on the Why tiles and the review cards.
+     ⚠️ COLUMN COUNT IS DRIVEN BY THE CONTENT COUNT, WHICH IS WHY THE TWO GRIDS DIFFER: "what you
+     get" is six cards and reads 3×2, "who we work with" is four and reads 4×1. Both are full
+     rows; `auto-fit` was what produced five-and-an-orphan. */
+  .trade-grid{display:grid;grid-template-columns:repeat(3,1fr);
+    gap:clamp(14px,1.6vw,22px);max-width:1320px;margin:0 auto}
+  #tradeWho .trade-grid{grid-template-columns:repeat(4,1fr)}
+  .trade-card{position:relative;overflow:hidden;display:flex;flex-direction:column;
+    border-radius:14px;
+    padding:clamp(18px,2.6vh,30px) clamp(18px,1.7vw,30px);
+    border:1px solid var(--hair-soft);
+    background:linear-gradient(158deg,#15151b,#0e0e12);
+    box-shadow:0 24px 54px -30px rgba(0,0,0,0.9)}
+  .trade-stone{position:absolute;inset:0;z-index:0;border-radius:inherit;overflow:hidden;
+    pointer-events:none;user-select:none}
+  .trade-stone svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+  /* ⚠️ THE SAME 0.74→0.86 VEIL AS `.wy-stone`, AND FOR THE SAME REASON: these cards carry about
+     ninety characters each, and at the review cards' lighter setting the veining crowds the copy.
+     If it is ever lifted, judge the body text against the BRIGHTEST vein, not the average. */
+  .trade-stone::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(9,9,12,0.74) 0%,rgba(9,9,12,0.86) 100%)}
+  /* the copy sits above the stone — `.trade-stone` is positioned at z-index 0, so without this
+     the words would paint underneath it */
+  .trade-card h3,.trade-card p{position:relative;z-index:1}
+  .trade-card h3{font-family:var(--sans);font-weight:400;color:var(--bone);letter-spacing:0.01em;
+    font-size:clamp(15px,1.3vw,18px);line-height:1.3;margin:0 0 clamp(9px,1.3vh,14px)}
+  .trade-card p{color:var(--muted);font-weight:300;margin:0;
+    font-size:clamp(13px,1.05vw,14.5px);line-height:1.62}
+  @media(max-width:900px){
+    .trade-grid,#tradeWho .trade-grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:620px){
+    .trade-grid,#tradeWho .trade-grid{grid-template-columns:1fr}
+  }
 
   /* ================= FAQ PANEL =================
      The FAQ used to be a sticky sheet that rose over the frozen "Why choose us" section; that

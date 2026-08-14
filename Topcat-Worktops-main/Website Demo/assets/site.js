@@ -6385,6 +6385,22 @@ function viewSequence(host,tiles,apply,opts){
   },{dur:620,gap:175,threshold:0.2});
 })();
 
+/* ---------- ⭐ THE TRADE CARDS' STONE (D231) ----------
+   The same slab the Why tiles and the review cards carry, veiled back by `.trade-stone::after`
+   until the copy is the brightest thing on the card. This is the half of "our design language"
+   that CSS alone cannot do: `marbleSVG()` is procedural, so every card needs its own seed.
+   ⚠️ THE TRADE PAGE ONLY. `site.js` is shared by every generated page and this selector matches
+   nothing anywhere else, so the loop is a no-op — including on the landing page, whose
+   `feTurbulence` count is part of the freeze probe and must stay at 60.
+   ⚠️ `marbleFill` and `marbleSVG` are `function` declarations and therefore hoisted, so calling
+   them from here is safe. ⛔ Do NOT switch this to `marble(preset,seed)` — that reads the STONES
+   preset const further down the file and would hit the TDZ that killed the helix IIFE once (§4e). */
+(function(){
+  const cards=document.querySelectorAll('.trade-stone');
+  if(!cards.length) return;
+  cards.forEach((el,i)=>{ marbleFill(el, 7400+i*17); });
+})();
+
 /* ---------- mobile burger menu ----------
    Open/close the full-screen nav overlay. Links are plain anchors, so navigation itself is the
    browser's job — we only close the sheet (and unlock scroll) when one is tapped. */
