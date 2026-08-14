@@ -1,5 +1,23 @@
 # START HERE — 14 August 2026, after the TABLET ROUND (D197–D200)
 
+> ⛔⛔⛔ **READ THIS BOX BEFORE ANYTHING ELSE. A LATER ROUND (D201–D205, 14 Aug) REVERSED THREE OF
+> THE RULES PRINTED BELOW, AND §10 OF THIS FILE IS NOW WRONG IN PLACES.**
+>
+> 1. ⛔ **FABRICATION IS IN-HOUSE AGAIN (D202).** §10 rule 2 below says the opposite. The client's
+>    own notes document claims in-house fabrication in five places, including an HSE dust-control
+>    answer. His wording is **"by our experienced fabricators"**. This has flipped three times.
+> 2. ⛔ **THE BRAND IS "Topcat", ONE WORD (D201)** — 1,431 occurrences renamed across 196 files.
+>    Every "TopCat" in this file is stale spelling.
+> 3. ⚠️ **HE NAMED A SUPPLIER PUBLICLY HIMSELF (D203).** "Next Stone Slabs" is in the brand
+>    marquee on his instruction; §10 rule 7 below still says suppliers are never named.
+> 4. ⛔ **NEVER "LASER" ANYTHING (D203).** They template by hand. 21 occurrences removed.
+> 5. ⭐ **THE SERVICE AREA IS EIGHT COUNTIES (D203)**, not four.
+> 6. ⭐ **SEVEN SERVICES, NOT SIX (D205)** — Vanity Tops. If you add an eighth, `PHONE_ORDER` in
+>    the services-arrange IIFE must name it or the card floats to the front of the phone grid.
+>
+> **`HANDOVER.md` §D rows D201–D205 and §2 rules 1, 7, 9 and 16 are the current truth.**
+
+
 Read this, then `HANDOVER.md` **§D** (the decision register, newest first — this round is
 **D197–D200**) and **§2** (the standing rules, especially **rule 9** and **rule 15**). That is about
 fifteen minutes and it is enough to work safely.

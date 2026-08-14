@@ -3,7 +3,7 @@
 
 Why this exists. `brands.marbledotcom()` walks the sitemap and then opens the first 140 pages
 of each section, which is a blind sweep: ~700 requests that may or may not contain the stones
-TopCat actually sells. The client's instruction is the other way round — the suppliers decide
+Topcat actually sells. The client's instruction is the other way round — the suppliers decide
 WHICH stones exist, and then we go and find an image of THAT EXACT NAME. So: index first,
 match second, fetch only what matched.
 
@@ -24,7 +24,7 @@ SITEMAPS = [
     "https://marble.com/sitemap.xml",
 ]
 
-# marble.com's own section -> the material family TopCat sells it as.
+# marble.com's own section -> the material family Topcat sells it as.
 SECTIONS = {
     "granite-countertops": "Granite",
     "quartz-countertops": "Quartz",

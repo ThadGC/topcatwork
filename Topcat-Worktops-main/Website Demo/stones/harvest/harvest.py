@@ -5,7 +5,7 @@
     python3 harvest.py --list     # show what each source would yield, download nothing
 
 ⚠️ LICENSING. This downloads other companies' product photography. That is fine for a
-   supplier TopCat actually buys from and has asset permission from, and it is NOT fine as a
+   supplier Topcat actually buys from and has asset permission from, and it is NOT fine as a
    blanket lift from ten companies, several of which (Bloom, AKG) are competitors rather than
    suppliers. Each SOURCE below carries an `ok` flag and a `note` recording what we know.
    Only sources with ok=True are fetched. See harvest/LICENSING.md.
@@ -71,7 +71,7 @@ SOURCES = {
         note="⛔ SWITCHED OFF 9 Aug 2026 (decision D45). A countertop retailer's reference "
              "catalogue: ~2,363 named stones, one page each, with a 1280x720 studio shot of the "
              "slab face. The photography is excellent and the naming is the trade's own — but "
-             "marble.com is a US COUNTERTOP RETAILER TopCat have no account with, so it fails "
+             "marble.com is a US COUNTERTOP RETAILER Topcat have no account with, so it fails "
              "the same test in LICENSING.md that put Caesarstone and CRL on 'ask first'. It is "
              "also the wrong source for engineered quartz, where the name is a brand's product "
              "name and a same-named slab from another maker is a different product. "

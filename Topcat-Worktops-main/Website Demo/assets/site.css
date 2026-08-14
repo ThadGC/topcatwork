@@ -563,9 +563,19 @@
   }
   html.nav-open .mobile-nav{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .4s var(--ease)}
   html.nav-open{overflow-y:hidden}
+  /* ⭐⭐ `text-indent` IS AN OPTICAL CORRECTION, NOT A NUDGE — 14 Aug 2026. `letter-spacing`
+     adds its space AFTER the last letter as well as between letters, so a centred word carries
+     an invisible 3.3px tail on its right and the INK sits half of that left of the centreline.
+     Every row is affected equally, so it never reads as one row being wrong — it reads as the
+     whole menu sitting slightly left, which is exactly what the client saw.
+     ⭐⭐ THE VALUE IS THE FULL TRACKING, NOT HALF OF IT, AND THAT IS COUNTER-INTUITIVE: the indent
+     also WIDENS the anchor, and a centred box gives half of any extra width straight back. An
+     indent of one tracking unit moves the ink by half of one. Measured, not reasoned — 0.11em
+     landed the ink 0.8px left and 0.22em landed it on 0.00. ⛔ Do not "simplify" this away: the box was always centred, the
+     letters were not. */
   .mobile-nav a{
     color:var(--bone);text-decoration:none;font-size:15px;letter-spacing:0.22em;
-    text-transform:uppercase;padding:13px 22px;
+    text-transform:uppercase;padding:13px 22px;text-indent:0.22em;
     opacity:0;transform:translateY(10px);
     transition:opacity .45s var(--ease),transform .45s var(--ease),color .35s var(--ease);
   }
@@ -580,14 +590,30 @@
      than the anchors is what makes the entrance survive the structure change.
      ⭐ `.mn-group` carries the entrance itself and its anchor opts out, because a transition-delay
      set on a parent does nothing for a child's own transition. */
-  .mn-group{display:flex;align-items:center;justify-content:center;gap:2px;
+  /* ⛔⛔ THE CARET IS OUT OF FLOW, AND THAT IS THE WHOLE ALIGNMENT FIX — 14 Aug 2026.
+     Client: "everything needs to be aligned perfectly in the mobile drop down."
+     ⭐⭐ MEASURED BEFORE TOUCHING IT: on a 390px sheet every plain row's word sat exactly on the
+     centreline and **Services and Stones sat 16px LEFT of it**. Nothing was wrong with either
+     row — the ROW was centred correctly, and the row is the word PLUS a 44px caret plus a 2px
+     gap, so centring the pair necessarily pushes the word left by about half the caret.
+     ⭐ Taking the caret out of flow (`position:absolute`) leaves `.mn-group` exactly as wide as
+     its anchor, so it centres identically to Projects, Estimate, About us, Trade and Contact —
+     one centreline down all nine rows, with no per-row nudge to drift out of date.
+     ⛔ The anchor's extra `padding-right:8px` went WITH it: it existed to hold the word off the
+     caret, and while the caret was in flow that 8px was itself part of the offset. The anchor is
+     now identical to a plain row, which is the point.
+     ⚠️ The caret keeps its full 44px square and its own tap target — it is still a sibling
+     BUTTON outside the anchor (D194), so the word still goes to the hub and the caret still
+     opens the list. Absolute positioning changes where it is painted, not what it is. */
+  .mn-group{position:relative;display:flex;align-items:center;justify-content:center;
     opacity:0;transform:translateY(10px);
     transition:opacity .45s var(--ease),transform .45s var(--ease)}
   html.nav-open .mn-group{opacity:1;transform:none}
-  .mn-group > a{opacity:1;transform:none;padding-right:8px}
+  .mn-group > a{opacity:1;transform:none}
   /* ⚠️ 44px square and OUTSIDE the anchor: the word goes to the hub and the caret opens the list,
      which is the split the client described, and neither can steal the other's tap target. */
-  .mn-toggle{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;
+  .mn-toggle{position:absolute;left:100%;top:50%;transform:translateY(-50%);
+    width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;
     background:none;border:0;padding:0;cursor:pointer;color:var(--gold);
     -webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .mn-toggle svg{width:13px;height:8px;transition:transform .35s var(--ease)}
@@ -614,7 +640,7 @@
      generous against six 36px rows until the padding was counted. The handler writes
      `scrollHeight` inline, which is exact, cannot be outgrown by a seventh link, and still
      animates because it is a real pixel value rather than `auto`. */
-  .mn-sub a{font-size:12px;letter-spacing:0.18em;padding:9px 22px;color:var(--muted)}
+  .mn-sub a{font-size:12px;letter-spacing:0.18em;padding:9px 22px;color:var(--muted);text-indent:0.18em}
   .mn-sub a:hover{color:var(--gold)}
 
   /* stagger the ROWS in, top to bottom */
@@ -887,6 +913,15 @@
   #services .services-grid{grid-template-columns:repeat(3,1fr);max-width:1160px}
   @media(max-width:1100px){#services .services-grid{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:600px){#services .services-grid{grid-template-columns:1fr}}
+  /* ⭐ SEVEN TILES SINCE 14 Aug 2026 (Vanity Tops), AND SEVEN DOES NOT DIVIDE BY TWO OR THREE.
+     Without this the last tile sits alone in the left column with a hole beside it, which reads
+     as a card that failed to load rather than as a list that ran out. Spanning the full row is
+     the standard grid answer and it needs no width to be hard-coded.
+     ⛔ DELIBERATELY NOT INSIDE A MEDIA QUERY, and that is the §2 rule 15 exemption rather than a
+     breach of it: `#services .services-grid` is `display:none` from 1121px up, where the helix
+     takes over, so this rule cannot reach the frozen desktop at all. At ≤600px the grid is one
+     column and `1/-1` is a no-op. It applies exactly where the grid is two or three across. */
+  #services .services-grid > *:last-child:nth-child(odd){grid-column:1/-1}
   /* ⛔ THE CATCH-ALL LINE IS OFF EVERYWHERE BY DEFAULT — D120, 12 Aug 2026. It is switched on
      only inside the phone query. New MARKUP cannot be scoped by a media query the way a new
      RULE can: the element exists at every width from the moment it is added, so the default has
@@ -4626,7 +4661,7 @@
     gap:0 clamp(26px,5vw,72px);align-items:stretch;
     --sideW:min(clamp(260px,37vw,500px),calc((100vh - 210px) * 0.72))}
   /* ⭐ THE COPY COLUMN IS BOUND TO THE COLLAGE (client, 9 Aug): "the title has to be in line
-     with the top of the collage, and Chat with TopCat has to be aligned with the bottom."
+     with the top of the collage, and Chat with Topcat has to be aligned with the bottom."
      Three things do that together and all three are needed:
        align-items:stretch on the wrap  — the column fills the row instead of centring in it
        .about-copy is a flex COLUMN     — so the title sits hard against its top edge
@@ -5165,7 +5200,7 @@
        "RESTORES" IT.** `SUPPLIERS` in the script is a misleading variable name: it holds twelve
        MANUFACTURER BRANDS (Silestone, Caesarstone, Dekton, Neolith…), which are safe to name
        and were never in tension with §2 rule 9. What could not go in were Nile Stone and Next
-       Stone Slabs, the yards TopCat BUY from (D8) — naming those tells a customer where to go
+       Stone Slabs, the yards Topcat BUY from (D8) — naming those tells a customer where to go
        direct. He chose to drop the band rather than run it with brands alone.
        ⚠️ THIS BAND WAS THE SECTION BOUNDARY BY DESIGN (client, 30 July): there is deliberately
        no .section-divider after the stones section because the strip itself was the seam. Hide

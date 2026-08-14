@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-TopCat Worktops — SEO page generator.
+Topcat Worktops — SEO page generator.
 
 Generates three page families that close the content gaps found in the 7 Aug 2026
 SEO research (see Docs/topcat-worktops-seo-build-plan.md):
@@ -18,14 +18,21 @@ Run from inside "Website Demo":
 ------------------------------------------------------------------------------
 HOUSE RULES honoured throughout. Breaking one of these is a client-visible error.
 ------------------------------------------------------------------------------
-⛔ FABRICATION IS OUTSOURCED (client decision, 7 Aug 2026, reversing the earlier
-   "present as in-house" rule). TopCat advise, source the slab, laser-template,
-   place the cut with long-standing fabrication workshops, fit, and carry the
-   ten year guarantee. NEVER write "our own workshop", "we cut", "in-house
-   fabrication" or anything implying TopCat cut the stone. Templating, fitting
-   and aftercare ARE theirs and may be claimed freely.
-⛔ NO SHOWROOM, ever. Samples come to the customer, slabs are approved from
-   photographs of the actual slab.
+⛔ FABRICATION IS IN-HOUSE AGAIN (client decision, 14 Aug 2026, in his own notes
+   document — REVERSING the 7 Aug 2026 rule that reversed the one before it).
+   Topcat advise, source the slab, template BY HAND, cut and polish with their
+   own experienced fabricators, fit, and carry the ten year guarantee. "Our
+   experienced fabricators" is his wording and it is the wording to use.
+   ⚠️ HISTORY, so this is not flipped back by accident: 7 Aug 2026 banned every
+   in-house claim outright ("we don't do in house fabrication, do not talk about
+   in house fabrication") and the whole site was rewritten around it. His 14 Aug
+   document claims in-house fabrication in five separate places, including an
+   HSE dust-control answer, so it is a considered position and not a slip.
+⛔ NEVER "LASER" ANYTHING (client, 14 Aug 2026): "we template everything by
+   hand". Say templated, measured or templated by hand.
+⛔ NO SHOWROOM of our own. Samples come to the customer, and slabs may be
+   approved from photographs OR chosen in person at the distributor's warehouse,
+   which the client recommends (14 Aug 2026).
 ⛔ NEVER a founding year or anything signalling a young company.
 ⛔ NEVER a review count and NEVER aggregateRating/review schema. 5.0 on Google
    only. Google explicitly makes self-reviewed star markup ineligible anyway.
@@ -54,14 +61,15 @@ PHONE_DISPLAY = "0800 098 2812"
 PHONE_TEL = "+448000982812"
 EMAIL = "info@topcatworktops.co.uk"
 HOURS = "Monday to Friday, 8am to 6pm"
-AREA = "London, Hertfordshire, Essex & Berkshire"
-AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire"]
+AREA = "London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire"
+AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire", "Buckinghamshire",
+                "Surrey", "Oxfordshire", "Bedfordshire"]
 GUARANTEE_YEARS = 10
 
 # The named author on every guide. E-E-A-T: guides need a real person with a real
 # role. Nick is the client-approved public name and the front-of-house contact.
 AUTHOR = "Nick"
-AUTHOR_ROLE = "Managing Director, TopCat Worktops"
+AUTHOR_ROLE = "Managing Director, Topcat Worktops"
 AUTHOR_URL = f"{BASE}/about/"
 # ⚠️ Shown as "Last reviewed" on every guide. Bump when the copy is genuinely
 # re-checked, not on every rebuild, or the date stops meaning anything.
@@ -112,7 +120,7 @@ def nav_html(depth):
     """depth is only used for the stylesheet href, all nav links are absolute."""
     links = "".join(f'<a href="{h}">{e(t)}</a>' for h, t in NAV_LINKS)
     return f"""<header class="bar">
-  <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops, home">{BRAND_LOGO}</a>
+  <a class="brand" href="/index.html#hero" aria-label="Topcat Worktops, home">{BRAND_LOGO}</a>
   <nav class="top" aria-label="Primary">{links}</nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
@@ -123,7 +131,7 @@ def footer_html():
     return f"""<footer class="foot">
   <div class="wrap foot-grid">
     <div class="foot-col">
-      <a class="brand brand-stack" href="/index.html#hero" aria-label="TopCat Worktops, home">{BRAND_LOGO_STACK}</a>
+      <a class="brand brand-stack" href="/index.html#hero" aria-label="Topcat Worktops, home">{BRAND_LOGO_STACK}</a>
       <p class="foot-tag">Bespoke stone worktops, templated, fitted and guaranteed by one team.</p>
       <p class="foot-stars"><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</p>
     </div>
@@ -156,7 +164,7 @@ def footer_html():
     </div>
   </div>
   <div class="foot-bar">
-    <span>&copy; TopCat Worktops Ltd</span>
+    <span>&copy; Topcat Worktops Ltd</span>
     <!-- ⚠️ .foot-legal is display:flex with a 20px gap, so the sentence needs its own
          span or the link would be gapped off an anonymous flex box. -->
     <span class="foot-legal"><span>Free home visit and samples. Ten year guarantee. No showroom visit needed, we come to you.</span><a class="foot-sitemap" href="/sitemap.html">Sitemap</a></span>
@@ -179,7 +187,7 @@ def head_html(title, metadesc, url, css_depth, extra_ld=""):
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(metadesc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:site_name" content="TopCat Worktops">
+<meta property="og:site_name" content="Topcat Worktops">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -287,7 +295,7 @@ def table_block(caption, head, rows):
 MATERIALS = [
   dict(
     slug="quartz-worktops", short="Quartz", h1="Quartz worktops",
-    title="Quartz Worktops | Supplied & Fitted Across London & the Home Counties | TopCat",
+    title="Quartz Worktops | Supplied & Fitted Across London & the Home Counties | Topcat",
     metadesc="Engineered quartz worktops templated, fitted and guaranteed for ten years. Every cut-out included, pencil edges as standard. Free home visit across London, Hertfordshire, Essex and Berkshire.",
     eyebrow="Engineered stone",
     lede="The most popular worktop material in Britain, and for good reason. Non-porous, hard wearing, and consistent from one slab to the next.",
@@ -324,7 +332,8 @@ MATERIALS = [
        "neutrals have replaced the cold greys, so mushroom, putty, oat and soft cream are "
        "where the range has grown. Plain whites and blacks still sell steadily. We work with "
        "Silestone, Caesarstone, Technistone, Unistone, Compac, Cimstone, Ceralsio, Noble "
-       "Stone, iStone and CQ Stone, so if you have seen a specific colour, tell us the name "
+       "Stone, iStone and Next Stone Slabs, so if you have seen a specific colour, tell us "
+       "the name "
        "and we will find it or show you the closest thing in stock."),
       ("Thickness, edges and the details that get charged elsewhere",
        "Twenty millimetre and thirty millimetre are both standard. Thirty reads more solid and "
@@ -368,7 +377,7 @@ MATERIALS = [
   ),
   dict(
     slug="granite-worktops", short="Granite", h1="Granite worktops",
-    title="Granite Worktops | Supplied & Fitted Across London & the Home Counties | TopCat",
+    title="Granite Worktops | Supplied & Fitted Across London & the Home Counties | Topcat",
     metadesc="Natural granite worktops, templated, fitted and guaranteed for ten years. Every cut-out included. Free home visit and samples across London, Hertfordshire, Essex and Berkshire.",
     eyebrow="Natural stone",
     lede="Quarried rock, no two slabs alike, and the most heat tolerant of the natural stones. The classic that keeps earning its place.",
@@ -439,7 +448,7 @@ MATERIALS = [
   ),
   dict(
     slug="marble-worktops", short="Marble", h1="Marble worktops",
-    title="Marble Worktops | Carrara & Calacatta, Supplied & Fitted | TopCat Worktops",
+    title="Marble Worktops | Carrara & Calacatta, Supplied & Fitted | Topcat Worktops",
     metadesc="Marble worktops templated, fitted and guaranteed for ten years, with honest advice on where marble works and where it does not. Free home visit across London and the Home Counties.",
     eyebrow="Natural stone",
     lede="The most beautiful surface you can put in a kitchen, and the one that asks the most of you. Worth it in the right place.",
@@ -513,7 +522,7 @@ MATERIALS = [
   ),
   dict(
     slug="porcelain-worktops", short="Porcelain", h1="Porcelain and sintered stone worktops",
-    title="Porcelain & Sintered Stone Worktops | Made to Order | TopCat Worktops",
+    title="Porcelain & Sintered Stone Worktops | Made to Order | Topcat Worktops",
     metadesc="Porcelain and sintered stone worktops, made to order and fitted across London and the Home Counties. Takes direct heat, UV stable, works outdoors. Send your plans for a proper price.",
     eyebrow="Sintered stone",
     lede="The technical answer. Takes a hot pan without flinching, holds its colour in sunlight, and works outdoors as well as in.",
@@ -589,7 +598,7 @@ MATERIALS = [
   ),
   dict(
     slug="quartzite-worktops", short="Quartzite", h1="Quartzite worktops",
-    title="Quartzite Worktops | Natural Stone, Not Quartz | TopCat Worktops",
+    title="Quartzite Worktops | Natural Stone, Not Quartz | Topcat Worktops",
     metadesc="Quartzite worktops, a natural stone with marble movement and granite durability. Templated, fitted and guaranteed for ten years across London and the Home Counties.",
     eyebrow="Natural stone",
     lede="Marble movement, granite hardness, and a slab nobody else has. The one people mean when they say they want something special.",
@@ -669,7 +678,7 @@ GUIDES = [
   dict(
     slug="how-much-do-quartz-worktops-cost", nav="What worktops cost",
     h1="How much do quartz worktops cost in the UK?",
-    title="How Much Do Quartz Worktops Cost? UK Prices 2026 | TopCat Worktops",
+    title="How Much Do Quartz Worktops Cost? UK Prices 2026 | Topcat Worktops",
     metadesc="Real UK quartz worktop prices for 2026, what moves the number, what is included in a proper quote and what commonly appears on the final invoice elsewhere.",
     answer=("Most quartz kitchens in the UK cost between £2,000 and £5,000 supplied and fitted, "
             "including VAT. A single straight run in a mid-range colour sits near the bottom of "
@@ -731,7 +740,7 @@ GUIDES = [
   dict(
     slug="quartz-vs-granite-worktops", nav="Quartz vs granite",
     h1="Quartz vs granite worktops: which should you choose?",
-    title="Quartz vs Granite Worktops: An Honest Comparison | TopCat Worktops",
+    title="Quartz vs Granite Worktops: An Honest Comparison | Topcat Worktops",
     metadesc="Quartz or granite? The real differences in heat tolerance, sealing, staining, cost and appearance, from a fitter who installs both every week.",
     answer=("Choose quartz if you want a low maintenance, non-porous surface that never needs "
             "sealing and looks the same across the whole kitchen. Choose granite if you cook "
@@ -794,7 +803,7 @@ GUIDES = [
   dict(
     slug="is-quartz-heatproof", nav="Is quartz heatproof?",
     h1="Is quartz heatproof? Can you put hot pans on quartz?",
-    title="Is Quartz Heatproof? What Hot Pans Really Do | TopCat Worktops",
+    title="Is Quartz Heatproof? What Hot Pans Really Do | Topcat Worktops",
     metadesc="Honest answer: quartz is heat resistant, not heatproof. What temperature it tolerates, what actually causes damage, and what to do instead.",
     answer=("No. Quartz is heat resistant, not heatproof. The resin that binds it starts to "
             "suffer somewhere around 150 degrees, and a pan straight off a hob is well past "
@@ -850,7 +859,7 @@ GUIDES = [
   dict(
     slug="quartz-vs-porcelain-worktops", nav="Quartz vs porcelain",
     h1="Quartz vs porcelain worktops: which is right for your kitchen?",
-    title="Quartz vs Porcelain Worktops Compared | TopCat Worktops",
+    title="Quartz vs Porcelain Worktops Compared | Topcat Worktops",
     metadesc="Porcelain takes direct heat and works outdoors, quartz offers more colours and costs less. An honest comparison, including the silica claim that is not true.",
     answer=("Porcelain wins on heat, sunlight and outdoor use, because it contains no resin to "
             "scorch or fade. Quartz wins on colour choice, price and availability. Many "
@@ -910,7 +919,7 @@ GUIDES = [
   dict(
     slug="20mm-vs-30mm-quartz-worktops", nav="20mm vs 30mm",
     h1="20mm or 30mm quartz worktop: which thickness should you choose?",
-    title="20mm vs 30mm Quartz Worktops: Which Thickness? | TopCat Worktops",
+    title="20mm vs 30mm Quartz Worktops: Which Thickness? | Topcat Worktops",
     metadesc="The practical difference between 20mm and 30mm worktops: how they look, how far they can overhang unsupported, and why the price is often the same.",
     answer=("Thirty millimetre reads more solid and carries a longer unsupported overhang, which "
             "matters on a breakfast bar. Twenty millimetre looks lighter and more contemporary, "
@@ -977,7 +986,7 @@ GUIDES = [
   dict(
     slug="quartzite-vs-quartz", nav="Quartzite vs quartz",
     h1="Quartzite vs quartz: they are not the same thing",
-    title="Quartzite vs Quartz Worktops: The Difference | TopCat Worktops",
+    title="Quartzite vs Quartz Worktops: The Difference | Topcat Worktops",
     metadesc="Quartz is manufactured, quartzite is a natural rock. The difference in heat tolerance, sealing, cost and appearance, and which suits which kitchen.",
     answer=("Quartz is a manufactured slab, crushed stone bound with resin, non-porous and "
             "consistent. Quartzite is a natural rock, quarried, unique slab to slab, harder, "
@@ -1049,7 +1058,7 @@ GUIDES = [
   dict(
     slug="is-quartz-safe-silica", nav="Is quartz safe? Silica",
     h1="Is quartz safe? Silica, silicosis and what it means for your kitchen",
-    title="Is Quartz Safe? Silica & Silicosis Explained | TopCat Worktops",
+    title="Is Quartz Safe? Silica & Silicosis Explained | Topcat Worktops",
     metadesc="An installed quartz worktop poses no silica risk in your home. The risk is occupational, at the cutting stage. What the HSE actually said in 2026, and what we require of the workshops that cut our stone.",
     answer=("A finished, sealed, installed worktop poses no silica risk to your household. The "
             "danger is occupational: it comes from dust created when engineered stone is cut, "
@@ -1086,16 +1095,14 @@ GUIDES = [
         "to modify your worktop in place, for a new tap hole or an appliance change, that is a "
         "job for someone with water suppression and extraction, not for a cordless grinder in "
         "your kitchen."]),
-      ("What we require of the workshops that cut our stone",
-       ["We do not cut stone ourselves. We advise on it, we template your kitchen, we place the "
-        "cut with fabrication workshops we have used for years, we fit it and we carry the "
-        "guarantee. That means the safety question is a supplier question, and we treat it as "
-        "one.",
-        "We only place work with workshops that cut wet with suppression at the tool, extract "
-        "at source, provide respiratory protection and health surveillance for their people, "
-        "and can show they meet current HSE guidance. It is the right thing to do, and it is "
-        "also self interested: a fabricator who ends up in the news for harming workers becomes "
-        "our problem too."]),
+      ("How we control the dust",
+       ["We advise on the stone, template your kitchen, cut it, fit it and carry the "
+        "guarantee. That means the safety question is ours to answer rather than somebody "
+        "else's, and we treat it that way.",
+        "We cut wet with suppression at the tool, extract at source, and provide respiratory "
+        "protection and health surveillance for our people, in line with current HSE "
+        "guidance. It is the right thing to do, and it is also self interested: a fabricator "
+        "who ends up in the news for harming workers has already failed at the job."]),
       ("Low silica and silica free, and what those words are worth",
        ["Several manufacturers now sell reduced silica ranges, and some market products as "
         "silica free. Two things are worth knowing before you pay a premium for the label.",
@@ -1140,7 +1147,7 @@ GUIDES = [
   dict(
     slug="best-kitchen-worktop-material", nav="Best worktop material",
     h1="The best kitchen worktop material for a UK kitchen",
-    title="Best Kitchen Worktop Material 2026: An Honest Guide | TopCat Worktops",
+    title="Best Kitchen Worktop Material 2026: An Honest Guide | Topcat Worktops",
     metadesc="Quartz, granite, marble, porcelain or quartzite? Which surface suits which kitchen, from a team that fits all five. Honest limits included.",
     answer=("For most UK kitchens, engineered quartz. It is non-porous, needs no sealing and "
             "comes in the widest range of colours. Choose granite if you cook hard, porcelain "
@@ -1192,10 +1199,10 @@ GUIDES = [
   dict(
     slug="what-happens-when-we-template", nav="What templating involves",
     h1="What happens when we template your kitchen",
-    title="Worktop Templating Explained: What Actually Happens | TopCat Worktops",
+    title="Worktop Templating Explained: What Actually Happens | Topcat Worktops",
     metadesc="What a worktop template visit involves, what has to be ready before we arrive, how long it takes and what happens between templating and fitting.",
     answer=("A templater visits once your cabinets are fitted and level, and measures the space "
-            "with a laser to a fraction of a millimetre. That measurement becomes the digital "
+            "by hand to a fraction of a millimetre. That measurement becomes the digital "
             "file the stone is cut from. It takes about an hour, and fitting normally follows "
             "within three to five working days."),
     sections=[
@@ -1270,7 +1277,7 @@ GUIDES = [
 #   5. Launch 8, gate at 90 days on real impressions before adding more.
 #      Phase 2 and 3 towns are listed in the SEO build plan, not here, on
 #      purpose. Do not bulk-add them without the gate.
-#   6. NO LocalBusiness schema on these pages. TopCat is not located in these
+#   6. NO LocalBusiness schema on these pages. Topcat is not located in these
 #      towns and marking up an address it does not have risks a manual action.
 #      BreadcrumbList only.
 #
@@ -1282,7 +1289,7 @@ COUNTIES = [
   dict(
     slug="hertfordshire", name="Hertfordshire",
     h1="Kitchen worktops in Hertfordshire",
-    title="Kitchen Worktops in Hertfordshire | Bathrooms & Commercial Too | TopCat",
+    title="Kitchen Worktops in Hertfordshire | Bathrooms & Commercial Too | Topcat",
     metadesc="Quartz, granite, marble and porcelain surfaces for kitchens, bathrooms, utilities and commercial spaces across Hertfordshire. Free home visit with samples, every cut-out included, ten year guarantee.",
     lede=("We work across Hertfordshire most weeks, from the St Albans and Watford end through "
           "to Stevenage, Hitchin and the Bishop's Stortford side."),
@@ -1303,7 +1310,7 @@ COUNTIES = [
   dict(
     slug="essex", name="Essex",
     h1="Kitchen worktops in Essex",
-    title="Kitchen Worktops in Essex | Bathrooms & Commercial Too | TopCat",
+    title="Kitchen Worktops in Essex | Bathrooms & Commercial Too | Topcat",
     metadesc="Quartz, granite, marble and porcelain surfaces for kitchens, bathrooms, utilities and commercial spaces across Essex. Free home visit with samples, all cut-outs included, ten year guarantee.",
     lede=("From Harlow and Epping through Chelmsford and Brentwood down to the Southend side, "
           "Essex is one of our busiest counties."),
@@ -1323,7 +1330,7 @@ COUNTIES = [
   dict(
     slug="london", name="London",
     h1="Kitchen worktops in London",
-    title="Kitchen Worktops in London | Bathrooms & Commercial Too | TopCat",
+    title="Kitchen Worktops in London | Bathrooms & Commercial Too | Topcat",
     metadesc="Stone surfaces for kitchens, bathrooms and commercial spaces across London. Quartz, granite, marble and porcelain, free home visit with samples, every cut-out included, ten year guarantee.",
     lede=("We fit across Greater London, most often in the north and east, and we are used to "
           "the practical realities of working in the city."),
@@ -1344,7 +1351,7 @@ COUNTIES = [
   dict(
     slug="berkshire", name="Berkshire",
     h1="Kitchen worktops in Berkshire",
-    title="Kitchen Worktops in Berkshire | Bathrooms & Commercial Too | TopCat",
+    title="Kitchen Worktops in Berkshire | Bathrooms & Commercial Too | Topcat",
     metadesc="Quartz, granite, marble and porcelain surfaces for kitchens, bathrooms, utilities and commercial spaces across Berkshire. Free home visit with samples, every cut-out included, ten year guarantee.",
     lede=("We cover Berkshire from Slough and Maidenhead across to Reading, Bracknell, "
           "Wokingham and Newbury."),
@@ -1367,7 +1374,7 @@ TOWNS = [
   dict(
     slug="harlow", name="Harlow", county="essex", county_name="Essex",
     h1="Kitchen worktops in Harlow",
-    title="Kitchen Worktops in Harlow | Bathrooms & Commercial Too | TopCat",
+    title="Kitchen Worktops in Harlow | Bathrooms & Commercial Too | Topcat",
     metadesc="Stone surfaces for kitchens, bathrooms and commercial spaces in Harlow and across CM17 to CM20. Free home visit with samples, every cut-out included, ten year guarantee.",
     postcodes="CM17 to CM20", dial="01279",
     lede=("Harlow is one of the areas we are asked for most, and one of the easiest for us to "
@@ -1389,7 +1396,7 @@ TOWNS = [
   dict(
     slug="stevenage", name="Stevenage", county="hertfordshire", county_name="Hertfordshire",
     h1="Kitchen worktops in Stevenage",
-    title="Kitchen Worktops in Stevenage | Bathrooms & Commercial Too | TopCat",
+    title="Kitchen Worktops in Stevenage | Bathrooms & Commercial Too | Topcat",
     metadesc="Stone surfaces for kitchens, bathrooms and commercial spaces in Stevenage and across SG1 and SG2. Free home visit with samples, every cut-out included, ten year guarantee.",
     postcodes="SG1 and SG2", dial="01438",
     lede=("Stevenage is well inside our normal working area and one of the Hertfordshire towns "
@@ -1398,7 +1405,7 @@ TOWNS = [
            "older new town housing tends toward compact, well proportioned kitchens where a "
            "single slab covers the job and the worktop makes a disproportionate difference to "
            "how the room feels. The Old Town and the villages north of it are a different "
-           "story, with older properties where the walls are rarely square and the laser "
+           "story, with older properties where the walls are rarely square and a hand "
            "template earns its keep. We fit both, and the approach differs more than the price "
            "does."),
     nearby=["Old Stevenage","Knebworth","Hitchin","Letchworth","Baldock","Welwyn Garden City"],
@@ -1411,7 +1418,7 @@ TOWNS = [
   dict(
     slug="st-albans", name="St Albans", county="hertfordshire", county_name="Hertfordshire",
     h1="Kitchen worktops in St Albans",
-    title="Kitchen Worktops in St Albans | Bathrooms & Commercial Too | TopCat",
+    title="Kitchen Worktops in St Albans | Bathrooms & Commercial Too | Topcat",
     metadesc="Stone surfaces for kitchens, bathrooms and commercial spaces in St Albans, AL1 to AL4. Free home visit with samples, every cut-out included, ten year guarantee.",
     postcodes="AL1 to AL4", dial="01727",
     lede=("St Albans is close to home for us and one of the most competitive worktop markets in "
@@ -1421,7 +1428,7 @@ TOWNS = [
            "properties tend to have kitchens in rear extensions where no two walls agree with "
            "each other, chimney breasts that eat into a run, and floors that are not level. "
            "None of that is a problem, but it is exactly why the template is taken off your "
-           "real cabinets with a laser rather than from a tape and a sketch. The larger "
+           "real cabinets by hand rather than from a tape and a sketch. The larger "
            "detached housing out toward Harpenden and Wheathampstead is more often an island "
            "job with a full height splashback."),
     nearby=["Harpenden","Wheathampstead","London Colney","Radlett","Redbourn","Hatfield"],
@@ -1434,7 +1441,7 @@ TOWNS = [
   dict(
     slug="enfield", name="Enfield", county="london", county_name="London",
     h1="Kitchen worktops in Enfield",
-    title="Kitchen Worktops in Enfield | Bathrooms & Commercial Too | TopCat",
+    title="Kitchen Worktops in Enfield | Bathrooms & Commercial Too | Topcat",
     metadesc="Stone worktops templated and fitted across Enfield, EN1 to EN3 and N9 to N21. Free home visit with samples, every cut-out included, ten year guarantee.",
     postcodes="EN1 to EN3, and N9 to N21", dial="020",
     lede=("Enfield is the London borough we are asked for most, and it sits right between our "
@@ -1461,14 +1468,14 @@ TOWNS = [
 # SHARED CONTENT BLOCKS
 # ===========================================================================
 # ⚠️ Every claim here must survive the outsourced-fabrication rule. Templating,
-# fitting, project management, aftercare and the guarantee are TopCat's own.
+# fitting, project management, aftercare and the guarantee are Topcat's own.
 # Cutting is not.
 PROCESS = [
   ("Free home visit", "We come to you with samples, look at the actual room and talk through "
    "the stone, the edges and the layout. No showroom trip, and no obligation."),
   ("One itemised price", "Templating, stone, fabrication, all cut-outs, fitting and VAT, in one "
    "figure agreed before anything is cut. What you approve is what you pay."),
-  ("Laser template", "Once your units are level we measure the room digitally, to a fraction of "
+  ("Template", "Once your units are level we template the room by hand, to a fraction of "
    "a millimetre, and agree joint positions and veining direction with you in the room."),
   ("Your slab, approved", "You see photographs of your actual slab and approve it before it is "
    "cut, so there are no surprises when it arrives."),
@@ -1478,7 +1485,7 @@ PROCESS = [
    "charge, and we have never taken more than 72 hours to get there."),
 ]
 
-# ⚠️ TopCat is NOT a kitchens-only business and the site must not read as one. These are the
+# ⚠️ Topcat is NOT a kitchens-only business and the site must not read as one. These are the
 # real applications, and every location and material page carries them. The service pages
 # already exist for the first six, so this doubles as the internal link into that family.
 APPLICATIONS = [
@@ -1549,7 +1556,7 @@ def org_ld():
     the client rule is never to publish the review count."""
     return {
       "@context": "https://schema.org", "@type": "HomeAndConstructionBusiness",
-      "name": "TopCat Worktops Ltd", "url": BASE + "/",
+      "name": "Topcat Worktops Ltd", "url": BASE + "/",
       "telephone": PHONE_TEL, "email": EMAIL,
       "description": ("Bespoke quartz, marble, granite and porcelain worktops, templated, fitted "
                       "and guaranteed across London, Hertfordshire, Essex and Berkshire."),
@@ -1567,7 +1574,7 @@ def article_ld(g, url):
       "headline": g["h1"], "description": g["metadesc"],
       "mainEntityOfPage": {"@type": "WebPage", "@id": url},
       "author": {"@type": "Person", "name": AUTHOR, "jobTitle": AUTHOR_ROLE, "url": AUTHOR_URL},
-      "publisher": {"@type": "Organization", "name": "TopCat Worktops Ltd"},
+      "publisher": {"@type": "Organization", "name": "Topcat Worktops Ltd"},
       "dateModified": LAST_REVIEWED_ISO,
     }
 
@@ -1661,7 +1668,7 @@ def materials_index():
         f'<p>{e(m["lede"])}</p><span class="mcard-go">Read about {e(m["short"].lower())}</span></a>'
         for m in MATERIALS)
     ld = ld_block(org_ld(), breadcrumb_ld(cr, url))
-    title = "Worktop Materials Compared | Quartz, Granite, Marble, Porcelain | TopCat"
+    title = "Worktop Materials Compared | Quartz, Granite, Marble, Porcelain | Topcat"
     md = ("Quartz, granite, marble, porcelain and quartzite worktops explained, with honest "
           "limits, real costs and what each one suits. Fitted across London and the Home Counties.")
     return head_html(title, md, url, 1, ld) + f"""
@@ -1728,7 +1735,7 @@ def guides_index():
         f'<p>{e(g["answer"][:170])}…</p><span class="mcard-go">Read the guide</span></a>'
         for g in GUIDES)
     ld = ld_block(org_ld(), breadcrumb_ld(cr, url))
-    title = "Worktop Guides | Costs, Materials & Straight Answers | TopCat Worktops"
+    title = "Worktop Guides | Costs, Materials & Straight Answers | Topcat Worktops"
     md = ("Straight answers on worktop costs, materials, heat, thickness and safety, written by "
           "the people who fit them. No sales pitch, including the parts that count against us.")
     return head_html(title, md, url, 1, ld) + f"""
@@ -1961,7 +1968,7 @@ def areas_index():
         cards += (f'<a class="mcard" href="/worktops/{c["slug"]}/"><h3>{e(c["name"])}</h3>'
                   f'<p>{e(c["lede"])}</p><span class="mcard-go">{e(tl)}</span></a>')
     ld = ld_block(org_ld(), breadcrumb_ld(cr, url))
-    title = "Areas We Cover | Worktops Across London & the Home Counties | TopCat"
+    title = "Areas We Cover | Worktops Across London & the Home Counties | Topcat"
     md = ("Stone worktops templated and fitted across London, Hertfordshire, Essex and Berkshire, "
           "plus nationwide templating for the right project. Free home visit with samples.")
     return head_html(title, md, url, 1, ld) + f"""
@@ -1970,8 +1977,10 @@ def areas_index():
   <section class="block"><div class="wrap">
     <h1>Areas we cover</h1>
     <p class="lede">Kitchens, bathrooms, splashbacks, outdoor kitchens and commercial work
-    across London, Hertfordshire, Essex and Berkshire, plus nationwide templating for projects
-    worth the journey. If you are just outside, ask.</p>
+    across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire and
+    Bedfordshire, plus nationwide templating for projects worth the journey.</p>
+    <p class="lede">If you are just outside these areas, ask. We are always happy to see if we
+    can help.</p>
     <div class="mgrid">{cards}</div>
   </div></section>
   {included_html()}
@@ -2145,8 +2154,8 @@ def sitemap_page():
                                 [("/stones/", "The full collection")]))
 
     ld = ld_block(org_ld(), breadcrumb_ld(cr, url))
-    title = "Sitemap | Every Page on TopCat Worktops"
-    md = ("Every page on the TopCat Worktops site in one place: services, materials, guides, "
+    title = "Sitemap | Every Page on Topcat Worktops"
+    md = ("Every page on the Topcat Worktops site in one place: services, materials, guides, "
           "the areas we cover and the full stone collection.")
     return head_html(title, md, url, 0, ld) + f"""
 {crumbs(cr)}

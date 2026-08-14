@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The real TopCat range, taken from the two suppliers the client sent (6 Aug 2026).
+"""The real Topcat range, taken from the two suppliers the client sent (6 Aug 2026).
 Nile specs are live from their inventory API; Next Stone publish no specs.
 Blurbs are ours, house style: British English, no em dashes, no exclamation marks.
 QZ = quartzite, which is NOT marble and must never be told it etches."""

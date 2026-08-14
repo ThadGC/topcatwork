@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Generates the TopCat Worktops trade page (/trade/index.html). Run from inside
+Generates the Topcat Worktops trade page (/trade/index.html). Run from inside
 this folder:
 
     python3 build_trade.py
@@ -32,10 +32,11 @@ PHONE_DISPLAY = "0800 098 2812"
 PHONE_TEL = "+448000982812"
 EMAIL = "info@topcatworktops.co.uk"
 HOURS = "Monday to Friday, 8am to 6pm"
-AREA = "London, Hertfordshire, Essex & Berkshire"
-AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire"]
+AREA = "London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire"
+AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire", "Buckinghamshire",
+                "Surrey", "Oxfordshire", "Bedfordshire"]
 
-TITLE = "Trade Worktops for Builders, Developers & Kitchen Designers | TopCat"
+TITLE = "Trade Worktops for Builders, Developers & Kitchen Designers | Topcat"
 METADESC = ("Stone worktop supply and fit for the trade across London, Hertfordshire, Essex and "
             "Berkshire. Template to fit through one contact, dates confirmed in writing, trade "
             "terms that hold, and a ten-year guarantee on every install.")
@@ -76,8 +77,9 @@ NAV_LINKS = [
 # index.html, not files, so they are not available to a generated page)
 HERO_IMG = "/assets/kitchen-day.jpg"
 
-LEDE = ("Stone worktops supplied and fitted for kitchen designers, builders, developers and "
-        "architects. We template, place the cut, fit and carry the guarantee, work to your programme, and "
+LEDE = ("Stone worktops supplied and fitted for kitchen designers, builders, building "
+        "contractors, developers and architects. We can deal with your customer directly, "
+        "template, fabricate, fit and carry the guarantee, work to your programme, and "
         "turn up on the date we agreed.")
 
 INTRO = [
@@ -174,7 +176,7 @@ def e(t):
 def nav_html():
     links = "".join(f'<a href="{h}">{e(t)}</a>' for h, t in NAV_LINKS)
     return f"""<header class="bar">
-  <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO}</a>
+  <a class="brand" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO}</a>
   <nav class="top">{links}</nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
@@ -184,7 +186,7 @@ def footer_html():
     return f"""<footer class="site">
   <div class="foot-grid">
     <div class="foot-brand">
-      <a class="brand brand-stack" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO_STACK}</a>
+      <a class="brand brand-stack" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO_STACK}</a>
       <p class="foot-tag">Bespoke stone worktops, templated, fitted and guaranteed by one team.</p>
       <span class="foot-stars"><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 &middot; Google reviews</span>
     </div>
@@ -217,7 +219,7 @@ def footer_html():
     </div>
   </div>
   <div class="foot-bar">
-    <span>&copy; 2026 TopCat Worktops Ltd. All rights reserved.</span>
+    <span>&copy; 2026 Topcat Worktops Ltd. All rights reserved.</span>
     <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
   </div>
 </footer>"""
@@ -236,7 +238,7 @@ REVEAL_JS = ("<script>document.addEventListener('DOMContentLoaded',function(){"
 
 def jsonld():
     business = {
-        "@type": "LocalBusiness", "@id": f"{BASE}/#business", "name": "TopCat Worktops",
+        "@type": "LocalBusiness", "@id": f"{BASE}/#business", "name": "Topcat Worktops",
         "url": BASE, "telephone": PHONE_DISPLAY, "email": EMAIL, "priceRange": "££",
         "areaServed": AREAS_SERVED,
         "openingHoursSpecification": [{
@@ -248,7 +250,7 @@ def jsonld():
         {"@type": "Service", "name": "Trade stone worktop supply and fit",
          "serviceType": "Trade stone worktop supply and fit",
          "description": METADESC, "url": URL,
-         "provider": {"@type": "LocalBusiness", "name": "TopCat Worktops", "@id": f"{BASE}/#business"},
+         "provider": {"@type": "LocalBusiness", "name": "Topcat Worktops", "@id": f"{BASE}/#business"},
          "areaServed": AREAS_SERVED,
          "audience": {"@type": "BusinessAudience",
                       "audienceType": "Kitchen designers, builders, developers and architects"}},
@@ -291,7 +293,7 @@ def page():
 <meta property="og:title" content="{e(TITLE)}">
 <meta property="og:description" content="{e(METADESC)}">
 <meta property="og:url" content="{URL}">
-<meta property="og:site_name" content="TopCat Worktops">
+<meta property="og:site_name" content="Topcat Worktops">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">

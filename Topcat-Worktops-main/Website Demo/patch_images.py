@@ -132,8 +132,8 @@ sub(re.escape('<img src="assets/hero-kitchen.jpg" alt="" id="heroImg" draggable=
     'fetchpriority="high" decoding="async">', 1, 'hero (LCP, high priority)')
 
 # ── 6. the About collage and the Why portrait ───────────────────────────────────────────────
-sub(re.escape('<img src="assets/team/team.jpg" alt="The TopCat team" draggable="false">'),
-    f'<img src="{SITE}/team-team-900.webp" alt="The TopCat team" draggable="false" '
+sub(re.escape('<img src="assets/team/team.jpg" alt="The Topcat team" draggable="false">'),
+    f'<img src="{SITE}/team-team-900.webp" alt="The Topcat team" draggable="false" '
     'loading="lazy" decoding="async">', 1, 'Why portrait (team.jpg)')
 
 # The three About tiles get their src assigned in JS; give those <img> tags their attributes

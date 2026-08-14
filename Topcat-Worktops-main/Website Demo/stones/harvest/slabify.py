@@ -606,15 +606,15 @@ PINS = {
     # Shimmer" and an "Arabescato Gold", and slabify groups candidates by NAME, so the frames of
     # both makers' products were competing to be one tile — and in each case the wrong maker's
     # won. Engineered quartz is a manufactured product: the name belongs to the brand, so the
-    # photograph must come from the supplier the catalogue says TopCat buy it from.
+    # photograph must come from the supplier the catalogue says Topcat buy it from.
     "carrara-shimmer": dict(
         file="nile/carrara-shimmer.jpg",
-        why="TopCat buy Carrara Shimmer from NILE. Next publish their own Carrara Shimmer and "
+        why="Topcat buy Carrara Shimmer from NILE. Next publish their own Carrara Shimmer and "
             "its frame was winning the group. Nile's own scan reads 64.5% clipped for being a "
             "white product on white; the grey grain is there."),
     "arabescato-gold": dict(
         file="next/arabescato-gold.jpg",
-        why="TopCat buy Arabescato Gold from NEXT. Nile publish an Arabescato Gold too and its "
+        why="Topcat buy Arabescato Gold from NEXT. Nile publish an Arabescato Gold too and its "
             "1400px frame was winning on size — a different manufacturer's product."),
     "carrara": dict(
         file="carrara__6.png",
@@ -1098,7 +1098,7 @@ def main():
     # ⛔ LICENCE GATE, and it belongs here rather than in harvest.py. Harvesting is research and
     # may look at anything; TILES ARE PUBLISHED, so only sources cleared in LICENSING.md may
     # become one. Nile Stone and Next Stone Slabs are the client's own trade suppliers, and
-    # TopCat selling their product with their photograph is the ordinary trade arrangement.
+    # Topcat selling their product with their photograph is the ordinary trade arrangement.
     # Everything else in raw/ is surveyed-only (Caesarstone, CRL, Cosentino, Noble, Fugen: brand
     # asset packs that have to be asked for) or excluded outright (Bloom and AKG are competing
     # fabricators; Classic Quartz refused this agent by name). Left ungated, slabify happily

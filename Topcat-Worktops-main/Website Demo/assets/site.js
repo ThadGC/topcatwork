@@ -220,14 +220,29 @@ function ss(u,z){ const s=SS[u]; return s?` srcset="${s}" sizes="${z}"`:''; }
 const SERVICES=[
   /* ⚠️ THIS LINE BROKE TWO STANDING RULES AND WAS LIVE — corrected 13 August 2026 while the
      services hub was being built. It read "vein-matched across every joint", which claims work
-     TopCat OUTSOURCE (§2 rule 2 — cutting and polishing are not theirs) and states an ABSOLUTE
+     Topcat OUTSOURCE (§2 rule 2 — cutting and polishing are not theirs) and states an ABSOLUTE
      (§2 rule 12 — "every" is not something we can guarantee). ⛔ Templating and fitting ARE theirs
      and stay. ⚠️ `verify.py` check 7 does not scan this file's inline data, which is why it
      survived; the same phrase on the service PAGES is a separate live instance. */
   {t:"Bespoke Worktops",long:"Kitchen worktops cut from a single slab where the run allows, templated to the millimetre and fitted by our own team.",href:"/services/kitchen-worktops.html",img:"/assets/site/service-worktops-554.webp"},
   {t:"Kitchen Islands",long:"Islands with mitred waterfall ends that fold the stone to the floor, the veining planned around every corner so it runs unbroken down each side.",href:"/services/kitchen-islands.html",img:"/assets/site/service-islands-468.webp"},
   {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splashbacks-706.webp"},
-  {t:"Bathrooms",long:"Vanity tops, shower surrounds and bathroom surfaces in stone that handles water and daily wear, matched to your tiles.",href:"/services/bathroom-worktops.html",img:"/assets/site/cta-slab-2752.webp"},
+  {t:"Bathrooms",long:"Shower surrounds, thresholds and window sills cut from one stone, so the room reads as a single material rather than a set of parts.",href:"/services/bathroom-worktops.html",img:"/assets/site/cta-slab-2752.webp"},
+  /* ⭐ VANITY TOPS — added 14 Aug 2026, the client's own ask ("add in another section for Vanity
+     tops (bathroom) in the same section as the above"). ⚠️ INSERTED AT INDEX 4, NOT APPENDED:
+     PROJECTS reads SERVICES[0..3] for its placeholder photography and the helix's ORDER is
+     written by index, so anything added after position 3 must not disturb the first four.
+     ⛔ It points at the bathroom page on purpose — that page IS "Bathroom Worktops & Vanity
+     Tops", and a second near-identical leaf page would compete with it in search for the same
+     words. The Bathrooms tile above was re-cut in the same edit so the two no longer say the
+     same sentence. ⚠️⚠️ **IT CARRIES NO `img` ON PURPOSE, AND THAT IS NOT AN OVERSIGHT.** There
+     are six real subjects for seven tiles until the shoot lands. Repeating the Bathrooms
+     photograph was tried first and it put two IDENTICAL pink slabs side by side in the phone
+     grid, which reads as a card that failed to load rather than as a range. Leaving `img` off
+     hands the tile to `phImg()`, the site's own "PHOTO TO COME" plate — the same honesty the
+     About collage's empty portraits use. ⛔ Drop the real photograph in here and nothing else
+     changes. */
+  {t:"Vanity Tops",long:"Basin tops cut for undermount or countertop basins, with the tap holes exactly where you want them and the edges finished to match.",href:"/services/bathroom-worktops.html",ph:"VANITY TOPS"},
   {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/kitchen-day-1188.webp"},
   {t:"Outdoor Kitchens",long:"Weatherproof stone for garden kitchens and barbecue runs, cut to fit around sinks, hobs and built-in appliances.",href:"/services/outdoor-kitchens.html",img:"/assets/site/quarry-955.webp"}
 ];
@@ -302,9 +317,9 @@ const PROCESS=[
   {t:"Design & Quote",img:"/assets/site/process-quote-675.webp",d:"Layout, edges and a clear quote with no hidden costs.",
    d:"A clear, itemised plan and price.",
    long:"We plan the layout, edge profiles, joints and cut-outs, then give you a clear, itemised quote covering template, fabrication and installation, the price you see is the price you pay."},
-  {t:"Template & Craft",img:"/assets/site/process-template-678.webp",d:"Laser-templated to the millimetre, then precision-cut and polished.",
+  {t:"Template & Craft",img:"/assets/site/process-template-678.webp",d:"Templated by hand to the millimetre, then precision-cut and polished.",
    d:"Measured and cut to the millimetre.",
-   long:"Once your units are level we laser-template the space to a fraction of a millimetre. Your slab is then precision-cut and polished at the fabrication workshop we place it with, cut wet to full safety standards, with the veining matched across every joint before we fit it ourselves."},
+   long:"Once your units are level we template the space by hand to a fraction of a millimetre. Your slab is then precision-cut and polished by our own experienced fabricators, cut wet to full safety standards, with the veining matched through the joints before we fit it ourselves."},
   {t:"Install & Enjoy",img:"/assets/site/process-install-600.webp",d:"Fitted cleanly and precisely, usually within days.",
    d:"Fitted cleanly, usually within days.",
    long:"Our team fits your worktop cleanly and precisely, usually within days of templating, squared, sealed and ready to use. Then the kitchen is yours to enjoy."}
@@ -391,7 +406,7 @@ const PROC_COPY=[
              ["What is included","Template, fabrication, fitting and VAT. Cut-outs, drainer grooves and pencil edges come as standard, not as extras."],
              ["What happens next","Nothing until you say so. We only order and cut once you have approved the quote and the slab."]]},
     {lede:"The precise part. We template off your real cabinets, then your slab is cut and polished to that template.",
-     points:[["Templating","Laser measured to a fraction of a millimetre, once the units are level and secure. Getting this right is what stops surprises on fitting day."],
+     points:[["Templating","Measured by hand to a fraction of a millimetre, once the units are level and secure. Getting this right is what stops surprises on fitting day."],
              ["In the workshop","Your slab is cut wet to current HSE standards and polished by hand, with the veining matched across every joint before it leaves us."],
              ["Your slab","You approve the actual piece from photographs first, so the stone you chose is the stone that arrives."]]},
     {lede:"Fitting day, usually within days of templating. Our own team, on the date we agreed.",
@@ -529,8 +544,18 @@ buildCards(document.getElementById('svcGridServices'), SERVICES, {nameOnly:true,
   if(!grid) return;
   /* the build order, captured before anything moves — this is the tablet/desktop arrangement */
   const built=[...grid.children];
-  /* indices INTO `built`, in the order a phone shows them (the client's popularity order) */
-  const PHONE_ORDER=[0,1,3,2,5,4];
+  /* indices INTO `built`, in the order a phone shows them (the client's popularity order)
+     ⛔⛔ **THIS LIST MUST NAME EVERY CARD, AND ON 14 Aug 2026 IT SILENTLY DID NOT.** It read
+     `[0,1,3,2,5,4]` — six indices, written when there were six services. Adding Vanity Tops
+     (D205) made seven, and the seventh index was simply absent: `seq` held six nodes,
+     appendChild moved those six to the END, and the card nobody moved was left sitting at the
+     FRONT of the grid. The phone opened on "Outdoor Kitchens 07" followed by 01, 02, 03…
+     ⭐⭐ **IT LOOKED LIKE A SORT BUG AND IT WAS AN OMISSION** — every number in the old list was
+     still correct, which is why re-reading it proved nothing. The tell was the INDEX BADGES: the
+     cards carried 07,01,02,… so they were BUILT in the right order and MOVED into the wrong one.
+     ⛔ Nothing measured this. It was found by looking at a screenshot.
+     ⚠️ The guard below is the real fix — a list that misses a card can no longer lose it. */
+  const PHONE_ORDER=[0,1,3,4,2,6,5];
   /* ⭐ the stylesheet's own answer, never a width test (D96). Unset — which is every width above
      720px, because the property is only declared inside the phone query — falls back to desktop,
      exactly as hxMode() does, so no base rule had to be touched to add this. */
@@ -541,7 +566,12 @@ buildCards(document.getElementById('svcGridServices'), SERVICES, {nameOnly:true,
     const mode=svcMode();
     if(mode===applied) return;                       // ⚠️ moving nodes restarts transitions
     applied=mode;
-    const seq=(mode==='phone') ? PHONE_ORDER.map(i=>built[i]) : built;
+    /* ⛔ ANY CARD PHONE_ORDER FORGETS KEEPS ITS BUILD POSITION AT THE END, NEVER THE FRONT.
+       Filtering out undefined also survives an index pointing past the array. */
+    const seq=(mode==='phone')
+      ? (()=>{const picked=PHONE_ORDER.map(i=>built[i]).filter(Boolean);
+              return picked.concat(built.filter(el=>!picked.includes(el)));})()
+      : built;
     /* ⛔ ON A FROZEN WIDTH THIS MUST DO NOTHING AT ALL, NOT "THE SAME THING AGAIN". Desktop and
        tablet want the build order, which is the order already in the DOM — but appendChild()
        still REMOVES and RE-INSERTS every node, which restarts CSS transitions and re-enters the
@@ -651,8 +681,12 @@ if(svcReduce){
   const stage=document.getElementById('helixStage');
   const nav=document.getElementById('svcNav');
   if(!stage||!nav) return;
-  /* spiral order (the client's): Islands → Bespoke → Splashbacks → Bathrooms → Outdoor → Commercial */
-  const ORDER=[1,0,2,3,5,4];
+  /* spiral order (the client's): Islands → Bespoke → Splashbacks → Bathrooms → Vanity Tops →
+     Outdoor → Commercial
+     ⚠️ SEVEN SINCE 14 Aug 2026. Vanity Tops (index 4) sits next to Bathrooms because they are
+     the same room, and the client's own Outdoor-before-Commercial tail is untouched. The spiral
+     is computed from `items.length`, so the geometry absorbed the extra node with no tuning. */
+  const ORDER=[1,0,2,3,4,6,5];
   const items=ORDER.map(i=>SERVICES[i]);
   const N=items.length;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -665,7 +699,7 @@ if(svcReduce){
     el.innerHTML=`<div class="hx-face hx-front glow-card"><img src="${s.img}"${ss(s.img,"(max-width:720px) 210px, 385px")} alt="${s.t}" draggable="false" loading="lazy" decoding="async"><div class="hx-veil"></div>
       <div class="hx-meta"><h3 class="hx-name">${s.t}</h3>
       <a class="hx-link" href="${s.href}">View this service</a></div></div>
-      <div class="hx-face hx-back glow-card"><div class="hx-back-frame"><span class="hx-back-diamond"></span><span class="hx-back-word">TopCat</span><span class="hx-back-sub">Worktops</span></div></div>`;
+      <div class="hx-face hx-back glow-card"><div class="hx-back-frame"><span class="hx-back-diamond"></span><span class="hx-back-word">Topcat</span><span class="hx-back-sub">Worktops</span></div></div>`;
     /* ⚠️ `.hx-ghost` is set by render() on the faded pair a phone shows two steps out (D97).
        They already carry pointer-events:none, so a real tap cannot reach them — but the LISTENER
        has to refuse as well. Anything that dispatches a click without hit-testing (a script, an
@@ -2172,12 +2206,12 @@ else{
    never surface on the wall. */
 const REVIEWS=[
   {n:"Judy Z.", q:"10/10 experience!! I had Nick as my point of contact for the end to end stone worktop work, it was extremely smooth process with minimal hustle. From the beginning, Nick was very professional, responsive and polite, which was a great customer experience for me. The team came in the next week to measure and Nick ordered the stone right away, so it was ready for installation 3-4 days after they templated the worktop. On the installation day, the team spent about 1.5h to complete the work and has done a clean job. The 2 workers on the day were absolutely brilliant, and have done a great service! 🙏 Basically, there was a window corner which was not originally planned to install any 10cm stone cover, but they brought the extra materials and cut the bit of window frame perfectly and installed it on the day (as I was there in person and they checked with me before making any adjustments). Very happy with my experience"},
-  {n:"Jhanzeb Chaudhry", q:"I’m so happy I went with TopCat Worktops for my kitchen! I had visited a few kitchen showrooms before and was honestly shocked at how expensive the quotes were. TopCat came in at least £1,200 cheaper than the others, and the quality and service were absolutely amazing. Nik was brilliant from the start, super helpful, always available to answer my questions (even out of hours), and guided me through the whole process with real care. On installation day, the team arrived on time and did a fantastic job. The finish is flawless, and everything was done to a really high standard. Highly recommend TopCat Worktops, great prices, great service, and a beautiful end result!"},
-  {n:"Maheen Amjad", q:"TopCat Worktops came highly recommended by our interior designer, and they certainly didn't disappoint. As we're based in Scotland, everything was handled over the phone and email, but Nick made the whole process incredibly easy. He was always quick to respond, answered all our questions, and helped us choose the right worktop for our kitchen without any pressure. The service was professional from start to finish, and we always felt well looked after despite being hundreds of miles away. The TopCat Worktops team installed the worktop and the quality is excellent. We're delighted with the finished result and wouldn't hesitate to recommend TopCat Worktops to others."},
+  {n:"Jhanzeb Chaudhry", q:"I’m so happy I went with Topcat Worktops for my kitchen! I had visited a few kitchen showrooms before and was honestly shocked at how expensive the quotes were. Topcat came in at least £1,200 cheaper than the others, and the quality and service were absolutely amazing. Nik was brilliant from the start, super helpful, always available to answer my questions (even out of hours), and guided me through the whole process with real care. On installation day, the team arrived on time and did a fantastic job. The finish is flawless, and everything was done to a really high standard. Highly recommend Topcat Worktops, great prices, great service, and a beautiful end result!"},
+  {n:"Maheen Amjad", q:"Topcat Worktops came highly recommended by our interior designer, and they certainly didn't disappoint. As we're based in Scotland, everything was handled over the phone and email, but Nick made the whole process incredibly easy. He was always quick to respond, answered all our questions, and helped us choose the right worktop for our kitchen without any pressure. The service was professional from start to finish, and we always felt well looked after despite being hundreds of miles away. The Topcat Worktops team installed the worktop and the quality is excellent. We're delighted with the finished result and wouldn't hesitate to recommend Topcat Worktops to others."},
   {n:"Cherif", q:"Excellent service, quick responses and my Quartz kitchen worktop was installed within 48 hours from my initial conversation with Nick"},
   {n:"Joel Brizman", q:"Highly recommended: Topcat Worktops replaced our old kitchen worktop with a new quartz worktop. The process was quick and seamless. From the initial visit, their friendly staff took care to understand our vision and our requirements, which included a one-source A-to-Z solution (including removal and disposal of the old worktop and a complete refit of our existing plumbing and electric hob). The installation was carried out very quickly after ordering - and was smooth, efficient with the installers taking great care to ensure there was no damage to surroundings. We are very satisfied with the process and the outcome."},
   {n:"Abbas", q:"We recently chose a Calacatta Viola worktop from Topcat Worktops Ltd and couldn't be happier with the result. The team were helpful throughout the whole process and made everything easy from start to finish. The installation was carried out professionally and the worktop looks absolutely stunning in our kitchen. Would definitely recommend Topcat Worktops to anyone looking for quality products and excellent service."},
-  {n:"Maria Shahsawar", q:"Really pleased with our new kitchen worktops from TopCat Worktops. Nick was brilliant from start to finish, very responsive, patient while we decided on colours and materials, and provided a free no-obligation quote with no pressure at all. The quality of the worktops and installation is excellent, and the finished kitchen looks amazing. The team were professional, tidy, and completed everything to a high standard. Would definitely recommend TopCat Worktops to anyone looking for new kitchen worktops."},
+  {n:"Maria Shahsawar", q:"Really pleased with our new kitchen worktops from Topcat Worktops. Nick was brilliant from start to finish, very responsive, patient while we decided on colours and materials, and provided a free no-obligation quote with no pressure at all. The quality of the worktops and installation is excellent, and the finished kitchen looks amazing. The team were professional, tidy, and completed everything to a high standard. Would definitely recommend Topcat Worktops to anyone looking for new kitchen worktops."},
   {n:"Davinder Dhillon", q:"I’ve just had my quartz worktop installed, and I’m already thrilled with how it looks and feels. The finish is smooth, modern, and really elevates the whole kitchen. The craftsmanship is excellent, clean edges, seamless joints, and a perfect fit around the sink and hob. Even though it’s brand new, I can already tell it’s going to be easy to maintain and very durable. Overall, I’m extremely happy with the installation and excited to start using it."},
   {n:"Kav Patel", q:"Very pleased with the service that was provided by Topcats . Whilst our project took longer than expected, Topcats were very patient with us and delivered amazing worktops to complement our kitchen. Would definitely recommend Topcats and a big shout out to Nick who we started the journey with back in Feb 2025."},
   {n:"Kinga Skubiszewska", q:"Excellent experience from start to finish. Professional, responsive, and easy to work with throughout the project. Communication was clear, the work was completed to a high standard, and the entire process was handled efficiently. I am very happy with the results and would gladly work with them again. Highly recommended."},
@@ -3270,16 +3304,21 @@ requestAnimationFrame(glowTick);
   const stage=document.getElementById('galStage');
   if(!scroll||!stage||typeof SERVICES==='undefined'||typeof PROCESS==='undefined') return;
 
-  // 8 projects — reusing the embedded service/process photos as placeholders (swap for real project shots later)
+  /* 8 projects — reusing the embedded service/process photos as placeholders (swap for real project shots later)
+     ⭐ THE EIGHT NAMES ARE THE CLIENT'S OWN, 14 Aug 2026, from his notes document — they are the
+     eight kinds of work he wants the gallery to show, in his order. ⚠️ The PLACE line is kept:
+     he changed the names only, the design carries a two-line meta, and "Bookmatched Worktops /
+     Hampstead" still reads as a real job in a real town. ⛔ Do not renumber or reorder — the
+     first four are the front panel and the second four are the panel you walk into. */
   const PROJECTS=[
-    {img:SERVICES[0].img, name:'Bookmatched Island',   place:'Hampstead'},
-    {img:SERVICES[1].img, name:'Waterfall Kitchen',    place:'Richmond'},
-    {img:SERVICES[2].img, name:'Full-height Splashback',place:'Islington'},
-    {img:SERVICES[3].img, name:'Template & Fit',       place:'St Albans'},
-    {img:'/assets/site/kitchen-day-1188.webp', name:'Family Kitchen', place:'Hertford'},
-    {img:PROCESS[1].img,  name:'Bespoke Layout',        place:'Welwyn'},
-    {img:PROCESS[2].img,  name:'Vein-matched Joints',    place:'Enfield'},
-    {img:'/assets/hero-kitchen.jpg', name:'Clean Install', place:'Barnet'}
+    {img:SERVICES[0].img, name:'Bookmatched Worktops',  place:'Hampstead'},
+    {img:SERVICES[1].img, name:'Waterfall Edges',       place:'Richmond'},
+    {img:SERVICES[2].img, name:'Full Height Splashbacks',place:'Islington'},
+    {img:SERVICES[3].img, name:'Bespoke Layout',        place:'St Albans'},
+    {img:'/assets/site/kitchen-day-1188.webp', name:'Bespoke Features', place:'Hertford'},
+    {img:PROCESS[1].img,  name:'Bespoke Edge Profiles', place:'Welwyn'},
+    {img:PROCESS[2].img,  name:'Dining Tables',         place:'Enfield'},
+    {img:'/assets/hero-kitchen.jpg', name:'Exclusive Fireplaces', place:'Barnet'}
   ];
 
   const PER_SET=4;
@@ -4385,17 +4424,17 @@ const FAQS = [
   {
     g:'How it works', label:'How long it takes', tag:'Process',
     q:'How long does it take, start to finish?',
-    a:'From template to fitted worktop is typically three to five working days. One visit to laser-measure your kitchen to the millimetre, then our fitters install the finished surface, and we are back inside 72 hours if anything at all needs attention.'
+    a:'From template to fitted worktop is typically three to five working days. One visit to template your kitchen by hand to the millimetre, then our fitters install the finished surface, and we are back inside 72 hours if anything at all needs attention.'
   },
   {
     g:'How it works', label:'Who comes to your home', tag:'Process',
     q:'Who will actually be coming to my home?',
-    a:'The same small team throughout. One of us comes out to template, and the same team fits it. The cutting happens at a workshop we have used for years, and dealing with them is our job rather than yours. You get one name and one number for the whole job, so you always know who is coming and when.'
+    a:'The same small team throughout. One of us comes out to template, and the same team fits it. The cutting is done by our own experienced fabricators, so the whole job stays with us rather than being passed down the line. You get one name and one number for the whole job, so you always know who is coming and when.'
   },
   {
     g:'How it works', label:'Where we work', tag:'Areas',
     q:'Which areas do you cover?',
-    a:'London, Hertfordshire, Essex and Berkshire for the full service, and we template nationwide for projects worth the journey. If you are just outside, ask, we travel for the right job.'
+    a:'London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire and Bedfordshire for the full service, and we template nationwide for projects worth the journey. If you are just outside these areas, ask. We are always happy to see if we can help.'
   },
   {
     g:'Your stone', label:'Choosing your stone', tag:'Materials',
@@ -4405,7 +4444,7 @@ const FAQS = [
   {
     g:'Your stone', label:'Matching your slab', tag:'Materials',
     q:'Will the slab match the sample I saw?',
-    a:'Natural stone varies, that is its beauty. Before a single cut is made you approve your exact slab from photographs of the piece itself, so the veining you fall for is precisely what arrives in your kitchen.'
+    a:'Natural stone varies, that is its beauty. Before a single cut is made you approve your exact slab from photographs of the piece itself, so the veining you fall for is precisely what arrives in your kitchen. You are also welcome to visit the distributor\'s warehouse and choose your slab in person, which for natural stone we highly recommend.'
   },
   {
     g:'Your stone', label:'Porcelain and sintered', tag:'Materials',
@@ -4415,7 +4454,7 @@ const FAQS = [
   {
     g:'Living with it', label:'Seams and joints', tag:'Craftsmanship',
     q:'Will I be able to see the seams?',
-    a:'Seams are positioned with intent and vein-matched so the pattern flows across every joint. Most of our clients cannot find them once the worktop is installed.'
+    a:'A seam is always visible, and anyone who tells you otherwise is selling you something. What we can do is place it where it is least in the way, close it tight and match the veining through it, so it reads as part of the stone rather than as a join. We will show you where every seam will fall before anything is cut.'
   },
   {
     g:'Living with it', label:'Hot pans and heat', tag:'Care',
@@ -4425,7 +4464,7 @@ const FAQS = [
   {
     g:'Living with it', label:'Silica and safety', tag:'Safety',
     q:'Is a stone worktop safe to have in the house?',
-    a:'Completely. A sealed, installed worktop poses no silica risk in your home, the dust risk belongs to the workshop and not the kitchen. It matters all the same, which is why we only place work with fabrication workshops that cut wet, extract at the tool and monitor their people, in line with current HSE guidance.'
+    a:'Completely. A sealed, installed worktop poses no silica risk in your home, the dust risk comes from the fabrication process and not from having a finished worktop in your kitchen. It matters all the same, which is why we carry out our fabrication in our own workshop, where we control the cutting process, use appropriate dust extraction and wet-cutting methods, and follow current HSE guidance.'
   }
 ];
 
@@ -4648,8 +4687,16 @@ if(faqIndex && panel && faqBody){
    the client confirmed porcelain is offered again on a bespoke, enquiry-led basis. Both are
    sintered-porcelain brands, so they belong here only while that holds.
    ⚠️ Naming a brand in this band implies we can supply it. Do not add a brand the client has
-   not confirmed access to. */
-const SUPPLIERS=["Silestone","Caesarstone","Technistone","Unistone","Compac","Cimstone","Ceralsio","Noble Stone","iStone","CQ Stone","Dekton","Neolith"];
+   not confirmed access to.
+   ⛔ 14 Aug 2026 — this list is the client's own, changed by him in writing. One name was added
+   and one removed on his instruction. ⚠️ It crosses a standing rule of his that is recorded in
+   HANDOVER.md §2 rule 9 and in the register at D201; the reasoning lives there rather than
+   here, because this file is public. If that rule is ever reinstated, D201 says which entry
+   comes back out.
+   ⚠️ The name that came out is a slab brand and is removed from THIS BAND ONLY. The same maker
+   is still recorded against twelve stone pages, where removing it would drop stones out of the
+   132 that `harvest/verify.py` gates on. */
+const SUPPLIERS=["Silestone","Caesarstone","Technistone","Unistone","Compac","Cimstone","Ceralsio","Noble Stone","iStone","Next Stone Slabs","Dekton","Neolith"];
 orNull(document.getElementById('strip')).innerHTML=[...SUPPLIERS,...SUPPLIERS].map(s=>`<span>${s}</span>`).join('');
 
 /* ---------- in-page navigation ----------
@@ -4862,7 +4909,14 @@ orNull(document.getElementById('strip')).innerHTML=[...SUPPLIERS,...SUPPLIERS].m
    accepts multipart/form-data — Netlify Forms with uploads, Formspree, or our own — and until
    that exists the form says plainly that nothing was sent. */
 const TC_UP={
-  MAX:8, MAXB:10*1024*1024,                       // 8 files, 10 MB each: a phone photo is 3-5 MB
+  /* ⭐ 50 MB PER FILE SINCE 14 Aug 2026 — the client's own ask, "just in case the clients might
+     have large file photos". A phone photo is 3-5 MB and a DSLR raw or a long PDF plan set is
+     the case this is for. ⚠️ THE BROWSER HAPPILY ACCEPTS THIS AND NOTHING ELSE DOES YET: at
+     8 × 50 MB an enquiry can carry 400 MB, which no ordinary form endpoint will take in one
+     multipart POST. See the note on submitEnquiry() — whoever wires the backend needs direct-to-
+     storage uploads, not a form handler. Raising the number here is correct and costs nothing;
+     it is the delivery end that has to be built for it. */
+  MAX:8, MAXB:50*1024*1024,                       // 8 files, 50 MB each
   /* what a homeowner or a kitchen designer actually has to hand: a plan from the designer, a
      phone photo of the room or of a slab, a scan of a sketch, and DWG/DXF for the trade */
   EXT:['pdf','jpg','jpeg','png','heic','heif','webp','gif','doc','docx','dwg','dxf'],
@@ -4874,7 +4928,7 @@ const TC_UP={
       if(this.files.length>=this.MAX){ bad.push('You can attach up to '+this.MAX+' files. The rest were not added.'); break; }
       const ext=(f.name.split('.').pop()||'').toLowerCase();
       if(this.EXT.indexOf(ext)<0){ bad.push('“'+f.name+'” is not a file we can open.'); continue; }
-      if(f.size>this.MAXB){ bad.push('“'+f.name+'” is over 10 MB, please send a smaller copy.'); continue; }
+      if(f.size>this.MAXB){ bad.push('“'+f.name+'” is over '+Math.round(this.MAXB/1048576)+' MB, please send a smaller copy.'); continue; }
       if(this.files.some(x=>x.file.name===f.name&&x.file.size===f.size))continue;   // same file twice
       this.files.push({file:f,url:/^image\//.test(f.type)?URL.createObjectURL(f):''});
     }

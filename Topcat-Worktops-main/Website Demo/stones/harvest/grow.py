@@ -12,9 +12,9 @@ currently in the catalogue is carried through untouched, and additions come only
 slabify has already accepted.
 
 ⚠️ TARGETS ARE NOT ALL 50. Quartz and Marble reach it. Granite does not and cannot: Nile and
-Next between them list 27 granite names, so 27 is the ceiling on what TopCat can actually sell.
+Next between them list 27 granite names, so 27 is the ceiling on what Topcat can actually sell.
 The shortfall is REPORTED, never filled — a range is a promise you can supply it, and a stone
-listed that TopCat cannot get turns a lead into an apology. Widening granite needs another
+listed that Topcat cannot get turns a lead into an apology. Widening granite needs another
 supplier account or the Caesarstone/CRL/Cosentino fabricator packs, not a bigger number here.
 
 ⛔ EVERY ADDITION IS THE CLIENT'S OWN SUPPLIERS' STOCK, photographed by them. Nothing is taken
@@ -56,7 +56,7 @@ def main():
     # Antiq Brown Extra beside Antiq Brown Leather, and Belvedere beside Belvedere Leather,
     # because a polished slab and a leathered slab of the same quarry stone are two different
     # products a customer chooses between and pays differently for. Deduping them away cost 9
-    # marbles and 9 granites that TopCat genuinely sell.
+    # marbles and 9 granites that Topcat genuinely sell.
     # ⛔ It does still dedupe: the SAME stone in the SAME finish, listed by both suppliers, is
     # one entry. That is padding, and it would show two identical tiles side by side.
     def ident(name, finish):

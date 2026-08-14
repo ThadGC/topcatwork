@@ -128,7 +128,7 @@ def main():
 
     # 8 · does every photograph trace to THAT supplier's own file under THAT name?
     # ⛔ THE MOST IMPORTANT CHECK ON THE SITE. Client, 10 Aug 2026: "if someone chooses this one
-    # by this name and TopCat somehow shows up at the house with a wrong looking slab because the
+    # by this name and Topcat somehow shows up at the house with a wrong looking slab because the
     # name and the slab didn't look correct, then we are fucked."
     # ⚠️ A stone name is only meaningful RELATIVE TO A SUPPLIER. "Calacatta Gold" is a marketing
     # name that different manufacturers put on completely different-looking products, so the site
@@ -172,7 +172,7 @@ def main():
     # This proves the WORDS agree, which is a different and more dangerous failure: fifteen
     # stones shipped a HONED or LEATHERED slab under a plain name, so a customer could choose
     # "Belvedere", ask for Belvedere, and be sent a different finish. Client, 10 Aug: "if someone
-    # chooses this one by this name and TopCat shows up at the house with a wrong looking slab,
+    # chooses this one by this name and Topcat shows up at the house with a wrong looking slab,
     # then we are fucked."
     cat_path = os.path.join(HERE, "catalogue.json")
     if os.path.exists(cat_path):
@@ -239,7 +239,7 @@ def main():
     # below was actually on the site. A comparative is fine ("varies less than quarried stone");
     # an absolute is not ("consistent across the slab").
     # ⚠️ `vein-match ... by hand` is here for a second reason: it claims FABRICATION, which
-    # TopCat outsource (D21, §2 rule 1).
+    # Topcat outsource (D21, §2 rule 1).
     BANNED = [
         (r"consistent across the slab", "claims a slab is uniform when veined stone is not"),
         (r"exactly what arrives", "guarantees a specific delivery"),

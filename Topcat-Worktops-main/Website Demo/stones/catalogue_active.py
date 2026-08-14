@@ -24,7 +24,7 @@ same list into index.html between the STONE-LIST markers. Nothing is typed twice
 ⛔ 50 A CATEGORY IS REACHED FOR QUARTZ ONLY, and that is a supply fact, not a shortfall in the
    work. The client's two licensed suppliers list 27 granite names and 27 marble names between
    them; after the ones with no usable photograph are dropped the natural-stone pool is what it
-   is. Padding either list would mean either listing stone TopCat cannot actually get, or taking
+   is. Padding either list would mean either listing stone Topcat cannot actually get, or taking
    photographs from a supplier they have no account with — LICENSING.md rules the second one out
    and the first turns a lead into an apology. The route to a wider granite range is an account
    with another supplier, or the Caesarstone/CRL/Cosentino fabricator packs.

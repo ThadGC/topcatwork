@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quartz, Granite &amp; Marble Worktops | London &amp; the Home Counties | TopCat</title>
+<title>Quartz, Granite &amp; Marble Worktops | London &amp; the Home Counties | Topcat</title>
 <meta name="description" content="Bespoke quartz, marble and granite worktops, chosen from the slab, templated to the millimetre and fitted in days. Serving St Albans, Hertfordshire and London.">
 <!-- The real icon, squared off so it fills the 16px box rather than sitting in it with air on
      two sides. ⚠️ It is a FILE now, not a data-URI: the old one pasted the hand-rebuilt mark
@@ -576,9 +576,19 @@
   }
   html.nav-open .mobile-nav{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .4s var(--ease)}
   html.nav-open{overflow-y:hidden}
+  /* ⭐⭐ `text-indent` IS AN OPTICAL CORRECTION, NOT A NUDGE — 14 Aug 2026. `letter-spacing`
+     adds its space AFTER the last letter as well as between letters, so a centred word carries
+     an invisible 3.3px tail on its right and the INK sits half of that left of the centreline.
+     Every row is affected equally, so it never reads as one row being wrong — it reads as the
+     whole menu sitting slightly left, which is exactly what the client saw.
+     ⭐⭐ THE VALUE IS THE FULL TRACKING, NOT HALF OF IT, AND THAT IS COUNTER-INTUITIVE: the indent
+     also WIDENS the anchor, and a centred box gives half of any extra width straight back. An
+     indent of one tracking unit moves the ink by half of one. Measured, not reasoned — 0.11em
+     landed the ink 0.8px left and 0.22em landed it on 0.00. ⛔ Do not "simplify" this away: the box was always centred, the
+     letters were not. */
   .mobile-nav a{
     color:var(--bone);text-decoration:none;font-size:15px;letter-spacing:0.22em;
-    text-transform:uppercase;padding:13px 22px;
+    text-transform:uppercase;padding:13px 22px;text-indent:0.22em;
     opacity:0;transform:translateY(10px);
     transition:opacity .45s var(--ease),transform .45s var(--ease),color .35s var(--ease);
   }
@@ -593,14 +603,30 @@
      than the anchors is what makes the entrance survive the structure change.
      ⭐ `.mn-group` carries the entrance itself and its anchor opts out, because a transition-delay
      set on a parent does nothing for a child's own transition. */
-  .mn-group{display:flex;align-items:center;justify-content:center;gap:2px;
+  /* ⛔⛔ THE CARET IS OUT OF FLOW, AND THAT IS THE WHOLE ALIGNMENT FIX — 14 Aug 2026.
+     Client: "everything needs to be aligned perfectly in the mobile drop down."
+     ⭐⭐ MEASURED BEFORE TOUCHING IT: on a 390px sheet every plain row's word sat exactly on the
+     centreline and **Services and Stones sat 16px LEFT of it**. Nothing was wrong with either
+     row — the ROW was centred correctly, and the row is the word PLUS a 44px caret plus a 2px
+     gap, so centring the pair necessarily pushes the word left by about half the caret.
+     ⭐ Taking the caret out of flow (`position:absolute`) leaves `.mn-group` exactly as wide as
+     its anchor, so it centres identically to Projects, Estimate, About us, Trade and Contact —
+     one centreline down all nine rows, with no per-row nudge to drift out of date.
+     ⛔ The anchor's extra `padding-right:8px` went WITH it: it existed to hold the word off the
+     caret, and while the caret was in flow that 8px was itself part of the offset. The anchor is
+     now identical to a plain row, which is the point.
+     ⚠️ The caret keeps its full 44px square and its own tap target — it is still a sibling
+     BUTTON outside the anchor (D194), so the word still goes to the hub and the caret still
+     opens the list. Absolute positioning changes where it is painted, not what it is. */
+  .mn-group{position:relative;display:flex;align-items:center;justify-content:center;
     opacity:0;transform:translateY(10px);
     transition:opacity .45s var(--ease),transform .45s var(--ease)}
   html.nav-open .mn-group{opacity:1;transform:none}
-  .mn-group > a{opacity:1;transform:none;padding-right:8px}
+  .mn-group > a{opacity:1;transform:none}
   /* ⚠️ 44px square and OUTSIDE the anchor: the word goes to the hub and the caret opens the list,
      which is the split the client described, and neither can steal the other's tap target. */
-  .mn-toggle{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;
+  .mn-toggle{position:absolute;left:100%;top:50%;transform:translateY(-50%);
+    width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;
     background:none;border:0;padding:0;cursor:pointer;color:var(--gold);
     -webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .mn-toggle svg{width:13px;height:8px;transition:transform .35s var(--ease)}
@@ -627,7 +653,7 @@
      generous against six 36px rows until the padding was counted. The handler writes
      `scrollHeight` inline, which is exact, cannot be outgrown by a seventh link, and still
      animates because it is a real pixel value rather than `auto`. */
-  .mn-sub a{font-size:12px;letter-spacing:0.18em;padding:9px 22px;color:var(--muted)}
+  .mn-sub a{font-size:12px;letter-spacing:0.18em;padding:9px 22px;color:var(--muted);text-indent:0.18em}
   .mn-sub a:hover{color:var(--gold)}
 
   /* stagger the ROWS in, top to bottom */
@@ -900,6 +926,15 @@
   #services .services-grid{grid-template-columns:repeat(3,1fr);max-width:1160px}
   @media(max-width:1100px){#services .services-grid{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:600px){#services .services-grid{grid-template-columns:1fr}}
+  /* ⭐ SEVEN TILES SINCE 14 Aug 2026 (Vanity Tops), AND SEVEN DOES NOT DIVIDE BY TWO OR THREE.
+     Without this the last tile sits alone in the left column with a hole beside it, which reads
+     as a card that failed to load rather than as a list that ran out. Spanning the full row is
+     the standard grid answer and it needs no width to be hard-coded.
+     ⛔ DELIBERATELY NOT INSIDE A MEDIA QUERY, and that is the §2 rule 15 exemption rather than a
+     breach of it: `#services .services-grid` is `display:none` from 1121px up, where the helix
+     takes over, so this rule cannot reach the frozen desktop at all. At ≤600px the grid is one
+     column and `1/-1` is a no-op. It applies exactly where the grid is two or three across. */
+  #services .services-grid > *:last-child:nth-child(odd){grid-column:1/-1}
   /* ⛔ THE CATCH-ALL LINE IS OFF EVERYWHERE BY DEFAULT — D120, 12 Aug 2026. It is switched on
      only inside the phone query. New MARKUP cannot be scoped by a media query the way a new
      RULE can: the element exists at every width from the moment it is added, so the default has
@@ -4639,7 +4674,7 @@
     gap:0 clamp(26px,5vw,72px);align-items:stretch;
     --sideW:min(clamp(260px,37vw,500px),calc((100vh - 210px) * 0.72))}
   /* ⭐ THE COPY COLUMN IS BOUND TO THE COLLAGE (client, 9 Aug): "the title has to be in line
-     with the top of the collage, and Chat with TopCat has to be aligned with the bottom."
+     with the top of the collage, and Chat with Topcat has to be aligned with the bottom."
      Three things do that together and all three are needed:
        align-items:stretch on the wrap  — the column fills the row instead of centring in it
        .about-copy is a flex COLUMN     — so the title sits hard against its top edge
@@ -5178,7 +5213,7 @@
        "RESTORES" IT.** `SUPPLIERS` in the script is a misleading variable name: it holds twelve
        MANUFACTURER BRANDS (Silestone, Caesarstone, Dekton, Neolith…), which are safe to name
        and were never in tension with §2 rule 9. What could not go in were Nile Stone and Next
-       Stone Slabs, the yards TopCat BUY from (D8) — naming those tells a customer where to go
+       Stone Slabs, the yards Topcat BUY from (D8) — naming those tells a customer where to go
        direct. He chose to drop the band rather than run it with brands alone.
        ⚠️ THIS BAND WAS THE SECTION BOUNDARY BY DESIGN (client, 30 July): there is deliberately
        no .section-divider after the stones section because the strip itself was the seam. Hide
@@ -6199,7 +6234,7 @@
 {
  "@context": "https://schema.org",
  "@type": "HomeAndConstructionBusiness",
- "name": "TopCat Worktops Ltd",
+ "name": "Topcat Worktops Ltd",
  "description": "Bespoke quartz, marble and granite worktops for kitchens and bathrooms, chosen from the slab, templated to the millimetre and fitted in days.",
  "url": "https://www.topcatworktops.co.uk",
  "telephone": "+448000982812",
@@ -6212,7 +6247,11 @@
   {"@type": "AdministrativeArea", "name": "London"},
   {"@type": "AdministrativeArea", "name": "Hertfordshire"},
   {"@type": "AdministrativeArea", "name": "Essex"},
-  {"@type": "AdministrativeArea", "name": "Berkshire"}
+  {"@type": "AdministrativeArea", "name": "Berkshire"},
+  {"@type": "AdministrativeArea", "name": "Buckinghamshire"},
+  {"@type": "AdministrativeArea", "name": "Surrey"},
+  {"@type": "AdministrativeArea", "name": "Oxfordshire"},
+  {"@type": "AdministrativeArea", "name": "Bedfordshire"}
  ],
  "address": {
   "@type": "PostalAddress",
@@ -6274,7 +6313,7 @@
   <i class="bar-flare" aria-hidden="true"></i>
   <!-- The link carries the accessible name, so the image is decorative and takes alt="" rather
        than announcing the brand a second time. -->
-  <a class="brand" href="/" aria-label="TopCat Worktops, home">
+  <a class="brand" href="/" aria-label="Topcat Worktops, home">
     <img class="brand-logo" src="/assets/brand/topcat-horizontal.svg" alt="" width="1455" height="323" decoding="async">
   </a>
   <!-- ⚠️ Trade is a REAL PAGE, not a hash. It is the only nav item that leaves the page, and
@@ -6469,7 +6508,7 @@
      away from it. WhatsApp's brand terms are satisfied by the glyph's own shape, which is
      unmodified. -->
 <a class="wa-fab" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer"
-   aria-label="Message TopCat Worktops on WhatsApp">
+   aria-label="Message Topcat Worktops on WhatsApp">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
     <path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0zm-.001 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/>
@@ -6553,9 +6592,9 @@
              nothing is lost to search. ⭐ It also retires the `.nowrap` span on the phone, and with
              it the 283px unbreakable phrase that would not fit a 320px screen at all.
              ⛔ Says the materials and the service and claims nothing else: templating and fitting
-             ARE TopCat's and may be claimed freely, the cutting is the workshops' (§2 rule 1), and
+             ARE Topcat's and may be claimed freely, the cutting is the workshops' (§2 rule 1), and
              there is no absolute in it (rule 12). -->
-        <p class="hero-sub hero-el" style="--hd:560ms"><span class="hs-wide">Chosen from the slab you approve, fitted by us <span class="nowrap">across London and the Home Counties.</span></span><span class="hs-phone">Quartz, granite and marble worktops, chosen with you and fitted by our own team.</span></p>
+        <p class="hero-sub hero-el" style="--hd:560ms"><span class="hs-wide">Chosen from the slab you approve, fitted by us <span class="nowrap">across England and the British Isles.</span></span><span class="hs-phone">Quartz, granite and marble worktops, chosen with you and fitted by our own team.</span></p>
 
         <!-- ===== THE THREE REASONS (the client's own words, 6 Aug) =====
              The client sent FOUR differentiators. Three are here. The fourth — "no one gets
@@ -6576,7 +6615,7 @@
               <path fill="url(#tcGoldSolid)" fill-rule="evenodd" d="M12 .9a8.35 8.35 0 1 1 0 16.7A8.35 8.35 0 0 1 12 .9Zm0 3.5a4.85 4.85 0 1 0 0 9.7 4.85 4.85 0 0 0 0-9.7Z"/>
               <circle cx="12" cy="9.25" r="2.5" fill="url(#tcGoldSolid)"/>
             </svg>
-            <span class="hf-t"><b>Service second to none</b><i>guided at every step</i></span>
+            <span class="hf-t"><b>Your project, expertly handled</b><i>from start to finish</i></span>
           </li>
           <li class="hf">
             <!-- ⚠️ Tighter viewBox than the other two on purpose. The L only occupies 17.2 of
@@ -6596,7 +6635,7 @@
                    not convert it to a stroke. -->
               <path fill="url(#tcGoldSolid)" fill-rule="evenodd" d="M5.3 3.4h5.2a1.9 1.9 0 0 1 1.9 1.9v3.8h6.3a1.9 1.9 0 0 1 1.9 1.9v7.6a1.9 1.9 0 0 1-1.9 1.9H5.3a1.9 1.9 0 0 1-1.9-1.9V5.3a1.9 1.9 0 0 1 1.9-1.9Zm2.45 9.15a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm8.5.4a1.85 1.85 0 1 0 0 3.7 1.85 1.85 0 0 0 0-3.7Z"/>
             </svg>
-            <span class="hf-t"><b>Every cut-out included</b><i>pencil edges and grooves</i></span>
+            <span class="hf-t"><b>Every detail included</b><i>pencil edges, grooves and all cut-outs</i></span>
           </li>
           <li class="hf">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -6725,8 +6764,8 @@
         <!-- ⭐ TWO LENGTHS, ONE SHOWN (D96). The phone takes the short one so the helix starts
              near the top of the screen instead of under a five-line paragraph; every other width
              gets the original, unchanged to the character. ⚠️ Both say the same true things:
-             templating and fitting ARE TopCat's, the cutting is the workshops' (§2 rule 1). -->
-        <p class="section-sub"><span class="svc-sub-long">Whatever you are imagining, a kitchen worth gathering in, a bathroom that feels like a retreat, a workspace that means business, TopCat brings it to life in stone. Every surface is templated and fitted by our own team, cut to that template by workshops we trust, so the finish you fall for is the finish you live with. Choose a space and picture yours.</span><span class="svc-sub-short">Kitchens, bathrooms, workspaces and more, brought to life in stone. Templated and fitted by our own team, cut to that template by workshops we trust. Choose a space and picture yours.</span></p>
+             templating and fitting ARE Topcat's, the cutting is the workshops' (§2 rule 1). -->
+        <p class="section-sub"><span class="svc-sub-long">Whatever you are imagining, a kitchen worth gathering in, a bathroom that feels like a retreat, a workspace that means business, Topcat brings it to life in stone. Every surface is templated and fitted by our own team, cut to that template by our experienced fabricators, so the finish you fall for is the finish you live with. Choose a space and picture yours.</span><span class="svc-sub-short">Kitchens, bathrooms, workspaces and more, brought to life in stone. Templated and fitted by our own team, cut to that template by our experienced fabricators. Choose a space and picture yours.</span></p>
         <div class="svc-nav" id="svcNav" role="tablist" aria-label="Our services"></div>
         <div class="svc-intro-ctas">
           <a class="rev-cta-primary" href="#cta">Get in touch</a>
@@ -6788,7 +6827,7 @@
         <div class="gal-stage" id="galStage">
           <div class="gal-mid" id="galMid">
             <h2 class="section-title">View our project <em>gallery</em></h2>
-            <p class="section-sub">Recent projects across London, Hertfordshire, Essex and Berkshire. Click any project to open its story.</p>
+            <p class="section-sub">Recent projects across England. Click any project to open its story.</p>
             <div class="gal-mid-actions">
               <a class="gal-mid-cta" href="#cta">Get in touch</a>
               <button type="button" class="gal-grid-btn">View as grid</button>
@@ -6821,7 +6860,7 @@
           <div class="proj-desc">
             <p class="proj-lead">What we did</p>
             <p class="big">A tired galley kitchen reimagined around a single bookmatched island, the veining runs unbroken from the waterfall edge, across the top, and down the other side.</p>
-            <p>We began with a full templating session, capturing every measurement to a fraction of a millimetre once the units were levelled. The slab was cut and polished to that template at the workshop we place our cutting with, matching the veining across each joint so the seams all but disappear.</p>
+            <p>We began with a full templating session, capturing every measurement to a fraction of a millimetre once the units were levelled. The slab was cut and polished to that template in our own workshop, matching the veining across each joint so the seams all but disappear.</p>
             <p>The finished worktops were installed in a single day, squared, sealed and ready to use, with a full-height splashback tying the run together and a honed finish chosen to keep glare down under the pendant lights.</p>
           </div>
         </div>
@@ -7215,17 +7254,23 @@
        the small medallion in the review cards). See the "ABOUT COLLAGE" CSS + IIFE. -->
   <section class="section" id="about">
     <div class="about-wrap">
-      <!-- ⚠️ CUT from three long paragraphs to two on 9 Aug (client: "less about us text").
-           Nothing load-bearing came out: the D21-safe wording is intact ("place the cut with
-           workshops", never in-house), and "Ask for Nick" now closes the second paragraph
-           rather than owning a third. -->
+      <!-- ⚠️ REWRITTEN 14 Aug 2026 from the client's own document — his words, six paragraphs,
+           replacing the two-paragraph version cut on 9 Aug ("less about us text"). That earlier
+           instruction is REVERSED by this one: he supplied the longer copy himself.
+           ⚠️ Contractions and the one em dash normalised to the house voice (§2 rule 6); nothing
+           else in his wording was touched. ⛔ "fabricating" here is deliberate and is his own
+           position as of this document — it reverses the 7 Aug outsourcing rule (§2 rule 1). -->
       <div class="about-copy">
         <h2 class="section-title rise" style="--rd:0ms;max-width:22ch">About <em>us</em></h2>
-        <p class="section-sub rise" style="--rd:120ms">We built TopCat because we had spent years watching the trade overcharge for work that was not always better. Opaque quotes, a vague process, and the person who sold the job was rarely the person who turned up to fit it. We thought the whole thing could be calmer.</p>
-        <p class="section-sub rise" style="--rd:220ms">So we made ourselves accountable for all of it. We advise on the stone, template your room to a fraction of a millimetre, place the cut with workshops we have worked with for years, then fit it and stand behind it. One contract, one contact, and nothing for you to chase. Ask for Nick. His is the name you will see again and again in the reviews above.</p>
-        <!-- the section's one action (client, 9 Aug: "have a chat CTA, chat with TopCat") -->
-        <div class="about-cta rise" style="--rd:320ms">
-          <a class="rev-cta-primary" href="#cta">Chat with TopCat</a>
+        <p class="section-sub rise" style="--rd:120ms">We built Topcat because we believed buying a worktop should be simpler, clearer and more personal. It is the heart of your home after all.</p>
+        <p class="section-sub rise" style="--rd:180ms">With a background in distribution, and after seeing customers faced with inflated and unclear quotes along with terrible service, we knew there was a better way. Too often, the person who sells the job is not the person who measures it, makes it or fits it. We wanted to change that.</p>
+        <p class="section-sub rise" style="--rd:240ms">At Topcat, we take responsibility and accountability for the entire process. From helping you choose the right stone and templating your kitchen, fabricating and completing the installation, we keep everything under one roof and make sure you always know who is responsible.</p>
+        <p class="section-sub rise" style="--rd:300ms">One contractor. One contact. No chasing around.</p>
+        <p class="section-sub rise" style="--rd:360ms">We believe great worktops are about more than just the stone. They are about precision, communication and making the whole experience feel effortless.</p>
+        <p class="section-sub rise" style="--rd:420ms">And if you want to speak to someone who knows your project from start to finish, ask for Nick. His is the name you will see time and time again in the reviews above.</p>
+        <!-- the section's one action (client, 9 Aug: "have a chat CTA, chat with Topcat") -->
+        <div class="about-cta rise" style="--rd:480ms">
+          <a class="rev-cta-primary" href="#cta">Chat with Topcat</a>
         </div>
       </div>
       <!-- ⚠️ the tiles are deliberately NOT .rise. They are driven per frame by scrollSequence
@@ -7311,7 +7356,7 @@
            on the page is doubled. The real brief for this slot is unchanged and still owed:
            the whole team together, or a finished install (§7.5). -->
       <figure class="wy-tile wy-p glow-card">
-        <img src="/assets/site/team-team-900.webp" alt="The TopCat team" draggable="false" loading="lazy" decoding="async">
+        <img src="/assets/site/team-team-900.webp" alt="The Topcat team" draggable="false" loading="lazy" decoding="async">
         <div class="wy-p-veil"></div>
         <div class="sheen"></div>
       </figure>
@@ -7348,7 +7393,7 @@
           <span class="wy-n" aria-hidden="true">01</span>
         </span>
         <h3>One accountable team</h3>
-        <p>One contract and one contact, from first measurement to final wipe down. We template it, we place the cut, we fit it, and we answer for all of it.</p>
+        <p>One contract and one contact, from first measurement to final wipe down. We template it, we cut it, we fit it, and we answer for all of it.</p>
       </article>
       <article class="wy-tile wy-r wy-b glow-card">
         <div class="wy-stone" aria-hidden="true"></div>
@@ -7469,7 +7514,12 @@
            copy. It is pushed to the foot of the column so the two sides finish level. -->
       <div class="cta-copy">
         <h2 class="cta-title">One visit, one price, <em>one team</em></h2>
-        <p class="cta-line">Tell us about your kitchen and we'll come and measure it. A free home visit across London, Hertfordshire, Essex and Berkshire, a fixed itemised quote, and a ten-year guarantee on every install. Prefer to talk it through? Ask for Nick.</p>
+        <!-- ⚠️ THE COUNTY LIST CAME OUT ON 14 Aug 2026 AND WAS NOT REPLACED WITH "England".
+             The service area grew to eight counties that day, which is too long for this
+             measure, but a free home VISIT is the one promise here and "across England" would
+             promise a visit we cannot always make. "Our service area" is the honest short form;
+             the eight counties are named in the footer, the FAQ and on /worktops/. -->
+        <p class="cta-line">Tell us about your kitchen and we'll come and measure it. A free home visit across our service area, a fixed itemised quote, and a ten-year guarantee on every install. Prefer to talk it through? Ask for Nick.</p>
 
         <div class="cta-reach">
           <div class="cta-or">Or reach us directly</div>
@@ -7581,7 +7631,7 @@
         <!-- ⚠️ The old footer mark filled itself from a gradient defined inside the NAV's inline
              SVG at the top of the document, so it rendered only because the two shared one page.
              That coupling is gone: each lockup is a self-contained file. -->
-        <a class="brand brand-stack" href="/" aria-label="TopCat Worktops, home">
+        <a class="brand brand-stack" href="/" aria-label="Topcat Worktops, home">
           <img class="brand-logo" src="/assets/brand/topcat-vertical.svg" alt="" width="528" height="495" decoding="async">
         </a>
         <p class="foot-tag">Bespoke stone worktops, from slab selection to a flawless fit.</p>
@@ -7596,7 +7646,7 @@
              ⛔ `display:none` in the base rule — new markup exists at every width the moment it is
              added (D120), and the footer above 720px is frozen (§2 rule 15). -->
         <span class="foot-stars foot-guar"><b>10</b> year guarantee</span>
-        <!-- ⭐⭐ **THE SOCIAL LINKS — 13 August 2026 (D178).** Client: *"go find all of TopCat's social
+        <!-- ⭐⭐ **THE SOCIAL LINKS — 13 August 2026 (D178).** Client: *"go find all of Topcat's social
              media or some sort of links, and we add that to the footer."*
              ⛔⛔ **THESE TWO CAME OFF TOPCAT'S OWN LIVE SITE, NOT OFF A SEARCH GUESS, AND THAT
              DISTINCTION IS THE WHOLE POINT.** `topcatworktops.co.uk` links to exactly these two and
@@ -7612,19 +7662,19 @@
              ⚠️ It is on every width: he named the footer, and this is additive — a new row under the
              brand block that re-composes nothing above it. One rule makes it phone-only. -->
         <div class="foot-social">
-          <a href="https://www.instagram.com/topcatworktops/" target="_blank" rel="noopener noreferrer" aria-label="TopCat Worktops on Instagram">
+          <a href="https://www.instagram.com/topcatworktops/" target="_blank" rel="noopener noreferrer" aria-label="Topcat Worktops on Instagram">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
               <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/>
               <circle cx="12" cy="12" r="4.1"/>
               <circle cx="17.1" cy="6.9" r="1.15" fill="currentColor" stroke="none"/>
             </svg>
           </a>
-          <a href="https://www.linkedin.com/company/topcat-worktops/" target="_blank" rel="noopener noreferrer" aria-label="TopCat Worktops on LinkedIn">
+          <a href="https://www.linkedin.com/company/topcat-worktops/" target="_blank" rel="noopener noreferrer" aria-label="Topcat Worktops on LinkedIn">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.6 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.35 4.33 5.4V21h-3.6v-5.02c0-1.2-.02-2.74-1.73-2.74-1.73 0-2 1.3-2 2.65V21H9.6z"/>
             </svg>
           </a>
-          <a href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer" aria-label="Message TopCat Worktops on WhatsApp">
+          <a href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer" aria-label="Message Topcat Worktops on WhatsApp">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
               <path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0zm-.001 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/>
@@ -7676,7 +7726,7 @@
         <div class="foot-k">Contact</div>
         <div class="foot-c-phone"><span class="foot-ck">Phone</span><a class="foot-cv" href="tel:+448000982812">0800 098 2812</a></div>
         <div class="foot-c-email"><span class="foot-ck">Email</span><a class="foot-cv" href="mailto:info@topcatworktops.co.uk">info@topcatworktops.co.uk</a></div>
-        <div class="foot-c-area"><span class="foot-ck">Area</span><span class="foot-cv">London, Hertfordshire, Essex &amp; Berkshire, plus nationwide templating</span></div>
+        <div class="foot-c-area"><span class="foot-ck">Area</span><span class="foot-cv">London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire &amp; Bedfordshire, plus nationwide templating</span></div>
         <div class="foot-c-hours"><span class="foot-ck">Hours</span><span class="foot-cv">Monday to Friday, 8am to 6pm</span></div>
       </div>
     </div>
@@ -7689,7 +7739,7 @@
          the markup, so nothing is duplicated into the page source (§4, D168's lesson). -->
     <div class="foot-tail" id="footTail"></div>
     <div class="foot-bar">
-      <span>© 2026 TopCat Worktops Ltd. All rights reserved.</span>
+      <span>© 2026 Topcat Worktops Ltd. All rights reserved.</span>
       <!-- Sitemap is the only one of these four that is a real page. Privacy, Terms and
            Cookies are still href="#" placeholders waiting on the client's policies. -->
       <div class="foot-legal">
@@ -7923,14 +7973,29 @@ function ss(u,z){ const s=SS[u]; return s?` srcset="${s}" sizes="${z}"`:''; }
 const SERVICES=[
   /* ⚠️ THIS LINE BROKE TWO STANDING RULES AND WAS LIVE — corrected 13 August 2026 while the
      services hub was being built. It read "vein-matched across every joint", which claims work
-     TopCat OUTSOURCE (§2 rule 2 — cutting and polishing are not theirs) and states an ABSOLUTE
+     Topcat OUTSOURCE (§2 rule 2 — cutting and polishing are not theirs) and states an ABSOLUTE
      (§2 rule 12 — "every" is not something we can guarantee). ⛔ Templating and fitting ARE theirs
      and stay. ⚠️ `verify.py` check 7 does not scan this file's inline data, which is why it
      survived; the same phrase on the service PAGES is a separate live instance. */
   {t:"Bespoke Worktops",long:"Kitchen worktops cut from a single slab where the run allows, templated to the millimetre and fitted by our own team.",href:"/services/kitchen-worktops.html",img:"/assets/site/service-worktops-554.webp"},
   {t:"Kitchen Islands",long:"Islands with mitred waterfall ends that fold the stone to the floor, the veining planned around every corner so it runs unbroken down each side.",href:"/services/kitchen-islands.html",img:"/assets/site/service-islands-468.webp"},
   {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splashbacks-706.webp"},
-  {t:"Bathrooms",long:"Vanity tops, shower surrounds and bathroom surfaces in stone that handles water and daily wear, matched to your tiles.",href:"/services/bathroom-worktops.html",img:"/assets/site/cta-slab-2752.webp"},
+  {t:"Bathrooms",long:"Shower surrounds, thresholds and window sills cut from one stone, so the room reads as a single material rather than a set of parts.",href:"/services/bathroom-worktops.html",img:"/assets/site/cta-slab-2752.webp"},
+  /* ⭐ VANITY TOPS — added 14 Aug 2026, the client's own ask ("add in another section for Vanity
+     tops (bathroom) in the same section as the above"). ⚠️ INSERTED AT INDEX 4, NOT APPENDED:
+     PROJECTS reads SERVICES[0..3] for its placeholder photography and the helix's ORDER is
+     written by index, so anything added after position 3 must not disturb the first four.
+     ⛔ It points at the bathroom page on purpose — that page IS "Bathroom Worktops & Vanity
+     Tops", and a second near-identical leaf page would compete with it in search for the same
+     words. The Bathrooms tile above was re-cut in the same edit so the two no longer say the
+     same sentence. ⚠️⚠️ **IT CARRIES NO `img` ON PURPOSE, AND THAT IS NOT AN OVERSIGHT.** There
+     are six real subjects for seven tiles until the shoot lands. Repeating the Bathrooms
+     photograph was tried first and it put two IDENTICAL pink slabs side by side in the phone
+     grid, which reads as a card that failed to load rather than as a range. Leaving `img` off
+     hands the tile to `phImg()`, the site's own "PHOTO TO COME" plate — the same honesty the
+     About collage's empty portraits use. ⛔ Drop the real photograph in here and nothing else
+     changes. */
+  {t:"Vanity Tops",long:"Basin tops cut for undermount or countertop basins, with the tap holes exactly where you want them and the edges finished to match.",href:"/services/bathroom-worktops.html",ph:"VANITY TOPS"},
   {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/kitchen-day-1188.webp"},
   {t:"Outdoor Kitchens",long:"Weatherproof stone for garden kitchens and barbecue runs, cut to fit around sinks, hobs and built-in appliances.",href:"/services/outdoor-kitchens.html",img:"/assets/site/quarry-955.webp"}
 ];
@@ -8005,9 +8070,9 @@ const PROCESS=[
   {t:"Design & Quote",img:"/assets/site/process-quote-675.webp",d:"Layout, edges and a clear quote with no hidden costs.",
    d:"A clear, itemised plan and price.",
    long:"We plan the layout, edge profiles, joints and cut-outs, then give you a clear, itemised quote covering template, fabrication and installation, the price you see is the price you pay."},
-  {t:"Template & Craft",img:"/assets/site/process-template-678.webp",d:"Laser-templated to the millimetre, then precision-cut and polished.",
+  {t:"Template & Craft",img:"/assets/site/process-template-678.webp",d:"Templated by hand to the millimetre, then precision-cut and polished.",
    d:"Measured and cut to the millimetre.",
-   long:"Once your units are level we laser-template the space to a fraction of a millimetre. Your slab is then precision-cut and polished at the fabrication workshop we place it with, cut wet to full safety standards, with the veining matched across every joint before we fit it ourselves."},
+   long:"Once your units are level we template the space by hand to a fraction of a millimetre. Your slab is then precision-cut and polished by our own experienced fabricators, cut wet to full safety standards, with the veining matched through the joints before we fit it ourselves."},
   {t:"Install & Enjoy",img:"/assets/site/process-install-600.webp",d:"Fitted cleanly and precisely, usually within days.",
    d:"Fitted cleanly, usually within days.",
    long:"Our team fits your worktop cleanly and precisely, usually within days of templating, squared, sealed and ready to use. Then the kitchen is yours to enjoy."}
@@ -8094,7 +8159,7 @@ const PROC_COPY=[
              ["What is included","Template, fabrication, fitting and VAT. Cut-outs, drainer grooves and pencil edges come as standard, not as extras."],
              ["What happens next","Nothing until you say so. We only order and cut once you have approved the quote and the slab."]]},
     {lede:"The precise part. We template off your real cabinets, then your slab is cut and polished to that template.",
-     points:[["Templating","Laser measured to a fraction of a millimetre, once the units are level and secure. Getting this right is what stops surprises on fitting day."],
+     points:[["Templating","Measured by hand to a fraction of a millimetre, once the units are level and secure. Getting this right is what stops surprises on fitting day."],
              ["In the workshop","Your slab is cut wet to current HSE standards and polished by hand, with the veining matched across every joint before it leaves us."],
              ["Your slab","You approve the actual piece from photographs first, so the stone you chose is the stone that arrives."]]},
     {lede:"Fitting day, usually within days of templating. Our own team, on the date we agreed.",
@@ -8232,8 +8297,18 @@ buildCards(document.getElementById('svcGridServices'), SERVICES, {nameOnly:true,
   if(!grid) return;
   /* the build order, captured before anything moves — this is the tablet/desktop arrangement */
   const built=[...grid.children];
-  /* indices INTO `built`, in the order a phone shows them (the client's popularity order) */
-  const PHONE_ORDER=[0,1,3,2,5,4];
+  /* indices INTO `built`, in the order a phone shows them (the client's popularity order)
+     ⛔⛔ **THIS LIST MUST NAME EVERY CARD, AND ON 14 Aug 2026 IT SILENTLY DID NOT.** It read
+     `[0,1,3,2,5,4]` — six indices, written when there were six services. Adding Vanity Tops
+     (D205) made seven, and the seventh index was simply absent: `seq` held six nodes,
+     appendChild moved those six to the END, and the card nobody moved was left sitting at the
+     FRONT of the grid. The phone opened on "Outdoor Kitchens 07" followed by 01, 02, 03…
+     ⭐⭐ **IT LOOKED LIKE A SORT BUG AND IT WAS AN OMISSION** — every number in the old list was
+     still correct, which is why re-reading it proved nothing. The tell was the INDEX BADGES: the
+     cards carried 07,01,02,… so they were BUILT in the right order and MOVED into the wrong one.
+     ⛔ Nothing measured this. It was found by looking at a screenshot.
+     ⚠️ The guard below is the real fix — a list that misses a card can no longer lose it. */
+  const PHONE_ORDER=[0,1,3,4,2,6,5];
   /* ⭐ the stylesheet's own answer, never a width test (D96). Unset — which is every width above
      720px, because the property is only declared inside the phone query — falls back to desktop,
      exactly as hxMode() does, so no base rule had to be touched to add this. */
@@ -8244,7 +8319,12 @@ buildCards(document.getElementById('svcGridServices'), SERVICES, {nameOnly:true,
     const mode=svcMode();
     if(mode===applied) return;                       // ⚠️ moving nodes restarts transitions
     applied=mode;
-    const seq=(mode==='phone') ? PHONE_ORDER.map(i=>built[i]) : built;
+    /* ⛔ ANY CARD PHONE_ORDER FORGETS KEEPS ITS BUILD POSITION AT THE END, NEVER THE FRONT.
+       Filtering out undefined also survives an index pointing past the array. */
+    const seq=(mode==='phone')
+      ? (()=>{const picked=PHONE_ORDER.map(i=>built[i]).filter(Boolean);
+              return picked.concat(built.filter(el=>!picked.includes(el)));})()
+      : built;
     /* ⛔ ON A FROZEN WIDTH THIS MUST DO NOTHING AT ALL, NOT "THE SAME THING AGAIN". Desktop and
        tablet want the build order, which is the order already in the DOM — but appendChild()
        still REMOVES and RE-INSERTS every node, which restarts CSS transitions and re-enters the
@@ -8354,8 +8434,12 @@ if(svcReduce){
   const stage=document.getElementById('helixStage');
   const nav=document.getElementById('svcNav');
   if(!stage||!nav) return;
-  /* spiral order (the client's): Islands → Bespoke → Splashbacks → Bathrooms → Outdoor → Commercial */
-  const ORDER=[1,0,2,3,5,4];
+  /* spiral order (the client's): Islands → Bespoke → Splashbacks → Bathrooms → Vanity Tops →
+     Outdoor → Commercial
+     ⚠️ SEVEN SINCE 14 Aug 2026. Vanity Tops (index 4) sits next to Bathrooms because they are
+     the same room, and the client's own Outdoor-before-Commercial tail is untouched. The spiral
+     is computed from `items.length`, so the geometry absorbed the extra node with no tuning. */
+  const ORDER=[1,0,2,3,4,6,5];
   const items=ORDER.map(i=>SERVICES[i]);
   const N=items.length;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -8368,7 +8452,7 @@ if(svcReduce){
     el.innerHTML=`<div class="hx-face hx-front glow-card"><img src="${s.img}"${ss(s.img,"(max-width:720px) 210px, 385px")} alt="${s.t}" draggable="false" loading="lazy" decoding="async"><div class="hx-veil"></div>
       <div class="hx-meta"><h3 class="hx-name">${s.t}</h3>
       <a class="hx-link" href="${s.href}">View this service</a></div></div>
-      <div class="hx-face hx-back glow-card"><div class="hx-back-frame"><span class="hx-back-diamond"></span><span class="hx-back-word">TopCat</span><span class="hx-back-sub">Worktops</span></div></div>`;
+      <div class="hx-face hx-back glow-card"><div class="hx-back-frame"><span class="hx-back-diamond"></span><span class="hx-back-word">Topcat</span><span class="hx-back-sub">Worktops</span></div></div>`;
     /* ⚠️ `.hx-ghost` is set by render() on the faded pair a phone shows two steps out (D97).
        They already carry pointer-events:none, so a real tap cannot reach them — but the LISTENER
        has to refuse as well. Anything that dispatches a click without hit-testing (a script, an
@@ -9875,12 +9959,12 @@ else{
    never surface on the wall. */
 const REVIEWS=[
   {n:"Judy Z.", q:"10/10 experience!! I had Nick as my point of contact for the end to end stone worktop work, it was extremely smooth process with minimal hustle. From the beginning, Nick was very professional, responsive and polite, which was a great customer experience for me. The team came in the next week to measure and Nick ordered the stone right away, so it was ready for installation 3-4 days after they templated the worktop. On the installation day, the team spent about 1.5h to complete the work and has done a clean job. The 2 workers on the day were absolutely brilliant, and have done a great service! 🙏 Basically, there was a window corner which was not originally planned to install any 10cm stone cover, but they brought the extra materials and cut the bit of window frame perfectly and installed it on the day (as I was there in person and they checked with me before making any adjustments). Very happy with my experience"},
-  {n:"Jhanzeb Chaudhry", q:"I’m so happy I went with TopCat Worktops for my kitchen! I had visited a few kitchen showrooms before and was honestly shocked at how expensive the quotes were. TopCat came in at least £1,200 cheaper than the others, and the quality and service were absolutely amazing. Nik was brilliant from the start, super helpful, always available to answer my questions (even out of hours), and guided me through the whole process with real care. On installation day, the team arrived on time and did a fantastic job. The finish is flawless, and everything was done to a really high standard. Highly recommend TopCat Worktops, great prices, great service, and a beautiful end result!"},
-  {n:"Maheen Amjad", q:"TopCat Worktops came highly recommended by our interior designer, and they certainly didn't disappoint. As we're based in Scotland, everything was handled over the phone and email, but Nick made the whole process incredibly easy. He was always quick to respond, answered all our questions, and helped us choose the right worktop for our kitchen without any pressure. The service was professional from start to finish, and we always felt well looked after despite being hundreds of miles away. The TopCat Worktops team installed the worktop and the quality is excellent. We're delighted with the finished result and wouldn't hesitate to recommend TopCat Worktops to others."},
+  {n:"Jhanzeb Chaudhry", q:"I’m so happy I went with Topcat Worktops for my kitchen! I had visited a few kitchen showrooms before and was honestly shocked at how expensive the quotes were. Topcat came in at least £1,200 cheaper than the others, and the quality and service were absolutely amazing. Nik was brilliant from the start, super helpful, always available to answer my questions (even out of hours), and guided me through the whole process with real care. On installation day, the team arrived on time and did a fantastic job. The finish is flawless, and everything was done to a really high standard. Highly recommend Topcat Worktops, great prices, great service, and a beautiful end result!"},
+  {n:"Maheen Amjad", q:"Topcat Worktops came highly recommended by our interior designer, and they certainly didn't disappoint. As we're based in Scotland, everything was handled over the phone and email, but Nick made the whole process incredibly easy. He was always quick to respond, answered all our questions, and helped us choose the right worktop for our kitchen without any pressure. The service was professional from start to finish, and we always felt well looked after despite being hundreds of miles away. The Topcat Worktops team installed the worktop and the quality is excellent. We're delighted with the finished result and wouldn't hesitate to recommend Topcat Worktops to others."},
   {n:"Cherif", q:"Excellent service, quick responses and my Quartz kitchen worktop was installed within 48 hours from my initial conversation with Nick"},
   {n:"Joel Brizman", q:"Highly recommended: Topcat Worktops replaced our old kitchen worktop with a new quartz worktop. The process was quick and seamless. From the initial visit, their friendly staff took care to understand our vision and our requirements, which included a one-source A-to-Z solution (including removal and disposal of the old worktop and a complete refit of our existing plumbing and electric hob). The installation was carried out very quickly after ordering - and was smooth, efficient with the installers taking great care to ensure there was no damage to surroundings. We are very satisfied with the process and the outcome."},
   {n:"Abbas", q:"We recently chose a Calacatta Viola worktop from Topcat Worktops Ltd and couldn't be happier with the result. The team were helpful throughout the whole process and made everything easy from start to finish. The installation was carried out professionally and the worktop looks absolutely stunning in our kitchen. Would definitely recommend Topcat Worktops to anyone looking for quality products and excellent service."},
-  {n:"Maria Shahsawar", q:"Really pleased with our new kitchen worktops from TopCat Worktops. Nick was brilliant from start to finish, very responsive, patient while we decided on colours and materials, and provided a free no-obligation quote with no pressure at all. The quality of the worktops and installation is excellent, and the finished kitchen looks amazing. The team were professional, tidy, and completed everything to a high standard. Would definitely recommend TopCat Worktops to anyone looking for new kitchen worktops."},
+  {n:"Maria Shahsawar", q:"Really pleased with our new kitchen worktops from Topcat Worktops. Nick was brilliant from start to finish, very responsive, patient while we decided on colours and materials, and provided a free no-obligation quote with no pressure at all. The quality of the worktops and installation is excellent, and the finished kitchen looks amazing. The team were professional, tidy, and completed everything to a high standard. Would definitely recommend Topcat Worktops to anyone looking for new kitchen worktops."},
   {n:"Davinder Dhillon", q:"I’ve just had my quartz worktop installed, and I’m already thrilled with how it looks and feels. The finish is smooth, modern, and really elevates the whole kitchen. The craftsmanship is excellent, clean edges, seamless joints, and a perfect fit around the sink and hob. Even though it’s brand new, I can already tell it’s going to be easy to maintain and very durable. Overall, I’m extremely happy with the installation and excited to start using it."},
   {n:"Kav Patel", q:"Very pleased with the service that was provided by Topcats . Whilst our project took longer than expected, Topcats were very patient with us and delivered amazing worktops to complement our kitchen. Would definitely recommend Topcats and a big shout out to Nick who we started the journey with back in Feb 2025."},
   {n:"Kinga Skubiszewska", q:"Excellent experience from start to finish. Professional, responsive, and easy to work with throughout the project. Communication was clear, the work was completed to a high standard, and the entire process was handled efficiently. I am very happy with the results and would gladly work with them again. Highly recommended."},
@@ -10973,16 +11057,21 @@ requestAnimationFrame(glowTick);
   const stage=document.getElementById('galStage');
   if(!scroll||!stage||typeof SERVICES==='undefined'||typeof PROCESS==='undefined') return;
 
-  // 8 projects — reusing the embedded service/process photos as placeholders (swap for real project shots later)
+  /* 8 projects — reusing the embedded service/process photos as placeholders (swap for real project shots later)
+     ⭐ THE EIGHT NAMES ARE THE CLIENT'S OWN, 14 Aug 2026, from his notes document — they are the
+     eight kinds of work he wants the gallery to show, in his order. ⚠️ The PLACE line is kept:
+     he changed the names only, the design carries a two-line meta, and "Bookmatched Worktops /
+     Hampstead" still reads as a real job in a real town. ⛔ Do not renumber or reorder — the
+     first four are the front panel and the second four are the panel you walk into. */
   const PROJECTS=[
-    {img:SERVICES[0].img, name:'Bookmatched Island',   place:'Hampstead'},
-    {img:SERVICES[1].img, name:'Waterfall Kitchen',    place:'Richmond'},
-    {img:SERVICES[2].img, name:'Full-height Splashback',place:'Islington'},
-    {img:SERVICES[3].img, name:'Template & Fit',       place:'St Albans'},
-    {img:'/assets/site/kitchen-day-1188.webp', name:'Family Kitchen', place:'Hertford'},
-    {img:PROCESS[1].img,  name:'Bespoke Layout',        place:'Welwyn'},
-    {img:PROCESS[2].img,  name:'Vein-matched Joints',    place:'Enfield'},
-    {img:'/assets/hero-kitchen.jpg', name:'Clean Install', place:'Barnet'}
+    {img:SERVICES[0].img, name:'Bookmatched Worktops',  place:'Hampstead'},
+    {img:SERVICES[1].img, name:'Waterfall Edges',       place:'Richmond'},
+    {img:SERVICES[2].img, name:'Full Height Splashbacks',place:'Islington'},
+    {img:SERVICES[3].img, name:'Bespoke Layout',        place:'St Albans'},
+    {img:'/assets/site/kitchen-day-1188.webp', name:'Bespoke Features', place:'Hertford'},
+    {img:PROCESS[1].img,  name:'Bespoke Edge Profiles', place:'Welwyn'},
+    {img:PROCESS[2].img,  name:'Dining Tables',         place:'Enfield'},
+    {img:'/assets/hero-kitchen.jpg', name:'Exclusive Fireplaces', place:'Barnet'}
   ];
 
   const PER_SET=4;
@@ -12088,17 +12177,17 @@ const FAQS = [
   {
     g:'How it works', label:'How long it takes', tag:'Process',
     q:'How long does it take, start to finish?',
-    a:'From template to fitted worktop is typically three to five working days. One visit to laser-measure your kitchen to the millimetre, then our fitters install the finished surface, and we are back inside 72 hours if anything at all needs attention.'
+    a:'From template to fitted worktop is typically three to five working days. One visit to template your kitchen by hand to the millimetre, then our fitters install the finished surface, and we are back inside 72 hours if anything at all needs attention.'
   },
   {
     g:'How it works', label:'Who comes to your home', tag:'Process',
     q:'Who will actually be coming to my home?',
-    a:'The same small team throughout. One of us comes out to template, and the same team fits it. The cutting happens at a workshop we have used for years, and dealing with them is our job rather than yours. You get one name and one number for the whole job, so you always know who is coming and when.'
+    a:'The same small team throughout. One of us comes out to template, and the same team fits it. The cutting is done by our own experienced fabricators, so the whole job stays with us rather than being passed down the line. You get one name and one number for the whole job, so you always know who is coming and when.'
   },
   {
     g:'How it works', label:'Where we work', tag:'Areas',
     q:'Which areas do you cover?',
-    a:'London, Hertfordshire, Essex and Berkshire for the full service, and we template nationwide for projects worth the journey. If you are just outside, ask, we travel for the right job.'
+    a:'London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire and Bedfordshire for the full service, and we template nationwide for projects worth the journey. If you are just outside these areas, ask. We are always happy to see if we can help.'
   },
   {
     g:'Your stone', label:'Choosing your stone', tag:'Materials',
@@ -12108,7 +12197,7 @@ const FAQS = [
   {
     g:'Your stone', label:'Matching your slab', tag:'Materials',
     q:'Will the slab match the sample I saw?',
-    a:'Natural stone varies, that is its beauty. Before a single cut is made you approve your exact slab from photographs of the piece itself, so the veining you fall for is precisely what arrives in your kitchen.'
+    a:'Natural stone varies, that is its beauty. Before a single cut is made you approve your exact slab from photographs of the piece itself, so the veining you fall for is precisely what arrives in your kitchen. You are also welcome to visit the distributor\'s warehouse and choose your slab in person, which for natural stone we highly recommend.'
   },
   {
     g:'Your stone', label:'Porcelain and sintered', tag:'Materials',
@@ -12118,7 +12207,7 @@ const FAQS = [
   {
     g:'Living with it', label:'Seams and joints', tag:'Craftsmanship',
     q:'Will I be able to see the seams?',
-    a:'Seams are positioned with intent and vein-matched so the pattern flows across every joint. Most of our clients cannot find them once the worktop is installed.'
+    a:'A seam is always visible, and anyone who tells you otherwise is selling you something. What we can do is place it where it is least in the way, close it tight and match the veining through it, so it reads as part of the stone rather than as a join. We will show you where every seam will fall before anything is cut.'
   },
   {
     g:'Living with it', label:'Hot pans and heat', tag:'Care',
@@ -12128,7 +12217,7 @@ const FAQS = [
   {
     g:'Living with it', label:'Silica and safety', tag:'Safety',
     q:'Is a stone worktop safe to have in the house?',
-    a:'Completely. A sealed, installed worktop poses no silica risk in your home, the dust risk belongs to the workshop and not the kitchen. It matters all the same, which is why we only place work with fabrication workshops that cut wet, extract at the tool and monitor their people, in line with current HSE guidance.'
+    a:'Completely. A sealed, installed worktop poses no silica risk in your home, the dust risk comes from the fabrication process and not from having a finished worktop in your kitchen. It matters all the same, which is why we carry out our fabrication in our own workshop, where we control the cutting process, use appropriate dust extraction and wet-cutting methods, and follow current HSE guidance.'
   }
 ];
 
@@ -12351,8 +12440,16 @@ if(faqIndex && panel && faqBody){
    the client confirmed porcelain is offered again on a bespoke, enquiry-led basis. Both are
    sintered-porcelain brands, so they belong here only while that holds.
    ⚠️ Naming a brand in this band implies we can supply it. Do not add a brand the client has
-   not confirmed access to. */
-const SUPPLIERS=["Silestone","Caesarstone","Technistone","Unistone","Compac","Cimstone","Ceralsio","Noble Stone","iStone","CQ Stone","Dekton","Neolith"];
+   not confirmed access to.
+   ⛔ 14 Aug 2026 — this list is the client's own, changed by him in writing. One name was added
+   and one removed on his instruction. ⚠️ It crosses a standing rule of his that is recorded in
+   HANDOVER.md §2 rule 9 and in the register at D201; the reasoning lives there rather than
+   here, because this file is public. If that rule is ever reinstated, D201 says which entry
+   comes back out.
+   ⚠️ The name that came out is a slab brand and is removed from THIS BAND ONLY. The same maker
+   is still recorded against twelve stone pages, where removing it would drop stones out of the
+   132 that `harvest/verify.py` gates on. */
+const SUPPLIERS=["Silestone","Caesarstone","Technistone","Unistone","Compac","Cimstone","Ceralsio","Noble Stone","iStone","Next Stone Slabs","Dekton","Neolith"];
 orNull(document.getElementById('strip')).innerHTML=[...SUPPLIERS,...SUPPLIERS].map(s=>`<span>${s}</span>`).join('');
 
 /* ---------- in-page navigation ----------
@@ -12565,7 +12662,14 @@ orNull(document.getElementById('strip')).innerHTML=[...SUPPLIERS,...SUPPLIERS].m
    accepts multipart/form-data — Netlify Forms with uploads, Formspree, or our own — and until
    that exists the form says plainly that nothing was sent. */
 const TC_UP={
-  MAX:8, MAXB:10*1024*1024,                       // 8 files, 10 MB each: a phone photo is 3-5 MB
+  /* ⭐ 50 MB PER FILE SINCE 14 Aug 2026 — the client's own ask, "just in case the clients might
+     have large file photos". A phone photo is 3-5 MB and a DSLR raw or a long PDF plan set is
+     the case this is for. ⚠️ THE BROWSER HAPPILY ACCEPTS THIS AND NOTHING ELSE DOES YET: at
+     8 × 50 MB an enquiry can carry 400 MB, which no ordinary form endpoint will take in one
+     multipart POST. See the note on submitEnquiry() — whoever wires the backend needs direct-to-
+     storage uploads, not a form handler. Raising the number here is correct and costs nothing;
+     it is the delivery end that has to be built for it. */
+  MAX:8, MAXB:50*1024*1024,                       // 8 files, 50 MB each
   /* what a homeowner or a kitchen designer actually has to hand: a plan from the designer, a
      phone photo of the room or of a slab, a scan of a sketch, and DWG/DXF for the trade */
   EXT:['pdf','jpg','jpeg','png','heic','heif','webp','gif','doc','docx','dwg','dxf'],
@@ -12577,7 +12681,7 @@ const TC_UP={
       if(this.files.length>=this.MAX){ bad.push('You can attach up to '+this.MAX+' files. The rest were not added.'); break; }
       const ext=(f.name.split('.').pop()||'').toLowerCase();
       if(this.EXT.indexOf(ext)<0){ bad.push('“'+f.name+'” is not a file we can open.'); continue; }
-      if(f.size>this.MAXB){ bad.push('“'+f.name+'” is over 10 MB, please send a smaller copy.'); continue; }
+      if(f.size>this.MAXB){ bad.push('“'+f.name+'” is over '+Math.round(this.MAXB/1048576)+' MB, please send a smaller copy.'); continue; }
       if(this.files.some(x=>x.file.name===f.name&&x.file.size===f.size))continue;   // same file twice
       this.files.push({file:f,url:/^image\//.test(f.type)?URL.createObjectURL(f):''});
     }

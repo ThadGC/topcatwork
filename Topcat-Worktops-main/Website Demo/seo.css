@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TopCat Worktops — components for the SEO page families
+   Topcat Worktops — components for the SEO page families
    (materials, guides, kitchen-worktops locations).
 
    Loaded AFTER /services/service.css, which supplies the shell: .bar, .brand,
@@ -194,7 +194,7 @@
 
 /* --- the applications grid --------------------------------------------------
    ⚠️ This block exists because the site was reading as kitchens-only (client,
-   7 Aug). TopCat also do bathrooms, vanity tops, splashbacks, utilities,
+   7 Aug). Topcat also do bathrooms, vanity tops, splashbacks, utilities,
    outdoor kitchens, commercial fit-outs, fireplaces and tables. It appears on
    every material page and every location page, and it doubles as the internal
    link into the /services/ family. Do not remove it to save space. */

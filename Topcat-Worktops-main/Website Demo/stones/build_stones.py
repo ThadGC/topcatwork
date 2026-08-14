@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Generates the TopCat Worktops V1 stone collection (/stones/*.html) from shared
+Generates the Topcat Worktops V1 stone collection (/stones/*.html) from shared
 templates + the catalogue below. Run from inside this folder:
 
     python3 build_stones.py
@@ -112,8 +112,9 @@ PHONE_DISPLAY = "0800 098 2812"
 PHONE_TEL = "+448000982812"
 EMAIL = "info@topcatworktops.co.uk"
 HOURS = "Monday to Friday, 8am to 6pm"
-AREA = "London, Hertfordshire, Essex & Berkshire"
-AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire"]
+AREA = "London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire"
+AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire", "Buckinghamshire",
+                "Surrey", "Oxfordshire", "Bedfordshire"]
 
 # ⭐ THE REAL LOGO — the client's own artwork, supplied 10 Aug 2026, living in
 # /assets/brand/. It replaces a hand-rebuilt approximation of the mark that sat beside a
@@ -199,7 +200,7 @@ RANGE_LABEL = {"Marble": "Marble & Quartzite", "Quartz": "Quartz", "Granite": "G
 # more vague." A veined quartz plainly varies across a slab, and "exactly what arrives" is a
 # guarantee about a specific delivery.
 # ⚠️ Two more went out with it. Marble carried "we vein-match every joint by hand", which is both
-# a guarantee AND a claim to fabrication work — ⛔ TopCat OUTSOURCE fabrication and the site must
+# a guarantee AND a claim to fabrication work — ⛔ Topcat OUTSOURCE fabrication and the site must
 # never claim it (D21, §2 rule 1). Granite carried "so there are no surprises on fitting day".
 # ⚠️ Absolutes are the tell. "all it asks for", "the one thing it minds", "keeps it perfect",
 # "takes it in its stride" each promise a limit we have not tested. Comparatives are safe,
@@ -242,7 +243,7 @@ MAT_FACTS = {
 # already in place.
 # ⛔ Their `mat` is deliberately NOT changed. The estimator prices by material and knows only
 # Quartz, Marble, Granite and Porcelain, so reclassifying would invent a pricing category, and
-# TopCat's pricing is not ours to change. Raise the classification with TopCat instead.
+# Topcat's pricing is not ours to change. Raise the classification with Topcat instead.
 NOT_MARBLE = ()
 NOT_MARBLE_FACTS = {}
 
@@ -330,7 +331,7 @@ def deep_link(s, anchor):
 def nav_html():
     links = "".join(f'<a href="{h}">{e(t)}</a>' for h, t in NAV_LINKS)
     return f"""<header class="bar">
-  <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO}</a>
+  <a class="brand" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO}</a>
   <nav class="top">{links}</nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
@@ -340,7 +341,7 @@ def footer_html():
     return f"""<footer class="site">
   <div class="foot-grid">
     <div class="foot-brand">
-      <a class="brand brand-stack" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO_STACK}</a>
+      <a class="brand brand-stack" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO_STACK}</a>
       <p class="foot-tag">Bespoke stone worktops, templated, fitted and guaranteed by one team.</p>
       <span class="foot-stars"><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 &middot; Google reviews</span>
     </div>
@@ -373,7 +374,7 @@ def footer_html():
     </div>
   </div>
   <div class="foot-bar">
-    <span>&copy; 2026 TopCat Worktops Ltd. All rights reserved.</span>
+    <span>&copy; 2026 Topcat Worktops Ltd. All rights reserved.</span>
     <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
   </div>
 </footer>"""
@@ -390,7 +391,7 @@ def head(title, desc, url, extra=""):
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:site_name" content="TopCat Worktops">
+<meta property="og:site_name" content="Topcat Worktops">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -403,7 +404,7 @@ def head(title, desc, url, extra=""):
 
 def business_ld():
     return {
-        "@type": "LocalBusiness", "@id": f"{BASE}/#business", "name": "TopCat Worktops",
+        "@type": "LocalBusiness", "@id": f"{BASE}/#business", "name": "Topcat Worktops",
         "url": BASE, "telephone": PHONE_DISPLAY, "email": EMAIL, "priceRange": "££",
         "areaServed": AREAS_SERVED,
         "openingHoursSpecification": [{
@@ -589,7 +590,7 @@ def tile(s):
 # replayed from another page (§7). ⚠️ It was real, and it was on this page.
 def collection_page():
     url = f"{BASE}/stones/"
-    title = "The Stone Collection | Marble, Quartz & Granite Worktops | TopCat Worktops"
+    title = "The Stone Collection | Marble, Quartz & Granite Worktops | Topcat Worktops"
     desc = ("Browse every stone we fit, marble, quartz and granite worktops across London, "
             "Hertfordshire, Essex and Berkshire. Search by name, filter by material, then "
             "open any stone for the detail and an estimate. Free home visit with samples.")
@@ -898,7 +899,7 @@ document.addEventListener('DOMContentLoaded',function(){
 # convert more clients."
 #
 # ⭐ IT IS ONE PAGE READING THE QUERY STRING, NOT 132x132 PAGES. `/stones/compare.html?s=a,b,c`
-# — so a comparison is a LINK. That is the half of this feature with a business case: TopCat
+# — so a comparison is a LINK. That is the half of this feature with a business case: Topcat
 # have no showroom (§2), so the one thing a showroom does that this site could not is hold two
 # samples side by side, and now Nick can send that view to a customer in a text message.
 #
@@ -1122,7 +1123,7 @@ def compare_datum(s):
         "tone": s["tone"].capitalize(), "vein": s["vein"].capitalize(),
         "care": facts.get("care", ""), "wear": facts.get("wear", ""),
         "size": f"{m.group(1)} × {m.group(2)} mm" if m else "",
-        # ⛔ THE SAME ON ALL 132 BY DESIGN, and it is the honest answer — TopCat supply two
+        # ⛔ THE SAME ON ALL 132 BY DESIGN, and it is the honest answer — Topcat supply two
         # thicknesses for every stone in the range, so this is what the customer will be sold.
         # The per-slab figure from the supplier's yard is NOT this and must not go back (see
         # slab_facts). It will therefore never mark as a difference, which is correct.
@@ -1143,7 +1144,7 @@ def compare_datum(s):
 
 def compare_page():
     url = f"{BASE}/stones/compare.html"
-    title = "Compare Stones Side by Side | TopCat Worktops"
+    title = "Compare Stones Side by Side | Topcat Worktops"
     desc = ("Put any of our marble, quartz and granite worktops side by side and compare the "
             "stone, finish, colour, pattern and care at a glance. Then ask us for samples of "
             "the ones you like, brought to your home across " + AREA + ".")
@@ -1305,11 +1306,11 @@ def shown_mat(s):
     That doesn't make any sense to me." He is right — a customer reads both on one screen.
 
     ⚠️ THE FIX IS TO THE WORDS, NOT THE CATEGORY. `s['mat']` is untouched, so the estimator, the
-    filters, the wheel and the POA behaviour are all exactly as TopCat set them, and no price
+    filters, the wheel and the POA behaviour are all exactly as Topcat set them, and no price
     moves. Only the visible noun changes, to the true one.
     ⛔ Do NOT "tidy" this by adding a Quartzite entry to MATS in index.html. It would be a fourth
-    material tab and a fourth range on a site TopCat present as quartz, marble and granite, and
-    that is a decision for TopCat, not a code change. It is in the handover as an open question.
+    material tab and a fourth range on a site Topcat present as quartz, marble and granite, and
+    that is a decision for Topcat, not a code change. It is in the handover as an open question.
 
     26 of the 27 are quartzites, one is a travertine.
 
@@ -1471,7 +1472,7 @@ def slab_facts(s):
     # 59 of the 115 had no thickness at all, because the supplier's stock system only publishes
     # a figure for the slabs it happens to be holding.
     # ⚠️ The old row was the WRONG FACT anyway. It printed the thickness of one physical slab in
-    # the supplier's yard, which is not what the customer will be sold. TopCat's own estimator
+    # the supplier's yard, which is not what the customer will be sold. Topcat's own estimator
     # offers exactly two thicknesses for every stone in the range (`THICK=[20,30]` in
     # index.html), so that is the honest answer and it is the same on all 115 pages.
     # ⛔ Do not put the per-slab figure back. If a specific thickness ever needs stating, it
@@ -1487,7 +1488,7 @@ def slab_facts(s):
 def stone_page(s):
     url = f"{BASE}/stones/{s['slug']}.html"
     tm = titled_mat(s)
-    title = " ".join(x for x in (s["name"], tm, "Worktops") if x) + " | TopCat Worktops"
+    title = " ".join(x for x in (s["name"], tm, "Worktops") if x) + " | Topcat Worktops"
     desc = (f"{' '.join(x for x in (s['name'], tm.lower()) if x)} worktops, templated, fitted "
             f"and guaranteed by one team across {AREA}. {stone_desc(s).split('.')[0]}. Free home "
             f"visit, fixed itemised quote and a ten-year guarantee.")

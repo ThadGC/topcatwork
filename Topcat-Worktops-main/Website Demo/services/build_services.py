@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Generates the TopCat Worktops V1 service pages (/services/*.html) from shared
+Generates the Topcat Worktops V1 service pages (/services/*.html) from shared
 templates + the per-service copy below. Run from inside this folder:
 
     python3 build_services.py
 
-House rules honoured: ⛔ fabrication is OUTSOURCED and the site must never claim otherwise
-(reversed 7 Aug 2026). TopCat advise, template, place the cut with long-standing
-fabrication partners, fit, and carry the guarantee. No showroom, no founding year,
-value not cheap, 5.0 on Google
+House rules honoured: ⛔ fabrication is IN-HOUSE (client, 14 Aug 2026, reversing his own
+7 Aug 2026 decision that it was outsourced). Topcat advise, template BY HAND — never
+"laser" anything — cut and polish with their own experienced fabricators, fit, and carry
+the guarantee. No showroom of our own, though slabs may be chosen at the distributor's
+warehouse. No founding year, value not cheap, 5.0 on Google
 with no review count and no aggregateRating in schema, service area = London,
-Hertfordshire, Essex & Berkshire. British English, no em dashes, no exclamation
-marks, plain confident voice.
+Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.
+British English, no em dashes, no exclamation marks, plain confident voice.
 """
 import html, json, pathlib
 
@@ -24,8 +25,9 @@ PHONE_DISPLAY = "0800 098 2812"
 PHONE_TEL = "+448000982812"
 EMAIL = "info@topcatworktops.co.uk"
 HOURS = "Monday to Friday, 8am to 6pm"
-AREA = "London, Hertfordshire, Essex & Berkshire"
-AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire"]
+AREA = "London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire"
+AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire", "Buckinghamshire",
+                "Surrey", "Oxfordshire", "Bedfordshire"]
 
 # ⭐ THE REAL LOGO — the client's own artwork, supplied 10 Aug 2026, living in
 # /assets/brand/. It replaces a hand-rebuilt approximation of the mark that sat beside a
@@ -60,7 +62,7 @@ NAV_LINKS = [
 ]
 
 WHY = [
-    ("One accountable team", "One contract and one contact. We template it, place the cut, fit it and carry the guarantee, so nobody is ever passing you between trades."),
+    ("One accountable team", "One contract and one contact. We template it, cut it, fit it and carry the guarantee, so nobody is ever passing you between trades."),
     ("Fixed, itemised pricing", "The quote you approve is the price you pay, with templating, edges and fitting all costed up front and every cut-out included free of charge."),
     ("Vein-matched by hand", "Slabs are laid out and matched before a single cut, so joints and waterfall edges run continuous."),
     ("Fitted in days", "Most kitchens are templated and installed within days of your slab being approved."),
@@ -82,7 +84,7 @@ TOWNS = ("St Albans, Harpenden, Watford, Hemel Hempstead, Welwyn Garden City, He
 SERVICES = [
   dict(
     slug="kitchen-worktops", eyebrow="Bespoke Worktops", h1="Kitchen Worktops",
-    title="Kitchen Worktops in London, Hertfordshire, Essex & Berkshire | TopCat Worktops",
+    title="Kitchen Worktops in London, Hertfordshire, Essex & Berkshire | Topcat Worktops",
     metadesc="Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
     lede="Quartz, granite and marble kitchen worktops, chosen from the slab you approve, cut to your kitchen and fitted by the same team that measured it. Free home visit, fixed pricing and a ten-year guarantee.",
     intro=[
@@ -99,12 +101,12 @@ SERVICES = [
       ("How much do kitchen worktops cost?", "Price depends on the stone, the size of the kitchen and the detail involved, such as waterfall ends or cut-outs. We give you a fixed, itemised quote after a free home visit, and the number we quote is the number you pay. We lead on value and finish rather than the lowest headline price."),
       ("Which stone is best for a kitchen worktop?", "Quartz is hard-wearing and low-maintenance, granite is heat and scratch resistant, and marble gives a softer, natural look that suits some kitchens beautifully. We talk you through how each behaves in daily use and help you pick the one that fits your kitchen, not the one that is easiest to sell."),
       ("How long does it take to fit a kitchen worktop?", "Most kitchens are templated once the units are level and fitted within days of the slab being approved. We confirm every date in writing so you can plan the rest of the work around it."),
-      ("Do you template and fit the worktops yourselves?", "Yes. Templating and fitting are both ours. The cutting is done by fabrication workshops we have used for years, and managing them is our job, so there is one point of contact looks after your project from start to finish."),
+      ("Do you template and fit the worktops yourselves?", "Yes. Templating, cutting and fitting are all ours, so one point of contact looks after your project from start to finish."),
     ],
   ),
   dict(
     slug="kitchen-islands", eyebrow="Kitchen Islands", h1="Kitchen Islands & Waterfall Ends",
-    title="Kitchen Island Worktops & Waterfall Ends | TopCat Worktops",
+    title="Kitchen Island Worktops & Waterfall Ends | Topcat Worktops",
     metadesc="Stone kitchen islands with mitred waterfall ends, vein-matched around every corner and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
     lede="The island is the centre of the kitchen, so it earns a little more attention. We build islands with mitred waterfall ends that fold the stone to the floor, with the veining planned around every corner.",
     intro=[
@@ -126,7 +128,7 @@ SERVICES = [
   ),
   dict(
     slug="splashbacks", eyebrow="Splashbacks", h1="Stone Splashbacks & Upstands",
-    title="Stone Splashbacks & Upstands | Quartz, Granite & Marble | TopCat Worktops",
+    title="Stone Splashbacks & Upstands | Quartz, Granite & Marble | Topcat Worktops",
     metadesc="Vein-matched stone splashbacks and upstands cut to fit around sockets and hobs, with no grout lines. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
     lede="Carry the same stone up the wall for a clean, vein-matched finish behind the hob and along the run. No grout lines to scrub and no visual break between the worktop and the wall.",
     intro=[
@@ -148,7 +150,7 @@ SERVICES = [
   ),
   dict(
     slug="bathroom-worktops", eyebrow="Bathrooms", h1="Bathroom Worktops & Vanity Tops",
-    title="Bathroom Worktops & Vanity Tops in Stone | TopCat Worktops",
+    title="Bathroom Worktops & Vanity Tops in Stone | Topcat Worktops",
     metadesc="Stone vanity tops, shower surrounds and bathroom worktops that shrug off water and daily wear, matched to your tiles and fitted to the millimetre. Serving London, Hertfordshire, Essex and Berkshire.",
     lede="Vanity tops, shower surrounds and bathroom surfaces in stone that handles water and daily wear without fuss. Cut with undermount or countertop basins in mind and matched to your tiles.",
     intro=[
@@ -170,7 +172,7 @@ SERVICES = [
   ),
   dict(
     slug="commercial-worktops", eyebrow="Commercial", h1="Commercial Stone Surfaces",
-    title="Commercial Worktops & Stone Surfaces | TopCat Worktops",
+    title="Commercial Worktops & Stone Surfaces | Topcat Worktops",
     metadesc="Hard-wearing stone worktops and surfaces for offices, bars, restaurants and shops, fitted to your programme by one team from template to install. Serving London, Hertfordshire, Essex and Berkshire.",
     lede="Reception desks, counters, tables and washroom surfaces for offices, bars, restaurants and shops. Hard-wearing stone, fitted to your programme by one team from template to install.",
     intro=[
@@ -192,7 +194,7 @@ SERVICES = [
   ),
   dict(
     slug="outdoor-kitchens", eyebrow="Outdoor Kitchens", h1="Outdoor Kitchen Worktops",
-    title="Outdoor Kitchen Worktops in Stone | TopCat Worktops",
+    title="Outdoor Kitchen Worktops in Stone | Topcat Worktops",
     metadesc="Weatherproof stone worktops for garden kitchens and barbecue runs, chosen to hold colour outdoors and cut around sinks, hobs and appliances. Serving London, Hertfordshire, Essex and Berkshire.",
     lede="Weatherproof stone for garden kitchens and barbecue runs, chosen to hold its colour outdoors and cut to fit around sinks, hobs and built-in appliances.",
     intro=[
@@ -233,7 +235,7 @@ def e(s):
 def nav_html():
     links = "".join(f'<a href="{h}">{e(t)}</a>' for h, t in NAV_LINKS)
     return f"""<header class="bar">
-  <a class="brand" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO}</a>
+  <a class="brand" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO}</a>
   <nav class="top">{links}</nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
@@ -243,7 +245,7 @@ def footer_html():
     return f"""<footer class="site">
   <div class="foot-grid">
     <div class="foot-brand">
-      <a class="brand brand-stack" href="/index.html#hero" aria-label="TopCat Worktops home">{BRAND_LOGO_STACK}</a>
+      <a class="brand brand-stack" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO_STACK}</a>
       <p class="foot-tag">Bespoke stone worktops, templated, fitted and guaranteed by one team.</p>
       <span class="foot-stars"><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 &middot; Google reviews</span>
     </div>
@@ -276,7 +278,7 @@ def footer_html():
     </div>
   </div>
   <div class="foot-bar">
-    <span>&copy; 2026 TopCat Worktops Ltd. All rights reserved.</span>
+    <span>&copy; 2026 Topcat Worktops Ltd. All rights reserved.</span>
     <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
   </div>
 </footer>"""
@@ -296,7 +298,7 @@ REVEAL_JS = ("<script>document.addEventListener('DOMContentLoaded',function(){"
 def jsonld(s):
     url = f"{BASE}/services/{s['slug']}.html"
     business = {
-        "@type": "LocalBusiness", "@id": f"{BASE}/#business", "name": "TopCat Worktops",
+        "@type": "LocalBusiness", "@id": f"{BASE}/#business", "name": "Topcat Worktops",
         "url": BASE, "telephone": PHONE_DISPLAY, "email": EMAIL, "priceRange": "££",
         "areaServed": AREAS_SERVED,
         "openingHoursSpecification": [{
@@ -307,7 +309,7 @@ def jsonld(s):
     graph = [
         {"@type": "Service", "name": s["h1"], "serviceType": s["h1"],
          "description": s["metadesc"], "url": url,
-         "provider": {"@type": "LocalBusiness", "name": "TopCat Worktops", "@id": f"{BASE}/#business"},
+         "provider": {"@type": "LocalBusiness", "name": "Topcat Worktops", "@id": f"{BASE}/#business"},
          "areaServed": AREAS_SERVED},
         {"@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{BASE}/index.html"},
@@ -360,7 +362,7 @@ def page(s):
 <meta property="og:title" content="{e(s['title'])}">
 <meta property="og:description" content="{e(s['metadesc'])}">
 <meta property="og:url" content="{url}">
-<meta property="og:site_name" content="TopCat Worktops">
+<meta property="og:site_name" content="Topcat Worktops">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -423,7 +425,7 @@ def page(s):
   </div></section>
 
   <section class="block"><div class="wrap rise">
-    <h2>Why TopCat</h2>
+    <h2>Why Topcat</h2>
     <ul class="ticks">{why}</ul>
   </div></section>
 

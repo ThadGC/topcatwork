@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""THE MIRROR RANGE, added 11 Aug 2026 on the client's instruction. TopCat's best sellers.
+"""THE MIRROR RANGE, added 11 Aug 2026 on the client's instruction. Topcat's best sellers.
 
-⭐ THE CLIENT, straight out of a meeting with TopCat: "there are three stones we have to add to
+⭐ THE CLIENT, straight out of a meeting with Topcat: "there are three stones we have to add to
 quartz as they are the best sellers — mirror grey, mirror black and mirror white. Those are the
 most popular slabs and they have to be inside the slab wheel." He then sent the rest of the range
 and asked for all of it.

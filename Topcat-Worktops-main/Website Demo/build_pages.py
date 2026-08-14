@@ -201,10 +201,15 @@ TRADE_WHAT_SECTION = """  <section class="section" id="tradeWhat">
     <div class="section-head rise">
       <span class="eyebrow">What you get from us</span>
       <h2 class="section-title">One trade off your <em>critical path</em></h2>
-      <p class="section-sub">Most of the trade problems we get called about are not stone problems,
-        they are diary problems. A supplier who templated too early, a fitter who did not arrive, a
-        joint that did not match the sample the client signed off. Each one lands on you rather
-        than on them.</p>
+      <p class="section-sub">Most of the problems we get called in to solve are not stone problems,
+        they are coordination problems. A supplier who templated too early. A fitter who did not
+        turn up. A joint that does not match the sample the client signed off.</p>
+      <p class="section-sub">When those things go wrong, the problem usually lands on you, on your
+        programme, your client and your reputation. That is exactly what we are here to prevent.
+        With Topcat, we manage the process from advice and templating through to fabrication and
+        installation, keeping the responsibility with us rather than passing it down the line.</p>
+      <p class="section-sub"><b>One team. One point of contact. One less thing on your critical
+        path.</b></p>
     </div>
     <div class="trade-grid">
 {cards}
@@ -231,8 +236,8 @@ TRADE_CTA_SECTION = """  <section id="tradeCta">
       <div class="cta-copy">
         <h2 class="cta-title">Open a <em>trade account</em></h2>
         <p class="cta-line">Tell us what you are working on and we will come back with terms, lead
-          times and a single point of contact. One job or forty plots, the answer comes from a
-          person who will still be on it at the fit.</p>
+          times and a single point of contact. One worktop or a 150 unit build, a dedicated
+          project manager who can be on site from templating to fit.</p>
         <div class="cta-reach">
           <div class="cta-or">Or reach us directly</div>
           <ul class="cta-lines">
@@ -305,7 +310,7 @@ CUSTOM = {
 PAGES = [
     dict(
         slug="services",
-        title="Worktop Services | Kitchens, Islands, Splashbacks &amp; More | TopCat Worktops",
+        title="Worktop Services | Kitchens, Islands, Splashbacks &amp; More | Topcat Worktops",
         desc="Kitchen worktops, islands, splashbacks, bathrooms, commercial surfaces and outdoor "
              "kitchens in quartz, granite and marble. Templated and fitted by our own team across "
              "London and the Home Counties.",
@@ -316,7 +321,7 @@ PAGES = [
     ),
     dict(
         slug="projects",
-        title="Our Projects | Kitchen Worktop Installations | TopCat Worktops",
+        title="Our Projects | Kitchen Worktop Installations | Topcat Worktops",
         desc="Recent worktop projects across London, Hertfordshire, Essex and Berkshire. See the "
              "stone, the space and how each one was templated and fitted.",
         crumb="Projects",
@@ -326,7 +331,7 @@ PAGES = [
     ),
     dict(
         slug="estimate",
-        title="Worktop Cost Estimator | Quartz, Granite &amp; Marble | TopCat Worktops",
+        title="Worktop Cost Estimator | Quartz, Granite &amp; Marble | Topcat Worktops",
         desc="Type in your sizes and see them laid out on real slabs. An honest range for quartz "
              "worktops in seconds, with your exact price after a free home visit.",
         crumb="Estimate",
@@ -336,7 +341,7 @@ PAGES = [
     ),
     dict(
         slug="about",
-        title="About TopCat Worktops | One Contract, One Contact | TopCat Worktops",
+        title="About Topcat Worktops | One Contract, One Contact | Topcat Worktops",
         desc="Who we are and how we work. One team from the first measurement to the last seal, "
              "with a ten year guarantee behind it.",
         crumb="About us",
@@ -346,7 +351,7 @@ PAGES = [
     ),
     dict(
         slug="contact",
-        title="Contact TopCat Worktops | Free Home Visit &amp; Quote | TopCat Worktops",
+        title="Contact Topcat Worktops | Free Home Visit &amp; Quote | Topcat Worktops",
         desc="Tell us about your project and we will come to you. Free home visit, samples "
              "brought to your kitchen, and a quote with no pressure behind it.",
         crumb="Contact",
@@ -356,13 +361,15 @@ PAGES = [
     ),
     dict(
         slug="trade",
-        title="Trade Worktops | Supply &amp; Fit for Designers and Developers | TopCat Worktops",
-        desc="Stone worktops supplied and fitted for kitchen designers, builders, developers and "
-             "architects. Dates confirmed in writing, one contact from template to fit, and a ten "
-             "year guarantee on every install.",
+        title="Trade Worktops | Supply &amp; Fit for Designers and Developers | Topcat Worktops",
+        desc="Stone worktops supplied and fitted for kitchen designers, builders, building "
+             "contractors, developers and architects. Dates confirmed in writing, one contact "
+             "from template to fit, and a ten year guarantee on every install.",
         crumb="Trade",
         h1="Trade",
-        lead="Stone worktops supplied and fitted for kitchen designers, builders, developers and architects. We template, place the cut, fit and carry the guarantee, work to your programme, and turn up on the date we agreed.",
+        # ⭐ the client's own rewrite, 14 Aug 2026: "building contractors" added to the list, and
+        # "we can deal with your customer directly" is the line he wanted leading the offer.
+        lead="Stone worktops supplied and fitted for kitchen designers, builders, building contractors, developers and architects. We can deal with your customer directly, template, fabricate, fit and carry the guarantee, work to your programme, and turn up on the date we agreed.",
         stack=["c_tradeWhat", "c_tradeWho", "s_reviews", "s_process", "c_tradeCta"],
     ),
 ]
@@ -383,7 +390,7 @@ HEAD = """<!DOCTYPE html>
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:url" content="https://www.topcatworktops.co.uk/{slug}/">
-<meta property="og:site_name" content="TopCat Worktops">
+<meta property="og:site_name" content="Topcat Worktops">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">

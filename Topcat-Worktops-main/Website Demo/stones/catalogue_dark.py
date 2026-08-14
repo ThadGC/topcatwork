@@ -9,14 +9,14 @@ generator has no reason to go, the same reasoning that moved the copy out to des
 there no dark quartz stones… I think we should have more options, right, if there are dark ones
 available", then "some of them have to be black with veining as well… the most popular darker
 options". He was right, and the first answer given to him was wrong in scope: the search had been
-limited to the two suppliers TopCat already buy from, because LICENSING.md and D45 put the rest
+limited to the two suppliers Topcat already buy from, because LICENSING.md and D45 put the rest
 on "ask first". He then sent the full supplier list himself and instructed that they be used.
 
 Before: 48 of 50 quartz were light, 2 dark, and NO black quartz at all.
 After:  66 quartz, 18 dark, of which 6 are black and 4 of those carry veining.
 
 ⚠️ LICENSING, AND IT IS NOT CLOSED. Caesarstone and CRL Stone are on LICENSING.md's "ask first"
-list because TopCat's photography is defensible when TopCat BUY from the source (D45). The client
+list because Topcat's photography is defensible when Topcat BUY from the source (D45). The client
 instructed this directly and supplied the links, so it proceeds — but ⛔ **confirm the accounts or
 get written permission before go-live**, because this is the one thing here that is a business
 risk rather than a code risk. The supplier is never named publicly either way (D8).
@@ -34,7 +34,7 @@ harvest run, not a research problem.
 
 # tone / hue / vein are MEASURED off the shipping tile by harvest/derive.py, never typed by hand,
 # so the filter always agrees with the photograph (D58). `size` and `thick` are deliberately
-# absent: engineered quartz slab sizes vary by maker and D64 settled thickness as what TopCat
+# absent: engineered quartz slab sizes vary by maker and D64 settled thickness as what Topcat
 # supply, which build_stones fills in.
 S_DARK = [
     dict(name="Vanilla Noir", slug="vanilla-noir", mat="Quartz", sup="Caesarstone",

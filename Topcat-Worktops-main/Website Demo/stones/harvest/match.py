@@ -113,7 +113,7 @@ ALIAS = {
     # sheet and looked at before it was written down — the tile stem differs only by the
     # supplier's own filing habit, not by the stone.
     # ⛔ "carrara-shimmer": "carrara-shimmer-2-of-4" REMOVED — that is NEXT'S Carrara Shimmer
-    # and TopCat buy theirs from Nile. Two makers, one marketing name, two different products;
+    # and Topcat buy theirs from Nile. Two makers, one marketing name, two different products;
     # the Next frame is a beige banded stone, nothing like "the fine grey grain of Carrara".
     "sabbia-beige": "ns-sabbia-beige",                        # "ns-" is Next Stone's file prefix
     # ⛔ WAS "misterio-gold": "misterio-gold-2" — REMOVED 10 Aug. Both files are the SAME
@@ -224,7 +224,7 @@ def main():
             tile, how = by_norm[norm(name)], "exact"
         elif core(name) in by_core:
             # ⭐ Same stone, different slab wording. Where the stock system offers the stone in
-            # several finishes, take the one the CATALOGUE says TopCat sell — showing a honed
+            # several finishes, take the one the CATALOGUE says Topcat sell — showing a honed
             # slab for a stone sold polished is a small lie that a customer would spot in person.
             cands = sorted(by_core[core(name)])
             pick = next((c for c in cands if want_finish and want_finish in norm(c)), None)
@@ -292,7 +292,7 @@ def main():
         json.dump(manifest, f, indent=1, sort_keys=True)
 
     # ⚠️ slabify writes a tile for EVERY image it can crop, which is far more than the catalogue
-    # uses — 161 tiles for 47 stones, because the suppliers stock plenty TopCat do not list. The
+    # uses — 161 tiles for 47 stones, because the suppliers stock plenty Topcat do not list. The
     # extras are wanted on disk (the expanded range will match against them) but they are 19MB
     # of files no page ever requests, sitting inside assets/ where a deploy would sweep them up.
     # --prune leaves only what the manifest actually points at. Re-run slabify to get them back.

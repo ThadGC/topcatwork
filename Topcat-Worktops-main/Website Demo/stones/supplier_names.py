@@ -2,7 +2,7 @@
 """THE SUPPLIER'S OWN PRODUCT TITLE, where it differs from the name we publish.
 
 ⛔ WHY THIS FILE EXISTS. Client, 10 Aug 2026: "if someone chooses this one by this name and
-TopCat somehow shows up at the house with a wrong looking slab because the name and the slab
+Topcat somehow shows up at the house with a wrong looking slab because the name and the slab
 didn't look correct, then we are fucked."
 
 Four stones are spelled correctly on this site and INCORRECTLY in the supplier's catalogue.
