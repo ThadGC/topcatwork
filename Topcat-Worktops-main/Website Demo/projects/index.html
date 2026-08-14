@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=baf94db7db">
+<link rel="stylesheet" href="/assets/site.css?v=57d78c3fd7">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -72,12 +72,16 @@
            to rest on it, and a keyboard user has no signal at all. -->
       <a href="/services/">Services<span class="nav-caret" aria-hidden="true"><svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></a>
       <div class="nav-menu" role="group" aria-label="Services">
-        <a href="/services/kitchen-worktops.html">Bespoke worktops</a>
+        <!-- ⚠️ THE CLIENT'S ORDER (D206), FOR THE ONES THAT HAVE A PAGE. This panel lists PAGES,
+             not the range: Fireplaces and Dining Tables are on his list but have no page yet, so
+             they are not here, and Kitchen Islands is NOT on his list but its page is still live
+             so it stays reachable. Sat under Kitchen Worktops because it is the same room. -->
+        <a href="/services/kitchen-worktops.html">Kitchen worktops</a>
         <a href="/services/kitchen-islands.html">Kitchen islands</a>
         <a href="/services/splashbacks.html">Splashbacks</a>
         <a href="/services/bathroom-worktops.html">Bathrooms</a>
+        <a href="/services/outdoor-kitchens.html">Outdoor spaces</a>
         <a href="/services/commercial-worktops.html">Commercial</a>
-        <a href="/services/outdoor-kitchens.html">Outdoor kitchens</a>
         <span class="nav-menu-sep" aria-hidden="true"></span>
         <a class="nav-menu-all" href="/services/">All services</a>
       </div>
@@ -122,12 +126,15 @@
     </button>
   </div>
   <div class="mn-sub" id="mnSubServices">
-    <a href="/services/kitchen-worktops.html">Bespoke worktops</a>
+    <!-- ⚠️ KEPT IN STEP WITH THE DESKTOP PANEL BY HAND (D206/D207). Two lists of the same links
+         is exactly the shape that drifts, and a menu that disagrees with the page it opens is
+         the failure §2 rule 13 is about. Same names, same order, both families. -->
+    <a href="/services/kitchen-worktops.html">Kitchen worktops</a>
     <a href="/services/kitchen-islands.html">Kitchen islands</a>
     <a href="/services/splashbacks.html">Splashbacks</a>
     <a href="/services/bathroom-worktops.html">Bathrooms</a>
+    <a href="/services/outdoor-kitchens.html">Outdoor spaces</a>
     <a href="/services/commercial-worktops.html">Commercial</a>
-    <a href="/services/outdoor-kitchens.html">Outdoor kitchens</a>
   </div>
   <a href="/projects/">Projects</a>
   <div class="mn-group">
@@ -568,6 +575,20 @@
         <div class="foot-k">Contact</div>
         <div class="foot-c-phone"><span class="foot-ck">Phone</span><a class="foot-cv" href="tel:+448000982812">0800 098 2812</a></div>
         <div class="foot-c-email"><span class="foot-ck">Email</span><a class="foot-cv" href="mailto:info@topcatworktops.co.uk">info@topcatworktops.co.uk</a></div>
+        <!-- ⭐ THE WHATSAPP NUMBER, WRITTEN OUT — 14 Aug 2026 (D207). Client: *"add WhatsApp to the
+             footer or the bottom icon so that they can still text WhatsApp if they have WhatsApp.
+             I can see it's in the photo already, but we should have the WhatsApp number displayed
+             as well."* The glyph in `.foot-social` and the floating button were both silent about
+             WHICH number they open, so a customer who wanted to save it or type it into their own
+             phone had nowhere to read it.
+             ⛔ **IT SITS ABOVE AREA AND HOURS, AND THAT ORDER IS LOAD-BEARING.** The D200 footer
+             IIFE moves those two to `.foot-tail` on the tablet and restores them with
+             `appendChild`, which only puts them back correctly while they are the LAST TWO
+             children of `.foot-contact`. Anything new goes above them, never below.
+             ⚠️ Displayed in the national form a British customer would dial and save, `07464
+             940287`, while the href keeps the international `447464940287` that `wa.me` requires
+             — same number, and the only format that link accepts (D173). -->
+        <div class="foot-c-wa"><span class="foot-ck">WhatsApp</span><a class="foot-cv" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer">07464 940287</a></div>
         <div class="foot-c-area"><span class="foot-ck">Area</span><span class="foot-cv">London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire &amp; Bedfordshire, plus nationwide templating</span></div>
         <div class="foot-c-hours"><span class="foot-ck">Hours</span><span class="foot-cv">Monday to Friday, 8am to 6pm</span></div>
       </div>
