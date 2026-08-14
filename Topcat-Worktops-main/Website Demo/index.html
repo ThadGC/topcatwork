@@ -3547,7 +3547,32 @@
     transform:scale(1.14);transition:transform 3s var(--ease-slow);will-change:transform;
   }
   .hero.loaded .hero-bg img{transform:scale(1.08)}
+  /* ⭐⭐⭐ **THE CENTRED SCRIM — 14 August 2026 (D238), AND IT IS THE COST OF CENTRING THE COPY.**
+     ⛔⛔ **THE BIG SHADE LAYER IS A LEFT-TO-RIGHT RAMP — 0.94 at the left edge, 0.06 at 74% — AND IT
+     WAS AIMED AT A COMPOSITION THAT NO LONGER EXISTS.** It was built when the words sat left and the
+     photograph right. Centred, the headline runs straight across the three lit pendants, which are
+     the brightest thing in the picture, and the veil there is only **0.19**.
+     ⚠️⚠️ **MEASURED, NOT GUESSED, BY SAMPLING THE PHOTOGRAPH ITSELF** (D232's method: the image drawn
+     to a canvas at its own rendered `cover` scale and offset, every 4px through each line's band,
+     composited under all four shade layers). At 1440×900 the worst pixel behind the headline came
+     out **rgb(149,133,128)** — white on it is **2.45:1** and the gold word **1.52:1**. Both fail, and
+     the gold badly. The old left-aligned composition never saw this because the words were over the
+     ramp's opaque end.
+     ⛔ **A FLAT WASH IS THE OBVIOUS FIX AND IT IS THE ONE D217 TRIED AND REVERTED**: at 0.42 the
+     gold still only reaches 3.36 (2.93 at the gradient's dark stop) and the whole photograph goes
+     down with it — "it fixes the text by flattening the photograph, and on this site the photograph
+     IS the product". ⭐ **A SCRIM UNDER THE COPY DOES THE SAME JOB WHERE THE WORDS ARE AND NOWHERE
+     ELSE**: zero at the edges, so the island's far end and the right-hand cabinetry keep their
+     light. **White 6.29:1, gold 3.90:1, the gold gradient's darkest stop 3.40:1, the trust line
+     8.31:1** — all above threshold, and the peak veil behind the letters is 0.59.
+     ⚠️ **IT IS A VARIABLE SO THE FROZEN BANDS CAN SWITCH IT OFF**: the phone and the tablet carry
+     D187's flat `background-color` wash instead, which the client asked for and signed off, and
+     ⛔ two veils on one photograph would be a third of a stop darker than anything he has seen.
+     The ≤1120 block sets both stops to 0. */
+  .hero{--heroScrimA:0.58;--heroScrimB:0.30}
   .hero-shade{position:absolute;inset:0;z-index:1;background:
+    radial-gradient(66% 62% at 50% 42%, rgba(7,7,9,var(--heroScrimA)) 0%,
+      rgba(7,7,9,var(--heroScrimB)) 62%, rgba(7,7,9,0) 100%),
     radial-gradient(280px 220px at 96% 93%, rgba(7,7,9,0.92), transparent 72%),
     linear-gradient(90deg,rgba(7,7,9,0.94) 0%,rgba(7,7,9,0.74) 26%,rgba(7,7,9,0.3) 52%,rgba(7,7,9,0.06) 74%,rgba(7,7,9,0.28) 100%),
     linear-gradient(to top,rgba(7,7,9,0.9) 2%,rgba(7,7,9,0) 32%),
@@ -3578,35 +3603,74 @@
        ⚠️ These are the DESKTOP numbers in practice: the phone block and the tablet block each set
        both paddings themselves, so neither inherits this. Checked after, not assumed. */
     padding:clamp(64px,15.6vh,168px) clamp(20px,5vw,64px) clamp(72px,10.8vh,132px)}
-  /* Widened from a flat 600px on 6 Aug. 600 was costing three things at once: the H1 broke to
-     THREE lines at 1440 ("Surfaces worth / building / around"), the one-liner wrapped, and the
-     three facts had ~150px of label each so every one of them wrapped too. It tracks vw rather
-     than sitting at 720 flat because the copy has to stay inside the dark half of the photo —
-     the shade gradient is still fairly opaque at 52% and thins out fast after that. */
-  .hero-copy{max-width:clamp(560px,48vw,720px)}
+  /* ⭐⭐⭐ **THE HERO IS ONE CENTRED COMPOSITION AT EVERY WIDTH — 14 August 2026 (D238).**
+     Client: *"for the desktop version, remove the line next to the subtitle, and then center the
+     hero section design just like on the tablet and mobile version. So the title is going to be
+     bigger, then the subtitle, then the buttons, and then the four buttons will be spread out
+     better across just so that we take up the hero section."*
+     ⛔⛔ **THE CENTRING WAS FIVE DECLARATIONS INSIDE `@media(max-width:1120px)` AND THEY ARE LIFTED,
+     NOT COPIED** — `text-align`, the mask's symmetric padding, the trust line's alignment, the
+     button row's justification and the copy box's auto margins. Writing them again in a
+     `min-width:1121px` block would have made two live descriptions of one composition, which is
+     the D106/D113/D114 failure and the one D235 spent a round undoing.
+     ⭐ **THE COPY BOX WAS NEVER CENTRED, IT WAS LEFT-ALIGNED BY OMISSION**, and D199 found the same
+     thing on the tablet: `max-width` with no auto margins parks the box at x=0 while every child
+     centres neatly inside it, so the hero looks centred to itself and sits in the left of the
+     screen. `margin-inline:auto` is the whole fix, at both bands now.
+     ⚠️ **THE OLD WIDTH WAS A CONSTRAINT FROM THE OLD COMPOSITION**: `clamp(560px,48vw,720px)` kept
+     the copy "inside the dark half of the photo" because the words sat left and the photograph
+     right. Centred, that reasoning is spent — the words now cross the middle of the picture, which
+     is what the wash below is for — and 720px is too narrow to spread four bubbles across.
+     ⚠️ The phone is untouched by the new number: at 390 the inner box is 350px wide, so neither
+     560px nor `min(92vw,1040px)` ever binds. Verified, not assumed. */
+  .hero-copy{max-width:min(92vw,1040px);margin-inline:auto;text-align:center}
+  /* ⚠️ .hl is an `overflow:hidden` MASK for the line reveal and carried .08em of padding on the
+     RIGHT only, to keep the last glyph's overhang from being clipped. Left-aligned that is
+     invisible; centred it pushes the title half that distance off-centre. Symmetric now, so the
+     overhang is still protected on both sides and the centre is a true centre. (Lifted from the
+     ≤1120 block with the rest of the centring, D238.) */
+  .hero-title .hl{padding:0 .08em .1em}
   /* ⛔ The eyebrow rules went WITH the eyebrow (client, 6 Aug, second pass). The base .eyebrow
      class is still used by the brand strip, so do not delete that one. */
-  .hero-title{font-family:var(--serif);font-weight:400;font-size:clamp(38px,min(4.7vw,8.6vh),64px);
-    line-height:1.07;letter-spacing:0.01em;margin-bottom:clamp(14px,2.4vh,26px)}
+  /* ⭐⭐ **THE TYPE AND THE GAPS HERE ARE THE DESKTOP'S OWN NUMBERS.** The phone and the tablet
+     each set their own in their blocks, so the base rule is free to be the big centred one —
+     ⚠️ except the two the phone was INHERITING, which is the trap in this edit: the phone had no
+     title or subtitle size of its own and simply sat on this clamp's floor. **Both are written
+     explicitly into the ≤1120 block now**, unchanged to the character, or a bigger desktop
+     headline would have silently grown the frozen phone from 38px to 52.
+     ⭐ 6.2vw with a 10.6vh companion: the vh term is not decoration, it is what stops a 92px
+     headline pushing a centred composition through the fold on a short laptop window. At
+     1440×900 it renders **89.3px** against the old 64; at 1440×700 the vh term takes over at 74. */
+  /* ⚠️ **THE 72px FLOOR IS THE TABLET'S OWN CEILING, SO THE SEAM DOES NOT STEP DOWN.** The tablet
+     tops out at 72px (D200) and 6.2vw only reaches that at ~1161px, so without the floor the
+     headline would have got SMALLER crossing 1120 → 1121, which is the one thing a band boundary
+     must never look like. Checked at both sides of the seam. */
+  .hero-title{font-family:var(--serif);font-weight:400;font-size:clamp(72px,min(6.2vw,10.6vh),92px);
+    line-height:1.07;letter-spacing:0.01em;margin-bottom:clamp(20px,3.2vh,38px)}
   .hero-title em{font-style:normal;color:#C6A664;
     background:linear-gradient(180deg,#E4CD92 0%,#C6A664 62%,#BC9A54 100%);
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
-  /* The trust line. It is NOT a subhead any more — the client's note was that it has to "stand
-     out in a different way", and a slightly brighter grey would not have done it. A gold rule
-     down its left edge gives it its own beat between the headline and the reasons, in the same
-     hairline language the section dividers use.
-     ⚠️ The rule is a pseudo-element, NOT a `border-left`: a border draws the full box height
-     including line-box leading, so it overshoots the text by ~4px top and bottom and reads as a
-     misaligned bar. `top/bottom:.18em` trims it to the visual text instead.
-     ⚠️ NO `max-width` in ch, deliberately. A ch cap narrower than the column guarantees a wrap
-     and strands the last word on line two. The column is the only limit and the COPY is kept
-     short enough to sit inside it. Lengthen the sentence and it wraps — re-measure if you edit. */
-  .hero-sub{position:relative;padding-left:clamp(14px,1.25vw,19px);
-    color:rgba(244,241,234,0.9);font-size:clamp(14.5px,min(1.32vw,2.15vh),17.5px);
-    font-weight:300;line-height:1.58;margin-bottom:clamp(18px,3.1vh,34px)}
-  .hero-sub::before{content:"";position:absolute;left:0;top:.18em;bottom:.18em;width:2px;
-    border-radius:2px;background:linear-gradient(180deg,#E9D5A0,#C6A664 52%,rgba(198,166,100,0.12))}
+  /* ⛔⛔⛔ **THE GOLD RULE DOWN THE TRUST LINE'S LEFT EDGE IS DELETED — 14 August 2026 (D238).**
+     Client: *"for the desktop version, remove the line next to the subtitle."*
+     ⭐⭐ **DELETED, NOT HIDDEN, BECAUSE NO BAND WAS LEFT WEARING IT.** The phone and the tablet
+     already stood it down (`display:none` in the ≤1120 block) for the reason that has now caught
+     up with the desktop: **a LEFT-EDGE mark against CENTRED text strands itself at the far left of
+     the block and reads as a stray mark rather than as an accent.** With the desktop centred too,
+     a `display:none` would have been a third rule describing an element that renders at no width —
+     D234's scroll cue exactly. So the pseudo-element, its `position:relative` host and the
+     `padding-left` that made room for it are all gone, and the ≤1120 block's two lines went with
+     them. ⛔ Do NOT replace it with a short gold rule ABOVE the copy: that is the top-edge hairline
+     §2 rule 10 forbids, and it has been rejected twice.
+     ⚠️ The line still has to "stand out in a different way" (his note of 6 Aug, which is what the
+     rule was for). Centred, at 19.5px against a 92px headline, the composition does that work.
+     ⚠️ **THE ch MEASURE IS NEW AND IT IS LOAD-BEARING NOW.** There was deliberately none while the
+     copy box was 720px, because a ch cap narrower than the column strands the last word. The box is
+     1040px centred today, and a 19.5px line across all of it runs to ~118 characters — twice a
+     readable measure — so the cap is what keeps it to two honest lines. */
+  .hero-sub{color:rgba(244,241,234,0.9);font-size:clamp(16px,min(1.42vw,2.3vh),19.5px);
+    font-weight:300;line-height:1.58;margin-bottom:clamp(24px,3.8vh,44px);
+    max-width:56ch;margin-inline:auto}
   .hero-sub .nowrap{white-space:nowrap}
 
   /* ⛔⛔⛔ **THE THREE ICON FACTS ARE DELETED — 14 August 2026 (D237). THE HERO IS ONE COMPOSITION
@@ -3634,31 +3698,31 @@
      and the L is what makes the eye read a plan instead of an object. It is in the D169 and D237
      rows and in git, not in this file. */
 
-  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:clamp(20px,4vh,44px)}
-  /* ⭐⭐⭐ **THE FOUR BUBBLES ARE A 2×2 GRID AT EVERY WIDTH — 14 August 2026 (D237).**
-     Client, having pointed at the tablet: *"then you'll have the four buttons below, or the four
-     reasons to choose. And that's what you're going to have set up for the desktop version's hero
-     section."*
-     ⛔⛔ **THE MECHANISM IS AT BASE SCOPE AND ONLY THE NUMBERS LIVE IN THE BAND BLOCK** — D235's
-     rule, and the reason the curved edge is one description instead of three. Pasting the grid into
-     a `min-width:1121px` block would have made two live descriptions of one row.
-     ⭐⭐ **WHY A GRID AND NOT THE WRAPPED FLEX ROW THE DESKTOP HAD**: four content-sized pills wrap
-     3-then-1 in a 576px column and 4-across in a 691px one, so the row re-arranges itself somewhere
-     between 1121 and 1440 and no two edges line up in either arrangement. That is what D186 already
-     rejected on the phone — "it is what content-sized boxes DO, and no gap value fixes it". Two
-     equal columns give one shared left edge, one middle seam and one right edge at every width.
-     ⭐⭐ **480px IS THE TWO BUTTONS' OWN WIDTH, MEASURED, AND THAT IS WHY THE ROW STOPS THERE.**
-     Left-aligned copy gives the block a shared LEFT edge for free; the cap is what gives it the
-     right one, so the buttons and the bubbles read as one column rather than two loose objects.
-     ⚠️ **THE NUMBER IS A MEASUREMENT, NOT A GUESS: `Get your free quote` + 16px + `Request a call`
-     comes to 479.3px at 1200 AND at 1440**, because both labels are `nowrap` at a fixed desktop
-     type size, so the row does not move across the band. ⛔ Change either label and this cap has to
-     be re-measured — they are two descriptions of one edge, which is the trade for having the edge
-     at all. Sized to its content instead, the row landed 121px short of the buttons and read as
-     unfinished. ⚠️ The cap is lifted again in the ≤1120 block, where the copy is centred and the
-     grid is meant to span its column; `.page-head` keeps its own 520px cap either way. */
-  .hero-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:12px}
-  #hero .hero-chips{width:100%;max-width:480px}
+  /* ⭐ `justify-content:center` came out of the ≤1120 block with the rest of the centring (D238);
+     the margin is the desktop's own number and grew with the composition — the phone and the
+     tablet each set their own below. */
+  .hero-ctas{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
+    margin-bottom:clamp(26px,4.4vh,52px)}
+  /* ⭐⭐⭐ **THE FOUR BUBBLES ARE A GRID, AND THE DESKTOP SPREADS THEM ACROSS IN ONE ROW —
+     14 August 2026 (D238, taking over D237's 2×2).**
+     Client: *"the four buttons will be spread out better across just so that we take up the hero
+     section."* ⛔ **D237's 480px CAP IS REVERSED AND THE REASON IT EXISTED MUST SURVIVE THE
+     REVERSAL:** with the copy LEFT-aligned, the block shared its left edge with the buttons for
+     free and the cap was what gave it the right one, measured off those two buttons. Centred, the
+     block has both edges by construction and the cap only kept it small — he is asking for the
+     opposite, for the row to hold the width of the hero.
+     ⛔⛔ **THE GRID IS DECLARED ONCE AND THE COLUMN COUNT IS A NUMBER PER BAND** — `--chipCols`,
+     the `--navCurveR` idiom D235 settled on. Four across at desktop, two at ≤1120, and
+     `.page-head` keeps the default two because its own band is capped at 520px, where four would
+     leave 122px columns against a Google chip that needs 173.
+     ⭐⭐ **WHY A GRID AT ALL, STILL**: four content-sized pills wrap 3-then-1 in a 576px column and
+     4-across in a 691px one, so a flex row re-arranges itself inside the desktop band and no two
+     edges line up in either arrangement — D186's finding, "it is what content-sized boxes DO, and
+     no gap value fixes it". Equal columns give one shared left edge, even seams and one right edge
+     at every width. */
+  .hero-chips{display:grid;grid-template-columns:repeat(var(--chipCols,2),minmax(0,1fr));
+    align-items:stretch;gap:12px}
+  #hero .hero-chips{--chipCols:4;width:100%}
   .chip{
     display:inline-flex;align-items:center;gap:9px;padding:10px 17px;border-radius:999px;position:relative;
     border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
@@ -3820,25 +3884,22 @@
      the icon row. They were written that way for a range of handsets and they simply keep going up
      the tablet band. Measure before adding a tablet override — most of them are not needed. */
   @media(max-width:1120px){
-    /* --- everything centred --------------------------------------------------------- */
-    .hero-copy{text-align:center}
-    /* ⚠️ .hl is an overflow:hidden MASK for the line reveal and carried .08em of padding on the
-       RIGHT only, to keep the last glyph's overhang from being clipped. Left-aligned that is
-       invisible; centred it pushes the title half that distance off-centre. Symmetric now, so
-       the overhang is still protected on both sides and the centre is a true centre. */
-    .hero-title .hl{padding:0 .08em .1em}
-    /* ⚠️ THE TRUST LINE LOSES ITS GOLD RULE HERE, AND THAT IS DELIBERATE. The rule is a
-       LEFT-EDGE mark (.hero-sub::before, §4b — the client asked for this line to "stand out in
-       a different way"). Against centred text it strands itself at the far left of a full-width
-       block and reads as a stray mark rather than as an accent, so on mobile the line stands
-       down and the centring does the emphasis instead. ⛔ Do NOT replace it with a short gold
-       rule above the copy — that is the top-edge hairline §2 rule 10 forbids, twice rejected. */
-    .hero-sub{padding-left:0;text-align:center}
-    .hero-sub::before{display:none}
-    /* ⛔ **THE THREE ICON FACTS AND THEIR TWO VARIABLES ARE DELETED (D237)** — see the note where
+    /* ⛔⛔ **THE CENTRING ITSELF IS AT BASE SCOPE NOW (D238) AND FIVE DECLARATIONS LEFT THIS
+       BLOCK** — `.hero-copy{text-align:center}`, the mask's symmetric padding, the trust line's
+       `padding-left:0;text-align:center`, its `::before{display:none}` (the rule is DELETED
+       outright, so there is nothing left to hide) and `.hero-ctas{justify-content:center}`. The
+       desktop is centred too, so they describe every band and belong where every band reads them.
+       ⛔ **THE THREE ICON FACTS AND THEIR TWO VARIABLES ARE DELETED (D237)** — see the note where
        the base rules used to be. `--hfGap` and `--hfIcon` went with them, which is why the button
-       width below is a plain percentage now. */
-    .hero-ctas{justify-content:center}
+       width below is a plain percentage now.
+       ⛔⛔⛔ **AND THESE TWO TYPE SIZES ARE THE PHONE'S OWN, WRITTEN DOWN AT LAST.** The phone never
+       had a title or subtitle size — it sat on the base clamp's FLOOR, 38px and 14.5px, which is
+       an inheritance nobody would find by reading this block. D238 made the base rule the big
+       centred desktop one, so an unwritten number would have grown the frozen phone headline from
+       38px to 52 on the spot. **Unchanged to the character; the tablet block below out-specifies
+       both with its own.** */
+    #hero .hero-title{font-size:clamp(38px,min(4.7vw,8.6vh),64px)}
+    #hero .hero-sub{font-size:clamp(14.5px,min(1.32vw,2.15vh),17.5px)}
 
     /* flat px here overran the fold on a phone the same way the desktop floors did — keep it
        vh-led so the cue stays on screen on a short handset in landscape too */
@@ -6373,10 +6434,11 @@
        ⚠️ Padding comes in 13px → 10px because the box is no longer sized to the text — the text now
        has to fit the box, and "Quick turnaround time" is the longest of the four.
        ⛔⛔ **THE GRID ITSELF IS AT BASE SCOPE SINCE 14 August 2026 (D237) — ONLY ITS NUMBERS ARE
-       LEFT HERE.** The desktop draws the same 2×2 now, so the mechanism has one description and
-       this block says what is different about a centred, full-width band: a tighter 9px gutter,
-       the grid stretched edge to edge instead of sized to its content, and the smaller pill. */
-    #hero .hero-chips{gap:9px;width:100%;max-width:none}
+       LEFT HERE.** ⭐ **AND THE COLUMN COUNT IS ONE OF THEM AS OF D238**: the desktop spreads the
+       four across in a single row and the phone and tablet keep the 2×2 D186 tuned, because two of
+       these labels will not sit in a quarter of a 390px screen. Beyond that this block says what is
+       different about a narrow band: a tighter 9px gutter and the smaller pill. */
+    #hero .hero-chips{--chipCols:2;gap:9px}
     .page-head .hero-chips{gap:9px}
     #hero .hero-chips .chip,.page-head .hero-chips .chip{padding:8px 10px;gap:8px}
 
@@ -6496,7 +6558,12 @@
        ⭐ `background-color` is a separate longhand, so it lands UNDER all four gradients without
        touching any of them: one number, one place, and the desktop stack is not edited at all.
        ⚠️ 0.30 is deliberately modest — he asked for *slightly* darker, and the photograph is the one
-       thing on this screen that says what the business sells. Turn it up here if he wants more. */
+       thing on this screen that says what the business sells. Turn it up here if he wants more.
+       ⛔⛔ **AND THE DESKTOP'S CENTRED SCRIM IS SWITCHED OFF HERE (D238).** These two bands already
+       have this wash and it is what the client signed off; the scrim on top of it would take the
+       photograph down a further third of a stop behind the copy, on a screen where the picture is
+       already the smallest it ever gets. One veil per band. */
+    #hero{--heroScrimA:0;--heroScrimB:0}
     #hero .hero-shade{background-color:rgba(7,7,9,0.30)}
   }
 
