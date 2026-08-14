@@ -937,7 +937,23 @@ if(svcReduce){
          stay solid — and only the wrap-around pair past two steps fades, so nothing floats
          over neighbouring sections. Both dims ride CSS vars because opacity/filter on the
          rotating shell itself would flatten the 3D and break the backface. */
-      const yaw=(d*360/N)*0.9;
+      /* ⛔⛔⛔ **THE PER-STEP TURN IS A FIXED 54°, NOT `360/N` — AND THE `360/N` VERSION SILENTLY
+         BROKE THE HELIX WHEN THE RANGE GREW TO EIGHT (client, 14 Aug 2026: "the very top and the
+         very bottom cards that are supposed to be turned kind of backwards is now broken").**
+         ⭐⭐ **THE BACKS ARE THE WHOLE POINT OF THE TOP AND BOTTOM CARDS**, and they only appear
+         once a card turns past 90°. The old line read `(d*360/N)*0.9`, which is 54° per step at
+         SIX services — so two steps out reached 108° and showed the gold-framed reverse, exactly
+         as the note below describes. At **eight** services the same expression gives 40.5° per
+         step, so two steps out reaches **81° and never crosses 90°**: every card stayed
+         face-forward and the helix lost its back-turned poles. Measured before the fix: max
+         |yaw| **81°** across all eight.
+         ⚠️⚠️ **NOTHING ABOUT THE RANGE CHANGE LOOKED LIKE IT TOUCHED THIS.** D206's own comment
+         says the geometry "is written from `items.length`, so it absorbed six → seven → eight
+         with no tuning" — true of the SPIRAL (x/z/y still use `360/N`, and should), and false of
+         the wind, because this angle is a fixed visual gesture and not a share of the circle.
+         ⭐ **A CONSTANT PER-STEP ANGLE IS N-INDEPENDENT**, so a ninth service cannot repeat this. */
+      const YAW_STEP=54;                                // degrees per step out; >90° by two steps
+      const yaw=d*YAW_STEP;
       const s=0.68+0.32*c;
       const edge=Math.max(0,Math.abs(d)-2);             // 0 until 2 steps out → 1 at the back pole
       const el=cards[j];
