@@ -3690,6 +3690,26 @@ requestAnimationFrame(glowTick);
   function measure(){
     const w=stage.clientWidth||1000, h=stage.clientHeight||700;
     phone=galStatic();         // read once per measure, not once per frame — render() reads no styles
+    /* ⛔⛔⛔ **THE CLASS GOES ON AND COMES OFF — 14 August 2026 (D236). IT ONLY EVER WENT ON.**
+       Client: *"the animation in the view our project gallery is broken, but it's only broken when I
+       change the responsiveness. So if I refresh it, then it still works perfectly."*
+       ⭐⭐ **`classList.add` WITH NO MATCHING REMOVE IS A ONE-WAY DOOR, AND A REFRESH IS WHAT HID IT.**
+       Every rule of the static layout is gated on `.gal-static` at BASE scope (D195 lifted them out
+       of the phone query on purpose), so the class alone — at any width — takes `position:sticky` off
+       `.gal-pin`, makes `.gal-stage` static, and turns the eight absolutely-positioned cards into
+       flex items. Narrowing past 1120 added it; widening back left it on, while `--galMode` went
+       unset and the accordion started drawing again. **Measured at 1200 after a 900 → 1200 resize:
+       `gal-static` still on, pin `static`, stage `static`, cards `relative` and carrying
+       `translate3d(-1311px, 355px)` at `opacity:0`** — the engine writing absolute geometry onto
+       elements that are in normal flow, which is his screenshot exactly.
+       ⭐ **ONE LINE, AND IT IS A `toggle` RATHER THAN AN `add` HERE AND A `remove` THERE**, so the
+       class can never describe a different state from the `phone` flag the whole function branches
+       on — they are now the same read. The safety argument the stylesheet makes (§12: if the script
+       never reaches this line the cards keep their old positioning and the old engine, which is a
+       working page) is unchanged: this still runs in the same breath as the early return below, from
+       the same value. */
+    const galEl=stage.closest('#gallery');
+    if(galEl) galEl.classList.toggle('gal-static',phone);
     /* ⚠️ Centre on the band BELOW THE NAV, not on the viewport. The nav is fixed and always
        over this section, so centring on the raw viewport looks wrong even when the numbers are
        equal: at 1366×610 the top row cleared the nav by 6px while the bottom had 82. The nav is
@@ -3785,8 +3805,8 @@ requestAnimationFrame(glowTick);
          is now dead on a phone. It is LEFT IN PLACE, not deleted: it is the desktop-shaped path
          this section has been rebuilt on five times, and he has reversed himself on this section
          more than any other. One `return` is the whole difference. */
-      const galEl=stage.closest('#gallery');
-      if(galEl) galEl.classList.add('gal-static');
+      /* ⭐ The class itself is set at the top of measure(), by the toggle that also takes it off
+         again when the engine comes back (D236). It used to be added here, one-way. */
       scroll.style.height='';
       stage.style.height='';
       if(mid) mid.style.height='';

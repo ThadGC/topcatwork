@@ -3609,51 +3609,56 @@
     border-radius:2px;background:linear-gradient(180deg,#E9D5A0,#C6A664 52%,rgba(198,166,100,0.12))}
   .hero-sub .nowrap{white-space:nowrap}
 
-  /* --- the three reasons (6 Aug, client, second pass) -----------------------------------
-     Headline → trust line → three reasons → CTAs → proof chips.
-     ⚠️ The icons are SOLID shapes filled with #tcGoldSolid, not 1.3px outlines. The outline
-     set was built first and rejected outright as "weak cutout looking ones" — the brief is
-     thick, gold and premium. Any replacement stays filled.
-     ⚠️ No animated sweep. The shimmer was deliberately dropped from every button on the site
-     for one consistent look, and a glinting icon row would put it straight back.
-     ⚠️ Every measure is vh-capped like the rest of the hero — this row is the tallest thing in
-     a composition that still has to fit 610px. */
-  .hero-facts{display:flex;justify-content:space-between;flex-wrap:wrap;
-    gap:clamp(10px,1.5vw,22px);margin-bottom:clamp(20px,3.4vh,38px)}
-  /* equal shares, so a long label wraps inside its OWN column instead of stealing width from
-     the two beside it and leaving the row lopsided */
-  /* ⚠️⚠️ **TOP-ALIGNED, NOT CENTRED, SO THE THREE WHITE LINES SIT ON ONE LINE** — client, 14 Aug
-     2026: *"we just have to make sure that the word aftercare is perfectly lined up with the other
-     two… obviously, the top white part."*
-     ⭐ **HE IS DESCRIBING A CONSEQUENCE OF `align-items:center`, NOT A SPACING MISTAKE.** All three
-     rows are the same 48px box, but their CONTENT is different heights — one has a two-line bold,
-     one a two-line sub, "72 hours of aftercare" is one line of each and therefore the shortest. A
-     centred short block sits lower, so its heading measured **8px below** the other two. Centring
-     aligns the middles of three things that are not the same height; the headings are what the eye
-     reads across, so the tops are what must agree. ⛔ Do not fix this with a margin on one item —
-     the wrap points move with the viewport width and the offset would be wrong everywhere else. */
-  .hf{display:flex;align-items:flex-start;gap:clamp(9px,0.95vw,13px);flex:1 1 0;min-width:0}
-  .hf svg{flex:none;width:clamp(27px,min(2.5vw,4.1vh),35px);height:auto;
-    /* a champagne bloom so a solid mark sits ON the photo rather than being cut out of it */
-    filter:drop-shadow(0 1px 6px rgba(198,166,100,0.34))}
-  /* ⚠️ The label STACKS — this is the point of the second pass. One long line per reason pushed
-     the row edge to edge with nothing between the three; two short lines each keeps every
-     reason inside its own column and lets the row breathe (client, and the reference site they
-     sent does exactly this). */
-  .hf-t{display:flex;flex-direction:column;gap:1px;min-width:0}
-  .hf-t b{font-family:var(--brand);font-weight:600;letter-spacing:0.01em;line-height:1.25;
-    font-size:clamp(11px,min(0.94vw,1.55vh),13px);color:var(--bone)}
-  .hf-t i{font-style:normal;font-family:var(--brand);font-weight:400;letter-spacing:0.012em;
-    line-height:1.3;font-size:clamp(9.5px,min(0.8vw,1.32vh),11.5px);color:rgba(244,241,234,0.58)}
-  /* Below this the three stop fitting side by side and would wrap 2-then-1, which reads as a
-     mistake. One column instead. */
-  @media(max-width:760px){
-    .hero-facts{flex-direction:column;justify-content:flex-start;gap:clamp(9px,1.7vh,14px)}
-    .hf{flex:0 0 auto}
-  }
+  /* ⛔⛔⛔ **THE THREE ICON FACTS ARE DELETED — 14 August 2026 (D237). THE HERO IS ONE COMPOSITION
+     AT EVERY WIDTH NOW: title → trust line → two buttons → four bubbles.**
+     Client: *"look at the tablet version and look at the desktop version's hero sections… it is
+     title, then subtitle, then two buttons, and then four reasons to choose them. I want you to now
+     add this to the hero section of the desktop version. So what you're going to do is you're going
+     to remove the icons."*
+     ⭐⭐ **HIDING THEM ON THE DESKTOP WOULD HAVE LEFT AN ELEMENT THAT RENDERS NOWHERE, DESCRIBED BY
+     ELEVEN LIVE RULES** — D234's scroll cue, exactly, and the same answer: the `.hero-facts` list,
+     its three inline SVGs, `.hf`, `.hf svg`, `.hf-t`, `.hf-t b`, `.hf-t i`, the 760px one-column
+     block, the tablet block's five rules and `--hfGap`/`--hfIcon` are all gone together. Nothing
+     else on the site wears `.hero-facts`, `.hf` or `.hf-t` — the built pages carry the hero's CHIPS,
+     never its fact row.
+     ⚠️ **`#tcGoldSolid` STAYS AND MUST**: the icon row was its biggest customer here, but the
+     process steps and the Why tiles resolve their gold against the same paint server, and
+     `build_pages.py` lifts the tc-defs sprite onto every page for exactly that reason.
+     ⛔⛔ **DO NOT WRITE THAT ELEMENT'S OPENING TAG OUT IN A COMMENT, HERE OR ANYWHERE IN THIS
+     STYLESHEET.** `build_pages.py` finds it with a plain string search — this comment named it
+     literally for about ten minutes and every built page took a slab of CSS where its icon
+     definitions should have been. The builder now searches the markup only (see `extract`), but
+     the same trap is one careless backtick away for every other marker it uses.
+     ⚠️ The L-plan icon took five attempts and its reasoning is worth keeping if a fact row ever
+     returns: a plain RECTANGLE holding smaller shapes reads as a camera or a car stereo every time,
+     and the L is what makes the eye read a plan instead of an object. It is in the D169 and D237
+     rows and in git, not in this file. */
 
   .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:clamp(20px,4vh,44px)}
-  .hero-chips{display:flex;gap:12px;flex-wrap:wrap}
+  /* ⭐⭐⭐ **THE FOUR BUBBLES ARE A 2×2 GRID AT EVERY WIDTH — 14 August 2026 (D237).**
+     Client, having pointed at the tablet: *"then you'll have the four buttons below, or the four
+     reasons to choose. And that's what you're going to have set up for the desktop version's hero
+     section."*
+     ⛔⛔ **THE MECHANISM IS AT BASE SCOPE AND ONLY THE NUMBERS LIVE IN THE BAND BLOCK** — D235's
+     rule, and the reason the curved edge is one description instead of three. Pasting the grid into
+     a `min-width:1121px` block would have made two live descriptions of one row.
+     ⭐⭐ **WHY A GRID AND NOT THE WRAPPED FLEX ROW THE DESKTOP HAD**: four content-sized pills wrap
+     3-then-1 in a 576px column and 4-across in a 691px one, so the row re-arranges itself somewhere
+     between 1121 and 1440 and no two edges line up in either arrangement. That is what D186 already
+     rejected on the phone — "it is what content-sized boxes DO, and no gap value fixes it". Two
+     equal columns give one shared left edge, one middle seam and one right edge at every width.
+     ⭐⭐ **480px IS THE TWO BUTTONS' OWN WIDTH, MEASURED, AND THAT IS WHY THE ROW STOPS THERE.**
+     Left-aligned copy gives the block a shared LEFT edge for free; the cap is what gives it the
+     right one, so the buttons and the bubbles read as one column rather than two loose objects.
+     ⚠️ **THE NUMBER IS A MEASUREMENT, NOT A GUESS: `Get your free quote` + 16px + `Request a call`
+     comes to 479.3px at 1200 AND at 1440**, because both labels are `nowrap` at a fixed desktop
+     type size, so the row does not move across the band. ⛔ Change either label and this cap has to
+     be re-measured — they are two descriptions of one edge, which is the trade for having the edge
+     at all. Sized to its content instead, the row landed 121px short of the buttons and read as
+     unfinished. ⚠️ The cap is lifted again in the ≤1120 block, where the copy is centred and the
+     grid is meant to span its column; `.page-head` keeps its own 520px cap either way. */
+  .hero-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:12px}
+  #hero .hero-chips{width:100%;max-width:480px}
   .chip{
     display:inline-flex;align-items:center;gap:9px;padding:10px 17px;border-radius:999px;position:relative;
     border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
@@ -3661,10 +3666,12 @@
     font-size:12px;color:rgba(244,241,234,0.85);font-weight:300;letter-spacing:0.02em;white-space:nowrap;
   }
   .chip b{color:var(--gold);font-weight:500;letter-spacing:2.5px;font-size:11.5px}
-  /* ⛔ The reason bubbles and the phone's own CTA/subtitle copy are off by default and
-     come on inside the ≤1120 block. ⭐ The Google mark and stack are NOT here any more —
-     they are unscoped below, because the chip is now identical at every width. */
-  .chip-reason,.cta-short,.hs-phone{display:none}
+  /* ⛔ The phone's own CTA and subtitle copy are off by default and come on inside the ≤1120
+     block. ⭐ The Google mark and stack are NOT here any more — they are unscoped below, because
+     the chip is now identical at every width. ⭐⭐ **AND `.chip-reason` LEFT THIS LIST ON 15 Aug
+     2026 (D237)** — the reason bubbles are the hero's four at every width now, so a rule hiding
+     them by default and a rule showing them in every band is two descriptions of one element. */
+  .cta-short,.hs-phone{display:none}
 
   /* ⭐⭐⭐ THE GOOGLE CHIP IS THE SAME OBJECT AT EVERY WIDTH — 14 August 2026.
      Client: *"for the desktop version, I want you to have the Google reviews part look the same as
@@ -3675,8 +3682,9 @@
      rule 13 confusion in another costume.
      ⚠️ **`.chip-legacy` IS CLIPPED, NOT `display:none`, AT EVERY WIDTH NOW** — it is what a screen
      reader reads, because a logo and five star glyphs do not say "rated 5.0 on Google" on their own.
-     ⚠️ **`.chip-reason` STAYS HIDDEN ABOVE 1120 and is deliberately NOT part of this move** — the
-     desktop shows the three reasons as the icon fact row instead, and he did not ask to change that. */
+     ⭐⭐ **AND `.chip-reason` FOLLOWED IT OUT ON 14 August 2026 (D237)** — the icon fact row it was
+     excluded for no longer exists, so the whole bubble row is one object at every width. Its rules
+     are below, beside the mark and the stack. */
   #hero .chip-google,.page-head .chip-google{align-items:center}
   #hero .g-mark,.page-head .g-mark{display:block;flex:none;width:26px;height:26px}
   #hero .g-stack,.page-head .g-stack{display:flex;flex-direction:column;justify-content:space-between;
@@ -3699,6 +3707,23 @@
      accessibility tree because a logo and five star glyphs do not say it on their own. */
   #hero .chip-legacy,.page-head .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
+  /* ⛔⛔ **THESE FOUR RULES CAME OUT OF `@media(max-width:1120px)` — MOVED, NOT COPIED — 15 August
+     2026 (D237).** The reason bubbles were a phone-and-tablet arrangement of a row the desktop drew
+     a different way; with the icon fact row deleted there is one arrangement left, so the rules that
+     shape it belong where every band can see them. ⭐ The band block below now holds only what is
+     genuinely different there: the gap, the full-width grid and the tighter chip padding.
+     ⚠️ **`white-space:normal` MATTERS ON A GRID AND NOT ON A FLEX ROW.** `.chip` is `nowrap`,
+     which does not wrap an overlong label, it overflows it (D224) — and in a two-column grid the
+     text has to fit the box rather than the box the text. `text-wrap:balance` keeps a wrapped
+     label from stranding one word on a second line.
+     ⚠️ The odd-child span does nothing at four bubbles. It is `:last-child:nth-child(odd)` so it
+     costs nothing to keep and covers the next time the list changes count (D205, D224). */
+  .hero-chips .chip{min-width:0;justify-content:center;text-align:center}
+  #hero .hero-chips > *:last-child:nth-child(odd),
+  .page-head .hero-chips > *:last-child:nth-child(odd){grid-column:1/-1}
+  #hero .chip-reason,.page-head .chip-reason{display:inline-flex;align-items:center;
+    white-space:normal;text-wrap:balance;line-height:1.25}
 
 
   /* ---------- the floating WhatsApp button (D173) ----------
@@ -3810,27 +3835,10 @@
        rule above the copy — that is the top-edge hairline §2 rule 10 forbids, twice rejected. */
     .hero-sub{padding-left:0;text-align:center}
     .hero-sub::before{display:none}
-    /* --- the three reasons: a row of three, icon over label, each one centred ---------
-       ⚠️ This OVERRIDES the max-width:760px rule above, which stacks them one per row. That
-       rule still governs the 721-760px band, which is not in scope. */
-    /* ⭐ THE ROW'S GAP AND ICON SIZE ARE NAMED HERE BECAUSE THE CTA BUTTONS BELOW ARE MEASURED
-       FROM THEM (see .hero-ctas). Both hold exactly the expression the base rules already
-       compute, so nothing about the icon row renders differently — they are variables so that
-       the buttons and the icons cannot drift apart at some width nobody checked. */
-    .hero-copy{--hfGap:clamp(6px,2.4vw,14px);--hfIcon:clamp(27px,min(2.5vw,4.1vh),35px)}
-    .hero-facts{flex-direction:row;flex-wrap:nowrap;justify-content:center;align-items:flex-start;
-      gap:var(--hfGap)}
-    .hf svg{width:var(--hfIcon)}
-    /* equal thirds, so the three labels wrap inside their OWN column and the row stays even */
-    .hf{flex:1 1 0;flex-direction:column;align-items:center;text-align:center;
-      gap:clamp(6px,1.1vh,9px)}
-    .hf-t{align-items:center}
-    /* ⚠️ Icons stay top-aligned (align-items:flex-start above) rather than centred on the tallest
-       label: the three labels wrap to different line counts, and centring them vertically puts
-       the three icons at three different heights, which is exactly what "all three in line" is
-       asking not to happen. */
+    /* ⛔ **THE THREE ICON FACTS AND THEIR TWO VARIABLES ARE DELETED (D237)** — see the note where
+       the base rules used to be. `--hfGap` and `--hfIcon` went with them, which is why the button
+       width below is a plain percentage now. */
     .hero-ctas{justify-content:center}
-    .hero-chips{justify-content:center}
 
     /* flat px here overran the fold on a phone the same way the desktop floors did — keep it
        vh-led so the cue stays on screen on a short handset in landscape too */
@@ -3843,25 +3851,18 @@
        padding had to come down with it or the hero would simply have kept its old height. */
     .hero{min-height:90vh}
     .hero-inner{padding-top:clamp(84px,14vh,136px);padding-bottom:clamp(60px,8.6vh,96px)}
-    /* ⭐ THE BUTTONS ARE AS WIDE AS THE ICON ROW IS, EDGE TO EDGE — 11 Aug 2026. Client: "make
-       the get your free quote and give us a call slightly thinner, not as wide. I want to
-       basically match the size of the side of the icons." Full-bleed buttons were reaching the
-       screen's own margins while the composition above them stopped well short, so the block
-       read as two bars rather than as part of the same centred stack.
-       ⭐ **THE WIDTH IS DERIVED, NOT TYPED.** The three reasons are equal thirds of this row, each
-       icon centred in its own third, so the distance from the FIRST icon's left edge to the LAST
-       icon's right edge is `(2/3)·row + (2/3)·gap + icon`. Both terms come from the two variables
-       above, which is why they exist: type 257px here instead and the buttons stop lining up the
-       moment the gap clamp moves at another handset width.
-       ⚠️ The padding and the type size come in WITH the width, and the type has to be vw-led.
-       "Get your free quote" is `white-space:nowrap` inside an `overflow:hidden` button, so a
-       label that does not fit is not a wrap, it is a SILENTLY CLIPPED WORD. At 12.5px it needs
-       224px of run and the button is 256 at 375px wide — but the button is derived from the
-       screen, so it is 246 at 360 and 219 at 320, where the same label overhangs. min() ties the
-       type to the same screen the width came from: 12.5px is the ceiling and 3.3vw takes over
-       below ~379px, which keeps the longest label inside its button down to a 320px handset. */
+    /* ⛔⛔ **THE 11 AUG DERIVED WIDTH IS GONE WITH THE ROW IT MEASURED — 14 August 2026 (D237).**
+       It read `calc(66.667% + var(--hfGap)*0.667 + var(--hfIcon))`: the distance from the first
+       fact icon's left edge to the last one's right edge, so a button lined up with the icon row
+       beneath it. That row has been `display:none` here since D169 and is now deleted outright, so
+       the expression was measuring against something that no longer exists — and with the two
+       variables gone it would compute to nothing at all. **The live width is the 76% D188 set**,
+       further down this block; there is one description of it and this is not a second.
+       ⚠️ The padding and the vw-led type stay, and the type is the load-bearing half: "Get your
+       free quote" is `white-space:nowrap` inside an `overflow:hidden` button, so a label that does
+       not fit is not a wrap, it is a SILENTLY CLIPPED WORD. 12.5px is the ceiling and 3.3vw takes
+       over below ~379px, which keeps the longest label inside its button down to a 320px handset. */
     .hero-ctas .btn-gold,.hero-ctas .btn-ghost{
-      width:calc(66.667% + var(--hfGap) * 0.667 + var(--hfIcon));
       padding-left:12px;padding-right:12px;font-size:min(12.5px,3.3vw)}
 
     /* --- ⭐ ROUNDED CORNERS, replacing the 30° matched bevel — 12 Aug 2026 (D115) --------
@@ -5415,10 +5416,14 @@
      ⭐ These rules were already the answer — they are the plain column the phone has used since
      D163 — but they were locked inside the phone query, so a page that wanted the column at any
      other width could not have it. **EVERY RULE BELOW IS GATED ON `.gal-static`**, a class the
-     script only adds when `--galMode` reads `phone`, so the frozen desktop and tablet landing page
+     script carries whenever `--galMode` reads `phone` or `grid`, so the frozen desktop landing page
      cannot see any of this. Moving them changes WHERE they can apply, not WHEN they do.
+     ⛔⛔ **AND BECAUSE THEY ARE AT BASE SCOPE, THE CLASS ALONE IS THE WHOLE SWITCH — AT ANY WIDTH.**
+     It was added and never removed until D236, so a resize from tablet back to desktop left the
+     static layout dressed on a page whose accordion had restarted. **`measure()` now toggles it from
+     the same read that drives the engine.** Do not reintroduce a one-way `add`.
      ⚠️ `build_pages.py` sets `--galMode:phone` on the Projects page at every width, which is what
-     turns the engine off there (`measure()` returns early) and adds the class. */
+     turns the engine off there (`measure()` returns early) and carries the class. */
     /* ============================================================================================
        12. ⭐⭐ THE PROJECT GALLERY IS A PLAIN, NATIVELY-SCROLLED COLUMN — 13 August 2026
        ============================================================================================
@@ -5426,15 +5431,16 @@
        good on mobile. So remove that."* Plus: *"it's also especially lagging on the view our
        project gallery section."* ⭐ **ONE CHANGE ANSWERS BOTH** — see the long note on the `return`
        in the gallery IIFE's `measure()`.
-       ⛔ **THIS IS SWITCHED ON BY A CLASS THE SCRIPT ADDS (`gal-static`), NOT BY THE MEDIA QUERY
+       ⛔ **THIS IS SWITCHED ON BY A CLASS THE SCRIPT CARRIES (`gal-static`), NOT BY THE MEDIA QUERY
        ALONE, AND THAT IS DELIBERATE.** The class is written in the same breath as the early return,
        so the layout below and the dead engine can never disagree: if the script ever fails to reach
        that line the cards keep the old absolute positioning and the old engine, which is a working
        page. A media-query-only version would strip the positioning while JS was still driving it,
        and eight cards would pile up in the corner. ⚠️ It also gives every rule here one extra class
        of specificity, which is what lets it out-rank `#gallery .gal-pin` at 2739 without `!important`.
-       ⛔ Above 720px `--galMode` is unset, the branch never runs, the class is never added, and the
-       desktop pin, runway, accordion and hallway are untouched (D91). */
+       ⛔ Above 1120px `--galMode` is unset, the branch never runs, the class is taken back off, and
+       the desktop pin, runway, accordion and hallway are untouched (D91). ⚠️ 721–1120 reads `grid`
+       and is static too, which is what the class has to come OFF again for (D236). */
 
     /* 12a. the machine comes apart: no runway, no pin, no viewport-tall stage. `display:contents`
        on `.gal-mid` and `.gal-set` is what does the real work — it dissolves the two wrapper boxes
@@ -6336,14 +6342,12 @@
       #hero .hero-sub{font-size:13px}
     }
 
-    /* 14b. ⛔ **THE THREE ICON FACTS COME OUT.** Client: *"remove the three icons with the service
-       second to none, every cutout, and the aftercare — remove those icons and text."*
-       ⚠️ **HIDDEN, NOT DELETED, AND THE REASON IS NOT SENTIMENT.** The same `<ul>` is what every
-       width above 720px shows, and the medal, the L-plan and the clock are drawn inline in the hero
-       markup — the L-plan alone took five attempts and its comment records why it is an L and not a
-       rectangle. Deleting the markup to satisfy a phone-only ask would take the desktop row with it.
-       ⭐ It also takes three inline SVGs out of the phone's first paint. */
-    #hero .hero-facts{display:none}
+    /* 14b. ⛔ **THE THREE ICON FACTS CAME OUT HERE FIRST (D169) AND ARE NOW DELETED OUTRIGHT
+       (D237).** Client, on the phone: *"remove the three icons with the service second to none,
+       every cutout, and the aftercare — remove those icons and text."* They were HIDDEN rather than
+       deleted for two rounds because the same `<ul>` was what every width above 1120 showed; on
+       14 Aug 2026 he took them off the desktop too, so nothing was left to protect and the
+       `display:none` that used to sit here went with the markup. */
 
     /* 14c. ⭐ **THE GUARANTEE SITS BESIDE THE GOOGLE CHIP.** Client: *"have the ten year guarantee
        next to the Google review part."* They were already siblings and already `flex`, but
@@ -6367,31 +6371,14 @@
        tall and the guarantee beside it is one, and two pills of different heights side by side read
        as a mistake rather than as a pair.
        ⚠️ Padding comes in 13px → 10px because the box is no longer sized to the text — the text now
-       has to fit the box, and "Quick turnaround time" is the longest of the four. */
-    #hero .hero-chips,.page-head .hero-chips{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;
-      gap:9px;width:100%}
-    #hero .hero-chips .chip,.page-head .hero-chips .chip{padding:8px 10px;gap:8px;min-width:0;justify-content:center;text-align:center}
-    /* ⭐ **THE REASON BUBBLES — D172.** Nothing new is styled: they take `.chip` whole, which is what
-       "all in the same bubble style as the Google and 10 year guarantee" asks for literally. They are
-       `display:none` in the base rule (D120) and only come on here. ⚠️ `align-items:center` because a
-       one-line chip beside the two-line Google chip would otherwise sit its text at the top. */
-    /* ⚠️⚠️ **FIVE BUBBLES IN TWO COLUMNS — THE LAST ONE SPANS RATHER THAN SITTING ALONE.** The
-       grid above was tuned for FOUR (D186); the client's list of 14 Aug 2026 is five. An odd last
-       child in a two-column grid leaves a hole beside it, which reads as a bubble that failed to
-       load — the identical fault D205 hit with seven service tiles, and it takes the identical
-       fix. ⛔ It is `:last-child:nth-child(odd)`, so it does nothing at all if the count returns
-       to even; nothing here has to be undone when the list changes again. */
-    #hero .hero-chips > *:last-child:nth-child(odd),
-    .page-head .hero-chips > *:last-child:nth-child(odd){grid-column:1/-1}
-    /* ⛔⛔ **`white-space:nowrap` HAD TO COME OFF `.chip-reason`, AND IT IS NOT A STYLE
-       PREFERENCE.** D186's own note says the box no longer sizes to the text — the text has to fit
-       the box — and it named "Quick turnaround time" as the longest of the four. His replacement,
-       **"Your project expertly handled", is eight characters longer and cannot fit half of a 320px
-       screen on one line**, and `nowrap` does not wrap an overlong label, it overflows it.
-       ⚠️ `align-items:stretch` on the grid already makes a two-line bubble and a one-line bubble
-       the same height, so a wrapped label costs the row nothing. */
-    #hero .chip-reason,.page-head .chip-reason{display:inline-flex;align-items:center;
-      white-space:normal;text-wrap:balance;line-height:1.25}
+       has to fit the box, and "Quick turnaround time" is the longest of the four.
+       ⛔⛔ **THE GRID ITSELF IS AT BASE SCOPE SINCE 14 August 2026 (D237) — ONLY ITS NUMBERS ARE
+       LEFT HERE.** The desktop draws the same 2×2 now, so the mechanism has one description and
+       this block says what is different about a centred, full-width band: a tighter 9px gutter,
+       the grid stretched edge to edge instead of sized to its content, and the smaller pill. */
+    #hero .hero-chips{gap:9px;width:100%;max-width:none}
+    .page-head .hero-chips{gap:9px}
+    #hero .hero-chips .chip,.page-head .hero-chips .chip{padding:8px 10px;gap:8px}
 
     /* 14c-ii. ⭐ **THE TWO BUTTONS SIT SIDE BY SIDE — D171.** Client: *"then we will have the free
        quote and call us buttons right next to each other."*
@@ -7162,60 +7149,16 @@
              there is no absolute in it (rule 12). -->
         <p class="hero-sub hero-el" style="--hd:560ms"><span class="hs-wide">Chosen from the slab you approve, fitted by us <span class="nowrap">across England and the British Isles.</span></span><span class="hs-phone">Quartz, granite and marble worktops, chosen with you and fitted by our own team.</span></p>
 
-        <!-- ===== THE THREE REASONS (the client's own words, 6 Aug) =====
-             The client sent FOUR differentiators. Three are here. The fourth — "no one gets
-             better supplier discounts in the country" — is deliberately NOT on the page: it is
-             on the internal-only list because it is unverifiable and it argues on price, which
-             is the one argument this brand does not make. It surfaces as the number at quote
-             stage instead. See memory/topcat-copy-constraints.md.
-             The labels stack over their sub-lines so each reason stays inside its own column. -->
-        <ul class="hero-facts hero-el" style="--hd:700ms">
-          <li class="hf">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <!-- Award medal: two ribbon tails behind, a solid disc in front with a ring
-                   knocked out of it. Says "second to none" WITHOUT a star — the five gold stars
-                   of the Google chip sit ~60px below this and a second star would read as a
-                   rating rather than as a mark of standing. -->
-              <path fill="url(#tcGoldSolid)" d="M8.55 15.62 5.72 21.7a.62.62 0 0 0 .83.82l2.86-1.33 1.44 2.02a.62.62 0 0 0 1.09-.19l1.36-4.02a8.9 8.9 0 0 1-4.75-3.38Z"/>
-              <path fill="url(#tcGoldSolid)" d="M15.45 15.62l2.83 6.08a.62.62 0 0 1-.83.82l-2.86-1.33-1.44 2.02a.62.62 0 0 1-1.09-.19l-1.36-4.02a8.9 8.9 0 0 0 4.75-3.38Z"/>
-              <path fill="url(#tcGoldSolid)" fill-rule="evenodd" d="M12 .9a8.35 8.35 0 1 1 0 16.7A8.35 8.35 0 0 1 12 .9Zm0 3.5a4.85 4.85 0 1 0 0 9.7 4.85 4.85 0 0 0 0-9.7Z"/>
-              <circle cx="12" cy="9.25" r="2.5" fill="url(#tcGoldSolid)"/>
-            </svg>
-            <span class="hf-t"><b>Your project, expertly handled</b><i>from start to finish</i></span>
-          </li>
-          <li class="hf">
-            <!-- ⚠️ Tighter viewBox than the other two on purpose. The L only occupies 17.2 of
-                 its 24 units where the medal fills 22 and the clock 21.3, so at a shared CSS
-                 width it rendered visibly smaller and the row read as two sizes. Cropping the
-                 box scales the art up without touching a single coordinate. -->
-            <svg viewBox="2.2 2.2 19.6 19.6" aria-hidden="true">
-              <!-- An L-shaped run in plan, solid, with the sink and hob cut-outs punched clean
-                   THROUGH it (evenodd) so the openings are real negative space. It is the
-                   site's own drawing language — the view the estimator renders cut plans in.
-                   ⚠️ FIVE attempts have failed on this one icon, four of them the same mistake:
-                   a plain RECTANGLE holding smaller shapes reads as a device, every time. As an
-                   outline it was a camera, then a car stereo; as a solid rounded rectangle with
-                   a slot and a ring punched out it went straight back to being a camera. The L
-                   is the whole fix — no camera, stereo or screen is that shape, so the eye reads
-                   a plan instead of an object. Do not "tidy" it back into a rectangle, and do
-                   not convert it to a stroke. -->
-              <path fill="url(#tcGoldSolid)" fill-rule="evenodd" d="M5.3 3.4h5.2a1.9 1.9 0 0 1 1.9 1.9v3.8h6.3a1.9 1.9 0 0 1 1.9 1.9v7.6a1.9 1.9 0 0 1-1.9 1.9H5.3a1.9 1.9 0 0 1-1.9-1.9V5.3a1.9 1.9 0 0 1 1.9-1.9Zm2.45 9.15a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm8.5.4a1.85 1.85 0 1 0 0 3.7 1.85 1.85 0 0 0 0-3.7Z"/>
-            </svg>
-            <span class="hf-t"><b>Every detail included</b><i>pencil edges, grooves and all cut-outs</i></span>
-          </li>
-          <li class="hf">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <!-- Solid clock, hands knocked out — the 72 hours in the label. The contact
-                   block's hours icon is an outline clock down in the footer, far enough away
-                   that the two never share a screen. -->
-              <path fill="url(#tcGoldSolid)" fill-rule="evenodd" d="M12 1.35a10.65 10.65 0 1 1 0 21.3 10.65 10.65 0 0 1 0-21.3Zm-.02 4.3a1.3 1.3 0 0 0-1.3 1.3v5.36c0 .43.21.83.57 1.07l3.62 2.42a1.3 1.3 0 1 0 1.44-2.16l-3.03-2.03V6.95a1.3 1.3 0 0 0-1.3-1.3Z"/>
-            </svg>
-            <!-- ⭐ "72 hours of aftercare", NOT "Aftercare in 72 hours" — client, 14 Aug 2026:
-                 *"we should obviously also just say seventy two hours of after care and not after
-                 care in seventy two hours."* The claim is unchanged; the number leads now. -->
-            <span class="hf-t"><b>72 hours of aftercare</b><i>free, not a month's wait</i></span>
-          </li>
-        </ul>
+        <!-- ⛔⛔ **THE THREE ICON REASONS ARE DELETED — 14 August 2026 (D237).** Client: *"what you
+             are going to do is you are going to remove the icons… title, then the subtitle as it is
+             there with a golden line, then the two buttons, and then the four reasons to choose."*
+             ⭐ The medal, the L-plan and the clock, their two-line labels and every rule that shaped
+             them are gone together — see the CSS note where `.hero-facts` used to be. The three
+             facts themselves are not lost: the aftercare promise is a bubble below, the guarantee is
+             a bubble below, and "every detail included" was replaced on his instruction at D231.
+             ⚠️ The gold paint server they filled against (`#tcGoldSolid`, in `.tc-defs`) STAYS — the
+             process steps and the Why tiles resolve their gold against it, and `build_pages.py`
+             lifts it onto every internal page. -->
 
         <!-- ⚠️ **TWO LABELS PER BUTTON, ONE SHOWN — 13 August 2026 (D171).** The pair sit SIDE BY
              SIDE on the phone now, which halves each button to ~162px, and "Get your free quote"
@@ -7226,7 +7169,14 @@
              call us buttons"), so nothing is being invented to make a layout work.
              ⛔ `display:none` in the base rule, phone opts in (D120) — every width above 720px keeps
              the full labels, unchanged to the character. -->
-        <div class="hero-ctas hero-el" style="--hd:900ms">
+        <!-- ⚠️ **THE STAGGER CLOSED UP WITH THE ROW THAT LEFT IT — D237.** The fact row held the
+             700ms slot, so deleting it left the buttons arriving 340ms after the trust line while
+             every other step in the sequence is ~160ms. Now 180 → 340 → 560 → 720 → 880, one
+             cadence the whole way down. ⛔ The chips' delay is matched by a REGEX in
+             `build_pages.py` (it strips `hero-el` so the internal heads do not wait for a hero
+             entrance that never comes); it used to be an exact string and a retime like this one
+             would have silently left every internal page's bubbles at opacity 0. -->
+        <div class="hero-ctas hero-el" style="--hd:720ms">
           <!-- ⚠️ `.cta-short` is the PHONE's label (D120's two-spans-one-shown idiom) — it reads
                "Get a free quote" as of 13 Aug (D186), the client's own words, answering the open
                question D177 left. The `.cta-long` beside it is the frozen desktop's and is
@@ -7235,7 +7185,7 @@
           <a href="tel:+448000982812" class="btn-ghost hero-call-mobile"><span class="cta-long">Give us a call</span><span class="cta-short">Give us a call</span></a>
           <a href="#cta" class="btn-ghost hero-call-desktop">Request a call</a>
         </div>
-        <div class="hero-chips hero-el" style="--hd:1040ms">
+        <div class="hero-chips hero-el" style="--hd:880ms">
           <!-- ⭐ **THE GOOGLE CHIP CARRIES TWO ARRANGEMENTS OF THE SAME FACT — 13 August 2026.**
                Client: *"put the Google icon next to the five stars… the Google icon, then it will
                have the word Google on top and the five stars below, and it's all the same height as
@@ -12109,6 +12059,26 @@ requestAnimationFrame(glowTick);
   function measure(){
     const w=stage.clientWidth||1000, h=stage.clientHeight||700;
     phone=galStatic();         // read once per measure, not once per frame — render() reads no styles
+    /* ⛔⛔⛔ **THE CLASS GOES ON AND COMES OFF — 14 August 2026 (D236). IT ONLY EVER WENT ON.**
+       Client: *"the animation in the view our project gallery is broken, but it's only broken when I
+       change the responsiveness. So if I refresh it, then it still works perfectly."*
+       ⭐⭐ **`classList.add` WITH NO MATCHING REMOVE IS A ONE-WAY DOOR, AND A REFRESH IS WHAT HID IT.**
+       Every rule of the static layout is gated on `.gal-static` at BASE scope (D195 lifted them out
+       of the phone query on purpose), so the class alone — at any width — takes `position:sticky` off
+       `.gal-pin`, makes `.gal-stage` static, and turns the eight absolutely-positioned cards into
+       flex items. Narrowing past 1120 added it; widening back left it on, while `--galMode` went
+       unset and the accordion started drawing again. **Measured at 1200 after a 900 → 1200 resize:
+       `gal-static` still on, pin `static`, stage `static`, cards `relative` and carrying
+       `translate3d(-1311px, 355px)` at `opacity:0`** — the engine writing absolute geometry onto
+       elements that are in normal flow, which is his screenshot exactly.
+       ⭐ **ONE LINE, AND IT IS A `toggle` RATHER THAN AN `add` HERE AND A `remove` THERE**, so the
+       class can never describe a different state from the `phone` flag the whole function branches
+       on — they are now the same read. The safety argument the stylesheet makes (§12: if the script
+       never reaches this line the cards keep their old positioning and the old engine, which is a
+       working page) is unchanged: this still runs in the same breath as the early return below, from
+       the same value. */
+    const galEl=stage.closest('#gallery');
+    if(galEl) galEl.classList.toggle('gal-static',phone);
     /* ⚠️ Centre on the band BELOW THE NAV, not on the viewport. The nav is fixed and always
        over this section, so centring on the raw viewport looks wrong even when the numbers are
        equal: at 1366×610 the top row cleared the nav by 6px while the bottom had 82. The nav is
@@ -12204,8 +12174,8 @@ requestAnimationFrame(glowTick);
          is now dead on a phone. It is LEFT IN PLACE, not deleted: it is the desktop-shaped path
          this section has been rebuilt on five times, and he has reversed himself on this section
          more than any other. One `return` is the whole difference. */
-      const galEl=stage.closest('#gallery');
-      if(galEl) galEl.classList.add('gal-static');
+      /* ⭐ The class itself is set at the top of measure(), by the toggle that also takes it off
+         again when the engine comes back (D236). It used to be added here, one-way. */
       scroll.style.height='';
       stage.style.height='';
       if(mid) mid.style.height='';

@@ -101,18 +101,27 @@ def section(src, sid):
 def extract(src):
     p = {}
     p["css"] = between(src, "<style>", "</style>", inclusive=False)
+    # ⛔⛔⛔ **EVERY MARKUP MARKER BELOW IS SEARCHED FROM THE END OF THE <style> BLOCK, NOT FROM
+    # BYTE 0 — 14 Aug 2026 (D237), AND IT COST A BUILD.** These are plain string searches, and
+    # index.html's stylesheet is one enormous commented document: a CSS comment that quotes an
+    # element's opening tag matches the marker BEFORE the real element does. It happened to
+    # `<svg class="tc-defs"` — a note explaining that the sprite must be kept named it in full, so
+    # `defs` came back as 240KB of stylesheet and every internal page rendered its own CSS as
+    # visible text. ⭐ The markup all lives after `</style>`, so starting there makes the whole
+    # class of accident impossible rather than fixing the one comment that caused it.
+    body = src.index("</style>")
     # the page's own behaviour script is the LAST <script> block, after </main>
     tail = src.index("</main>")
     p["js"] = between(src, "<script>", "</script>", inclusive=False, start_at=tail)
-    p["header"] = between(src, '<header class="bar"', "</header>")
-    p["mobile_nav"] = between(src, '<nav class="mobile-nav"', "</nav>")
+    p["header"] = between(src, '<header class="bar"', "</header>", start_at=body)
+    p["mobile_nav"] = between(src, '<nav class="mobile-nav"', "</nav>", start_at=body)
     # sticky bar + floating WhatsApp: everything between the menu and <main>, comments included
-    after_nav = src.index("</nav>", src.index('<nav class="mobile-nav"')) + len("</nav>")
-    p["floats"] = src[after_nav:src.index("<main>")].strip("\n")
-    p["footer"] = between(src, '  <footer class="site"', "  </footer>")
+    after_nav = src.index("</nav>", src.index('<nav class="mobile-nav"', body)) + len("</nav>")
+    p["floats"] = src[after_nav:src.index("<main>", body)].strip("\n")
+    p["footer"] = between(src, '  <footer class="site"', "  </footer>", start_at=body)
     # the gold gradient paint servers the icons resolve against — they live in the hero on the
     # landing page, so any page without the hero has to carry its own copy or every icon goes black
-    p["defs"] = between(src, '<svg class="tc-defs"', "</svg>")
+    p["defs"] = between(src, '<svg class="tc-defs"', "</svg>", start_at=body)
     # ⭐ D193: the hero's trust bubbles, lifted whole so the internal page heads show the same four
     # the landing page does.
     # ⛔⛔ **`hero-el` AND ITS `--hd` MUST BE STRIPPED, AND THIS COST A ROUND.** `.hero-el` is the
@@ -123,7 +132,13 @@ def extract(src):
     # looking for. The page head does not want a staged entrance anyway; it is the first thing on
     # the page.
     chips = between(src, '<div class="hero-chips', "</span>\n        </div>")
-    chips = chips.replace(' hero-el" style="--hd:1040ms"', '"', 1)
+    # ⛔⛔ **THIS WAS AN EXACT STRING MATCH ON `--hd:1040ms` UNTIL 14 Aug 2026 (D237), AND A RETIME
+    # WOULD HAVE BROKEN IT SILENTLY.** `str.replace` with no match does nothing and raises nothing,
+    # so the day the hero's stagger changed, every internal page would have shipped its bubbles
+    # still wearing `hero-el` — opacity 0, holding their space, invisible, and looking for all the
+    # world like the chips had not been inserted. The delay moved to 880ms that same day.
+    # ⭐ A regex takes the class and ANY `--hd`, so the two files cannot drift apart again.
+    chips = re.sub(r' hero-el" style="--hd:\d+ms"', '"', chips, count=1)
     p["chips"] = "      " + chips
     for sid in ("reviews", "services", "gallery", "stones", "estimator",
                 "process", "about", "why", "faq", "cta"):
