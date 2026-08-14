@@ -3380,11 +3380,20 @@ requestAnimationFrame(glowTick);
      ⚠️ **ONE SENTENCE WAS DROPPED FROM HORNCHURCH AND HE WAS TOLD:** his own copy reads "we
      outdid competitors by being £1000 cheaper", which is discount language and argues on price
      — §2 rule 5, the rule that keeps biting. The rest of that description is his, verbatim.
-     ⚠️ **THE OPENING WORDS ARE DELIBERATELY NOT HIS.** His site starts both descriptions with
-     "Our recent project, The X project, …"; client, 14 Aug: *"don't say our recent project like
-     starting with that in the line. Just say this x project, and then you describe the project."*
-     ⛔ Do not restore the original opening when re-syncing from his site — it names the project
-     twice in six words, and "recent" is a claim that quietly expires.
+     ⛔⛔ **THE DESCRIPTIONS ARE REWRITTEN IN THE HOUSE VOICE, AND THAT REVERSES "SAME DETAILS".**
+     Client, 14 Aug, on his own site's wording: *"it just sounds so much like AI… I want you to
+     speak like the brand speaks. We don't have to talk about our expertise or our experienced
+     team. Just simply what was done."* ⭐ So the FACTS are his — the stone, the thickness, the
+     pieces, the edge profile — and the sentences are §2 rule 6's voice: plain, exact, no
+     "showcases our expertise", no "bring your vision to life", no "no matter how bespoke".
+     ⛔ **DO NOT RE-SYNC THESE FROM HIS SITE.** A future scrape would pull the marketing copy
+     straight back in; take the facts and write them again.
+     ⚠️⚠️ **AND ONE FACT WAS CORRECTED, NOT COPIED: HIS SITE CALLS TAJ MAHAL "QUARTZ".** This
+     site's own stone page is titled **Taj Mahal Quartzite** and files it under Marble &
+     Quartzite. Carrying "quartz" across would have a project page contradict the stone page it
+     links to, which is exactly the confusion §2 rule 13 was written for — *"on the collection
+     page it shows marble, but on the actual page it says quartzite, we cannot have that
+     confusion."* It reads **quartzite** here.
      ⚠️ **THE EIGHTH CARD IS A DELIBERATE PLACEHOLDER.** He said there are eight projects and his
      site lists seven, and that he would send the missing one. It carries no photograph so it
      shows the "photo to come" plate rather than pretending to be a job. ⛔ Do not fill it with a
@@ -3395,7 +3404,7 @@ requestAnimationFrame(glowTick);
   const PROJECTS=[
     {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
      img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches',
-     story:'This Ruislip project showcases our expertise in installing a Calacatta Sydney Black 20mm quartz worktop, island, and splashbacks along with a bespoke breakfast bar. Along with this, we lined the doorway entering the kitchen to match. Our experienced team can bring your vision to life, no matter how bespoke.',
+     story:'Calacatta Sydney Black quartz at 20mm, across the worktop, the island and the splashbacks. The breakfast bar was cut to the room, and the doorway into the kitchen lined in the same stone so the run carries through.',
      gallery:[['/assets/projects/ruislip-g1.webp',1067,1600], ['/assets/projects/ruislip-g2.webp',1067,1600], ['/assets/projects/ruislip-g3.webp',1067,1600], ['/assets/projects/ruislip-g4.webp',1067,1600], ['/assets/projects/ruislip-g5.webp',1067,1600], ['/assets/projects/ruislip-g6.webp',1067,1600]]},
 
     {key:'central-london', name:'The Central London Project', place:'London',
@@ -3404,7 +3413,7 @@ requestAnimationFrame(glowTick);
 
     {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
      img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
-     story:'This Hornchurch project showcases our expertise in installing a Taj Mahal 30mm quartz worktop, island, and splashbacks in a large house in Essex, incorporating a complicated Single Ogee edging. Trust our experienced team to provide a range of edge profiles to suit your needs.',
+     story:'Taj Mahal quartzite at 30mm, across the worktop, the island and the splashbacks, with a single ogee edge worked through the run.',
      gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g2.webp',604,1074], ['/assets/projects/hornchurch-g3.webp',1569,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g6.webp',882,1177]]},
 
     {key:'harrow', name:'The Harrow Project', place:'Harrow',
