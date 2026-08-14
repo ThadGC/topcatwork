@@ -2952,6 +2952,21 @@
      `.gal-set.settled{pointer-events:auto}` swallowed every click over the middle — and the
      title block now lives under there, with buttons in it. */
   .gal-set.settled .gal-card{pointer-events:auto}
+  /* ⛔⛔⛔ THE STATIC COLUMN HAD TO RE-ENABLE THIS ITSELF, AND FOR MONTHS IT DID NOT — 14 Aug 2026
+     (D212). Client: *"you have made it so that the projects aren't clickable. They have to be
+     clickable… the projects aren't currently clickable on mobile either."*
+     ⭐⭐ **HE IS RIGHT AND IT WAS NEVER THE PROJECT PAGE'S FAULT.** `.gal-set` is
+     `pointer-events:none` because the set plane is stage-sized and would otherwise swallow every
+     click over the title block. The CARDS get their events back from `.gal-set.settled`, a class
+     **the pinned accordion adds** — and `.gal-static` turns that engine OFF, so on `/projects/`
+     and on every phone the cards sat there looking clickable with `pointer-events:none`
+     computed on them. `document.elementFromPoint()` over a card's centre returned `.gal-stage`.
+     ⚠️ **A SCRIPTED `card.click()` STILL WORKED, WHICH IS WHY EARLIER TESTING MISSED IT** —
+     `.click()` dispatches straight at the node and never does hit-testing. Only a real pointer
+     goes through the compositor. ⭐ **TEST A CLICK TARGET WITH `elementFromPoint`, NOT `.click()`.**
+     ⛔ Gated on `.gal-static` so the desktop accordion's own settled/unsettled behaviour is
+     untouched — a card mid-flight must still not be clickable. */
+  #gallery.gal-static .gal-card{pointer-events:auto}
   /* The section title, dead centre, in the gap the walls open around it. z-index 1 keeps it
      BEHIND the cards (10+), so a set walking through passes in front of it rather than being
      hidden by it. Fades in on the last stretch of the spread — see render(). */
@@ -3263,18 +3278,38 @@
   .proj-desc .proj-lead{font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
   .proj-desc p{color:var(--muted);font-weight:300;font-size:clamp(15px,1.15vw,17px);line-height:1.8;margin-bottom:18px}
   .proj-desc p.big{font-family:var(--sans);font-weight:300;font-size:clamp(19px,1.9vw,24px);color:var(--bone);line-height:1.55;margin-bottom:26px}
-  .proj-media{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-  .proj-ph{position:relative;background:#0d0d11;border:1px solid var(--hair-soft);overflow:hidden;aspect-ratio:3/2;grid-column:span 3;cursor:pointer}
-  .proj-ph.wide{grid-column:span 6;aspect-ratio:21/9}
-  .ph-media{position:absolute;inset:0;background-size:cover;background-position:center;
-    filter:saturate(0.9) brightness(0.9);transition:transform .6s var(--ease),filter .5s var(--ease)}
-  .proj-ph:hover .ph-media{transform:scale(1.06);filter:saturate(1) brightness(1)}
-  .proj-ph::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to top,rgba(8,8,10,0.72),transparent 45%)}
-  .proj-ph::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(198,166,100,0);transition:box-shadow .4s var(--ease)}
-  .proj-ph:hover::after{box-shadow:inset 0 0 0 1px rgba(198,166,100,0.55)}
-  .proj-ph .ph-label{position:absolute;bottom:13px;left:15px;font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--bone);z-index:2;text-shadow:0 1px 8px rgba(0,0,0,0.8)}
-  .proj-ph.video .ph-play{position:absolute;inset:0;margin:auto;width:66px;height:66px;border-radius:50%;border:1px solid var(--gold);background:rgba(198,166,100,0.12);display:grid;place-items:center;z-index:2;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
-  .proj-ph.video .ph-play::after{content:"";width:0;height:0;border-left:17px solid var(--gold);border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+  /* ⭐⭐⭐ A COLLAGE, NOT A CROPPING GRID — 14 August 2026 (D212). Client: *"the way that you laid
+     out the images inside the project gallery, you resize some of them, and now they're blurry.
+     Try and keep them in a collage style with the original sizing of the images… make sure to
+     keep all the images the correct sizing even on tablet and mobile."*
+     ⛔⛔ **THE BLUR WAS THE CROP, NOT THE FILE.** Every tile was forced to `aspect-ratio:3/2`
+     (and the wide ones to **21/9**) and filled with `background-size:cover`. His photographs are
+     4672×7008 PORTRAIT phone shots and 1084×1446 uprights — forcing a 21:9 letterbox out of a
+     3:4 portrait means the browser takes a thin horizontal strip and blows it up to 1180px wide,
+     on a 2× screen. **The source was fine; the shape it was poured into was not.**
+     ⭐ `column-count` masonry lets every photograph keep its own proportions — nothing is cropped
+     and nothing is stretched, which is what "original sizing" means here.
+     ⭐ **`<img>` WITH `width`/`height`, NOT A BACKGROUND.** A background image cannot tell the
+     browser its aspect ratio, so the column packed at the wrong heights and every tile jumped
+     when the photo arrived. The real dimensions are baked into the markup from the files.
+     ⚠️ Columns drop 3 → 2 → 1 so a tile is never asked to be wider than the file behind it. */
+  .proj-media{column-count:3;column-gap:14px}
+  @media(max-width:1000px){.proj-media{column-count:2}}
+  @media(max-width:640px){.proj-media{column-count:1}}
+  /* ⛔ `break-inside:avoid` is what stops a column splitting a photograph across its foot. */
+  .proj-ph{break-inside:avoid;margin:0 0 14px;position:relative;display:block;cursor:pointer;
+    border-radius:14px;overflow:hidden;background:#0d0d11;border:1px solid var(--hair-soft)}
+  /* ⭐ THE ROUNDED CORNER, THE GOLD RIM AND THE GLOSS ARE THE SITE'S OWN, NOT NEW ONES. The tile
+     carries `.glow-card`, so it takes the same cursor-tracked rim as the service faces and the
+     review cards (`--gx/--gy/--ga`, driven by attachGlow), and the same `.sheen` sweep. ⚠️
+     `overflow:hidden` clips both pseudo-elements to the radius — without it the rim draws a
+     square around a rounded picture. */
+  .proj-ph img{display:block;width:100%;height:auto;
+    filter:saturate(0.92) brightness(0.92);transition:transform .6s var(--ease),filter .5s var(--ease)}
+  .proj-ph:hover img{transform:scale(1.04);filter:saturate(1) brightness(1)}
+  .proj-ph:hover .sheen{transform:translateX(120%)}
+  .proj-ph:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
   /* image lightbox */
   .proj-lightbox{position:fixed;inset:0;z-index:130;background:rgba(6,6,8,0.96);display:flex;align-items:center;justify-content:center;pointer-events:none;
     opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility 0s .35s}
@@ -3306,9 +3341,8 @@
   .proj-cta-btn:hover{background:var(--gold);color:var(--ink)}
   @media(max-width:820px){
     .proj-intro{grid-template-columns:1fr;gap:34px}
-    .proj-media{grid-template-columns:repeat(2,1fr)}
-    .proj-ph{grid-column:span 1}
-    .proj-ph.wide{grid-column:span 2}
+    /* ⚠️ the grid overrides here died with the cropping grid (D212); the collage sets its
+       own column count at 1000px and 640px, in the block above. */
     .proj-title{font-size:clamp(38px,10vw,64px)}
   }
 
@@ -6992,7 +7026,11 @@
           <div class="proj-meta">
             <div><span class="pm-k">Location</span><span class="pm-v" id="projMetaPlace"></span></div>
             <div id="projTypeRow"><span class="pm-k">Project type</span><span class="pm-v" id="projMetaType"></span></div>
-            <div id="projDateRow"><span class="pm-k">Completed</span><span class="pm-v" id="projMetaDate"></span></div>
+            <!-- ⛔ NO COMPLETION DATE — client, 14 Aug 2026 (D212): *"I don't want you to say
+                 what date the project was completed."* His own portfolio publishes one; this site
+                 does not. ⚠️ A date also ages the page badly: "January 2025" reads as stale the
+                 moment the year turns, and the newest job on the wall dating from a while back
+                 says something about the workload that nobody chose to say. -->
           </div>
           <!-- ⚠️ THE STORY IS WRITTEN BY THE CLIENT OR IT IS NOT SHOWN. Five of his seven have no
                description on his own site; for those this whole column is hidden and the intro
@@ -11287,6 +11325,11 @@ requestAnimationFrame(glowTick);
      ⚠️ **ONE SENTENCE WAS DROPPED FROM HORNCHURCH AND HE WAS TOLD:** his own copy reads "we
      outdid competitors by being £1000 cheaper", which is discount language and argues on price
      — §2 rule 5, the rule that keeps biting. The rest of that description is his, verbatim.
+     ⚠️ **THE OPENING WORDS ARE DELIBERATELY NOT HIS.** His site starts both descriptions with
+     "Our recent project, The X project, …"; client, 14 Aug: *"don't say our recent project like
+     starting with that in the line. Just say this x project, and then you describe the project."*
+     ⛔ Do not restore the original opening when re-syncing from his site — it names the project
+     twice in six words, and "recent" is a claim that quietly expires.
      ⚠️ **THE EIGHTH CARD IS A DELIBERATE PLACEHOLDER.** He said there are eight projects and his
      site lists seven, and that he would send the missing one. It carries no photograph so it
      shows the "photo to come" plate rather than pretending to be a job. ⛔ Do not fill it with a
@@ -11296,38 +11339,38 @@ requestAnimationFrame(glowTick);
      one hard-coded Calacatta Gold story shown for every card. */
   const PROJECTS=[
     {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
-     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches', date:'October 2025',
-     story:'Our recent project, The Ruislip project, showcases our expertise in installing a Calacatta Sydney Black 20mm quartz worktop, island, and splashbacks along with a bespoke breakfast bar. Along with this, we lined the doorway entering the kitchen to match. Our experienced team can bring your vision to life, no matter how bespoke.',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/ruislip-g'+n+'-1100.webp')},
+     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches',
+     story:'This Ruislip project showcases our expertise in installing a Calacatta Sydney Black 20mm quartz worktop, island, and splashbacks along with a bespoke breakfast bar. Along with this, we lined the doorway entering the kitchen to match. Our experienced team can bring your vision to life, no matter how bespoke.',
+     gallery:[['/assets/projects/ruislip-g1.webp',1067,1600], ['/assets/projects/ruislip-g2.webp',1067,1600], ['/assets/projects/ruislip-g3.webp',1067,1600], ['/assets/projects/ruislip-g4.webp',1067,1600], ['/assets/projects/ruislip-g5.webp',1067,1600], ['/assets/projects/ruislip-g6.webp',1067,1600]]},
 
     {key:'central-london', name:'The Central London Project', place:'London',
-     img:'/assets/projects/central-london-1400.webp', type:'Worktop', date:'October 2025', story:'',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/central-london-g'+n+'-1100.webp')},
+     img:'/assets/projects/central-london-1400.webp', type:'Worktop', story:'',
+     gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067]]},
 
     {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
-     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks', date:'February 2025',
-     story:'Our recent project, The Hornchurch project, showcases our expertise in installing a Taj Mahal 30mm quartz worktop, island, and splashbacks in a large house in Essex, incorporating a complicated Single Ogee edging. Trust our experienced team to provide a range of edge profiles to suit your needs.',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/hornchurch-g'+n+'-1100.webp')},
+     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
+     story:'This Hornchurch project showcases our expertise in installing a Taj Mahal 30mm quartz worktop, island, and splashbacks in a large house in Essex, incorporating a complicated Single Ogee edging. Trust our experienced team to provide a range of edge profiles to suit your needs.',
+     gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g2.webp',604,1074], ['/assets/projects/hornchurch-g3.webp',1569,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g6.webp',882,1177]]},
 
     {key:'harrow', name:'The Harrow Project', place:'Harrow',
-     img:'/assets/projects/harrow-1400.webp', type:'Worktop', date:'January 2025', story:'',
-     gallery:[1,2].map(n=>'/assets/projects/harrow-g'+n+'-1100.webp')},
+     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'',
+     gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]},
 
     {key:'harlow', name:'The Harlow Project', place:'Essex',
-     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', date:'May 2025', story:'',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/harlow-g'+n+'-1100.webp')},
+     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446]]},
 
     {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
-     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', date:'April 2025', story:'',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/rickmansworth-g'+n+'-1100.webp')},
+     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446]]},
 
     {key:'watford', name:'The Watford Project', place:'Watford',
-     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', date:'July 2025', story:'',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/watford-g'+n+'-1100.webp')},
+     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/watford-g1.webp',1600,1066], ['/assets/projects/watford-g2.webp',1600,1066], ['/assets/projects/watford-g3.webp',1600,1066], ['/assets/projects/watford-g4.webp',1600,1066], ['/assets/projects/watford-g5.webp',1600,1066], ['/assets/projects/watford-g6.webp',1600,1066]]},
 
     /* ⚠️ THE EIGHTH — HIS, AND STILL TO COME. No `img`, so it renders the "photo to come" plate. */
     {key:'eighth', name:'Project eight', place:'Details to come',
-     ph:'PHOTO TO COME', type:'', date:'', story:'', gallery:[]}
+     ph:'PHOTO TO COME', type:'', story:'', gallery:[]}
   ];
   const PER_SET=4;
   const NSETS=Math.ceil(PROJECTS.length/PER_SET);   // 8 projects → two panels of four
@@ -12297,19 +12340,26 @@ requestAnimationFrame(glowTick);
      order and nothing is claimed about what is in them. */
   function loadMedia(proj){
     mediaWrap.innerHTML='';
-    MEDIA=(proj&&proj.gallery?proj.gallery:[]).map((src,i)=>({type:'image',src,label:proj.name+' '+(i+1)}));
-    /* the first and last run full width when there are enough of them to make a rhythm */
+    MEDIA=(proj&&proj.gallery?proj.gallery:[]).map(g=>({src:g[0],w:g[1],h:g[2]}));
     MEDIA.forEach((m,i)=>{
       const el=document.createElement('div');
-      const wide=(MEDIA.length>=4)&&(i===0||i===MEDIA.length-1);
-      el.className='proj-ph'+(wide?' wide':'');
-      el.innerHTML='<div class="ph-media"></div>';
-      el.querySelector('.ph-media').style.backgroundImage='url('+m.src+')';
+      el.className='proj-ph glow-card';
+      el.tabIndex=0; el.setAttribute('role','button');
+      el.setAttribute('aria-label',(proj.name||'Project')+', photograph '+(i+1)+' of '+MEDIA.length);
+      /* ⭐ width/height are the FILE's own, so the column reserves the right height before the
+         photograph arrives and nothing jumps as they load. `loading="lazy"` is safe here because
+         the overlay is only built when a project is opened. */
+      el.innerHTML='<img src="'+m.src+'" width="'+m.w+'" height="'+m.h+'" alt="'+
+        ((proj.name||'Project')+', photograph '+(i+1))+'" loading="lazy" decoding="async" draggable="false">'+
+        '<div class="sheen"></div>';
       el.addEventListener('click',()=>openLightbox(i));
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openLightbox(i);}});
+      attachGlow(el);                      // the cursor-tracked gold rim, same as the service faces
       mediaWrap.appendChild(el);
     });
     mediaWrap.style.display=MEDIA.length?'':'none';
   }
+
 
   // lightbox
   const lightbox=document.getElementById('projLightbox');
@@ -12317,7 +12367,7 @@ requestAnimationFrame(glowTick);
   const plLabel=document.getElementById('plLabel');
   const plCounter=document.getElementById('plCounter');
   let lbIndex=0;
-  function renderLb(){ const m=MEDIA[lbIndex]; plImg.style.backgroundImage=`url(${m.src})`; plLabel.textContent=m.label; plCounter.textContent=(lbIndex+1)+' / '+MEDIA.length; lightbox.classList.toggle('is-video',m.type==='video'); }
+  function renderLb(){ const m=MEDIA[lbIndex]; plImg.style.backgroundImage=`url(${m.src})`; plLabel.textContent=''; plCounter.textContent=(lbIndex+1)+' / '+MEDIA.length; lightbox.classList.toggle('is-video',m.type==='video'); }
   function openLightbox(i){ lbIndex=i; renderLb(); lightbox.classList.add('on'); lightbox.setAttribute('aria-hidden','false'); }
   function closeLightbox(){ lightbox.classList.remove('on'); lightbox.setAttribute('aria-hidden','true'); }
   function lbNext(){ lbIndex=(lbIndex+1)%MEDIA.length; renderLb(); }
@@ -12336,7 +12386,6 @@ requestAnimationFrame(glowTick);
     const setRow=(rowId,valId,val)=>{const r=document.getElementById(rowId),v=document.getElementById(valId);
       if(v) v.textContent=val||''; if(r) r.style.display=val?'':'none';};
     setRow('projTypeRow','projMetaType',proj.type);
-    setRow('projDateRow','projMetaDate',proj.date);
     /* ⛔ NO STORY MEANS NO COLUMN — see the markup note. The intro drops to one column so the
        facts sit on their own rather than beside an empty half. */
     const desc=document.getElementById('projDesc'), story=document.getElementById('projStory'),

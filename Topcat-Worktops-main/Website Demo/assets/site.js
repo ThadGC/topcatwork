@@ -3380,6 +3380,11 @@ requestAnimationFrame(glowTick);
      ⚠️ **ONE SENTENCE WAS DROPPED FROM HORNCHURCH AND HE WAS TOLD:** his own copy reads "we
      outdid competitors by being £1000 cheaper", which is discount language and argues on price
      — §2 rule 5, the rule that keeps biting. The rest of that description is his, verbatim.
+     ⚠️ **THE OPENING WORDS ARE DELIBERATELY NOT HIS.** His site starts both descriptions with
+     "Our recent project, The X project, …"; client, 14 Aug: *"don't say our recent project like
+     starting with that in the line. Just say this x project, and then you describe the project."*
+     ⛔ Do not restore the original opening when re-syncing from his site — it names the project
+     twice in six words, and "recent" is a claim that quietly expires.
      ⚠️ **THE EIGHTH CARD IS A DELIBERATE PLACEHOLDER.** He said there are eight projects and his
      site lists seven, and that he would send the missing one. It carries no photograph so it
      shows the "photo to come" plate rather than pretending to be a job. ⛔ Do not fill it with a
@@ -3389,38 +3394,38 @@ requestAnimationFrame(glowTick);
      one hard-coded Calacatta Gold story shown for every card. */
   const PROJECTS=[
     {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
-     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches', date:'October 2025',
-     story:'Our recent project, The Ruislip project, showcases our expertise in installing a Calacatta Sydney Black 20mm quartz worktop, island, and splashbacks along with a bespoke breakfast bar. Along with this, we lined the doorway entering the kitchen to match. Our experienced team can bring your vision to life, no matter how bespoke.',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/ruislip-g'+n+'-1100.webp')},
+     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches',
+     story:'This Ruislip project showcases our expertise in installing a Calacatta Sydney Black 20mm quartz worktop, island, and splashbacks along with a bespoke breakfast bar. Along with this, we lined the doorway entering the kitchen to match. Our experienced team can bring your vision to life, no matter how bespoke.',
+     gallery:[['/assets/projects/ruislip-g1.webp',1067,1600], ['/assets/projects/ruislip-g2.webp',1067,1600], ['/assets/projects/ruislip-g3.webp',1067,1600], ['/assets/projects/ruislip-g4.webp',1067,1600], ['/assets/projects/ruislip-g5.webp',1067,1600], ['/assets/projects/ruislip-g6.webp',1067,1600]]},
 
     {key:'central-london', name:'The Central London Project', place:'London',
-     img:'/assets/projects/central-london-1400.webp', type:'Worktop', date:'October 2025', story:'',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/central-london-g'+n+'-1100.webp')},
+     img:'/assets/projects/central-london-1400.webp', type:'Worktop', story:'',
+     gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067]]},
 
     {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
-     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks', date:'February 2025',
-     story:'Our recent project, The Hornchurch project, showcases our expertise in installing a Taj Mahal 30mm quartz worktop, island, and splashbacks in a large house in Essex, incorporating a complicated Single Ogee edging. Trust our experienced team to provide a range of edge profiles to suit your needs.',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/hornchurch-g'+n+'-1100.webp')},
+     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
+     story:'This Hornchurch project showcases our expertise in installing a Taj Mahal 30mm quartz worktop, island, and splashbacks in a large house in Essex, incorporating a complicated Single Ogee edging. Trust our experienced team to provide a range of edge profiles to suit your needs.',
+     gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g2.webp',604,1074], ['/assets/projects/hornchurch-g3.webp',1569,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g6.webp',882,1177]]},
 
     {key:'harrow', name:'The Harrow Project', place:'Harrow',
-     img:'/assets/projects/harrow-1400.webp', type:'Worktop', date:'January 2025', story:'',
-     gallery:[1,2].map(n=>'/assets/projects/harrow-g'+n+'-1100.webp')},
+     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'',
+     gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]},
 
     {key:'harlow', name:'The Harlow Project', place:'Essex',
-     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', date:'May 2025', story:'',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/harlow-g'+n+'-1100.webp')},
+     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446]]},
 
     {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
-     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', date:'April 2025', story:'',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/rickmansworth-g'+n+'-1100.webp')},
+     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446]]},
 
     {key:'watford', name:'The Watford Project', place:'Watford',
-     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', date:'July 2025', story:'',
-     gallery:[1,2,3,4,5,6].map(n=>'/assets/projects/watford-g'+n+'-1100.webp')},
+     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', story:'',
+     gallery:[['/assets/projects/watford-g1.webp',1600,1066], ['/assets/projects/watford-g2.webp',1600,1066], ['/assets/projects/watford-g3.webp',1600,1066], ['/assets/projects/watford-g4.webp',1600,1066], ['/assets/projects/watford-g5.webp',1600,1066], ['/assets/projects/watford-g6.webp',1600,1066]]},
 
     /* ⚠️ THE EIGHTH — HIS, AND STILL TO COME. No `img`, so it renders the "photo to come" plate. */
     {key:'eighth', name:'Project eight', place:'Details to come',
-     ph:'PHOTO TO COME', type:'', date:'', story:'', gallery:[]}
+     ph:'PHOTO TO COME', type:'', story:'', gallery:[]}
   ];
   const PER_SET=4;
   const NSETS=Math.ceil(PROJECTS.length/PER_SET);   // 8 projects → two panels of four
@@ -4390,19 +4395,26 @@ requestAnimationFrame(glowTick);
      order and nothing is claimed about what is in them. */
   function loadMedia(proj){
     mediaWrap.innerHTML='';
-    MEDIA=(proj&&proj.gallery?proj.gallery:[]).map((src,i)=>({type:'image',src,label:proj.name+' '+(i+1)}));
-    /* the first and last run full width when there are enough of them to make a rhythm */
+    MEDIA=(proj&&proj.gallery?proj.gallery:[]).map(g=>({src:g[0],w:g[1],h:g[2]}));
     MEDIA.forEach((m,i)=>{
       const el=document.createElement('div');
-      const wide=(MEDIA.length>=4)&&(i===0||i===MEDIA.length-1);
-      el.className='proj-ph'+(wide?' wide':'');
-      el.innerHTML='<div class="ph-media"></div>';
-      el.querySelector('.ph-media').style.backgroundImage='url('+m.src+')';
+      el.className='proj-ph glow-card';
+      el.tabIndex=0; el.setAttribute('role','button');
+      el.setAttribute('aria-label',(proj.name||'Project')+', photograph '+(i+1)+' of '+MEDIA.length);
+      /* ⭐ width/height are the FILE's own, so the column reserves the right height before the
+         photograph arrives and nothing jumps as they load. `loading="lazy"` is safe here because
+         the overlay is only built when a project is opened. */
+      el.innerHTML='<img src="'+m.src+'" width="'+m.w+'" height="'+m.h+'" alt="'+
+        ((proj.name||'Project')+', photograph '+(i+1))+'" loading="lazy" decoding="async" draggable="false">'+
+        '<div class="sheen"></div>';
       el.addEventListener('click',()=>openLightbox(i));
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openLightbox(i);}});
+      attachGlow(el);                      // the cursor-tracked gold rim, same as the service faces
       mediaWrap.appendChild(el);
     });
     mediaWrap.style.display=MEDIA.length?'':'none';
   }
+
 
   // lightbox
   const lightbox=document.getElementById('projLightbox');
@@ -4410,7 +4422,7 @@ requestAnimationFrame(glowTick);
   const plLabel=document.getElementById('plLabel');
   const plCounter=document.getElementById('plCounter');
   let lbIndex=0;
-  function renderLb(){ const m=MEDIA[lbIndex]; plImg.style.backgroundImage=`url(${m.src})`; plLabel.textContent=m.label; plCounter.textContent=(lbIndex+1)+' / '+MEDIA.length; lightbox.classList.toggle('is-video',m.type==='video'); }
+  function renderLb(){ const m=MEDIA[lbIndex]; plImg.style.backgroundImage=`url(${m.src})`; plLabel.textContent=''; plCounter.textContent=(lbIndex+1)+' / '+MEDIA.length; lightbox.classList.toggle('is-video',m.type==='video'); }
   function openLightbox(i){ lbIndex=i; renderLb(); lightbox.classList.add('on'); lightbox.setAttribute('aria-hidden','false'); }
   function closeLightbox(){ lightbox.classList.remove('on'); lightbox.setAttribute('aria-hidden','true'); }
   function lbNext(){ lbIndex=(lbIndex+1)%MEDIA.length; renderLb(); }
@@ -4429,7 +4441,6 @@ requestAnimationFrame(glowTick);
     const setRow=(rowId,valId,val)=>{const r=document.getElementById(rowId),v=document.getElementById(valId);
       if(v) v.textContent=val||''; if(r) r.style.display=val?'':'none';};
     setRow('projTypeRow','projMetaType',proj.type);
-    setRow('projDateRow','projMetaDate',proj.date);
     /* ⛔ NO STORY MEANS NO COLUMN — see the markup note. The intro drops to one column so the
        facts sit on their own rather than beside an empty half. */
     const desc=document.getElementById('projDesc'), story=document.getElementById('projStory'),

@@ -2939,6 +2939,21 @@
      `.gal-set.settled{pointer-events:auto}` swallowed every click over the middle — and the
      title block now lives under there, with buttons in it. */
   .gal-set.settled .gal-card{pointer-events:auto}
+  /* ⛔⛔⛔ THE STATIC COLUMN HAD TO RE-ENABLE THIS ITSELF, AND FOR MONTHS IT DID NOT — 14 Aug 2026
+     (D212). Client: *"you have made it so that the projects aren't clickable. They have to be
+     clickable… the projects aren't currently clickable on mobile either."*
+     ⭐⭐ **HE IS RIGHT AND IT WAS NEVER THE PROJECT PAGE'S FAULT.** `.gal-set` is
+     `pointer-events:none` because the set plane is stage-sized and would otherwise swallow every
+     click over the title block. The CARDS get their events back from `.gal-set.settled`, a class
+     **the pinned accordion adds** — and `.gal-static` turns that engine OFF, so on `/projects/`
+     and on every phone the cards sat there looking clickable with `pointer-events:none`
+     computed on them. `document.elementFromPoint()` over a card's centre returned `.gal-stage`.
+     ⚠️ **A SCRIPTED `card.click()` STILL WORKED, WHICH IS WHY EARLIER TESTING MISSED IT** —
+     `.click()` dispatches straight at the node and never does hit-testing. Only a real pointer
+     goes through the compositor. ⭐ **TEST A CLICK TARGET WITH `elementFromPoint`, NOT `.click()`.**
+     ⛔ Gated on `.gal-static` so the desktop accordion's own settled/unsettled behaviour is
+     untouched — a card mid-flight must still not be clickable. */
+  #gallery.gal-static .gal-card{pointer-events:auto}
   /* The section title, dead centre, in the gap the walls open around it. z-index 1 keeps it
      BEHIND the cards (10+), so a set walking through passes in front of it rather than being
      hidden by it. Fades in on the last stretch of the spread — see render(). */
@@ -3250,18 +3265,38 @@
   .proj-desc .proj-lead{font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
   .proj-desc p{color:var(--muted);font-weight:300;font-size:clamp(15px,1.15vw,17px);line-height:1.8;margin-bottom:18px}
   .proj-desc p.big{font-family:var(--sans);font-weight:300;font-size:clamp(19px,1.9vw,24px);color:var(--bone);line-height:1.55;margin-bottom:26px}
-  .proj-media{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-  .proj-ph{position:relative;background:#0d0d11;border:1px solid var(--hair-soft);overflow:hidden;aspect-ratio:3/2;grid-column:span 3;cursor:pointer}
-  .proj-ph.wide{grid-column:span 6;aspect-ratio:21/9}
-  .ph-media{position:absolute;inset:0;background-size:cover;background-position:center;
-    filter:saturate(0.9) brightness(0.9);transition:transform .6s var(--ease),filter .5s var(--ease)}
-  .proj-ph:hover .ph-media{transform:scale(1.06);filter:saturate(1) brightness(1)}
-  .proj-ph::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to top,rgba(8,8,10,0.72),transparent 45%)}
-  .proj-ph::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(198,166,100,0);transition:box-shadow .4s var(--ease)}
-  .proj-ph:hover::after{box-shadow:inset 0 0 0 1px rgba(198,166,100,0.55)}
-  .proj-ph .ph-label{position:absolute;bottom:13px;left:15px;font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--bone);z-index:2;text-shadow:0 1px 8px rgba(0,0,0,0.8)}
-  .proj-ph.video .ph-play{position:absolute;inset:0;margin:auto;width:66px;height:66px;border-radius:50%;border:1px solid var(--gold);background:rgba(198,166,100,0.12);display:grid;place-items:center;z-index:2;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
-  .proj-ph.video .ph-play::after{content:"";width:0;height:0;border-left:17px solid var(--gold);border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+  /* ⭐⭐⭐ A COLLAGE, NOT A CROPPING GRID — 14 August 2026 (D212). Client: *"the way that you laid
+     out the images inside the project gallery, you resize some of them, and now they're blurry.
+     Try and keep them in a collage style with the original sizing of the images… make sure to
+     keep all the images the correct sizing even on tablet and mobile."*
+     ⛔⛔ **THE BLUR WAS THE CROP, NOT THE FILE.** Every tile was forced to `aspect-ratio:3/2`
+     (and the wide ones to **21/9**) and filled with `background-size:cover`. His photographs are
+     4672×7008 PORTRAIT phone shots and 1084×1446 uprights — forcing a 21:9 letterbox out of a
+     3:4 portrait means the browser takes a thin horizontal strip and blows it up to 1180px wide,
+     on a 2× screen. **The source was fine; the shape it was poured into was not.**
+     ⭐ `column-count` masonry lets every photograph keep its own proportions — nothing is cropped
+     and nothing is stretched, which is what "original sizing" means here.
+     ⭐ **`<img>` WITH `width`/`height`, NOT A BACKGROUND.** A background image cannot tell the
+     browser its aspect ratio, so the column packed at the wrong heights and every tile jumped
+     when the photo arrived. The real dimensions are baked into the markup from the files.
+     ⚠️ Columns drop 3 → 2 → 1 so a tile is never asked to be wider than the file behind it. */
+  .proj-media{column-count:3;column-gap:14px}
+  @media(max-width:1000px){.proj-media{column-count:2}}
+  @media(max-width:640px){.proj-media{column-count:1}}
+  /* ⛔ `break-inside:avoid` is what stops a column splitting a photograph across its foot. */
+  .proj-ph{break-inside:avoid;margin:0 0 14px;position:relative;display:block;cursor:pointer;
+    border-radius:14px;overflow:hidden;background:#0d0d11;border:1px solid var(--hair-soft)}
+  /* ⭐ THE ROUNDED CORNER, THE GOLD RIM AND THE GLOSS ARE THE SITE'S OWN, NOT NEW ONES. The tile
+     carries `.glow-card`, so it takes the same cursor-tracked rim as the service faces and the
+     review cards (`--gx/--gy/--ga`, driven by attachGlow), and the same `.sheen` sweep. ⚠️
+     `overflow:hidden` clips both pseudo-elements to the radius — without it the rim draws a
+     square around a rounded picture. */
+  .proj-ph img{display:block;width:100%;height:auto;
+    filter:saturate(0.92) brightness(0.92);transition:transform .6s var(--ease),filter .5s var(--ease)}
+  .proj-ph:hover img{transform:scale(1.04);filter:saturate(1) brightness(1)}
+  .proj-ph:hover .sheen{transform:translateX(120%)}
+  .proj-ph:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
   /* image lightbox */
   .proj-lightbox{position:fixed;inset:0;z-index:130;background:rgba(6,6,8,0.96);display:flex;align-items:center;justify-content:center;pointer-events:none;
     opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility 0s .35s}
@@ -3293,9 +3328,8 @@
   .proj-cta-btn:hover{background:var(--gold);color:var(--ink)}
   @media(max-width:820px){
     .proj-intro{grid-template-columns:1fr;gap:34px}
-    .proj-media{grid-template-columns:repeat(2,1fr)}
-    .proj-ph{grid-column:span 1}
-    .proj-ph.wide{grid-column:span 2}
+    /* ⚠️ the grid overrides here died with the cropping grid (D212); the collage sets its
+       own column count at 1000px and 640px, in the block above. */
     .proj-title{font-size:clamp(38px,10vw,64px)}
   }
 
