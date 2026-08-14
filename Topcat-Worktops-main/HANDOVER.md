@@ -136,12 +136,13 @@
 
 
 **THE single current handover. Start here in a new chat.**
-Current as of **11 August 2026**, end of the **first mobile round**.
-⭐ **The range is 132 stones across 167 live pages. Desktop design is CLOSED (D91); the live scope
-is MOBILE (≤720px); tablet is untouched by instruction.** Open
-`HANDOVER-NEXT-CHAT-START-HERE.md` first in a new chat, and
-`HANDOVER-2026-08-11-mobile-round.md` before touching any mobile rule; this file is the full
-record behind both.
+Current as of **14 August 2026**, after the **tablet round (D197–D200)**.
+⭐ **The range is 132 stones across 167 live pages, and the site is SEVEN pages built by
+`build_pages.py` from the landing page's own parts.** Desktop design is CLOSED (D91). **The phone
+(≤720px) is signed off, the TABLET BAND (721–1120px) has just been built, and he has not named what
+comes next.** Open `HANDOVER-NEXT-CHAT-START-HERE.md` first in a new chat — it carries the
+lift-don't-copy rule that makes one rule serve two bands, and why the tablet block must be the last
+thing in the stylesheet. This file is the full record behind it.
 
 **If you are picking this up cold, read in this order:** §D the Decision Register → §0 the current
 state → §2 the standing rules. That is about ten minutes and it is enough to work safely. The two
@@ -189,7 +190,8 @@ So, whenever the client makes or changes a decision:
 | `HANDOVER-2026-08-07-design-round.md` | ⭐ The narrative write-up of the 7 Aug design round (second session): the sitemap, the two scroll animations, the FAQ redesign, the enquiry form's foot, the helix card backs. **Read §2 and §5 of it before touching either scroll build or the FAQ.** |
 | `HANDOVER-2026-08-09-real-slab-photography.md` | The narrative write-up of the first slab-photography session (the pipeline itself: harvest, crop, gate, match). ⚠️ Its plan to harvest marble.com was **reversed the next day** — read the file below before acting on it. |
 | **`HANDOVER-2026-08-10-slab-photography-complete.md`** | ⭐ The narrative write-up of the 9–10 Aug session that **finished** the photography: 52/52 stones, the six collection bugs that were hiding the images, the licensing decision on marble.com, the two automatic guards and the live wrong-image errors they caught, and the popularity ordering. **Read §2, §3 and §5 of it before touching anything in `stones/harvest/`** — most of what looks like a threshold worth tuning was arrived at by looking at several hundred photographs, and the obvious tuning has already failed. |
-| **`HANDOVER-NEXT-CHAT-START-HERE.md`** | ⭐ **Rewritten 11 Aug, end of the FIRST MOBILE ROUND. This is the file to open first in a new chat** — the device-scope rule and how to prove the freeze, the nine-check gate, the integrity rule and its four failures, the six lessons of the mobile round, and the open list in priority order. |
+| **`HANDOVER-NEXT-CHAT-START-HERE.md`** | ⭐⭐ **Rewritten 14 Aug, after the TABLET ROUND (D197–D200). This is the file to open first in a new chat** — the three device bands and the lift-don't-copy rule that reaches two of them, why the tablet block must be the LAST thing in the stylesheet, the freeze probe and its current numbers, the four bugs this round produced, the environment traps, and the open list in priority order. |
+| `HANDOVER-2026-08-13-internal-pages-start-here.md` | The START HERE from the internal pages round (D179–D196), superseded 14 Aug. ⚠️ Predates the tablet band entirely — it still says the tablet is "frozen, NEXT, on his word". |
 | **`HANDOVER-2026-08-11-mobile-round.md`** | ⭐ The narrative write-up of the first mobile round (D90–D98): the desktop freeze and how it is proven, the hero's bevel geometry, the swipe that only answered to a touchscreen, the invisible slack behind a spacing complaint, and the three stacked causes of a helix card that shipped invisible. **Read before touching any mobile rule.** |
 | `HANDOVER-2026-08-11-alphabetical-v2-mirror-start-here.md` | The START HERE from the alphabetical / V2-removal / Mirror round, superseded 11 Aug. ⚠️ Predates the desktop freeze and all mobile work |
 | `HANDOVER-2026-08-10-logo-and-integrity-start-here.md` | The START HERE from the logo / name-integrity round, superseded 11 Aug. ⚠️ Describes a **126**-stone range ordered by POPULARITY on a site that still had a V2 — all three have moved |
