@@ -518,10 +518,32 @@
     font-size:clamp(32px,min(4.8vw,6vh),58px);letter-spacing:0.01em;margin:0 0 clamp(14px,2.2vh,22px);
   }
   .page-head h1 em{font-style:normal;color:var(--gold-soft)}
+  /* ⛔⛔ THE LEDE WAS BELOW THE READABLE THRESHOLD OVER THIS PHOTOGRAPH — 14 Aug 2026 (D232).
+     Client: *"the part that's on the actual hero section is easier to read because the text is
+     hard to read with that background."*
+     ⭐⭐ MEASURED, NOT GUESSED, AND THE PHOTOGRAPH ITSELF WAS SAMPLED: the head's own background
+     was drawn to a canvas at its rendered `cover` scale and position, and the brightest pixel in
+     the band the lede occupies is **rgb(211,189,168)** — a lit worktop edge. Composited under the
+     existing 0.62 veil that is an effective background of rgb(85,76,69), and `--muted` is bone at
+     **0.55 alpha**, which lands the body copy at **3.51:1**. Under 4.5, and he could see it.
+     ⛔⛔ **DEEPENING THE VEIL IS THE OBVIOUS FIX AND IT IS THE ONE D217 ALREADY TRIED AND REVERTED:**
+     reaching contrast that way "fixed the label by flattening the photograph, and on this site the
+     photograph IS the product". **The words needed shade, not the picture.**
+     ⭐ So the veil is untouched and the TEXT carries it: 0.78 alpha takes the same worst case to
+     **5.27:1**, and the shadow is led by a centred `0 0` blur so the rim sits on all four sides of
+     the letterform — D220's finding that small text needs the rim more than the drop.
+     ⚠️ A `text-shadow` is local separation that a contrast ratio cannot see, so the 5.27 figure is
+     the shadow-free number and the real page is better than it. ⚠️ This is the shared internal
+     page head, so every page gets it; the photograph is the same on all of them. */
   .page-head p{
-    font-size:clamp(14px,min(1.4vw,2.2vh),16.5px);line-height:1.72;color:var(--muted);font-weight:300;
+    font-size:clamp(14px,min(1.4vw,2.2vh),16.5px);line-height:1.72;font-weight:300;
+    color:rgba(244,241,234,0.78);
+    text-shadow:0 0 14px rgba(7,7,9,0.72), 0 1px 6px rgba(7,7,9,0.6);
     max-width:64ch;margin:0 auto;
   }
+  /* the title is already full bone and measures 7.41:1 against the same worst pixel; it takes the
+     drop-led shadow only so the two lines read as one block rather than one lit and one not */
+  .page-head h1{text-shadow:0 0 18px rgba(7,7,9,0.5), 0 2px 10px rgba(7,7,9,0.45)}
   /* the crumb sits above the title, quiet, and names where the customer is */
   .page-crumb{
     display:flex;justify-content:center;align-items:center;gap:9px;margin-bottom:18px;
@@ -4543,16 +4565,28 @@
      narrow-ribbon problem one level down. The COLUMN is the measure now.
      ⚠️ `text-align:left` is stated rather than inherited — these paragraphs still sit in a
      `.section` whose head is centred, and `text-align` inherits. */
-  .trade-lede{max-width:1320px;margin:0 auto clamp(18px,3vh,38px);
-    display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,44px);text-align:left}
-  .trade-lede .section-sub{max-width:none;margin-top:0}
-  /* the closing line is the summary, so it spans both columns rather than orphaning itself
-     halfway down the second one */
-  .trade-lede .trade-lede-close{grid-column:1/-1;color:var(--bone)}
-  /* ⚠️ ONE COLUMN BELOW 860px. Two columns of body copy on a phone gives about 22 characters a
-     line, which is a newspaper column at the wrong scale. The tablet keeps two: at 900px each
-     column is still ~55 characters. */
-  @media(max-width:860px){ .trade-lede{grid-template-columns:1fr;gap:clamp(10px,1.6vh,16px)} }
+  /* ⛔ ONE PARAGRAPH, NOT TWO COLUMNS — 14 Aug 2026 (D232), REVERSING D230's ARRANGEMENT THE SAME
+     DAY. Client: *"why would you go and split it up into two paragraphs instead of just making one
+     long paragraph. Merge them together again. Keep the width similar or slightly smaller than the
+     actual blocks below it."*
+     ⚠️ **KEEP THE REASON D230 EXISTED, OR THE NEXT SESSION REBUILDS IT:** the copy started as three
+     paragraphs inside `.section-head`, which is `text-align:center` with a 52ch measure, and that
+     gave a 547px centred ribbon down the middle of the page — the thing he called terrible. **The
+     fault was the centred ribbon, not the paragraph count.** Two columns fixed it; one wide
+     paragraph fixes it too, and it is his call which.
+     ⭐ 1000px against the card grid's measured 1062px — "slightly smaller", inset about 31px each
+     side, so it reads as a deliberate measure rather than as a block that failed to reach.
+     ⚠️ `line-height` is lifted to 1.8 BECAUSE the line is long: at this width the paragraph runs to
+     roughly 130 characters, and the longer the line the more the eye needs help finding the next
+     one. ⛔ Do not also raise the font size to "fill" it — that lengthens the line again. */
+  /* ⭐ CENTRED — client, same message: *"the paragraph under one trade off your critical path, it
+     has to be centered."* It sits under a centred title, so centred is what makes the two read as
+     one block. ⚠️ This is the third arrangement this copy has had today; what he rejected was
+     never the alignment, it was the 547px RIBBON the 52ch measure made of it. Centred at 1000px
+     is not that. */
+  .trade-lede{max-width:1000px;margin:0 auto clamp(18px,3vh,38px);text-align:center}
+  .trade-lede .section-sub{max-width:none;margin-top:0;line-height:1.8}
+  .trade-lede .trade-lede-close{color:var(--bone);margin-top:clamp(12px,1.8vh,20px)}
   /* ⛔⛔⛔ **EVERY DECLARATION IN THE OLD VERSION OF THIS BLOCK WAS DEAD, AND THAT IS THE WHOLE
      STORY OF WHY IT LOOKED THE WAY IT DID** — 14 Aug 2026 (D231). Client: *"These blocks look
      absolutely terrible. We don't have this kind of design across the entire site. Why is the
@@ -4577,10 +4611,17 @@
   .trade-grid{display:grid;grid-template-columns:repeat(3,1fr);
     gap:clamp(14px,1.6vw,22px);max-width:1320px;margin:0 auto}
   #tradeWho .trade-grid{grid-template-columns:repeat(4,1fr)}
+  /* ⛔⛔ THE RIM IS GOLD, AND D231 TOOK IT AWAY BY ACCIDENT — 14 Aug 2026 (D232). Client: *"add the
+     golden rim around."* Borrowing `.wy-r`'s skin wholesale brought its `--hair-soft` border with
+     it, which is bone at 10%, and the trade cards had been on `--hair` — **gold at 34%** — since
+     they were written. The review cards, the enquiry card and the FAQ plate all carry the gold
+     rim; the Why tiles are the exception, not the rule. ⭐ **COPY A COMPONENT'S SKIN AND YOU COPY
+     ITS EXCEPTIONS TOO.** ⛔ A rim is not a top line: §2 rule 10 forbids a bright band across the
+     TOP of a card, and this is a full border at 34%, which is what the review cards already do. */
   .trade-card{position:relative;overflow:hidden;display:flex;flex-direction:column;
     border-radius:14px;
     padding:clamp(18px,2.6vh,30px) clamp(18px,1.7vw,30px);
-    border:1px solid var(--hair-soft);
+    border:1px solid var(--hair);
     background:linear-gradient(158deg,#15151b,#0e0e12);
     box-shadow:0 24px 54px -30px rgba(0,0,0,0.9)}
   .trade-stone{position:absolute;inset:0;z-index:0;border-radius:inherit;overflow:hidden;
@@ -4604,6 +4645,55 @@
   @media(max-width:620px){
     .trade-grid,#tradeWho .trade-grid{grid-template-columns:1fr}
   }
+
+  /* --- ⭐ WHAT A TRADE BUYER CAN SPECIFY (D232) ------------------------------------------------
+     Nine links, not nine cards: this section answers "is the range wide enough", which is a
+     scanning question, and nine more panels would out-shout the six that carry the actual
+     argument above it. ⛔ Gold rim, like everything else on this page. */
+  .trade-scope{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+    max-width:1000px;margin:0 auto}
+  .trade-scope-link{display:inline-flex;align-items:center;text-decoration:none;
+    border:1px solid var(--hair);border-radius:999px;
+    padding:clamp(9px,1.2vh,13px) clamp(15px,1.4vw,22px);
+    font-family:var(--brand);font-size:clamp(11px,0.95vw,12.5px);letter-spacing:0.13em;
+    text-transform:uppercase;color:var(--bone);
+    transition:color .3s var(--ease),border-color .3s var(--ease),background-color .3s var(--ease)}
+  .trade-scope-link:hover{color:var(--gold);border-color:var(--gold);
+    background:rgba(198,166,100,0.06)}
+  .trade-scope-foot{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;
+    margin-top:clamp(18px,2.6vh,30px)}
+
+  /* --- ⭐ THE TRADE QUESTIONS (D232) -----------------------------------------------------------
+     ⛔⛔ NOT the landing page's `#faq`. That is a grouped contents-page component with a JS answer
+     panel, built for twelve questions across four named groups; six operational questions in a
+     column is a different object and borrowing that machinery would have been the D231 mistake in
+     reverse — taking a component because it is nearby rather than because it fits.
+     ⭐ `<details>`/`<summary>` is the same idiom the 166 leaf pages already use, so it needs no
+     script at all and it opens with a keyboard for free.
+     ⛔ NO `FAQPage` SCHEMA ANYWHERE NEAR THIS — Google deprecated it 7 May 2026 (§10). */
+  .trade-faq{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+  .trade-q{border:1px solid var(--hair);border-radius:14px;background:var(--ink-2);
+    overflow:hidden}
+  .trade-q summary{list-style:none;cursor:pointer;display:flex;align-items:center;
+    justify-content:space-between;gap:16px;
+    padding:clamp(14px,1.9vh,20px) clamp(16px,1.5vw,24px);
+    font-family:var(--sans);font-weight:400;color:var(--bone);
+    font-size:clamp(14px,1.15vw,16px);line-height:1.35;
+    transition:color .3s var(--ease)}
+  .trade-q summary::-webkit-details-marker{display:none}
+  .trade-q summary:hover{color:var(--gold)}
+  /* ⚠️ A PLUS DRAWN FROM TWO BORDERS, NOT A GLYPH: a `+`/`−` character changes width between the
+     two states and shunts the question text sideways as it opens. */
+  .trade-q-mark{position:relative;flex:none;width:13px;height:13px}
+  .trade-q-mark::before,.trade-q-mark::after{content:"";position:absolute;background:var(--gold);
+    transition:transform .32s var(--ease),opacity .32s var(--ease)}
+  .trade-q-mark::before{left:0;right:0;top:6px;height:1px}
+  .trade-q-mark::after{top:0;bottom:0;left:6px;width:1px}
+  .trade-q[open] .trade-q-mark::after{transform:rotate(90deg);opacity:0}
+  .trade-a{color:var(--muted);font-weight:300;
+    font-size:clamp(13px,1.05vw,14.5px);line-height:1.7;
+    padding:0 clamp(16px,1.5vw,24px) clamp(15px,2vh,22px);
+    max-width:78ch}
 
   /* ================= FAQ PANEL =================
      The FAQ used to be a sticky sheet that rose over the frozen "Why choose us" section; that

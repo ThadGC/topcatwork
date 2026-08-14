@@ -36,9 +36,19 @@ RUN
 """
 
 import hashlib
+import html
 import os
 import re
 import sys
+
+
+# ⚠️ ADDED 14 Aug 2026 (D232) FOR THE TWO NEW TRADE SECTIONS. This file had no escaping helper
+# because every section template was a hand-written literal; the new sections build their markup
+# from data lists, so the text goes through here. ⛔ The older templates are deliberately NOT
+# retro-fitted — they contain intentional entities (`&middot;`, `&#9733;`) that escaping would
+# print as literal text.
+def e(s):
+    return html.escape(str(s), quote=True)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "index.html")
@@ -225,11 +235,11 @@ TRADE_WHAT_SECTION = """  <section class="section" id="tradeWhat">
     <div class="trade-lede rise">
       <p class="section-sub">Most of the problems we get called in to solve are not stone problems,
         they are coordination problems. A supplier who templated too early. A fitter who did not
-        turn up. A joint that does not match the sample the client signed off.</p>
-      <p class="section-sub">When those things go wrong, the problem usually lands on you, on your
-        programme, your client and your reputation. That is exactly what we are here to prevent.
-        With Topcat, we manage the process from advice and templating through to fabrication and
-        installation, keeping the responsibility with us rather than passing it down the line.</p>
+        turn up. A joint that does not match the sample the client signed off. When those things go
+        wrong, the problem usually lands on you, on your programme, your client and your
+        reputation. That is exactly what we are here to prevent. With Topcat, we manage the process
+        from advice and templating through to fabrication and installation, keeping the
+        responsibility with us rather than passing it down the line.</p>
       <p class="section-sub trade-lede-close"><b>One team. One point of contact. One less thing on
         your critical path.</b></p>
     </div>
@@ -321,9 +331,97 @@ TRADE_CTA_SECTION = """  <section id="tradeCta">
     </div>
   </section>"""
 
+# ⭐⭐ TWO SECTIONS THE TRADE PAGE DID NOT HAVE — 14 Aug 2026 (D232). Client: *"make sure the page
+# actually has everything that we need, and it looks better and functions better, has more sections
+# to it maybe."* What a trade buyer could not find here: **what Topcat actually supplies** (the page
+# linked to neither /services/ nor /stones/ anywhere), and **answers to the operational questions**
+# a specifier asks before they will risk a client on a new supplier.
+# ⛔⛔ EVERY ANSWER BELOW IS ALREADY TRUE AND ALREADY CLAIMED SOMEWHERE ON THIS SITE. Trade terms,
+# payment and minimum order are NOT among them — §2 rule 12 forbids stating what we cannot
+# guarantee, and the client has never supplied them. The terms question is answered honestly, by
+# pointing at the form, which is exactly what the CTA already promises.
+# ⛔ NO `FAQPage` SCHEMA. Google deprecated it on 7 May 2026 and it is on the dead-types list.
+# ⚠️ THE NINE SERVICE LINKS ARE A SIXTH COPY OF THE SERVICE LIST (see the D228 note in
+# build_seo_pages.py). If a tenth service is ever added, it goes here too.
+TRADE_SCOPE = [
+    ("Kitchen worktops", "/services/kitchen-worktops.html"),
+    ("Kitchen islands", "/services/kitchen-islands.html"),
+    ("Splashbacks", "/services/splashbacks.html"),
+    ("Bathrooms", "/services/bathroom-worktops.html"),
+    ("Vanity tops", "/services/vanity-tops.html"),
+    ("Outdoor spaces", "/services/outdoor-kitchens.html"),
+    ("Fireplaces", "/services/fireplaces.html"),
+    ("Dining tables", "/services/dining-tables.html"),
+    ("Commercial", "/services/commercial-worktops.html"),
+]
+
+TRADE_FAQ = [
+    ("Can you deal with our client directly?",
+     "Either way. We can speak to your customer, take them through the stone and handle the "
+     "template appointment, or stay behind you and deal only with your office. Tell us which at "
+     "the start and we will keep to it."),
+    ("How much notice do you need?",
+     "We template once the units are level, and most kitchens are fitted within days of the slab "
+     "being approved. Dates go in writing so you can plan the trades around them."),
+    ("Can you hold a slab for a later plot?",
+     "Yes. Slabs are reserved and matched up front, so a plot finishing months after the first one "
+     "does not arrive looking like a different scheme."),
+    ("Who templates and fits it?",
+     "Our own team, and the stone is cut and polished by our experienced fabricators. There is no "
+     "third party in the middle to point at when something needs sorting."),
+    ("Do you supply samples for client presentations?",
+     "Yes. We bring samples to the visit and can leave them with you or with your client while the "
+     "scheme is being decided."),
+    ("What are your trade terms?",
+     "They depend on what you are working on, so we would rather quote them than post them. Send us "
+     "the project and we will come back with terms, lead times and a single point of contact."),
+]
+
+TRADE_SCOPE_SECTION = """  <section class="section" id="tradeScope">
+    <div class="section-head rise">
+      <h2 class="section-title">Everything you can <em>specify</em></h2>
+      <p class="section-sub">One supplier across the whole job, so a scheme does not have to be
+        split between three of them.</p>
+    </div>
+    <div class="trade-scope rise">
+{links}
+    </div>
+    <div class="trade-scope-foot rise">
+      <a class="btn-ghost" href="/stones/">Browse the stone catalogue</a>
+      <a class="btn-ghost" href="/projects/">See recent installations</a>
+    </div>
+  </section>"""
+
+TRADE_FAQ_SECTION = """  <section class="section" id="tradeFaq">
+    <div class="section-head rise">
+      <h2 class="section-title">Trade <em>questions</em></h2>
+    </div>
+    <div class="trade-faq rise">
+{rows}
+    </div>
+  </section>"""
+
+
+def trade_scope_links(items):
+    return "\n".join(
+        '      <a class="trade-scope-link" href="%s">%s</a>' % (href, e(name))
+        for name, href in items)
+
+
+def trade_faq_rows(items):
+    return "\n".join(
+        '      <details class="trade-q">\n'
+        '        <summary>%s<span class="trade-q-mark" aria-hidden="true"></span></summary>\n'
+        '        <div class="trade-a">%s</div>\n'
+        '      </details>' % (e(q), e(a))
+        for q, a in items)
+
+
 CUSTOM = {
     "c_tradeWhat": TRADE_WHAT_SECTION.format(cards=trade_cards(TRADE_WHAT)),
     "c_tradeWho": TRADE_WHO_SECTION.format(cards=trade_cards(TRADE_WHO)),
+    "c_tradeScope": TRADE_SCOPE_SECTION.format(links=trade_scope_links(TRADE_SCOPE)),
+    "c_tradeFaq": TRADE_FAQ_SECTION.format(rows=trade_faq_rows(TRADE_FAQ)),
     "c_tradeCta": TRADE_CTA_SECTION,
 }
 
@@ -399,7 +497,13 @@ PAGES = [
         # ⭐ the client's own rewrite, 14 Aug 2026: "building contractors" added to the list, and
         # "we can deal with your customer directly" is the line he wanted leading the offer.
         lead="Stone worktops supplied and fitted for kitchen designers, builders, building contractors, developers and architects. We can deal with your customer directly, template, fabricate, fit and carry the guarantee, work to your programme, and turn up on the date we agreed.",
-        stack=["c_tradeWhat", "c_tradeWho", "s_reviews", "s_process", "c_tradeCta"],
+        # ⭐ D232 added `c_tradeScope` and `c_tradeFaq`. ORDER IS THE ARGUMENT A TRADE BUYER MAKES:
+        # what you get → who it is for → what you can specify → who says so → how it runs →
+        # the questions in the way → the form. Scope sits before the reviews because a specifier
+        # checks the range is wide enough before they care whether other people liked it, and the
+        # FAQ sits last before the form because it is the last set of objections.
+        stack=["c_tradeWhat", "c_tradeWho", "c_tradeScope", "s_reviews", "s_process",
+               "c_tradeFaq", "c_tradeCta"],
     ),
 ]
 
