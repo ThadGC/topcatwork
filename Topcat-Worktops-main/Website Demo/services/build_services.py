@@ -148,26 +148,61 @@ SERVICES = [
       ("How thick is a stone splashback?", "Splashbacks are usually cut thinner than the worktop so they sit neatly against the wall. We confirm the thickness and finish when we template."),
     ],
   ),
+  # ⛔⛔ THE BATHROOM PAGE NO LONGER COVERS VANITY TOPS — 14 Aug 2026 (D228). Client: *"when I go
+  # into vanity tops, it takes me to bathroom worktops and vanity tops. That's not right. Bathroom
+  # should take me to bathroom, and vanity tops should take me to vanity tops."* This page was
+  # both, which is why one tile opened the other tile's page. ⭐ Its SLUG, and therefore its URL
+  # and its ranking, is unchanged; the basin content moved out and shower surrounds, sills and
+  # thresholds moved in, so the two pages no longer compete for the same words.
   dict(
-    slug="bathroom-worktops", eyebrow="Bathrooms", h1="Bathroom Worktops & Vanity Tops",
-    title="Bathroom Worktops & Vanity Tops in Stone | Topcat Worktops",
-    metadesc="Stone vanity tops, shower surrounds and bathroom worktops that shrug off water and daily wear, matched to your tiles and fitted to the millimetre. Serving London, Hertfordshire, Essex and Berkshire.",
-    lede="Vanity tops, shower surrounds and bathroom surfaces in stone that handles water and daily wear without fuss. Cut with undermount or countertop basins in mind and matched to your tiles.",
+    slug="bathroom-worktops", eyebrow="Bathrooms", h1="Bathroom Worktops & Shower Surrounds",
+    title="Bathroom Worktops & Shower Surrounds in Stone | Topcat Worktops",
+    metadesc="Stone shower surrounds, thresholds, window sills and bath surrounds cut from one material and fitted by our own team. Free home visit across London, Hertfordshire, Essex and Berkshire.",
+    lede="Shower surrounds, thresholds, window sills and bath panels cut from one stone, so a bathroom reads as a single material rather than a set of parts. Basin tops have a page of their own.",
     intro=[
-      "A bathroom asks a lot of a surface. It sees water every day, cosmetics and cleaning products, and it needs to still look good years later. Quartz handles this easily, and a natural stone can work beautifully where it is sealed and cared for.",
-      "We template your vanity or bathroom run to the millimetre, specify the basin openings to suit an undermount or countertop basin, and fit it ourselves. Matching upstands and window sills can be cut from the same stone so the room ties together.",
+      "A bathroom is a small room that gets looked at closely, and it is usually the tiling and the joints that give it away. Running one stone across the shower wall, the threshold, the sill and the bath panel takes most of those joints out, and what is left is stone rather than grout.",
+      "We template the room by hand once the walls are true, have the pieces cut and polished by our experienced fabricators, and fit them ourselves. Wherever the sizes allow we lay the pieces out on the same slab, so the colour and the movement carry from one to the next instead of meeting by accident.",
+      "Quartz is the easiest material to live with in a bathroom, because it takes water, cosmetics and cleaning products in its stride. Marble and other natural stones look wonderful in here and ask for a little more of you: sealing on fitting, and wiping up anything acidic rather than leaving it to sit.",
     ],
     feats=[
-      ("Vanity tops", "Cut for undermount or countertop basins, with tap holes positioned exactly where you want them."),
-      ("Shower surrounds and sills", "Stone thresholds, shower shelves and window sills cut from the same material for a consistent look."),
-      ("Water-friendly stone", "Quartz shrugs off water and cosmetics, and natural stone is sealed on fitting."),
-      ("Matched to your tiles", "We help you choose a stone that sits well with your tiles, fittings and brassware."),
+      ("Shower walls and thresholds", "Full-height shower panels, low thresholds and shelves cut from the same stone, with fewer joints to keep clean."),
+      ("Window sills and returns", "Sills cut to the reveal and finished on every edge that shows, in the material already in the room."),
+      ("Bath surrounds and panels", "A stone top to a panelled bath, or a surround cut around it, templated to the opening as built."),
+      ("Laid out together", "Where the sizes allow, the pieces for one room come off one slab, so the stone agrees across the bathroom."),
     ],
     faqs=[
-      ("What is the best worktop for a bathroom?", "Quartz is the easiest to live with in a bathroom because it resists water, cosmetics and cleaning products. Marble and other natural stones can look wonderful and are fine when sealed and wiped down, and we will be honest about the upkeep each one needs."),
-      ("Can you cut a vanity top for an undermount basin?", "Yes. The opening and tap holes are cut to suit an undermount or countertop basin and finish the edges to match your worktop."),
-      ("Do you do matching window sills and shower shelves?", "Yes. We can cut sills, thresholds and shelves from the same stone so the bathroom reads as one material."),
-      ("Is marble suitable for a bathroom?", "Marble suits bathrooms that are looked after, sealed on fitting and wiped down after use. If you want the marble look with less maintenance, a marble-effect quartz gives you the appearance with an easier life."),
+      ("What is the best stone for a bathroom?", "Quartz is the easiest to live with, because water, cosmetics and cleaning products do not trouble it. Marble and other natural stones look beautiful in a bathroom and want a little care: they are sealed on fitting, and anything acidic is better wiped up than left. We will tell you honestly which one suits how the room gets used."),
+      ("Can you run the same stone up the shower wall?", "Yes. A full-height panel takes the tiling and the grout lines out of the wettest part of the room. Panel sizes are limited by the slab, so on a large wall we will show you where a joint would fall before anything is cut."),
+      ("Do you fit the shower tray, the plumbing or the tiling?", "No. We cut and fit the stone. Trays, plumbing and tiling are for your bathroom fitter, and we work around their programme and to the dimensions they give us."),
+      ("Is marble suitable for a bathroom?", "It suits a bathroom that is looked after: sealed on fitting and wiped down after use. If you want the look without thinking about it, a marble-effect quartz gets you close with an easier life."),
+      ("When should you template a bathroom?", "Once the walls are true and the trays and units are in position, so the template records the room as it will actually be rather than as it was drawn."),
+    ],
+  ),
+  # ⭐⭐ NEW 14 Aug 2026 (D228). Client: *"each one of these options needs to have its own dedicated
+  # page… vanity tops should take me to vanity tops."* This is the content that used to live on the
+  # bathroom page, written out properly rather than lifted across.
+  dict(
+    slug="vanity-tops", eyebrow="Vanity Tops", h1="Stone Vanity Tops",
+    title="Stone Vanity Tops for Undermount & Countertop Basins | Topcat Worktops",
+    metadesc="Vanity tops cut in quartz, granite or marble for undermount and countertop basins, with the tap holes where you want them. Templated by hand and fitted by our own team across London and the Home Counties.",
+    lede="Basin tops cut for the basin you have chosen, with the tap holes where you want them and the edges finished to match. One stone can carry the vanity, the sill and the shelf above the bath.",
+    intro=[
+      "A vanity top is a small piece of stone that gets looked at from a foot away, every morning. That is why the details count for more here than almost anywhere else in the house: where the tap sits, how far the top oversails the unit, whether the basin is cut in from beneath or stands on top of it.",
+      "Bring us the basin and the tap, or their make and model, and we will template around them. An undermount basin is cut from below and the inside edge is polished, so the stone runs down to the bowl. A countertop basin sits on an uncut top with one hole for the waste. Wall-mounted taps mean no holes at all, which is worth settling early, because a hole is quick to cut and impossible to un-cut.",
+      "Cloakrooms, family bathrooms and en-suites all get the same treatment. Where more than one of them is being done at once we plan the pieces together, so the same stone runs through the house rather than nearly matching from room to room.",
+    ],
+    feats=[
+      ("Undermount or countertop", "Cut from beneath for an undermount basin, with the inside edge polished, or left whole for a basin that stands on top."),
+      ("Tap holes where you want them", "Single, twin, or none at all for wall-mounted taps. Tell us the tap and we drill to its specification."),
+      ("Upstands, sills and shelves", "The same stone cut for the upstand behind the basin, the window sill or a shelf above the bath."),
+      ("Edges to match the room", "A pencil edge for something quiet, or a mitred edge built up to read thicker than the slab."),
+    ],
+    faqs=[
+      ("Can you cut a vanity top for an undermount basin?", "Yes. The opening is cut from beneath and the inside edge is polished, so the stone runs cleanly to the bowl. We need the basin itself, or its make and model, before we cut."),
+      ("Where do the tap holes go?", "Wherever you want them, as long as the tap and the basin agree with each other. Bring the tap or its specification to the template and we will drill to it. If the taps come out of the wall, the top stays solid."),
+      ("What is the best stone for a vanity top?", "Quartz is the easiest to live with, because toothpaste, cosmetics and cleaning products come off it with a wipe. Marble and other natural stones look wonderful on a vanity and want a little care: sealed on fitting, and acidic things wiped up rather than left. We will tell you which one suits the way the room is used."),
+      ("Can I have a matching upstand and window sill?", "Yes. Upstands, sills, shelves and shower thresholds can come from the same stone, cut at the same time so the colour and the movement sit together."),
+      ("How thick is a vanity top?", "20mm and 30mm are the usual thicknesses. A mitred edge can be built up to look thicker than the slab, which suits a vanity meant to be a feature. We confirm the thickness and the edge profile at the template."),
     ],
   ),
   dict(
@@ -214,6 +249,67 @@ SERVICES = [
       ("Do outdoor worktops need sealing?", "Natural stone used outdoors is sealed on fitting and benefits from resealing over time, which we will explain when we visit."),
     ],
   ),
+  # ⭐⭐ NEW 14 Aug 2026 (D228). Client: *"for those that don't have it, like fireplaces and dining
+  # tables, make sure that you write a dedicated page. That sounds like it was written by a human.
+  # No AI slop. And also says what it needs to say."*
+  # ⛔⛔ THE SCOPE PARAGRAPH IS THE POINT OF THIS PAGE, NOT A HEDGE. A fireplace carries
+  # building-regulation duties around hearth sizes and clearances, and §2 rule 12 forbids stating
+  # what we cannot guarantee. Nobody has told us Topcat takes on appliance work, so the page says
+  # plainly what it does — the stonework — and cuts to the figures the customer's own installer
+  # gives. ⭐ That is a scope, not an excuse, and it reads as expertise rather than as a disclaimer.
+  # ⚠️ THE QUARTZ-AND-HEAT ANSWER IS TRUE AND LOAD-BEARING: engineered quartz is resin-bound, so
+  # recommending it for a hearth under an appliance would be wrong. Do not "simplify" that FAQ.
+  dict(
+    slug="fireplaces", eyebrow="Fireplaces", h1="Stone Fireplaces",
+    title="Stone Fireplace Surrounds, Hearths & Mantels | Topcat Worktops",
+    metadesc="Fireplace hearths, surrounds and mantel shelves cut from granite, marble or quartz to your opening, templated by hand and fitted by our own team across London and the Home Counties.",
+    lede="Hearths, surrounds and mantel shelves cut to your opening and finished by hand. We work in the same stones as the kitchen, so one room can carry a single material from the worktop to the fire.",
+    intro=[
+      "A fireplace is usually the thing everyone in the room ends up looking at, and stone suits it because it is heavy, quiet, and it wears well. We cut hearths, side slips, headers and mantel shelves to the opening you have, in the same granite, marble and quartz we use everywhere else in the house.",
+      "What we do here is the stonework. We template the opening by hand once it is formed, have the pieces cut and polished by our experienced fabricators, and fit them. We do not install stoves, flues or gas appliances, and we do not set hearth sizes or clearances, because those belong to your installer and to whoever made the appliance. Give us the figures they need and we will cut to them.",
+      "Most fireplaces are a set of pieces rather than one, so we lay them out together. Where the sizes allow, the hearth, the slips and the header come off the same slab, which is what makes the grain run around the opening instead of meeting at the corners by accident.",
+    ],
+    feats=[
+      ("Hearths cut to the opening", "Cut to the size and shape your installer specifies, and finished on every edge that shows."),
+      ("Surrounds and slips", "Side slips and a header cut as one set, so the colour and the movement carry around the opening."),
+      ("Mantel shelves", "A solid stone shelf, squared or with a moulded edge, cut to the length of the chimney breast."),
+      ("The same stone as the room", "Where the fire and the kitchen share a room, both can be laid out on the same slab if the sizes allow."),
+    ],
+    faqs=[
+      ("Which stone suits a fireplace?", "Granite and natural stone are the usual choice for a hearth, because they take heat well. Engineered quartz is bound with resin, so it is better kept away from direct heat and suits a surround or a mantel shelf rather than the hearth under an appliance. The clearances themselves are your installer's call and we cut to them."),
+      ("Do you fit the stove or the fire itself?", "No. We cut and fit the stone. Stoves, flues and gas appliances are for a registered installer, and the hearth size and clearances come from them and from the appliance manufacturer. We work to the figures they give us."),
+      ("Can you cut a hearth that is not a rectangle?", "Yes. Curved fronts, chamfered corners and cut-outs around a chimney breast are all cut to a template we make on site. The more unusual the shape, the more the template earns its keep."),
+      ("Can you match a fireplace to worktops we already have?", "Often, yes. If you know what the stone is we can look for the same material or something close to it. If you do not, send a photograph taken in daylight and we will tell you what we think it is."),
+      ("When should we template?", "Once the opening is formed and the plaster is back, so the template records the room as it will be. If the appliance is going in first, we template after it and work to the clearances your installer has set."),
+    ],
+  ),
+  # ⭐⭐ NEW 14 Aug 2026 (D228), with fireplaces. ⚠️ THE BASE IS THE HONEST PART: a stone top is
+  # heavy, and the page says plainly that Topcat make the top and not the frame. Rule 12 again —
+  # promising that any base will carry any top is exactly the kind of claim that cannot be kept.
+  dict(
+    slug="dining-tables", eyebrow="Dining Tables", h1="Stone Dining Tables",
+    title="Stone Dining Table & Console Tops | Quartz, Granite & Marble | Topcat Worktops",
+    metadesc="Dining table and console tops cut from quartz, granite or marble to your shape and edge profile, on your own base or one being made for you. Free home visit across London and the Home Counties.",
+    lede="Table and console tops cut to your shape and your edge profile, in the same stones as the kitchen. Heavy, flat, and made to be eaten off rather than looked after.",
+    intro=[
+      "A stone table top is the piece people notice first and touch most. It can be cut square, with rounded ends, as an oval, or to a shape you draw on the floor, and because it comes off the same slabs as the worktops it can carry the kitchen material down to the dining end of the room.",
+      "Two things decide whether a stone table works: the base and the weight. Stone is heavy, so the frame has to suit the size and the overhang, and we will say plainly if the one you have in mind does not. We cut to a base you already own or to one being made for you, and we make the top rather than the frame. Thickness, edge profile and how far the top oversails all get settled at the template.",
+      "Size has a ceiling, and it is the slab. Beyond it a top needs a joint, and a joint in a table is always visible, because there is nothing for it to hide behind. Where a top is close to the limit we would rather talk about the shape than promise a seam nobody can see.",
+    ],
+    feats=[
+      ("Cut to your shape", "Rectangles, rounded ends, ovals and one-off shapes, cut to a template so the curve is the one you drew."),
+      ("Edges that suit the room", "A pencil edge for something quiet, a moulded profile, or a mitred edge that reads thicker without the weight."),
+      ("Matched to the kitchen", "Where the table and the worktops share a room, we plan both together so the stone agrees across the space."),
+      ("On your base or a new one", "We cut to a frame you already have, or to one being made for you. Tell us the base and we work to it."),
+    ],
+    faqs=[
+      ("Do you make the base as well?", "No, we work in stone. We cut the top to a base you have or one being made for you, and we will tell you plainly whether that base suits the size and the overhang you are asking for."),
+      ("How thick should a stone table top be?", "20mm and 30mm are the usual thicknesses, and a mitred edge can be built up to read thicker without carrying the weight of a solid slab. Larger tops tend to want the thicker stone or the mitre, and we will talk it through when we measure."),
+      ("Is marble a bad idea for a dining table?", "Marble is softer than granite and it etches where something acidic sits on it, so a slice of lemon or a glass of wine left overnight can leave a mark. Plenty of people accept that and like the way it ages. If you would rather not think about it at all, a marble-effect quartz gives you the look with an easier life."),
+      ("How big can a stone table top be?", "The slab sets the limit, and past it the top needs a joint. A joint in a table is always visible, so we will show you where it would fall before you decide."),
+      ("Can you match a table to our existing worktops?", "Where the material is still available, yes. If the worktops came from us we will have the record of what they are."),
+    ],
+  ),
 ]
 
 # ---------------------------------------------------------------------------
@@ -225,6 +321,15 @@ HERO_IMG = {
     "bathroom-worktops": "../assets/cta-slab.jpg",
     "commercial-worktops": "../assets/kitchen-day.jpg",
     "outdoor-kitchens": "../assets/quarry.jpg",
+    # ⚠️ THE THREE NEW PAGES ALL TAKE THE SLAB SHOT ON PURPOSE (D228). His portfolio was checked
+    # image by image on a contact sheet and it holds no fireplace and no dining table, and the
+    # client has twice said generate nothing. ⛔ A near-enough room photograph is what put a QUARRY
+    # on Outdoor Spaces and a KITCHEN on Commercial, and he has asked for both to be replaced —
+    # a photograph of the wrong subject reads as wrong, where the material itself cannot.
+    # ⭐ Drop a real file in when the shoot lands; nothing else changes.
+    "vanity-tops": "../assets/cta-slab.jpg",
+    "fireplaces": "../assets/cta-slab.jpg",
+    "dining-tables": "../assets/cta-slab.jpg",
 }
 
 

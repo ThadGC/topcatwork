@@ -1486,23 +1486,28 @@ PROCESS = [
 ]
 
 # ⚠️ Topcat is NOT a kitchens-only business and the site must not read as one. These are the
-# real applications, and every location and material page carries them. The service pages
-# already exist for the first six, so this doubles as the internal link into that family.
+# real applications, and every location and material page carries them. ⭐ Every one of them now
+# has its own service page (D228), so this doubles as the internal link into that family.
 APPLICATIONS = [
   ("Kitchen worktops", "/services/kitchen-worktops.html",
    "Runs, peninsulas and full replacements, in any of the five materials."),
   ("Kitchen islands", "/services/kitchen-islands.html",
    "Including mitred waterfall ends and bookmatched slabs."),
-  ("Bathrooms and vanity tops", "/services/bathroom-worktops.html",
-   "Vanity tops, shower thresholds and bath surrounds, cut for undermount or countertop basins."),
+  ("Bathrooms", "/services/bathroom-worktops.html",
+   "Shower surrounds, thresholds, window sills and bath panels cut from one stone."),
+  ("Vanity tops", "/services/vanity-tops.html",
+   "Cut for undermount or countertop basins, with the tap holes where you want them."),
   ("Splashbacks and upstands", "/services/splashbacks.html",
    "Cut from the same slab as the worktop so the veining runs on unbroken."),
   ("Outdoor kitchens", "/services/outdoor-kitchens.html",
    "Porcelain or hard granite, both of which take weather and sunlight."),
   ("Commercial surfaces", "/services/commercial-worktops.html",
    "Reception desks, bar tops, office kitchens and hospitality fit-outs."),
-  ("Fireplaces, hearths and tables", "/contact/",
-   "Made to order from your drawings or measurements, priced by hand."),
+  # ⭐ THESE TWO POINTED AT `/contact/` UNTIL D228, BECAUSE NEITHER HAD A PAGE. They do now.
+  ("Fireplaces", "/services/fireplaces.html",
+   "Hearths, surrounds and mantel shelves cut to your opening and finished by hand."),
+  ("Dining tables", "/services/dining-tables.html",
+   "Table and console tops cut to your shape, on your base or one being made for you."),
 ]
 
 
@@ -2008,16 +2013,23 @@ def areas_index():
 # stones/catalogue_source.py (the documented source of truth). If that import
 # ever fails the page degrades to a link to /stones/ rather than breaking.
 #
-# The six service pages are hardcoded here because services/build_services.py
-# owns that list and importing it would run its module-level work. Six entries
-# that have not changed in weeks is the cheaper trade.
+# The service pages are hardcoded here because services/build_services.py owns
+# that list and importing it would run its module-level work.
+# ⚠️⚠️ THAT TRADE CAME DUE ON 14 Aug 2026 (D228). This comment used to say "six
+# entries that have not changed in weeks is the cheaper trade" — then three pages
+# were added and one was renamed, and NOTHING flagged that this copy of the list
+# had gone stale. ⛔ If you add a service page, it goes in FOUR places: this list,
+# APPLICATIONS above, the SERVICES array in index.html, and both nav menus.
 SERVICE_PAGES = [
     ("kitchen-worktops", "Kitchen worktops"),
     ("kitchen-islands", "Kitchen islands and waterfall ends"),
     ("splashbacks", "Splashbacks and upstands"),
-    ("bathroom-worktops", "Bathroom worktops and vanity tops"),
-    ("commercial-worktops", "Commercial stone surfaces"),
+    ("bathroom-worktops", "Bathroom worktops and shower surrounds"),
+    ("vanity-tops", "Stone vanity tops"),
     ("outdoor-kitchens", "Outdoor kitchen worktops"),
+    ("fireplaces", "Fireplace surrounds, hearths and mantels"),
+    ("dining-tables", "Stone dining tables"),
+    ("commercial-worktops", "Commercial stone surfaces"),
 ]
 
 # The landing page is one file, so its sections are the "pages" a visitor thinks

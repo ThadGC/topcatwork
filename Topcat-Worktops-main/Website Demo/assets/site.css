@@ -1614,7 +1614,11 @@
      removed (client's call), the line invites the scroll on into the about story below. */
   .rev-cta{margin-top:clamp(14px,2.2vh,28px);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
   .rev-cta-line{font-family:var(--serif);font-size:clamp(17px,1.5vw,21px);color:var(--bone)}
-  /* ⭐ "Let's bring your vision to life" is a LINK, not a button (client, 9 Aug: "a button
+  /* ⭐ THE WORDS CHANGED ON 14 Aug 2026 (D228) AND THE REASONING BELOW DID NOT. It read "Let's
+     bring your vision to life", which D213 flagged as one of the two live AI-tells and left
+     pending a ruling; *"no AI slop"* is that ruling. It is "Tell us about your kitchen" now —
+     an instruction rather than a promise, and the same words the enquiry band already uses.
+     ⭐ It is a LINK, not a button (client, 9 Aug: "a button
      below, or underline it and an arrow to make it clickable, or just something to make that
      a CTA"). A link because the page already pairs a gold button with a ghost in the hero, the
      services intro and the process foot — a fourth pair here is a fourth place the eye has to

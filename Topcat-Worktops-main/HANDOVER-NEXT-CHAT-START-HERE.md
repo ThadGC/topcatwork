@@ -216,7 +216,7 @@ A 13-point sweep can land entirely between the settle windows and report zero.
 | Page | State |
 |---|---|
 | **`/`** | hero chips, helix, gallery and projects all worked on this round |
-| **`/services/`** | ⭐ seven leaf pages, eight tiles — Fireplaces and Dining Tables have no page yet |
+| **`/services/`** | ⭐⭐ **NINE leaf pages, and all eight of his services now have their own** (D228). Vanity Tops no longer opens the bathroom page |
 | **`/projects/`** | ⭐⭐ **eight real projects, 89 photographs, reviews, all cards hit-tested clickable** |
 | **`/estimate/` `/about/` `/contact/` `/trade/`** | as before |
 | **`/stones/`** | the collection page |
@@ -333,18 +333,24 @@ Every fault in §0 was invisible on a read-through. These are the specific ways 
 5. ⭐ **CONFIRM THE SILICA / HSE SENTENCE** in his own words (D202). It is a health-and-safety claim.
 6. ⭐ **KITCHEN ISLANDS** — not on his service list; page still live. Delete or keep?
 7. ⭐ **TRUSTPILOT** — recommended AGAINST putting 4.0 beside the Google 5.0. **He has not ruled.**
-8. ⭐ **TWO LIVE AI-TELLS, FLAGGED NOT CHANGED (D213):** the reviews CTA *"Let's bring your vision
-   to life"* and the Why subtitle *"and ours is second to none"*.
+8. ✅ **DONE (D228): THE TWO AI-TELLS ARE GONE.** *"No AI slop"* was the ruling they were waiting
+   on. The reviews CTA is *"Tell us about your kitchen"* and the Why subtitle ends *"and that is
+   the part we are judged on"*.
 
 ### ⭐ Ready to build
 
-9. ⭐ **FIREPLACES AND DINING TABLES HAVE NO LEAF PAGE.** Their tiles carry no `href` on purpose.
-    ⚠️ Needs real detail from Nick — fireplace copy touches building regulations and rule 5 forbids
-    inventing it.
+9. ✅ **DONE (D228): FIREPLACES, DINING TABLES AND VANITY TOPS ALL HAVE PAGES NOW.**
+    ⚠️ **STILL WORTH ASKING NICK** about the fireplace page: it says plainly that Topcat cut and
+    fit the stone and do NOT install stoves, flues or gas appliances, and that hearth sizes and
+    clearances come from the customer's installer. **If they do take on more than that, the page
+    is understating the service** — but rule 12 forbids claiming it until he says so.
 10. ⭐ **PHOTOGRAPHY IS STILL THE BIGGEST REMAINING GAP.** ⛔ **He has said twice: generate nothing.**
     - **Three service tiles show the wrong subject** — Outdoor Spaces a quarry, Commercial a
       kitchen, Bathrooms a bare slab. He asked for the first two to be replaced.
-    - **Three service tiles show "PHOTO TO COME"** — Fireplaces, Dining Tables, Vanity Tops.
+    - **Three service tiles show "PHOTO TO COME"** — Fireplaces, Dining Tables, Vanity Tops, and
+      **their three new leaf pages all take the slab shot as a hero for the same reason** (D228).
+      ⚠️ His whole portfolio was checked on a contact sheet: **it holds no fireplace and no
+      dining table.** Those two need a shoot or nothing.
     - **The director portraits and the Why feature shot are placeholders.**
 11. ⭐ **THE SITE HAS NO FAVICON AT ALL** — every browser requests `/favicon.ico` and gets a 404.
     Found in the console this round. Small, but it is a go-live item.

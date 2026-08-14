@@ -316,7 +316,10 @@ PAGES = [
              "London and the Home Counties.",
         crumb="Services",
         h1="Services",
-        lead="Six ways we work in stone, from a single kitchen run to a full commercial fit-out. Every one of them starts the same way: we come to you, we template to the millimetre, and our own team fits it. Choose the space you are working on and we will show you how it is done.",
+        # ⚠️ "SIX WAYS" UNTIL D228 AND IT HAD BEEN WRONG SINCE D206 PUT THE RANGE AT EIGHT. The
+        # number in a sentence like this ages the moment the range moves; if a ninth service is
+        # ever added, this line is one of the places that has to move with it.
+        lead="Eight ways we work in stone, from a single kitchen run to a full commercial fit-out. Every one of them starts the same way: we come to you, we template to the millimetre, and our own team fits it. Choose the space you are working on and we will show you how it is done.",
         stack=["s_services", "s_process", "s_why", "s_reviews", "s_cta"],
     ),
     dict(

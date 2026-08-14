@@ -260,20 +260,26 @@ const SERVICES=[
      (§2 rule 13, the lesson from the marble/quartzite confusion). */
   {t:"Outdoor Spaces",long:"Weatherproof stone for garden kitchens, barbecue runs and outdoor bars, cut to fit around sinks, hobs and built-in appliances.",href:"/services/outdoor-kitchens.html",img:"/assets/site/quarry-955.webp"},
 
-  /* ⭐ NEW 14 Aug 2026, from his list. ⛔ NO LEAF PAGE YET, AND NO `href` — a card with no href
-     flips to its description and shows no "Read more", which is the designed behaviour for a
-     service without a page. A tile pointing at a page that does not exist is the worse failure.
-     ⚠️ THE COPY IS DELIBERATELY CLAIM-LIGHT. A fireplace carries building-regulation duties
-     around hearths and clearances that nobody has told us they take on, and §2 rule 3 forbids
-     stating what we cannot guarantee. It describes the stonework and stops there. */
-  {t:"Fireplaces",long:"Hearths, surrounds and mantels cut to your opening and finished by hand, in the same stone as the rest of the house if you want the rooms to tie together.",ph:"FIREPLACES"},
+  /* ⭐⭐ ALL EIGHT HAVE THEIR OWN PAGE NOW — 14 Aug 2026 (D228). Client: *"each one of these
+     options needs to have its own dedicated page. So when you go to view the service, you should
+     be able to view the service."* Fireplaces and Dining Tables were the two written from
+     nothing; they had no `href` and so no "View this service" button at all.
+     ⚠️ THE FIREPLACE COPY IS STILL DELIBERATELY CLAIM-LIGHT, HERE AND ON ITS PAGE. A fireplace
+     carries building-regulation duties around hearths and clearances that nobody has told us
+     they take on, and §2 rule 12 forbids stating what we cannot guarantee. The page says plainly
+     that Topcat cut and fit the stone and work to the installer's figures. */
+  {t:"Fireplaces",long:"Hearths, surrounds and mantels cut to your opening and finished by hand, in the same stone as the rest of the house if you want the rooms to tie together.",href:"/services/fireplaces.html",ph:"FIREPLACES"},
 
-  {t:"Dining Tables",long:"Table and console tops cut to your shape and edge profile, in the same stone as the kitchen, so the piece reads as part of the room rather than as furniture bought separately.",ph:"DINING TABLES"},
+  {t:"Dining Tables",long:"Table and console tops cut to your shape and edge profile, in the same stone as the kitchen, so the piece reads as part of the room rather than as furniture bought separately.",href:"/services/dining-tables.html",ph:"DINING TABLES"},
 
-  /* ⛔ POINTS AT THE BATHROOM PAGE ON PURPOSE — that page IS "Bathroom Worktops & Vanity Tops",
-     and a second near-identical leaf page would compete with it in search for the same words.
-     The Bathrooms tile above is cut so the two do not say the same sentence. */
-  {t:"Vanity Tops",long:"Basin tops cut for undermount or countertop basins, with the tap holes exactly where you want them and the edges finished to match.",href:"/services/bathroom-worktops.html",ph:"VANITY TOPS"},
+  /* ⛔⛔ THIS TILE POINTED AT `/services/bathroom-worktops.html` UNTIL D228 AND THE CLIENT CAUGHT
+     IT: *"when I go into vanity tops, it takes me to bathroom worktops and vanity tops. That's
+     not right. Bathroom should take me to bathroom, and vanity tops should take me to vanity
+     tops."* The old reasoning — that a second leaf page would compete with the first for the same
+     words — was answered by SPLITTING the content rather than by sharing a page: the bathroom
+     page kept its URL and took shower surrounds, sills and thresholds, and the basins moved here.
+     ⛔ Do not re-point this at the bathroom page. */
+  {t:"Vanity Tops",long:"Basin tops cut for undermount or countertop basins, with the tap holes exactly where you want them and the edges finished to match.",href:"/services/vanity-tops.html",ph:"VANITY TOPS"},
 
   {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/kitchen-day-1188.webp"}
 ];
