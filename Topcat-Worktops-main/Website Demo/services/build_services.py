@@ -83,7 +83,7 @@ TOWNS = ("St Albans, Harpenden, Watford, Hemel Hempstead, Welwyn Garden City, He
 # ---------------------------------------------------------------------------
 SERVICES = [
   dict(
-    slug="kitchen-worktops", eyebrow="Bespoke Worktops", h1="Kitchen Worktops",
+    slug="kitchen-worktops", eyebrow="Kitchen Worktops", h1="Kitchen Worktops",
     title="Kitchen Worktops in London, Hertfordshire, Essex & Berkshire | Topcat Worktops",
     metadesc="Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
     lede="Quartz, granite and marble kitchen worktops, chosen from the slab you approve, cut to your kitchen and fitted by the same team that measured it. Free home visit, fixed pricing and a ten-year guarantee.",
@@ -193,7 +193,7 @@ SERVICES = [
     ],
   ),
   dict(
-    slug="outdoor-kitchens", eyebrow="Outdoor Kitchens", h1="Outdoor Kitchen Worktops",
+    slug="outdoor-kitchens", eyebrow="Outdoor Spaces", h1="Outdoor Kitchen Worktops",
     title="Outdoor Kitchen Worktops in Stone | Topcat Worktops",
     metadesc="Weatherproof stone worktops for garden kitchens and barbecue runs, chosen to hold colour outdoors and cut around sinks, hobs and appliances. Serving London, Hertfordshire, Essex and Berkshire.",
     lede="Weatherproof stone for garden kitchens and barbecue runs, chosen to hold its colour outdoors and cut to fit around sinks, hobs and built-in appliances.",

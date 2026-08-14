@@ -218,34 +218,62 @@ const SS={
    the header of patch_images.py for why those are not the same number here. */
 function ss(u,z){ const s=SS[u]; return s?` srcset="${s}" sizes="${z}"`:''; }
 const SERVICES=[
-  /* ⚠️ THIS LINE BROKE TWO STANDING RULES AND WAS LIVE — corrected 13 August 2026 while the
-     services hub was being built. It read "vein-matched across every joint", which claims work
-     Topcat OUTSOURCE (§2 rule 2 — cutting and polishing are not theirs) and states an ABSOLUTE
-     (§2 rule 12 — "every" is not something we can guarantee). ⛔ Templating and fitting ARE theirs
-     and stay. ⚠️ `verify.py` check 7 does not scan this file's inline data, which is why it
-     survived; the same phrase on the service PAGES is a separate live instance. */
-  {t:"Bespoke Worktops",long:"Kitchen worktops cut from a single slab where the run allows, templated to the millimetre and fitted by our own team.",href:"/services/kitchen-worktops.html",img:"/assets/site/service-worktops-554.webp"},
-  {t:"Kitchen Islands",long:"Islands with mitred waterfall ends that fold the stone to the floor, the veining planned around every corner so it runs unbroken down each side.",href:"/services/kitchen-islands.html",img:"/assets/site/service-islands-468.webp"},
+  /* ⭐⭐⭐ THE CLIENT'S OWN LIST AND HIS OWN ORDER — 14 August 2026 (D206). He sent the range as
+     eight services, in words: *"kitchen worktops, splashbacks, bathrooms, outdoor spaces,
+     fireplace, dining tables, vanity tops, and commercial."* ⛔ **THIS ARRAY IS THAT SENTENCE.**
+     ⭐⭐ ONE ORDER NOW GOVERNS ALL THREE RENDERINGS. `ORDER` (the desktop helix) and `PHONE_ORDER`
+     (the phone grid) were separate re-shuffles of an older popularity order; he has now stated a
+     single order, so both are the identity and the array itself is the only place order lives.
+     **Two lists that could disagree with the array are two more places to lose a card** — which
+     is exactly what happened on 14 Aug when a seventh service was added and `PHONE_ORDER` still
+     named six (D205).
+     ⚠️⚠️ **KITCHEN ISLANDS IS NOT ON HIS LIST AND IS NO LONGER A TILE.** Its content was folded
+     into Kitchen Worktops, which is where a customer looks for it. ⛔ **`/services/kitchen-islands.html`
+     IS DELIBERATELY STILL LIVE** — it ranks for its own term, it is linked from the nav submenu,
+     the footer and other leaf pages, and deleting a page is the one move here that cannot be
+     undone from the browser. If he wants it gone, that is one line in `services/build_services.py`
+     plus a redirect, and it should be his call rather than an inference from a list.
+     ⚠️ **THREE TILES CARRY NO `img` AND THAT IS DELIBERATE** (§ the phImg note below).
+     ⛔ **`PROJECTS` NO LONGER READS THIS ARRAY BY INDEX** — it names its own files now, so
+     re-ordering the range can never silently re-photograph the gallery. */
+
+  {t:"Kitchen Worktops",long:"Worktops cut from a single slab where the run allows, islands with mitred waterfall ends that fold the stone to the floor, templated to the millimetre and fitted by our own team.",href:"/services/kitchen-worktops.html",img:"/assets/site/service-worktops-554.webp"},
+
   {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splashbacks-706.webp"},
+
   {t:"Bathrooms",long:"Shower surrounds, thresholds and window sills cut from one stone, so the room reads as a single material rather than a set of parts.",href:"/services/bathroom-worktops.html",img:"/assets/site/cta-slab-2752.webp"},
-  /* ⭐ VANITY TOPS — added 14 Aug 2026, the client's own ask ("add in another section for Vanity
-     tops (bathroom) in the same section as the above"). ⚠️ INSERTED AT INDEX 4, NOT APPENDED:
-     PROJECTS reads SERVICES[0..3] for its placeholder photography and the helix's ORDER is
-     written by index, so anything added after position 3 must not disturb the first four.
-     ⛔ It points at the bathroom page on purpose — that page IS "Bathroom Worktops & Vanity
-     Tops", and a second near-identical leaf page would compete with it in search for the same
-     words. The Bathrooms tile above was re-cut in the same edit so the two no longer say the
-     same sentence. ⚠️⚠️ **IT CARRIES NO `img` ON PURPOSE, AND THAT IS NOT AN OVERSIGHT.** There
-     are six real subjects for seven tiles until the shoot lands. Repeating the Bathrooms
-     photograph was tried first and it put two IDENTICAL pink slabs side by side in the phone
-     grid, which reads as a card that failed to load rather than as a range. Leaving `img` off
-     hands the tile to `phImg()`, the site's own "PHOTO TO COME" plate — the same honesty the
-     About collage's empty portraits use. ⛔ Drop the real photograph in here and nothing else
-     changes. */
+
+  /* ⚠️ HIS WORD IS "OUTDOOR SPACES", WIDER THAN THE PAGE IT POINTS AT. The leaf page keeps its
+     slug, title and meta — "outdoor kitchen worktops" is the phrase people actually search, and
+     changing a URL costs its ranking and every link into it. Its EYEBROW was changed to match
+     this tile, because a tile and the page it opens must not call the same thing two names
+     (§2 rule 13, the lesson from the marble/quartzite confusion). */
+  {t:"Outdoor Spaces",long:"Weatherproof stone for garden kitchens, barbecue runs and outdoor bars, cut to fit around sinks, hobs and built-in appliances.",href:"/services/outdoor-kitchens.html",img:"/assets/site/quarry-955.webp"},
+
+  /* ⭐ NEW 14 Aug 2026, from his list. ⛔ NO LEAF PAGE YET, AND NO `href` — a card with no href
+     flips to its description and shows no "Read more", which is the designed behaviour for a
+     service without a page. A tile pointing at a page that does not exist is the worse failure.
+     ⚠️ THE COPY IS DELIBERATELY CLAIM-LIGHT. A fireplace carries building-regulation duties
+     around hearths and clearances that nobody has told us they take on, and §2 rule 3 forbids
+     stating what we cannot guarantee. It describes the stonework and stops there. */
+  {t:"Fireplaces",long:"Hearths, surrounds and mantels cut to your opening and finished by hand, in the same stone as the rest of the house if you want the rooms to tie together.",ph:"FIREPLACES"},
+
+  {t:"Dining Tables",long:"Table and console tops cut to your shape and edge profile, in the same stone as the kitchen, so the piece reads as part of the room rather than as furniture bought separately.",ph:"DINING TABLES"},
+
+  /* ⛔ POINTS AT THE BATHROOM PAGE ON PURPOSE — that page IS "Bathroom Worktops & Vanity Tops",
+     and a second near-identical leaf page would compete with it in search for the same words.
+     The Bathrooms tile above is cut so the two do not say the same sentence. */
   {t:"Vanity Tops",long:"Basin tops cut for undermount or countertop basins, with the tap holes exactly where you want them and the edges finished to match.",href:"/services/bathroom-worktops.html",ph:"VANITY TOPS"},
-  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/kitchen-day-1188.webp"},
-  {t:"Outdoor Kitchens",long:"Weatherproof stone for garden kitchens and barbecue runs, cut to fit around sinks, hobs and built-in appliances.",href:"/services/outdoor-kitchens.html",img:"/assets/site/quarry-955.webp"}
+
+  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/kitchen-day-1188.webp"}
 ];
+/* ⚠️⚠️ THREE TILES CARRY `ph` AND NO `img`, WHICH HANDS THEM TO `phImg()` — the site's own
+   "PHOTO TO COME" plate. There are five real subjects for eight tiles until the shoot lands.
+   ⛔ THIS IS THE HONEST STATE AND IT WAS CHOSEN OVER THE ALTERNATIVE: reusing a near-enough
+   photograph is what put a QUARRY on Outdoor Kitchens and a KITCHEN on Commercial, and the
+   client has already asked for both to be replaced. A plate that says "photo to come" is read
+   as pending; a photograph of the wrong thing is read as wrong. Drop a real file into `img`
+   and delete the `ph` — nothing else changes. */
 const flipIcon='<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>';
 const backIcon='<svg viewBox="0 0 24 24"><path d="M9 5l-7 7 7 7"/><path d="M2 12h20"/></svg>';
 /* Placeholder image for cards whose photo isn't in yet. The card already renders the service
@@ -544,18 +572,20 @@ buildCards(document.getElementById('svcGridServices'), SERVICES, {nameOnly:true,
   if(!grid) return;
   /* the build order, captured before anything moves — this is the tablet/desktop arrangement */
   const built=[...grid.children];
-  /* indices INTO `built`, in the order a phone shows them (the client's popularity order)
-     ⛔⛔ **THIS LIST MUST NAME EVERY CARD, AND ON 14 Aug 2026 IT SILENTLY DID NOT.** It read
-     `[0,1,3,2,5,4]` — six indices, written when there were six services. Adding Vanity Tops
-     (D205) made seven, and the seventh index was simply absent: `seq` held six nodes,
-     appendChild moved those six to the END, and the card nobody moved was left sitting at the
-     FRONT of the grid. The phone opened on "Outdoor Kitchens 07" followed by 01, 02, 03…
-     ⭐⭐ **IT LOOKED LIKE A SORT BUG AND IT WAS AN OMISSION** — every number in the old list was
-     still correct, which is why re-reading it proved nothing. The tell was the INDEX BADGES: the
-     cards carried 07,01,02,… so they were BUILT in the right order and MOVED into the wrong one.
-     ⛔ Nothing measured this. It was found by looking at a screenshot.
-     ⚠️ The guard below is the real fix — a list that misses a card can no longer lose it. */
-  const PHONE_ORDER=[0,1,3,4,2,6,5];
+  /* ⭐⭐ THE BUILD ORDER IS THE PHONE ORDER — 14 Aug 2026 (D206). The client stated one order for
+     the whole range, so the phone no longer re-shuffles it and this list is the identity.
+     ⛔⛔ **KEPT RATHER THAN DELETED, AND KEPT WITH ITS SCAR ON IT.** It read `[0,1,3,2,5,4]` —
+     six indices, written when there were six services. A seventh was added on 14 Aug and the
+     seventh index was simply absent: `seq` held six nodes, appendChild moved those six to the
+     END, and the card nobody moved was left sitting at the FRONT. The phone opened on
+     "Outdoor Kitchens 07" followed by 01, 02, 03.
+     ⭐⭐ **IT LOOKED LIKE A SORT BUG AND IT WAS AN OMISSION** — every number still in the list was
+     correct, which is why re-reading it proved nothing. The tell was the index badges: the cards
+     were BUILT in the right order and MOVED into the wrong one. Nothing measured it; it was
+     found by looking at a screenshot.
+     ⚠️ The guard in `arrange()` is the real fix — a list that misses a card can no longer lose
+     it. If he ever asks for a different phone order, write it here and the guard still holds. */
+  const PHONE_ORDER=built.map((_,i)=>i);
   /* ⭐ the stylesheet's own answer, never a width test (D96). Unset — which is every width above
      720px, because the property is only declared inside the phone query — falls back to desktop,
      exactly as hxMode() does, so no base rule had to be touched to add this. */
@@ -623,7 +653,11 @@ buildCards(document.getElementById('svcGridServices'), SERVICES, {nameOnly:true,
     const phone=svcMode()==='phone';
     built.forEach((el,i)=>{
       const s=SERVICES[i];
-      if(phone && s){ el.setAttribute('role','link'); el.setAttribute('aria-label',s.t); }
+      /* ⚠️ `s.href` IS PART OF THE TEST SINCE 14 Aug 2026 (D206). Two of the client's eight
+         services have no page yet, and `intercept()` correctly refuses to navigate them — but
+         this line was still announcing them to a screen reader as "link", which promises a
+         destination that does not exist. A card with no page keeps its flip and says so. */
+      if(phone && s && s.href){ el.setAttribute('role','link'); el.setAttribute('aria-label',s.t); }
       else { el.removeAttribute('role'); el.removeAttribute('aria-label'); }
     });
   }
@@ -681,12 +715,15 @@ if(svcReduce){
   const stage=document.getElementById('helixStage');
   const nav=document.getElementById('svcNav');
   if(!stage||!nav) return;
-  /* spiral order (the client's): Islands → Bespoke → Splashbacks → Bathrooms → Vanity Tops →
-     Outdoor → Commercial
-     ⚠️ SEVEN SINCE 14 Aug 2026. Vanity Tops (index 4) sits next to Bathrooms because they are
-     the same room, and the client's own Outdoor-before-Commercial tail is untouched. The spiral
-     is computed from `items.length`, so the geometry absorbed the extra node with no tuning. */
-  const ORDER=[1,0,2,3,4,6,5];
+  /* ⭐⭐ THE ORDER IS THE ARRAY'S OWN — 14 Aug 2026 (D206). The client stated a single order for
+     the whole range in words, so the helix no longer re-shuffles it. ⛔ **KEEPING A SECOND LIST
+     HERE IS THE BUG, NOT THE FEATURE:** the phone's equivalent list named six services when
+     there were seven and silently stranded a card at the front of the grid (D205). One order,
+     declared once, in `SERVICES`.
+     ⚠️ The geometry below is written from `items.length`, so it absorbed six → seven → eight
+     with no tuning; the "60° apart" in the comment above is 6-service arithmetic and the code
+     computes 360/N. */
+  const ORDER=SERVICES.map((_,i)=>i);
   const items=ORDER.map(i=>SERVICES[i]);
   const N=items.length;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -696,9 +733,21 @@ if(svcReduce){
     el.className='helix-card';
     el.setAttribute('role','group');
     el.setAttribute('aria-label',s.t);
-    el.innerHTML=`<div class="hx-face hx-front glow-card"><img src="${s.img}"${ss(s.img,"(max-width:720px) 210px, 385px")} alt="${s.t}" draggable="false" loading="lazy" decoding="async"><div class="hx-veil"></div>
+    /* ⛔⛔ BOTH FALLBACKS ARE LOAD-BEARING — 14 Aug 2026 (D206). This template used to
+       interpolate `s.img` and `s.href` raw, which was safe only while EVERY service had both.
+       The client's eight-service list has two with no page yet (Fireplaces, Dining Tables) and
+       three with no photograph, and the raw template turned those into `src="undefined"` and
+       **`href="undefined"` — a "View this service" button that 404s.** It rendered as a normal,
+       confident button; nothing looked wrong until the link was read.
+       ⭐ `phImg()` is the same "photo to come" plate the grid uses, and `ss()` already returns an
+       empty string for anything it has no srcset for, so a data URI passes through it safely.
+       ⚠️ No href means NO BUTTON, not a dead one — the card still names the service and the
+       enquiry form is the route, which is the same choice `buildCards` makes. */
+    const hxImg=s.img||phImg(s.ph||s.t.toUpperCase());
+    const hxLink=s.href?`<a class="hx-link" href="${s.href}">View this service</a>`:'';
+    el.innerHTML=`<div class="hx-face hx-front glow-card"><img src="${hxImg}"${ss(hxImg,"(max-width:720px) 210px, 385px")} alt="${s.t}" draggable="false" loading="lazy" decoding="async"><div class="hx-veil"></div>
       <div class="hx-meta"><h3 class="hx-name">${s.t}</h3>
-      <a class="hx-link" href="${s.href}">View this service</a></div></div>
+      ${hxLink}</div></div>
       <div class="hx-face hx-back glow-card"><div class="hx-back-frame"><span class="hx-back-diamond"></span><span class="hx-back-word">Topcat</span><span class="hx-back-sub">Worktops</span></div></div>`;
     /* ⚠️ `.hx-ghost` is set by render() on the faded pair a phone shows two steps out (D97).
        They already carry pointer-events:none, so a real tap cannot reach them — but the LISTENER
@@ -3311,10 +3360,14 @@ requestAnimationFrame(glowTick);
      Hampstead" still reads as a real job in a real town. ⛔ Do not renumber or reorder — the
      first four are the front panel and the second four are the panel you walk into. */
   const PROJECTS=[
-    {img:SERVICES[0].img, name:'Bookmatched Worktops',  place:'Hampstead'},
-    {img:SERVICES[1].img, name:'Waterfall Edges',       place:'Richmond'},
-    {img:SERVICES[2].img, name:'Full Height Splashbacks',place:'Islington'},
-    {img:SERVICES[3].img, name:'Bespoke Layout',        place:'St Albans'},
+    /* ⛔ NAMED FILES, NOT `SERVICES[n].img` — 14 Aug 2026 (D206). These four used to read the
+       first four services by INDEX, which quietly tied the gallery's photography to the ORDER
+       OF THE RANGE: the client re-ordering his services would have re-photographed the project
+       gallery as a side effect, with nothing in either place to say so. */
+    {img:'/assets/site/service-worktops-554.webp',   name:'Bookmatched Worktops',  place:'Hampstead'},
+    {img:'/assets/site/service-islands-468.webp',    name:'Waterfall Edges',       place:'Richmond'},
+    {img:'/assets/site/service-splashbacks-706.webp',name:'Full Height Splashbacks',place:'Islington'},
+    {img:'/assets/site/cta-slab-2752.webp',          name:'Bespoke Layout',        place:'St Albans'},
     {img:'/assets/site/kitchen-day-1188.webp', name:'Bespoke Features', place:'Hertford'},
     {img:PROCESS[1].img,  name:'Bespoke Edge Profiles', place:'Welwyn'},
     {img:PROCESS[2].img,  name:'Dining Tables',         place:'Enfield'},
