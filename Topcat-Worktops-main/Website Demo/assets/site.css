@@ -3197,15 +3197,26 @@
   /* Label type is sized off the card itself rather than fixed px, so it stays in proportion
      on a narrow stage where the card has to shrink. At the desktop card (418px) this lands on
      30px / 11px — nudge the multipliers, not the px. */
+  /* ⭐⭐ **THE NAME IS ON THE CARD FROM THE MOMENT IT IS DEALT — 14 August 2026.** Client: *"make
+     sure when the stack comes in, all the names are already on the cards during the animation,
+     not only once they settle into their respective spaces."*
+     ⛔ **THE `.gal-set.settled .gal-meta` GATE IS DELETED, NOT OVERRIDDEN** (the D106/D113/D114
+     rule). It used to read "labels and hover only on the set that's parked at the front — mid-move
+     they're just noise", which was a taste call and is now his call.
+     ⚠️ **STACKED NAMES DO NOT PILE UP, AND THAT IS WHY THIS IS SAFE:** in the pile the cards are
+     opaque and overlap, so a rear card's caption is behind the card in front of it, not on top of
+     it — only the front card's name is ever legible, which is what the phone branch already
+     arranges by hand for the same reason. ⭐ The hover rules below stay gated on `.settled`: a
+     hover effect on a card mid-flight IS noise, and he did not ask for it. */
   .gal-meta{position:absolute;left:calc(var(--cw,420px) * 0.048);right:calc(var(--cw,420px) * 0.048);
     bottom:calc(var(--cw,420px) * 0.043);z-index:2;
-    opacity:0;transform:translateY(8px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+    opacity:1;transform:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
   .gal-name{display:block;font-family:var(--serif);font-size:calc(var(--cw,420px) * 0.072);
     font-weight:400;line-height:1.1;color:var(--bone);text-shadow:0 2px 18px rgba(0,0,0,0.75)}
   .gal-place{display:block;font-size:calc(var(--cw,420px) * 0.0264);letter-spacing:0.24em;
     text-transform:uppercase;color:var(--gold);margin-top:calc(var(--cw,420px) * 0.014)}
-  /* labels and hover only on the set that's parked at the front — mid-move they're just noise */
-  .gal-set.settled .gal-meta{opacity:1;transform:none}
+  /* hover only on the set that's parked at the front — mid-move it is just noise. The LABELS are
+     no longer gated here; see `.gal-meta` above (client, 14 Aug 2026). */
   /* The flat inset hover ring that used to live on .gal-door::after is GONE — that pseudo is the
      cursor-glow rim now (.glow-card::after), and two rings on one edge read as a double border. */
   .gal-set.settled .gal-card:hover img{filter:saturate(1) brightness(1.02) contrast(1.02)}
@@ -3261,7 +3272,10 @@
      direction, and the photograph keeps its shape top to bottom. The words are carried by their
      own shadow (`.proj-eyebrow` / `.proj-title`), which is what he asked for. */
   .proj-hero-veil{position:absolute;inset:0;z-index:3;background:rgba(8,8,10,0.34)}
-  .proj-hero-copy{position:relative;z-index:4;padding:0 clamp(28px,6vw,92px);max-width:1080px;text-align:center;
+  /* ⭐ ONE GAP TOKEN FOR THE WHOLE CENTRED GROUP: eyebrow → title → arrow. The client asked for
+     the arrow to sit at "the same spacing as the eyebrow part", so it is the SAME VALUE and not a
+     matching number — change it once and the group stays even. */
+  .proj-hero-copy{--heroGap:18px;position:relative;z-index:4;padding:0 clamp(28px,6vw,92px);max-width:1080px;text-align:center;
     opacity:0;transform:translateY(26px);transition:opacity .9s .25s var(--ease),transform .9s .25s var(--ease)}
   .proj-detail.on .proj-hero-copy{opacity:1;transform:none}
   /* ⭐⭐ THE WORDS ARE CARRIED BY A SHADOW, NOT BY A PANEL — client, 14 Aug 2026: *"just add a
@@ -3280,18 +3294,22 @@
      photograph. The `0 0` layer is a centred blur, so it rims the letterform on all four sides.
      ⭐ Small text needs the rim more than the drop; the display face needs the drop more than the
      rim. Both carry both, weighted accordingly. */
-  .proj-eyebrow{display:block;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;
+  .proj-eyebrow{display:block;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold);margin-bottom:var(--heroGap);
     text-shadow:0 0 3px rgba(0,0,0,0.88),0 0 9px rgba(0,0,0,0.72),0 1px 2px rgba(0,0,0,0.8),0 4px 22px rgba(0,0,0,0.6)}
   .proj-title{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,94px);line-height:0.98;color:var(--bone);
     text-shadow:0 0 4px rgba(0,0,0,0.5),0 2px 4px rgba(0,0,0,0.6),0 4px 20px rgba(0,0,0,0.66),0 10px 54px rgba(0,0,0,0.55)}
   /* ⛔ THE CUE IS AN ARROW AND NOTHING ELSE (client, 14 Aug 2026). It keeps the bob it always had.
-     ⭐ It is pinned to the FOOT of the hero now rather than travelling with the copy: the copy
-     moved to the middle of the screen, and a "scroll down" cue floating under the title reads as
-     part of the title. ⚠️ Centred with `left:0;right:0` and not with `translateX(-50%)`, because
-     the bob animates `transform` and the two would fight. */
-  .proj-scrollcue{position:absolute;z-index:4;bottom:clamp(26px,5vh,54px);left:0;right:0;
-    display:flex;justify-content:center;color:var(--faint);
-    filter:drop-shadow(0 2px 8px rgba(0,0,0,0.7));animation:projBob 2s ease-in-out infinite}
+     ⚠️⚠️ **IT SITS DIRECTLY UNDER THE TITLE, AT THE EYEBROW'S OWN SPACING — HIS CORRECTION.** It
+     was briefly pinned to the foot of the hero, which is the conventional place for a scroll cue
+     and is not what he wants: *"that arrow at the bottom should be right below the title with the
+     same spacing as the eyebrow part, and it should also have the shadow."*
+     ⭐ **`margin-top` IS THE EYEBROW'S `margin-bottom`, WRITTEN AS THE SAME TOKEN, NOT AS A
+     MATCHING NUMBER** — one value, so the three lines cannot drift apart when it changes.
+     ⭐ A `drop-shadow` FILTER rather than a `text-shadow`, because the arrow is an SVG stroke and
+     `text-shadow` does not apply to it; the two blurs mirror the eyebrow's rim-and-drop pair. */
+  .proj-scrollcue{display:flex;justify-content:center;margin-top:var(--heroGap);color:var(--faint);
+    filter:drop-shadow(0 0 3px rgba(0,0,0,0.85)) drop-shadow(0 2px 10px rgba(0,0,0,0.7));
+    animation:projBob 2s ease-in-out infinite}
   @keyframes projBob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(8px);opacity:1}}
   .proj-body{max-width:1180px;margin:0 auto;padding:clamp(56px,9vh,116px) clamp(24px,5vw,60px) 130px}
   .proj-intro{display:grid;grid-template-columns:1fr 1.7fr;gap:clamp(30px,5vw,72px);align-items:start;margin-bottom:clamp(48px,8vh,88px)}
@@ -3496,7 +3514,17 @@
     gap:clamp(10px,1.5vw,22px);margin-bottom:clamp(20px,3.4vh,38px)}
   /* equal shares, so a long label wraps inside its OWN column instead of stealing width from
      the two beside it and leaving the row lopsided */
-  .hf{display:flex;align-items:center;gap:clamp(9px,0.95vw,13px);flex:1 1 0;min-width:0}
+  /* ⚠️⚠️ **TOP-ALIGNED, NOT CENTRED, SO THE THREE WHITE LINES SIT ON ONE LINE** — client, 14 Aug
+     2026: *"we just have to make sure that the word aftercare is perfectly lined up with the other
+     two… obviously, the top white part."*
+     ⭐ **HE IS DESCRIBING A CONSEQUENCE OF `align-items:center`, NOT A SPACING MISTAKE.** All three
+     rows are the same 48px box, but their CONTENT is different heights — one has a two-line bold,
+     one a two-line sub, "72 hours of aftercare" is one line of each and therefore the shortest. A
+     centred short block sits lower, so its heading measured **8px below** the other two. Centring
+     aligns the middles of three things that are not the same height; the headings are what the eye
+     reads across, so the tops are what must agree. ⛔ Do not fix this with a margin on one item —
+     the wrap points move with the viewport width and the offset would be wrong everywhere else. */
+  .hf{display:flex;align-items:flex-start;gap:clamp(9px,0.95vw,13px);flex:1 1 0;min-width:0}
   .hf svg{flex:none;width:clamp(27px,min(2.5vw,4.1vh),35px);height:auto;
     /* a champagne bloom so a solid mark sits ON the photo rather than being cut out of it */
     filter:drop-shadow(0 1px 6px rgba(198,166,100,0.34))}
@@ -6018,7 +6046,23 @@
        "all in the same bubble style as the Google and 10 year guarantee" asks for literally. They are
        `display:none` in the base rule (D120) and only come on here. ⚠️ `align-items:center` because a
        one-line chip beside the two-line Google chip would otherwise sit its text at the top. */
-    #hero .chip-reason,.page-head .chip-reason{display:inline-flex;align-items:center;white-space:nowrap}
+    /* ⚠️⚠️ **FIVE BUBBLES IN TWO COLUMNS — THE LAST ONE SPANS RATHER THAN SITTING ALONE.** The
+       grid above was tuned for FOUR (D186); the client's list of 14 Aug 2026 is five. An odd last
+       child in a two-column grid leaves a hole beside it, which reads as a bubble that failed to
+       load — the identical fault D205 hit with seven service tiles, and it takes the identical
+       fix. ⛔ It is `:last-child:nth-child(odd)`, so it does nothing at all if the count returns
+       to even; nothing here has to be undone when the list changes again. */
+    #hero .hero-chips > *:last-child:nth-child(odd),
+    .page-head .hero-chips > *:last-child:nth-child(odd){grid-column:1/-1}
+    /* ⛔⛔ **`white-space:nowrap` HAD TO COME OFF `.chip-reason`, AND IT IS NOT A STYLE
+       PREFERENCE.** D186's own note says the box no longer sizes to the text — the text has to fit
+       the box — and it named "Quick turnaround time" as the longest of the four. His replacement,
+       **"Your project expertly handled", is eight characters longer and cannot fit half of a 320px
+       screen on one line**, and `nowrap` does not wrap an overlong label, it overflows it.
+       ⚠️ `align-items:stretch` on the grid already makes a two-line bubble and a one-line bubble
+       the same height, so a wrapped label costs the row nothing. */
+    #hero .chip-reason,.page-head .chip-reason{display:inline-flex;align-items:center;
+      white-space:normal;text-wrap:balance;line-height:1.25}
 
     /* 14c-ii. ⭐ **THE TWO BUTTONS SIT SIDE BY SIDE — D171.** Client: *"then we will have the free
        quote and call us buttons right next to each other."*

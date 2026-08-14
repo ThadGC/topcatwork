@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=30f58a1836">
+<link rel="stylesheet" href="/assets/site.css?v=bf06465933">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -271,7 +271,9 @@
                  read as one phrase: ★★★★★ 5.0. ⚠️ The stars come down to 9px with tighter tracking
                  because the two now share a line that still has to fit the mark's 26px height. -->
             <span class="g-stack" aria-hidden="true">
-              <span class="g-word">Google</span>
+              <!-- ⭐ "Google reviews", not "Google" — client, 14 Aug 2026. ⚠️ The line BELOW it is
+                   unchanged (★★★★★ then 5.0): that order is D176, his own earlier instruction. -->
+              <span class="g-word">Google reviews</span>
               <span class="g-rating"><span class="g-stars">★★★★★</span><b class="g-score">5.0</b></span>
             </span>
             <span class="chip-legacy"><b>★★★★★</b> 5.0 on Google</span>
@@ -284,13 +286,28 @@
                ⚠️ **THIS IS THE SAME CONTENT D169 TOOK OUT, IN A DIFFERENT DRESS, AND THAT IS THE
                POINT** — what he rejected was three icons with a heading and a sub-line each, not the
                facts themselves. The icon row is still `display:none` and still intact for desktop.
-               ⛔ Phone only: `display:none` in the base rule, the phone opts in (D120). Above 720px
-               the chip row is still exactly the two chips it has always been.
+               ⛔ Phone AND TABLET: `display:none` in the base rule, and the ≤1120 block opts in.
+               Above 1120 the chip row is still exactly the two chips it has always been.
                ⚠️ **NEITHER LINE STATES AN ABSOLUTE (§2 rule 12).** "72-hour aftercare" is the
-               existing, already-live promise from the fact row; "Quick turnaround time" is
-               deliberately vague rather than a number we would have to keep. -->
+               existing, already-live promise from the fact row.
+               ⛔⛔ **"QUICK TURNAROUND TIME" IS GONE — 14 Aug 2026, HIS WORD "instead of".** It was
+               this row's second bubble and was deliberately vague rather than a number we would
+               have to keep; his two real reasons replace it. **Do not restore it.** -->
+          <!-- ⭐⭐ **THE THREE DESKTOP REASONS ARE BUBBLES HERE NOW — 14 Aug 2026.** Client: *"then
+               these three reasons have to go into the mobile and tablet version… Google reviews,
+               then five point o, the five stars next to that. Then we have ten year guarantee.
+               Then we will have seventy two hour aftercare. And then we have your project expertly
+               handled, and then every detail included in those drop downs instead of the quick
+               turnaround time."*
+               ⛔ **"QUICK TURNAROUND TIME" IS GONE, IN HIS WORDS ("instead of").** It was D172's
+               deliberately vague stand-in; the two real reasons replace it.
+               ⚠️ **FIVE BUBBLES IN A TWO-COLUMN GRID LEAVES AN ORPHAN**, and a lone bubble with a
+               hole beside it reads as a card that failed to load — the same fault D205 hit with
+               seven service tiles. It takes the same fix, `:last-child:nth-child(odd)`, spanning
+               the last one across both columns rather than leaving the gap. -->
           <span class="chip chip-reason glow-card">72-hour aftercare</span>
-          <span class="chip chip-reason glow-card">Quick turnaround time</span>
+          <span class="chip chip-reason glow-card">Your project expertly handled</span>
+          <span class="chip chip-reason glow-card">Every detail included</span>
         </div>
     </div>
   </section>
@@ -732,6 +749,6 @@
 
 </main>
 
-<script src="/assets/site.js?v=bdc419b434" defer></script>
+<script src="/assets/site.js?v=f0d2a36ba4" defer></script>
 </body>
 </html>

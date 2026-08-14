@@ -4603,6 +4603,40 @@ requestAnimationFrame(glowTick);
 
   window.addEventListener('resize',()=>{ sizeRunway(); measure(); kick(); });
 
+  /* ⛔⛔⛔ **THE ACCORDION COULD LOAD WITH THE WRONG GEOMETRY AND STAY THERE UNTIL A REFRESH —
+     14 August 2026.** Client: *"the desktop version animation is sometimes now broken. I have to
+     refresh the page for it to work correctly."*
+     ⭐⭐ **`measure()` READS `stage.clientWidth/clientHeight` AND ONLY EVER RE-RAN ON A WINDOW
+     `resize`.** Every number the scene draws from — `cw`, `ch`, the slot positions, the stack
+     origin — is derived there, once, at boot. So anything that changed the stage's box WITHOUT a
+     window resize event left the whole accordion drawing to numbers that no longer matched the
+     screen: a late web font, a late image, a scrollbar appearing, the browser restoring scroll on
+     a back-navigation, or a boot that simply won a race against layout. **The cards then deal out
+     to slots that are not where they look like they should be** — which is the scattered, stuck
+     mid-air state in his screenshot — **and nothing re-measures, because nothing resizes.**
+     Refreshing worked because boot then won the race.
+     ⭐ **MEASURED, NOT ASSUMED:** at one fixed scroll position the cards were **1253px wide before
+     a synthetic resize and 1771px after it, at the same scrollY** — a 40% error in the card size
+     alone, with zero settled sets before and one after.
+     ⭐ A `ResizeObserver` on the stage closes the whole class: it fires on the element's real box
+     whatever moved it, so the fix does not have to enumerate the causes. ⚠️ Guarded on a changed
+     integer box so it cannot feed back — `render()` writes transforms, which do not resize
+     anything, but the guard means a future layout write here cannot loop either. */
+  if('ResizeObserver' in window){
+    let lastW=0,lastH=0;
+    new ResizeObserver(()=>{
+      const w=Math.round(stage.clientWidth), h=Math.round(stage.clientHeight);
+      if(w===lastW&&h===lastH) return;
+      lastW=w; lastH=h;
+      sizeRunway(); measure(); kick();
+    }).observe(stage);
+  }
+  /* ⚠️ The two remaining moments a stage box can change without its own box changing FIRST: the
+     last image landing (which can move the runway under a still viewport) and the web fonts
+     swapping in. Both are one-shot and cheap. */
+  window.addEventListener('load',()=>{ sizeRunway(); measure(); kick(); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ measure(); kick(); });
+
   // <main> has its own stacking context (z-index:1), which traps these below the sticky header.
   // Re-parent the fixed overlays to <body> so their z-index actually wins over the header.
   document.body.appendChild(detail);
