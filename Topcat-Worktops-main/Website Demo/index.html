@@ -3256,19 +3256,36 @@
     border:1px solid rgba(198,166,100,0.45);color:var(--bone);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
     cursor:pointer;box-shadow:0 12px 30px -12px rgba(0,0,0,0.8);transition:border-color .4s var(--ease),color .4s var(--ease),background .4s var(--ease)}
   .proj-close:hover{border-color:var(--gold);color:var(--gold);background:rgba(10,10,12,0.95)}
-  .proj-hero{position:relative;height:100vh;min-height:520px;overflow:hidden;display:flex;align-items:flex-end}
-  .proj-hero-bg{position:absolute;inset:0}
+  /* ⭐ THE HERO COPY IS CENTRED — 14 Aug 2026, client: *"also add the text center."* The block
+     still sits on the floor of the hero; only its horizontal alignment changed. */
+  .proj-hero{position:relative;height:100vh;min-height:520px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+  .proj-hero-bg{position:absolute;inset:0;background:var(--ink)}
   .phb-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s var(--ease);will-change:opacity,transform}
-  .phb-slide.active{opacity:1;animation:phbZoom 6s var(--ease) forwards}
+  .phb-slide.active{animation:phbZoom 6s var(--ease) forwards}
   @keyframes phbZoom{from{transform:scale(1.10)}to{transform:scale(1)}}
-  .proj-hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,10,0.96) 3%,rgba(8,8,10,0.3) 42%,rgba(8,8,10,0.55))}
-  .proj-hero-copy{position:relative;z-index:2;padding:0 clamp(28px,6vw,92px) clamp(46px,7vh,86px);max-width:1080px;
+  .proj-hero-veil{position:absolute;inset:0;z-index:3;background:linear-gradient(to top,rgba(8,8,10,0.96) 3%,rgba(8,8,10,0.3) 42%,rgba(8,8,10,0.55))}
+  .proj-hero-copy{position:relative;z-index:4;padding:0 clamp(28px,6vw,92px) clamp(46px,7vh,86px);max-width:1080px;text-align:center;
     opacity:0;transform:translateY(26px);transition:opacity .9s .25s var(--ease),transform .9s .25s var(--ease)}
+  /* ⚠️⚠️ THE COPY CARRIES ITS OWN SHADE, BECAUSE THE VEIL ALONE COULD NOT — measured 14 Aug 2026
+     while centring this block. Across the 97 photographs that can appear behind it, the gold
+     eyebrow measured **1.42:1 against its own background on the worst of them** (a bright white
+     splashback filling the frame) and under 2:1 on fifteen. Gold on pale grey: present, unreadable.
+     ⛔ **DEEPENING THE PAGE VEIL WAS TRIED FIRST AND REVERTED, AND THAT IS THE PART TO REMEMBER.**
+     Getting the worst case to 3:1 that way needed about 0.65 alpha across the middle of the frame
+     — it fixed the label by flattening the photograph, and on this site the photograph IS the
+     product. **The words needed shade, not the picture.**
+     ⭐ A soft ellipse behind the text block only, so the rest of the frame keeps its light. It is
+     wide and feathered to zero, which reads as a natural pool of shade rather than a panel.
+     ⛔ NOT A BOX, NOT A PANEL, AND NO LINE ANYWHERE ON IT (§2 rule 10). */
+  .proj-hero-copy::before{content:"";position:absolute;z-index:-1;pointer-events:none;
+    inset:-70px -12vw -46px;
+    background:radial-gradient(66% 78% at 50% 50%,rgba(8,8,10,0.80),rgba(8,8,10,0.55) 56%,rgba(8,8,10,0) 100%)}
   .proj-detail.on .proj-hero-copy{opacity:1;transform:none}
   .proj-eyebrow{display:block;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
   .proj-title{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,94px);line-height:0.98;color:var(--bone)}
-  .proj-scrollcue{display:inline-block;margin-top:26px;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--faint);animation:projBob 2s ease-in-out infinite}
-  @keyframes projBob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(6px);opacity:1}}
+  /* ⛔ THE CUE IS AN ARROW AND NOTHING ELSE (client, 14 Aug 2026). It keeps the bob it always had. */
+  .proj-scrollcue{display:inline-flex;margin-top:30px;color:var(--faint);animation:projBob 2s ease-in-out infinite}
+  @keyframes projBob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(8px);opacity:1}}
   .proj-body{max-width:1180px;margin:0 auto;padding:clamp(56px,9vh,116px) clamp(24px,5vw,60px) 130px}
   .proj-intro{display:grid;grid-template-columns:1fr 1.7fr;gap:clamp(30px,5vw,72px);align-items:start;margin-bottom:clamp(48px,8vh,88px)}
   .proj-meta{display:flex;flex-direction:column;gap:20px;border-left:1px solid var(--hair-soft);padding-left:26px}
@@ -3278,6 +3295,31 @@
   .proj-desc .proj-lead{font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
   .proj-desc p{color:var(--muted);font-weight:300;font-size:clamp(15px,1.15vw,17px);line-height:1.8;margin-bottom:18px}
   .proj-desc p.big{font-family:var(--sans);font-weight:300;font-size:clamp(19px,1.9vw,24px);color:var(--bone);line-height:1.55;margin-bottom:26px}
+  /* ⭐ THE CUSTOMER'S REVIEW FOR THIS JOB, BESIDE WHAT WAS DONE — 14 Aug 2026 (client's ask).
+     ⛔ NO RULE ACROSS ITS TOP: §2 rule 10 forbids a bright line over any card or panel outright,
+     so the block is held by a LEFT hairline, the same gesture `.proj-meta` already uses on the
+     other side of this grid. */
+  .proj-rev{border-left:1px solid var(--hair-soft);padding:2px 0 2px 26px;margin-top:34px}
+  .proj-rev-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .proj-rev .stars{color:var(--gold);font-size:13px;letter-spacing:0.14em}
+  .proj-rev-src{font-size:10px;letter-spacing:0.26em;text-transform:uppercase;color:var(--faint)}
+  .proj-rev blockquote{font-family:var(--sans);font-weight:300;font-size:clamp(15px,1.15vw,17px);
+    line-height:1.8;color:var(--muted);margin:0 0 14px}
+  .proj-rev figcaption{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--bone)}
+  /* ⭐⭐ THE NAV BAR STAYS ON A PROJECT PAGE — 14 Aug 2026. Client: *"there must still be a nav
+     bar when they go into one of the project pages."* The detail view is a fixed overlay at
+     z-index 120 and the header sits at 50, so it was being covered.
+     ⛔ **THE WHOLE NAV STACK MOVES, NOT JUST THE BAR, AND IN ITS EXISTING ORDER.** Raising only
+     `header.bar` would leave the phone's `.mobile-nav` sheet (40) stranded UNDER the overlay, so
+     the burger would open a menu nobody could see. Normal order is sheet < bar < burger; it is
+     the same order up here, just above 120. ⚠️ The lightbox stays at 130 and still covers the
+     nav, which is right — it is a fullscreen photograph. */
+  html.proj-open header.bar{z-index:122}
+  html.proj-open .mobile-nav{z-index:121}
+  html.proj-open .nav-burger{z-index:123}
+  /* ⚠️ AND THE BACK BUTTON HAS TO COME DOWN OFF THE LOGO. It is `position:fixed;top:22px;left:22px`,
+     which is exactly where the lockup now sits. Below the bar, on its own line. */
+  html.proj-open .proj-close{top:92px}
   /* ⭐⭐⭐ A COLLAGE, NOT A CROPPING GRID — 14 August 2026 (D212). Client: *"the way that you laid
      out the images inside the project gallery, you resize some of them, and now they're blurry.
      Try and keep them in a collage style with the original sizing of the images… make sure to
@@ -7012,7 +7054,14 @@
         <div class="proj-hero-copy">
           <span class="proj-eyebrow" id="projPlace">Project</span>
           <h2 class="proj-title" id="projName">Project</h2>
-          <span class="proj-scrollcue">scroll for the full story ↓</span>
+          <!-- ⛔ NO WORDS ON THE CUE — 14 Aug 2026. Client: *"don't say scroll to view the full
+               story. Just add the arrow down jumping. Nothing else."* The bob animation is
+               unchanged; only the sentence is gone. `aria-hidden` because an arrow that says
+               nothing to the eye should not announce "scroll for the full story" to a screen
+               reader either — the heading and the body below it are the real navigation. -->
+          <span class="proj-scrollcue" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15"/><path d="M5.5 12.5L12 19l6.5-6.5"/></svg>
+          </span>
         </div>
       </div>
       <div class="proj-body">
@@ -7038,8 +7087,26 @@
                ⛔ Do not fill it with generated copy — it would read as his account of a real job
                he did for a real customer. -->
           <div class="proj-desc" id="projDesc">
-            <p class="proj-lead">What we did</p>
-            <p class="big" id="projStory"></p>
+            <div id="projStoryWrap">
+              <p class="proj-lead">What we did</p>
+              <p class="big" id="projStory"></p>
+            </div>
+            <!-- ⭐⭐ THE CUSTOMER'S OWN REVIEW FOR THIS JOB — 14 Aug 2026. Client: *"there are
+                 reviews in some of the drives, a screenshot of the Google review for that project.
+                 Just add that text into a review format from the client in the project page by the
+                 descriptions."*
+                 ⛔⛔ **THE TEXT IS NOT COPIED HERE. `reviewBy` HOLDS A NAME AND THE WORDS ARE
+                 LOOKED UP IN `REVIEWS` AT RENDER TIME**, so there is exactly one copy of every
+                 review in the document. That is D168: a review deleted from `REVIEWS` but left in
+                 a second array still ships to every visitor and still sits in view-source on a
+                 PUBLIC repo. One copy means deleting it once deletes it everywhere.
+                 ⚠️ The screenshot in his Drive is Google's own truncated card ("… More"); the full
+                 text was already in `REVIEWS`, so the customer's whole review runs here. -->
+            <figure class="proj-rev" id="projRev">
+              <div class="proj-rev-top"><span class="stars">★★★★★</span><span class="proj-rev-src">Google review</span></div>
+              <blockquote id="projRevText"></blockquote>
+              <figcaption id="projRevName"></figcaption>
+            </figure>
           </div>
         </div>
         <div class="proj-media" id="projMedia"></div>
@@ -11352,14 +11419,22 @@ requestAnimationFrame(glowTick);
      story:'Calacatta Sydney Black quartz at 20mm, across the worktop, the island and the splashbacks. The breakfast bar was cut to the room, and the doorway into the kitchen lined in the same stone so the run carries through.',
      gallery:[['/assets/projects/ruislip-g1.webp',1067,1600], ['/assets/projects/ruislip-g2.webp',1067,1600], ['/assets/projects/ruislip-g3.webp',1067,1600], ['/assets/projects/ruislip-g4.webp',1067,1600], ['/assets/projects/ruislip-g5.webp',1067,1600], ['/assets/projects/ruislip-g6.webp',1067,1600]]},
 
+    /* ⭐ THE CLIENT'S OWN DRIVE, 14 Aug 2026 — g7 onwards. Same kitchen as g1–g6: the mint glass
+       splashback and the white quartz are in both sets, checked before they were added. */
     {key:'central-london', name:'The Central London Project', place:'London',
      img:'/assets/projects/central-london-1400.webp', type:'Worktop', story:'',
-     gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067]]},
+     reviewBy:'Joel Brizman',
+     gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067], ['/assets/projects/central-london-g7.webp',1600,1067], ['/assets/projects/central-london-g8.webp',1600,1067], ['/assets/projects/central-london-g9.webp',1600,1067], ['/assets/projects/central-london-g10.webp',1600,1067], ['/assets/projects/central-london-g11.webp',1600,1067], ['/assets/projects/central-london-g12.webp',1600,1067], ['/assets/projects/central-london-g13.webp',1600,1067]]},
 
+    /* ⚠️ TWO OF HIS SITE'S SIX CAME OUT HERE, 14 Aug 2026, and it is a judgement call worth
+       reading: the old `-g2` was a slab on a trolley in a dusty workshop with an air hose across
+       the floor, and the old `-g3` was a half-built room with a stepladder, a mitre saw and loose
+       cables. Client: *"if something doesn't look good, don't use it."* Both files are still on
+       disk — put the two paths back in this array to restore them. g7–g10 are his Drive set. */
     {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
      img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
      story:'Taj Mahal quartzite at 30mm, across the worktop, the island and the splashbacks, with a single ogee edge worked through the run.',
-     gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g2.webp',604,1074], ['/assets/projects/hornchurch-g3.webp',1569,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g6.webp',882,1177]]},
+     gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g6.webp',882,1177], ['/assets/projects/hornchurch-g7.webp',1200,1600], ['/assets/projects/hornchurch-g8.webp',1200,1600], ['/assets/projects/hornchurch-g9.webp',1200,1600], ['/assets/projects/hornchurch-g10.webp',1200,1600]]},
 
     {key:'harrow', name:'The Harrow Project', place:'Harrow',
      img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'',
@@ -11367,19 +11442,29 @@ requestAnimationFrame(glowTick);
 
     {key:'harlow', name:'The Harlow Project', place:'Essex',
      img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446]]},
+     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g7.webp',1200,1600], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]},
 
     {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
      img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446]]},
+     gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446], ['/assets/projects/rickmansworth-g7.webp',1200,1600], ['/assets/projects/rickmansworth-g8.webp',1200,1600], ['/assets/projects/rickmansworth-g9.webp',1200,1600], ['/assets/projects/rickmansworth-g10.webp',1200,1600], ['/assets/projects/rickmansworth-g11.webp',1200,1600], ['/assets/projects/rickmansworth-g12.webp',1200,1600], ['/assets/projects/rickmansworth-g13.webp',1200,1600], ['/assets/projects/rickmansworth-g14.webp',1200,1600], ['/assets/projects/rickmansworth-g15.webp',1200,1600], ['/assets/projects/rickmansworth-g16.webp',1200,1600]]},
 
     {key:'watford', name:'The Watford Project', place:'Watford',
      img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/watford-g1.webp',1600,1066], ['/assets/projects/watford-g2.webp',1600,1066], ['/assets/projects/watford-g3.webp',1600,1066], ['/assets/projects/watford-g4.webp',1600,1066], ['/assets/projects/watford-g5.webp',1600,1066], ['/assets/projects/watford-g6.webp',1600,1066]]},
+     gallery:[['/assets/projects/watford-g1.webp',1600,1066], ['/assets/projects/watford-g2.webp',1600,1066], ['/assets/projects/watford-g3.webp',1600,1066], ['/assets/projects/watford-g4.webp',1600,1066], ['/assets/projects/watford-g5.webp',1600,1066], ['/assets/projects/watford-g6.webp',1600,1066], ['/assets/projects/watford-g7.webp',1600,1067], ['/assets/projects/watford-g8.webp',1600,1067], ['/assets/projects/watford-g9.webp',1600,1067], ['/assets/projects/watford-g10.webp',1600,1067], ['/assets/projects/watford-g11.webp',1600,1067], ['/assets/projects/watford-g12.webp',1600,1067], ['/assets/projects/watford-g13.webp',1600,1067], ['/assets/projects/watford-g14.webp',1600,1067], ['/assets/projects/watford-g15.webp',1600,1067], ['/assets/projects/watford-g16.webp',1600,1067], ['/assets/projects/watford-g17.webp',1600,1067], ['/assets/projects/watford-g18.webp',1600,1067]]},
 
-    /* ⚠️ THE EIGHTH — HIS, AND STILL TO COME. No `img`, so it renders the "photo to come" plate. */
-    {key:'eighth', name:'Project eight', place:'Details to come',
-     ph:'PHOTO TO COME', type:'', story:'', gallery:[]}
+    /* ⭐⭐ THE EIGHTH IS REAL NOW — 14 Aug 2026. Client: *"the Wimbledon project is project number
+       eight… it's quite complicated because it was done in multiple apartments, so it's not all
+       the same apartment. So just describe that it was done in multiple apartments."*
+       ⛔ THE STORY SAYS WHAT HE SAID AND NOTHING MORE. There is no stone name here: his Drive
+       folder records none, and naming one on a real customer's flat is the §6 integrity rule in
+       a different costume — the same reason the other six carry no material field.
+       ⚠️ The photographs ARE several different flats, which is why the story leads with that; a
+       reader who spots two different rooms in one gallery would otherwise read it as an error. */
+    {key:'wimbledon', name:'The Wimbledon Project', place:'Wimbledon, London',
+     img:'/assets/projects/wimbledon-1400.webp', type:'Worktops and splashbacks, across multiple apartments',
+     story:'A development of several apartments, each one templated and fitted on its own. The worktops and full height splashbacks run through every flat in the same stone, so the block reads as one piece of work rather than a set of separate kitchens.',
+     reviewBy:'Kinga Skubiszewska',
+     gallery:[['/assets/projects/wimbledon-g1.webp',1067,1600], ['/assets/projects/wimbledon-g2.webp',1067,1600], ['/assets/projects/wimbledon-g3.webp',1067,1600], ['/assets/projects/wimbledon-g4.webp',1067,1600], ['/assets/projects/wimbledon-g5.webp',1067,1600], ['/assets/projects/wimbledon-g6.webp',1067,1600], ['/assets/projects/wimbledon-g7.webp',1067,1600], ['/assets/projects/wimbledon-g8.webp',1067,1600], ['/assets/projects/wimbledon-g9.webp',1067,1600], ['/assets/projects/wimbledon-g10.webp',1067,1600], ['/assets/projects/wimbledon-g11.webp',1067,1600]]}
   ];
   const PER_SET=4;
   const NSETS=Math.ceil(PROJECTS.length/PER_SET);   // 8 projects → two panels of four
@@ -12324,20 +12409,72 @@ requestAnimationFrame(glowTick);
   // hero: crossfading slideshow behind the title
   const HERO_N=5, heroSlides=[];
   for(let i=0;i<HERO_N;i++){ const s=document.createElement('div'); s.className='phb-slide'; heroBg.appendChild(s); heroSlides.push(s); }
-  let heroIdx=0, heroTimer=null;
+  let heroIdx=0, heroTimer=null, heroSeq=[], heroRun=0;
+
+  /* ⛔⛔⛔ THE HERO SAT ON BLACK FOR EIGHTEEN SECONDS OUT OF EVERY TWENTY-TWO, AND THE CAUSE WAS
+     A DATA SHAPE, NOT A TIMING — 14 August 2026. Client: *"there is a long pause of just black
+     between the images on the projects that are in the hero section… no pause on black ever."*
+     ⭐⭐ **`gallery` STOPPED BEING A LIST OF URLS IN D212 AND THIS FUNCTION WAS NEVER TOLD.** The
+     collage needs intrinsic dimensions, so every entry became `[url, width, height]` — and
+     `url(${entry})` stringifies the whole array to `url(/assets/…webp,1067,1600)`, which is not a
+     valid CSS url(), so the declaration is DROPPED and the slide paints nothing. Slide 1 was the
+     clicked card's `src` (still a plain string, still fine) and slides 2–5 were empty. One real
+     photograph, then four black screens at 4.5s each.
+     ⭐ **IT LOOKED LIKE A TRANSITION BUG AND WAS A TYPE BUG**, which is why staring at the fade
+     timing would never have found it. `srcOf()` now normalises both shapes.
+     ⭐⭐ **AND THE CROSSFADE ITSELF COULD NEVER REACH BLACK NOW EITHER.** Two layers fading in
+     opposite directions over a dark page dip to about 75% coverage together at the midpoint, so
+     even with every image loading there was a visible darkening at each change. The outgoing
+     slide now HOLDS at full opacity underneath while the incoming one fades in above it, and is
+     only cleared once the fade has finished — the stack is opaque at every instant.
+     ⛔ **AN IMAGE IS NEVER SHOWN BEFORE IT HAS DECODED.** A slide swapped to a photograph the
+     browser has not fetched yet is another way to paint black; `advance()` waits for the decode
+     and holds the current picture until then. */
+  const srcOf=g=>Array.isArray(g)?g[0]:g;
+  const preload=u=>new Promise(res=>{ const im=new Image(); im.onload=im.onerror=()=>res(u); im.src=u; });
+
   function startHero(clickedSrc, pool){
-    const src=(pool&&pool.length?pool:[clickedSrc]);
-    /* ⚠️ The hero cycles the project's OWN photographs, and repeats them when it has fewer than
-       HERO_N — Harrow has three in total. A slideshow that borrowed another job's kitchen to
-       fill the gap would be showing a customer someone else's worktop. */
-    const imgs=[clickedSrc,...src.filter(s=>s!==clickedSrc)];
-    while(imgs.length<HERO_N && imgs.length) imgs.push(imgs[imgs.length%imgs.length===0?0:imgs.length-1]);
-    heroSlides.forEach((s,i)=>{ s.style.backgroundImage=`url(${imgs[i%imgs.length]})`; s.classList.remove('active'); });
-    heroIdx=0; void heroSlides[0].offsetWidth; heroSlides[0].classList.add('active');
-    clearInterval(heroTimer);
-    heroTimer=setInterval(()=>{ heroSlides[heroIdx].classList.remove('active'); heroIdx=(heroIdx+1)%HERO_N; heroSlides[heroIdx].classList.add('active'); },4500);
+    const run=++heroRun;                       // invalidates any in-flight advance from a previous open
+    clearInterval(heroTimer); heroTimer=null;
+    /* ⚠️ The hero cycles the project's OWN photographs and simply cycles fewer of them when it
+       has fewer — Harrow has two. A slideshow that borrowed another job's kitchen to fill the
+       gap would be showing a customer someone else's worktop. ⛔ No padding to HERO_N: repeating
+       an image to reach five is how the same picture appeared to "pause" twice in a row. */
+    const list=(pool&&pool.length?pool.map(srcOf):[]);
+    heroSeq=[clickedSrc,...list.filter(s=>s!==clickedSrc)];
+    heroSlides.forEach(s=>{ s.style.transition='none'; s.style.opacity='0'; s.style.zIndex='0'; s.classList.remove('active'); });
+    heroIdx=0;
+    const first=heroSlides[0];
+    first.style.backgroundImage=`url("${heroSeq[0]}")`;
+    void first.offsetWidth;                    // commit the transition:none before it is lifted
+    first.style.opacity='1'; first.style.zIndex='1'; first.classList.add('active');
+    requestAnimationFrame(()=>heroSlides.forEach(s=>{ s.style.transition=''; }));
+    if(heroSeq.length<2) return;               // one photograph is a still, not a slideshow
+    heroSeq.slice(1,3).forEach(preload);       // warm the next two before they are ever needed
+    heroTimer=setInterval(()=>advance(run),4500);
   }
-  function stopHero(){ clearInterval(heroTimer); heroTimer=null; }
+
+  /* One step of the rotation: the next slide is laid OVER the current one and faded up, so the
+     screen is covered by a full-opacity photograph for the whole 1.3s. */
+  async function advance(run){
+    if(run!==heroRun || heroSeq.length<2) return;
+    const cur=heroSlides[heroIdx%HERO_N], nxt=heroSlides[(heroIdx+1)%HERO_N];
+    const url=heroSeq[(heroIdx+1)%heroSeq.length];
+    await preload(url);
+    if(run!==heroRun) return;                  // the overlay was closed or another project opened
+    nxt.style.backgroundImage=`url("${url}")`;
+    nxt.style.transition='none'; nxt.style.opacity='0'; nxt.style.zIndex='2';
+    void nxt.offsetWidth;
+    nxt.style.transition=''; nxt.classList.add('active'); nxt.style.opacity='1';
+    heroIdx++;
+    setTimeout(()=>{                           // only once the incoming slide is fully opaque
+      if(run!==heroRun) return;
+      cur.style.transition='none'; cur.style.opacity='0'; cur.style.zIndex='0'; cur.classList.remove('active');
+      void cur.offsetWidth; cur.style.transition='';
+      preload(heroSeq[(heroIdx+1)%heroSeq.length]);   // and warm the one after
+    },1400);
+  }
+  function stopHero(){ heroRun++; clearInterval(heroTimer); heroTimer=null; }
 
   /* ⭐⭐ THE MEDIA GRID IS BUILT PER PROJECT — 14 Aug 2026 (D211). It used to be a fixed six
      slots pulling from every card's photo, with invented labels ("Island detail", "Edge
@@ -12398,17 +12535,44 @@ requestAnimationFrame(glowTick);
     /* ⛔ NO STORY MEANS NO COLUMN — see the markup note. The intro drops to one column so the
        facts sit on their own rather than beside an empty half. */
     const desc=document.getElementById('projDesc'), story=document.getElementById('projStory'),
-          intro=detail.querySelector('.proj-intro');
+          storyWrap=document.getElementById('projStoryWrap'), intro=detail.querySelector('.proj-intro');
     if(story) story.textContent=proj.story||'';
-    if(desc) desc.style.display=proj.story?'':'none';
-    if(intro) intro.style.gridTemplateColumns=proj.story?'':'1fr';
+    if(storyWrap) storyWrap.style.display=proj.story?'':'none';
+    /* ⭐ THE REVIEW IS LOOKED UP BY NAME, NEVER STORED TWICE — see the markup note (D168).
+       ⚠️ `REVIEWS` is declared at the top level of this same <script>, so it is in scope here;
+       the guard is so a future split into two files fails loudly in the console rather than
+       silently dropping a customer's words off the page. */
+    const rev=document.getElementById('projRev'), revText=document.getElementById('projRevText'),
+          revName=document.getElementById('projRevName');
+    let r=null;
+    if(proj.reviewBy){
+      try{ r=REVIEWS.find(x=>x.n===proj.reviewBy)||null; }catch(e){ console.warn('REVIEWS not in scope for',proj.reviewBy,e); }
+      if(!r) console.warn('No review found for',proj.reviewBy);
+    }
+    if(revText) revText.textContent=r?'“'+r.q+'”':'';
+    if(revName) revName.textContent=r?r.n:'';
+    if(rev) rev.style.display=r?'':'none';
+    /* The right-hand column earns its place with EITHER a story or a review. Central London has
+       a review and no story, so keying the column off `story` alone would have hidden it. */
+    const hasCol=!!(proj.story||r);
+    if(desc) desc.style.display=hasCol?'':'none';
+    if(intro) intro.style.gridTemplateColumns=hasCol?'':'1fr';
     loadMedia(proj);
     startHero(img.src, proj.gallery);
     detail.scrollTop=0;
     detail.classList.add('on'); detail.setAttribute('aria-hidden','false');
+    document.documentElement.classList.add('proj-open');   // lifts the nav stack over the overlay
     focused=true;                                  // lets Escape close the detail
   }
-  function closeFocus(){ if(lightbox.classList.contains('on'))closeLightbox(); detail.classList.remove('on'); detail.setAttribute('aria-hidden','true'); stopHero(); focused=false; }
+  function closeFocus(){ if(lightbox.classList.contains('on'))closeLightbox(); detail.classList.remove('on'); detail.setAttribute('aria-hidden','true'); document.documentElement.classList.remove('proj-open'); stopHero(); focused=false; }
+
+  /* ⭐ A VISIBLE NAV THAT DOES NOTHING IS WORSE THAN NO NAV. Every destination in the bar is
+     either a section of the page UNDERNEATH this overlay or another page, so a click has to put
+     the overlay away first. ⚠️ Capture phase, because the smooth-scroll IIFE also listens for
+     `a[href^="#"]` and would otherwise scroll the hidden page before we close. */
+  orNull(document.querySelector('header.bar')).addEventListener('click',e=>{
+    if(e.target.closest('a') && detail.classList.contains('on')) closeFocus();
+  },true);
   orNull(document.getElementById('projClose')).addEventListener('click',closeFocus);
 
   /* ---- "View as grid": a fullscreen overlay with all 8 projects, each still clickable ---- */

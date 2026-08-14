@@ -3243,19 +3243,36 @@
     border:1px solid rgba(198,166,100,0.45);color:var(--bone);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
     cursor:pointer;box-shadow:0 12px 30px -12px rgba(0,0,0,0.8);transition:border-color .4s var(--ease),color .4s var(--ease),background .4s var(--ease)}
   .proj-close:hover{border-color:var(--gold);color:var(--gold);background:rgba(10,10,12,0.95)}
-  .proj-hero{position:relative;height:100vh;min-height:520px;overflow:hidden;display:flex;align-items:flex-end}
-  .proj-hero-bg{position:absolute;inset:0}
+  /* ⭐ THE HERO COPY IS CENTRED — 14 Aug 2026, client: *"also add the text center."* The block
+     still sits on the floor of the hero; only its horizontal alignment changed. */
+  .proj-hero{position:relative;height:100vh;min-height:520px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+  .proj-hero-bg{position:absolute;inset:0;background:var(--ink)}
   .phb-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s var(--ease);will-change:opacity,transform}
-  .phb-slide.active{opacity:1;animation:phbZoom 6s var(--ease) forwards}
+  .phb-slide.active{animation:phbZoom 6s var(--ease) forwards}
   @keyframes phbZoom{from{transform:scale(1.10)}to{transform:scale(1)}}
-  .proj-hero-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,10,0.96) 3%,rgba(8,8,10,0.3) 42%,rgba(8,8,10,0.55))}
-  .proj-hero-copy{position:relative;z-index:2;padding:0 clamp(28px,6vw,92px) clamp(46px,7vh,86px);max-width:1080px;
+  .proj-hero-veil{position:absolute;inset:0;z-index:3;background:linear-gradient(to top,rgba(8,8,10,0.96) 3%,rgba(8,8,10,0.3) 42%,rgba(8,8,10,0.55))}
+  .proj-hero-copy{position:relative;z-index:4;padding:0 clamp(28px,6vw,92px) clamp(46px,7vh,86px);max-width:1080px;text-align:center;
     opacity:0;transform:translateY(26px);transition:opacity .9s .25s var(--ease),transform .9s .25s var(--ease)}
+  /* ⚠️⚠️ THE COPY CARRIES ITS OWN SHADE, BECAUSE THE VEIL ALONE COULD NOT — measured 14 Aug 2026
+     while centring this block. Across the 97 photographs that can appear behind it, the gold
+     eyebrow measured **1.42:1 against its own background on the worst of them** (a bright white
+     splashback filling the frame) and under 2:1 on fifteen. Gold on pale grey: present, unreadable.
+     ⛔ **DEEPENING THE PAGE VEIL WAS TRIED FIRST AND REVERTED, AND THAT IS THE PART TO REMEMBER.**
+     Getting the worst case to 3:1 that way needed about 0.65 alpha across the middle of the frame
+     — it fixed the label by flattening the photograph, and on this site the photograph IS the
+     product. **The words needed shade, not the picture.**
+     ⭐ A soft ellipse behind the text block only, so the rest of the frame keeps its light. It is
+     wide and feathered to zero, which reads as a natural pool of shade rather than a panel.
+     ⛔ NOT A BOX, NOT A PANEL, AND NO LINE ANYWHERE ON IT (§2 rule 10). */
+  .proj-hero-copy::before{content:"";position:absolute;z-index:-1;pointer-events:none;
+    inset:-70px -12vw -46px;
+    background:radial-gradient(66% 78% at 50% 50%,rgba(8,8,10,0.80),rgba(8,8,10,0.55) 56%,rgba(8,8,10,0) 100%)}
   .proj-detail.on .proj-hero-copy{opacity:1;transform:none}
   .proj-eyebrow{display:block;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
   .proj-title{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,94px);line-height:0.98;color:var(--bone)}
-  .proj-scrollcue{display:inline-block;margin-top:26px;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--faint);animation:projBob 2s ease-in-out infinite}
-  @keyframes projBob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(6px);opacity:1}}
+  /* ⛔ THE CUE IS AN ARROW AND NOTHING ELSE (client, 14 Aug 2026). It keeps the bob it always had. */
+  .proj-scrollcue{display:inline-flex;margin-top:30px;color:var(--faint);animation:projBob 2s ease-in-out infinite}
+  @keyframes projBob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(8px);opacity:1}}
   .proj-body{max-width:1180px;margin:0 auto;padding:clamp(56px,9vh,116px) clamp(24px,5vw,60px) 130px}
   .proj-intro{display:grid;grid-template-columns:1fr 1.7fr;gap:clamp(30px,5vw,72px);align-items:start;margin-bottom:clamp(48px,8vh,88px)}
   .proj-meta{display:flex;flex-direction:column;gap:20px;border-left:1px solid var(--hair-soft);padding-left:26px}
@@ -3265,6 +3282,31 @@
   .proj-desc .proj-lead{font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
   .proj-desc p{color:var(--muted);font-weight:300;font-size:clamp(15px,1.15vw,17px);line-height:1.8;margin-bottom:18px}
   .proj-desc p.big{font-family:var(--sans);font-weight:300;font-size:clamp(19px,1.9vw,24px);color:var(--bone);line-height:1.55;margin-bottom:26px}
+  /* ⭐ THE CUSTOMER'S REVIEW FOR THIS JOB, BESIDE WHAT WAS DONE — 14 Aug 2026 (client's ask).
+     ⛔ NO RULE ACROSS ITS TOP: §2 rule 10 forbids a bright line over any card or panel outright,
+     so the block is held by a LEFT hairline, the same gesture `.proj-meta` already uses on the
+     other side of this grid. */
+  .proj-rev{border-left:1px solid var(--hair-soft);padding:2px 0 2px 26px;margin-top:34px}
+  .proj-rev-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .proj-rev .stars{color:var(--gold);font-size:13px;letter-spacing:0.14em}
+  .proj-rev-src{font-size:10px;letter-spacing:0.26em;text-transform:uppercase;color:var(--faint)}
+  .proj-rev blockquote{font-family:var(--sans);font-weight:300;font-size:clamp(15px,1.15vw,17px);
+    line-height:1.8;color:var(--muted);margin:0 0 14px}
+  .proj-rev figcaption{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--bone)}
+  /* ⭐⭐ THE NAV BAR STAYS ON A PROJECT PAGE — 14 Aug 2026. Client: *"there must still be a nav
+     bar when they go into one of the project pages."* The detail view is a fixed overlay at
+     z-index 120 and the header sits at 50, so it was being covered.
+     ⛔ **THE WHOLE NAV STACK MOVES, NOT JUST THE BAR, AND IN ITS EXISTING ORDER.** Raising only
+     `header.bar` would leave the phone's `.mobile-nav` sheet (40) stranded UNDER the overlay, so
+     the burger would open a menu nobody could see. Normal order is sheet < bar < burger; it is
+     the same order up here, just above 120. ⚠️ The lightbox stays at 130 and still covers the
+     nav, which is right — it is a fullscreen photograph. */
+  html.proj-open header.bar{z-index:122}
+  html.proj-open .mobile-nav{z-index:121}
+  html.proj-open .nav-burger{z-index:123}
+  /* ⚠️ AND THE BACK BUTTON HAS TO COME DOWN OFF THE LOGO. It is `position:fixed;top:22px;left:22px`,
+     which is exactly where the lockup now sits. Below the bar, on its own line. */
+  html.proj-open .proj-close{top:92px}
   /* ⭐⭐⭐ A COLLAGE, NOT A CROPPING GRID — 14 August 2026 (D212). Client: *"the way that you laid
      out the images inside the project gallery, you resize some of them, and now they're blurry.
      Try and keep them in a collage style with the original sizing of the images… make sure to
