@@ -853,10 +853,12 @@
     font-family:var(--serif);font-style:italic;font-weight:300;
     font-size:clamp(20px,3vw,30px);color:var(--faint);letter-spacing:0.01em;text-align:center;
   }
-  .scrollcue{display:flex;flex-direction:column;align-items:center;gap:12px;color:var(--faint);animation:cue 2.4s var(--ease) infinite}
-  .scrollcue span{font-size:11px;letter-spacing:0.32em;text-transform:uppercase}
-  .scrollcue svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.2}
-  @keyframes cue{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(9px);opacity:1}}
+  /* ⛔ `.scrollcue`, ITS TWO CHILD RULES AND THE `cue` KEYFRAME WENT WITH THE HERO ARROW (D234).
+     The hero cue was the only thing wearing the class; a grep of every built page finds only
+     `proj-scrollcue`, which is a DIFFERENT class with its own rules and its own bob (`.proj-hero`).
+     ⚠️ `.ph .scrollcue` went too — it dressed this class inside the placeholder plate and had
+     nothing left to dress. ⭐ Deleted rather than left behind, because a rule that matches nothing
+     is what made the trade cards unstyleable for as long as they existed (D231). */
 
   /* ================= SERVICES (flip cards) ================= */
   /* The cards take their HEIGHT from the column width (aspect-ratio 4/5), so on a wide-but-short
@@ -3193,6 +3195,8 @@
   .gal-grid-title{text-align:center;margin-bottom:clamp(20px,3vh,36px)}
   .gal-grid-title .eyebrow{color:var(--gold)}
   .gal-grid-title h3{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3vw,40px);color:var(--bone);margin-top:8px}
+  /* the same gold `<em>` every other title on this site uses — see `.section-title em` (D234) */
+  .gal-grid-title h3 em{font-style:normal;color:var(--gold-soft)}
   /* The card is only the positioning shell — the visible face is .gal-door inside it, hinged
      on the card's outer edge (origin set per side in JS). The door carries all the chrome so
      its swing never gets clipped by the shell; the shell's perspective gives the swing depth. */
@@ -3270,7 +3274,6 @@
   .ph-title em{font-style:italic;color:var(--gold-soft,#F6D269)}
   .ph-title span{color:var(--gold)}
   .ph-line{color:var(--muted);font-weight:300;font-size:clamp(15px,1.3vw,18px);line-height:1.75;margin:0 auto;max-width:54ch}
-  .ph .scrollcue{position:static;margin:40px auto 0;transform:none}
   /* ---- fullscreen project detail ---- */
   .proj-detail{position:fixed;inset:0;z-index:120;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;pointer-events:none;
     background:var(--ink);opacity:0;visibility:hidden;transition:opacity .5s var(--ease),visibility 0s .5s;-webkit-overflow-scrolling:touch}
@@ -3655,13 +3658,31 @@
      ⭐ 1121px is the desktop edge, so this is one rule and the phone and tablet keep the button
      untouched. The FOOTER's WhatsApp glyph and its written number stay at every width. */
   @media(min-width:1121px){.wa-fab{display:none}}
-  .hero-cue{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:2}
-  /* Under ~560px of viewport there is no honest room for both the copy and the cue. The cue is
-     decorative — the page obviously continues — so it stands down rather than crushing the
-     composition or sitting on top of the chips. */
+  /* ⛔⛔⛔ THE HERO SCROLL CUE IS DELETED, MARKUP AND RULES — 14 Aug 2026 (D234). Client: *"on the
+     hero section of the desktop version, remove the down arrow that says scroll above it. So
+     remove that completely."*
+     ⭐⭐ HE ASKED FOR THIS ONCE BEFORE AND ONLY TWO BANDS GOT IT. D174 quotes him — *"remove the
+     scroll arrow at the bottom of the hero section"* — and it shipped as `#hero .hero-cue
+     {display:none}` inside the `max-width:1120px` block, so the phone and tablet lost it and the
+     desktop kept it. **That is the third instruction delivered to some bands and not others** (the
+     eyebrow, D197 → D229, was the other). ⚠️ When he names an element, check which bands the fix
+     actually reached before calling it done.
+     ⛔⛔ HIDING IT ON THE DESKTOP WAS THE FIRST ATTEMPT AND IT WAS THE WRONG ONE. With the other
+     two bands already hiding it, a third `display:none` would have left an element that renders
+     nowhere, described by SIX live rules — which is precisely the shape that cost D106, D113 and
+     D114 a rule each. **It is gone: the `<div class="hero-cue">`, its positioning, its two entrance
+     transforms, its reduced-motion override, the mobile block's three rules, and the tablet
+     block's hide.** ⭐ Verified after: hero 900px, `.hero-inner` 694px, chips bottom 675px and the
+     document 14833px, every one identical to before.
+     ⚠️ `.scrollcue` ITSELF SURVIVES AND MUST — `.ph .scrollcue` uses it on the placeholder plates.
+     ⚠️ `.hero-inner`'s padding-bottom is UNTOUCHED. It was cut to fit around this arrow, so it is
+     now reserving space for nothing, but changing it would move a frozen desktop hero he has not
+     asked me to move. That is a spacing question for him, not a tidy-up. */
+  /* Under ~560px of viewport there is no honest room for the copy plus a floor. ⚠️ This block
+     used to stand the scroll cue down as well; the cue is deleted outright now (D234). */
   @media(max-height:560px){
-    .hero-cue{display:none}
-    /* the bottom floor was reserving space for the cue — with it gone, hand that back */
+    /* ⚠️ the `.hero-cue{display:none}` that led this block went with the cue itself (D234). The
+       padding stays: it was cut for a short window, and it is what keeps the chips off the floor. */
     .hero-inner{padding-bottom:clamp(52px,13.5vh,150px)}
   }
   /* staged entrance — each element carries its own delay in --hd */
@@ -3670,8 +3691,6 @@
   .hero.loaded .hero-el{opacity:1;transform:none}
   .hl > .hero-el{transform:translateY(116%);opacity:1}   /* the mask hides it — no fade needed */
   .hero.loaded .hl > .hero-el{transform:none}
-  .hero-cue.hero-el{transform:translateX(-50%) translateY(18px)}
-  .hero.loaded .hero-cue.hero-el{transform:translateX(-50%)}
   /* ============================================================================
      ⭐ MOBILE HERO — 11 Aug 2026 (D92). MOBILE ONLY.
      ⛔ Desktop is frozen (D91, §2 rule 15), so every rule below lives inside this query and
@@ -3765,10 +3784,6 @@
     .hero-ctas .btn-gold,.hero-ctas .btn-ghost{
       width:calc(66.667% + var(--hfGap) * 0.667 + var(--hfIcon));
       padding-left:12px;padding-right:12px;font-size:min(12.5px,3.3vw)}
-    /* the arrow says it on its own; the word was costing the height the client wants back */
-    .hero-cue .scrollcue span{display:none}
-    .hero-cue .scrollcue{gap:0}
-    .hero-cue{bottom:22px}
 
     /* --- ⭐ ROUNDED CORNERS, replacing the 30° matched bevel — 12 Aug 2026 (D115) --------
        Client: "the Hero section divider that has those sharp corners now — move the flat part
@@ -5064,7 +5079,6 @@
   /* new sections must also settle instantly under reduced motion */
   @media (prefers-reduced-motion: reduce){
     .hero-el,.hl > .hero-el{opacity:1!important;transform:none!important}
-    .hero-cue.hero-el{transform:translateX(-50%)!important}
     .hero-bg img{transform:none!important}
   }
   /* ===================== ABOUT COLLAGE =====================
@@ -6394,7 +6408,9 @@
        ⚠️ The block is pushed down by `.hero-inner`'s own padding rather than by a margin, so it
        cannot collapse against anything, and it stays vh-led so a short handset in landscape
        re-proportions instead of pushing the buttons off the fold. */
-    #hero .hero-cue{display:none}
+    /* ⚠️ D174's `#hero .hero-cue{display:none}` stood here. The cue is DELETED now (D234), so the
+       rule went with it — but the spacing reasoning above is still why these numbers are what they
+       are, which is why that comment is kept. */
     /* ⚠️ **THE TITLE COMES BACK UP — 13 August 2026 (D177), PARTLY REVERSING D174's PUSH DOWN.**
        Client: *"move the title back higher up so there's not so much space between the navbar and
        the title."* D174 sent it from 143 to 219 because removing the arrow freed ~100px and he had

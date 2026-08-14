@@ -4632,7 +4632,14 @@ requestAnimationFrame(glowTick);
     overlay.className='gal-grid-view';
     overlay.setAttribute('aria-hidden','true');
     overlay.innerHTML='<button type="button" class="gal-grid-close">Close &times;</button>'+
-      '<div class="gal-grid-title"><h3>Every project</h3></div>'+
+      /* ⭐ "PROJECT GALLERY", NOT "EVERY PROJECT" — 14 Aug 2026 (D234). Client: *"when you say
+         view as grid, the title is every project. It shouldn't say every project. Just say project
+         gallery, and then one of the words being gold."*
+         ⚠️ "Every project" was also a promise this overlay does not keep: it shows the eight in
+         `PROJECTS`, which is the portfolio he has sent so far, not every job Topcat have done.
+         ⭐ The gold word is the LAST one, which is the rule the hero, the section titles and the
+         leaf-page headings all follow (D229). `<em>` is how this site marks it. */
+      '<div class="gal-grid-title"><h3>Project <em>gallery</em></h3></div>'+
       '<div class="gal-grid-inner"></div>';
     const inner=overlay.querySelector('.gal-grid-inner');
     PROJECTS.forEach(p=>{
