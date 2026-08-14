@@ -3632,7 +3632,13 @@
      tops out at 72px (D200) and 6.2vw only reaches that at ~1161px, so without the floor the
      headline would have got SMALLER crossing 1120 → 1121, which is the one thing a band boundary
      must never look like. Checked at both sides of the seam. */
-  .hero-title{font-family:var(--serif);font-weight:400;font-size:clamp(72px,min(6.2vw,10.6vh),92px);
+  /* ⭐⭐ **THE SIZE IS A VARIABLE BECAUSE THE BUBBLE ROW BELOW IS MEASURED IN IT — 15 August 2026
+     (D239).** `--hTitle` is the desktop headline's size and nothing else; the phone and the tablet
+     still set `font-size` outright in their own blocks, which out-specifies this. ⛔ Do not "tidy"
+     the two band rules into the variable — they are per-band numbers, and the chip cap must NOT
+     follow them (see the `max-width:none` in the ≤1120 block). */
+  .hero{--hTitle:clamp(72px,min(6.2vw,10.6vh),92px)}
+  .hero-title{font-family:var(--serif);font-weight:400;font-size:var(--hTitle);
     line-height:1.07;letter-spacing:0.01em;margin-bottom:clamp(20px,3.2vh,38px)}
   .hero-title em{font-style:normal;color:#C6A664;
     background:linear-gradient(180deg,#E4CD92 0%,#C6A664 62%,#BC9A54 100%);
@@ -3651,10 +3657,15 @@
      §2 rule 10 forbids, and it has been rejected twice.
      ⚠️ The line still has to "stand out in a different way" (his note of 6 Aug, which is what the
      rule was for). Centred, at 19.5px against a 92px headline, the composition does that work.
-     ⚠️ **THE ch MEASURE IS NEW AND IT IS LOAD-BEARING NOW.** There was deliberately none while the
-     copy box was 720px, because a ch cap narrower than the column strands the last word. The box is
-     1040px centred today, and a 19.5px line across all of it runs to ~118 characters — twice a
-     readable measure — so the cap is what keeps it to two honest lines. */
+     ⚠️⚠️ **THE 56ch MEASURE CAME OUT AND WENT STRAIGHT BACK IN — 15 August 2026 (D239).** Client:
+     *"let's try with the subtitle in one line"*, then, having seen it: *"put the subtitle back in
+     two lines like it was before."* ⭐ **THE CAP IS THE ONLY THING THAT DECIDES THIS, WHICH IS WHY
+     IT IS WORTH WRITING DOWN**: 56ch computes to **718.5px** against a sentence that sets in
+     **795.9px** on one line, so the cap is what puts "across England and the British Isles." onto
+     the second line — and `.nowrap` is what keeps that phrase whole once it gets there.
+     ⛔ **DO NOT "TIDY" THE CAP AWAY.** Without it the line is one 796px run inside a 1040px box,
+     which is the arrangement he has now looked at and rejected. ⚠️ And a cap much tighter than
+     56ch would stop breaking after "fitted by us" and strand a word instead. */
   .hero-sub{color:rgba(244,241,234,0.9);font-size:clamp(16px,min(1.42vw,2.3vh),19.5px);
     font-weight:300;line-height:1.58;margin-bottom:clamp(24px,3.8vh,44px);
     max-width:56ch;margin-inline:auto}
@@ -3685,10 +3696,26 @@
      and the L is what makes the eye read a plan instead of an object. It is in the D169 and D237
      rows and in git, not in this file. */
 
-  /* ⭐ `justify-content:center` came out of the ≤1120 block with the rest of the centring (D238);
-     the margin is the desktop's own number and grew with the composition — the phone and the
-     tablet each set their own below. */
-  .hero-ctas{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
+  /* ⭐⭐⭐ **THE TWO BUTTONS ARE THE SAME SIZE AND CENTRED AT EVERY WIDTH — 15 August 2026 (D239).**
+     Client: *"the buttons for get your free quote and request a call have to be the same size and
+     center."*
+     ⭐⭐ **AN EQUAL-COLUMN GRID IS WHAT MAKES TWO BUTTONS THE SAME SIZE WITHOUT TYPING A NUMBER.**
+     They were content-sized flex items — "Get your free quote" 259.4px against "Request a call"
+     219.9 — and no gap value makes those two match. In a `repeat(2,1fr)` grid sized `max-content`,
+     both tracks resolve to the WIDER label and the pair centres on `margin-inline:auto`, so the
+     labels can change and the two stay identical. It is the same reasoning the bubble row already
+     runs on, and D186's on the phone.
+     ⭐ **AND IT ABSORBS D188 RATHER THAN FIGHTING IT.** The phone and tablet stack the pair at one
+     shared 76% measure — client, 13 Aug: *"make the get a free quote and call us button the same
+     size again"* — which is this same grid with **one** column and a 76% container. So the count
+     and the container width are per-band numbers, the mechanism is written once, and D188's own
+     warning ("width is written once on both selectors now, do NOT reintroduce a second rule") is
+     honoured by the width living on the row instead of on each button.
+     ⚠️ Three `<a>` children, one of the two ghosts always `display:none` (`.hero-call-mobile` vs
+     `.hero-call-desktop`), and a `display:none` grid child takes no track — so both bands see
+     exactly two items. */
+  .hero-ctas{display:grid;grid-template-columns:repeat(var(--ctaCols,2),minmax(0,1fr));
+    width:max-content;max-width:100%;margin-inline:auto;gap:16px;
     margin-bottom:clamp(26px,4.4vh,52px)}
   /* ⭐⭐⭐ **THE FOUR BUBBLES ARE A GRID, AND THE DESKTOP SPREADS THEM ACROSS IN ONE ROW —
      14 August 2026 (D238, taking over D237's 2×2).**
@@ -3707,9 +3734,38 @@
      edges line up in either arrangement — D186's finding, "it is what content-sized boxes DO, and
      no gap value fixes it". Equal columns give one shared left edge, even seams and one right edge
      at every width. */
+  /* ⭐⭐⭐ **AND THE ROW ENDS WHERE THE HEADLINE'S SECOND LINE ENDS — 15 August 2026 (D239).**
+     Client: *"make those four blocks on the bottom a little bit smaller each so that it doesn't go
+     past the side of the b from the word building and the side of the d from the word round. So it
+     all fits perfectly in line."*
+     ⭐⭐ **THE CAP IS MEASURED IN THE HEADLINE'S OWN TYPE SIZE, WHICH IS WHY IT HOLDS AT EVERY
+     WIDTH.** "building around" sets in **9.4374 em** — measured with a `Range` over the text itself,
+     not the `.hl` box, which is a full-width mask and would have said 1040 — and it is EXACTLY
+     9.4374 at 72, 80, 89.28 and 92px, because the tracking is in em too. So the row is
+     `calc(var(--hTitle) * 9.4374)` and the two edges cannot drift apart at a width nobody checked.
+     ⛔ A fixed px cap would have been right at 1440 and wrong everywhere else: the headline is
+     vw-led between 1161 and 1484px, so its second line runs 679px at 1121 and 868px at 1600.
+     ⚠️ **THE PILL HAD TO COME DOWN WITH THE ROW, AND 8px/10px IS NOT A NEW NUMBER** — it is the one
+     the phone and the tablet have used since D186, lifted here so there is one pill at every width
+     (D225's principle: one component, one appearance). At 1121 the columns are the tightest they
+     get, **160.9px against a Google chip that needs 158**, so the gutter is vw-led too and buys
+     the last few pixels back at the narrow end. ⚠️ Measured at 1121, 1200 and 1440: nothing clips. */
   .hero-chips{display:grid;grid-template-columns:repeat(var(--chipCols,2),minmax(0,1fr));
     align-items:stretch;gap:12px}
-  #hero .hero-chips{--chipCols:4;width:100%}
+  .hero-chips .chip{padding:8px 10px;gap:8px}
+  /* ⚠️ `margin-inline:auto` IS NOT TIDYING EITHER: a block box with a `max-width` inside a wider
+     parent aligns LEFT, so the row came out the right WIDTH and 98.7px to the left of the headline
+     it was supposed to match. The same omission D199 found on the copy box, one level down. */
+  /* ⚠️ **THE GUTTER IS vw-LED FOR THE NARROW END OF THE BAND, AND THE NUMBER THAT MATTERS IS THE
+     GOOGLE CHIP'S SLACK.** At 1121 the headline is on its 72px floor, so the row is at its
+     narrowest — 679.5px — and that chip's content (the 26px mark, its 8px gap and a 109px stack)
+     has **3px** to spare inside a 12px-gutter column and **6px** inside this one. Nothing clips
+     either way; six is simply the one that survives a font falling back.
+     ⚠️ **AND `scrollWidth > clientWidth` IS NOT THE WAY TO CHECK THAT.** Both are rounded to whole
+     pixels, so on a 163.82px box every chip on the row reported one pixel of overflow — including
+     one with 122px of slack. **Measure the children against the content box in sub-pixels.** */
+  #hero .hero-chips{--chipCols:4;width:100%;margin-inline:auto;
+    max-width:calc(var(--hTitle) * 9.4374);gap:clamp(8px,0.72vw,14px)}
   .chip{
     display:inline-flex;align-items:center;gap:9px;padding:10px 17px;border-radius:999px;position:relative;
     border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
@@ -6425,9 +6481,13 @@
        four across in a single row and the phone and tablet keep the 2×2 D186 tuned, because two of
        these labels will not sit in a quarter of a 390px screen. Beyond that this block says what is
        different about a narrow band: a tighter 9px gutter and the smaller pill. */
-    #hero .hero-chips{--chipCols:2;gap:9px}
+    /* ⛔⛔ **`max-width:none` IS LOAD-BEARING, NOT TIDYING (D239).** The desktop's row is capped to
+       the width of its headline's second line, in `em` of `--hTitle` — and `--hTitle` is the
+       DESKTOP headline's size, which these two bands do not use. Left in place the cap would size
+       this row off a number nothing here renders. ⭐ The pill itself moved to base scope: 8px/10px
+       is what this block always said, and it is now the one pill at every width. */
+    #hero .hero-chips{--chipCols:2;gap:9px;max-width:none}
     .page-head .hero-chips{gap:9px}
-    #hero .hero-chips .chip,.page-head .hero-chips .chip{padding:8px 10px;gap:8px}
 
     /* 14c-ii. ⭐ **THE TWO BUTTONS SIT SIDE BY SIDE — D171.** Client: *"then we will have the free
        quote and call us buttons right next to each other."*
@@ -6448,7 +6508,12 @@
        ⚠️ `width:100%` rather than letting the 11 Aug derived width return: that expression measures
        against the fact row (`--hfGap`, `--hfIcon`), which has been `display:none` since D169, so it
        would be sizing to something the customer cannot see. */
-    #hero .hero-ctas{flex-direction:column;flex-wrap:nowrap;gap:10px;align-items:center}
+    /* ⭐ **ONE COLUMN, AND THE 76% MOVES FROM THE BUTTONS TO THE ROW — 15 August 2026 (D239).**
+       The stack is now `--ctaCols:1` on the same equal-column grid the desktop uses, and the shared
+       measure sits on the container, so both buttons are the width of their track and cannot
+       disagree at all. ⛔ `width:auto` would let the base `max-content` size the row off its widest
+       label and the 76% would be gone; this IS the per-band number. */
+    #hero .hero-ctas{--ctaCols:1;gap:10px;width:76%}
     /* ⛔⛔ **BOTH BUTTONS ARE 76% — 13 August 2026 (D188), REVERSING D186 ONE MESSAGE LATER.**
        Client: *"you can make the get a free quote and call us button the same size again and make it
        the same size as what the call us button is now."*
@@ -6458,9 +6523,12 @@
        So the 76% survives and the DIFFERENCE goes: one measure, both buttons, centred.
        ⚠️ `width` is written once on both selectors now — do NOT reintroduce a second rule that
        out-specifies one of them. Two competing descriptions of one element is how D106, D113 and
-       D114 each lost a rule to a later one at equal specificity. */
+       D114 each lost a rule to a later one at equal specificity.
+       ⛔⛔ **AND AS OF D239 THE WIDTH IS ON THE ROW, NOT HERE.** Same 76%, same result, measured
+       identical at 390 (266px) — but one declaration instead of two, which is what the warning
+       above was asking for in the first place. Only the padding is left. */
     #hero .hero-ctas .btn-gold,
-    #hero .hero-ctas .btn-ghost{width:76%;flex:0 0 auto;min-width:0;padding-left:12px;padding-right:12px}
+    #hero .hero-ctas .btn-ghost{min-width:0;padding-left:12px;padding-right:12px}
     /* the short labels, and the long ones out of the way — see the markup note */
     #hero .hero-ctas .cta-long{display:none}
     #hero .hero-ctas .cta-short{display:inline}
