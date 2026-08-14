@@ -159,9 +159,31 @@
   }
   /* the bar's bottom edge speaks the site's divider language — a hairline that brightens to
      pale champagne at its centre (same ramp as .sd-line) — instead of a flat border */
+  /* ⭐⭐ THE CURVED BOTTOM EDGE IS THE BASE NOW, AT EVERY WIDTH — 14 Aug 2026 (D235). Client:
+     *"the same curve style at the bottom of the tablet and mobile hero sections and at the bottom
+     of the nav bar, I want you to add that to desktop as well. So when the nav bar eventually
+     forms, it forms in the same way that it does on tablet and [mobile]."*
+     ⛔⛔ **LIFTED, NOT COPIED.** The curve was written for the phone (D122) and re-tuned for the
+     tablet, and the obvious move — pasting the same six declarations into a `min-width:1121px`
+     block — would have left THREE live descriptions of one edge. **Only the two numbers vary by
+     band now**, and they are the only thing each block declares: 18/5 phone, 26/7 tablet, 34/9
+     here. The mechanism lives once.
+     ⛔ **THE STRAIGHT GRADIENT IS DELETED, WHICH IS THE PRICE AND IT IS PAID KNOWINGLY.** It ramped
+     from 0.08 alpha at the edges to pale champagne at the centre; a BORDER takes one colour, so
+     the ramp cannot survive. The colour is that ramp's own midpoint, so the line reads at the same
+     weight — this is D122's reasoning, now applying everywhere rather than below 1120px.
+     ⭐ The formation is untouched and therefore identical across bands: `scaleX(0)` → `scaleX(1)`
+     on `.scrolled`, drawing out from the centre, which is what he means by "forms in the same way".
+     ⚠️ The out-hang puts `--navCurveOut` of horizontal overflow either side; `html`/`body` carry
+     `overflow-x:clip`, which is what makes it safe. Do not remove that. */
+  header.bar{--navCurveR:34px;--navCurveOut:9px}
   header.bar::after{
-    content:"";position:absolute;left:0;right:0;bottom:0;height:1px;z-index:-1;pointer-events:none;
-    background:linear-gradient(90deg,rgba(198,166,100,0.08),rgba(198,166,100,0.5) 22%,rgba(228,205,146,0.85) 50%,rgba(198,166,100,0.5) 78%,rgba(198,166,100,0.08));
+    content:"";position:absolute;bottom:0;z-index:-1;pointer-events:none;
+    left:calc(-1 * var(--navCurveOut));right:calc(-1 * var(--navCurveOut));
+    height:calc(var(--navCurveR) + 1px);
+    border:0 solid rgba(198,166,100,0.5);
+    border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
+    border-bottom-left-radius:var(--navCurveR);border-bottom-right-radius:var(--navCurveR);
     opacity:0;transition:opacity .6s var(--ease);
     /* ⭐ the line DRAWS from its centre outwards rather than simply fading up (client, 9 Aug) */
     transform:scaleX(0);transform-origin:50% 50%;
@@ -260,15 +282,9 @@
        `overflow-x:clip`, which is what makes this safe. Do not remove that.
        ⚠️ `transform:scaleX(1)` from the rule above still applies and is what this replaces the
        draw-in with on the phone; the box is wider than the screen, so scaleX must stay at 1. */
+    /* ⭐ ONLY THE TWO NUMBERS LIVE HERE NOW (D235) — the mechanism moved to base scope so the
+       desktop could have it too. "Much smaller" is what these numbers mean, against the hero's 48. */
     header.bar{--navCurveR:18px;--navCurveOut:5px}
-    header.bar::after{
-      left:calc(-1 * var(--navCurveOut));right:calc(-1 * var(--navCurveOut));
-      height:calc(var(--navCurveR) + 1px);
-      background:none;
-      border:0 solid rgba(198,166,100,0.5);
-      border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
-      border-bottom-left-radius:var(--navCurveR);border-bottom-right-radius:var(--navCurveR);
-    }
   }
 
 
@@ -592,9 +608,19 @@
   .nav-burger[aria-expanded="true"] span:nth-child(2){opacity:0}
   .nav-burger[aria-expanded="true"] span:nth-child(3){top:21px;transform:rotate(-45deg)}
   @media(max-width:1120px){.nav-burger{display:block}}
-  /* the very narrowest screens: the burger + logo matter more than the header CTA
-     (the overlay repeats the CTA anyway) */
-  @media(max-width:430px){header.bar .bar-cta{display:none}}
+  /* ⛔⛔ THE QUOTE BUTTON IS OUT OF THE BAR WHEREVER THE BURGER IS — 14 Aug 2026 (D235). Client,
+     testing widths: *"when I use the responsiveness option, why is the get a free quote still in
+     the hero section?"* — two gold buttons of the same name, the bar's directly above the hero's.
+     ⚠️⚠️ **IT SURVIVED IN ONE NARROW BAND AND THAT IS THE WHOLE BUG.** D198 removed it for the
+     TABLET on his instruction (*"let's remove the get a quote inside the NavBar"*) and a separate
+     `max-width:430px` rule removed it on small phones — **so it lived on only between 431 and 720px**,
+     which is exactly the width he was previewing. ⭐ **ONE RULE AT 1120px NOW, MATCHING THE BURGER'S
+     OWN BREAKPOINT** (`@media(max-width:1120px){.nav-burger{display:block}}` above): wherever the
+     burger is, the bar is logo + burger, and the CTA lives in the overlay and in the hero.
+     ⛔ DELETED, NOT STACKED — the tablet's own copy of this rule went with it. Two rules hiding one
+     element at two breakpoints is how the gap opened in the first place.
+     ⭐ The DESKTOP keeps the button: there is no burger there and the bar has the room. */
+  @media(max-width:1120px){header.bar .bar-cta{display:none}}
 
   .mobile-nav{
     /* UNDER the fixed header (z50): the burger lives inside the header's stacking context, so
@@ -3466,14 +3492,43 @@
   .hl{display:block;overflow:hidden;padding:0 .08em .1em 0;margin-bottom:-.1em}
 
   /* ================= HERO ================= */
+  /* ⭐⭐ THE HERO'S BOTTOM EDGE CURVES AT EVERY WIDTH NOW — 14 Aug 2026 (D235). Client: *"same for
+     the bottom gold line of the hero section on desktop."* It was a flat `border-bottom` here and a
+     traced arc below 1120px. ⛔ **LIFTED OUT OF THE MOBILE BLOCK, NOT COPIED INTO A DESKTOP ONE** —
+     the phone and the tablet already used the SAME 48/14, so there was never a per-band number to
+     preserve, only a per-band scope that had no reason to exist. ⚠️ `overflow:hidden` was already
+     here, which is what cuts the arc at the screen edge; the three rules below rely on it. */
   .hero{
     position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;
-    /* straight bottom edge with a warm hairline riding it */
-    border-bottom:1px solid var(--hair);
+    --curveR:48px;--curveOut:14px;
   }
   /* paint-server sprite only — must stay in the layout tree but occupy nothing */
   .tc-defs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
-  .hero-bg{position:absolute;inset:0;z-index:0}
+  /* ⚠️ THE PHOTOGRAPH IS WHAT GETS CUT, AND THE BOX IS WIDENED RATHER THAN THE CLIP BEING GIVEN
+     NEGATIVE INSETS. `.hero-shade` lives inside `.hero-bg`, so one clip takes the image and its
+     shading together and the page floor shows through the two corners. ⛔ The clip is deliberately
+     NOT on `.hero` itself: a pseudo-element is clipped by its parent's clip-path, so putting it
+     there would cut the hairline below in half. ⭐ `inset() round` rather than `border-radius`,
+     because clip-path clips DESCENDANTS and the photo is an `<img>` that is also transform-scaled
+     to 1.08 on load. (D122's derivation, now at base scope — D235.) */
+  .hero-bg{position:absolute;inset:0;z-index:0;
+    left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));
+    clip-path:inset(0 round 0 0 var(--curveR) var(--curveR))}
+  /* ⭐ **A BORDER ON A ROUNDED BOX, NOT GRADIENTS.** A gradient can only draw a STRAIGHT band and
+     an arc has no single angle; a border follows `border-radius` exactly and stays 1px doing it.
+     ⭐ **THE BOX IS `R + 1px` TALL** so the straight part of each side border is zero — the left and
+     right borders exist only to paint their half of the arc, because a corner arc is split between
+     its two adjacent borders. All three are `--hair` and the arc comes out continuous.
+     ⚠️ The hairline's box hangs out by the same `--curveOut` as the clip, so both are cut at the
+     screen edge together and the 1px band stays just inside the cut all the way out of frame. */
+  .hero::after{
+    content:"";position:absolute;
+    left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));bottom:0;
+    height:calc(var(--curveR) + 1px);
+    border:0 solid var(--hair);border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
+    border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
+    z-index:3;pointer-events:none;
+  }
   .hero-bg img{
     width:100%;height:100%;object-fit:cover;object-position:72% 50%;display:block;
     transform:scale(1.14);transition:transform 3s var(--ease-slow);will-change:transform;
@@ -3498,7 +3553,18 @@
      past the fold and took the cue with it. Top clears the 77px header; bottom keeps the copy
      off the cue, which sits 30px up from the bottom edge and is ~49px tall. */
   .hero-inner{position:relative;z-index:2;width:100%;max-width:1320px;margin:0 auto;
-    padding:clamp(64px,13vh,150px) clamp(20px,5vw,64px) clamp(72px,13.5vh,150px)}
+    /* ⭐⭐ REBALANCED AFTER THE SCROLL ARROW WENT (D235). Client: *"you can resize the hero section
+       like you said because you left [space] for it. So make the perfect hero section size."*
+       ⚠️⚠️ **MEASURED, AND THE BLOCK WAS SITTING HIGH.** At 1440x900 the space between the fixed
+       nav's bottom edge and the hero floor is 821px and the content block is 456px of it, so there
+       are 365px of slack — and it was split **140px above / 225px below**, 38:62. The arrow used to
+       stand in that lower band; with it deleted the composition simply looked bottom-heavy.
+       ⭐ Now 15.6vh / 10.8vh, which at 900px tall is **164 above / 201 below**, about 45:55. ⛔ NOT
+       a dead 50:50 — a block centred by arithmetic reads as sitting low, so the optical centre
+       keeps a little more air beneath it than above.
+       ⚠️ These are the DESKTOP numbers in practice: the phone block and the tablet block each set
+       both paddings themselves, so neither inherits this. Checked after, not assumed. */
+    padding:clamp(64px,15.6vh,168px) clamp(20px,5vw,64px) clamp(72px,10.8vh,132px)}
   /* Widened from a flat 600px on 6 Aug. 600 was costing three things at once: the H1 broke to
      THREE lines at 1440 ("Surfaces worth / building / around"), the one-liner wrapped, and the
      three facts had ~150px of label each so every one of them wrapped too. It tracks vw rather
@@ -3824,7 +3890,8 @@
        under the screen width or this walks back into the design he rejected.
        ⚠️ `--curveOut` IS NOT A FREE PARAMETER — it is read by three rules that must agree (the
        photo's box, its border-radius and the hairline). Change it in one place only, here. */
-    .hero{--curveR:48px;--curveOut:14px;border-bottom:0}
+    /* ⭐ THE NUMBERS AND THE MECHANISM BOTH MOVED TO BASE SCOPE (D235) — the phone and the tablet
+       used the same 48/14 the desktop now uses, so there was nothing here worth a media query. */
     /* The PHOTOGRAPH is what gets cut — .hero-shade lives inside .hero-bg, so one clip takes the
        image and its shading together and the page floor shows through the two corners.
        ⛔ The clip is deliberately NOT on .hero itself: a pseudo-element is clipped by its own
@@ -3842,8 +3909,7 @@
        x=0 while the clip-path rounded at x=−14, and the tighter of the two wins: the photograph
        would be bitten 48px up at the screen edge, along an arc the hairline does not trace.
        ⭐ Widening the box moves all three together and keeps one number in charge. */
-    .hero-bg{left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));
-      clip-path:inset(0 round 0 0 var(--curveR) var(--curveR))}
+
     /* The hairline that traces the cut, in the same --hair gold the straight desktop edge uses.
        ⭐ **A BORDER ON A ROUNDED BOX, NOT GRADIENTS — and the reason is the whole lesson here.**
        The bevel drew its two diagonals with `linear-gradient`, which can only ever draw a
@@ -3861,14 +3927,7 @@
     /* ⚠️ The hairline's box hangs out by the same `--curveOut` so its arc is the SAME arc as the
        clip's. `.hero` is overflow:hidden, so both are cut at the screen edge together and the
        1px band stays just inside the cut all the way out of the frame. */
-    .hero::after{
-      content:"";position:absolute;
-      left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));bottom:0;
-      height:calc(var(--curveR) + 1px);
-      border:0 solid var(--hair);border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
-      border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
-      z-index:3;pointer-events:none;
-    }
+
   }
 
   /* ================= ESTIMATOR ================= */
@@ -6461,12 +6520,9 @@
      exists in a phone block, stop and lift that block instead.
      ============================================================================================ */
   @media(min-width:721px) and (max-width:1120px){
-    /* ⛔ D198: THE QUOTE BUTTON COMES OUT OF THE BAR. Client: *"let's remove the get a quote inside
-       the NavBar."* ⚠️ Tablet-only on purpose — the phone shows it from 431px up and the client has
-       signed that off; `@media(max-width:430px)` further down is the phone's own rule and is
-       deliberately left alone. With the button gone the bar is logo + burger, which is the mobile
-       bar he asked it to look like. */
-    header.bar .bar-cta{display:none}
+    /* ⛔ D198's `header.bar .bar-cta{display:none}` stood here, tablet-scoped. It is now ONE rule
+       at `max-width:1120px` up beside the burger's own breakpoint (D235), because tablet-only left
+       the button alive between 431 and 720px and the client found it. */
     /* ⭐ D198: THE CURVE SCALES WITH THE BAR. 18px of radius on a 375px screen turns the line in
        its last ~13px; the same 18px on a 768px bar is 2.3% of the run and reads as dead straight,
        so the gesture would be present in the code and absent on the screen. 26px against the

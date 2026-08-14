@@ -3509,13 +3509,13 @@ requestAnimationFrame(glowTick);
      reviewBy:'Joel Brizman',
      gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067], ['/assets/projects/central-london-g7.webp',1600,1067], ['/assets/projects/central-london-g8.webp',1600,1067], ['/assets/projects/central-london-g9.webp',1600,1067], ['/assets/projects/central-london-g10.webp',1600,1067], ['/assets/projects/central-london-g11.webp',1600,1067], ['/assets/projects/central-london-g12.webp',1600,1067], ['/assets/projects/central-london-g13.webp',1600,1067]]},
 
-    {key:'harrow', name:'The Harrow Project', place:'Harrow',
-     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'',
-     gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]},
-
     {key:'harlow', name:'The Harlow Project', place:'Essex',
      img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'',
-     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g7.webp',1200,1600], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]}
+     gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g7.webp',1200,1600], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]},
+
+    {key:'harrow', name:'The Harrow Project', place:'Harrow',
+     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'',
+     gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]}
   ];
   const PER_SET=4;
   const NSETS=Math.ceil(PROJECTS.length/PER_SET);   // 8 projects → two panels of four
