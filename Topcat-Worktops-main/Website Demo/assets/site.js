@@ -6863,11 +6863,12 @@ function viewSequence(host,tiles,apply,opts){
      ⚠️ Keep the D21 trigger phrases out of this file entirely, comments included — the go-live
      scan in §2 rule 1 is a plain grep and cannot tell a comment from a claim.
      AI-generated placeholders in assets/team/ until the real shoot (§7.5). */
-  /* ⭐⭐ A FOURTH ENTRY SINCE 15 Aug 2026 (D244), AND IT IS THE ONLY REAL PHOTOGRAPH IN THE LIST.
-     The three above are AI stand-ins until the shoot; this is the Central London waterfall island
-     from the client's own portfolio, which the copy beside it is describing. ⭐ Its ladder is
-     already in `SS` under exactly this key (D211, registered for the project gallery), so the
-     lookup below hands a phone the 560px rung without anything else being added.
+  /* ⭐⭐ A FOURTH ENTRY SINCE 15 Aug 2026 (D244) — a real job from the client's own portfolio, and
+     the WHICH changed the same day (D253, Central London → Harrow; see the note on `picks`).
+     ⚠️ **IT IS NO LONGER THE ONLY REAL PHOTOGRAPH IN THE LIST:** w2 is his as well since D247, and
+     w1 and w3 are the two AI stand-ins that remain until the shoot. ⭐ Its ladder is already in
+     `SS` under exactly this key (D211, registered for the project gallery), so the lookup below
+     hands a phone the 560px rung without anything else being added.
      ⚠️ The list still maps to `.ac-tile img` in DOM ORDER — the portraits carry no <img> — so the
      four fill w1, w2, w3, w4. ⛔ `.ac-w4` is `display:none` below 1121px, but it is still in the
      DOM and still matched here, which is deliberate: one list, one order, every band. */
@@ -6890,8 +6891,20 @@ function viewSequence(host,tiles,apply,opts){
      the kitchen in it" to be regenerated as an installation shot; it is the CENTRAL LONDON job out
      of his own portfolio (D244), so replacing it would have swapped a real photograph of his work
      for an invented one. Put to him and he kept the real one. */
+  /* ⭐⭐ w4 IS THE HARROW ISLAND SINCE 15 Aug 2026, NOT CENTRAL LONDON. Client: *"we should use a
+     different project image than the Central London project because we have two dark images there…
+     and the London one, whatever image that we have there from the project gallery, that's just
+     not good."* ⭐ **HE IS RIGHT ON BOTH COUNTS AND THEY ARE SEPARATE POINTS.** Measured as they
+     render, the work tiles ran **55 / 115 / 71 / 115** — w1 and w3 carry the block's weight, so the
+     one wide tile should not also be murky. And the Central London frame is a corner with a sink,
+     a kettle and a bin in it: the stone is not the subject. Harrow is a mitred waterfall end in
+     warm light against navy units, mean **124**, and the highest contrast in the whole portfolio
+     (stddev 58 against Central London's 36) — it reads instantly at 282x134.
+     ⭐ **STILL A REAL TOPCAT JOB, WHICH IS THE PART THAT MATTERS**, and it cost nothing: its ladder
+     is already in `SS` under this exact key for the project gallery. ⚠️ It is also the Harrow
+     CARD image, so it appears twice on the site — the same trade D244 made with Central London. */
   const picks=['/assets/site/about-handshake-900.webp','/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
-               '/assets/projects/central-london-1400.webp'];
+               '/assets/projects/harrow-1400.webp'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */
       if(SS[picks[i]]){ im.srcset=SS[picks[i]]; im.sizes='(max-width:720px) 240px, 375px'; }
