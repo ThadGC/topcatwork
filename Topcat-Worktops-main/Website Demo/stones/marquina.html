@@ -39,14 +39,46 @@
 
 <main>
   <section class="stp-hero">
+    <!-- ⭐⭐ THE SLAB STARTS ON THE STONE'S NAME, ON ALL 132 PAGES — 15 Aug 2026. Client: *"we can
+         move the slabs to always be in line with the slab name in the individual slab pages."*
+         ⛔⛔ **THE KICKER IS A GRID ITEM OF ITS OWN AND THAT IS THE WHOLE MECHANISM.** It used to
+         sit inside `.stp-copy` above the `<h1>`, so the slab could only ever line up with the
+         copy column's TOP — the kicker's top, not the name's — and `align-items:center` meant it
+         did not even do that: the slab floated to the middle of a column whose height is the
+         description, and **every one of the 132 pages put the slab somewhere different.**
+         ⭐⭐ Lifted out, the kicker owns row 1 of the right column and the slab and the name both
+         begin on row 2, **so the alignment is structural and cannot drift** — no offset to keep
+         in step with the kicker's size, its margin or its line-height, at any width, on any
+         stone. ⛔ A `margin-top` of "about 30px" would have looked right here and been wrong the
+         moment any of those three changed.
+         ⚠️ THE PHONE AND TABLET KEEP THEIR OWN ORDER — slab, then kicker, then name — which is
+         what they have always shown; the single-column areas below say so explicitly rather than
+         letting DOM order decide it. -->
     <div class="wrap stp-grid">
-      <figure class="stp-slab">
-        <span class="stp-stone"><img src="/assets/slabs/marquina.webp" srcset="/assets/slabs/marquina-s.webp 800w, /assets/slabs/marquina.webp 1600w" sizes="(max-width:700px) 92vw, 436px" alt="Marquina quartz slab" loading="lazy" decoding="async"></span>
-        <span class="stp-glass" aria-hidden="true"></span>
-        <figcaption class="stp-tag">Quartz</figcaption>
-      </figure>
+      <span class="eyebrow stp-kicker">Quartz &middot; Polished</span>
+      <!-- ⭐⭐ THE COMPARE DOOR MOVED UP HERE — 15 Aug 2026. Client: *"we should have, let's say,
+           compare Azul Shimmer with other stones, and that should be higher up maybe underneath
+           the actual slab."* ⛔ **IT IS MOVED, NOT DUPLICATED**, and it reverses the reasoning
+           written against it at the foot of the related strip (D141) — *"it belongs here and not
+           in the CTA row"* — which argued it should sit beside the three near-identical
+           alternatives it helps you weigh. That was sound and it is superseded: a visitor who
+           wants to compare knows it while they are looking at the slab, not four screens later.
+           ⭐ Wording is his: *"with other stones"*, not "with another stone". Compare takes up to
+           a shortlist, so the plural is also the truer promise. -->
+      <div class="stp-shot">
+        <figure class="stp-slab">
+          <span class="stp-stone"><img src="/assets/slabs/marquina.webp" srcset="/assets/slabs/marquina-s.webp 800w, /assets/slabs/marquina.webp 1600w" sizes="(max-width:700px) 92vw, 436px" alt="Marquina quartz slab" loading="lazy" decoding="async"></span>
+          <span class="stp-glass" aria-hidden="true"></span>
+          <figcaption class="stp-tag">Quartz</figcaption>
+        </figure>
+        <a class="stp-compare" href="/stones/compare.html?s=marquina">
+          <svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="19" height="29" rx="2"/>
+            <rect x="27.5" y="1.5" width="19" height="29" rx="2" stroke-dasharray="4 4"/>
+          </svg>
+          Compare Marquina with other stones</a>
+      </div>
       <div class="stp-copy">
-        <span class="eyebrow">Quartz &middot; Polished</span>
         <h1>Marquina</h1>
         <p class="lede">A deep blue black cut by fine white veins that fork across the surface.</p>
         <ul class="stp-facts">
@@ -89,16 +121,10 @@
     <h2>More quartz to consider</h2>
     <p class="sub">Three that look closest to it, or <a class="stp-all" href="/stones/">browse the full collection</a>.</p>
     <div class="st-grid related"><a class="stile mini" href="/stones/darcrest.html" aria-label="Darcrest"><span class="stile-stone"><img src="/assets/slabs/darcrest.webp" srcset="/assets/slabs/darcrest-s.webp 800w, /assets/slabs/darcrest.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Darcrest quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Darcrest</span><span class="stile-sup">Honed</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a><a class="stile mini" href="/stones/azalai-negro.html" aria-label="Azalai Negro"><span class="stile-stone"><img src="/assets/slabs/azalai-negro.webp" srcset="/assets/slabs/azalai-negro-s.webp 800w, /assets/slabs/azalai-negro.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Azalai Negro quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Azalai Negro</span><span class="stile-sup">Polished</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a><a class="stile mini" href="/stones/nero-starlight.html" aria-label="Nero Starlight"><span class="stile-stone"><img src="/assets/slabs/nero-starlight.webp" srcset="/assets/slabs/nero-starlight-s.webp 800w, /assets/slabs/nero-starlight.webp 1600w" sizes="(max-width:700px) 45vw, 290px" alt="Nero Starlight quartz slab" loading="lazy" decoding="async"></span><span class="stile-veil"></span><span class="stile-meta"><span class="stile-name">Nero Starlight</span><span class="stile-sup">Polished</span></span><span class="stile-go" aria-hidden="true">&rsaquo;</span></a></div>
-    <!-- ⭐ THE COMPARE DOOR, AND IT OPENS ALREADY HOLDING THIS STONE (D141). It belongs here
-         and not in the CTA row: this strip offers three near-identical alternatives and until
-         now gave no way to weigh them, which is precisely the job compare does. Putting it
-         beside "Get an estimate" would set a browse control against the conversion path. -->
-    <a class="stp-compare" href="/stones/compare.html?s=marquina">
-      <svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
-        <rect x="1.5" y="1.5" width="19" height="29" rx="2"/>
-        <rect x="27.5" y="1.5" width="19" height="29" rx="2" stroke-dasharray="4 4"/>
-      </svg>
-      Compare Marquina with another stone</a>
+    <!-- ⛔ THE COMPARE DOOR USED TO SIT HERE (D141) AND IT MOVED UNDER THE SLAB ON 15 Aug 2026 on
+         the client's instruction — see the comment in the hero above. It is MOVED, not copied:
+         one door, and it opens already holding this stone. ⚠️ Do not put a second one back here
+         because this comment used to argue for it. -->
     <!-- ⭐ The range on show is not the range (client, 10 Aug). This is the right place for it on
          a stone page: somebody reading "more to consider" is looking for an alternative, and
          that is the moment to say the collection is not the ceiling. -->

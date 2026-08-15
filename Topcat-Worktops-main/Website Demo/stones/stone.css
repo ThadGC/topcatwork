@@ -131,8 +131,29 @@
 
 /* ---------- stone page hero ---------- */
 .stp-hero{padding:clamp(30px,5vh,64px) 0 clamp(30px,5vh,56px)}
-.stp-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:clamp(26px,4vw,58px);align-items:center}
-@media(max-width:900px){.stp-grid{grid-template-columns:1fr}}
+/* ⭐⭐⭐ THE SLAB'S TOP EDGE IS THE STONE'S NAME — 15 Aug 2026 (client). ⛔⛔ `align-items:center`
+   WAS THE FAULT AND IT IS WHY NO TWO OF THE 132 PAGES AGREED: the slab was centred against a
+   column whose height is the description, so a two-line description put it in one place and a
+   four-line one put it somewhere else. ⭐ Three items now — the kicker, the shot, the copy — and
+   the kicker owns row 1 of the right column, so the slab and the `<h1>` both start on row 2 and
+   the alignment is structural. No offset, nothing to keep in step, true at every width.
+   ⚠️ `align-items:start` matters as much as the rows: with the slab no longer stretched or
+   centred, its own `aspect-ratio` decides its height and the empty space falls BELOW it, which
+   is where a tall copy column should leave it. */
+.stp-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:0 clamp(26px,4vw,58px);
+  align-items:start;grid-template-rows:auto 1fr;
+  grid-template-areas:".    kick"
+                      "shot copy"}
+.stp-kicker{grid-area:kick}
+.stp-shot{grid-area:shot}
+.stp-copy{grid-area:copy}
+/* ⚠️ THE FROZEN BANDS KEEP THE ORDER THEY HAVE ALWAYS SHOWN — slab, then kicker, then name.
+   Stated as areas rather than left to DOM order, which now starts with the kicker. */
+@media(max-width:900px){
+  .stp-grid{grid-template-columns:1fr;grid-template-rows:auto auto auto;
+    grid-template-areas:"shot" "kick" "copy";gap:0}
+  .stp-kicker{margin-top:22px}
+}
 .stp-slab{position:relative;aspect-ratio:3/4;max-height:560px;width:100%;margin:0;
   border:1px solid var(--hair-soft);border-radius:4px;overflow:hidden;
   box-shadow:0 46px 92px -38px rgba(0,0,0,0.95)}
@@ -372,6 +393,16 @@ html.cmp-locked,html.cmp-locked body{overflow:hidden}
    that strip already offers three near-identical alternatives and until now gave no way to
    weigh them, which is exactly the job this page does. Putting it beside "Get an estimate"
    would have set a browse control against the conversion path. */
+/* ⭐ UNDER THE SLAB SINCE 15 Aug 2026, CENTRED ON IT. Centred rather than flush left because the
+   slab is a strong rectangle and the link belongs to it, and because on a phone the slab is
+   `max-width:420px;margin:0 auto` — a left-aligned link would sit off its edge there. */
+.stp-shot .stp-compare{display:flex;justify-content:center;align-items:flex-start;
+  text-align:left;margin-top:16px}
+/* ⚠️ THE LABEL WRAPS TO TWO LINES ON A PHONE — the stone's own name is inside it and some of
+   them are long ("Arabescato Corchia Extra Honed"). `align-items:center` then floats the glyph
+   in the middle of a two-line block with nothing beside it; it belongs on the first line, and
+   the 2px is the difference between the 13px glyph and the 17.6px line it sits on. */
+.stp-shot .stp-compare svg{margin-top:2px}
 .stp-compare{display:inline-flex;align-items:center;gap:9px;margin-top:20px;
   font-family:var(--brand);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
   color:var(--gold);text-decoration:underline;text-underline-offset:6px;
