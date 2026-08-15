@@ -2024,8 +2024,26 @@
       opacity:var(--hxO,1);filter:brightness(var(--hxB,1))}
     .hx-front img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
       filter:saturate(0.88) brightness(0.8);transition:filter .5s var(--ease)}
+    /* ⭐⭐ DEEPENED THROUGH THE MIDDLE ON 15 Aug 2026 (D242), for the same reason as the phone
+       grid: the eight photographs the client sent on 15 Aug are pale stone where the old ones
+       were mostly dark. **Measured against the real cards, worst-case: 3.87:1 before, 5.64:1
+       after; the front card, which is the one being read, goes 4.70 → 6.6.**
+       ⛔⛔ **THE NAME SITS HIGH ON THIS CARD AND THAT IS WHY THE FIX IS HERE AND NOT A NUDGE
+       DOWNWARDS.** `.hx-meta` also holds the "View this service" button, which keeps its space on
+       every card even while it is transparent on all but the front one, so the name floats at
+       23–57% of the card rather than sitting on the floor. A 6px nudge, which is what fixed the
+       phone, moves nothing here.
+       ⚠️⚠️ **AND DEEPENING ONLY THE FOOT DOES ALMOST NOTHING — MEASURED: 3.85 → 3.95.** The whole
+       gain is in the 20–60% band, which is where the glyphs actually are. ⛔ Do not "simplify"
+       this back to a two-stop ramp. ⚠️ The top stop is 0.10 against 0.12 before, so the clear
+       corner of the photograph is if anything very slightly clearer than it was. */
     .hx-front .hx-veil{position:absolute;inset:0;
-      background:linear-gradient(to top,rgba(8,8,10,0.94) 0%,rgba(8,8,10,0.5) 42%,rgba(8,8,10,0.12) 100%)}
+      background:linear-gradient(to top,
+        rgba(8,8,10,0.95) 0%,
+        rgba(8,8,10,0.86) 22%,
+        rgba(8,8,10,0.55) 55%,
+        rgba(8,8,10,0.22) 78%,
+        rgba(8,8,10,0.10) 100%)}
     .helix-card.front{cursor:default}
     .helix-card.front .hx-front{border-color:rgba(198,166,100,0.5)}
     .helix-card.front .hx-front img{filter:saturate(1) brightness(0.94)}
@@ -2215,24 +2233,45 @@
        ⭐ **BOTH HAD TO GO OR THE OTHER STILL READS AS "dark radiant".** Fixing the veil alone
        would have left the 50% mix and looked like nothing had happened.
        ⛔ THE VEIL IS NOT DELETED, IT IS RE-AIMED. The tile carries type in two places and they
-       are measured, not guessed: on a 146×106 tile the number sits 10→22px down (top 21%) and
-       the name 71→85px down (67→80%). So the scrim is opaque only where those two bands are and
-       is FULLY TRANSPARENT from 44% to 78% — the middle of the frame, which is where the subject
-       of every one of these six photographs actually is. That is what "full brightness" has to
-       mean on a tile that also has to carry a name.
+       are measured, not guessed. So the scrim is opaque only where those two bands are and is
+       FULLY TRANSPARENT from 47% to 76% — the middle of the frame, which is where the subject of
+       every one of these photographs actually is. That is what "full brightness" has to mean on
+       a tile that also has to carry a name.
        ⚠️ Stops are eased rather than two-stop, the same technique as `.pt-scrim` and the hero's
-       nav shade — a plain ramp leaves a visible band edge for the eye to find. */
+       nav shade — a plain ramp leaves a visible band edge for the eye to find.
+
+       ⭐⭐⭐ **THE LOWER HALF WAS DEEPENED ON 15 Aug 2026 (D242) AND THE REASON IS D241.** Client:
+       "in mobile, it just looks a bit hard to read right now… make it so that it's really easy to
+       read the name."
+       ⛔⛔ **THIS SCRIM WAS TUNED AGAINST THE OLD PHOTOGRAPHS AND FOUR OF THOSE WERE DARK.** The
+       eight the client sent on 15 Aug are pale stone — a white marble vanity, a Carrara fireplace,
+       a quartz peninsula — and pale stone lands exactly where the name is. **Measured on the real
+       tiles, compositing each photograph under this gradient: Bathrooms 1.76:1, Splashbacks 1.97,
+       Kitchen Worktops 2.32, Fireplaces 2.42, Dining Tables 2.55, Commercial 2.58, Outdoor 3.17.**
+       Seven of eight under the 4.5:1 bar and the worst barely over 1.7 — his complaint exactly.
+       ⭐⭐ **MOVING THE NAME DOWN WAS NOT ENOUGH ON ITS OWN AND THAT WAS MEASURED TOO**: +12px with
+       this gradient unchanged reaches only 3.85:1. The two together reach **6.16:1**.
+       ⛔⛔ **THE TRANSPARENT WINDOW IS UNTOUCHED — STILL 47% TO 76%, TO THE CHARACTER.** Only the
+       stops BELOW the name moved, so the client's "full brightness" ruling on the middle of the
+       frame still holds. Deepening the middle instead is the move that would undo 13 Aug. */
     #services .services-grid .svc .face.front .stone{opacity:1}
     #services .services-grid .svc .face.front .veil{
       background:linear-gradient(to top,
-        rgba(8,8,10,0.88) 0%,
-        rgba(8,8,10,0.72) 14%,
-        rgba(8,8,10,0.34) 30%,
-        rgba(8,8,10,0.08) 41%,
+        rgba(8,8,10,0.94) 0%,
+        rgba(8,8,10,0.88) 16%,
+        rgba(8,8,10,0.66) 28%,
+        rgba(8,8,10,0.30) 38%,
+        rgba(8,8,10,0.08) 44%,
         rgba(8,8,10,0) 47%,
         rgba(8,8,10,0) 76%,
         rgba(8,8,10,0.20) 88%,
         rgba(8,8,10,0.38) 100%)}
+    /* ⭐ AND THE NAME SITS 6px LOWER, WHICH THE CLIENT OFFERED: "feel free to move the text
+       slightly closer to the bottom on mobile and on tablet." ⚠️ It is the h3's OWN bottom margin
+       that moves, not the card's padding — the padding also sets the name's left inset and the
+       number's inset at the top, and neither of those was asked to change. ⚠️ `.flip-hint` is
+       `display:none` on this grid, so those 12px were holding nothing up. */
+    #services .services-grid .svc h3{margin-bottom:6px}
     /* ⭐ THE TYPE CARRIES ITS OWN CONTRAST NOW, so the scrim does not have to do all of it.
        The same shadow pair `.hx-name` uses on the desktop helix, which sits on photographs of
        exactly this kind: a tight 1px shadow for edge definition against busy detail, and a wide
