@@ -1,105 +1,115 @@
-# START HERE — 15 August 2026, after the DESKTOP HERO ROUND (D236–D240)
+# START HERE — 15 August 2026, after the PHOTOGRAPHY ROUND (D241–D245)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D236–D240**) and
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D241–D245**) and
 **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
-> ⚠️ **This replaces the previous version of this same file**, which covered the service pages and
-> trade page round (D227–D235) and is now
-> `HANDOVER-2026-08-14-service-and-trade-round-start-here.md`. Everything in it that still matters
-> is carried below.
+> ⚠️ **This replaces the previous version of this same file**, which covered the desktop hero
+> round (D236–D240) and is now `HANDOVER-2026-08-15-desktop-hero-round-start-here.md`.
+> Everything in it that still matters is carried below.
 
 ---
 
 ## 0. ⛔⛔⛔ THE ONE THING TO TAKE FROM THIS ROUND
 
-**⭐⭐⭐ THE DESKTOP IS OPEN AND HE IS ITERATING ON IT FAST. THE HERO CHANGED THREE TIMES IN ONE DAY.**
+**⭐⭐⭐ HE SENT EIGHT PHOTOGRAPHS IN ONE SITTING, ONE MESSAGE PER SERVICE, AND EVERY TILE ON THE
+SITE IS HIS OWN WORK NOW.** Then he looked at the result and found what the photographs had broken.
 
-| He asked | It became | Reversed by |
-|---|---|---|
-| D237 *"add this to the hero section of the desktop version"* | the tablet's stack, bubbles 2×2, gold rule kept | **D238, one hour later** |
-| D238 *"centre the hero section design just like on the tablet"* | centred, gold rule deleted, four bubbles across | still live |
-| D239 *"let's try with the subtitle in one line"* | one line | **D239, one message later** |
-
-⭐⭐ **THAT IS NOT INDECISION, IT IS HOW HE WORKS — AND EVERY REVERSAL HAS TO CARRY THE REASON THE OLD
-DECISION EXISTED**, or the next session helpfully rebuilds the thing he just rejected. D237's 480px
-bubble cap was a real measurement of the two buttons, and it existed only because the copy was
-LEFT-aligned; centred, the block gets both edges for free. That sentence is what stops it coming back.
-
-### ⛔⛔ AND THREE MEASUREMENT TRAPS THAT EACH COST TIME THIS ROUND
-
-- ⛔⛔⛔ **`scrollWidth > clientWidth` IS NOT AN OVERFLOW TEST.** Both round to whole pixels, so on a
-  163.82px chip **all four bubbles reported one pixel of overflow — one of them with 122px of slack.**
-  I shipped a padding change to "fix" it before measuring properly, then reverted it.
-  **Compare the children against the content box in sub-pixels.**
-- ⛔⛔ **MEASURE THE TEXT, NOT ITS BOX.** `.hl` is a full-width `overflow:hidden` mask, so a
-  `getBoundingClientRect()` on the headline's line says **1040** — the copy width — not the 842.6 the
-  glyphs actually occupy. **A `Range` over the text contents is the only way to answer "where does
-  the B start and the D end".**
-- ⛔⛔ **A BLOCK BOX WITH A `max-width` INSIDE A WIDER PARENT ALIGNS LEFT.** The bubble row came out
-  the right WIDTH and **98.7px to the left** of the headline it was matching. `margin-inline:auto`.
-  That is D199's finding on the copy box, one level down, and it happened twice this round.
-
----
-
-## 1. ⛔⛔⛔ THE BUG HE FOUND, AND THE SHAPE OF IT
-
-**D236: the project gallery broke on a resize and was perfect after a refresh.** Client: *"it's only
-broken when I change the responsiveness. So if I refresh it, then it still works perfectly."*
-
-**`measure()` added `.gal-static` and nothing ever took it off.** Every rule of the static layout is
-gated on that class at **base scope** (D195 lifted them out of the phone query on purpose), so the
-class ALONE, at any width, takes `position:sticky` off the pin, makes the stage static and turns the
-eight absolutely-positioned cards into flex items. Narrowing past 1120 added it; widening back left
-it on while `--galMode` went unset and the accordion started drawing again.
-
-⭐ **Measured at 1200 after a 900 → 1200 resize: pin `static`, cards `relative`, carrying
-`translate3d(-1311.6px, 355.8px)` at `opacity:0`.** That was his screenshot exactly.
-
-⭐⭐ **IT IS A `toggle` FROM THE SAME READ THAT DRIVES THE ENGINE NOW.** ⛔ **Do not reintroduce a
-one-way `add`.** ⚠️ And look for the same shape elsewhere: a class or an inline style set on the way
-INTO a band and never cleared on the way out is invisible to a refresh and obvious to a drag.
-
----
-
-## 2. ⭐⭐ THE DESKTOP HERO AS IT NOW STANDS
-
-**Title → trust line → two buttons → four bubbles, centred, at every width.** The icon fact row is
-**deleted** (D237), the trust line's gold rule is **deleted** (D238), and the four bubbles run
-across in one row.
-
-| Thing | At 1440×900 |
+| He sent | It closed |
 |---|---|
-| headline | **89.3px**, two lines, `clamp(72px,min(6.2vw,10.6vh),92px)` |
-| copy box | **1040px** centred (`min(92vw,1040px)`) |
-| trust line | **two** lines, capped at `56ch` |
-| buttons | **259.4 = 259.4**, centred to 0.0px |
-| bubbles | **842.6px**, four × 202.9, edges **0.0px** off the B of "building" and the D of "around" |
-| composition | **166 above / 201 below**, 45:55 (D235's balance, and it holds by itself) |
+| dining, bathrooms, outdoor, fireplace, vanity, commercial, splashbacks, kitchen | the **three** "PHOTO TO COME" plates, the **three** wrong subjects, and the last **two** July stock images |
 
-- ⭐⭐ **THE BUBBLE ROW IS MEASURED IN THE HEADLINE'S OWN TYPE SIZE.** "building around" sets in
-  **9.4374 em** — identical at 72, 80, 89.28 and 92px — so the cap is `calc(var(--hTitle) * 9.4374)`
-  and the two edges cannot drift. ⛔ **A fixed px cap would have been right at 1440 and wrong
-  everywhere else**: that line runs 679.5px at 1121 and 868px at 1600.
-- ⭐⭐ **THE TWO BUTTONS ARE AN EQUAL-COLUMN GRID**, `repeat(2,1fr)` at `width:max-content`, which is
-  how two buttons become one size without a number. The phone and tablet are the same grid with
-  **one** column and a 76% container, so D188's shared measure now lives on the row, not on each
-  button.
-- ⛔⛔ **CENTRING THE COPY PUT THE HEADLINE ACROSS THE THREE LIT PENDANTS.** The big shade layer is a
-  LEFT-TO-RIGHT ramp aimed at a composition that no longer exists — 0.94 at the left edge and **0.19
-  where the words now are**. Sampling the photograph itself: **2.45:1 white, 1.52:1 gold.** Both fail.
-  ⭐ The fix is a **scrim under the copy**, zero at the edges, so the island's far end keeps its
-  light: **6.29:1 white, 3.90:1 gold, 3.40 at the gold gradient's darkest stop.** ⛔ A flat wash is
-  what D217 reverted and only reaches 3.36 anyway.
-- ⚠️ **THE SCRIM IS TWO VARIABLES SO THE FROZEN BANDS SWITCH IT OFF** — the phone and tablet keep
-  D187's flat 0.30 wash. **One veil per band.**
-- ⚠️⚠️ **THE PHONE'S TYPE SIZES ARE WRITTEN DOWN NOW AND THAT MATTERS.** It had no title or subtitle
-  size of its own and sat on the base clamp's FLOOR (38px, 14.5px). Making the base rule the big
-  centred one would have grown the frozen phone headline to 52px silently. **Both are explicit in
-  the ≤1120 block.**
+⭐⭐ **THE LESSON IS THE SECOND HALF, NOT THE FIRST: A CONTRAST DECISION IS ONLY VALID FOR THE
+PICTURE IT WAS MEASURED AGAINST.** The tile scrims were tuned on 13 Aug against a set where most
+images were dark. His are pale stone — a white marble vanity, a Carrara fireplace, a quartz
+peninsula — and pale stone lands exactly where the service name sits. **Measured: the phone went to
+1.76:1, with seven of eight tiles under the 4.5 bar.** Nothing errored, nothing moved, the type just
+went soft. ⛔ **Change a photograph and re-measure the type over it, every time.**
+
+### ⛔⛔ AND FOUR MEASUREMENT TRAPS THAT EACH COST TIME
+
+- ⛔⛔⛔ **`img.currentSrc` LIES ONCE YOU HAVE BROWSED THE SITE.** A card reported the 2400px rung,
+  which would have meant the whole ladder was decorative — but Chrome prefers a candidate it has
+  ALREADY downloaded, and a leaf hero had put a bigger file in the cache. **A throwaway probe page
+  with `?q=` on every candidate is the only honest test.** It showed 880 at both phone and desktop.
+- ⛔⛔ **`minmax(0,1fr)` STILL RESOLVES TO MAX-CONTENT WHEN THE PARENT ROW IS AUTO-SIZED.** Setting
+  the minimum to zero is not enough. The About collage reported 1019px, beat the copy's 761, and
+  **grew the section from 844 to 1101**. Put the images out of flow.
+- ⛔⛔ **A NEW `<img>` INHERITS THE RULE WRITTEN FOR THE PHOTOGRAPH BESIDE IT.** `.wy-p img` is
+  `inset:0;width:100%;height:100%` and out-specifies a lone class, so the client's logo shipped
+  **stretched to 181x251 against its own 528x495** — and looked entirely plausible in a screenshot.
+  ⭐ **Compare the RENDERED ratio to the INTRINSIC one.** Rule 14 cannot be checked by eye.
+- ⛔ **`getBoundingClientRect()` ON ANYTHING CARRYING `.rise` LIES BY THE REVEAL'S OFFSET.** It said
+  the helix top missed the title by 34px; `offsetTop` said 23 = 23. This is D221/D230 and it caught
+  me twice this round.
 
 ---
 
-## 3. ⛔ THREE DEVICE BANDS — AND THE DESKTOP IS THE ONE IN SCOPE
+## 1. ⭐⭐ THE EIGHT SERVICE TILES AS THEY NOW STAND
+
+Every one is the client's own file. **Seven arrived on 15 Aug; nothing here is stock any more.**
+
+| Tile | Crop of his original |
+|---|---|
+| Kitchen Worktops | `(1914,1969)–(6330,4912)` of 7360x4912 |
+| Splashbacks | `(0,0)–(1620,1080)` of 1920x1080 |
+| Bathrooms | `(331,1398)–(5601,4912)` |
+| Outdoor Spaces | `(3496,1288)–(7360,3654)` |
+| Fireplaces | `(1450,880)–(3000,1913)` of **3000x2000** |
+| Dining Tables | `(2639,1472)–(7275,4563)` |
+| Vanity Tops | `(737,4301)–(4731,6963)` of a **5464x8192 PORTRAIT** |
+| Commercial | `(3974,1398)–(7360,3654)` |
+
+- ⭐⭐⭐ **THE CROP IS THE JOB, AND IT IS DECIDED BY THREE BOXES.** Each file is centre-cropped by
+  the card grid at **1.52:1**, the leaf hero at **2.69:1** and that hero on a phone at **0.73:1** —
+  so a desktop hero shows the middle **55.8%** of the file's HEIGHT and a phone hero the middle
+  **48.4%** of its WIDTH. ⛔ **A subject sitting off-centre survives none of them**, and it was
+  off-centre in every frame he sent. All eight are cut to 1.5:1 with the subject on the centre.
+- ⭐⭐ **SIMULATE THE HERO VEIL OFFLINE BEFORE WRITING A FILE.** `.svc-hero-bg::after` is two
+  gradients compositing to **0.61–0.96**. Compositing candidate crops under that arithmetic is what
+  caught the dining crop cutting the lily heads off, and it rejected a tighter fireplace crop whose
+  hero band was a flat panel of marble with no shape in it.
+- ⭐ **THE CROP ALSO DID FOUR JOBS BEYOND FRAMING**, and each is a reason: a **television** out of
+  the fireplace shot, a **red wall sign and a shelf of ornaments** out of the kitchen, **Cyrillic
+  shopfront lettering** out of the commercial one — and the **sockets kept** in the splashback,
+  because that tile's copy says "cut around sockets and hobs".
+- ⛔ **HEROES TAKE THE 1600 RUNG, NOT 2400.** A CSS background has no `srcset`, so the builder's
+  choice is what a phone downloads; under that veil the extra pixels are invisible. Two sources are
+  small, so their ladders clamp at **1550** and **1620** — no 2400, an upscale adds bytes and no
+  detail.
+- ⛔⛔ **TWO PREFIXES ARE DELIBERATELY NOT THE OBVIOUS ONES: `service-splash-marble` AND
+  `service-worktops-quartz`.** `service-splashbacks-706` and `service-worktops-554` are the DIFFERENT
+  July photographs they replaced. Two pictures sharing a rung prefix is an `SS` table waiting to be
+  mis-read. Both old pairs stay on disk.
+- ⭐ **`phImg()` STAYS AND IS NOT DEAD CODE** — D206 shipped `src="undefined"` the day a service
+  arrived without a photograph. A ninth service gets a plate, not a blank.
+
+---
+
+## 2. ⭐ WHAT ELSE MOVED THIS ROUND
+
+| # | Thing |
+|---|---|
+| **D242** | Tile names legible again: **phone 1.76 → 6.32:1**, **desktop 3.87 → 5.72** (front card **8.07**). Tablet measured at **8.39** and left alone. |
+| **D243** | The helix arrows are the "Call us" block — 129.79 x 50.75, centred on the helix and on its line, all to **0.00px**. |
+| **D244** | The About collage runs the full height of the copy, bottom edge **0px** from the Chat button, plus a fourth work tile. |
+| **D245** | The vertical lockup on the Why feature shot, height only, ratio held to 1.0658 vs 1.0667. |
+
+- ⭐⭐ **D242's FIX NEEDED BOTH HALVES AND THAT WAS MEASURED FIRST.** Moving the name down 12px with
+  the scrim untouched reaches only **3.85**; deepening the scrim alone reaches **3.30**; together
+  **6.32**. ⛔ **The transparent window stayed 47%→76% to the character** — that is the client's
+  "full brightness" ruling and deepening the middle is the move that would quietly undo it.
+- ⭐⭐ **THE DESKTOP NEEDED THE OPPOSITE FIX.** Its name floats at **23–57%** of the card because
+  `.hx-meta` also holds the button, which keeps its space on every card. **So a nudge down moves
+  nothing and deepening the FOOT moves almost nothing: 3.85 → 3.95.** The gain is all in the 20–60%
+  band where the glyphs are.
+- ⛔⛔⛔ **D243's FOOT IS SET FROM SCRIPT BECAUSE NO CSS VALUE CAN DO IT.** The columns are a stretch
+  row in a `min-height:100vh` frame, so the row follows the WINDOW while the copy's height is
+  intrinsic: **the gap below the CTA pair is 6.5px at 863 tall and 48.8px at 900.** Recomputed from
+  a fresh read on every resize, never accumulated — D236's rule — and it runs BEFORE `metrics()`.
+
+---
+
+## 3. ⛔ THREE DEVICE BANDS — AND THE DESKTOP IS STILL THE ONE IN SCOPE
 
 ```
    ≤ 720px          721 – 1120px          ≥ 1121px
@@ -107,13 +117,22 @@ across in one row.
    FROZEN          FROZEN                HE IS WORKING HERE
 ```
 
-⭐⭐ **THE MECHANISM GOES TO BASE SCOPE AND ONLY THE NUMBERS LIVE IN THE BAND BLOCKS.** D235 set this
-and this round leaned on it five times: the centring, the chip grid, the CTA grid, the scrim and the
-title size are each written ONCE, with `--chipCols`, `--ctaCols`, `--heroScrimA/B` and `--hTitle`
-carrying the per-band values.
+⚠️ **HE CROSSED THE FREEZE HIMSELF FOR D242** — *"on desktop mobile and tablet"* — and that was
+built as asked. ⛔ It does not generalise; the next mobile change needs its own instruction.
+⭐⭐ **THE MECHANISM GOES TO BASE SCOPE AND ONLY THE NUMBERS LIVE IN THE BAND BLOCKS.**
 ⛔ **THE TABLET-ONLY BLOCK IS THE LAST THING IN THE STYLESHEET.** Search `THE TABLET BAND`.
-⚠️ Base scope IS the desktop. A change to a base rule reaches the phone and tablet unless they
-override it — **check what they were silently inheriting before you touch a base number.**
+⚠️ Base scope IS the desktop — **check what the frozen bands were silently inheriting before you
+touch a base rule.** D244 and D245 both needed a `display:none` at base so a new element could not
+land on a frozen band.
+
+### ⚠️⚠️ TWO BOUNDARIES THAT ARE NOT THE ONES YOU EXPECT
+
+- ⛔ **THE TILE SCRIM'S QUERY IS `max-width:600px`, NOT THE SITE'S 720px PHONE BAND.** 601–720 falls
+  through to the base rules with the tablet. **The two numbers should agree eventually.**
+- ⚠️ **THE 13 Aug "FULL BRIGHTNESS" FIX ONLY EVER APPLIED BELOW 600px.** The tablet's tiles still
+  carry `.face.front .stone{opacity:0.5}` — the photograph at HALF strength over near-black, which
+  is exactly the "dark radiant" he rejected on the phone. **It is why the tablet reads so well, and
+  it is a look he has not seen. Told him; his call, and it is one line.**
 
 ---
 
@@ -127,10 +146,12 @@ Branch **`tablet-round-d197-d200`**, working tree clean, **level with the remote
 
 | Commit | What |
 |---|---|
-| `0c33e6e` | D240 three duplicates out, the Topcat plate fills the holes |
-| `8b93746` | D239 the bubble row ends where the headline does, the buttons match |
-| `90d5c81` | D238 the desktop hero centred, the gold rule gone |
-| `4eef0ab` | D236–D237 the desktop hero takes the tablet's composition, the gallery survives a resize |
+| `601be39` | D245 the vertical lockup on the Why feature shot |
+| `1866f37` | D244 the About collage runs the full height of the copy |
+| `9f78861` | D243 the helix arrows become the Call us block |
+| `7e209b3` | D242 the service names read clearly on every band |
+| `23d691f` | D241 all eight service tiles are his own photographs |
+| `efad6f2` | D241 the first three tiles and their heroes |
 
 ⛔ **`gh` IS NOT INSTALLED**, so the PR cannot be opened from here: `brew install gh` once, or
 https://github.com/ThadGC/topcatwork/pull/new/tablet-round-d197-d200
@@ -144,14 +165,14 @@ cd "Website Demo" && nohup caffeinate -ims node dev-server.js > /tmp/topcat-serv
 ```
 
 **Give him `http://192.168.1.102:5501`** — re-check with `ipconfig getifaddr en0`.
-⭐ **THE SERVER IS DETACHED ON PURPOSE — PID 5158, untouched for four days.**
+⭐ **THE SERVER IS DETACHED ON PURPOSE — PID 5158, untouched for five days.**
 ⛔ Do not `preview_stop` it and do not kill it to restart.
 ⭐ **USE `http://localhost:5501` IN THE PREVIEW PANE**, on his instruction: *"Stop asking to access
 the link or something. Just look at the local host in the preview."*
 
 ### ⚠️ HE REVIEWS ON `thadeusg3.sg-host.com`
 
-**We still do not know how files get there. Asked five times.** ⛔ Until it is answered, anything
+**We still do not know how files get there. Asked six times.** ⛔ Until it is answered, anything
 built may be invisible to him and he will report bugs already fixed.
 
 ---
@@ -185,9 +206,6 @@ while i<len(css):
 print('comment issues:',bad,'| braces:',css.count('{')-css.count('}'))"
 ```
 
-⭐⭐ **IT EARNED ITS PLACE AGAIN THIS ROUND: A COMMENT EDIT LEFT A STRAY `*/` THAT SILENTLY DELETED
-`.hero-ctas`**, and the gate is the only thing that saw it.
-
 ⭐ **AND CHECK THE JS PARSES:**
 
 ```bash
@@ -208,10 +226,10 @@ print(subprocess.run(['node','--check',p],capture_output=True,text=True).stderr 
 |---|---|
 | `.gal-scroll` height | **4950** |
 | `--revPer` (on `section.mode-grid`) | **3** |
-| `feTurbulence` | **60** |
+| `feTurbulence` count | **60** |
 | document height | **14833** |
-| elements | **2687** ⚠️ was 2709 — the icon row's 22 nodes came out (D237) |
-| `#svcNav` | **8** |
+| elements | **2692** ⚠️ was 2687 — D244's tile is 4 nodes, D245's logo is 1 |
+| `#svcNav` children | **8** |
 | broken images | 0 |
 | horizontal overflow | none |
 
@@ -221,19 +239,23 @@ reloading leaves `.gal-scroll` at its static height and looks like a regression 
 
 ---
 
-## 7. ⛔⛔⛔ A CSS COMMENT BROKE A BUILDER, AND THE CLASS OF FAULT IS STILL OPEN
+## 7. ⚠️ THE IMAGE PIPELINE IS HAND-DRIVEN NOW, AND THAT IS NOT A CHOICE
 
-**`build_pages.py` finds its parts with plain string searches.** A comment in the stylesheet quoted
-an element's opening tag verbatim, the search matched THERE first, and **every internal page shipped
-a slab of CSS as visible text on the screen** where the icon definitions should have been.
+⛔⛔ **`build_images.py` AND `patch_images.py` ARE BOTH ONE-SHOT AND CAN NO LONGER RUN.** The first
+extracts seven base64 photographs out of `index.html` and exits if it does not find exactly seven;
+the second already took them out in D109. **Do not run either to "regenerate" a ladder.**
 
-⭐ **Fixed at the class, not the instance: every markup marker now searches from `</style>`
-onwards.** ⚠️ **But the same trap is one careless backtick away for the other builders** — do not
-write a live element's opening tag out in a comment. Name it as `.class` instead.
+⭐ **THE ROUTE FOR THE NEXT PHOTOGRAPH**, which D241 walked eight times:
 
-⚠️ **AND `str.replace` WITH NO MATCH DOES NOTHING AND RAISES NOTHING.** The chips extractor stripped
-`hero-el` with an exact match on `--hd:1040ms`; the day the stagger changed, every internal page
-would have shipped its bubbles at **opacity 0, holding their space, invisible**. It is a regex now.
+1. Crop to **1.5:1** with the subject centred — check it against all three boxes (§1).
+2. Cut rungs with the pipeline's own rules: **LANCZOS, WebP q85, method 6**, clamped to the native
+   width. Save a `.jpg` master beside them.
+3. Register the ladder by hand in **`SS`**, keyed on the exact `.img` URL the record carries.
+4. Point the tile's `img` at the **top** rung and the leaf hero at the **1600** one.
+5. `build_pages.py`, then `services/build_services.py`, then the gates.
+
+⛔ **QUALITY IS 85 FOR EVERYTHING** — the level `build_images.py` verified by eye. It was NOT
+lowered for the expensive outdoor file, because a per-image quality is a second rule nobody finds.
 
 ---
 
@@ -241,33 +263,17 @@ would have shipped its bubbles at **opacity 0, holding their space, invisible**.
 
 | Page | State |
 |---|---|
-| **`/`** | ⭐⭐ **hero centred at every width, headline 89px, four bubbles across, gallery survives a resize** |
-| **`/services/`** | NINE leaf pages — all eight of his services have their own |
-| **`/trade/`** | rebuilt: eight sections, "Trade with Topcat", no trade terms anywhere |
-| **`/projects/`** | ⭐ **three duplicates out, Topcat plates close three blocks** |
+| **`/`** | ⭐⭐ **all eight tiles his own photographs, names legible on every band, helix arrows on the Call us line, About collage full height, lockup on the Why shot** |
+| **`/services/`** | NINE leaf pages — eight open on his own photograph, kitchen-islands still on `kitchen-day.jpg` |
+| **`/trade/`** | eight sections, "Trade with Topcat", no trade terms anywhere |
+| **`/projects/`** | three duplicates out, Topcat plates close three blocks |
 | **`/estimate/` `/about/` `/contact/`** | as before |
 | **`/stones/`** | the collection page |
 | `/materials/` `/guides/` `/worktops/` `/sitemap.html` | the SEO layer |
 
-### The project galleries after D240
-
-| Project | Photographs | Block at 3 columns |
-|---|---|---|
-| Hornchurch | 7 (`-g6` out) | 3/2/2, a **74px** step |
-| Rickmansworth | 15 (`-g16` out) | 5/5/5 flush |
-| Central London | 13 **+ plate** | 5/5/4, the plate two slots tall |
-| Harlow | 14 (`-g7` out) **+ plate** | 5/5/5 flush |
-| Harrow | 2 **+ plate** | one a column |
-
-- ⭐⭐ **THE PLATE LANDS IN THE GAP BY ARITHMETIC.** `column-count` balances and fills in source
-  order, so the LAST item, given exactly the height of the missing slots, can only go where the hole
-  is. `(cols − n mod cols) mod cols` IS the hole, computed from the gallery length — ⛔ **it was a
-  typed number for an hour and that was wrong.**
-- ⚠️ It answers each band separately: **two columns gives Harrow no hole, and one column never has
-  one**, so neither renders a plate.
-- ⚠️ The plate is out of `MEDIA`, so the lightbox never opens a blank slide, and it is `aria-hidden`.
-- ⛔ **THE ORDER OF THE GRID IS HIS AND IS NOT TO BE RE-SORTED**: Wimbledon | Watford / Hornchurch |
-  Rickmansworth / Ruislip | Central London / **Harlow | Harrow** (one letter apart, and he checked).
+⚠️ **THREE SHARED PHOTOGRAPHS ARE STILL LIVE AND MUST NOT BE DELETED**: `hero-kitchen.jpg` is the
+LANDING PAGE's hero, `kitchen-day.jpg` is `/services/kitchen-islands.html`, `cta-slab.jpg` is the
+landing page's CTA band. What ended is three service pages sharing two pictures between them.
 
 ---
 
@@ -285,10 +291,9 @@ would have shipped its bubbles at **opacity 0, holding their space, invisible**.
 8. **No showroom of our own. Never show the review count. Value, not cheap.**
 9. **Voice:** quietly confident master. British English, commas not em dashes, no exclamation marks.
    ⭐⭐ **NO AI SLOP** and **no jargon**.
-10. ⛔ **The logo is the client's artwork and is never re-drawn. Set HEIGHT only.** ⚠️ The project
-    plates (D240) are the newest place this applies.
-11. ⛔ **ONE DEVICE AT A TIME. Only the client unfreezes a band.** ⭐ **He unfroze the DESKTOP on
-    14 Aug and it is the band in scope.**
+10. ⛔ **The logo is the client's artwork and is never re-drawn. Set HEIGHT only.** ⚠️ **D245 is the
+    newest place this applies, and it is the one that nearly shipped broken** — see §0.
+11. ⛔ **ONE DEVICE AT A TIME. Only the client unfreezes a band.** ⭐ **The DESKTOP is in scope.**
 12. ⭐⭐ **THIS IS A DESIGN BUILD. NEVER RAISE THE MISSING FORM BACKEND AS A BLOCKER.**
 
 ---
@@ -297,14 +302,14 @@ would have shipped its bubbles at **opacity 0, holding their space, invisible**.
 
 - ⛔⛔⛔ **PRINT THE COMPUTED VALUE BEFORE YOU CHANGE THE DECLARATION (D207).** A rule can be parsed,
   present, and matching nothing.
-- ⛔⛔ **AND CHECK WHAT YOUR TEST ACTUALLY MEASURES.** See §0 — `scrollWidth`/`clientWidth` round to
-  whole pixels, a mask's box is not its text, and a `max-width` box is not centred by default.
-- ⛔⛔ **SAMPLE THE PHOTOGRAPH, DO NOT GUESS AT IT.** For contrast over a hero image, draw the
-  background to a canvas **at its own rendered `cover` scale and offset**, undo the `1.08` load
-  transform, and find the brightest pixel in the band the text occupies, composited under every
-  shade layer. That is how D238 got 2.45:1 and 1.52:1 — real numbers on the real pendant lights.
+- ⛔⛔ **AND CHECK WHAT YOUR TEST ACTUALLY MEASURES.** See §0 — a cached `currentSrc`, an `fr` track
+  that resolves to max-content, an inherited `img` rule, and a rect that carries a reveal.
+- ⛔⛔ **CONTRAST IS MEASURED BY COMPOSITING, NOT BY LOOKING.** Draw the photograph to a canvas with
+  its own CSS `filter`, composite it under the element's own computed gradient stops at the type's
+  real band, and take the BRIGHTEST pixel. That is how D242 got 1.76:1 and how the fix was chosen
+  before a line was written.
 - ⛔⛔ **MEASURE LAYOUT WITH LAYOUT PROPERTIES.** `getBoundingClientRect()` on an element carrying
-  `.rise` includes the reveal's `translateY`. **`offsetTop` ignores transforms** (D221, D230).
+  `.rise` includes the reveal's `translateY`. **`offsetTop` ignores transforms** (D221, D230, D243).
 - ⛔ **DEEPENING A VEIL TO WIN CONTRAST IS THE MOVE D217 ALREADY TRIED AND REVERTED.** Shade the
   words, or scrim only where they are.
 - ⛔ **A `.click()` IN A PROBE DOES NOT HIT-TEST.** Use `elementFromPoint` (D212).
@@ -312,13 +317,16 @@ would have shipped its bubbles at **opacity 0, holding their space, invisible**.
 
 ### The environment traps (all still live)
 
-- ⛔⛔⛔ **A STRAY `*/` SILENTLY DELETES THE NEXT CSS RULE.** The §6 gate catches it. It happened again.
+- ⛔⛔⛔ **A STRAY `*/` SILENTLY DELETES THE NEXT CSS RULE.** The §6 gate catches it.
 - ⛔⛔ **THE PANE FREEZES ANIMATIONS AT ZERO when `document.visibilityState === 'hidden'`.** A
-  screenshot still wakes it, which is how the gallery was verified this round.
+  screenshot wakes it — **often a SECOND screenshot is needed**, and the helix and both collages all
+  measure as nonsense until they have run.
 - ⛔⛔ **THE PANE SILENTLY RESIZES ITSELF.** **Read `innerWidth` in the same call as your
   measurements**, and judge desktop visually at **1141–1200**.
-- ⛔ **CONSOLE ERRORS FROM `javascript_tool` ARE YOUR OWN PROBE WRAPPERS, NOT THE PAGE.** One of mine
-  was still in the log this round. **Open a new tab before believing a console error.**
+- ⚠️ **THE PANE'S SCREENSHOT SOMETIMES STOPS TRACKING A SCRIPTED `scrollTo`.** Scroll with the
+  `computer` tool instead, or accept the DOM probe as the evidence and say so.
+- ⛔ **CONSOLE ERRORS FROM `javascript_tool` ARE YOUR OWN PROBE WRAPPERS, NOT THE PAGE.** **Open a
+  new tab before believing a console error.**
 - ⛔⛔ **`service.css` AND `stone.css` ARE NOT CONTENT-HASHED** — a reload can serve the previous
   edit. **Still open.**
 - ⛔ **`scroll-behavior:smooth` IS ON `<html>`** — every probe `scrollTo` animates unless
@@ -335,55 +343,53 @@ would have shipped its bubbles at **opacity 0, holding their space, invisible**.
 
 ### ⭐⭐ Waiting on him
 
-1. ⭐⭐ **HOW DO FILES GET TO `thadeusg3.sg-host.com`?** Asked five times. **Nothing else matters if
+1. ⭐⭐ **HOW DO FILES GET TO `thadeusg3.sg-host.com`?** Asked six times. **Nothing else matters if
    he cannot see the work.**
-2. ⭐ **THE HORNCHURCH DUPLICATE HE HAS NOT NAMED — `-g1` AND `-g9` ARE THE SAME NOOK.** It was
-   removed, measured and put back: it is the only portrait balancing that gallery's two landscape
-   shots, and without it the two of them sit alone in column one under a **399px** hole. **Told him;
-   his call.**
-3. ⭐ **HARLOW'S PLATE WAS NOT ASKED FOR.** Removing the duplicate left 14 photographs, which balance
-   5/5/4 with the hole in the MIDDLE of the block. One plate closes it. **Told him; one field to
-   delete.**
-4. ⭐⭐ **TRADE TERMS.** Payment, minimum order, lead-time commitments, a dedicated trade contact.
-   **The trade FAQ currently answers "we would rather quote them than post them"** — honest, but it
-   is the one answer on that page that is a deflection, and it is his stated first priority.
-5. ⭐⭐ **THE FIREPLACE SCOPE, WITH NICK.** The page says Topcat do NOT install stoves, flues or gas
-   appliances. **If they take on more, the page is understating the service.**
-6. ⭐⭐ **ALI JAFFER AND KAV / UXBRIDGE** — two Drive folders that match no project. Projects nine and
-   ten? He has photographs for neither.
-7. ⭐ **THE 19 DRONE VIDEOS** in the Hornchurch and Rickmansworth folders.
-8. ⭐ **THE TWO DROPPED HORNCHURCH PHOTOGRAPHS** — both files are still on disk, one line each.
-9. ⭐ **CONFIRM THE SILICA / HSE SENTENCE** in his own words (D202). A health-and-safety claim.
-10. ⭐ **KITCHEN ISLANDS** — not on his service list; page still live and still linked. Delete or keep?
-11. ⭐ **TRUSTPILOT** — recommended AGAINST putting 4.0 beside the Google 5.0. **He has not ruled.**
+2. ⭐⭐ **THE TABLET'S TILES ARE STILL AT HALF BRIGHTNESS** — §3. His "full brightness" ruling never
+   reached that band. One line, and it would then need the same scrim treatment the phone just got.
+3. ⭐ **THE SERVICE HERO VEIL DIMS ALL EIGHT NEW PHOTOGRAPHS.** It composites to 0.61–0.96 and is
+   shared by ~166 pages, so lightening it is a site-wide change he has not asked for. **Told him
+   four times; it is one line in `service.css` when he wants it.**
+4. ⭐ **THE HORNCHURCH DUPLICATE HE HAS NOT NAMED — `-g1` AND `-g9` ARE THE SAME NOOK.** Removed,
+   measured and put back: it is the only portrait balancing that gallery's two landscapes. **His call.**
+5. ⭐ **HARLOW'S PLATE WAS NOT ASKED FOR.** One field to delete.
+6. ⭐⭐ **TRADE TERMS.** Payment, minimum order, lead times, a dedicated contact. **His stated first
+   priority, and the trade FAQ currently deflects it.**
+7. ⭐⭐ **THE FIREPLACE SCOPE, WITH NICK.** The page says Topcat do NOT install stoves, flues or gas
+   appliances. If they take on more, the page is understating the service.
+8. ⭐⭐ **ALI JAFFER AND KAV / UXBRIDGE** — two Drive folders that match no project.
+9. ⭐ **THE 19 DRONE VIDEOS** in the Hornchurch and Rickmansworth folders.
+10. ⭐ **CONFIRM THE SILICA / HSE SENTENCE** in his own words (D202). A health-and-safety claim.
+11. ⭐ **KITCHEN ISLANDS** — not on his service list; page still live and still linked. Delete or keep?
+12. ⭐ **TRUSTPILOT** — recommended AGAINST putting 4.0 beside the Google 5.0. **He has not ruled.**
 
 ### ⭐ Ready to build
 
-12. ⭐⭐ **PHOTOGRAPHY IS THE BIGGEST REMAINING GAP.** ⛔ **He has said twice: generate nothing.**
-    - **Three service tiles show the wrong subject** — Outdoor Spaces a quarry, Commercial a
-      kitchen, Bathrooms a bare slab. He asked for the first two to be replaced.
-    - **Three tiles show "PHOTO TO COME"** — Fireplaces, Dining Tables, Vanity Tops — and their three
-      leaf pages all take the slab shot. ⚠️ **His whole portfolio holds no fireplace and no dining
-      table**, checked on one contact sheet. Those two need a shoot or nothing.
-    - **The director portraits and the Why feature shot are placeholders.**
-13. ⭐ **THE SITE HAS NO FAVICON AT ALL** — every browser requests `/favicon.ico` and gets a 404.
+13. ⭐⭐ **THE PHOTOGRAPHY GAP IS MUCH SMALLER NOW, AND WHAT IS LEFT IS PEOPLE.** ⛔ **He has said
+    twice: generate nothing.**
+    - **The two director portraits** (Nick, Rimsha) are still empty plates.
+    - **The Why feature shot** and **three of the four About collage tiles** are AI stand-ins.
+    - **`/services/kitchen-islands.html`** is the one leaf page still on a shared stock hero.
+14. ⭐ **THE SITE HAS NO FAVICON AT ALL** — every browser requests `/favicon.ico` and gets a 404.
     ⚠️ `assets/brand/favicon.svg` exists and is referenced; the `.ico` is what is missing.
-14. ⭐ **CONTENT-HASH `service.css` AND `stone.css`** — §10, and it will bite him on his phone.
-15. ⚠️ **THE GENERATED PAGES SHIP THEIR CODE COMMENTS TO VIEW-SOURCE**, including his own quotes, on
-    a public repo. Nothing in them is sensitive; stripping comments at build time is a small change.
-16. ⚠️ **THE HORNCHURCH CARD PHOTO** shows a garden through bi-folds with what looks like a child on
+15. ⭐ **CONTENT-HASH `service.css` AND `stone.css`** — §10, and it will bite him on his phone.
+16. ⚠️ **THE GENERATED PAGES SHIP THEIR CODE COMMENTS TO VIEW-SOURCE**, including his own quotes, on
+    a public repo. Nothing is sensitive; stripping comments at build time is a small change.
+17. ⚠️ **THE HORNCHURCH CARD PHOTO** shows a garden through bi-folds with what looks like a child on
     play equipment. **It is the third card in the gallery.**
-17. ⭐ **THE `<title>` STILL SAYS "London & the Home Counties"** — he changed the hero, not the title,
+18. ⭐ **THE `<title>` STILL SAYS "London & the Home Counties"** — he changed the hero, not the title,
     and the title is a search asset.
-18. ⚠️ **~166 LEAF PAGES' META DESCRIPTIONS STILL NAME FOUR COUNTIES**, not eight. Deliberately left.
+19. ⚠️ **~166 LEAF PAGES' META DESCRIPTIONS STILL NAME FOUR COUNTIES**, not eight. Deliberately left.
+20. ⚠️ **THE SPLASHBACK PHOTOGRAPH'S SOCKETS ARE NOT UK PATTERN.** Not legible at card size, and the
+    copy names sockets on purpose — but it is his page and he may want it swapped.
 
 ### The rest
 
-19. ⭐ Pick a production host; brotli and long-lived cache headers.
-20. ⭐ Close the licensing question on Caesarstone, CRL and Bloom. ⛔ Classic Quartz Stone is off
+21. ⭐ Pick a production host; brotli and long-lived cache headers.
+22. ⭐ Close the licensing question on Caesarstone, CRL and Bloom. ⛔ Classic Quartz Stone is off
     limits. ⭐ **Calacatta Gold is UNRESOLVED.**
-21. ⚠️ **IS IT RIMSHA OR REMSHA?** A real person's name on a public page.
-22. ⭐ **FACEBOOK, TIKTOK, YOUTUBE?** ⛔ Do not guess handles.
+23. ⚠️ **IS IT RIMSHA OR REMSHA?** A real person's name on a public page.
+24. ⭐ **FACEBOOK, TIKTOK, YOUTUBE?** ⛔ Do not guess handles.
 
 **Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing
 (⚠️ the thickness toggle moves no number, which is correct until he rules), brackets for vanity tops
@@ -399,25 +405,26 @@ build the thing.**
 
 ⛔⛔ **AND DO NOT ASK HIS PERMISSION.** Commit, push, report. See §4.
 
-⛔⛔ **DO THE THING HE ASKED FOR, IN THE MESSAGE HE ASKED FOR IT.** He sends asks in runs and adds
-more mid-build — **two separate mid-turn messages this round.** Do them in his order.
+⛔⛔ **DO THE THING HE ASKED FOR, IN THE MESSAGE HE ASKED FOR IT.** ⭐⭐ **THIS ROUND HE SENT SEVEN
+MID-TURN MESSAGES IN A ROW, ONE SERVICE AT A TIME, WHILE THE FIRST WAS STILL BEING BUILT.** Do them
+in his order and finish each one.
 
 ⚠️⚠️ **HE REVERSES HIMSELF FREELY AND FAST — AND THAT IS FINE. LOG IT.** ⛔ **Write the reversal into
-§D WITH THE REASON THE OLD DECISION EXISTED.** ⭐ This round the hero moved three times in a day and
-the trust line went to one line and back within two messages.
+§D WITH THE REASON THE OLD DECISION EXISTED.**
 
-⭐⭐ **WHEN SOMETHING IS DIFFERENT FROM WHAT HE ASKED, SAY SO PLAINLY IN THE REPORT.** Two things
-this round were not his instruction — Harlow's plate and the Hornchurch duplicate left in — and both
-were reported with the measurement behind them rather than buried or quietly done.
+⭐⭐ **WHEN SOMETHING IS DIFFERENT FROM WHAT HE ASKED, SAY SO PLAINLY IN THE REPORT.** ⚠️ **And when
+your own work causes the next fault, say that too** — D242 exists because D241 broke it, and the
+report said so in the first line.
 
-⚠️ **HE CORRECTS THE DIAGNOSIS, NOT JUST THE DESIGN, AND HE IS USUALLY RIGHT.** *"It's only broken
-when I change the responsiveness"* was a one-way `classList.add`.
+⚠️ **HE CORRECTS THE DIAGNOSIS, NOT JUST THE DESIGN, AND HE IS USUALLY RIGHT.** *"In mobile, it just
+looks a bit hard to read"* was 1.76:1.
 
 ⚠️ **HE SWEARS WHEN SOMETHING LOOKS WRONG, AND THE COMPLAINT IS ALWAYS REAL.** Find it, name the
 actual cause, fix it, say what it was.
 
 - **Walk the journey, do not check the page.**
-- ⭐⭐ **LOOK AT THE RESULT BEFORE REPORTING IT DONE.**
+- ⭐⭐ **LOOK AT THE RESULT BEFORE REPORTING IT DONE.** ⚠️ **And a screenshot is not enough for
+  anything with a ratio in it** — D245 looked fine and was stretched.
 - **Measure, then claim.** ⚠️ **And if you could not measure it, say so.**
 
 ---
@@ -425,25 +432,27 @@ actual cause, fix it, say what it was.
 ## 13. BUDGET AND THE DOCUMENT SET
 
 - **~82 credits** of the client's **100-credit ceiling** spent, about **18 left**. ⭐ **This round
-  cost none** — no image generation, on his instruction.
+  cost none** — every photograph was his own file, on his instruction.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D240**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** |
-| **`Website Demo/index.html`** | ⭐⭐ The whole design — inline `<style>` and `<script>`. Search `THE TABLET BAND`, `const PROJECTS`, `const SERVICES`, `--hTitle`, `--chipCols`, `--heroScrimA`, `proj-brand` |
-| **`Website Demo/build_pages.py`** | ⭐⭐ Builds the seven internal pages and the shared assets. **Owns `/trade/index.html`.** ⚠️ Its markup markers search from `</style>` — see §7 |
-| **`Website Demo/services/build_services.py`** | ⭐ The nine service leaf pages |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D245**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** |
+| **`Website Demo/index.html`** | ⭐⭐ The whole design — inline `<style>` and `<script>`. Search `THE TABLET BAND`, `const SERVICES`, `const SS`, `about-collage`, `wy-p-mark`, `helix-ui`, `footToCallUs` |
+| **`Website Demo/build_pages.py`** | ⭐⭐ Builds the seven internal pages and the shared assets. **Owns `/trade/index.html`.** ⚠️ Its markup markers search from `</style>` |
+| **`Website Demo/services/build_services.py`** | ⭐ The nine service leaf pages and `HERO_IMG` |
 | **`Website Demo/build_seo_pages.py`** | ⭐ The 26-page SEO layer, the sitemap, and `APPLICATIONS` on ~166 pages |
-| ⛔ **`Website Demo/trade/build_trade.py`** | ⛔⛔ **SUPERSEDED — DO NOT RUN.** Would revert the trade page to 1 August (D233) |
+| ⛔ **`Website Demo/trade/build_trade.py`** | ⛔⛔ **SUPERSEDED — DO NOT RUN** |
+| ⛔ **`build_images.py` `patch_images.py`** | ⛔⛔ **ONE-SHOT, CANNOT RUN AGAIN** — see §7 |
 | `Website Demo/assets/site.css` `site.js` | ⛔ **GENERATED. Never edit.** |
-| **`Website Demo/assets/projects/`** | ⭐ **107 WebP files, 101 of them referenced — the client's real portfolio.** ⚠️ The six unused are kept on disk on purpose: `harlow-g7`, `hornchurch-g6`, `rickmansworth-g16` (D240's duplicates), `hornchurch-g2` and `-g3` (dropped 14 Aug), and `wimbledon-560` |
-| **`Website Demo/assets/brand/`** | ⭐ The client's own artwork. `topcat-vertical.svg` is the project plate's logo (D240) |
+| **`Website Demo/assets/site/`** | ⭐ **The eight service photographs and their ladders**, plus the shared stock. ⚠️ `service-worktops-554`, `service-splashbacks-706`, `service-islands-468` and `quarry` are superseded, unreferenced, and kept on purpose |
+| **`Website Demo/assets/projects/`** | ⭐ **107 WebP files — the client's real portfolio.** ⚠️ Six are unused on purpose |
+| **`Website Demo/assets/brand/`** | ⭐ The client's own artwork. `topcat-vertical.svg` is the project plate (D240) and the Why mark (D245) |
 | `Website Demo/services/service.css` `stones/stone.css` | ⭐ Hand-maintained, shared by ~166 leaf pages. ⚠️ **NOT content-hashed** |
 | `Website Demo/stones/build_stones.py` | Builds the collection, compare.html and 132 stone pages |
 | `Website Demo/stones/harvest/verify.py` | ⭐ The nine-check gate |
 | `Website Demo/dev-server.js` | Compression, caching, and the reload that keeps scroll position |
 | `Docs/topcat-worktops-SEO-LOG.md` | Every URL, title, target query and SEO change |
-| `HANDOVER-2026-08-14-service-and-trade-round-start-here.md` | ⭐ **The START HERE this file replaces** (D227–D235) |
+| `HANDOVER-2026-08-15-desktop-hero-round-start-here.md` | ⭐ **The START HERE this file replaces** (D236–D240) |
 | `HANDOVER-archive-to-2026-08-06.md` | ⚠️ **Every design the client rejected, in his words.** Read before redesigning anything |
 
 ⚠️ **Section numbers in `HANDOVER.md` are referenced from code comments** (`§3`, `§4`, `§5a`, `§6.7`,
