@@ -5089,11 +5089,17 @@
   .cta-lines{list-style:none;display:grid;gap:clamp(9px,1.4vh,14px);margin-top:clamp(12px,1.9vh,20px)}
   .cta-lines li{display:flex;align-items:center;gap:11px;min-width:0}
   .cta-lines svg{flex:none;width:16px;height:16px;color:var(--gold);opacity:0.85}
-  /* ⚠️ The WhatsApp mark is a SOLID glyph drawn to the edges of its 24 box, while the phone and
-     envelope beside it are 1.5px outlines drawn inset. Matched by the box they share, it reads
-     a size larger and much heavier, so it takes a smaller box instead — the icons look equal
-     because they are optically equal, not because the numbers match. */
-  .cta-lines svg.ic-wa{width:14px;height:14px}
+  /* ⛔⛔ THE WHATSAPP MARK IS INSET BY ITS OWN viewBox, NEVER BY A SMALLER `width` — 15 Aug 2026.
+     Client: *"why is it not lined up on mobile? All three, the two numbers and the email, have to
+     be perfectly in line."* ⭐⭐ **HE WAS READING A 2px ERROR AND HE WAS RIGHT.** Measured at 390:
+     the two outline rows started their text at **72.00px** and this one at **70.00px** — exactly
+     the 2px taken off the icon when it was cut to 14px to match the others optically. The row is
+     `icon + gap + text`, so ANY change to the icon's box moves the text with it.
+     ⭐ The glyph is a SOLID mark drawn to the edges of its 24 box while the phone and envelope are
+     1.5px outlines drawn inset, so it still has to be smaller to LOOK the same size — it just
+     cannot be smaller in layout. The viewBox is padded to 27.4 instead: 24 units of ink inside a
+     16px box is 14.02px drawn, centred, with the flex box its neighbours are measured against. */
+  .cta-lines svg.ic-wa{fill:currentColor}
   .cta-lines a,.cta-lines span{font-size:clamp(13px,1.1vw,14.5px);font-weight:300;color:var(--bone);
     text-decoration:none;min-width:0;overflow-wrap:anywhere}
   /* ⭐ The links carry a STANDING underline as of 9 Aug, not one that waits for a hover
@@ -5104,7 +5110,11 @@
   .cta-lines a{border-bottom:1px solid rgba(198,166,100,0.32);
     transition:border-color .35s var(--ease),color .35s var(--ease)}
   .cta-lines a:hover{color:var(--gold);border-bottom-color:var(--gold)}
-  /* The number is the promoted one of the two, so it takes the gold and a little more size.
+  /* BOTH NUMBERS TAKE THE GOLD AND A LITTLE MORE SIZE — the email is the quiet one.
+     ⭐ THE WHATSAPP NUMBER JOINED THEM ON 15 Aug 2026 (client: "with the WhatsApp number in the
+     form also make that gold and line it up perfectly with the other number"), and it does it by
+     SHARING THIS CLASS rather than by a second rule that has to be kept in step. One declaration,
+     so the two numbers cannot drift apart in colour, size, tracking or underline weight.
      ⚠️ Selector must be .cta-lines a.cta-tel — a bare .cta-tel is (0,1,0) and loses to the
      .cta-lines a rules above it (0,2,0), which silently ate both the colour and the size. */
   .cta-lines a.cta-tel{color:var(--gold-soft);font-size:clamp(14px,1.22vw,16.5px);

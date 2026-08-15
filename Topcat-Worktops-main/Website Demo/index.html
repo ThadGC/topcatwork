@@ -5102,11 +5102,17 @@
   .cta-lines{list-style:none;display:grid;gap:clamp(9px,1.4vh,14px);margin-top:clamp(12px,1.9vh,20px)}
   .cta-lines li{display:flex;align-items:center;gap:11px;min-width:0}
   .cta-lines svg{flex:none;width:16px;height:16px;color:var(--gold);opacity:0.85}
-  /* ⚠️ The WhatsApp mark is a SOLID glyph drawn to the edges of its 24 box, while the phone and
-     envelope beside it are 1.5px outlines drawn inset. Matched by the box they share, it reads
-     a size larger and much heavier, so it takes a smaller box instead — the icons look equal
-     because they are optically equal, not because the numbers match. */
-  .cta-lines svg.ic-wa{width:14px;height:14px}
+  /* ⛔⛔ THE WHATSAPP MARK IS INSET BY ITS OWN viewBox, NEVER BY A SMALLER `width` — 15 Aug 2026.
+     Client: *"why is it not lined up on mobile? All three, the two numbers and the email, have to
+     be perfectly in line."* ⭐⭐ **HE WAS READING A 2px ERROR AND HE WAS RIGHT.** Measured at 390:
+     the two outline rows started their text at **72.00px** and this one at **70.00px** — exactly
+     the 2px taken off the icon when it was cut to 14px to match the others optically. The row is
+     `icon + gap + text`, so ANY change to the icon's box moves the text with it.
+     ⭐ The glyph is a SOLID mark drawn to the edges of its 24 box while the phone and envelope are
+     1.5px outlines drawn inset, so it still has to be smaller to LOOK the same size — it just
+     cannot be smaller in layout. The viewBox is padded to 27.4 instead: 24 units of ink inside a
+     16px box is 14.02px drawn, centred, with the flex box its neighbours are measured against. */
+  .cta-lines svg.ic-wa{fill:currentColor}
   .cta-lines a,.cta-lines span{font-size:clamp(13px,1.1vw,14.5px);font-weight:300;color:var(--bone);
     text-decoration:none;min-width:0;overflow-wrap:anywhere}
   /* ⭐ The links carry a STANDING underline as of 9 Aug, not one that waits for a hover
@@ -5117,7 +5123,11 @@
   .cta-lines a{border-bottom:1px solid rgba(198,166,100,0.32);
     transition:border-color .35s var(--ease),color .35s var(--ease)}
   .cta-lines a:hover{color:var(--gold);border-bottom-color:var(--gold)}
-  /* The number is the promoted one of the two, so it takes the gold and a little more size.
+  /* BOTH NUMBERS TAKE THE GOLD AND A LITTLE MORE SIZE — the email is the quiet one.
+     ⭐ THE WHATSAPP NUMBER JOINED THEM ON 15 Aug 2026 (client: "with the WhatsApp number in the
+     form also make that gold and line it up perfectly with the other number"), and it does it by
+     SHARING THIS CLASS rather than by a second rule that has to be kept in step. One declaration,
+     so the two numbers cannot drift apart in colour, size, tracking or underline weight.
      ⚠️ Selector must be .cta-lines a.cta-tel — a bare .cta-tel is (0,1,0) and loses to the
      .cta-lines a rules above it (0,2,0), which silently ate both the colour and the size. */
   .cta-lines a.cta-tel{color:var(--gold-soft);font-size:clamp(14px,1.22vw,16.5px);
@@ -8489,8 +8499,8 @@
                  ⚠️ The glyph is FILLED and full-bleed in its 24 box, unlike the outline icons
                  either side of it, so it is cut to 14px to sit at their optical size. -->
             <li>
-              <svg class="ic-wa" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0zm-.001 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg>
-              <a href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer" aria-label="07464 940287 on WhatsApp">07464 940287</a>
+              <svg class="ic-wa" viewBox="-1.7 -1.7 27.4 27.4" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0zm-.001 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/></svg>
+              <a class="cta-tel" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer" aria-label="07464 940287 on WhatsApp">07464 940287</a>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.6 6.5 8.4 6 8.4-6"/></svg>
