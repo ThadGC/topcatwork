@@ -250,6 +250,16 @@ const SS={
  /* ⛔ `service-worktops-quartz` IS NOT A RUNG OF `service-worktops-554`. Different photograph,
     deliberately different prefix. */
  "/assets/site/service-worktops-quartz-2400.webp":"/assets/site/service-worktops-quartz-880.webp 880w, /assets/site/service-worktops-quartz-1600.webp 1600w, /assets/site/service-worktops-quartz-2400.webp 2400w",
+ /* ⭐ THE CLIENT'S TWO NEW PHOTOGRAPHS — 15 Aug 2026. The Design & Quote step and the small work
+    tile in the About collage. Registered by hand for the same reason every ladder since D241 has
+    been: `build_images.py` is one-shot and cannot run again (§7). Rungs cut by its own rules —
+    LANCZOS, WebP q85, method 6 — against the boxes each one is actually drawn into.
+    ⚠️ The About tile is 156x132 on the desktop and 105x66 below it, so 386 is the top rung and
+    that is not a mistake: at 2x the widest ask is ~312px and anything larger is bytes nobody
+    sees. It matches the `team-samples` pair it replaces, which is what the IIFE's `sizes` hint
+    is already written for. */
+ "/assets/site/process-quote-plans-1600.webp":"/assets/site/process-quote-plans-880.webp 880w, /assets/site/process-quote-plans-1600.webp 1600w",
+ "/assets/site/about-fitting-386.webp":"/assets/site/about-fitting-248.webp 248w, /assets/site/about-fitting-386.webp 386w",
  "assets/team/handshake.jpg":"/assets/site/team-handshake-600.webp 600w, /assets/site/team-handshake-900.webp 900w",
  "assets/team/samples.jpg":"/assets/site/team-samples-248.webp 248w, /assets/site/team-samples-386.webp 386w",
  "assets/team/fitting.jpg":"/assets/site/team-fitting-248.webp 248w, /assets/site/team-fitting-386.webp 386w"
@@ -477,7 +487,15 @@ const PROCESS=[
   {t:"Consultation",img:"/assets/site/process-consultation-547.webp",d:"We visit, understand the space, and guide you to the right stone.",
    d:"Understanding your space and style.",
    long:"We start at your kitchen, understanding the space, how you live in it, and the look you're after, then guide you to the material and finish that fit, with no pressure and no jargon."},
-  {t:"Design & Quote",img:"/assets/site/process-quote-675.webp",d:"Layout, edges and a clear quote with no hidden costs.",
+  /* ⭐⭐ THE CLIENT'S OWN PICTURE FOR STEP TWO — 15 Aug 2026. Client: *"use this first screenshot
+     as the image in the design and quote section."* Drawings, a rendering and a pencil, which is
+     what this step actually is. ⛔ NEW PREFIX, NOT A NEW RUNG: `process-quote-675` is a DIFFERENT
+     photograph and it stays on disk, so `process-quote-plans` keeps the two apart in `SS` — the
+     D241 rule. ⚠️ Cut to 16:9 because every box this lands in is landscape and the old file was a
+     675x900 PORTRAIT being cover-cropped to a band: the tile is 348x148 on a phone, 598x148 on a
+     tablet and 392x230 on the desktop, and `.pm-shot` in the detail card is 758 wide. That 758 at
+     2x is why the ladder goes to 1600 — `#pmShot` takes `p.img` straight, with no srcset. */
+  {t:"Design & Quote",img:"/assets/site/process-quote-plans-1600.webp",d:"Layout, edges and a clear quote with no hidden costs.",
    d:"A clear, itemised plan and price.",
    long:"We plan the layout, edge profiles, joints and cut-outs, then give you a clear, itemised quote covering template, fabrication and installation, the price you see is the price you pay."},
   {t:"Template & Craft",img:"/assets/site/process-template-678.webp",d:"Templated by hand to the millimetre, then precision-cut and polished.",
@@ -6808,7 +6826,17 @@ function viewSequence(host,tiles,apply,opts){
      ⚠️ The list still maps to `.ac-tile img` in DOM ORDER — the portraits carry no <img> — so the
      four fill w1, w2, w3, w4. ⛔ `.ac-w4` is `display:none` below 1121px, but it is still in the
      DOM and still matched here, which is deliberate: one list, one order, every band. */
-  const picks=['/assets/team/handshake.jpg','/assets/team/samples.jpg','/assets/team/fitting.jpg',
+  /* ⭐⭐ w2 IS A REAL PHOTOGRAPH SINCE 15 Aug 2026. Client: *"use the second screenshot as one of
+     the images in the About section, one of the smaller parts."* w2 is the smallest tile in the
+     collage — 156x132 on the desktop, 105x66 below it — so the crop is tight on the two people
+     working over the worktop rather than on the room, which is the only thing that reads at that
+     size. ⚠️ THE STAND-IN IT REPLACES WAS 'Choosing stone samples together', so the row now runs
+     handshake → a job in progress → fitting → the finished island, and w3's fitting stand-in is
+     the nearest neighbour in subject. Told him; whether w3 moves is his call.
+     ⚠️ Its ladder is keyed on the TOP RUNG here, the D211/D244 shape, not on a `.jpg` in
+     assets/team/ like the three stand-ins beside it — those live there because they are
+     AI placeholders awaiting the shoot (§7.5), and this one is not one of those. */
+  const picks=['/assets/team/handshake.jpg','/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
                '/assets/projects/central-london-1400.webp'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */

@@ -5089,6 +5089,11 @@
   .cta-lines{list-style:none;display:grid;gap:clamp(9px,1.4vh,14px);margin-top:clamp(12px,1.9vh,20px)}
   .cta-lines li{display:flex;align-items:center;gap:11px;min-width:0}
   .cta-lines svg{flex:none;width:16px;height:16px;color:var(--gold);opacity:0.85}
+  /* ⚠️ The WhatsApp mark is a SOLID glyph drawn to the edges of its 24 box, while the phone and
+     envelope beside it are 1.5px outlines drawn inset. Matched by the box they share, it reads
+     a size larger and much heavier, so it takes a smaller box instead — the icons look equal
+     because they are optically equal, not because the numbers match. */
+  .cta-lines svg.ic-wa{width:14px;height:14px}
   .cta-lines a,.cta-lines span{font-size:clamp(13px,1.1vw,14.5px);font-weight:300;color:var(--bone);
     text-decoration:none;min-width:0;overflow-wrap:anywhere}
   /* ⭐ The links carry a STANDING underline as of 9 Aug, not one that waits for a hover
