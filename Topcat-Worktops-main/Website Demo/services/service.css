@@ -216,12 +216,54 @@ section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-sof
 .faq details[open] summary::after{transform:rotate(45deg)}
 .faq .a{padding:0 40px 22px 0;color:var(--muted);font-size:15px;line-height:1.7;max-width:74ch}
 
-/* ---------- CTA band ---------- */
-.cta-band{background:var(--ink-2);border-top:1px solid var(--hair)}
-.cta-band .wrap{padding-top:clamp(44px,7vh,76px);padding-bottom:clamp(44px,7vh,76px);text-align:center}
-.cta-band h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.4vw,42px);margin-bottom:14px}
+/* ---------- CTA band — REDESIGNED 15 Aug 2026 ---------------------------------------------
+   Client, with a screenshot of the two bands that close the compare page: *"redesign sections
+   like this because it looks terrible and doesn't feel like it fits the branding or the design
+   of the site at all. And then also any other of the pages that look like this… so that it has
+   our brand look."*
+   ⭐⭐⭐ **IT IS ONE COMPONENT ON 176 PAGES, WHICH IS WHY IT IS WORTH GETTING RIGHT AND WHY IT IS
+   FIXED HERE RATHER THAN IN FOUR BUILDERS.** Every service leaf, every stone page, the
+   collection, compare, and the whole SEO layer close on this band. Nothing but this rule set
+   changes and all 176 move together.
+   ⛔⛔⛔ **AND THE OLD RULE BROKE §2 RULE 10 ON EVERY ONE OF THEM: `border-top:1px solid
+   var(--hair)` IS A GOLD LINE ACROSS THE TOP OF A SECTION.** *"Don't ever use that fingernail
+   design on top of sections."* It has been there since the band was written. **Deleted, and the
+   full 34% rim below is the sanctioned alternative** — the rule forbids a top BAND, not a border.
+   ⭐⭐ **WHAT WAS ACTUALLY WRONG, BEYOND THE RULE:** it was an edge-to-edge slab of panel grey
+   with type floating on it. The site does not do that anywhere else — everything that asks the
+   visitor for something sits in a rimmed card with depth under it (the enquiry card, the review
+   cards, the Why tiles, the About collage). So the band becomes the page ground and the `.wrap`
+   becomes the card, which needs NO markup change on any of the 176: the section takes over the
+   page gutter and the wrap takes a max-width, a rim, a radius and a shadow.
+   ⛔ **THE GROUND IS PLAIN `--ink-2` AND THAT IS A CLIENT RULING, NOT A DEFAULT** — 11 Aug, of
+   the landing page's own card: *"I don't like that there's such a detailed background… Just make
+   it a plain background, that grey that we have."* No stone, no bloom, no texture.
+   ⭐ The heading takes a gold last word through `<em>`, which is the site's white-then-gold title
+   shape (D229) and needs nothing here — `em` is already gold-soft at the top of this sheet. */
+.cta-band{background:var(--ink);padding:clamp(30px,5.5vh,64px) clamp(20px,5vw,64px)}
+.cta-band .wrap{max-width:980px;text-align:center;
+  padding:clamp(30px,4.6vh,58px) clamp(22px,3.6vw,54px);
+  border:1px solid var(--hair);border-radius:18px;background:var(--ink-2);
+  box-shadow:0 40px 90px -50px rgba(0,0,0,0.9)}
+.cta-band h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.4vw,42px);
+  line-height:1.12;letter-spacing:0.005em;margin-bottom:14px}
 .cta-band p{color:var(--muted);max-width:56ch;margin:0 auto 28px;font-size:15.5px}
 .cta-band .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+/* ⭐ ONCE THE PAIR WRAPS, THE TWO BUTTONS MATCH. Sized to their own text they stack as two
+   different widths down one centreline, which is the exact thing the client rejected on the
+   landing page: *"the buttons for get your free quote and request a call have to be the same
+   size and center"* (D239). Above this width they sit side by side and size to their words. */
+@media(max-width:560px){
+  .cta-band .cta-row{flex-direction:column;align-items:stretch}
+  .cta-band .cta-row a{justify-content:center}
+}
+/* ⚠️ THE FOOTNOTE UNDER THE BUTTONS HAD NO STYLE AT ALL and read as a stray sentence of body
+   copy hard against them — it is the line the client's screenshot shows colliding with the
+   buttons on compare. It is a caption now: smaller, faint, tracked, and given real air.
+   ⛔ SEPARATED BY SPACE, NOT BY A RULE. A hairline here would be the same fingernail §2 rule 10
+   forbids, one level down. */
+.cta-band .cta-note,.cta-band .cmp-cta-note{margin:26px auto 0;max-width:60ch;
+  color:var(--faint);font-size:12.5px;line-height:1.7;letter-spacing:0.02em}
 
 /* ---------- footer ---------- */
 footer.site{border-top:1px solid var(--hair-soft);padding:clamp(44px,6vh,72px) 0 34px;background:var(--ink)}

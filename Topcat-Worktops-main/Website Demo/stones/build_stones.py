@@ -868,7 +868,7 @@ document.addEventListener('DOMContentLoaded',function(){
   </section>
 
   <section class="cta-band"><div class="wrap rise">
-    <h2>Can't choose from a screen?</h2>
+    <h2>Can't choose from a <em>screen?</em></h2>
     <p>Nobody should. Book a free home visit and we bring samples to you, in your light, against your cabinets. You approve photographs of your actual slab before a single cut. Prefer to talk it through? Ask for Nick.</p>
     <div class="cta-row">
       <a class="btn-gold" href="/contact/">Book a free home visit</a>
@@ -1231,7 +1231,7 @@ def compare_page():
   </section>
 
   <section class="cta-band cmp-cta" id="cmpCta" hidden><div class="wrap">
-    <h2>Narrowed it down?</h2>
+    <h2>Narrowed it <em>down?</em></h2>
     <p>We will bring samples of your shortlist to your home, in your light, against your own
       cabinets, and talk through what each one is like to live with. You approve photographs of
       your actual slab before a single cut.</p>
@@ -1243,7 +1243,7 @@ def compare_page():
   </div></section>
 
   <section class="cta-band"><div class="wrap rise">
-    <h2>Can't choose from a screen?</h2>
+    <h2>Can't choose from a <em>screen?</em></h2>
     <p>Nobody should. Book a free home visit and we bring samples to you. Prefer to talk it
       through? Ask for Nick.</p>
     <div class="cta-row">
@@ -1605,7 +1605,7 @@ def stone_page(s):
   </div></section>
 
   <section class="cta-band"><div class="wrap rise">
-    <h2>Make it yours</h2>
+    <h2>Make it <em>yours</em></h2>
     <p>Tell us about your kitchen and we will come and measure it, a free home visit, a fixed itemised quote, and a ten-year guarantee on every install. We reply within one working day.</p>
     <div class="cta-row">
       <a class="btn-gold" href="{deep_link(s, 'estimator')}">Get an estimate</a>

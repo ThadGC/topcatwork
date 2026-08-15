@@ -260,10 +260,24 @@ def ld_block(*objs):
     return f'<script type="application/ld+json">\n{body}\n</script>'
 
 
+def gold_last(text):
+    """The site's white-then-gold title shape, applied to a heading string.
+
+    ⭐ D229 is the client's own rule and it includes the exception: "the first word is gonna be
+    white, and then second word is gonna be gold. And if it's just one word, it's gonna be a
+    white word." So a one-word heading is returned untouched rather than turned entirely gold.
+    ⚠️ Escapes FIRST and adds the tag after, or the `<em>` would be escaped with the text.
+    ⚠️ Every heading that reaches here is a plain sentence from a call site below; if one ever
+    arrives already carrying markup, this splits on its last space and would break the tag.
+    """
+    parts = e(text).rsplit(" ", 1)
+    return parts[0] if len(parts) == 1 else f'{parts[0]} <em>{parts[1]}</em>'
+
+
 def cta_band(heading, line):
     return f"""<section class="cta-band">
   <div class="wrap">
-    <h2>{e(heading)}</h2>
+    <h2>{gold_last(heading)}</h2>
     <p>{e(line)}</p>
     <div class="cta-row">
       <a class="btn-gold" href="/contact/">Get your free quote</a>
