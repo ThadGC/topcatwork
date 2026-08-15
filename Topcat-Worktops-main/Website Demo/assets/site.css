@@ -4732,6 +4732,31 @@
     background:linear-gradient(to top,rgba(8,8,10,0.46),rgba(8,8,10,0.04) 58%)}
   .wy-p:hover img{transform:scale(1.05);filter:brightness(1) saturate(1)}
   .wy-p:hover .sheen{transform:translateX(120%)}
+  /* ⭐⭐ THE BRAND MARK ON THE FEATURE PHOTOGRAPH — D245. It sits at the FOOT of the tile, not the
+     middle, for two reasons that are both about the picture underneath: `.wy-p-veil` is a bottom-up
+     scrim that reaches 0.46 at the floor and only 0.04 by 58%, so the foot is the one band where
+     white artwork is legible without deepening anything; and the subject of this shot is people,
+     so a centred lockup would land on their faces.
+     ⛔⛔ **HEIGHT ONLY — NO WIDTH, NO `object-fit`** (§2 rule 14). Width follows the intrinsic
+     ratio; pinning both squashes the client's own lockup, which at this size reads as a subtly
+     wrong logo rather than an obviously broken one.
+     ⛔⛔⛔ **THE SELECTOR IS `.wy-p img.wy-p-mark` AND THE EXTRA CLASS IS LOAD-BEARING — A PLAIN
+     `.wy-p-mark` LOSES.** `.wy-p img` is written for the PHOTOGRAPH: `position:absolute;inset:0;
+     width:100%;height:100%;object-fit:cover` plus a brightness filter. It matches ANY img in this
+     figure, it out-specifies a lone class (0,1,1 against 0,1,0), and `inset:0` is not a property a
+     bare class rule even overrides — so the first attempt shipped the lockup stretched across the
+     whole tile at 181x251 against its own 528x495 artwork. **Measured, not spotted by eye.**
+     ⚠️ So `top`/`right` are reset explicitly and the hover scale is stood down for this img only —
+     the photograph still grows on hover, the mark must not.
+     ⚠️ The clamp is vh-led so the mark stays proportionate on the tablet, where the tile is
+     min-height-driven (clamp(170px,26vh,300px)) rather than sized by the desktop grid.
+     ⚠️ `pointer-events:none` so the tile's cursor glow and hover sheen still track the figure. */
+  .wy-p img.wy-p-mark{position:absolute;top:auto;right:auto;left:50%;
+    transform:translateX(-50%);transition:none;
+    bottom:clamp(12px,2vh,22px);height:clamp(34px,5.4vh,62px);width:auto;
+    object-fit:contain;z-index:2;opacity:0.92;pointer-events:none;
+    filter:drop-shadow(0 2px 10px rgba(0,0,0,0.55))}
+  .wy-p:hover img.wy-p-mark{transform:translateX(-50%);filter:drop-shadow(0 2px 10px rgba(0,0,0,0.55))}
 
   /* The reason tiles. ⚠️ NO overflow:hidden. .glow-card's halo is inset:-1px and blurred, so it
      spills outside the box on purpose — clipping here would cut the cursor light off at the
