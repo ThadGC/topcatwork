@@ -315,30 +315,45 @@ SERVICES = [
 # ---------------------------------------------------------------------------
 # Hero photos reuse the existing shared assets (no new images generated). Loose but on-brand.
 HERO_IMG = {
-    "kitchen-worktops": "../assets/hero-kitchen.jpg",
+    # ⭐⭐⭐ HIS OWN PHOTOGRAPH — D241, the eighth and last. ⚠️ `hero-kitchen.jpg` IS NOT RETIRED
+    # AND MUST NOT BE: it is the LANDING PAGE's hero, the first thing anybody sees. It is simply
+    # no longer any service page's hero — splashbacks and this page both moved off it in one run,
+    # which is also the end of two service pages opening on the same picture.
+    "kitchen-worktops": "../assets/site/service-worktops-quartz-1600.webp",
     "kitchen-islands": "../assets/kitchen-day.jpg",
-    "splashbacks": "../assets/hero-kitchen.jpg",
+    # ⭐⭐ HIS OWN PHOTOGRAPH — D241. This page shared `hero-kitchen.jpg` with kitchen-worktops,
+    # so the two pages opened on the same picture; it now opens on a marble splashback behind a
+    # hob, which is what it is about. ⚠️ 1620 is the NATIVE top of that ladder (a 1920x1080
+    # source), not a choice. ⚠️ `hero-kitchen.jpg` stays — kitchen-worktops still uses it, and
+    # so does the landing page.
+    "splashbacks": "../assets/site/service-splash-marble-1620.webp",
     # ⭐⭐ THE CLIENT'S OWN PHOTOGRAPH — D241, sent with the dining one. It replaced the slab shot
     # on the Bathrooms TILE and this hero follows it, so the tile and the page it opens show the
     # same room. ⚠️ `cta-slab.jpg` is still the hero two lines below and still the landing page's
     # CTA band — this line moved, that file did not.
     "bathroom-worktops": "../assets/site/service-bathrooms-1600.webp",
-    "commercial-worktops": "../assets/kitchen-day.jpg",
+    # ⭐⭐⭐ HIS OWN PHOTOGRAPH — D241, and the last of the wrong subjects. A DOMESTIC kitchen was
+    # opening the commercial page. ⚠️ `kitchen-day.jpg` stays: kitchen-islands is still using it.
+    "commercial-worktops": "../assets/site/service-commercial-1600.webp",
     # ⭐⭐ A REAL OUTDOOR KITCHEN INSTEAD OF THE QUARRY — D241, his own file. The quarry shot was
     # the second of the three wrong-subject tiles he had already asked to have replaced: it is a
     # picture of where stone comes FROM, not of a garden kitchen. ⚠️ `quarry.jpg` and its two
     # WebP rungs stay on disk and stay in the SS table — nothing else pointed at them, but a
     # deleted photograph cannot be put back from the browser.
     "outdoor-kitchens": "../assets/site/service-outdoor-1600.webp",
-    # ⚠️ THE TWO REMAINING NEW PAGES TAKE THE SLAB SHOT ON PURPOSE (D228). His portfolio was
-    # checked image by image on a contact sheet and it holds no fireplace and no vanity top, and
-    # the client has twice said generate nothing. ⛔ A near-enough room photograph is what put a
-    # QUARRY on Outdoor Spaces and a KITCHEN on Commercial — a photograph of the wrong subject
-    # reads as wrong, where the material itself cannot. ⭐ The quarry is gone as of D241 and
-    # commercial is the one still standing. ⭐ Drop a real file in when the shoot lands; nothing
-    # else changes, which is exactly what dining-tables and bathroom-worktops did on 15 Aug.
-    "vanity-tops": "../assets/cta-slab.jpg",
-    "fireplaces": "../assets/cta-slab.jpg",
+    # ⭐⭐⭐ D228's SLAB SHOT IS GONE FROM THIS TABLE ENTIRELY — 15 Aug 2026 (D241). Three pages
+    # took `cta-slab.jpg` because the portfolio held no fireplace, no dining table and no vanity
+    # top, and the client had twice said generate nothing. He sent photographs of all three
+    # instead. ⛔ `cta-slab.jpg` IS STILL LIVE and must not be deleted: it is the landing page's
+    # CTA band. It is simply no longer any service page's hero.
+    # ⚠️ THE ONE WRONG SUBJECT LEFT IS COMMERCIAL, which still carries `kitchen-day.jpg` — a
+    # domestic kitchen against copy about reception desks and washrooms. He has asked for it.
+    "vanity-tops": "../assets/site/service-vanity-1600.webp",
+    # ⭐⭐ HIS OWN PHOTOGRAPH — D241. ⚠️ THIS ONE TAKES ITS NATIVE 1550 RUNG AND NOT A 1600 LIKE
+    # the other three: the source is 3000x2000, so 1550 is the whole crop and there is nothing
+    # above it. ⭐ It is also the cheapest of the four heroes at 184 KB, because a marble surround
+    # against flat panelling holds far less high-frequency detail than foliage or gravel.
+    "fireplaces": "../assets/site/service-fireplaces-1550.webp",
     # ⭐⭐ THE CLIENT'S OWN PHOTOGRAPH — D241. He sent it for the Dining Tables CARD and said it
     # would "automatically become the hero section in the dedicated page", which is this line.
     # ⛔⛔ THIS IS A CSS `background-image` AND CSS BACKGROUNDS HAVE NO `srcset`, so whatever is

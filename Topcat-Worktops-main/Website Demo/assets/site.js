@@ -237,6 +237,19 @@ const SS={
     85 for all three, the level build_images.py verified by eye — it was NOT lowered for this one
     file, because a per-image quality is a second rule nobody would find later. */
  "/assets/site/service-outdoor-2400.webp":"/assets/site/service-outdoor-880.webp 880w, /assets/site/service-outdoor-1600.webp 1600w, /assets/site/service-outdoor-2400.webp 2400w",
+ /* ⚠️ TWO RUNGS, NOT THREE, AND THAT IS THE SOURCE FILE'S DOING — the fireplace photograph is
+    3000x2000 where the other three are 7360x4912, so the crop tops out at 1550px native. ⛔ Do
+    not add a 2400 here to make the table look tidy; it would be an upscale. */
+ "/assets/site/service-fireplaces-1550.webp":"/assets/site/service-fireplaces-880.webp 880w, /assets/site/service-fireplaces-1550.webp 1550w",
+ "/assets/site/service-vanity-2400.webp":"/assets/site/service-vanity-880.webp 880w, /assets/site/service-vanity-1600.webp 1600w, /assets/site/service-vanity-2400.webp 2400w",
+ "/assets/site/service-commercial-2400.webp":"/assets/site/service-commercial-880.webp 880w, /assets/site/service-commercial-1600.webp 1600w, /assets/site/service-commercial-2400.webp 2400w",
+ /* ⚠️ TWO RUNGS AGAIN, AND AGAIN THE SOURCE DECIDED IT — 1920x1080 in, 1620 out. ⛔ And note the
+    prefix: `service-splash-marble` is THIS photograph; `service-splashbacks-706` is the July one
+    it replaced and is a different picture entirely. */
+ "/assets/site/service-splash-marble-1620.webp":"/assets/site/service-splash-marble-880.webp 880w, /assets/site/service-splash-marble-1620.webp 1620w",
+ /* ⛔ `service-worktops-quartz` IS NOT A RUNG OF `service-worktops-554`. Different photograph,
+    deliberately different prefix. */
+ "/assets/site/service-worktops-quartz-2400.webp":"/assets/site/service-worktops-quartz-880.webp 880w, /assets/site/service-worktops-quartz-1600.webp 1600w, /assets/site/service-worktops-quartz-2400.webp 2400w",
  "assets/team/handshake.jpg":"/assets/site/team-handshake-600.webp 600w, /assets/site/team-handshake-900.webp 900w",
  "assets/team/samples.jpg":"/assets/site/team-samples-248.webp 248w, /assets/site/team-samples-386.webp 386w",
  "assets/team/fitting.jpg":"/assets/site/team-fitting-248.webp 248w, /assets/site/team-fitting-386.webp 386w"
@@ -266,9 +279,30 @@ const SERVICES=[
      ⛔ **`PROJECTS` NO LONGER READS THIS ARRAY BY INDEX** — it names its own files now, so
      re-ordering the range can never silently re-photograph the gallery. */
 
-  {t:"Kitchen Worktops",long:"Worktops cut from a single slab where the run allows, islands with mitred waterfall ends that fold the stone to the floor, templated to the millimetre and fitted by our own team.",href:"/services/kitchen-worktops.html",img:"/assets/site/service-worktops-554.webp"},
+  /* ⭐⭐⭐ THE LAST TILE TO GO OVER TO HIS OWN PHOTOGRAPHY — D241. **ALL EIGHT ARE HIS NOW.** This
+     one had carried `service-worktops-554`, one of the seven images that were pasted into this
+     file as base64 in July and pulled out to disk by D109.
+     ⛔⛔ **THE PREFIX IS `service-worktops-quartz`, NOT `service-worktops`** — same reason as the
+     splashback: `service-worktops-554.webp` and its `.jpg` are a DIFFERENT picture, and two
+     photographs sharing a rung prefix is how a ladder gets mis-read. **The old pair stays on
+     disk, unreferenced.**
+     ⭐ Cut to (1914,1969)–(6330,4912) of 7360x4912: the quartz peninsula and its thick edge fill
+     the foreground, the run behind carries the sink and hob, and the crop keeps out a red wall
+     sign and a shelf of ornaments that were the only two things in the frame reading as somebody
+     else's house. */
+  {t:"Kitchen Worktops",long:"Worktops cut from a single slab where the run allows, islands with mitred waterfall ends that fold the stone to the floor, templated to the millimetre and fitted by our own team.",href:"/services/kitchen-worktops.html",img:"/assets/site/service-worktops-quartz-2400.webp"},
 
-  {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splashbacks-706.webp"},
+  /* ⭐⭐ HIS OWN PHOTOGRAPH REPLACES THE ONE THAT WAS INLINED IN THIS FILE SINCE JULY — D241.
+     ⛔⛔ **THE NAME IS DELIBERATELY NOT `service-splashbacks`.** That prefix already belongs to a
+     DIFFERENT photograph — `service-splashbacks-706.webp` and its `.jpg`, the July image this
+     one supersedes — and two unrelated pictures sharing a prefix is a rung table waiting to be
+     mis-read. **The old pair stays on disk, unreferenced, like the six unused project files.**
+     ⭐ Cut to (0,0)–(1620,1080) of a 1920x1080 source, so 1620 IS the ladder's top and there is
+     no 2400: the marble runs the full width with the hob anchoring it as a kitchen. ⭐⭐ **THE
+     SOCKETS ARE IN SHOT ON PURPOSE** — this tile's own copy says "cut around sockets and hobs",
+     so they are the sentence, not clutter. ⚠️ They are not UK sockets; at card size it is not
+     legible, and the alternative crop lost the run of marble that makes the point. */
+  {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splash-marble-1620.webp"},
 
   /* ⭐⭐ A REAL BATHROOM INSTEAD OF THE BARE SLAB — D241, his own file, sent in the same run as
      the dining photograph. This tile was one of the three the handover had listed as showing the
@@ -303,7 +337,22 @@ const SERVICES=[
      carries building-regulation duties around hearths and clearances that nobody has told us
      they take on, and §2 rule 12 forbids stating what we cannot guarantee. The page says plainly
      that Topcat cut and fit the stone and work to the installer's figures. */
-  {t:"Fireplaces",long:"Hearths, surrounds and mantels cut to your opening and finished by hand, in the same stone as the rest of the house if you want the rooms to tie together.",href:"/services/fireplaces.html",ph:"FIREPLACES"},
+  /* ⭐⭐ THE SECOND PLATE TO BECOME A PHOTOGRAPH — D241, his own file. Client: *"use this one for
+     fireplace but crop it so the focus is more on the fireplace."* ⭐⭐⭐ **THE CROP IS THE
+     INSTRUCTION**: the frame he sent is a whole drawing room and the marble surround is in the
+     right-hand quarter, under a wall-mounted television. Cut to (1450,880)–(3000,1913) it is the
+     surround, the opening, the hearth and just enough floor and panelling to place it — ⭐ **and
+     the top edge at 880 is what takes the TELEVISION out**, which is the one object in that room
+     a stone company should not be showing. ⛔⛔ **THIS PHOTOGRAPH IS 3000x2000, NOT 7360x4912
+     LIKE THE OTHER THREE**, so the crop is 1550px wide and THAT is the top of its ladder. There
+     is no 2400 rung and there must not be one: upscaling adds bytes and no detail, which is the
+     rule build_images.py already applies by clamping to the native width. ⚠️ The card grid asks
+     for 2320 at 2x and gets 1550 — the best that exists — exactly as `service-worktops-554` has
+     always done against the same `sizes`. ⚠️ A tighter crop was cut first and rejected on the
+     HERO: at 1.5:1 the hero band is the middle 55.8% of the file, and tight on the opening that
+     band is a flat panel of marble with no shape in it. This one puts the opening's top moulding
+     and its right jamb inside the band, so it still reads as a fireplace under the veil. */
+  {t:"Fireplaces",long:"Hearths, surrounds and mantels cut to your opening and finished by hand, in the same stone as the rest of the house if you want the rooms to tie together.",href:"/services/fireplaces.html",img:"/assets/site/service-fireplaces-1550.webp"},
 
   /* ⭐⭐ THE FIRST OF THE THREE PLATES TO BECOME A REAL PHOTOGRAPH — D241, his own file. ⛔ THE
      CROP IS LOAD-BEARING AND IS NOT THE PHOTOGRAPH HE SENT: the frame he gave is a whole kitchen
@@ -324,21 +373,42 @@ const SERVICES=[
      words — was answered by SPLITTING the content rather than by sharing a page: the bathroom
      page kept its URL and took shower surrounds, sills and thresholds, and the basins moved here.
      ⛔ Do not re-point this at the bathroom page. */
-  {t:"Vanity Tops",long:"Basin tops cut for undermount or countertop basins, with the tap holes exactly where you want them and the edges finished to match.",href:"/services/vanity-tops.html",ph:"VANITY TOPS"},
+  /* ⭐⭐⭐ THE LAST PLATE IS GONE — D241. All eight tiles are photographs now. His own file, and
+     the only PORTRAIT source of the five: **5464x8192**, where every box on this site is a
+     landscape crop, so this one had to give up most of its height rather than its width. Cut to
+     (737,4301)–(4731,6963) — the worktop run with its undermount basin, the wall tap, the second
+     basin at the far end, and enough of the lit mirror above and the cabinet below that it reads
+     as a vanity and not as a length of stone. ⭐ It is also the cheapest of the five at every
+     rung (42/102/176 KB): one pale, evenly-lit surface across most of the frame is the opposite
+     of the outdoor kitchen's foliage and gravel. ⚠️ The subject is a QUARTZ-look top, which is
+     what this tile's copy promises, and the basin is undermount — the same word the copy uses. */
+  {t:"Vanity Tops",long:"Basin tops cut for undermount or countertop basins, with the tap holes exactly where you want them and the edges finished to match.",href:"/services/vanity-tops.html",img:"/assets/site/service-vanity-2400.webp"},
 
-  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/kitchen-day-1188.webp"}
+  /* ⭐⭐⭐ THE LAST WRONG SUBJECT IS GONE — D241. This tile carried `kitchen-day`, a DOMESTIC
+     kitchen, against copy about reception desks and washrooms, and the client had asked for it.
+     His own file now: a salon fit-out, a run of stations and a marble floor, which is a
+     commercial interior on sight. ⚠️ `kitchen-day` stays live — it is still the hero of
+     `/services/kitchen-islands.html`. ⛔ **THE CROP IS PICKED TO KEEP FOREIGN SHOPFRONT SIGNAGE
+     OUT OF FRAME**: the original looks across the room to a street window carrying Cyrillic
+     lettering, and a UK company's commercial page should not be showing it. Cut to
+     (3974,1398)–(7360,3654) — the right-hand third — it is out entirely. */
+  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/service-commercial-2400.webp"}
 ];
-/* ⚠️⚠️ TWO TILES CARRY `ph` AND NO `img`, WHICH HANDS THEM TO `phImg()` — the site's own
-   "PHOTO TO COME" plate. Fireplaces and Vanity Tops are the two left; Dining Tables became a
-   real photograph on 15 Aug (D241) and the route was exactly the one described below — a file
-   into `img`, the `ph` deleted, and nothing else touched.
-   ⛔ THIS IS THE HONEST STATE AND IT WAS CHOSEN OVER THE ALTERNATIVE: reusing a near-enough
-   photograph is what put a QUARRY on Outdoor Spaces, a SLAB on Bathrooms and a KITCHEN on
-   Commercial. A plate that says "photo to come" is read as pending; a photograph of the wrong
-   thing is read as wrong. ⭐ D241 CLOSED TWO OF THOSE THREE — the client sent a garden kitchen
-   and a stone bathroom of his own, and both tiles now show what they are named after.
-   ⚠️ **COMMERCIAL IS THE ONE STILL SHOWING A DOMESTIC KITCHEN** (`kitchen-day`), and he has
-   asked for it. Drop a real file into `img` and delete the `ph` — nothing else changes. */
+/* ⭐⭐⭐ NO TILE CARRIES `ph` ANY MORE — 15 Aug 2026 (D241). All eight are photographs. The
+   client sent five files in one run and they closed the three "PHOTO TO COME" plates (Dining
+   Tables, Fireplaces, Vanity Tops) AND two of the three wrong subjects (a quarry on Outdoor
+   Spaces, a slab on Bathrooms).
+   ⛔⛔ **`phImg()` STAYS AND IS NOT DEAD CODE.** Both renderers still fall back to it, and that
+   fallback is load-bearing: D206 shipped `src="undefined"` the day a service arrived without a
+   photograph, and it rendered as a confident, broken card. A ninth service tomorrow gets a
+   plate, not a blank.
+   ⭐⭐⭐ **AND THERE IS NO WRONG SUBJECT LEFT EITHER. ALL EIGHT TILES ARE THE CLIENT'S OWN FILES
+   AS OF 15 AUG** — he sent them in one run of seven messages, one service at a time. ⚠️ That
+   also means the last of the JULY inlined photographs is off the tiles: `service-worktops-554`,
+   `service-splashbacks-706` and their `.jpg` masters are all unreferenced now and all still on
+   disk. ⛔ `service-islands-468` was already unused and stays too.
+   ⭐ THE ROUTE, FOR THE NEXT ONE: drop a real file into `img`, delete any `ph`, register the
+   ladder in `SS`, and point the leaf hero at the 1600 rung in `services/build_services.py`. */
 const flipIcon='<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>';
 const backIcon='<svg viewBox="0 0 24 24"><path d="M9 5l-7 7 7 7"/><path d="M2 12h20"/></svg>';
 /* Placeholder image for cards whose photo isn't in yet. The card already renders the service
