@@ -2101,7 +2101,32 @@
       transition:background .4s var(--ease),color .4s var(--ease),border-color .4s var(--ease)}
     .helix-card:not(.front) .hx-link{pointer-events:none}
     .hx-link:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
-    .helix-ui{flex:none;display:flex;justify-content:center;gap:14px;padding:10px 0 0}
+    /* ⭐⭐⭐ THE ARROW PAIR IS THE "CALL US" BLOCK, MIRRORED UNDER THE HELIX — 15 Aug 2026 (D243).
+       Client: *"make the buttons the exact same size as the call us block and then also the same
+       height and move it exactly into the center of the helix. and line it up exactly center with
+       the word call us."*
+       ⭐ **129.79 x 50.75 IS `.rev-cta-ghost`'s MEASURED BOX, AND IT IS A CONSTANT HERE, WHICH WAS
+       CHECKED BEFORE IT WAS TYPED.** That button is `font-size:12.5px` with `padding:15px 28px`
+       and a 1px border — none of them viewport-scaled — so it measures 129.79 x 50.75 at 1132 AND
+       at 1440. ⛔ **THIS IS THE ONE CASE D239's WARNING ALLOWS**: a px cap is wrong when the thing
+       it mirrors is vw-led, and right when it is not. ⚠️ Re-measure if the "Call us" label, the
+       CTA padding or its font-size ever changes — the width is `56px + 2px + 5.7431em` of that
+       label, and a longer word moves it.
+       ⭐ TWO EQUAL COLUMNS, WHICH IS D239's OWN ANSWER to making two buttons one size without
+       typing a second number, and `margin-inline:auto` centres the block on the helix — a
+       `max-width` box in a wider parent aligns LEFT (D199, and it has caught this project twice).
+       ⚠️ THE ARROWS ARE SQUARE-CORNERED NOW, not circles: a 50% radius on a 60x50 box is an
+       ellipse, and the point of the ask is that they read as the same component as the CTA. */
+    .helix-ui{flex:none;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+      width:129.79px;height:50.75px;margin:0 auto var(--helixFoot,0px);padding:0}
+    .helix-ui .wbtn{width:100%;height:100%;border-radius:2px}
+    /* ⭐⭐ THE TOP OF THE HELIX MEETS THE TOP OF THE TITLE. Client: *"the top of the title with the
+       top of the helix… just bring it slightly down to balance out more with the section."*
+       ⭐ **IT IS THE SAME CLAMP `.svc-intro` ALREADY CARRIES, NOT A NUMBER MEASURED OFF IT** — that
+       column's `padding-top:clamp(6px,2.5vh,30px)` is the only reason the title starts below the
+       row, so repeating the expression makes the two tops move together at every window height.
+       Measured: 21.6px at 863 tall, 22.5px at 900, and the tops agree at both. */
+    .svc-helix{padding-top:clamp(6px,2.5vh,30px)}
   }
 
   /* the phone gets a shorter version of the intro — see the markup, both live in the DOM and
@@ -9854,13 +9879,37 @@ if(svcReduce){
      that only fires if the window is later widened, and the cards would sit at ENT=0, which
      is invisible. */
   let booted=false, tries=0;
+  /* ⭐⭐⭐ THE ARROWS SIT ON THE "CALL US" LINE, AND THIS IS THE ONLY WAY THAT CAN BE EXACT —
+     15 Aug 2026 (D243). Client: *"line it up exactly center with the word call us."*
+     ⛔⛔ **NO CSS VALUE CAN DO IT, AND THAT WAS MEASURED BEFORE REACHING FOR SCRIPT.** The two
+     columns are a stretch row inside a `min-height:100vh` frame, so the row's height follows the
+     WINDOW while the left column's content height is intrinsic — the gap below the CTA pair runs
+     **6.5px at 863 tall and 48.8px at 900**. A fixed padding is right at one height and wrong at
+     every other, and a `vh` expression is a guess at a number that is not linear in vh.
+     ⛔ The other obvious fix — parking the CTA pair at the column's bottom edge — is the one the
+     client already rejected (see `.svc-intro-ctas`: it "used to push the pair a whole empty
+     column-height away from the rows it belongs to").
+     ⭐⭐ **IT IS RECOMPUTED FROM A FRESH READ EVERY TIME, NEVER ACCUMULATED** — D236's rule. The
+     value is overwritten on each call, so widening and narrowing cannot leave a stale offset
+     behind, which is exactly the fault that broke the project gallery on a resize.
+     ⚠️ It runs BEFORE metrics(): it changes the stage's height, and metrics() reads that rect. */
+  function footToCallUs(){
+    const wrap=document.querySelector('.svc-helix');
+    const row=wrap&&wrap.parentElement;
+    const ctas=document.querySelectorAll('#services .svc-intro-ctas a');
+    const call=ctas[ctas.length-1];
+    if(!wrap||!row||!call) return;
+    const gap=row.getBoundingClientRect().bottom-call.getBoundingClientRect().bottom;
+    wrap.style.setProperty('--helixFoot',Math.max(0,gap).toFixed(2)+'px');
+  }
   function boot(){
+    footToCallUs();
     const r=stage.getBoundingClientRect();
     if(!r.width||!r.height){ if(++tries<20) setTimeout(boot,150); return; }
     booted=true; metrics(); cur=target; render(); markActive(); watchEntrance();
   }
   boot();
-  window.addEventListener('resize',()=>{ if(!booted){ tries=0; boot(); return; } metrics(); render(); });
+  window.addEventListener('resize',()=>{ if(!booted){ tries=0; boot(); return; } footToCallUs(); metrics(); render(); });
 })();
 
 /* ---------- marble generator (slab wheel + review card backing) ---------- */

@@ -1279,13 +1279,37 @@ if(svcReduce){
      that only fires if the window is later widened, and the cards would sit at ENT=0, which
      is invisible. */
   let booted=false, tries=0;
+  /* ⭐⭐⭐ THE ARROWS SIT ON THE "CALL US" LINE, AND THIS IS THE ONLY WAY THAT CAN BE EXACT —
+     15 Aug 2026 (D243). Client: *"line it up exactly center with the word call us."*
+     ⛔⛔ **NO CSS VALUE CAN DO IT, AND THAT WAS MEASURED BEFORE REACHING FOR SCRIPT.** The two
+     columns are a stretch row inside a `min-height:100vh` frame, so the row's height follows the
+     WINDOW while the left column's content height is intrinsic — the gap below the CTA pair runs
+     **6.5px at 863 tall and 48.8px at 900**. A fixed padding is right at one height and wrong at
+     every other, and a `vh` expression is a guess at a number that is not linear in vh.
+     ⛔ The other obvious fix — parking the CTA pair at the column's bottom edge — is the one the
+     client already rejected (see `.svc-intro-ctas`: it "used to push the pair a whole empty
+     column-height away from the rows it belongs to").
+     ⭐⭐ **IT IS RECOMPUTED FROM A FRESH READ EVERY TIME, NEVER ACCUMULATED** — D236's rule. The
+     value is overwritten on each call, so widening and narrowing cannot leave a stale offset
+     behind, which is exactly the fault that broke the project gallery on a resize.
+     ⚠️ It runs BEFORE metrics(): it changes the stage's height, and metrics() reads that rect. */
+  function footToCallUs(){
+    const wrap=document.querySelector('.svc-helix');
+    const row=wrap&&wrap.parentElement;
+    const ctas=document.querySelectorAll('#services .svc-intro-ctas a');
+    const call=ctas[ctas.length-1];
+    if(!wrap||!row||!call) return;
+    const gap=row.getBoundingClientRect().bottom-call.getBoundingClientRect().bottom;
+    wrap.style.setProperty('--helixFoot',Math.max(0,gap).toFixed(2)+'px');
+  }
   function boot(){
+    footToCallUs();
     const r=stage.getBoundingClientRect();
     if(!r.width||!r.height){ if(++tries<20) setTimeout(boot,150); return; }
     booted=true; metrics(); cur=target; render(); markActive(); watchEntrance();
   }
   boot();
-  window.addEventListener('resize',()=>{ if(!booted){ tries=0; boot(); return; } metrics(); render(); });
+  window.addEventListener('resize',()=>{ if(!booted){ tries=0; boot(); return; } footToCallUs(); metrics(); render(); });
 })();
 
 /* ---------- marble generator (slab wheel + review card backing) ---------- */
