@@ -260,6 +260,16 @@ const SS={
     is already written for. */
  "/assets/site/process-quote-plans-1600.webp":"/assets/site/process-quote-plans-880.webp 880w, /assets/site/process-quote-plans-1600.webp 1600w",
  "/assets/site/about-fitting-386.webp":"/assets/site/about-fitting-248.webp 248w, /assets/site/about-fitting-386.webp 386w",
+ /* ⭐ THE FACELESS ROUND — 15 Aug 2026. Two process steps and the About handshake, all generated
+    without faces on the client's instruction, all with the ladders their own boxes ask for. The
+    two process files take 880/1600 for the same reason `process-quote-plans` does: `#pmShot` in
+    the step's detail card is 758 wide and takes `p.img` with no srcset. */
+ "/assets/site/process-consult-handshake-1600.webp":"/assets/site/process-consult-handshake-880.webp 880w, /assets/site/process-consult-handshake-1600.webp 1600w",
+ /* ⚠️ TWO RUNGS AND THE TOP ONE IS 1516, NOT 1600 — the install shot is a CROP of its generation
+    (the client asked for the breast pockets out), so 1516 is its native width and 1600 would be
+    an upscale. Same rule the fireplace and splashback ladders follow (D241). */
+ "/assets/site/process-install-hands-1516.webp":"/assets/site/process-install-hands-880.webp 880w, /assets/site/process-install-hands-1516.webp 1516w",
+ "/assets/site/about-handshake-900.webp":"/assets/site/about-handshake-600.webp 600w, /assets/site/about-handshake-900.webp 900w",
  "assets/team/handshake.jpg":"/assets/site/team-handshake-600.webp 600w, /assets/site/team-handshake-900.webp 900w",
  "assets/team/samples.jpg":"/assets/site/team-samples-248.webp 248w, /assets/site/team-samples-386.webp 386w",
  "assets/team/fitting.jpg":"/assets/site/team-fitting-248.webp 248w, /assets/site/team-fitting-386.webp 386w"
@@ -484,7 +494,29 @@ function buildCards(container, items, opts){
   });
 }
 const PROCESS=[
-  {t:"Consultation",img:"/assets/site/process-consultation-547.webp",d:"We visit, understand the space, and guide you to the right stone.",
+  /* ⭐⭐ NO FACES, A BLACK TOPCAT POLO, AND THE MARK IS HIS OWN FILE — 15 Aug 2026. Client:
+     *"a black shirt with a golden topcat logo on it, a collared shirt, and you don't see the
+     person's face. It's just a shirt and them shaking hands with the homeowner."*
+     ⛔⛔⛔ **THE LOGO WAS NOT GENERATED AND MUST NEVER BE.** §2 rule 14 — the logo is the client's
+     artwork and is never re-drawn — and an image model asked for "a gold Topcat logo" INVENTS a
+     mark, which is precisely a re-drawing. The photograph was generated with a deliberately blank
+     chest and `topcat-icon.svg` was composited on afterwards, rasterised from ITS OWN PATH DATA
+     and ITS OWN gradient stops (#C6A664 → #E4CD92 → #C6A664). ⚠️ Even-odd fill: the mark is three
+     contours and the inner two are HOLES — filling all three solid gives a shape that is nearly
+     right and quite wrong, which is the D245 failure again in another medium.
+     ⭐ Sized like a real embroidered badge, 14.6% of the chest width, and shaded by the fabric's
+     own luminance under it so the folds read through instead of a sticker sitting on top.
+     ⭐⭐ **THE SECOND ATTEMPT IS THE ONE THAT SHIPPED, AND THE FIRST FAILED FOR A REASON WORTH
+     KEEPING.** Client: *"the image you currently have for consultation is not good… we definitely
+     need a new image for consultation where it LOOKS LIKE a consultation… handshake with the slab
+     thing in the background or some plans."* The first was a correct handshake in an empty kitchen
+     — nothing in it said what the meeting was about. This one has a stone slab standing behind,
+     samples, drawings and a tape measure on the counter. ⚠️ **THE PROPS HAD TO BE IN THE TOP HALF
+     OR THEY WOULD NOT EXIST:** `.pt-scrim` is 0.92+ opaque across the bottom 40% of the tile, so a
+     better-composed variant with the samples on the counter was rejected — at 392x230 its whole
+     story sat under the shade. ⛔ **AND THE GENERATION INVENTED TWO CHEST MARKS AND A WORDMARK**,
+     which were patched out with the shirt's own fabric before his was composited on. */
+  {t:"Consultation",img:"/assets/site/process-consult-handshake-1600.webp",d:"We visit, understand the space, and guide you to the right stone.",
    d:"Understanding your space and style.",
    long:"We start at your kitchen, understanding the space, how you live in it, and the look you're after, then guide you to the material and finish that fit, with no pressure and no jargon."},
   /* ⭐⭐ THE CLIENT'S OWN PICTURE FOR STEP TWO — 15 Aug 2026. Client: *"use this first screenshot
@@ -501,7 +533,20 @@ const PROCESS=[
   {t:"Template & Craft",img:"/assets/site/process-template-678.webp",d:"Templated by hand to the millimetre, then precision-cut and polished.",
    d:"Measured and cut to the millimetre.",
    long:"Once your units are level we template the space by hand to a fraction of a millimetre. Your slab is then precision-cut and polished by our own experienced fabricators, cut wet to full safety standards, with the veining matched through the joints before we fit it ourselves."},
-  {t:"Install & Enjoy",img:"/assets/site/process-install-600.webp",d:"Fitted cleanly and precisely, usually within days.",
+  /* ⭐⭐ HANDS ON THE STONE, NO FACES, PLAIN BLACK SHIRTS — 15 Aug 2026. Client: *"we need to
+     probably not show faces just the installation being done with hands on it and also just black
+     shirts. and they don't have to have the logo on it unless we can get it with the logo on. But
+     in case it's gonna mess up, don't do that."*
+     ⭐⭐ **CROPPED TO THE ARMS ON HIS SECOND LOOK:** *"unless you wanna crop out the part where you
+     see the breast pockets. So you basically just start by cropping where you can only see their
+     arms. So maybe do that, but you can still use that same image."* The generation put patch
+     pockets on both chests, and a pocket is a garment detail nobody chose. **Top 26% cut, so the
+     frame now opens below them:** black sleeves, gloved hands and the stone, nothing else.
+     ⛔ **NO LOGO ON THIS ONE, AND THAT IS HIS RULE APPLIED, NOT AN OVERSIGHT** — *"in case it's
+     gonna mess up, don't do that."* After the crop there is no chest left in frame at all.
+     ⚠️ **IT ALSO RETIRES ANOTHER FIRM'S BRANDING.** The July file it replaces showed three fitters
+     in shirts reading "ENCOTEY" across the back, legible at tile size on the landing page. */
+  {t:"Install & Enjoy",img:"/assets/site/process-install-hands-1516.webp",d:"Fitted cleanly and precisely, usually within days.",
    d:"Fitted cleanly, usually within days.",
    long:"Our team fits your worktop cleanly and precisely, usually within days of templating, squared, sealed and ready to use. Then the kitchen is yours to enjoy."}
 ];
@@ -6836,7 +6881,16 @@ function viewSequence(host,tiles,apply,opts){
      ⚠️ Its ladder is keyed on the TOP RUNG here, the D211/D244 shape, not on a `.jpg` in
      assets/team/ like the three stand-ins beside it — those live there because they are
      AI placeholders awaiting the shoot (§7.5), and this one is not one of those. */
-  const picks=['/assets/team/handshake.jpg','/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
+  /* ⭐⭐ w1 IS FACELESS NOW — 15 Aug 2026. Client: *"the big block where the two people are shaking
+     hands, we need to regenerate that."* The stand-in it replaces showed three lit faces at the
+     largest size in the collage, directly under two director plates that are still empty; the new
+     one is a handshake over a marble worktop with a brushed gold tap, which is the site's own
+     palette rather than a stock interior.
+     ⛔ **w4 STAYS AS IT IS AND THAT IS A DECISION, NOT AN OMISSION.** He asked for "the block with
+     the kitchen in it" to be regenerated as an installation shot; it is the CENTRAL LONDON job out
+     of his own portfolio (D244), so replacing it would have swapped a real photograph of his work
+     for an invented one. Put to him and he kept the real one. */
+  const picks=['/assets/site/about-handshake-900.webp','/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
                '/assets/projects/central-london-1400.webp'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */
