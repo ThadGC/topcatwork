@@ -6918,7 +6918,11 @@ function viewSequence(host,tiles,apply,opts){
      ⭐ Zero cost: both rungs and the `SS` entry have been on disk since D109, unreferenced since
      D241 and kept on purpose. ⚠️ The alt says what the picture IS and claims nothing — Topcat do
      not quarry, and the tile carries no caption that could suggest otherwise. */
-  const picks=['/assets/site/quarry-955.webp','/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
+  /* ⭐ `null` AT INDEX 0 SINCE D255: w1 is a Topcat plate and carries its own `src` in the markup.
+     ⛔ **KEEP THE NULL RATHER THAN SHORTENING THE ARRAY** — the fill maps to `.ac-tile img` in DOM
+     order, so dropping the entry would slide w2, w3 and w4 up by one and quietly re-shuffle the
+     whole collage. The guard below (`if(!picks[i])return`) was already there. */
+  const picks=[null,'/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
                '/assets/projects/harrow-1400.webp'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */

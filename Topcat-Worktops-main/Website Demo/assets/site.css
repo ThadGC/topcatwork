@@ -5505,6 +5505,24 @@
      both of which are frozen. */
   .ac-w4{display:none}
 
+  /* ⭐⭐ THE BIG TILE IS A TOPCAT PLATE — 15 Aug 2026 (D255), the client's own suggestion. It is the
+     SAME component as the project-gallery plates (D240) and the Why mark (D245): the same
+     `topcat-vertical.svg`, the same 158deg ground, the same 46% height and 0.92 opacity, so the
+     page's brand moments are one file and one treatment rather than three lookalikes.
+     ⛔⛔⛔ **THE SELECTOR NEEDS ALL FOUR CLASSES AND THAT IS LOAD-BEARING.** `.about-collage>.ac-tile>img`
+     is `position:absolute;inset:0` (0,2,1) and `.ac-tile img` is `width:100%;height:100%;object-fit:cover`
+     — a lone `.ac-mark` (0,1,0) loses to both, and the lockup would ship stretched to the tile.
+     **This is exactly how D245 nearly shipped the same artwork squashed.**
+     ⛔ HEIGHT ONLY (§2 rule 14): `height:46%` with `width:auto`, never both.
+     ⚠️ The veil is off here — it is a bottom-up scrim written for photographs, and on a plate it
+     just dirties the ground. `.proj-brand` carries no veil either. */
+  .about-collage>.ac-tile.ac-plate{display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(158deg,rgba(30,30,38,0.92),rgba(12,12,16,0.96))}
+  .about-collage>.ac-tile.ac-plate>img.ac-mark{position:static;inset:auto;
+    height:46%;width:auto;max-width:72%;object-fit:contain;opacity:0.92;filter:none}
+  .ac-plate .ac-veil{display:none}
+  .about-collage>.ac-tile.ac-plate:hover>img.ac-mark{transform:none}
+
   /* ============================================================================
      ⭐⭐⭐ THE COLLAGE REACHES THE BOTTOM OF THE COPY — 15 Aug 2026 (D244). DESKTOP ONLY.
      Client: *"add more blocks to the collage so that the about us section fills up nicely in line

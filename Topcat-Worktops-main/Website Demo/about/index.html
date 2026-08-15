@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=07479666ff">
+<link rel="stylesheet" href="/assets/site.css?v=a0d659a17d">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -461,7 +461,12 @@
              ⚠️ Do not re-add a tile here without also restoring the third column in the grid
              (`.about-collage`) and the third entry in `HINGE` (the ABOUT COLLAGE IIFE). All three
              are indexed by DOM position and they must agree. -->
-        <figure class="ac-tile ac-w1 glow-card"><img alt="Blocks of marble cut at the quarry" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
+        <!-- ⭐⭐ A TOPCAT PLATE, NOT A PHOTOGRAPH — 15 Aug 2026 (D255), and it is the client's own
+             suggestion after two rejected pictures: *"just use something different… or even add the
+             vertical topcat logo in there."* ⛔ **THE `src` IS WRITTEN HERE AND `picks[0]` IS `null`
+             SO THE IIFE LEAVES IT ALONE** — the fill maps to `.ac-tile img` in DOM ORDER, so a null
+             holds this tile's place and keeps every other index where it was. -->
+        <figure class="ac-tile ac-w1 ac-plate glow-card"><img class="ac-mark" src="/assets/brand/topcat-vertical.svg" alt="" aria-hidden="true" draggable="false" loading="lazy" decoding="async"><div class="ac-veil"></div><div class="sheen"></div></figure>
         <figure class="ac-tile ac-w2 glow-card"><img alt="Worktops going in on a kitchen fit" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
         <figure class="ac-tile ac-w3 glow-card"><img alt="Fitting a worktop" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
         <!-- ⭐⭐ THE FOURTH WORK TILE — 15 Aug 2026 (D244). Client: *"add more blocks to the collage
@@ -1073,6 +1078,6 @@
 
 </main>
 
-<script src="/assets/site.js?v=4be112ad67" defer></script>
+<script src="/assets/site.js?v=db389da578" defer></script>
 </body>
 </html>
