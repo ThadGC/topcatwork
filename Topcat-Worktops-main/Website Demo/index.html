@@ -5473,6 +5473,65 @@
     background:linear-gradient(to top,rgba(8,8,10,0.42),rgba(8,8,10,0.05) 55%)}
   .ac-tile:hover img{transform:scale(1.05);filter:brightness(1) saturate(1)}
   .ac-tile:hover .sheen{transform:translateX(120%)}
+  /* ⛔ THE FOURTH WORK TILE IS DESKTOP-ONLY, so it must be OFF everywhere else — an unplaced grid
+     child would otherwise drop into an implicit row below the 3/4 frame on the phone and tablet,
+     both of which are frozen. */
+  .ac-w4{display:none}
+
+  /* ============================================================================
+     ⭐⭐⭐ THE COLLAGE REACHES THE BOTTOM OF THE COPY — 15 Aug 2026 (D244). DESKTOP ONLY.
+     Client: *"add more blocks to the collage so that the about us section fills up nicely in line
+     with the text and the images lines up with the text and goes all the way and matches up with
+     the bottom of the chat to the top cat button… Resize the images, add more take some away if
+     you want to."*
+     ⛔⛔ **THE GAP WAS `aspect-ratio:3/4` AND `align-self:start` TOGETHER, NOT A MISSING TILE.**
+     The collage took its height from its own width — 496.8 wide gave 662.4 tall — while the copy
+     column ran 761. **Measured: the collage ended 99px above the "Chat with Topcat" button.** No
+     number of extra tiles closes that on its own; they would just have shared the same 662px.
+     ⭐⭐ SO THE HEIGHT COMES FROM THE ROW NOW (`align-self:stretch`, no aspect-ratio) and the
+     bottom edge IS the copy column's bottom edge, which is the button. It needs no measurement
+     and cannot drift: whatever the copy does at any width, the collage matches it.
+     ⚠️ **`align-self:start` WAS LOAD-BEARING FOR THE TOP EDGE** and `stretch` keeps that — the
+     row's top edge is still the collage's top edge, which is the note above this block.
+     ⭐ THE DIRECTORS KEEP THEIR SHAPE AND THAT IS WHY ROW 1 IS `auto`: the pair carries its own
+     3/4 and the auto row sizes to it, so the extra height lands entirely in the work band, which
+     grows 324 → 423. ⛔ Six equal `1fr` rows would have stretched the portraits instead, and
+     "those images can be the same size" (client, D150) is about each other, not about being tall.
+     ⚠️ FOUR WORK TILES IS THE CEILING AND THE ARITHMETIC IS THE REASON: `scrollSequence`'s bound
+     is `(n−1)*step + span < 1`, and at six tiles that is `5*0.112 + 0.42 = 0.98`. A seventh needs
+     `step` cut to 0.096 or the last tile never finishes its build inside the block's travel. */
+  @media(min-width:1121px){
+    .about-collage{
+      align-self:stretch;
+      aspect-ratio:auto;
+      /* ⛔⛔ `minmax(0,1fr)`, NEVER A BARE `1fr`, AND THIS COST A ROUND. A bare `1fr` track carries
+         an automatic MIN-CONTENT floor, so the three work rows refused to shrink below their
+         images' intrinsic height and the collage stopped following the copy and started DRIVING
+         the grid row: the section went from 844px to over 1100 and broke the "under one screen"
+         rule this whole block is built around. ⚠️ `min-height:0` on the tiles is the same guard
+         one level down — a grid ITEM has the same automatic minimum. */
+      grid-template-rows:auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+      grid-template-areas:
+        "p1 p1 p1 p2 p2 p2"
+        "w1 w1 w1 w1 w2 w2"
+        "w1 w1 w1 w1 w3 w3"
+        "w4 w4 w4 w4 w3 w3";
+    }
+    .ac-p{aspect-ratio:3/4}
+    .about-collage>.ac-tile{min-height:0;min-width:0}
+    /* ⛔⛔⛔ THIS ONE LINE IS WHAT MAKES THE COPY DRIVE THE ROW, AND WITHOUT IT THE WHOLE BLOCK
+       DOES THE OPPOSITE OF WHAT IT SAYS. `minmax(0,1fr)` sets each track's MINIMUM to zero, but
+       when the parent row is auto-sized an `fr` track still resolves to its MAX-content, and the
+       max-content of these tiles is their photographs at natural height. So the collage was
+       reporting a 1019px contribution, winning the row against the copy's 761, and the section
+       grew to 1101px — measured, and the opposite of "matches up with the bottom of the button".
+       ⭐ Out of flow, the image contributes nothing, the tracks collapse to zero, and the tallest
+       thing in the row is the copy — which is exactly the thing the collage is supposed to match.
+       ⚠️ `.ac-tile` is already `position:relative`, so `inset:0` still fills the tile and the
+       hover scale, the veil and the sheen are all unchanged. */
+    .about-collage>.ac-tile>img{position:absolute;inset:0}
+    .ac-w4{display:block;grid-area:w4}
+  }
 
   /* ===== the directors, INSIDE the collage (client, 9 Aug; cut to two 12 Aug, D150) =====
      Replaces the .about-team credit strip that used to sit under the story. The client's read
@@ -8147,6 +8206,16 @@
         <figure class="ac-tile ac-w1 glow-card"><img alt="The owner shaking hands with a customer" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
         <figure class="ac-tile ac-w2 glow-card"><img alt="Choosing stone samples together" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
         <figure class="ac-tile ac-w3 glow-card"><img alt="Fitting a worktop" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
+        <!-- ⭐⭐ THE FOURTH WORK TILE — 15 Aug 2026 (D244). Client: *"add more blocks to the collage
+             so that the about us section fills up nicely… and matches up with the bottom of the
+             chat to the top cat button."* ⭐ **IT IS A REAL TOPCAT JOB, NOT ANOTHER PLACEHOLDER** —
+             the three above it are AI stand-ins until the shoot (§7.5), and this one is the Central
+             London waterfall island out of his own portfolio, which is also the piece the copy in
+             the next column is describing. ⚠️ IT IS LAST IN THE DOM BECAUSE IT IS THE BOTTOM ROW —
+             DOM order IS the build order, and the client's brief is "one by one from the top".
+             ⛔ It only renders as a fourth tile on DESKTOP; below 1121px the grid keeps its 3/4
+             frame and its three work tiles, so the frozen bands are untouched. -->
+        <figure class="ac-tile ac-w4 glow-card"><img alt="A finished waterfall island in a Central London kitchen" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
       </div>
 
     </div>
@@ -15400,7 +15469,16 @@ function viewSequence(host,tiles,apply,opts){
      ⚠️ Keep the D21 trigger phrases out of this file entirely, comments included — the go-live
      scan in §2 rule 1 is a plain grep and cannot tell a comment from a claim.
      AI-generated placeholders in assets/team/ until the real shoot (§7.5). */
-  const picks=['/assets/team/handshake.jpg','/assets/team/samples.jpg','/assets/team/fitting.jpg'];
+  /* ⭐⭐ A FOURTH ENTRY SINCE 15 Aug 2026 (D244), AND IT IS THE ONLY REAL PHOTOGRAPH IN THE LIST.
+     The three above are AI stand-ins until the shoot; this is the Central London waterfall island
+     from the client's own portfolio, which the copy beside it is describing. ⭐ Its ladder is
+     already in `SS` under exactly this key (D211, registered for the project gallery), so the
+     lookup below hands a phone the 560px rung without anything else being added.
+     ⚠️ The list still maps to `.ac-tile img` in DOM ORDER — the portraits carry no <img> — so the
+     four fill w1, w2, w3, w4. ⛔ `.ac-w4` is `display:none` below 1121px, but it is still in the
+     DOM and still matched here, which is deliberate: one list, one order, every band. */
+  const picks=['/assets/team/handshake.jpg','/assets/team/samples.jpg','/assets/team/fitting.jpg',
+               '/assets/projects/central-london-1400.webp'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */
       if(SS[picks[i]]){ im.srcset=SS[picks[i]]; im.sizes='(max-width:720px) 240px, 375px'; }
@@ -15431,7 +15509,13 @@ function viewSequence(host,tiles,apply,opts){
     {ax:'Y',deg:-78,org:'100% 50%'},  // p2 Rimsha — swings in off its RIGHT edge
     {ax:'X',deg:-84,org:'50% 0%'},    // w1 the big square, falls forward off its top edge
     {ax:'Y',deg:-78,org:'100% 50%'},  // w2 swings in off its right edge
-    {ax:'Y',deg: 78,org:'0% 50%'}     // w3 the other way, off its left edge
+    {ax:'Y',deg: 78,org:'0% 50%'},    // w3 the other way, off its left edge
+    /* ⭐ w4, the bottom strip (D244). It falls off its TOP edge like w1 rather than swinging:
+       it is a wide, shallow band, and a Y-axis swing on a 327x132 tile reads as a shutter
+       closing rather than a panel landing. ⚠️ THIS ENTRY IS NOT OPTIONAL EVEN THOUGH THE LOOKUP
+       WRAPS (`i%HINGE.length`) — without it the sixth tile would silently borrow p1's hinge and
+       open off its left edge, which is the one direction the row below cannot support. */
+    {ax:'X',deg:-84,org:'50% 0%'}     // w4 the bottom strip, falls forward off its top edge
   ];
   const tiles=Array.prototype.slice.call(collage.querySelectorAll('.ac-tile'));
   /* the hinge is static, so it is set once here rather than rewritten every frame */

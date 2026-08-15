@@ -6800,7 +6800,16 @@ function viewSequence(host,tiles,apply,opts){
      ⚠️ Keep the D21 trigger phrases out of this file entirely, comments included — the go-live
      scan in §2 rule 1 is a plain grep and cannot tell a comment from a claim.
      AI-generated placeholders in assets/team/ until the real shoot (§7.5). */
-  const picks=['/assets/team/handshake.jpg','/assets/team/samples.jpg','/assets/team/fitting.jpg'];
+  /* ⭐⭐ A FOURTH ENTRY SINCE 15 Aug 2026 (D244), AND IT IS THE ONLY REAL PHOTOGRAPH IN THE LIST.
+     The three above are AI stand-ins until the shoot; this is the Central London waterfall island
+     from the client's own portfolio, which the copy beside it is describing. ⭐ Its ladder is
+     already in `SS` under exactly this key (D211, registered for the project gallery), so the
+     lookup below hands a phone the 560px rung without anything else being added.
+     ⚠️ The list still maps to `.ac-tile img` in DOM ORDER — the portraits carry no <img> — so the
+     four fill w1, w2, w3, w4. ⛔ `.ac-w4` is `display:none` below 1121px, but it is still in the
+     DOM and still matched here, which is deliberate: one list, one order, every band. */
+  const picks=['/assets/team/handshake.jpg','/assets/team/samples.jpg','/assets/team/fitting.jpg',
+               '/assets/projects/central-london-1400.webp'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */
       if(SS[picks[i]]){ im.srcset=SS[picks[i]]; im.sizes='(max-width:720px) 240px, 375px'; }
@@ -6831,7 +6840,13 @@ function viewSequence(host,tiles,apply,opts){
     {ax:'Y',deg:-78,org:'100% 50%'},  // p2 Rimsha — swings in off its RIGHT edge
     {ax:'X',deg:-84,org:'50% 0%'},    // w1 the big square, falls forward off its top edge
     {ax:'Y',deg:-78,org:'100% 50%'},  // w2 swings in off its right edge
-    {ax:'Y',deg: 78,org:'0% 50%'}     // w3 the other way, off its left edge
+    {ax:'Y',deg: 78,org:'0% 50%'},    // w3 the other way, off its left edge
+    /* ⭐ w4, the bottom strip (D244). It falls off its TOP edge like w1 rather than swinging:
+       it is a wide, shallow band, and a Y-axis swing on a 327x132 tile reads as a shutter
+       closing rather than a panel landing. ⚠️ THIS ENTRY IS NOT OPTIONAL EVEN THOUGH THE LOOKUP
+       WRAPS (`i%HINGE.length`) — without it the sixth tile would silently borrow p1's hinge and
+       open off its left edge, which is the one direction the row below cannot support. */
+    {ax:'X',deg:-84,org:'50% 0%'}     // w4 the bottom strip, falls forward off its top edge
   ];
   const tiles=Array.prototype.slice.call(collage.querySelectorAll('.ac-tile'));
   /* the hinge is static, so it is set once here rather than rewritten every frame */
