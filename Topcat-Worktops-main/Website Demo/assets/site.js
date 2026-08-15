@@ -6903,7 +6903,22 @@ function viewSequence(host,tiles,apply,opts){
      ⭐ **STILL A REAL TOPCAT JOB, WHICH IS THE PART THAT MATTERS**, and it cost nothing: its ladder
      is already in `SS` under this exact key for the project gallery. ⚠️ It is also the Harrow
      CARD image, so it appears twice on the site — the same trade D244 made with Central London. */
-  const picks=['/assets/site/about-handshake-900.webp','/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
+  /* ⭐⭐ w1 IS THE QUARRY SINCE 15 Aug 2026 (D254), NOT THE HANDSHAKE. Client: *"the shaking hands
+     image that you're using in the about us section looks terrible… add a different image that it
+     may be something to do with a slab or some sort of installation or some sort of outside thing."*
+     ⭐ **THE QUARRY IS TWO OF HIS THREE AT ONCE** — cut blocks and open sky — and it is the one
+     frame in the whole library that is not another interior: w2, w3 and w4 are a kitchen fit, a
+     slab being carried and a finished island, so a fourth room was the real problem with every
+     obvious candidate. ⭐ It is also the brightest thing available at **203** against the tile's
+     old **55**, which answers his other complaint from the message before this one.
+     ⛔⛔ **HE REJECTED THIS FILE ONCE, IN D241, AND THE REASON DOES NOT CARRY:** it was the Outdoor
+     Spaces service tile, where a picture of stone being cut out of the ground sat against copy
+     promising barbecue runs and garden bars. Here the copy beside it is about sourcing the right
+     stone and answering for the whole job. **Told him it had a history; his call.**
+     ⭐ Zero cost: both rungs and the `SS` entry have been on disk since D109, unreferenced since
+     D241 and kept on purpose. ⚠️ The alt says what the picture IS and claims nothing — Topcat do
+     not quarry, and the tile carries no caption that could suggest otherwise. */
+  const picks=['/assets/site/quarry-955.webp','/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
                '/assets/projects/harrow-1400.webp'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */
