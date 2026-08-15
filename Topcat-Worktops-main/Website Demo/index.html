@@ -8755,6 +8755,24 @@ const SS={
  "/assets/site/cta-slab-2752.webp":"/assets/site/cta-slab-1958.webp 1958w, /assets/site/cta-slab-2752.webp 2752w",
  "/assets/site/kitchen-day-1188.webp":"/assets/site/kitchen-day-626.webp 626w, /assets/site/kitchen-day-1188.webp 1188w",
  "/assets/site/quarry-955.webp":"/assets/site/quarry-518.webp 518w, /assets/site/quarry-955.webp 955w",
+ /* ⭐ THE DINING TABLE PHOTOGRAPH — D241, the client's own file. Registered by hand because
+    build_images.py can no longer run: it extracts the seven base64 photographs out of this file
+    and exits if it does not find exactly seven, and patch_images.py already took them out. The
+    rungs were cut by the same rules that script uses — LANCZOS, WebP q85, method 6 — against the
+    two `sizes` this image is served at: 440/1160 in the card grid and 210/385 in the helix, so
+    2320 is the largest any card can ask for at 2x. ⚠️ The top rung is also the leaf page's hero
+    background, which is CSS and has no srcset, so it is the one file every device there pays for. */
+ "/assets/site/service-dining-2400.webp":"/assets/site/service-dining-880.webp 880w, /assets/site/service-dining-1600.webp 1600w, /assets/site/service-dining-2400.webp 2400w",
+ /* ⚠️ THE BATHROOM PHOTOGRAPH REPLACES `cta-slab`, WHICH STAYS IN THIS TABLE — the slab shot is
+    still the landing page's CTA band and still the hero of two service pages. Repointing this
+    tile does not retire that file. */
+ "/assets/site/service-bathrooms-2400.webp":"/assets/site/service-bathrooms-880.webp 880w, /assets/site/service-bathrooms-1600.webp 1600w, /assets/site/service-bathrooms-2400.webp 2400w",
+ /* ⚠️ THE OUTDOOR KITCHEN IS THE EXPENSIVE ONE AND ITS LADDER IS THE REASON IT IS AFFORDABLE:
+    foliage, gravel and cut stone are all high-frequency, so the same crop that costs 291 KB as a
+    dining room costs 770 KB here at 2400 and 102 KB at 880. A phone takes the 880. ⛔ Quality is
+    85 for all three, the level build_images.py verified by eye — it was NOT lowered for this one
+    file, because a per-image quality is a second rule nobody would find later. */
+ "/assets/site/service-outdoor-2400.webp":"/assets/site/service-outdoor-880.webp 880w, /assets/site/service-outdoor-1600.webp 1600w, /assets/site/service-outdoor-2400.webp 2400w",
  "assets/team/handshake.jpg":"/assets/site/team-handshake-600.webp 600w, /assets/site/team-handshake-900.webp 900w",
  "assets/team/samples.jpg":"/assets/site/team-samples-248.webp 248w, /assets/site/team-samples-386.webp 386w",
  "assets/team/fitting.jpg":"/assets/site/team-fitting-248.webp 248w, /assets/site/team-fitting-386.webp 386w"
@@ -8779,7 +8797,8 @@ const SERVICES=[
      the footer and other leaf pages, and deleting a page is the one move here that cannot be
      undone from the browser. If he wants it gone, that is one line in `services/build_services.py`
      plus a redirect, and it should be his call rather than an inference from a list.
-     ⚠️ **THREE TILES CARRY NO `img` AND THAT IS DELIBERATE** (§ the phImg note below).
+     ⚠️ **TWO TILES CARRY NO `img` AND THAT IS DELIBERATE** (§ the phImg note below). Dining
+     Tables was the third until D241, when the client sent a photograph for it.
      ⛔ **`PROJECTS` NO LONGER READS THIS ARRAY BY INDEX** — it names its own files now, so
      re-ordering the range can never silently re-photograph the gallery. */
 
@@ -8787,14 +8806,30 @@ const SERVICES=[
 
   {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splashbacks-706.webp"},
 
-  {t:"Bathrooms",long:"Shower surrounds, thresholds and window sills cut from one stone, so the room reads as a single material rather than a set of parts.",href:"/services/bathroom-worktops.html",img:"/assets/site/cta-slab-2752.webp"},
+  /* ⭐⭐ A REAL BATHROOM INSTEAD OF THE BARE SLAB — D241, his own file, sent in the same run as
+     the dining photograph. This tile was one of the three the handover had listed as showing the
+     wrong subject: `cta-slab` is a slab on a rack, which says "stone" but never says "bathroom".
+     ⛔ THE SLAB FILE IS NOT RETIRED — it is still the landing page's CTA band and still the hero
+     of `/services/vanity-tops.html` and `/services/fireplaces.html`. Only this tile moved.
+     ⭐ Cut to (331,1398)–(5601,4912) of the 7360x4912 original on the same reasoning as Dining
+     Tables: the marble vanity and its inset basin sit on the LEFT of the frame he sent, and the
+     card, the leaf hero and that hero on a phone all crop from the centre outwards. */
+  {t:"Bathrooms",long:"Shower surrounds, thresholds and window sills cut from one stone, so the room reads as a single material rather than a set of parts.",href:"/services/bathroom-worktops.html",img:"/assets/site/service-bathrooms-2400.webp"},
 
   /* ⚠️ HIS WORD IS "OUTDOOR SPACES", WIDER THAN THE PAGE IT POINTS AT. The leaf page keeps its
      slug, title and meta — "outdoor kitchen worktops" is the phrase people actually search, and
      changing a URL costs its ranking and every link into it. Its EYEBROW was changed to match
      this tile, because a tile and the page it opens must not call the same thing two names
      (§2 rule 13, the lesson from the marble/quartzite confusion). */
-  {t:"Outdoor Spaces",long:"Weatherproof stone for garden kitchens, barbecue runs and outdoor bars, cut to fit around sinks, hobs and built-in appliances.",href:"/services/outdoor-kitchens.html",img:"/assets/site/quarry-955.webp"},
+  /* ⭐⭐ A REAL GARDEN KITCHEN INSTEAD OF THE QUARRY — D241, his own file, the third he sent in
+     one run. ⛔ THE QUARRY WAS THE CLEAREST OF THE THREE WRONG SUBJECTS: it is a photograph of
+     where stone is CUT OUT OF THE GROUND, against copy that promises barbecue runs and outdoor
+     bars. ⭐ Cut to (3496,1288)–(7360,3864) of the 7360x4912 original — the counter run and the
+     pergola are in the right-hand third of the frame he sent, and the rocks and palm that made
+     the left half read as landscaping rather than as a kitchen are out. ⚠️ `quarry-955` keeps
+     its SS entry and both files stay on disk; nothing points at them now, and that is on
+     purpose (§ the same rule that kept the six unused project photographs). */
+  {t:"Outdoor Spaces",long:"Weatherproof stone for garden kitchens, barbecue runs and outdoor bars, cut to fit around sinks, hobs and built-in appliances.",href:"/services/outdoor-kitchens.html",img:"/assets/site/service-outdoor-2400.webp"},
 
   /* ⭐⭐ ALL EIGHT HAVE THEIR OWN PAGE NOW — 14 Aug 2026 (D228). Client: *"each one of these
      options needs to have its own dedicated page. So when you go to view the service, you should
@@ -8806,7 +8841,17 @@ const SERVICES=[
      that Topcat cut and fit the stone and work to the installer's figures. */
   {t:"Fireplaces",long:"Hearths, surrounds and mantels cut to your opening and finished by hand, in the same stone as the rest of the house if you want the rooms to tie together.",href:"/services/fireplaces.html",ph:"FIREPLACES"},
 
-  {t:"Dining Tables",long:"Table and console tops cut to your shape and edge profile, in the same stone as the kitchen, so the piece reads as part of the room rather than as furniture bought separately.",href:"/services/dining-tables.html",ph:"DINING TABLES"},
+  /* ⭐⭐ THE FIRST OF THE THREE PLATES TO BECOME A REAL PHOTOGRAPH — D241, his own file. ⛔ THE
+     CROP IS LOAD-BEARING AND IS NOT THE PHOTOGRAPH HE SENT: the frame he gave is a whole kitchen
+     with the marble table in the right-hand third, and this image is centre-cropped by THREE
+     different boxes — the card grid at 1.52:1, the leaf hero at 2.39:1 and that same hero on a
+     phone at 0.93:1. A subject sitting off-centre survives none of them. Cut to (2639,1472)–
+     (7275,4563) of the 7360x4912 original, the table and the flowers sit on the centre and all
+     three crops keep them. ⚠️ Raising the crop's top edge by 65px is what stopped the 2.39:1
+     hero band cutting the lily heads off — that band is the middle 62.7% of the file's height,
+     so what the hero shows is decided here, not on the page. ⭐ The master is
+     `assets/site/service-dining.jpg` and the untouched original is on the client's disk. */
+  {t:"Dining Tables",long:"Table and console tops cut to your shape and edge profile, in the same stone as the kitchen, so the piece reads as part of the room rather than as furniture bought separately.",href:"/services/dining-tables.html",img:"/assets/site/service-dining-2400.webp"},
 
   /* ⛔⛔ THIS TILE POINTED AT `/services/bathroom-worktops.html` UNTIL D228 AND THE CLIENT CAUGHT
      IT: *"when I go into vanity tops, it takes me to bathroom worktops and vanity tops. That's
@@ -8819,13 +8864,17 @@ const SERVICES=[
 
   {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/kitchen-day-1188.webp"}
 ];
-/* ⚠️⚠️ THREE TILES CARRY `ph` AND NO `img`, WHICH HANDS THEM TO `phImg()` — the site's own
-   "PHOTO TO COME" plate. There are five real subjects for eight tiles until the shoot lands.
+/* ⚠️⚠️ TWO TILES CARRY `ph` AND NO `img`, WHICH HANDS THEM TO `phImg()` — the site's own
+   "PHOTO TO COME" plate. Fireplaces and Vanity Tops are the two left; Dining Tables became a
+   real photograph on 15 Aug (D241) and the route was exactly the one described below — a file
+   into `img`, the `ph` deleted, and nothing else touched.
    ⛔ THIS IS THE HONEST STATE AND IT WAS CHOSEN OVER THE ALTERNATIVE: reusing a near-enough
-   photograph is what put a QUARRY on Outdoor Kitchens and a KITCHEN on Commercial, and the
-   client has already asked for both to be replaced. A plate that says "photo to come" is read
-   as pending; a photograph of the wrong thing is read as wrong. Drop a real file into `img`
-   and delete the `ph` — nothing else changes. */
+   photograph is what put a QUARRY on Outdoor Spaces, a SLAB on Bathrooms and a KITCHEN on
+   Commercial. A plate that says "photo to come" is read as pending; a photograph of the wrong
+   thing is read as wrong. ⭐ D241 CLOSED TWO OF THOSE THREE — the client sent a garden kitchen
+   and a stone bathroom of his own, and both tiles now show what they are named after.
+   ⚠️ **COMMERCIAL IS THE ONE STILL SHOWING A DOMESTIC KITCHEN** (`kitchen-day`), and he has
+   asked for it. Drop a real file into `img` and delete the `ph` — nothing else changes. */
 const flipIcon='<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>';
 const backIcon='<svg viewBox="0 0 24 24"><path d="M9 5l-7 7 7 7"/><path d="M2 12h20"/></svg>';
 /* Placeholder image for cards whose photo isn't in yet. The card already renders the service

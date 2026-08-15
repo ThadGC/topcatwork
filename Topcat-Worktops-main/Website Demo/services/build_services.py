@@ -318,18 +318,43 @@ HERO_IMG = {
     "kitchen-worktops": "../assets/hero-kitchen.jpg",
     "kitchen-islands": "../assets/kitchen-day.jpg",
     "splashbacks": "../assets/hero-kitchen.jpg",
-    "bathroom-worktops": "../assets/cta-slab.jpg",
+    # ⭐⭐ THE CLIENT'S OWN PHOTOGRAPH — D241, sent with the dining one. It replaced the slab shot
+    # on the Bathrooms TILE and this hero follows it, so the tile and the page it opens show the
+    # same room. ⚠️ `cta-slab.jpg` is still the hero two lines below and still the landing page's
+    # CTA band — this line moved, that file did not.
+    "bathroom-worktops": "../assets/site/service-bathrooms-1600.webp",
     "commercial-worktops": "../assets/kitchen-day.jpg",
-    "outdoor-kitchens": "../assets/quarry.jpg",
-    # ⚠️ THE THREE NEW PAGES ALL TAKE THE SLAB SHOT ON PURPOSE (D228). His portfolio was checked
-    # image by image on a contact sheet and it holds no fireplace and no dining table, and the
-    # client has twice said generate nothing. ⛔ A near-enough room photograph is what put a QUARRY
-    # on Outdoor Spaces and a KITCHEN on Commercial, and he has asked for both to be replaced —
-    # a photograph of the wrong subject reads as wrong, where the material itself cannot.
-    # ⭐ Drop a real file in when the shoot lands; nothing else changes.
+    # ⭐⭐ A REAL OUTDOOR KITCHEN INSTEAD OF THE QUARRY — D241, his own file. The quarry shot was
+    # the second of the three wrong-subject tiles he had already asked to have replaced: it is a
+    # picture of where stone comes FROM, not of a garden kitchen. ⚠️ `quarry.jpg` and its two
+    # WebP rungs stay on disk and stay in the SS table — nothing else pointed at them, but a
+    # deleted photograph cannot be put back from the browser.
+    "outdoor-kitchens": "../assets/site/service-outdoor-1600.webp",
+    # ⚠️ THE TWO REMAINING NEW PAGES TAKE THE SLAB SHOT ON PURPOSE (D228). His portfolio was
+    # checked image by image on a contact sheet and it holds no fireplace and no vanity top, and
+    # the client has twice said generate nothing. ⛔ A near-enough room photograph is what put a
+    # QUARRY on Outdoor Spaces and a KITCHEN on Commercial — a photograph of the wrong subject
+    # reads as wrong, where the material itself cannot. ⭐ The quarry is gone as of D241 and
+    # commercial is the one still standing. ⭐ Drop a real file in when the shoot lands; nothing
+    # else changes, which is exactly what dining-tables and bathroom-worktops did on 15 Aug.
     "vanity-tops": "../assets/cta-slab.jpg",
     "fireplaces": "../assets/cta-slab.jpg",
-    "dining-tables": "../assets/cta-slab.jpg",
+    # ⭐⭐ THE CLIENT'S OWN PHOTOGRAPH — D241. He sent it for the Dining Tables CARD and said it
+    # would "automatically become the hero section in the dedicated page", which is this line.
+    # ⛔⛔ THIS IS A CSS `background-image` AND CSS BACKGROUNDS HAVE NO `srcset`, so whatever is
+    # named here is what every device downloads — a phone included. ⭐⭐ THAT IS WHY ALL THREE OF
+    # THE NEW HEROES TAKE THE 1600 RUNG AND NOT THE 2400 ONE. The 2400 exists for the card grid,
+    # which has a srcset and can choose. This hero is veiled at between 0.61 and 0.96 composite
+    # alpha (the two gradients on `.svc-hero-bg::after`), so the detail those extra pixels buy is
+    # not visible on the page — the same trade build_images.py wrote down for hero-kitchen: *"a
+    # photograph that is heavily darkened and sits behind text"*. It also keeps these heroes at
+    # 140-348 KB, next to the 149 KB hero-kitchen already ships. ⛔ The outdoor one is 348 KB at
+    # 1600 and there is no crop that fixes that: foliage, gravel and cut stone are all
+    # high-frequency, and the top rung was 770 KB.
+    # ⚠️ The crop is centred on the table for this box in particular: the hero is a 2.69:1 band
+    # at desktop and 0.73:1 on a phone, so it shows the middle of the file in one direction or
+    # the other and never the whole frame. See the SERVICES note in index.html.
+    "dining-tables": "../assets/site/service-dining-1600.webp",
 }
 
 
