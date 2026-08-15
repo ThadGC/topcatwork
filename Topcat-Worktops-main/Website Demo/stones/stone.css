@@ -307,11 +307,17 @@ html.cmp-locked,html.cmp-locked body{overflow:hidden}
   margin-bottom:14px}
 .cmp-pick-head h2{font-family:var(--serif);font-size:clamp(19px,2.4vw,25px);font-weight:400;
   color:var(--bone);margin:0}
-.cmp-pick-x{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);
+/* ⛔ THE DISMISS IS A DOWNWARD CHEVRON AND THE CLASS SAYS SO — 15 Aug 2026. It was `.cmp-pick-x`
+   carrying an ×, which the client read as losing the shortlist he had built (see the comment on
+   the button in build_stones.py). ⚠️ RENAMED RATHER THAN RE-POINTED: a class called `-x` holding
+   a chevron is an invitation for somebody to put the × back, and this file is hand-maintained.
+   ⚠️ The glyph is WIDER THAN IT IS TALL, so the box is 15x9 where the × was 15x15 — a chevron
+   forced into a square either shrinks or distorts. */
+.cmp-pick-down{width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);
   background:transparent;color:var(--bone);cursor:pointer;display:grid;place-items:center;
   flex:none;transition:border-color .35s var(--ease),color .35s var(--ease)}
-.cmp-pick-x svg{width:15px;height:15px}
-.cmp-pick-x:hover{border-color:var(--gold);color:var(--gold)}
+.cmp-pick-down svg{width:15px;height:9px}
+.cmp-pick-down:hover{border-color:var(--gold);color:var(--gold)}
 .cmp-pick-search{margin-bottom:12px}
 .cmp-pick-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .cmp-pick-count{font-family:var(--brand);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;

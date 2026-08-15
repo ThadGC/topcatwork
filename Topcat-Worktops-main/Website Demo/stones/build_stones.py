@@ -921,7 +921,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var clearBtn=document.getElementById('cmpClear'), shareBtn=document.getElementById('cmpShare');
   var addBtn=document.getElementById('cmpAdd'), addFirst=document.getElementById('cmpAddFirst');
   var pick=document.getElementById('cmpPick'), pickGrid=document.getElementById('cmpPickGrid');
-  var pickX=document.getElementById('cmpPickX'), pickSearch=document.getElementById('cmpSearch');
+  var pickDown=document.getElementById('cmpPickDown'), pickSearch=document.getElementById('cmpSearch');
   var pickTabs=document.getElementById('cmpTabs'), pickCount=document.getElementById('cmpPickCount');
   var pickEmpty=document.getElementById('cmpPickEmpty');
 
@@ -1082,7 +1082,7 @@ document.addEventListener('DOMContentLoaded',function(){
   }
   if(addBtn)addBtn.addEventListener('click',openPick);
   if(addFirst)addFirst.addEventListener('click',openPick);
-  pickX.addEventListener('click',closePick);
+  pickDown.addEventListener('click',closePick);
   pick.addEventListener('click',function(ev){ if(ev.target===pick)closePick(); });
   document.addEventListener('keydown',function(ev){
     if(ev.key==='Escape'&&!pick.hasAttribute('hidden'))closePick();
@@ -1260,8 +1260,21 @@ def compare_page():
   <div class="cmp-pick-panel">
     <div class="cmp-pick-head">
       <h2 id="cmpPickTitle">Add a stone</h2>
-      <button class="cmp-pick-x" id="cmpPickX" type="button" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      <!-- ⛔⛔ A DOWNWARD CHEVRON, NEVER AN ×  — 15 Aug 2026. Client: *"it's a pop up, but it
+           should not be an x at the top. It should be a downward facing arrow because it's a pop
+           up. If it was made to be an x, it looks like you're losing your saved progress."*
+           ⭐⭐ **HE IS DESCRIBING WHAT THE GLYPH PROMISES, AND AN × PROMISES DESTRUCTION.** The
+           shortlist lives in the URL and this sheet only ever ADDS to it, so closing the picker
+           cannot lose anything — but an × is the same mark that empties a basket and removes a
+           chip, and one is `.cs-x` on the enquiry card two sections away. ⭐ A chevron promises
+           the opposite: put this away, the thing behind it is still there.
+           ⭐ IT IS ALSO LITERALLY TRUE HERE. `.cmp-pick` is `align-items:flex-end` with the panel
+           square along its bottom edge — a sheet that came UP from the floor — so down is the
+           direction it actually goes.
+           ⚠️ THE GLYPH IS THE NAV'S OWN CARET, NOT A NEW DRAWING: same 2:1 chevron, same round
+           caps and joins, in the 24 box this button's weights are written for. -->
+      <button class="cmp-pick-down" id="cmpPickDown" type="button" aria-label="Close the picker and go back to your comparison">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5l6 6 6-6"/></svg>
       </button>
     </div>
     <label class="st-search cmp-pick-search">
