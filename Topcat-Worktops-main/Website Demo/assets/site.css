@@ -3513,13 +3513,32 @@
      ⭐ 46% of the plate's own height, so it scales with the tile at every column width and never
      needs a second number. `max-width:72%` is the guard for the one-slot case, where a 46%-tall
      square logo would otherwise reach the side walls. */
+  /* ⭐⭐⭐ THE PLATES ARE CUT STONE NOW, NOT GREY CARD — 15 Aug 2026 (D256). Client: *"everywhere we
+     were using a logo in the image like that, even in the gallery section or the project sections…
+     make the logo bigger and add the stone slab thing design behind it instead of the just plain
+     gray… so the logo stays gold in that gradient, but it looks like it's actually IN the slab."*
+     ⭐ **THE STONE IS `--marbleBG`, THE SITE'S ONE SHARED SLAB** — the same photograph the nav
+     glass, the CTA card and the page floor already draw on, so this adds no new material. The dark
+     gradient sits OVER it at 0.70/0.80 rather than 0.92/0.96, which is what lets the veining read
+     as stone instead of as noise.
+     ⭐⭐ **THE INLAY IS TWO DROP-SHADOWS AND NOTHING IS RE-DRAWN (§2 rule 14).** `drop-shadow`
+     follows the artwork's own alpha, so the mark is still exactly his file: a dark shadow up-left
+     is the stone edge falling into the recess, and a warm highlight down-right is the lit lower
+     lip. That reads as engraved-and-gilded, which is a real thing in stone, rather than as a logo
+     sitting on top. ⛔ Light comes from the top-left here because the ground gradient is 158deg —
+     flip one and you must flip the other or the recess pops back out as a bump. */
   .proj-brand{break-inside:avoid;margin:0 0 14px;border-radius:14px;overflow:hidden;
     aspect-ratio:var(--brandAR3,1 / 1);
     display:var(--brandShow3,flex);align-items:center;justify-content:center;
     border:1px solid var(--hair);
-    background:linear-gradient(158deg,rgba(30,30,38,0.92),rgba(12,12,16,0.96));
+    background:linear-gradient(158deg,rgba(28,28,35,0.46),rgba(10,10,14,0.60)),
+      var(--marbleBG) center/cover no-repeat;
     box-shadow:0 24px 54px -30px rgba(0,0,0,0.9)}
-  .proj-brand img{height:46%;width:auto;max-width:72%;opacity:0.92;display:block}
+  /* ⛔ `object-fit:contain` IS THE GUARD ON `max-width`, NOT DECORATION. With `height` set and
+     `width:auto`, a clamp on max-width would squash the lockup — rule 14's exact failure — and
+     these plates take their aspect from whatever hole the masonry left, so some are narrow. */
+  .proj-brand img{height:58%;width:auto;max-width:84%;object-fit:contain;opacity:0.94;display:block;
+    filter:drop-shadow(-1px -1px 1.1px rgba(0,0,0,0.85)) drop-shadow(1px 1.4px 1.1px rgba(255,244,214,0.22))}
   /* the hole is a different size at two columns, and there is no hole at all at one */
   @media(max-width:1000px){
     .proj-brand{aspect-ratio:var(--brandAR2,1 / 1);display:var(--brandShow2,flex)}
@@ -4755,8 +4774,17 @@
     transform:translateX(-50%);transition:none;
     bottom:clamp(12px,2vh,22px);height:clamp(34px,5.4vh,62px);width:auto;
     object-fit:contain;z-index:2;opacity:0.92;pointer-events:none;
-    filter:drop-shadow(0 2px 10px rgba(0,0,0,0.55))}
-  .wy-p:hover img.wy-p-mark{transform:translateX(-50%);filter:drop-shadow(0 2px 10px rgba(0,0,0,0.55))}
+    /* ⭐ THE INLAY LIGHTING JOINS THE PLATES (D256), KEPT OVER THE ORIGINAL SOFT SHADOW rather
+       than replacing it: this mark sits on a PHOTOGRAPH, not on stone, so it still needs the
+       broad 10px shadow to separate from whatever is behind it — the two crisp 1px offsets are
+       the recess, the soft one is the lift. ⭐⭐ IT ALSO BUYS BACK CONTRAST WHERE IT WAS THINNEST:
+       D247 put a pale marble slab under the foot of this tile and the lockup measured 4.53:1,
+       barely over the 4.5 bar. The dark up-left offset is measured again below. */
+    filter:drop-shadow(-1px -1px 1.2px rgba(0,0,0,0.85)) drop-shadow(1px 1.4px 1.2px rgba(255,244,214,0.20))
+      drop-shadow(0 2px 10px rgba(0,0,0,0.55))}
+  .wy-p:hover img.wy-p-mark{transform:translateX(-50%);
+    filter:drop-shadow(-1px -1px 1.2px rgba(0,0,0,0.85)) drop-shadow(1px 1.4px 1.2px rgba(255,244,214,0.20))
+      drop-shadow(0 2px 10px rgba(0,0,0,0.55))}
 
   /* The reason tiles. ⚠️ NO overflow:hidden. .glow-card's halo is inset:-1px and blurred, so it
      spills outside the box on purpose — clipping here would cut the cursor light off at the
@@ -5516,10 +5544,17 @@
      ⛔ HEIGHT ONLY (§2 rule 14): `height:46%` with `width:auto`, never both.
      ⚠️ The veil is off here — it is a bottom-up scrim written for photographs, and on a plate it
      just dirties the ground. `.proj-brand` carries no veil either. */
+  /* ⭐⭐ THE SAME CUT-STONE PLATE AS THE PROJECT GALLERY (D256) — one treatment, three places.
+     ⭐ **THE MARK IS BIGGER HERE THAN ON THE GALLERY PLATES, 68% AGAINST 58%, AND THAT IS THE
+     CLIENT'S OWN EMPHASIS** — *"especially now specifically talking about the about us section,
+     make the logo inside that section bigger."* It is also the one plate that is not filling a
+     hole: it is the largest tile in the collage and the block's brand moment. */
   .about-collage>.ac-tile.ac-plate{display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(158deg,rgba(30,30,38,0.92),rgba(12,12,16,0.96))}
+    background:linear-gradient(158deg,rgba(28,28,35,0.46),rgba(10,10,14,0.60)),
+      var(--marbleBG) center/cover no-repeat}
   .about-collage>.ac-tile.ac-plate>img.ac-mark{position:static;inset:auto;
-    height:46%;width:auto;max-width:72%;object-fit:contain;opacity:0.92;filter:none}
+    height:68%;width:auto;max-width:78%;object-fit:contain;opacity:0.94;
+    filter:drop-shadow(-1.2px -1.2px 1.3px rgba(0,0,0,0.85)) drop-shadow(1.2px 1.7px 1.3px rgba(255,244,214,0.22))}
   .ac-plate .ac-veil{display:none}
   .about-collage>.ac-tile.ac-plate:hover>img.ac-mark{transform:none}
 
