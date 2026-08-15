@@ -3681,13 +3681,13 @@ requestAnimationFrame(glowTick);
        ⚠️ The photographs ARE several different flats, which is why the story leads with that; a
        reader who spots two different rooms in one gallery would otherwise read it as an error. */
     {key:'wimbledon', name:'The Wimbledon Project', place:'Wimbledon, London',
-     img:'/assets/projects/wimbledon-1400.webp', type:'Worktops and splashbacks, across multiple apartments',
+     img:'/assets/projects/wimbledon-1400.webp', brand:true, type:'Worktops and splashbacks, across multiple apartments',
      story:'A development of several apartments, each one templated and fitted on its own. The worktops and full height splashbacks run through every flat in the same stone, so the block reads as one piece of work rather than a set of separate kitchens.',
      reviewBy:'Kinga Skubiszewska',
      gallery:[['/assets/projects/wimbledon-g1.webp',1067,1600], ['/assets/projects/wimbledon-g2.webp',1067,1600], ['/assets/projects/wimbledon-g3.webp',1067,1600], ['/assets/projects/wimbledon-g4.webp',1067,1600], ['/assets/projects/wimbledon-g5.webp',1067,1600], ['/assets/projects/wimbledon-g6.webp',1067,1600], ['/assets/projects/wimbledon-g7.webp',1067,1600], ['/assets/projects/wimbledon-g8.webp',1067,1600], ['/assets/projects/wimbledon-g9.webp',1067,1600], ['/assets/projects/wimbledon-g10.webp',1067,1600], ['/assets/projects/wimbledon-g11.webp',1067,1600]]},
 
     {key:'watford', name:'The Watford Project', place:'Watford',
-     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', story:'',
+     img:'/assets/projects/watford-1400.webp', brand:true, type:'Worktop and splashback', story:'',
      gallery:[['/assets/projects/watford-g1.webp',1600,1066], ['/assets/projects/watford-g2.webp',1600,1066], ['/assets/projects/watford-g3.webp',1600,1066], ['/assets/projects/watford-g4.webp',1600,1066], ['/assets/projects/watford-g5.webp',1600,1066], ['/assets/projects/watford-g6.webp',1600,1066], ['/assets/projects/watford-g7.webp',1600,1067], ['/assets/projects/watford-g8.webp',1600,1067], ['/assets/projects/watford-g9.webp',1600,1067], ['/assets/projects/watford-g10.webp',1600,1067], ['/assets/projects/watford-g11.webp',1600,1067], ['/assets/projects/watford-g12.webp',1600,1067], ['/assets/projects/watford-g13.webp',1600,1067], ['/assets/projects/watford-g14.webp',1600,1067], ['/assets/projects/watford-g15.webp',1600,1067], ['/assets/projects/watford-g16.webp',1600,1067], ['/assets/projects/watford-g17.webp',1600,1067], ['/assets/projects/watford-g18.webp',1600,1067]]},
 
     /* ⚠️ TWO OF HIS SITE'S SIX CAME OUT HERE, 14 Aug 2026, and it is a judgement call worth
@@ -3696,15 +3696,15 @@ requestAnimationFrame(glowTick);
        cables. Client: *"if something doesn't look good, don't use it."* Both files are still on
        disk — put the two paths back in this array to restore them. g7–g10 are his Drive set. */
     {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
-     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
+     img:'/assets/projects/hornchurch-1400.webp', brand:true, type:'Worktop, island and splashbacks',
      story:'Taj Mahal quartzite at 30mm, across the worktop, the island and the splashbacks, with a single ogee edge worked through the run.',
      gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g7.webp',1200,1600], ['/assets/projects/hornchurch-g8.webp',1200,1600], ['/assets/projects/hornchurch-g9.webp',1200,1600], ['/assets/projects/hornchurch-g10.webp',1200,1600]]},
 
     {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
-     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', story:'',
+     img:'/assets/projects/rickmansworth-1400.webp', brand:true, type:'Worktop and splashback', story:'',
      gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446], ['/assets/projects/rickmansworth-g7.webp',1200,1600], ['/assets/projects/rickmansworth-g8.webp',1200,1600], ['/assets/projects/rickmansworth-g9.webp',1200,1600], ['/assets/projects/rickmansworth-g10.webp',1200,1600], ['/assets/projects/rickmansworth-g11.webp',1200,1600], ['/assets/projects/rickmansworth-g12.webp',1200,1600], ['/assets/projects/rickmansworth-g13.webp',1200,1600], ['/assets/projects/rickmansworth-g14.webp',1200,1600], ['/assets/projects/rickmansworth-g15.webp',1200,1600]]},
     {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
-     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches',
+     img:'/assets/projects/ruislip-1400.webp', brand:true, type:'Worktop, splashback, breakfast bar and arches',
      story:'Calacatta Sydney Black quartz at 20mm, across the worktop, the island and the splashbacks. The breakfast bar was cut to the room, and the doorway into the kitchen lined in the same stone so the run carries through.',
      gallery:[['/assets/projects/ruislip-g1.webp',1067,1600], ['/assets/projects/ruislip-g2.webp',1067,1600], ['/assets/projects/ruislip-g3.webp',1067,1600], ['/assets/projects/ruislip-g4.webp',1067,1600], ['/assets/projects/ruislip-g5.webp',1067,1600], ['/assets/projects/ruislip-g6.webp',1067,1600]]},
 
@@ -3720,7 +3720,7 @@ requestAnimationFrame(glowTick);
        for about an hour and that was wrong: add a photograph and the number is stale, which is the
        "what was derived from it stays behind" fault this project keeps paying for. */
     {key:'central-london', name:'The Central London Project', place:'London',
-     img:'/assets/projects/central-london-1400.webp', type:'Worktop', story:'',
+     img:'/assets/projects/central-london-1400.webp', brand:true, type:'Worktop', story:'',
      reviewBy:'Joel Brizman', brand:true,
      gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067], ['/assets/projects/central-london-g7.webp',1600,1067], ['/assets/projects/central-london-g8.webp',1600,1067], ['/assets/projects/central-london-g9.webp',1600,1067], ['/assets/projects/central-london-g10.webp',1600,1067], ['/assets/projects/central-london-g11.webp',1600,1067], ['/assets/projects/central-london-g12.webp',1600,1067], ['/assets/projects/central-london-g13.webp',1600,1067]]},
 
@@ -3730,7 +3730,7 @@ requestAnimationFrame(glowTick);
        middle of the block rather than at its end. One plate takes it back to fifteen slots and the
        block closes. ⛔ If he would rather have the hole, this field is the only thing to delete. */
     {key:'harlow', name:'The Harlow Project', place:'Essex',
-     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'', brand:true,
+     img:'/assets/projects/harlow-1400.webp', brand:true, type:'Worktop and splashback', story:'', brand:true,
      gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]},
 
     /* ⭐ **TWO PHOTOGRAPHS, SO THE PLATE STANDS IN THE THIRD COLUMN — 15 Aug 2026 (D240).** Client:
@@ -3739,7 +3739,7 @@ requestAnimationFrame(glowTick);
        three. ⚠️ At TWO columns the same two photographs already make a square block, so the plate
        does not render there at all — see `--brandShow2`. */
     {key:'harrow', name:'The Harrow Project', place:'Harrow',
-     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'', brand:true,
+     img:'/assets/projects/harrow-1400.webp', brand:true, type:'Worktop', story:'', brand:true,
      gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]}
   ];
   const PER_SET=4;
@@ -4843,6 +4843,38 @@ requestAnimationFrame(glowTick);
       plate.style.setProperty('--brandShow2',n2?'flex':'none');
       plate.innerHTML='<img src="/assets/brand/topcat-vertical.svg" alt="" draggable="false">';
       mediaWrap.appendChild(plate);
+      /* ⛔⛔⛔ THE PLATE HAS TO PROVE IT FILLS A HOLE, OR IT LEAVES — 15 Aug 2026 (D258). Client:
+         *"you can clearly see the Hornchurch project didn't need a logo because the collage was
+         already full from the images. I'm saying only where there's a gap because of a lack of a
+         single image, then you add the logo in. Don't just force it into every project."*
+         ⭐⭐⭐ **THE COUNT FORMULA ABOVE CANNOT ANSWER THIS AND NO COUNT FORMULA CAN.** `(c − n mod
+         c) mod c` assumes a uniform GRID; this is `column-count:3`, which BALANCES. Central London
+         (13 photographs) and Hornchurch (7) both come out "two slots short" and they do not look
+         alike at all — one ends ragged and one ends level, because that depends on the heights of
+         the pictures, not on how many there are.
+         ⭐⭐ **SO IT IS MEASURED INSTEAD OF PREDICTED:** group the tiles by `offsetLeft` to find the
+         real columns, take each column's lowest edge, and the raggedness is the spread between
+         them. Render it both ways and keep the plate only if it makes that spread SMALLER. A plate
+         that lengthens its own column is the fault he is describing and removes itself.
+         ⚠️ `offsetTop`/`offsetHeight`, never rects — these tiles carry `.glow-card` transforms.
+         ⚠️ Safe on one column (≤640px): the spread is 0 either way, so the plate goes. */
+      requestAnimationFrame(()=>{
+        const ragged=()=>{
+          const bottoms=new Map();
+          for(const el of mediaWrap.children){
+            if(!el.offsetWidth&&!el.offsetHeight) continue;      // display:none at this band
+            const x=Math.round(el.offsetLeft);
+            bottoms.set(x,Math.max(bottoms.get(x)||0,el.offsetTop+el.offsetHeight));
+          }
+          const v=[...bottoms.values()];
+          return v.length>1?Math.max(...v)-Math.min(...v):0;
+        };
+        const withPlate=ragged();
+        plate.style.display='none';
+        const without=ragged();
+        plate.style.display='';
+        if(withPlate>=without) plate.remove();
+      });
     }
     mediaWrap.style.display=MEDIA.length?'':'none';
   }

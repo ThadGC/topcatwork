@@ -60,6 +60,32 @@
        `assets/stone-floor.webp` there asks for `/assets/assets/stone-floor.webp` and the page
        floor silently disappears on every internal page. */
     --marbleBG:url('/assets/stone-floor.webp');
+    /* ⭐⭐⭐ THE PLATE STONE — 15 Aug 2026 (D257). Client: *"we're gonna have to put it on a white
+       stone and not a dark stone because the background is already dark. So put it on a white or
+       gray stone. You can use any of the stones you suggest from the stone gallery."*
+       ⭐ **IT IS CALACATTA GOLD (Oro Honed) OUT OF HIS OWN COLLECTION**, cut to a 700px square rung
+       of its own rather than serving the 1600px slab the stone pages use: these plates are never
+       wider than ~340px, so 700 covers 2x and the file is 39KB instead of 222KB.
+       ⛔⛔ **THE FIRST ATTEMPT WAS CLOUD BURST AND HE KILLED IT ON SIGHT** — *"don't use the fucking
+       blue slab that makes it look like shit."* It measured well (mean 188, sd 24, the calmest pale
+       slab) and it is BLUE, which no luminance figure was ever going to tell me. ⭐ **SO THE FILTER
+       GAINED A COLOUR TERM: `blue − red` PER SLAB, AND ANYTHING WITH A BLUE CAST IS OUT.** Of 264
+       files, 8 are pale, neutral-or-warm and calm enough. Calacatta Oro is mean **229**, sd **18**,
+       cast **−14.9** — white with warm gold veining, and it is the stone he named: *"you should
+       obviously be choosing the Calacatta Gold."* ⚠️ **THERE ARE THREE CALACATTA GOLDS IN THE 132
+       AND ONLY ONE IS THE FLAGSHIP:** Gold Shimmer measures a **+11 blue cast**, which is the slab
+       he had just rejected in another guise, and Gold Soft is sd **3**, so fine it reads as plain
+       white rather than as stone. Oro Honed is the one whose page carries the name.
+       ⚠️ **`Calacatta Gold` IS THE ONE STONE WITH AN OPEN LICENSING QUESTION (§7)** — it is already
+       published as a stone page, so this adds no new exposure, but it is now on the landing page
+       and in every project gallery. **Told him.**
+       ⚠️ **ROOT-RELATIVE, for the same D190 reason as `--marbleBG` above** — this block is lifted
+       to `/assets/site.css` and a relative url would resolve against the stylesheet, not the page.
+       ⭐ The wash on top is a soft top-left lift and a bottom-right settle, which is what gives the
+       recess shadows something to sit in; it is NOT a darkening veil. */
+    --plateStone:
+      linear-gradient(158deg,rgba(16,16,21,0.22),rgba(16,16,21,0.29) 52%,rgba(16,16,21,0.36)),
+      url('/assets/site/plate-stone-700.webp') center/cover no-repeat;
     /* The same stone with gold in it, drawn tall and stretched to fill a multi-viewport
        backdrop (preserveAspectRatio="none"). Broad grey structure first, then fine grey
        hairlines, then the gold threads — all at very low opacity so it reads as material
@@ -3534,24 +3560,33 @@
      glass, the CTA card and the page floor already draw on, so this adds no new material. The dark
      gradient sits OVER it at 0.70/0.80 rather than 0.92/0.96, which is what lets the veining read
      as stone instead of as noise.
-     ⭐⭐ **THE INLAY IS TWO DROP-SHADOWS AND NOTHING IS RE-DRAWN (§2 rule 14).** `drop-shadow`
-     follows the artwork's own alpha, so the mark is still exactly his file: a dark shadow up-left
-     is the stone edge falling into the recess, and a warm highlight down-right is the lit lower
-     lip. That reads as engraved-and-gilded, which is a real thing in stone, rather than as a logo
-     sitting on top. ⛔ Light comes from the top-left here because the ground gradient is 158deg —
-     flip one and you must flip the other or the recess pops back out as a bump. */
+     ⛔⛔⛔ **THE MARK CARRIES NO SHADOW AT ALL — THE GROUND DOES THE WORK.** Client: *"add a slight
+     dark gradient onto the stones that the logo stands out without having to give it a shadow."*
+     ⭐⭐ **HE IS RIGHT AND IT IS THE BETTER ENGINEERING.** On white marble the gold sits at about
+     **1.4:1**, so the earlier build held it off the stone with a keyline and two recess shadows —
+     four `drop-shadow`s doing a job the background should have done, and fragile at small sizes.
+     ⛔⛔⛔ **IT IS AN EVEN WASH ACROSS THE WHOLE SLAB, NEVER A POOL BEHIND THE MARK.** The first
+     attempt was a centred radial and the client rejected it on sight — on white marble a dark
+     ellipse does not read as shade, it reads as **a stain on the stone**. A gradient that covers
+     every edge equally reads as light falling across a slab, which is what he asked for.
+     ⛔⛔ **AND THE LEVEL WAS FOUND BY LOOKING, NOT BY ARITHMETIC — THREE WERE BUILT AND COMPARED.**
+     `0.10→0.20` leaves a beautiful white slab and the wordmark all but disappears; `0.34→0.58`
+     makes the gold crisp and is no longer a light block at all, which defeats the whole point of
+     going pale. **`0.22→0.36` is the one that holds both** — the veining still reads as Calacatta
+     Gold and "WORKTOPS", the finest thing in the lockup, still reads.
+     ⛔ **DO NOT PUT THE SHADOWS BACK ON TOP OF THIS.** Two solutions to one problem is how this
+     ended up with four filters, and the wash is the one that scales. */
   .proj-brand{break-inside:avoid;margin:0 0 14px;border-radius:14px;overflow:hidden;
     aspect-ratio:var(--brandAR3,1 / 1);
     display:var(--brandShow3,flex);align-items:center;justify-content:center;
     border:1px solid var(--hair);
-    background:linear-gradient(158deg,rgba(28,28,35,0.46),rgba(10,10,14,0.60)),
-      var(--marbleBG) center/cover no-repeat;
+    background:var(--plateStone);
     box-shadow:0 24px 54px -30px rgba(0,0,0,0.9)}
   /* ⛔ `object-fit:contain` IS THE GUARD ON `max-width`, NOT DECORATION. With `height` set and
      `width:auto`, a clamp on max-width would squash the lockup — rule 14's exact failure — and
      these plates take their aspect from whatever hole the masonry left, so some are narrow. */
-  .proj-brand img{height:58%;width:auto;max-width:84%;object-fit:contain;opacity:0.94;display:block;
-    filter:drop-shadow(-1px -1px 1.1px rgba(0,0,0,0.85)) drop-shadow(1px 1.4px 1.1px rgba(255,244,214,0.22))}
+  .proj-brand img{height:58%;width:auto;max-width:84%;object-fit:contain;opacity:1;display:block;
+    filter:none}
   /* the hole is a different size at two columns, and there is no hole at all at one */
   @media(max-width:1000px){
     .proj-brand{aspect-ratio:var(--brandAR2,1 / 1);display:var(--brandShow2,flex)}
@@ -5530,8 +5565,12 @@
     perspective:1250px;perspective-origin:50% 42%}
   .ac-p1{grid-area:p1}.ac-p2{grid-area:p2}
   .ac-w1{grid-area:w1}.ac-w2{grid-area:w2}.ac-w3{grid-area:w3}
+  /* ⭐ A GOLD RIM ON EVERY BLOCK IN THE COLLAGE — 15 Aug 2026 (D257). Client: *"add that with the
+     golden rim around every block in the about us section."* It was `--hair-soft`, bone at 10%.
+     ⚠️ **THIS IS THE FULL 34% GOLD BORDER §2 RULE 10 EXPLICITLY ALLOWS**, not the fingernail it
+     forbids: a rim is all four edges, and what is banned is a bright band across the TOP. */
   .ac-tile{position:relative;overflow:hidden;border-radius:10px;margin:0;
-    border:1px solid var(--hair-soft);background:var(--ink-2);
+    border:1px solid var(--hair);background:var(--ink-2);
     box-shadow:0 24px 54px -30px rgba(0,0,0,0.9);
     will-change:transform,opacity}
   .ac-tile img{width:100%;height:100%;object-fit:cover;display:block;
@@ -5563,11 +5602,10 @@
      make the logo inside that section bigger."* It is also the one plate that is not filling a
      hole: it is the largest tile in the collage and the block's brand moment. */
   .about-collage>.ac-tile.ac-plate{display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(158deg,rgba(28,28,35,0.46),rgba(10,10,14,0.60)),
-      var(--marbleBG) center/cover no-repeat}
+    background:var(--plateStone)}
   .about-collage>.ac-tile.ac-plate>img.ac-mark{position:static;inset:auto;
-    height:68%;width:auto;max-width:78%;object-fit:contain;opacity:0.94;
-    filter:drop-shadow(-1.2px -1.2px 1.3px rgba(0,0,0,0.85)) drop-shadow(1.2px 1.7px 1.3px rgba(255,244,214,0.22))}
+    height:68%;width:auto;max-width:78%;object-fit:contain;opacity:1;
+    filter:none}
   .ac-plate .ac-veil{display:none}
   .about-collage>.ac-tile.ac-plate:hover>img.ac-mark{transform:none}
 
@@ -12485,13 +12523,13 @@ requestAnimationFrame(glowTick);
        ⚠️ The photographs ARE several different flats, which is why the story leads with that; a
        reader who spots two different rooms in one gallery would otherwise read it as an error. */
     {key:'wimbledon', name:'The Wimbledon Project', place:'Wimbledon, London',
-     img:'/assets/projects/wimbledon-1400.webp', type:'Worktops and splashbacks, across multiple apartments',
+     img:'/assets/projects/wimbledon-1400.webp', brand:true, type:'Worktops and splashbacks, across multiple apartments',
      story:'A development of several apartments, each one templated and fitted on its own. The worktops and full height splashbacks run through every flat in the same stone, so the block reads as one piece of work rather than a set of separate kitchens.',
      reviewBy:'Kinga Skubiszewska',
      gallery:[['/assets/projects/wimbledon-g1.webp',1067,1600], ['/assets/projects/wimbledon-g2.webp',1067,1600], ['/assets/projects/wimbledon-g3.webp',1067,1600], ['/assets/projects/wimbledon-g4.webp',1067,1600], ['/assets/projects/wimbledon-g5.webp',1067,1600], ['/assets/projects/wimbledon-g6.webp',1067,1600], ['/assets/projects/wimbledon-g7.webp',1067,1600], ['/assets/projects/wimbledon-g8.webp',1067,1600], ['/assets/projects/wimbledon-g9.webp',1067,1600], ['/assets/projects/wimbledon-g10.webp',1067,1600], ['/assets/projects/wimbledon-g11.webp',1067,1600]]},
 
     {key:'watford', name:'The Watford Project', place:'Watford',
-     img:'/assets/projects/watford-1400.webp', type:'Worktop and splashback', story:'',
+     img:'/assets/projects/watford-1400.webp', brand:true, type:'Worktop and splashback', story:'',
      gallery:[['/assets/projects/watford-g1.webp',1600,1066], ['/assets/projects/watford-g2.webp',1600,1066], ['/assets/projects/watford-g3.webp',1600,1066], ['/assets/projects/watford-g4.webp',1600,1066], ['/assets/projects/watford-g5.webp',1600,1066], ['/assets/projects/watford-g6.webp',1600,1066], ['/assets/projects/watford-g7.webp',1600,1067], ['/assets/projects/watford-g8.webp',1600,1067], ['/assets/projects/watford-g9.webp',1600,1067], ['/assets/projects/watford-g10.webp',1600,1067], ['/assets/projects/watford-g11.webp',1600,1067], ['/assets/projects/watford-g12.webp',1600,1067], ['/assets/projects/watford-g13.webp',1600,1067], ['/assets/projects/watford-g14.webp',1600,1067], ['/assets/projects/watford-g15.webp',1600,1067], ['/assets/projects/watford-g16.webp',1600,1067], ['/assets/projects/watford-g17.webp',1600,1067], ['/assets/projects/watford-g18.webp',1600,1067]]},
 
     /* ⚠️ TWO OF HIS SITE'S SIX CAME OUT HERE, 14 Aug 2026, and it is a judgement call worth
@@ -12500,15 +12538,15 @@ requestAnimationFrame(glowTick);
        cables. Client: *"if something doesn't look good, don't use it."* Both files are still on
        disk — put the two paths back in this array to restore them. g7–g10 are his Drive set. */
     {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
-     img:'/assets/projects/hornchurch-1400.webp', type:'Worktop, island and splashbacks',
+     img:'/assets/projects/hornchurch-1400.webp', brand:true, type:'Worktop, island and splashbacks',
      story:'Taj Mahal quartzite at 30mm, across the worktop, the island and the splashbacks, with a single ogee edge worked through the run.',
      gallery:[['/assets/projects/hornchurch-g1.webp',882,1177], ['/assets/projects/hornchurch-g4.webp',1569,1177], ['/assets/projects/hornchurch-g5.webp',1569,1177], ['/assets/projects/hornchurch-g7.webp',1200,1600], ['/assets/projects/hornchurch-g8.webp',1200,1600], ['/assets/projects/hornchurch-g9.webp',1200,1600], ['/assets/projects/hornchurch-g10.webp',1200,1600]]},
 
     {key:'rickmansworth', name:'The Rickmansworth Project', place:'Rickmansworth',
-     img:'/assets/projects/rickmansworth-1400.webp', type:'Worktop and splashback', story:'',
+     img:'/assets/projects/rickmansworth-1400.webp', brand:true, type:'Worktop and splashback', story:'',
      gallery:[['/assets/projects/rickmansworth-g1.webp',1084,1446], ['/assets/projects/rickmansworth-g2.webp',1084,1446], ['/assets/projects/rickmansworth-g3.webp',1084,1446], ['/assets/projects/rickmansworth-g4.webp',1084,1446], ['/assets/projects/rickmansworth-g5.webp',1084,1446], ['/assets/projects/rickmansworth-g6.webp',1084,1446], ['/assets/projects/rickmansworth-g7.webp',1200,1600], ['/assets/projects/rickmansworth-g8.webp',1200,1600], ['/assets/projects/rickmansworth-g9.webp',1200,1600], ['/assets/projects/rickmansworth-g10.webp',1200,1600], ['/assets/projects/rickmansworth-g11.webp',1200,1600], ['/assets/projects/rickmansworth-g12.webp',1200,1600], ['/assets/projects/rickmansworth-g13.webp',1200,1600], ['/assets/projects/rickmansworth-g14.webp',1200,1600], ['/assets/projects/rickmansworth-g15.webp',1200,1600]]},
     {key:'ruislip', name:'The Ruislip Project', place:'Ruislip, Hillingdon',
-     img:'/assets/projects/ruislip-1400.webp', type:'Worktop, splashback, breakfast bar and arches',
+     img:'/assets/projects/ruislip-1400.webp', brand:true, type:'Worktop, splashback, breakfast bar and arches',
      story:'Calacatta Sydney Black quartz at 20mm, across the worktop, the island and the splashbacks. The breakfast bar was cut to the room, and the doorway into the kitchen lined in the same stone so the run carries through.',
      gallery:[['/assets/projects/ruislip-g1.webp',1067,1600], ['/assets/projects/ruislip-g2.webp',1067,1600], ['/assets/projects/ruislip-g3.webp',1067,1600], ['/assets/projects/ruislip-g4.webp',1067,1600], ['/assets/projects/ruislip-g5.webp',1067,1600], ['/assets/projects/ruislip-g6.webp',1067,1600]]},
 
@@ -12524,7 +12562,7 @@ requestAnimationFrame(glowTick);
        for about an hour and that was wrong: add a photograph and the number is stale, which is the
        "what was derived from it stays behind" fault this project keeps paying for. */
     {key:'central-london', name:'The Central London Project', place:'London',
-     img:'/assets/projects/central-london-1400.webp', type:'Worktop', story:'',
+     img:'/assets/projects/central-london-1400.webp', brand:true, type:'Worktop', story:'',
      reviewBy:'Joel Brizman', brand:true,
      gallery:[['/assets/projects/central-london-g1.webp',1600,1067], ['/assets/projects/central-london-g2.webp',1600,1067], ['/assets/projects/central-london-g3.webp',1600,1067], ['/assets/projects/central-london-g4.webp',1600,1067], ['/assets/projects/central-london-g5.webp',1600,1067], ['/assets/projects/central-london-g6.webp',1600,1067], ['/assets/projects/central-london-g7.webp',1600,1067], ['/assets/projects/central-london-g8.webp',1600,1067], ['/assets/projects/central-london-g9.webp',1600,1067], ['/assets/projects/central-london-g10.webp',1600,1067], ['/assets/projects/central-london-g11.webp',1600,1067], ['/assets/projects/central-london-g12.webp',1600,1067], ['/assets/projects/central-london-g13.webp',1600,1067]]},
 
@@ -12534,7 +12572,7 @@ requestAnimationFrame(glowTick);
        middle of the block rather than at its end. One plate takes it back to fifteen slots and the
        block closes. ⛔ If he would rather have the hole, this field is the only thing to delete. */
     {key:'harlow', name:'The Harlow Project', place:'Essex',
-     img:'/assets/projects/harlow-1400.webp', type:'Worktop and splashback', story:'', brand:true,
+     img:'/assets/projects/harlow-1400.webp', brand:true, type:'Worktop and splashback', story:'', brand:true,
      gallery:[['/assets/projects/harlow-g1.webp',1084,1446], ['/assets/projects/harlow-g2.webp',882,1177], ['/assets/projects/harlow-g3.webp',1084,1446], ['/assets/projects/harlow-g4.webp',1084,1446], ['/assets/projects/harlow-g5.webp',1084,1446], ['/assets/projects/harlow-g6.webp',1084,1446], ['/assets/projects/harlow-g8.webp',1200,1600], ['/assets/projects/harlow-g9.webp',1200,1600], ['/assets/projects/harlow-g10.webp',1200,1600], ['/assets/projects/harlow-g11.webp',1200,1600], ['/assets/projects/harlow-g12.webp',1200,1600], ['/assets/projects/harlow-g13.webp',1200,1600], ['/assets/projects/harlow-g14.webp',1200,1600], ['/assets/projects/harlow-g15.webp',1200,1600]]},
 
     /* ⭐ **TWO PHOTOGRAPHS, SO THE PLATE STANDS IN THE THIRD COLUMN — 15 Aug 2026 (D240).** Client:
@@ -12543,7 +12581,7 @@ requestAnimationFrame(glowTick);
        three. ⚠️ At TWO columns the same two photographs already make a square block, so the plate
        does not render there at all — see `--brandShow2`. */
     {key:'harrow', name:'The Harrow Project', place:'Harrow',
-     img:'/assets/projects/harrow-1400.webp', type:'Worktop', story:'', brand:true,
+     img:'/assets/projects/harrow-1400.webp', brand:true, type:'Worktop', story:'', brand:true,
      gallery:[['/assets/projects/harrow-g1.webp',1084,1446], ['/assets/projects/harrow-g2.webp',1084,1446]]}
   ];
   const PER_SET=4;
@@ -13647,6 +13685,38 @@ requestAnimationFrame(glowTick);
       plate.style.setProperty('--brandShow2',n2?'flex':'none');
       plate.innerHTML='<img src="/assets/brand/topcat-vertical.svg" alt="" draggable="false">';
       mediaWrap.appendChild(plate);
+      /* ⛔⛔⛔ THE PLATE HAS TO PROVE IT FILLS A HOLE, OR IT LEAVES — 15 Aug 2026 (D258). Client:
+         *"you can clearly see the Hornchurch project didn't need a logo because the collage was
+         already full from the images. I'm saying only where there's a gap because of a lack of a
+         single image, then you add the logo in. Don't just force it into every project."*
+         ⭐⭐⭐ **THE COUNT FORMULA ABOVE CANNOT ANSWER THIS AND NO COUNT FORMULA CAN.** `(c − n mod
+         c) mod c` assumes a uniform GRID; this is `column-count:3`, which BALANCES. Central London
+         (13 photographs) and Hornchurch (7) both come out "two slots short" and they do not look
+         alike at all — one ends ragged and one ends level, because that depends on the heights of
+         the pictures, not on how many there are.
+         ⭐⭐ **SO IT IS MEASURED INSTEAD OF PREDICTED:** group the tiles by `offsetLeft` to find the
+         real columns, take each column's lowest edge, and the raggedness is the spread between
+         them. Render it both ways and keep the plate only if it makes that spread SMALLER. A plate
+         that lengthens its own column is the fault he is describing and removes itself.
+         ⚠️ `offsetTop`/`offsetHeight`, never rects — these tiles carry `.glow-card` transforms.
+         ⚠️ Safe on one column (≤640px): the spread is 0 either way, so the plate goes. */
+      requestAnimationFrame(()=>{
+        const ragged=()=>{
+          const bottoms=new Map();
+          for(const el of mediaWrap.children){
+            if(!el.offsetWidth&&!el.offsetHeight) continue;      // display:none at this band
+            const x=Math.round(el.offsetLeft);
+            bottoms.set(x,Math.max(bottoms.get(x)||0,el.offsetTop+el.offsetHeight));
+          }
+          const v=[...bottoms.values()];
+          return v.length>1?Math.max(...v)-Math.min(...v):0;
+        };
+        const withPlate=ragged();
+        plate.style.display='none';
+        const without=ragged();
+        plate.style.display='';
+        if(withPlate>=without) plate.remove();
+      });
     }
     mediaWrap.style.display=MEDIA.length?'':'none';
   }
