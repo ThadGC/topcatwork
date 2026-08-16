@@ -2587,6 +2587,26 @@
      margins now (client, 1 Aug round 4) */
   @media(min-width:1121px){
     #process{justify-content:center}
+    /* ⭐⭐ SMALLER BLOCKS, AND EVERY PIXEL THEY GIVE BACK GOES TO THE TOP AND THE BOTTOM EDGE —
+       16 Aug 2026 (D271). Client, on the pinned frame the weld holds him on: *"make the blocks
+       a little bit smaller, or just optimise it somehow so that we can buy some more space for
+       the title to come down slightly and the buttons to come up slightly so they're not close
+       to the top and bottom edges of the screen."* ⭐ The cap is the only lever that bites here:
+       `(100vh − 400)/6` is 83px at 900 and 71px at 824, so the CAP governs on every desktop
+       window and lowering it is what shrinks the tiles. 68 → 58 takes the flow 478 → 418 and the
+       tile 220 → 202, which is still 100px clear of what the pill and the text band need.
+       ⛔ SCOPED TO DESKTOP. `--u` is declared at base and the TABLET USES THE SAME GRID
+       (the flex-column fallback only starts at ≤980), so a base-scope edit would have resized a
+       frozen band. ⚠️ **THE OVERRIDE ITSELF LIVES DOWN BESIDE `#procFlow`, NOT HERE** — this
+       block is ABOVE that declaration, and `#procFlow` against `#procFlow` is decided by source
+       order. Written here it lost silently and the tiles never moved. Search `--u:clamp`. */
+    /* ⛔⛔ AND THE AIR ONLY LOOKS EQUAL IF THE BAR IS IN THE SUM. `justify-content:center` splits
+       the free space evenly, so with 90px of top padding the title cleared the fixed bar by
+       **16.9px** while the buttons had **43.2px** under them — the section was centred and read
+       as top-heavy, which is exactly what he is looking at. Same relation as the hero (D259):
+       the top inset is the bottom inset PLUS the bar. Measured after: 60.1 / 60.1.
+       ⚠️ Only while the weld is live, because only then is this frame pinned under the bar. */
+    body.weld-live #process{padding-top:calc(clamp(28px,4.2vh,72px) + var(--barH))}
   }
   /* Flex items with `margin:0 auto` do NOT stretch — explicit full width (same trap as before) */
   #process .section-head,#process .proc-flow{width:100%}
@@ -2637,6 +2657,17 @@
       "d d d d d e e e e e e e"
       "d d d d d e e e e e e e"
       "d d d d d e e e e e e e";
+  }
+  /* ⭐⭐ THE DESKTOP CAP — 16 Aug 2026 (D271), and it has to sit AFTER the declaration above.
+     Client: *"make the blocks a little bit smaller… so we can buy some more space for the title
+     to come down slightly and the buttons to come up slightly."* The vh term is 83px at 900 and
+     71px at 824, so on every desktop window the CAP is what the tiles are actually taking, and
+     the cap is therefore the whole lever. 68 → 58 takes the flow 478 → 418 and the tile 220 →
+     202; the pill and the bottom text band need 118 between them, so there is 84px of headroom
+     left. ⛔ DESKTOP ONLY — the tablet is on this same grid (the flex-column fallback starts at
+     ≤980), so this cannot go anywhere near base scope. See the note in the `#process` block. */
+  @media(min-width:1121px){
+    #procFlow{--u:clamp(26px,calc((100vh - 400px)/6),58px)}
   }
   .ptile{
     position:relative;overflow:hidden;border-radius:14px;
@@ -5788,6 +5819,24 @@
         "w1 w1 w1 w1 w3 w3"
         "w4 w4 w4 w4 w3 w3";
     }
+    /* ⭐⭐ THE STORY COLUMN IS TIGHTER ON DESKTOP, AND THE COLLAGE COMES DOWN WITH IT — 16 Aug
+       2026 (D271). Client: *"for the about us section as well, if there's any way for us to
+       optimise both sides to be a little bit smaller so it doesn't fill up the screen so much."*
+       ⭐⭐⭐ **ONE COLUMN IS BOTH SIDES.** The block above this is the whole reason: the collage
+       is `align-self:stretch` with no aspect ratio, so the copy drives the row and the pictures
+       follow it. Shortening the prose is the only edit either side needs.
+       ⛔ **NOT ONE WORD OF HIS COPY IS CUT** — this is leading, paragraph gaps and a 0.8px cap
+       on the type, nothing else. 20 lines at 27.52 became 20 lines at 24.62.
+       ⚠️ The cap only lowers the CEILING: the `min(1.4vw,2.2vh)` term still governs on a narrow
+       or short desktop, so nothing about how it shrinks has changed.
+       Measured at 1440x900: the section 843.8 → 761.6, which finally puts it INSIDE the 821.5
+       the weld leaves under the bar, with the slack split above and below. */
+    #about .section-sub,.weld-about .section-sub{
+      font-size:clamp(13.5px,min(1.4vw,2.2vh),15.2px);line-height:1.62;
+      margin-top:clamp(8px,1.2vh,12px)}
+    #about .section-title + .section-sub,.weld-about .section-title + .section-sub{
+      margin-top:clamp(7px,1.1vh,11px)}
+    #about .about-cta,.weld-about .about-cta{padding-top:clamp(11px,1.9vh,22px)}
     .ac-p{aspect-ratio:3/4}
     .about-collage>.ac-tile{min-height:0;min-width:0}
     /* ⛔⛔⛔ THIS ONE LINE IS WHAT MAKES THE COPY DRIVE THE ROW, AND WITHOUT IT THE WHOLE BLOCK
