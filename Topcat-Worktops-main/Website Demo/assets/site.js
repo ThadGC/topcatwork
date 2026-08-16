@@ -264,7 +264,17 @@ const SS={
     without faces on the client's instruction, all with the ladders their own boxes ask for. The
     two process files take 880/1600 for the same reason `process-quote-plans` does: `#pmShot` in
     the step's detail card is 758 wide and takes `p.img` with no srcset. */
- "/assets/site/process-consult-handshake-1600.webp":"/assets/site/process-consult-handshake-880.webp 880w, /assets/site/process-consult-handshake-1600.webp 1600w",
+ /* ⛔⛔ **CROPPED TO GET THE MARK OFF THE SHIRT — 16 August 2026 (D265).** Client: *"this Topcat
+    logo is terribly done, so go crop that image. Don't have to change it. Just crop it so that you
+    can't see the Topcat logo."* ⭐ **A CROP, NOT A GENERATION — HE SAID SO AND IT COSTS NOTHING.**
+    The mark sits at x 1795–1915 of the 2048px master and the model's invented wordmark ghost is at
+    1885–1950, so the cut is at **1780** and takes both, with 15px to spare. ⚠️ The right man keeps
+    his arm, his collar and the piping; what goes is the chest, which is a normal way to frame a
+    figure at the edge. ⛔ **A NEW PREFIX, NOT NEW BYTES UNDER THE OLD ONE** — the old ladder stays
+    on disk untouched (never delete the originals), the URL change is its own cache-bust on his
+    phone, and one prefix still means one picture. Two rungs for the same reason as before:
+    `#pmShot` is 758 wide and takes `p.img` with no srcset. */
+ "/assets/site/process-consult-shake-1600.webp":"/assets/site/process-consult-shake-880.webp 880w, /assets/site/process-consult-shake-1600.webp 1600w",
  /* ⚠️ TWO RUNGS AND THE TOP ONE IS 1516, NOT 1600 — the install shot is a CROP of its generation
     (the client asked for the breast pockets out), so 1516 is its native width and 1600 would be
     an upscale. Same rule the fireplace and splashback ladders follow (D241). */
@@ -516,7 +526,7 @@ const PROCESS=[
      better-composed variant with the samples on the counter was rejected — at 392x230 its whole
      story sat under the shade. ⛔ **AND THE GENERATION INVENTED TWO CHEST MARKS AND A WORDMARK**,
      which were patched out with the shirt's own fabric before his was composited on. */
-  {t:"Consultation",img:"/assets/site/process-consult-handshake-1600.webp",d:"We visit, understand the space, and guide you to the right stone.",
+  {t:"Consultation",img:"/assets/site/process-consult-shake-1600.webp",d:"We visit, understand the space, and guide you to the right stone.",
    d:"Understanding your space and style.",
    long:"We start at your kitchen, understanding the space, how you live in it, and the look you're after, then guide you to the material and finish that fit, with no pressure and no jargon."},
   /* ⭐⭐ THE CLIENT'S OWN PICTURE FOR STEP TWO — 15 Aug 2026. Client: *"use this first screenshot
@@ -5354,22 +5364,6 @@ if(faqIndex && panel && faqBody){
 
 })();
 
-/* ---------- supplier strip ----------
-   Dekton and Neolith were removed on 6 Aug when porcelain was off, and RESTORED on 7 Aug when
-   the client confirmed porcelain is offered again on a bespoke, enquiry-led basis. Both are
-   sintered-porcelain brands, so they belong here only while that holds.
-   ⚠️ Naming a brand in this band implies we can supply it. Do not add a brand the client has
-   not confirmed access to.
-   ⛔ 14 Aug 2026 — this list is the client's own, changed by him in writing. One name was added
-   and one removed on his instruction. ⚠️ It crosses a standing rule of his that is recorded in
-   HANDOVER.md §2 rule 9 and in the register at D201; the reasoning lives there rather than
-   here, because this file is public. If that rule is ever reinstated, D201 says which entry
-   comes back out.
-   ⚠️ The name that came out is a slab brand and is removed from THIS BAND ONLY. The same maker
-   is still recorded against twelve stone pages, where removing it would drop stones out of the
-   132 that `harvest/verify.py` gates on. */
-const SUPPLIERS=["Silestone","Caesarstone","Technistone","Unistone","Compac","Cimstone","Ceralsio","Noble Stone","iStone","Next Stone Slabs","Dekton","Neolith"];
-orNull(document.getElementById('strip')).innerHTML=[...SUPPLIERS,...SUPPLIERS].map(s=>`<span>${s}</span>`).join('');
 
 /* ---------- in-page navigation ----------
    A raw anchor jump is wrong for most of this page, for two different reasons:
@@ -5478,9 +5472,9 @@ orNull(document.getElementById('strip')).innerHTML=[...SUPPLIERS,...SUPPLIERS].m
 /* ---------- gold section divider: the shine tracks the line's position in the viewport,
    so it slides from one side to the other as you scroll past it ---------- */
 (function(){
-  /* .strip-rule is included because the brand strip IS the stones→process divider now
-     (client, 30 July) — it takes the same travelling shine on its bottom hairline. */
-  const divs=[...document.querySelectorAll('.section-divider, .strip-rule')];
+  /* ⚠️ `.strip-rule` was in this list until D266 — the brand marquee was the stones → estimator
+     divider and took the same travelling shine on its bottom hairline. Both are deleted. */
+  const divs=[...document.querySelectorAll('.section-divider')];
   if(!divs.length) return;
   const shine=()=>{
     const vh=window.innerHeight||1;

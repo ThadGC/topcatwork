@@ -1781,12 +1781,8 @@
   /* gold section divider — a bright shine slides along it as the line scrolls up the viewport */
   /* full-bleed: the line spans the whole viewport, touching both edges; the shine still sweeps it */
   .section-divider{position:relative;height:2px;width:100vw;margin:clamp(26px,6vh,74px) calc(50% - 50vw);overflow:visible;z-index:2}
-  /* the phone's replacement for the brand marquee (D143). ⛔ display:none is the BASE default
-     because a new element exists at every width the moment it is added (D120); the phone query
-     turns it on. Above 720px the marquee is still the seam and this must stay invisible. */
-  .strip-swap{display:none}
   /* ⭐ the projects/stones order wrapper (D179). ⛔ `display:contents` is the BASE default for the
-     same D120 reason as .strip-swap above: the element exists at every width the moment it is
+     same D120 reason the deleted `.strip-swap` had: the element exists at every width the moment it is
      added, and a box here would change the frozen desktop and tablet compositions. It generates
      no box, so those widths lay the four children out unchanged; the phone query below makes it
      a flex column and re-orders it. */
@@ -3058,30 +3054,6 @@
     .faq-plate.fp-in .fp-rule,.faq-plate.fp-in .fp-a{animation:none}
   }
 
-  /* ============ BRAND STRIP — this IS the stones -> estimator divider (see markup) ========
-     ⚠️ Client, 30 July: "that rotating bar becomes the divider. There is no gold divider
-     underneath that." The plain .section-divider that used to follow this band is DELETED and
-     the band sits ON the seam instead — so it wears the divider's language: gold hairlines top
-     and bottom (the .sd-line gold, not the old dull --hair-soft) and the same travelling shine
-     riding its bottom line, driven by the same --shine var from the divider IIFE. Brand names
-     are GOLD now, not the old grey. Don't put a .section-divider back under this. */
-  /* The RULE carries the lines + shine and is NOT masked, so the hairlines run full-bleed edge
-     to edge like every other divider. The mask lives on .strip inside it, where its only job is
-     fading the marquee's names in and out — masking the parent faded the lines' ends too. */
-  .strip-rule{position:relative;
-    border-top:1px solid rgba(198,166,100,0.34);border-bottom:1px solid rgba(198,166,100,0.34)}
-  /* ⚠️ `--shineA` (D182) rides along here too — this rule is driven by the same IIFE and the same
-     clamp, so it parks at the corners for the same reason. See `.sd-line::after`. */
-  .strip-rule::after{content:"";position:absolute;left:var(--shine,50%);bottom:-1px;height:2px;width:26%;opacity:var(--shineA,1);
-    transform:translateX(-50%);border-radius:3px;filter:blur(1px);pointer-events:none;
-    background:linear-gradient(90deg,transparent,rgba(255,244,214,0.95) 50%,transparent)}
-  @media (prefers-reduced-motion:reduce){ .strip-rule::after{left:50%!important} }
-  .strip{padding:26px 0;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
-  .strip-track{display:flex;gap:64px;width:max-content;animation:marquee 34s linear infinite}
-  .strip:hover .strip-track{animation-play-state:paused}
-  .strip-track span{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--gold);white-space:nowrap;letter-spacing:0.04em;transition:color .4s var(--ease)}
-  .strip-track span:hover{color:var(--gold-hi)}
-  @keyframes marquee{to{transform:translateX(-50%)}}
 
   .note{max-width:1320px;margin:60px auto 0;padding-top:26px;border-top:1px solid var(--hair-soft);color:var(--faint);font-size:12px;letter-spacing:0.02em;line-height:1.7}
   .note b{color:var(--muted);font-weight:500}
@@ -4332,7 +4304,18 @@
   }
 
   /* ================= ESTIMATOR ================= */
-  #estimator{position:relative;z-index:1}
+  /* ⭐⭐ **THE STONES → ESTIMATOR SEAM IS PLAIN SPACE NOW — 16 August 2026 (D266).** The brand
+     marquee was this seam by design (client, 30 July: *"that rotating bar becomes the divider"*),
+     so deleting it left two full sections butted together with 41.4px between their content.
+     ⛔ **AND A `.section-divider` IS NOT THE ANSWER — HE RULED IT OUT IN THE SAME SENTENCE**
+     (*"or actually better yet, don't have any divider in that section"*).
+     ⭐ **SO THE GAP IS EXACTLY WHAT A DIVIDER SEAM OCCUPIES, WITH NO LINE DRAWN IN IT**: two of
+     `.section-divider`'s own symmetric margins plus the 2px rule it would have carried. Written as
+     that calculation rather than as a number, so it tracks the divider at every viewport height
+     and the page's rhythm cannot drift here alone. ⚠️ It reaches every band on purpose — the phone
+     had its own divider in this spot (D143) and he has now removed that too. */
+  #estimator{position:relative;z-index:1;
+    margin-top:calc(2 * clamp(26px,6vh,74px) + 2px)}
   .est-grid{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1.04fr .96fr;
     gap:clamp(24px,3.5vw,56px);align-items:stretch}
   @media(max-width:980px){.est-grid{grid-template-columns:1fr}}
@@ -6287,28 +6270,6 @@
        each arrow's own bounding box, so both chevrons light identically.
        ⚠️ The glyph grows 18px → 26px. Without its disc an 18px chevron has nothing to give
        it presence and simply reads as small. */
-    /* --- 6. THE BRAND MARQUEE BECOMES A PLAIN DIVIDER ON THE PHONE (D143) -------------
-       Client: "remove the words 'brands we work with', and move the rolling bar based on all
-       the supplier links I sent you, add their names in here" — then, once told that the trade
-       yards cannot be named: "if we cannot name the suppliers, then remove that rolling bar
-       divider completely and just make it a regular divider."
-       ⛔ **THE STRIP WAS NEVER HIS BUYING LIST AND THAT IS WORTH KNOWING BEFORE ANYONE
-       "RESTORES" IT.** `SUPPLIERS` in the script is a misleading variable name: it holds twelve
-       MANUFACTURER BRANDS (Silestone, Caesarstone, Dekton, Neolith…), which are safe to name
-       and were never in tension with §2 rule 9. What could not go in were Nile Stone and Next
-       Stone Slabs, the yards Topcat BUY from (D8) — naming those tells a customer where to go
-       direct. He chose to drop the band rather than run it with brands alone.
-       ⚠️ THIS BAND WAS THE SECTION BOUNDARY BY DESIGN (client, 30 July): there is deliberately
-       no .section-divider after the stones section because the strip itself was the seam. Hide
-       it without putting something in its place and stones runs into the estimator with no
-       break at all — which is why the swap adds a divider rather than just deleting.
-       ⭐ The band's own top padding is dropped to nothing so the divider's own symmetric margin
-       (clamp(26px,6vh,74px) top and bottom) is the ONLY spacing, which is what "perfectly in
-       between the two sections" means — one number either side rather than a 13vh pad above
-       and #estimator's padding below. */
-    .strip-band{padding-top:0 !important}
-    .strip-head,.strip-rule{display:none}
-    .strip-swap{display:block}
 
     .wbtn{background:transparent;border-color:transparent}
     .wbtn:hover{background:transparent;border-color:transparent;transform:none;color:var(--bone)}
@@ -6588,10 +6549,11 @@
        ⚠️⚠️ **13 Aug 2026 (D179): THIS RULE MOVED, IT WAS NOT DROPPED.** D179 puts the stone
        selector above the gallery on the phone, so `#gallery + .section-divider` — which is a DOM
        selector — now names the divider ABOVE the gallery, where there is no sticky-bar reserve to
-       double up with. The divider that now sits BELOW the gallery is `.strip-swap`, so the
-       compensation goes there. ⛔ **THIS IS THE COST-STAYS-BEHIND TRAP** (START HERE §7.2, four
-       times now): the seam fix belongs to the gallery's BOTTOM EDGE, not to that one element. */
-    .strip-band .strip-swap{margin-top:0}
+       double up with. ⚠️ **AND THERE IS NO DIVIDER BELOW THE GALLERY AT ALL SINCE D266** — the
+       marquee that used to close this run is deleted at every width and `#estimator` carries the
+       seam as plain space, so the compensation that used to ride on `.strip-swap` went with it.
+       ⛔ **THIS IS THE COST-STAYS-BEHIND TRAP** (START HERE §7.2, four times now): the seam fix
+       belongs to the gallery's BOTTOM EDGE, not to any one element. */
 
 
     /* --- 11. THE FOOTER: A CENTRED HEAD, TWO PACKED COLUMNS, A CENTRED FOOT — D153 -----------
@@ -6803,12 +6765,11 @@
      still does not move: `.gs-swap` is `display:contents` in the base rule — an element that
      generates NO BOX AT ALL — so above 1120px the wrapper is invisible to layout and the frozen
      desktop composition (D91) is untouched, exactly as it was when only the phone opted in.
-     ⛔ **THE SEAM COMPENSATION ABOVE TRAVELS WITH IT AND MUST STAY ABOVE THIS BLOCK.**
-     `.strip-band .strip-swap{margin-top:0}` is D179's cost-stays-behind fix: `#gallery +
-     .section-divider` is a DOM selector, so after the swap it names the divider ABOVE the gallery,
-     where there is no sticky-bar reserve to double up with. That rule is inside the phone block and
-     therefore does NOT reach the tablet — see the tablet band at the foot of this stylesheet, where
-     the tablet's own seam is measured and set. ⚠️ Getting this wrong tightens the wrong seam by
+     ⚠️ **THE SEAM COMPENSATION THAT USED TO TRAVEL WITH IT IS GONE — D266.** It was
+     `.strip-band .strip-swap{margin-top:0}`, D179's cost-stays-behind fix, and it died with the
+     marquee it hung on: `#gallery + .section-divider` is a DOM selector, so after the swap it names
+     the divider ABOVE the gallery, and the one BELOW it no longer exists at any width. The tablet's
+     own seam is still measured and set at the foot of this stylesheet. ⚠️ Getting this wrong tightens the wrong seam by
      ~49px and it is invisible in a diff (D179, five times now).
      ============================================================================================ */
   @media(max-width:1120px){
