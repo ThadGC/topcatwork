@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=aa110b4533">
+<link rel="stylesheet" href="/assets/site.css?v=8328acf7d9">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -347,7 +347,9 @@
             </span>
             <span class="chip-legacy"><b>★★★★★</b> 5.0 on Google</span>
           </span>
-          <span class="chip chip-guarantee glow-card"><b>10</b> year guarantee</span>
+          <!-- ⭐ D260: the numeral is the mark. `<b>` is kept, so this is still the same element
+               `.chip b` has always styled and the chip still reads "10 year guarantee" aloud. -->
+          <span class="chip chip-guarantee glow-card"><b class="chip-mk">10</b> year guarantee</span>
           <!-- ⭐ **THE REASONS RETURN AS BUBBLES — 13 August 2026 (D172).** Client: *"then we have
                the more reasons, like, we will list it out in the same bubble kind of way… it's a
                seventy two hour aftercare, we will say quick turnaround time, all in the same bubble
@@ -396,8 +398,14 @@
                rather than wrapping inside it.
                ⚠️ THE DESKTOP FACT ROW STILL SAYS "Every detail included" and should: he named the
                tablet and the mobile, and the desktop's is a different element (D225). -->
-          <span class="chip chip-reason glow-card">72-hour aftercare</span>
-          <span class="chip chip-reason glow-card">Free home visit</span>
+          <!-- ⭐ D260. ⚠️ THE HYPHEN GOES WITH THE SPLIT: "72" is in the ring and "hour aftercare"
+               follows it, so a hyphen would be joining a word to a mark it is no longer beside.
+               The promise is unchanged and still not an absolute (§2 rule 12). -->
+          <span class="chip chip-reason glow-card"><b class="chip-mk">72</b> hour aftercare</span>
+          <!-- ⛔ D260: the house is a STROKE, so it takes #tcGold — see the `.chip .chip-mk` note.
+               ⛔ NO RING AROUND IT (his second message). aria-hidden, because "Free home visit"
+               beside it already says what it is. -->
+          <span class="chip chip-reason glow-card"><span class="chip-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.4 10.6 12 3.8l8.6 6.8M5.9 9.2V20h12.2V9.2M9.9 20v-5.6h4.2V20" stroke="url(#tcGold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Free home visit</span>
         </div>
     </div>
   </section>

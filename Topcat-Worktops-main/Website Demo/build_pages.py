@@ -93,6 +93,15 @@ def section(src, sid):
     block = src[m.start():end + len("\n  </section>")]
     if block.count("<section") != block.count("</section>"):
         raise SystemExit("build_pages.py: section %r came out unbalanced" % sid)
+    # ⛔⛔ **BALANCED IS NOT THE SAME AS CORRECT — D262.** `#faq` closed at column 0 instead of two
+    # spaces, so this search ran past its end and took the whole `#cta` section with it: two opens,
+    # two closes, balanced, and /about/ and /contact/ shipped the enquiry card twice for weeks.
+    # A second top-level `<section` inside one section is impossible in this file, so it is the
+    # signal that the end marker was missed.
+    # ⚠️ `block` STARTS WITH ITS OWN OPENING TAG, newline included, so the count is 1 when correct.
+    if block.count("\n  <section") > 1:
+        raise SystemExit("build_pages.py: section %r swallowed the section after it — check that "
+                         "its </section> is indented two spaces" % sid)
     return block.strip("\n")
 
 
@@ -512,7 +521,12 @@ PAGES = [
         crumb="Contact",
         h1="Contact",
         lead="Send us the room, the rough sizes or just a photograph, and we will come back to you with what it takes. The home visit is free, we bring the samples to your kitchen, and nothing is charged until you have said yes.",
-        stack=["s_cta", "s_faq", "s_reviews"],
+        # ⭐ D262: THE REVIEWS COME BEFORE THE QUESTIONS. Client: *"on the dedicated contact us
+        # page, put the review section above the [frequently asked questions] section."* ⭐ It is
+        # also the better argument on this page of all of them: the form is the ask, other people
+        # vouching for us is what earns the answer to it, and the FAQ is the leftover objections —
+        # so proof now sits directly under the form rather than three screens below it.
+        stack=["s_cta", "s_reviews", "s_faq"],
     ),
     dict(
         slug="trade",

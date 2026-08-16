@@ -15,6 +15,14 @@
     --gold-soft:#D4B778;     /* accent words in headings — a lifted champagne so they read against the limestone */
     --hair:rgba(198,166,100,0.34);
     --hair-soft:rgba(244,241,234,0.10);
+    /* ⭐⭐ THE FIXED HEADER'S HEIGHT, AS A NUMBER THE REST OF THE PAGE CAN READ — 16 Aug 2026
+       (D259). The hero has to give its composition back exactly the height the bar takes off the
+       top of the frame, and until now that height existed only as an outcome (18px of padding
+       twice, plus a 42.5px logo). ⛔ `header.bar` now takes this as its `height`, so the variable
+       is the AUTHORITY rather than a guess that drifts the first time the logo is resized —
+       box-sizing is border-box everywhere here, so the bar renders at exactly the 78.5px it
+       already measured. */
+    --barH:78.5px;
     --ease:cubic-bezier(0.16,1,0.3,1);
     --ease-2:cubic-bezier(0.65,0,0.35,1);
     --ease-slow:cubic-bezier(0.4,0,0.15,1);
@@ -172,6 +180,11 @@
   header.bar{
     position:fixed;top:0;left:0;right:0;z-index:50;
     display:flex;align-items:center;justify-content:space-between;gap:24px;
+    /* ⚠️ THE HEIGHT IS DECLARED, NOT INFERRED (D259). It was 18+42.5+18 by arithmetic, and the
+       hero now centres its composition against it — a bar whose height is only ever an outcome
+       cannot be read by anything else. Same 78.5px it has always drawn at; the vertical padding
+       stays so the logo keeps its own air if the number is ever changed. */
+    height:var(--barH);
     padding:18px clamp(20px,5vw,64px);
   }
   header.bar::before{
@@ -649,6 +662,14 @@
      element at two breakpoints is how the gap opened in the first place.
      ⭐ The DESKTOP keeps the button: there is no burger there and the bar has the room. */
   @media(max-width:1120px){header.bar .bar-cta{display:none}}
+  /* ⛔⛔ **THE BAR IS 80px WHEREVER THE BURGER IS, AND `--barH` HAS TO SAY SO — 16 Aug 2026 (D259).**
+     The desktop bar is 42.5px of logo inside 36px of padding, so 78.5; below 1121 the burger's own
+     44px control sets the height instead and both frozen bands measure **80**. ⚠️ Declaring the
+     desktop's 78.5 as a `height` at base scope silently took 1.5px off the phone and the tablet —
+     caught by measuring the bands after a base-rule edit, which is the one thing §4 asks for.
+     ⭐ The hero reads this variable only on the desktop (the band blocks set their own paddings),
+     so this exists to keep the number TRUE, not because anything downstream needs it here. */
+  @media(max-width:1120px){header.bar{--barH:80px}}
 
   .mobile-nav{
     /* UNDER the fixed header (z50): the burger lives inside the header's stacking context, so
@@ -3733,18 +3754,29 @@
      past the fold and took the cue with it. Top clears the 77px header; bottom keeps the copy
      off the cue, which sits 30px up from the bottom edge and is ~49px tall. */
   .hero-inner{position:relative;z-index:2;width:100%;max-width:1320px;margin:0 auto;
-    /* ⭐⭐ REBALANCED AFTER THE SCROLL ARROW WENT (D235). Client: *"you can resize the hero section
-       like you said because you left [space] for it. So make the perfect hero section size."*
-       ⚠️⚠️ **MEASURED, AND THE BLOCK WAS SITTING HIGH.** At 1440x900 the space between the fixed
-       nav's bottom edge and the hero floor is 821px and the content block is 456px of it, so there
-       are 365px of slack — and it was split **140px above / 225px below**, 38:62. The arrow used to
-       stand in that lower band; with it deleted the composition simply looked bottom-heavy.
-       ⭐ Now 15.6vh / 10.8vh, which at 900px tall is **164 above / 201 below**, about 45:55. ⛔ NOT
-       a dead 50:50 — a block centred by arithmetic reads as sitting low, so the optical centre
-       keeps a little more air beneath it than above.
+    /* ⭐⭐⭐ **THE COMPOSITION IS CENTRED ON ITS OWN INK — 16 August 2026 (D259).** Client: *"the
+       hero section… if you take everything together, spaced out as it is, it doesn't look like
+       it's exactly in the center on the vertical axis. It should be centred."*
+       ⛔⛔ **AND THE FRAME IS THE ONE UNDER THE NAV BAR, WHICH WAS TESTED BOTH WAYS BEFORE
+       CHOOSING.** Centred in the hero BOX (top of the screen to the gold arc) the block reads
+       plainly top-heavy — built it, screenshotted it, rejected it. The bar is 78.5px of visible
+       furniture at the top of the frame and the eye starts the composition below it.
+       ⭐⭐ **AND IT IS THE INK THAT IS CENTRED, NOT THE BOX.** The headline's first line box carries
+       11px of leading above the cap at 89.28px, so a box centred by arithmetic still LOOKS low by
+       that much. `--hTitle * 0.1234` is that leading measured off Cinzel's own metrics at this
+       line-height (half-leading plus ascender-minus-cap), and it is in em so it holds at every
+       size the clamp produces. The chips' bottom edge IS their ink — they are bordered pills.
+       ⭐⭐⭐ **SO THE RULE IS ONE RELATION, NOT TWO NUMBERS:** the top padding is the bottom padding
+       plus the header's height, less the leading the headline already provides. ⛔ Do not re-tune
+       these as a pair of independent clamps — that is what D235 did, and 15.6vh/10.8vh left the
+       ink **179 above / 203 below** at 1440x900. Measured after: **191.3 / 191.3**.
        ⚠️ These are the DESKTOP numbers in practice: the phone block and the tablet block each set
-       both paddings themselves, so neither inherits this. Checked after, not assumed. */
-    padding:clamp(64px,15.6vh,168px) clamp(20px,5vw,64px) clamp(72px,10.8vh,132px)}
+       both paddings themselves, so neither inherits this. Checked after, not assumed.
+       ⚠️ `--heroPadB` exists so the short-viewport block below can move the floor and have the top
+       follow it; setting `padding-bottom` there alone would silently break the relation. */
+    --heroPadB:clamp(72px,10.8vh,132px);
+    padding:calc(var(--heroPadB) + var(--barH) - var(--hTitle) * 0.1234)
+            clamp(20px,5vw,64px) var(--heroPadB)}
   /* ⭐⭐⭐ **THE HERO IS ONE CENTRED COMPOSITION AT EVERY WIDTH — 14 August 2026 (D238).**
      Client: *"for the desktop version, remove the line next to the subtitle, and then center the
      hero section design just like on the tablet and mobile version. So the title is going to be
@@ -3987,6 +4019,50 @@
   #hero .chip-reason,.page-head .chip-reason{display:inline-flex;align-items:center;
     white-space:normal;text-wrap:balance;line-height:1.25}
 
+  /* ⭐⭐⭐ **EVERY BUBBLE CARRIES A MARK NOW — 16 August 2026 (D260).** Client: *"I want all of the
+     parts to have almost like icons. So for instance, ten year guarantee, the ten should look like
+     a golden icon, and then the seventy two should look like a gold icon. And then the free home
+     visit should have a house icon."*
+     ⭐⭐ **THE NUMERAL IS THE ICON, WHICH IS WHAT HE ASKED FOR AND ALSO THE CHEAPEST TRUE ANSWER:**
+     "10" and "72" were already gold text in the label, so they are lifted into a struck ring and
+     the words that follow them read on. Nothing is invented and nothing is drawn twice — the chip
+     says "10 year guarantee" to a screen reader exactly as it did before.
+     ⭐ **26px, WHICH IS THE GOOGLE MARK'S OWN SIZE**, so all four bubbles have a mark in the same
+     slot at the same diameter and the row reads as one family rather than as one badged chip and
+     three plain ones.
+     ⛔ **THE HOUSE IS A STROKE, SO IT TAKES `#tcGold` AND NOT `#tcGoldSolid`** — the note in
+     `.tc-defs` is explicit that the solid ramp is for filled glyphs and goes flat on a 1.3px line,
+     and these two ramps are the whole reason a gold icon reads as metal rather than as a sticker.
+     ⛔⛔⛔ **NO RING, NO PLATE, NO CIRCLE OF ANY KIND — HE KILLED THAT ON SIGHT.** The first build
+     set each mark in a 26px struck ring to match the Google mark's diameter. Client: *"the circle
+     around the ten year and the seventy two hours and the home icon, I don't like the circles.
+     Stop doing that. Just make the ten an actual icon, make the seventy two an actual icon, and
+     then make the home an icon."* ⭐ **IT IS THE SAME INSTRUCTION HE GAVE ABOUT THE BACK ARROW**
+     (10 Aug, `service.css`): *"a simple golden gradient back arrow, not a circle around it, not
+     anything, just simple."* **This site does not put marks in containers.** Do not re-offer one.
+     ⭐⭐ **SO THE NUMERAL IS STRUCK METAL AND NOTHING ELSE** — the serif face at 23px carrying the
+     site's own champagne ramp through `background-clip:text`, which is the identical treatment
+     every gold accent word on the page already takes (`.section-title em` and its neighbours).
+     A numeral in the brand's metal at the brand's size IS the icon; a numeral in a circle is a
+     numeral in a circle.
+     ⚠️ **`.chip .chip-mk` OUT-SPECIFIES `.chip b` (0,2,0 against 0,1,1)**, which matters: the b
+     rule carries 2.5px of tracking, and tracking on a two-digit numeral puts a half-space of air
+     between the mark and the word after it. Reset here, not there — the tracking is right for the
+     numerals this rule does not reach.
+     ⚠️ **THE HOUSE IS A SEPARATE CLASS AND HAS TO BE.** `background-clip:text` on a box that
+     contains an SVG clips the box's own paint to the text inside it, so a shared class would put
+     the gradient nowhere and leave the icon to fend for itself.
+     ⚠️ It is one appearance at every width (D225): the bubbles have been one object since D237 and
+     a mark that only exists on the desktop would re-open exactly that. */
+  .chip .chip-mk{
+    flex:none;font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:0;line-height:1;
+    color:#C6A664;
+    background:linear-gradient(180deg,#E4CD92 0%,#C6A664 62%,#BC9A54 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .chip .chip-ico{flex:none;display:inline-flex;align-items:center}
+  .chip .chip-ico svg{width:24px;height:24px;display:block}
+
 
   /* ---------- the floating WhatsApp button (D173) ----------
      ⛔ **z-index 38 IS CHOSEN, NOT ARBITRARY.** It sits just UNDER `.mbar` (39) so the two never
@@ -4048,8 +4124,11 @@
      used to stand the scroll cue down as well; the cue is deleted outright now (D234). */
   @media(max-height:560px){
     /* ⚠️ the `.hero-cue{display:none}` that led this block went with the cue itself (D234). The
-       padding stays: it was cut for a short window, and it is what keeps the chips off the floor. */
-    .hero-inner{padding-bottom:clamp(52px,13.5vh,150px)}
+       padding stays: it was cut for a short window, and it is what keeps the chips off the floor.
+       ⚠️ IT SETS THE VARIABLE, NOT THE DECLARATION (D259) — the top padding is derived from this
+       number, so writing `padding-bottom` here would move the floor and leave the head where it
+       was, which is the centring undone at exactly the height it is tightest. */
+    .hero-inner{--heroPadB:clamp(52px,13.5vh,150px)}
   }
   /* staged entrance — each element carries its own delay in --hd */
   .hero-el{opacity:0;transform:translateY(26px);
@@ -5208,7 +5287,9 @@
      stopped being fine the moment the "what happens next" block went in underneath: at 1366×610
      the section ran 37px past one screen. They are vh-aware now and the section fits again.
      This is exactly the class of violation §7.8 says to expect more of. */
-  .cta-form{display:grid;gap:clamp(7px,1.2vh,11px);align-content:start}
+  /* ⭐ `--cnIndent` is the "what happens next" column's one text indent (D261): the numerals sit at
+     the column edge, their sentences and the reply promise below them both start here. */
+  .cta-form{display:grid;gap:clamp(7px,1.2vh,11px);align-content:start;--cnIndent:22px}
   .cta-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}      /* horizontal, leave flat */
   .cta-form input,.cta-form textarea,.cta-form select{
     width:100%;font:inherit;font-size:14px;font-weight:300;color:var(--bone);
@@ -5254,7 +5335,22 @@
     background:var(--gold);color:#141007;
     transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)}
   .cta-send:hover{background:var(--gold-hi);border-color:var(--gold-hi);transform:translateY(-1px)}
-  .cta-reply{text-align:center;font-size:11.5px;color:var(--faint)}
+  /* ⭐⭐ **THE REPLY PROMISE LINES UP WITH THE LIST, IT IS NOT A FOURTH ITEM — 16 Aug 2026 (D261).**
+     Client: *"where it says we reply within one working day, line that up with the text above that
+     so that the W is in line with the A from number three's 'a fixed'. So it, being centred, looks
+     a bit strange. It doesn't have to be a number four, it just needs to be its own thing, maybe in
+     gold text or whatever, but just needs to line up better."*
+     ⭐ **HE IS DESCRIBING A RAGGED LEFT EDGE.** Everything else in that column starts on one of two
+     x positions — the kicker and the numerals at the column edge, the three answers 22px in — and
+     this line started at neither, because `text-align:center` puts it wherever its own length
+     happens to leave it. Measured before: the numbered text at **766.48**, this at **909.65**.
+     ⛔ **AND IT MUST NOT BECOME ITEM FOUR**, which is his other half: no counter, no numeral, a size
+     of its own (11.5 against the list's 13.68) and the brand gold rather than the list's muted bone.
+     It is the form's closing promise, not another step in the process.
+     ⚠️ **THE INDENT IS ONE NUMBER IN ONE PLACE.** `.cn-list li` had 22px hard-coded and this rule
+     needs exactly the same 22px, so it is a variable on the form now — two copies of an alignment
+     constant is how the two halves drift the first time the numerals change size. */
+  .cta-reply{text-align:left;padding-left:var(--cnIndent);font-size:11.5px;color:var(--gold)}
 
   /* ============ THE FOOT OF THE FORM (7 Aug) ============
      Filling the ~119px of dead column under the submit button. ⚠️ All three measures below are
@@ -5281,7 +5377,9 @@
     text-transform:uppercase;color:var(--gold);margin-bottom:clamp(5px,1.1vh,12px)}
   .cn-list{list-style:none;display:grid;gap:clamp(3px,0.85vh,10px);counter-reset:cn}
   .cn-list li{
-    counter-increment:cn;position:relative;padding-left:22px;
+    /* ⚠️ `--cnIndent` is declared on `.cta-form` (D261) — the reply line under this list aligns to
+       the same edge and the number has to live in one place. */
+    counter-increment:cn;position:relative;padding-left:var(--cnIndent);
     font-size:clamp(11.5px,min(0.95vw,1.6vh),14px);line-height:1.45;
     color:var(--muted);font-weight:300;
   }
