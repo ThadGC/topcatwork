@@ -16185,6 +16185,36 @@ function viewSequence(host,tiles,apply,opts){
                    5*step + span must stay under 1 or the last tile never finishes inside the
                    block's travel. At span 0.42 that caps step at about 0.116.
        scrub     — the damping. Lower is laggier, and the lag is what reads as weight. */
+  /* ⭐⭐⭐ THE MOSAIC IS BUILDING INSIDE A SLIDING SLAB NOW, SO IT IS CLOCKED OFF A DIFFERENT
+     STRETCH OF TRAVEL — 16 Aug 2026 (D272). Client: *"when the about us section comes in,
+     especially with the images, let's make sure it's fully animated out, or the animation fully
+     finishes before the centre line disappears or halfway between the centre line
+     disappearing."* ⛔⛔ **THE DEFAULT NUMBERS FINISH THE BUILD AFTER THE HAND-OVER, NOT BEFORE
+     THE WELD.** `end:0.02` means progress only reaches 1 once the mosaic's top has climbed to
+     18px off the top of the screen — and the weld parks the section at **138px** and holds it
+     there, so the sequence topped out at **0.855** and the last tile was still at 97% as the
+     seam was fading. It finished afterwards, on the scroll out, which is precisely what he is
+     watching. ⛔⛔⛔ **AND MOVING `end` ALONE WAS NOT ENOUGH, WHICH IS THE PART WORTH KNOWING.**
+     The playhead is DAMPED, so reaching progress 1 is where the settling starts, not where it
+     ends: at 6.2% a frame the last tile needs about **44 frames** — three quarters of a second —
+     after the target lands, and the seam's whole fade is 148px of scroll, which is ten frames at
+     a normal wheel speed. A first pass at `end:0.62` still finished at **1852px**, past the
+     hand-over. So BOTH ends move: the target now lands at **0.85** of a viewport, which is
+     **357px of scroll before the slabs touch and 424 before the line starts to go**, and the
+     damping goes 0.062 → **0.16**, which settles in about 16 frames. ⚠️ That is deliberately
+     less lag than the client asked for on 6 Aug — inside the weld the build has a deadline it
+     did not have when it was a section scrolling past, and the choreography either side of it
+     (span and step) is untouched. `start` goes past 1.0 on purpose — the mosaic is genuinely
+     below the fold while it builds, because it is riding INSIDE the right-hand slab, which is
+     the one case the engine's "keep start near the fold" note does not cover.
+     ⛔ **ONLY WHERE THE WELD ACTUALLY RUNS.** `/about/` links this same file and has the same
+     collage with no pin at all, and the frozen bands must not be re-clocked, so the test is the
+     weld's own three conditions: desktop width, motion allowed, and `#process` on the page.
+     ⚠️ It is read ONCE at load, like every other option here — a window dragged from desktop to
+     tablet keeps the weld clocking until the next reload. */
+  const weldClock=window.matchMedia('(min-width:1121px)').matches
+    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    && !!document.getElementById('process');
   scrollSequence(collage,tiles,(el,e,i)=>{
     /* at rest the inline styles are CLEARED rather than set to their identity values, so the
        tile drops its compositing layer and the CSS hover transitions own it again */
@@ -16193,7 +16223,8 @@ function viewSequence(host,tiles,apply,opts){
     el.style.transform='translateZ('+(-(1-e)*70).toFixed(1)+'px) rotate'+h.ax+
                        '('+((1-e)*h.deg).toFixed(2)+'deg)';
     el.style.opacity=Math.min(1,e*2.1).toFixed(3);
-  },{start:0.94,end:0.02,span:0.42,step:0.112,scrub:0.062});
+  },weldClock?{start:1.45,end:0.85,span:0.42,step:0.112,scrub:0.16}
+             :{start:0.94,end:0.02,span:0.42,step:0.112,scrub:0.062});
 })();
 
 /* ---------- THE WELD: About closes over Process like two slabs — 16 Aug 2026 (D269) ----------
