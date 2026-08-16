@@ -5707,7 +5707,13 @@
        whole section still has to come in under one screen. Both terms shrink on a short
        window, so the vh one still governs at ~610px (the clamp-floor rule). */
     width:var(--sideW);
-    aspect-ratio:3/4;
+    /* ⭐⭐⭐ THE HEIGHT IS A RATIO BECAUSE EVERY ROW IN THIS GRID IS DRIVEN BY THE WIDTH — 16 Aug
+       2026 (D279). `.ac-w1` is square and spans the three work rows, and `.ac-p` is square and
+       is the band, so the whole stack is a function of W and the gap: (2W-g)/3 + g + (W-g)/2.
+       That comes out at 0.853 of the width at 335/10 and 0.853 at 420/14, so one number holds
+       across the phone. ⚠️ THE TABLET OVERRIDES IT (it carries a fourth work tile) and the
+       desktop drops it entirely for `align-self:stretch`. */
+    aspect-ratio:0.853;
     /* ⭐ SIX ROWS. ⚠️ THE OWNERS ARE THE TOP BAND (client, 9 Aug, second pass: "the owners must be
        on the top of the collage and then the team below"). They were the bottom band for the first
        half of that day — the order was flipped on review, and flipping it back means flipping the
@@ -5732,10 +5738,19 @@
        two slivers with a hole where the third used to be. Six rows still make both bands fall out
        of the 3/4 frame exactly.
        ⚠️ AREA NAMES ARE p1..p2 (people) and w1..w3 (work), not a..f — see the note above. */
-    display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);
+    /* ⭐⭐⭐ THE WORK LEADS AND THE PEOPLE CLOSE — 16 Aug 2026 (D279). Client: *"on the bottom
+       side of the collage there"*, for the phone as well as the desktop. The directors used to
+       be three rows of a six-row grid across the TOP, which made them the largest photographs in
+       the block on every band; they are one square row at the FOOT now, half the collage each.
+       ⛔ The markup moved with them. DOM order IS the build order (see the ABOUT COLLAGE IIFE),
+       so a pair at the foot of the grid has to be at the foot of the figures too. */
+    display:grid;grid-template-columns:repeat(6,1fr);
+    grid-template-rows:repeat(3,minmax(0,1fr)) auto;
     grid-template-areas:
-      "p1 p1 p1 p2 p2 p2" "p1 p1 p1 p2 p2 p2" "p1 p1 p1 p2 p2 p2"
-      "w1 w1 w1 w1 w2 w2" "w1 w1 w1 w1 w3 w3" "w1 w1 w1 w1 w3 w3";
+      "w1 w1 w1 w1 w2 w2"
+      "w1 w1 w1 w1 w3 w3"
+      "w1 w1 w1 w1 w3 w3"
+      "p1 p1 p1 p2 p2 p2";
     gap:clamp(10px,1vw,14px);
     /* The tiles hinge in 3D as you scroll (scrollSequence, driven from the ABOUT COLLAGE IIFE),
        so the cluster needs a viewing distance — without a perspective every rotation reads as
@@ -5820,38 +5835,30 @@
          the grid row: the section went from 844px to over 1100 and broke the "under one screen"
          rule this whole block is built around. ⚠️ `min-height:0` on the tiles is the same guard
          one level down — a grid ITEM has the same automatic minimum. */
-      /* ⭐⭐⭐ TWELVE COLUMNS, AND THE DIRECTORS ARE A SMALL PAIR — 16 Aug 2026 (D278). Client,
-         sending both photographs: *"make their images in the about us section smaller. Like,
-         make them one of the smaller images next to each other. So add more images to the
-         collage if you have to, but we just can't have their image be very big because I had to
-         edit it with AI… we have to put less focus on them and just make them a part of it."*
-         ⭐⭐ **DOUBLING THE TRACKS IS FREE, THE SAME TRADE D150 MADE GOING 3 -> 6.** Every span
-         doubles, so nothing that was expressible before has moved; the halves just become
-         sixths, which is the only way to seat a PAIR of small portraits in a row that also
-         carries a full tile.
-         ⛔⛔⛔ **THE READING ORDER IS THE DOM ORDER AND THAT IS WHY THIS ARRANGEMENT AND NOT
-         ANOTHER.** Every tile's first cell runs p1(r1c1) p2(r1c4) w1(r1c7) w2(r2c1) w3(r3c1)
-         w4(r3c5) — exactly the order the figures sit in the markup. **So nothing had to move in
-         the DOM, `picks` keeps its mapping, `HINGE` keeps its indices, the six-tile timing is
-         untouched, and the phone and tablet are not altered in any way** (they keep their own
-         6-column grid below this query). Half a dozen tidier-looking arrangements were measured
-         and every one of them needed the markup shuffled, which would have re-ordered the build
-         on the frozen bands for no gain the client asked for.
-         ⚠️ **THE PAIR IS 22% OF THE AREA IT WAS**: 241.4 x 321.9 became 113.7 x 151.7 at
-         1440x900, which puts it just under the smallest photograph in the block — his "one of
-         the smaller images".
-         ⚠️ **AND THE THREE WORK PHOTOGRAPHS KEEP CROPS THEY CAN TAKE.** w2 goes 1.386 -> 1.42,
-         which is no change at all; w3 stays the tall portrait its picture needs (0.443 against
-         a native 0.562); w4 goes from a 2.9 letterbox to 0.925, and it is BETTER for it — the
-         Harrow waterfall end, the gold tap and the navy units all read now where the strip had
-         cut them off. ⛔ Do not give w3 a landscape slot: `team/fitting.jpg` is 506x900. */
+      /* ⭐⭐⭐ TWELVE COLUMNS, THE WORK ON TOP, THE DIRECTORS ALONG THE FOOT — 16 Aug 2026
+         (D279). Client: *"there needs to be a little bit more emphasis on them, but also not too
+         much. Right now, that's too small… maybe it just needs to be bigger and on the bottom
+         side part of the collage and taking up the full bottom space."*
+         ⭐⭐ **THE PAIR IS 3.4x THE AREA IT WAS AT D278** — 114x152 became **241x241**, half the
+         collage each, and the type went back to the site's own sizes because the box can hold
+         them again. ⛔ It is still not the biggest thing in the block: the plate is.
+         ⛔⛔⛔ **AND MOVING THEM DOWN IS WHAT LET THE WORK TILES GO BACK TO THE SHAPES THEIR
+         PICTURES WANT.** Measured against the files: w2 lands at **1.19** against
+         `about-fitting`'s native 1.199, and w3 at **0.567** against `fitting.jpg`'s native 0.562
+         — both effectively uncropped. w4 keeps the wide band Harrow reads best in. The D278
+         arrangement had to bend two of the three to fit a top-band pair.
+         ⚠️ **THE READING ORDER IS STILL THE DOM ORDER**: w1(r1c1) w2(r1c9) w3(r2c9) w4(r3c1)
+         p1(r4c1) p2(r4c7). The markup was re-ordered to match, which is the thing D278 went out
+         of its way to avoid — it is correct here because the pair genuinely belongs last now.
+         ⚠️ The band row is `auto` and `.ac-p` is square, so the band height is half the collage
+         width and the three work rows share whatever the copy column leaves. */
       grid-template-columns:repeat(12,1fr);
-      grid-template-rows:auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+      grid-template-rows:repeat(3,minmax(0,1fr)) auto;
       grid-template-areas:
-        "p1 p1 p1 p2 p2 p2 w1 w1 w1 w1 w1 w1"
-        "w2 w2 w2 w2 w2 w2 w1 w1 w1 w1 w1 w1"
-        "w3 w3 w3 w3 w4 w4 w4 w4 w4 w4 w4 w4"
-        "w3 w3 w3 w3 w4 w4 w4 w4 w4 w4 w4 w4";
+        "w1 w1 w1 w1 w1 w1 w1 w1 w2 w2 w2 w2"
+        "w1 w1 w1 w1 w1 w1 w1 w1 w3 w3 w3 w3"
+        "w4 w4 w4 w4 w4 w4 w4 w4 w3 w3 w3 w3"
+        "p1 p1 p1 p1 p1 p1 p2 p2 p2 p2 p2 p2";
     }
     /* ⚠️ THE NAME PLATE IS RE-KEYED FOR THIS TILE TOO, AND ITS RULES CANNOT LIVE HERE — they
        are the same specificity as the base `.acp-*` declarations, which sit BELOW this query in
@@ -5876,7 +5883,6 @@
     #about .section-title + .section-sub,.weld-about .section-title + .section-sub{
       margin-top:clamp(7px,1.1vh,11px)}
     #about .about-cta,.weld-about .about-cta{padding-top:clamp(11px,1.9vh,22px)}
-    .ac-p{aspect-ratio:3/4}
     .about-collage>.ac-tile{min-height:0;min-width:0}
     /* ⛔⛔⛔ THIS ONE LINE IS WHAT MAKES THE COPY DRIVE THE ROW, AND WITHOUT IT THE WHOLE BLOCK
        DOES THE OPPOSITE OF WHAT IT SAYS. `minmax(0,1fr)` sets each track's MINIMUM to zero, but
@@ -5902,8 +5908,20 @@
      carried it — a ringed glyph over a photograph would have sat on the face. ⛔ Do not put it
      back to "balance" anything. ⚠️ The gradient below is now only ever seen while the pictures
      load, but it stays: it is what the tile is when there is nothing in it. */
+  /* ⛔ SQUARE AT EVERY BAND, AND THE CROP IS SQUARE TOO. A wider card would force a tighter
+     crop of the source — Nick's frame carries only 190px of paper above his crown — and a
+     close-up is the opposite of the "further away" the client asked for. At 1:1 his head is
+     half the frame and his shoulders are in it. */
   .ac-p{
     background:linear-gradient(155deg,#17171d 0%,#0c0c10 100%);
+    aspect-ratio:1;
+    /* ⭐⭐⭐ THE CARD IS ITS OWN QUERY CONTAINER, AND THAT IS THE POINT. Its width is half the
+       collage, and the collage is 497 on a wide desktop, 560 on a 800px tablet held single
+       column, and 333 on a 900px one held in two — so the card runs 275, 241 and 162 in an order
+       that NO viewport breakpoint follows. The plate's contents key off the box they are in
+       instead. ⚠️ `inline-size` containment does not change the layout here: `.ac-p` was already
+       `position:relative`, so it was already the containing block for the photograph. */
+    container-type:inline-size;
     display:flex;align-items:flex-end}
   /* ⭐⭐⭐ THE PAIR IS FILTERED DOWN, AND THE STUDIO PAPER STAYS — 16 Aug 2026 (D278, second
      pass). Client: *"do not remove the backgrounds from their images… and also maybe put a
@@ -5930,7 +5948,9 @@
      foot of a photograph as well as over the flat placeholder ground. */
   .acp-who{position:relative;z-index:2;width:100%;
     display:flex;flex-direction:column;min-width:0;
-    padding:clamp(20px,3vh,34px) clamp(8px,0.8vw,13px) clamp(9px,1.3vh,14px);
+    /* the small-card padding is the DEFAULT and the roomy one is the override, so a card that
+       gets smaller than anything anticipated still shows a face rather than a scrim */
+    padding:clamp(12px,1.8vh,20px) clamp(8px,0.8vw,13px) clamp(9px,1.3vh,14px);
     background:linear-gradient(to top,rgba(8,8,10,0.94) 40%,rgba(8,8,10,0.62) 72%,transparent)}
   .acp-name{font-family:var(--serif);font-weight:400;letter-spacing:0.01em;color:var(--bone);
     font-size:clamp(11.5px,calc(var(--sideW) * 0.045),17px);line-height:1.15}
@@ -5946,26 +5966,30 @@
   .acp-role{margin-top:3px;font-size:clamp(7.5px,calc(var(--sideW) * 0.027),10px);
     letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);opacity:0.85;
     line-height:1.3;min-height:2.6em}
-
-  /* ⭐⭐ THE PLATE IS RE-KEYED TO THE SMALL DESKTOP TILE — 16 Aug 2026 (D278). The portrait went
-     from 0.486 of --sideW wide to 0.229, so type keyed to --sideW came out nearly twice what the
-     box can hold: a 17px name in a 114px tile, and a plate covering 57% of the picture. Every
-     figure below is the old one scaled by that same 0.47, so the plate lands back at about the
-     27% of tile height it has always been.
-     ⛔⛔⛔ **THIS BLOCK MUST STAY BELOW THE THREE DECLARATIONS IT OVERRIDES.** Written up in the
-     main min-width:1121px query — which sits ABOVE them in this file — it has the same
-     specificity and loses silently on SOURCE ORDER: the grid moved, the type did not, and every
-     other number in the same edit landed, which is exactly what makes it look like it worked.
-     Third time on this project (§5, D271).
-     ⭐ At 0.10em tracking the longest role, "OPERATIONS DIRECTOR", measures about 89px inside
-     102px of content box, so it sits on ONE line — and `min-height:2.6em` above still reserves
-     the second, which is what keeps the two plates level whatever a future title says. */
-  @media(min-width:1121px){
-    .acp-who{padding:clamp(13px,1.9vh,20px) clamp(5px,0.42vw,8px) clamp(7px,1vh,10px)}
-    .acp-name{font-size:clamp(9px,calc(var(--sideW) * 0.021),12px)}
-    .acp-role{margin-top:2px;letter-spacing:0.10em;
-      font-size:clamp(6px,calc(var(--sideW) * 0.0127),7.6px)}
+  /* ⭐⭐ ONE LINE OF DESCRIPTION EACH — 16 Aug 2026 (D279), the client's *"some sort of
+     description kind of part for them"*. ⛔ IT IS OFF ON THE PHONE and that is measured, not
+     squeamish: on a 162px card the same sentence runs to three lines and the plate takes 63% of
+     the picture. The phone keeps the name and the role, which is what it has always carried.
+     ⚠️ The wording describes the ROLE and claims nothing (§2 rule 12) — his own words are owed. */
+  .acp-note{display:none}
+  /* ⛔⛔ 190px IS MEASURED, NOT PICKED. Below it the sentence runs to three lines and the plate
+     takes 59% of the card — on the 900px tablet that put the scrim across both their chins. At
+     190 and up it sits on two lines and the plate settles around 40%, which leaves the face and
+     the shoulders. ⚠️ So the note is ON at the desktop (241px card) and on a tablet held single
+     column (275px), and OFF on the phone and on a two-column tablet (162px). */
+  @container (min-width:190px){
+    .acp-who{padding-top:clamp(18px,2.6vh,30px)}
+    .acp-note{display:block;margin-top:6px;
+      font-size:clamp(9.5px,calc(var(--sideW) * 0.024),12px);line-height:1.42;
+      color:var(--bone);opacity:0.72}
   }
+
+  /* ⛔⛔ THE D278 SHRINK OF THIS PLATE IS GONE (D279). It keyed the name to 10.4px and the role
+     to 6.3px for a 114px tile, and the client's verdict was flat: *"the text on their names are
+     too small. So that's not gonna work either. It needs to be the correct size for the site."*
+     The card is 241px on the desktop now, twice the width, so the base sizes — 17px name, 10px
+     role — are the right ones and there is nothing to override. ⚠️ Do not re-key type to a tile
+     without checking the tile is still that size. */
 
   /* The copy measure still widens on a short window. 52ch is right on a tall screen and three
      wasted lines on a wide short one.
@@ -7538,6 +7562,57 @@
     @media(max-width:880px){
       .about-wrap{--sideW:min(88vw,560px)}
     }
+
+    /* ⭐⭐⭐ A FOURTH PHOTOGRAPH IN THE COLLAGE, AND THE DIRECTORS ALONG THE FOOT — 16 Aug 2026
+       (D279). Client: *"we also need to add more images to the collage for the tablet version as
+       well, so it can just look better."* ⛔ **THE TABLET HAS ONLY EVER SEEN THREE.** `.ac-w4`,
+       the Harrow island, has been in the DOM since D244 and `display:none` below 1121px, so this
+       costs nothing but a row: no new file, no seventh tile, and no change to the build timing,
+       which is bounded at six.
+       ⭐⭐ **AND IT IS WHAT MAKES THE COLUMN WORK.** The tablet collage was 333x444 against a copy
+       column of about 525 — the directors alone were three of its six rows, and the mosaic
+       stopped 80px short of the story beside it. Five rows now, the work above and the pair at
+       the foot, and it lands within a few pixels of the copy.
+       ⚠️ **THE RATIO IS DERIVED, NOT GUESSED**, the same way the base one is: w1 is square over
+       the three work rows, w4 is a 2.6 band and `.ac-p` is square, so the height is
+       (2W-g)/3 + g + W/2.6 + g + (W-g)/2. That is 0.630 of the width at 333/10 and 0.632 at
+       414/11.2 — one number holds across the band. */
+    .ac-w4{display:block;grid-area:w4;aspect-ratio:2.6}
+    .about-collage{
+      aspect-ratio:0.63;
+      grid-template-rows:repeat(3,minmax(0,1fr)) auto auto;
+      grid-template-areas:
+        "w1 w1 w1 w1 w2 w2"
+        "w1 w1 w1 w1 w3 w3"
+        "w1 w1 w1 w1 w3 w3"
+        "w4 w4 w4 w4 w4 w4"
+        "p1 p1 p1 p2 p2 p2";
+    }
+
+    /* ⭐⭐ THE FEATURE PHOTOGRAPH DROPS TO THE SLAB — 16 Aug 2026 (D279). Client: *"the big first
+       image in more reasons to choose our section, I want you to move that image down so you can
+       see the slab in the image and not just the person standing there in the tablet version."*
+       ⛔⛔ **HE IS DESCRIBING A COVER CROP, EXACTLY.** The file is SQUARE, 900x900 — generated that
+       way on purpose, because this tile is a tall portrait on the desktop and a wide band here —
+       and the marble is in the BOTTOM THIRD of it. At 810x260 the cover scale is 0.9, so the box
+       shows 260 of 810 scaled pixels and a centred crop takes the middle band: aprons, no stone.
+       ⭐ `object-position` at 88% slides that window down to scaled y 484-744, which is the lower
+       aprons, the hands and the slab they are resting on.
+       ⚠️ TABLET ONLY. The phone puts the same tile at about 350x260, a far squarer box where the
+       centred crop already reaches the stone, and the desktop tile is a PORTRAIT where dropping
+       the window would cut the heads off. One band, one rule. */
+    /* ⭐⭐ AND IT FILLS THE COLUMN WHERE THERE IS A COLUMN TO FILL. At 900px the copy runs 679
+       and the collage stopped at 529, leaving 150px of nothing under the mosaic — the same fault
+       D244 fixed on the desktop. Stretching hands that height to the three work rows.
+       ⛔⛔ **SCOPED TO 881px AND UP, WHICH IS WHERE `.about-wrap` STILL HAS TWO COLUMNS.** Below
+       880 the collage and the copy are STACKED, so there is no sibling to match: `stretch` there
+       would leave the fr rows with no height to share and collapse the mosaic to its two
+       definite rows. The ratio has to stay in charge on that side of the line. */
+    @media(min-width:881px){
+      .about-collage{align-self:stretch;aspect-ratio:auto}
+    }
+
+    .wy-p img{object-position:50% 88%}
   }
 
 </style>
@@ -8678,49 +8753,14 @@
       <!-- ⚠️ the tiles are deliberately NOT .rise. They are driven per frame by scrollSequence
            (see the ABOUT COLLAGE IIFE), and .rise holds opacity:0 until its own observer fires,
            which would fight the opacity written here every frame. -->
-      <!-- ⭐ THE PEOPLE ARE NOW IN THE COLLAGE (client, 9 Aug). The separate credit strip that
-           used to sit under the story is gone; the directors are EQUAL tiles across the top band
-           of the mosaic, each carrying its own name and role. Three work photographs sit below
-           them, so the block reads: these are the people, and this is what they do. DOM order is
-           still top-to-bottom by grid row, which is what the build order depends on.
+      <!-- ⭐ THE PEOPLE ARE IN THE COLLAGE (client, 9 Aug). The separate credit strip that used
+           to sit under the story is gone; the directors are EQUAL tiles carrying their own name
+           and role. ⚠️ **THEY WERE THE TOP BAND UNTIL 16 Aug 2026 (D279) AND ARE THE BOTTOM ONE
+           NOW** — the client asked them down there, bigger, with a line of description each. So
+           the block reads: this is the work, and these are the people who answer for it. DOM
+           order is still top-to-bottom by grid row, which is what the build order depends on.
            ⚠️ TWO directors since 12 Aug 2026 (D150), not three — see the note on the tiles. -->
       <div class="about-collage" id="aboutCollage">
-        <!-- ⭐⭐⭐ THE REAL DIRECTORS ARE IN — 16 Aug 2026 (D278). The client sent both
-             photographs and asked for them SMALL: *"make their images in the about us section
-             smaller. Like, make them one of the smaller images next to each other… we have to
-             put less focus on them and just make them a part of it."* The plates that stood
-             empty here since 9 Aug are filled, and on DESKTOP the pair is a quarter of the area
-             it was (see THE COLLAGE GRID block in the stylesheet).
-             ⛔ THE `src` AND `srcset` ARE WRITTEN HERE, AND `picks` CARRIES A `null` FOR EACH, so
-             the collage IIFE leaves both alone. Same contract the Topcat plate takes at D255 —
-             the fill maps to `.ac-tile img` in DOM ORDER, so a null holds the place and every
-             other index stays where it was.
-             ⚠️ THEY COME FIRST IN THE DOM because they are the top band, and DOM order IS the
-             build order. Move them in the grid and you must move them here too, or the mosaic
-             builds bottom-up and the client's "one by one from the top" brief is broken.
-             ⚠️ `sizes` is the TILE, not the collage: 115px on the desktop where the pair is
-             small, 207px on the frozen bands where it is still a half-width plate.
-             ⛔⛔ **THE `?v=` IS THE D276 RULE APPLIED TO THESE FOUR FILES.** The filename is the
-             person, so a re-cut portrait is the same URL as the one before it, which is exactly
-             how he was shown a stale Argento through two corrections. **Bump it on BOTH tiles,
-             in step, whenever either is re-cut.** Currently 2 — the first cut had the studio
-             paper masked out and he reversed that. -->
-        <figure class="ac-tile ac-p ac-p1 glow-card">
-          <img src="/assets/team/nick-240.webp?v=2"
-               srcset="/assets/team/nick-240.webp?v=2 240w, /assets/team/nick-624.webp?v=2 624w"
-               sizes="(max-width:1120px) 207px, 115px"
-               alt="Nick, Managing Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
-          <div class="sheen"></div>
-          <figcaption class="acp-who"><b class="acp-name">Nick</b><span class="acp-role">Managing Director</span></figcaption>
-        </figure>
-        <figure class="ac-tile ac-p ac-p2 glow-card">
-          <img src="/assets/team/rimsha-240.webp?v=2"
-               srcset="/assets/team/rimsha-240.webp?v=2 240w, /assets/team/rimsha-624.webp?v=2 624w"
-               sizes="(max-width:1120px) 207px, 115px"
-               alt="Rimsha, Operations Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
-          <div class="sheen"></div>
-          <figcaption class="acp-who"><b class="acp-name">Rimsha</b><span class="acp-role">Operations Director</span></figcaption>
-        </figure>
         <!-- ⛔ THERE IS NO THIRD PORTRAIT. Removed 12 Aug 2026 (D150) on the client's instruction —
              "we are only gonna have Nick and Remsha, we're not gonna have Ali, so you can divide
              that into two sections instead of the three that are there" — and this is the ONE
@@ -8746,6 +8786,45 @@
              ⛔ It only renders as a fourth tile on DESKTOP; below 1121px the grid keeps its 3/4
              frame and its three work tiles, so the frozen bands are untouched. -->
         <figure class="ac-tile ac-w4 glow-card"><img alt="A mitred waterfall island fitted on the Harrow project" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
+        <!-- ⭐⭐⭐ THE DIRECTORS ARE THE BOTTOM BAND — 16 Aug 2026 (D279). Client: *"there needs
+             to be a little bit more emphasis on them, but also not too much. Right now, that's
+             too small… maybe it just needs to be bigger and on the bottom side part of the
+             collage and taking up the full bottom space with maybe some sort of description kind
+             of part for them."*
+             ⛔⛔⛔ **THEY ARE LAST IN THE DOM NOW, AND THAT IS NOT OPTIONAL.** DOM order IS the
+             build order, so a pair that sits at the FOOT of the grid has to sit at the foot of
+             the markup as well, or the mosaic assembles bottom-up and breaks his "one by one from
+             the top" brief. Moving them here is what let the four work tiles go back to the
+             shapes their photographs actually want.
+             ⛔ THE TILES ARE SQUARE AT EVERY WIDTH, AND THE CROP IS SQUARE TOO — see the cut
+             script's header for why nothing wider works: Nick's frame has 190px of paper above
+             his crown, so a wider card forces a close-up, which is the opposite of the
+             "further away" he asked for in the same breath.
+             ⛔⛔ **THE `?v=` IS THE D276 RULE.** The filename is the person, so a re-cut portrait
+             is the same URL as the one before it. **Bump BOTH tiles in step whenever either is
+             re-cut.** Currently 3 — v1 had the paper masked out, v2 was the small 3:4 pair.
+             ⚠️ `sizes` is the CARD: half the collage at every band, so about 241px on a wide
+             desktop and about 162 on a phone.
+             ⚠️ THE NOTE LINES ARE MINE, NOT HIS, AND THEY ARE WRITTEN TO DESCRIBE THE ROLE AND
+             CLAIM NOTHING (§2 rule 12). Nick's restates the promise the copy beside it already
+             makes; Rimsha's says what an Operations Director does and stops there. **Owed: his
+             own wording.** -->
+        <figure class="ac-tile ac-p ac-p1 glow-card">
+          <img src="/assets/team/nick-320.webp?v=3"
+               srcset="/assets/team/nick-320.webp?v=3 320w, /assets/team/nick-640.webp?v=3 640w"
+               sizes="(max-width:1120px) 162px, 241px"
+               alt="Nick, Managing Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
+          <div class="sheen"></div>
+          <figcaption class="acp-who"><b class="acp-name">Nick</b><span class="acp-role">Managing Director</span><span class="acp-note">Your one contact, from the first visit to the final fit.</span></figcaption>
+        </figure>
+        <figure class="ac-tile ac-p ac-p2 glow-card">
+          <img src="/assets/team/rimsha-320.webp?v=3"
+               srcset="/assets/team/rimsha-320.webp?v=3 320w, /assets/team/rimsha-640.webp?v=3 640w"
+               sizes="(max-width:1120px) 162px, 241px"
+               alt="Rimsha, Operations Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
+          <div class="sheen"></div>
+          <figcaption class="acp-who"><b class="acp-name">Rimsha</b><span class="acp-role">Operations Director</span><span class="acp-note">Runs the day to day, from your order to the fitting date.</span></figcaption>
+        </figure>
       </div>
 
     </div>
@@ -16262,14 +16341,15 @@ function viewSequence(host,tiles,apply,opts){
      ⛔ **KEEP THE NULL RATHER THAN SHORTENING THE ARRAY** — the fill maps to `.ac-tile img` in DOM
      order, so dropping the entry would slide w2, w3 and w4 up by one and quietly re-shuffle the
      whole collage. The guard below (`if(!picks[i])return`) was already there.
-     ⛔⛔⛔ **TWO MORE NULLS SINCE D278, AND THEY ARE THE FIRST TWO.** The director plates carry
-     real photographs now, written into the markup with their own `srcset` the way the Topcat
-     plate is, so `.ac-tile img` matches SIX elements here rather than four — p1, p2, w1, w2, w3,
-     w4. **Without the two leading nulls the fitting photograph lands on Nick's face and every
-     tile below it shifts up one.** The comment three blocks up that says "the portraits carry no
-     <img>" was true until D278 and is not any more. */
-  const picks=[null,null,null,'/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
-               '/assets/projects/harrow-1400.webp'];
+     ⛔⛔⛔ **TWO MORE NULLS SINCE D278, AND THEY MOVED TO THE END AT D279.** The director plates
+     carry real photographs now, written into the markup with their own `srcset` the way the
+     Topcat plate is, so `.ac-tile img` matches SIX elements here rather than four. **D279 moved
+     the pair to the FOOT of the collage and therefore to the foot of the markup, so the order is
+     w1, w2, w3, w4, p1, p2 and the two nulls trail rather than lead.** Get this the wrong way
+     round and the fitting photograph lands on Nick's face with every tile below it shifted one.
+     The comment three blocks up that says "the portraits carry no <img>" was true until D278. */
+  const picks=[null,'/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
+               '/assets/projects/harrow-1400.webp',null,null];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */
       if(SS[picks[i]]){ im.srcset=SS[picks[i]]; im.sizes='(max-width:720px) 240px, 375px'; }
@@ -16295,18 +16375,18 @@ function viewSequence(host,tiles,apply,opts){
      ⚠️ scrollSequence's bound is `(n−1)*step + span < 1`. At five tiles that is
      4*0.112 + 0.42 = 0.868, comfortably inside — it had less headroom at six, not more, so the
      timings below are untouched and still valid. */
+  /* ⭐ REORDERED 16 Aug 2026 (D279) WITH THE DOM. The list is indexed by DOM POSITION, and the
+     directors went to the foot of the collage, so the work tiles lead now and the pair closes.
+     The pair still opens like two doors from the centre line, which is D150's shape. */
   const HINGE=[
-    {ax:'Y',deg: 78,org:'0% 50%'},    // p1 Nick   — swings in off its LEFT edge
-    {ax:'Y',deg:-78,org:'100% 50%'},  // p2 Rimsha — swings in off its RIGHT edge
-    {ax:'X',deg:-84,org:'50% 0%'},    // w1 the big square, falls forward off its top edge
+    {ax:'X',deg:-84,org:'50% 0%'},    // w1 the big plate, falls forward off its top edge
     {ax:'Y',deg:-78,org:'100% 50%'},  // w2 swings in off its right edge
     {ax:'Y',deg: 78,org:'0% 50%'},    // w3 the other way, off its left edge
-    /* ⭐ w4, the bottom strip (D244). It falls off its TOP edge like w1 rather than swinging:
-       it is a wide, shallow band, and a Y-axis swing on a 327x132 tile reads as a shutter
-       closing rather than a panel landing. ⚠️ THIS ENTRY IS NOT OPTIONAL EVEN THOUGH THE LOOKUP
-       WRAPS (`i%HINGE.length`) — without it the sixth tile would silently borrow p1's hinge and
-       open off its left edge, which is the one direction the row below cannot support. */
-    {ax:'X',deg:-84,org:'50% 0%'}     // w4 the bottom strip, falls forward off its top edge
+    {ax:'X',deg:-84,org:'50% 0%'},    // w4 the wide band, falls forward off its top edge
+    {ax:'Y',deg: 78,org:'0% 50%'},    // p1 Nick   — swings in off its LEFT edge
+    /* ⚠️ THE SIXTH ENTRY IS NOT OPTIONAL EVEN THOUGH THE LOOKUP WRAPS (`i%HINGE.length`) —
+       without it the last tile would silently borrow the first tile's hinge. */
+    {ax:'Y',deg:-78,org:'100% 50%'}   // p2 Rimsha — swings in off its RIGHT edge
   ];
   const tiles=Array.prototype.slice.call(collage.querySelectorAll('.ac-tile'));
   /* the hinge is static, so it is set once here rather than rewritten every frame */

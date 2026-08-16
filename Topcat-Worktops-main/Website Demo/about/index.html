@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=c9aff0bc9a">
+<link rel="stylesheet" href="/assets/site.css?v=e0cb4d00db">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -434,49 +434,14 @@
       <!-- ⚠️ the tiles are deliberately NOT .rise. They are driven per frame by scrollSequence
            (see the ABOUT COLLAGE IIFE), and .rise holds opacity:0 until its own observer fires,
            which would fight the opacity written here every frame. -->
-      <!-- ⭐ THE PEOPLE ARE NOW IN THE COLLAGE (client, 9 Aug). The separate credit strip that
-           used to sit under the story is gone; the directors are EQUAL tiles across the top band
-           of the mosaic, each carrying its own name and role. Three work photographs sit below
-           them, so the block reads: these are the people, and this is what they do. DOM order is
-           still top-to-bottom by grid row, which is what the build order depends on.
+      <!-- ⭐ THE PEOPLE ARE IN THE COLLAGE (client, 9 Aug). The separate credit strip that used
+           to sit under the story is gone; the directors are EQUAL tiles carrying their own name
+           and role. ⚠️ **THEY WERE THE TOP BAND UNTIL 16 Aug 2026 (D279) AND ARE THE BOTTOM ONE
+           NOW** — the client asked them down there, bigger, with a line of description each. So
+           the block reads: this is the work, and these are the people who answer for it. DOM
+           order is still top-to-bottom by grid row, which is what the build order depends on.
            ⚠️ TWO directors since 12 Aug 2026 (D150), not three — see the note on the tiles. -->
       <div class="about-collage" id="aboutCollage">
-        <!-- ⭐⭐⭐ THE REAL DIRECTORS ARE IN — 16 Aug 2026 (D278). The client sent both
-             photographs and asked for them SMALL: *"make their images in the about us section
-             smaller. Like, make them one of the smaller images next to each other… we have to
-             put less focus on them and just make them a part of it."* The plates that stood
-             empty here since 9 Aug are filled, and on DESKTOP the pair is a quarter of the area
-             it was (see THE COLLAGE GRID block in the stylesheet).
-             ⛔ THE `src` AND `srcset` ARE WRITTEN HERE, AND `picks` CARRIES A `null` FOR EACH, so
-             the collage IIFE leaves both alone. Same contract the Topcat plate takes at D255 —
-             the fill maps to `.ac-tile img` in DOM ORDER, so a null holds the place and every
-             other index stays where it was.
-             ⚠️ THEY COME FIRST IN THE DOM because they are the top band, and DOM order IS the
-             build order. Move them in the grid and you must move them here too, or the mosaic
-             builds bottom-up and the client's "one by one from the top" brief is broken.
-             ⚠️ `sizes` is the TILE, not the collage: 115px on the desktop where the pair is
-             small, 207px on the frozen bands where it is still a half-width plate.
-             ⛔⛔ **THE `?v=` IS THE D276 RULE APPLIED TO THESE FOUR FILES.** The filename is the
-             person, so a re-cut portrait is the same URL as the one before it, which is exactly
-             how he was shown a stale Argento through two corrections. **Bump it on BOTH tiles,
-             in step, whenever either is re-cut.** Currently 2 — the first cut had the studio
-             paper masked out and he reversed that. -->
-        <figure class="ac-tile ac-p ac-p1 glow-card">
-          <img src="/assets/team/nick-240.webp?v=2"
-               srcset="/assets/team/nick-240.webp?v=2 240w, /assets/team/nick-624.webp?v=2 624w"
-               sizes="(max-width:1120px) 207px, 115px"
-               alt="Nick, Managing Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
-          <div class="sheen"></div>
-          <figcaption class="acp-who"><b class="acp-name">Nick</b><span class="acp-role">Managing Director</span></figcaption>
-        </figure>
-        <figure class="ac-tile ac-p ac-p2 glow-card">
-          <img src="/assets/team/rimsha-240.webp?v=2"
-               srcset="/assets/team/rimsha-240.webp?v=2 240w, /assets/team/rimsha-624.webp?v=2 624w"
-               sizes="(max-width:1120px) 207px, 115px"
-               alt="Rimsha, Operations Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
-          <div class="sheen"></div>
-          <figcaption class="acp-who"><b class="acp-name">Rimsha</b><span class="acp-role">Operations Director</span></figcaption>
-        </figure>
         <!-- ⛔ THERE IS NO THIRD PORTRAIT. Removed 12 Aug 2026 (D150) on the client's instruction —
              "we are only gonna have Nick and Remsha, we're not gonna have Ali, so you can divide
              that into two sections instead of the three that are there" — and this is the ONE
@@ -502,6 +467,45 @@
              ⛔ It only renders as a fourth tile on DESKTOP; below 1121px the grid keeps its 3/4
              frame and its three work tiles, so the frozen bands are untouched. -->
         <figure class="ac-tile ac-w4 glow-card"><img alt="A mitred waterfall island fitted on the Harrow project" draggable="false"><div class="ac-veil"></div><div class="sheen"></div></figure>
+        <!-- ⭐⭐⭐ THE DIRECTORS ARE THE BOTTOM BAND — 16 Aug 2026 (D279). Client: *"there needs
+             to be a little bit more emphasis on them, but also not too much. Right now, that's
+             too small… maybe it just needs to be bigger and on the bottom side part of the
+             collage and taking up the full bottom space with maybe some sort of description kind
+             of part for them."*
+             ⛔⛔⛔ **THEY ARE LAST IN THE DOM NOW, AND THAT IS NOT OPTIONAL.** DOM order IS the
+             build order, so a pair that sits at the FOOT of the grid has to sit at the foot of
+             the markup as well, or the mosaic assembles bottom-up and breaks his "one by one from
+             the top" brief. Moving them here is what let the four work tiles go back to the
+             shapes their photographs actually want.
+             ⛔ THE TILES ARE SQUARE AT EVERY WIDTH, AND THE CROP IS SQUARE TOO — see the cut
+             script's header for why nothing wider works: Nick's frame has 190px of paper above
+             his crown, so a wider card forces a close-up, which is the opposite of the
+             "further away" he asked for in the same breath.
+             ⛔⛔ **THE `?v=` IS THE D276 RULE.** The filename is the person, so a re-cut portrait
+             is the same URL as the one before it. **Bump BOTH tiles in step whenever either is
+             re-cut.** Currently 3 — v1 had the paper masked out, v2 was the small 3:4 pair.
+             ⚠️ `sizes` is the CARD: half the collage at every band, so about 241px on a wide
+             desktop and about 162 on a phone.
+             ⚠️ THE NOTE LINES ARE MINE, NOT HIS, AND THEY ARE WRITTEN TO DESCRIBE THE ROLE AND
+             CLAIM NOTHING (§2 rule 12). Nick's restates the promise the copy beside it already
+             makes; Rimsha's says what an Operations Director does and stops there. **Owed: his
+             own wording.** -->
+        <figure class="ac-tile ac-p ac-p1 glow-card">
+          <img src="/assets/team/nick-320.webp?v=3"
+               srcset="/assets/team/nick-320.webp?v=3 320w, /assets/team/nick-640.webp?v=3 640w"
+               sizes="(max-width:1120px) 162px, 241px"
+               alt="Nick, Managing Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
+          <div class="sheen"></div>
+          <figcaption class="acp-who"><b class="acp-name">Nick</b><span class="acp-role">Managing Director</span><span class="acp-note">Your one contact, from the first visit to the final fit.</span></figcaption>
+        </figure>
+        <figure class="ac-tile ac-p ac-p2 glow-card">
+          <img src="/assets/team/rimsha-320.webp?v=3"
+               srcset="/assets/team/rimsha-320.webp?v=3 320w, /assets/team/rimsha-640.webp?v=3 640w"
+               sizes="(max-width:1120px) 162px, 241px"
+               alt="Rimsha, Operations Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
+          <div class="sheen"></div>
+          <figcaption class="acp-who"><b class="acp-name">Rimsha</b><span class="acp-role">Operations Director</span><span class="acp-note">Runs the day to day, from your order to the fitting date.</span></figcaption>
+        </figure>
       </div>
 
     </div>
@@ -998,6 +1002,6 @@
 
 </main>
 
-<script src="/assets/site.js?v=5dedf9b9c0" defer></script>
+<script src="/assets/site.js?v=f270e2a57a" defer></script>
 </body>
 </html>

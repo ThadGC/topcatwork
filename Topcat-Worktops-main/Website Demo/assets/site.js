@@ -6999,14 +6999,15 @@ function viewSequence(host,tiles,apply,opts){
      ⛔ **KEEP THE NULL RATHER THAN SHORTENING THE ARRAY** — the fill maps to `.ac-tile img` in DOM
      order, so dropping the entry would slide w2, w3 and w4 up by one and quietly re-shuffle the
      whole collage. The guard below (`if(!picks[i])return`) was already there.
-     ⛔⛔⛔ **TWO MORE NULLS SINCE D278, AND THEY ARE THE FIRST TWO.** The director plates carry
-     real photographs now, written into the markup with their own `srcset` the way the Topcat
-     plate is, so `.ac-tile img` matches SIX elements here rather than four — p1, p2, w1, w2, w3,
-     w4. **Without the two leading nulls the fitting photograph lands on Nick's face and every
-     tile below it shifts up one.** The comment three blocks up that says "the portraits carry no
-     <img>" was true until D278 and is not any more. */
-  const picks=[null,null,null,'/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
-               '/assets/projects/harrow-1400.webp'];
+     ⛔⛔⛔ **TWO MORE NULLS SINCE D278, AND THEY MOVED TO THE END AT D279.** The director plates
+     carry real photographs now, written into the markup with their own `srcset` the way the
+     Topcat plate is, so `.ac-tile img` matches SIX elements here rather than four. **D279 moved
+     the pair to the FOOT of the collage and therefore to the foot of the markup, so the order is
+     w1, w2, w3, w4, p1, p2 and the two nulls trail rather than lead.** Get this the wrong way
+     round and the fitting photograph lands on Nick's face with every tile below it shifted one.
+     The comment three blocks up that says "the portraits carry no <img>" was true until D278. */
+  const picks=[null,'/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
+               '/assets/projects/harrow-1400.webp',null,null];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */
       if(SS[picks[i]]){ im.srcset=SS[picks[i]]; im.sizes='(max-width:720px) 240px, 375px'; }
@@ -7032,18 +7033,18 @@ function viewSequence(host,tiles,apply,opts){
      ⚠️ scrollSequence's bound is `(n−1)*step + span < 1`. At five tiles that is
      4*0.112 + 0.42 = 0.868, comfortably inside — it had less headroom at six, not more, so the
      timings below are untouched and still valid. */
+  /* ⭐ REORDERED 16 Aug 2026 (D279) WITH THE DOM. The list is indexed by DOM POSITION, and the
+     directors went to the foot of the collage, so the work tiles lead now and the pair closes.
+     The pair still opens like two doors from the centre line, which is D150's shape. */
   const HINGE=[
-    {ax:'Y',deg: 78,org:'0% 50%'},    // p1 Nick   — swings in off its LEFT edge
-    {ax:'Y',deg:-78,org:'100% 50%'},  // p2 Rimsha — swings in off its RIGHT edge
-    {ax:'X',deg:-84,org:'50% 0%'},    // w1 the big square, falls forward off its top edge
+    {ax:'X',deg:-84,org:'50% 0%'},    // w1 the big plate, falls forward off its top edge
     {ax:'Y',deg:-78,org:'100% 50%'},  // w2 swings in off its right edge
     {ax:'Y',deg: 78,org:'0% 50%'},    // w3 the other way, off its left edge
-    /* ⭐ w4, the bottom strip (D244). It falls off its TOP edge like w1 rather than swinging:
-       it is a wide, shallow band, and a Y-axis swing on a 327x132 tile reads as a shutter
-       closing rather than a panel landing. ⚠️ THIS ENTRY IS NOT OPTIONAL EVEN THOUGH THE LOOKUP
-       WRAPS (`i%HINGE.length`) — without it the sixth tile would silently borrow p1's hinge and
-       open off its left edge, which is the one direction the row below cannot support. */
-    {ax:'X',deg:-84,org:'50% 0%'}     // w4 the bottom strip, falls forward off its top edge
+    {ax:'X',deg:-84,org:'50% 0%'},    // w4 the wide band, falls forward off its top edge
+    {ax:'Y',deg: 78,org:'0% 50%'},    // p1 Nick   — swings in off its LEFT edge
+    /* ⚠️ THE SIXTH ENTRY IS NOT OPTIONAL EVEN THOUGH THE LOOKUP WRAPS (`i%HINGE.length`) —
+       without it the last tile would silently borrow the first tile's hinge. */
+    {ax:'Y',deg:-78,org:'100% 50%'}   // p2 Rimsha — swings in off its RIGHT edge
   ];
   const tiles=Array.prototype.slice.call(collage.querySelectorAll('.ac-tile'));
   /* the hinge is static, so it is set once here rather than rewritten every frame */
