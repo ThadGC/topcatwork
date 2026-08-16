@@ -75,7 +75,13 @@ D = {
     "grigio-shimmer": "A warm mushroom grey with a fine sparkle and no veining.",
     "arabescato-classico": "A bright white with faint grey veining, very quiet across the slab.",
     "calacatta-borghini-light": "White with grey veining and a thin copper line following it.",
-    "argento": "A white with a soft pink cast and fine grey veining across it.",
+    # ⛔ REWRITTEN 16 Aug 2026 (D275) BECAUSE THE TILE WAS CORRECTED, WHICH IS THE CASE THE
+    # HEADER OF THIS FILE WARNS ABOUT. It read "A white with a soft pink cast and fine grey
+    # veining across it" — written honestly against a photograph whose field had been pushed to
+    # a magenta cast in the pipeline, so the page was telling the customer the stone is pink.
+    # The client checked it against the maker's own pictures and it is not. Re-read against the
+    # corrected tile: neutral white field, fine grey veins, warm gold brown in the heavier ones.
+    "argento": "A soft white with fine grey veining and thin gold brown threads through it.",
     "calacatta-classic": "Bright white with soft grey veining that fades at its edges rather than cutting a hard line.",
     "calacatta-lucente": "A pale white with a cool cast and soft grey veining, very lightly drawn.",
     "calacatta-aurelia": "White with grey veining and warm gold picking out the finer branches.",

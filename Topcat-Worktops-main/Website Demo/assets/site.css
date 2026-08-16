@@ -2172,14 +2172,22 @@
        it mirrors is vw-led, and right when it is not. ⚠️ Re-measure if the "Call us" label, the
        CTA padding or its font-size ever changes — the width is `56px + 2px + 5.7431em` of that
        label, and a longer word moves it.
-       ⭐ TWO EQUAL COLUMNS, WHICH IS D239's OWN ANSWER to making two buttons one size without
-       typing a second number, and `margin-inline:auto` centres the block on the helix — a
-       `max-width` box in a wider parent aligns LEFT (D199, and it has caught this project twice).
-       ⚠️ THE ARROWS ARE SQUARE-CORNERED NOW, not circles: a 50% radius on a 60x50 box is an
-       ellipse, and the point of the ask is that they read as the same component as the CTA. */
-    .helix-ui{flex:none;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
-      width:129.79px;height:50.75px;margin:0 auto var(--helixFoot,0px);padding:0}
-    .helix-ui .wbtn{width:100%;height:100%;border-radius:2px}
+       ⭐ `margin-inline:auto` centres the block on the helix — a `max-width` box in a wider parent
+       aligns LEFT (D199, and it has caught this project twice).
+       ⛔⛔⛔ **REVERSED ON THE SHAPE — 16 Aug 2026 (D273). THE ARROWS ARE THE SITE'S ROUND BUTTON
+       AGAIN.** Client: *"make those buttons the round button with the arrow inside so that it's
+       consistent with the rest of the site."* ⚠️ **THE OLD REASON IS WORTH KEEPING**: D243 sized
+       them 129.79 x 50.75 and squared the corners so they read as the same component as the
+       "Call us" CTA beside them, on his own instruction — *"make the buttons the exact same size
+       as the call us block."* ⭐ **BUT `.wbtn` IS A SHARED CLASS AND EVERY OTHER ONE ON THE SITE
+       IS A CIRCLE** — the base rule, the lightbox's `.pl-nav`, the stone wheel's pair — so the
+       helix pair was the single exception, which is exactly what he is looking at. **The size
+       override goes entirely rather than being retyped: `.wbtn`'s own 52px circle governs now, so
+       there is ONE definition of this control on the site and it cannot drift again.**
+       ⚠️ 129.79 was a measured constant off `.rev-cta-ghost` and is no longer load-bearing —
+       nothing here needs re-measuring if that button's label ever changes. */
+    .helix-ui{flex:none;display:flex;justify-content:center;gap:14px;
+      width:auto;height:auto;margin:0 auto var(--helixFoot,0px);padding:0}
     /* ⭐⭐ THE TOP OF THE HELIX MEETS THE TOP OF THE TITLE. Client: *"the top of the title with the
        top of the helix… just bring it slightly down to balance out more with the section."*
        ⭐ **IT IS THE SAME CLAMP `.svc-intro` ALREADY CARRIES, NOT A NUMBER MEASURED OFF IT** — that

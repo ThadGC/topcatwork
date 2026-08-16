@@ -1366,13 +1366,39 @@ if(svcReduce){
      value is overwritten on each call, so widening and narrowing cannot leave a stale offset
      behind, which is exactly the fault that broke the project gallery on a resize.
      ⚠️ It runs BEFORE metrics(): it changes the stage's height, and metrics() reads that rect. */
+  /* ⛔⛔⛔ IT IS THE CENTRES THAT LINE UP NOW, NOT THE BOTTOM EDGES — 16 Aug 2026 (D273). The
+     arrows went back to the site's 52px circle and the CTA is 50.75 tall, so matching the two
+     bottom edges would leave the centres 0.62px apart. The eye reads the centre of a circle.
+     ⛔⛔ **AND IT HAD TO BE RE-SEATED, NOT JUST RE-DERIVED. THE SUM WAS ALWAYS RIGHT AND THE
+     ANSWER WAS STALE**, which is why it looked like a broken formula: it ran once at boot and
+     then only on resize, and at boot the row is not yet at its final height. Measured live
+     before this fix: the stored foot was **14.82px** where the correct answer was **48.80**, so
+     the pair sat **34px BELOW** the "Call us" button it is supposed to sit level with — the
+     client's *"move it up to in line with the call us button."*
+     ⭐ A `ResizeObserver` on the LEFT column closes it: that column's height is the only input
+     that moves, and watching it cannot feed back, because the foot is spent by the stage
+     (`flex:1 1 auto`) and the ROW's height does not change — verified by setting the correct
+     value by hand and watching the row stay at the same bottom while the stage went 703.9 → 670.
+     ⚠️ Still recomputed from a fresh read every time and never accumulated (D236). */
   function footToCallUs(){
     const wrap=document.querySelector('.svc-helix');
     const row=wrap&&wrap.parentElement;
+    const ui=wrap&&wrap.querySelector('.helix-ui');
+    const intro=document.querySelector('#services .svc-intro');
     const ctas=document.querySelectorAll('#services .svc-intro-ctas a');
     const call=ctas[ctas.length-1];
-    if(!wrap||!row||!call) return;
-    const gap=row.getBoundingClientRect().bottom-call.getBoundingClientRect().bottom;
+    if(!wrap||!row||!ui||!intro||!call) return;
+    /* ⛔⛔⛔ THE COLUMN THIS BUTTON LIVES IN CARRIES `.rise`, AND `.rise` IS A 34px translateY.
+       `getBoundingClientRect()` reports it, so every read before the reveal lands puts the button
+       34px low — and the answer it produced, **14.20px against the correct 48.20**, was wrong by
+       exactly that translate. §12's rule, and this is the third time it has caught something.
+       ⭐ The heights are safe (a Y translation does not resize a box); only the POSITION needs
+       the transform taken back out, so it is read off the column itself rather than guessed. */
+    const tf=getComputedStyle(intro).transform;
+    const riseY=(tf&&tf!=='none'&&window.DOMMatrixReadOnly)?new DOMMatrixReadOnly(tf).m42:0;
+    const cb=call.getBoundingClientRect();
+    const gap=row.getBoundingClientRect().bottom-(cb.bottom-riseY)
+             -(ui.getBoundingClientRect().height-cb.height)/2;
     wrap.style.setProperty('--helixFoot',Math.max(0,gap).toFixed(2)+'px');
   }
   function boot(){
@@ -1382,6 +1408,20 @@ if(svcReduce){
     booted=true; metrics(); cur=target; render(); markActive(); watchEntrance();
   }
   boot();
+  /* ⛔⛔ WATCH THE COPY, NOT THE COLUMN. `.svc-intro` is a STRETCH item, so its height is the
+     ROW's height and it does not move when the text inside it reflows — and the reflow is the
+     whole problem: the web font swaps in after boot, the paragraph loses a line, the CTA pair
+     rises ~34px, and the row is unchanged because the helix column is the taller one. An
+     observer on the column itself therefore never fires, which is exactly what the first attempt
+     at this did. ⭐ The three things whose OWN size changes are the title, the sub and the
+     service list, plus `document.fonts.ready` for the swap that causes it. */
+  if(window.ResizeObserver){
+    const ro=new ResizeObserver(()=>{ footToCallUs(); if(booted) metrics(); });
+    ['#services .svc-intro .section-title','#services .svc-intro .section-sub','#svcNav']
+      .forEach(s=>{ const el=document.querySelector(s); if(el) ro.observe(el); });
+  }
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(footToCallUs);
+  window.addEventListener('load',footToCallUs);
   window.addEventListener('resize',()=>{ if(!booted){ tries=0; boot(); return; } footToCallUs(); metrics(); render(); });
 })();
 
@@ -7016,14 +7056,23 @@ function viewSequence(host,tiles,apply,opts){
      ends: at 6.2% a frame the last tile needs about **44 frames** — three quarters of a second —
      after the target lands, and the seam's whole fade is 148px of scroll, which is ten frames at
      a normal wheel speed. A first pass at `end:0.62` still finished at **1852px**, past the
-     hand-over. So BOTH ends move: the target now lands at **0.85** of a viewport, which is
-     **357px of scroll before the slabs touch and 424 before the line starts to go**, and the
-     damping goes 0.062 → **0.16**, which settles in about 16 frames. ⚠️ That is deliberately
-     less lag than the client asked for on 6 Aug — inside the weld the build has a deadline it
-     did not have when it was a section scrolling past, and the choreography either side of it
-     (span and step) is untouched. `start` goes past 1.0 on purpose — the mosaic is genuinely
-     below the fold while it builds, because it is riding INSIDE the right-hand slab, which is
-     the one case the engine's "keep start near the fold" note does not cover.
+     hand-over. So BOTH ends move, and the damping goes 0.062 → **0.26**, which settles in about
+     six frames instead of forty-four. ⚠️ That is deliberately less lag than the client asked for
+     on 6 Aug — inside the weld the build has a deadline it did not have when it was a section
+     scrolling past, and the choreography either side of it (span and step) is untouched.
+     ⛔⛔⛔ **AND THE FIRST TUNING OVERSHOT, WHICH IS THE OTHER HALF OF THIS — 16 Aug 2026 (D274).**
+     Client: *"in the about us section, make sure that every one of those cards are animating in,
+     not just the last one. So the Nick and Rimsha card must fold, and the rest of each card must
+     also have the fold and then still animate the right way."* At `end:0.85` the build finished
+     at **px 1087**, and the right-hand slab does not uncover the mosaic's left column until about
+     **px 738** and does not clear it entirely until **1024** — so the first four tiles landed
+     behind a slab that had not arrived yet, and the last one was the only one still folding when
+     you could see it. ⭐⭐ **IT IS CLOCKED TO THE WINDOW WHERE THE MOSAIC IS ACTUALLY ON SCREEN
+     NOW:** `start:1.21` puts progress 0 at **px 760**, which is where the slab's leading edge
+     first uncovers Nick, and `end:0.576` lands progress 1 at **px 1330**, 110px before the slabs
+     touch. ⚠️ `start` is past 1.0 either way, which the engine's own header warns against — the
+     warning does not cover this case, because the mosaic really is below the fold as it builds:
+     it is riding INSIDE the right-hand slab.
      ⛔ **ONLY WHERE THE WELD ACTUALLY RUNS.** `/about/` links this same file and has the same
      collage with no pin at all, and the frozen bands must not be re-clocked, so the test is the
      weld's own three conditions: desktop width, motion allowed, and `#process` on the page.
@@ -7040,7 +7089,7 @@ function viewSequence(host,tiles,apply,opts){
     el.style.transform='translateZ('+(-(1-e)*70).toFixed(1)+'px) rotate'+h.ax+
                        '('+((1-e)*h.deg).toFixed(2)+'deg)';
     el.style.opacity=Math.min(1,e*2.1).toFixed(3);
-  },weldClock?{start:1.45,end:0.85,span:0.42,step:0.112,scrub:0.16}
+  },weldClock?{start:1.21,end:0.576,span:0.42,step:0.112,scrub:0.26}
              :{start:0.94,end:0.02,span:0.42,step:0.112,scrub:0.062});
 })();
 
