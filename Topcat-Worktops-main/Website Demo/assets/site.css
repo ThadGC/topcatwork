@@ -5922,9 +5922,14 @@
      frozen band. It is `display:none` by default and the desktop query turns it back on. */
   #weldStage{display:none}
   @media(min-width:1121px){
-    /* the pin. `--procH` is written by the IIFE from the section's own height, so the top
-       offset is exactly "stick when your bottom edge reaches the bottom of the screen". */
-    body.weld-live #process{position:sticky;top:calc(100vh - var(--procH,100vh))}
+    /* ⭐⭐ THE PIN, AND THE FRAME IT HOLDS IS CHOSEN, NOT INHERITED — D270. `--procPin` is written
+       by the IIFE. It was `100vh − the section's height`, i.e. bottom-flush, which is right only
+       while the section fits: at 1512x824 the section needs 865px, so bottom-flush pinned it 41px
+       up and **held the reader on the one frame with the headline cut off behind the bar**. The
+       pin now shows the section's CONTENT box from the bar's lower edge down, and only falls back
+       to bottom-flush when even that would not reach. ⚠️ Whatever cannot fit falls off the BOTTOM
+       now, never off the head. */
+    body.weld-live #process{position:sticky;top:var(--procPin,0px)}
     body.weld-live #weldStage{display:block}
     /* ⛔ IT HAS TO BE HIDDEN ONCE THE DOORS ARE SHUT, NOT LEFT PINNED. `#process` is
        `position:relative;z-index:1` and `#about` is static, so a still-pinned Process paints

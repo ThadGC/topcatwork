@@ -5935,9 +5935,14 @@
      frozen band. It is `display:none` by default and the desktop query turns it back on. */
   #weldStage{display:none}
   @media(min-width:1121px){
-    /* the pin. `--procH` is written by the IIFE from the section's own height, so the top
-       offset is exactly "stick when your bottom edge reaches the bottom of the screen". */
-    body.weld-live #process{position:sticky;top:calc(100vh - var(--procH,100vh))}
+    /* ⭐⭐ THE PIN, AND THE FRAME IT HOLDS IS CHOSEN, NOT INHERITED — D270. `--procPin` is written
+       by the IIFE. It was `100vh − the section's height`, i.e. bottom-flush, which is right only
+       while the section fits: at 1512x824 the section needs 865px, so bottom-flush pinned it 41px
+       up and **held the reader on the one frame with the headline cut off behind the bar**. The
+       pin now shows the section's CONTENT box from the bar's lower edge down, and only falls back
+       to bottom-flush when even that would not reach. ⚠️ Whatever cannot fit falls off the BOTTOM
+       now, never off the head. */
+    body.weld-live #process{position:sticky;top:var(--procPin,0px)}
     body.weld-live #weldStage{display:block}
     /* ⛔ IT HAS TO BE HIDDEN ONCE THE DOORS ARE SHUT, NOT LEFT PINNED. `#process` is
        `position:relative;z-index:1` and `#about` is static, so a still-pinned Process paints
@@ -16175,13 +16180,24 @@ function viewSequence(host,tiles,apply,opts){
   const mqWide=window.matchMedia('(min-width:1121px)');
   const mqCalm=window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  const CLOSE=0.72,   /* the leaves touch here */
-        FADE0=0.80,   /* the seam and the slab edges start going */
-        FADE1=0.94,   /* and are gone by here, so nothing of the mechanism reaches the hand-over */
-        ARM  =0.66;   /* scroll back up past this and the weld re-arms */
+  /* ⭐⭐⭐ THE THREE LENGTHS, IN VIEWPORTS — 16 Aug 2026 (D270), and they are the whole answer to
+     *"it's also happening instantly… they have to find the perfect spot with their mouse"*.
+       REST  — Process pinned and perfectly framed, NOTHING moving. This is the window he was
+               hunting for: without it there was exactly ONE scroll position where the section
+               sat whole, and a pixel past it the slabs were already moving.
+       SHUT  — the slabs close. ⚠️ It was 0.72 of the free travel, which is 570px on a 1512x824
+               window: one trackpad flick, hence "instantly". It is over twice that now.
+       WELD  — the flash fires, then the composition holds while the seam fades out.
+     ⛔ The page only provides `vh − target` px of scroll between the two sections. The rest is
+     bought with a margin on `#about`, which sits behind the pinned Process where nothing sees it. */
+  const REST=0.40,SHUT=1.20,WELD=0.30,
+        EDGE_IN=0.06,  /* the slab edge and its shadow ramp in over the first 6% of the close,
+                          so nothing bleeds into the screen edges during the rest window */
+        ARMD  =0.94;   /* scroll back up past this much of the close and the weld re-arms */
 
   let stage=null,doorL=null,doorR=null,tilesReal=null,tilesL=null,tilesR=null;
-  let S=0,TRAVEL=1,cur=-1,on=false,welded=false,ticking=false,armed=false,loop=null;
+  let S=0,TOTAL=1,HOLD=0,SLIDE=1,TAIL=1,target=0;
+  let cur=-1,on=false,phase=false,welded=false,ticking=false,armed=false,loop=null;
 
   /* offsetTop up the chain, NOT getBoundingClientRect: `#process` is sticky by the time this
      runs and its rect lies about where it lives (§12). offsetTop is a layout property. */
@@ -16196,6 +16212,11 @@ function viewSequence(host,tiles,apply,opts){
     c.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
     c.classList.add('weld-about');          /* the three `#about ...` rules name this as well */
     c.setAttribute('aria-hidden','true');
+    /* ⛔⛔ THE BOUGHT SCROLL IS AN INLINE `margin-top` ON THE REAL SECTION, AND `cloneNode` COPIES
+       THE STYLE ATTRIBUTE. Without this the slabs carry their copy 783px below where the real
+       section will land — measured as clone h2 at 899.8 against the real one at 117.8, which is
+       most of a screen and reads as the slabs arriving empty. */
+    c.style.marginTop='0px';
     c.querySelectorAll('.rise').forEach(el=>{el.style.transition='none';el.classList.add('in')});
     return c;
   }
@@ -16253,44 +16274,76 @@ function viewSequence(host,tiles,apply,opts){
      `docTop(about) − vh` is the same instant, stated in the one coordinate that cannot move.
      ⚠️ `offsetHeight` is safe — sticky shifts a box, it does not resize it. */
   function measure(){
-    const vh=window.innerHeight;
-    proc.style.setProperty('--procH',proc.offsetHeight+'px');
+    const vh=window.innerHeight,procH=proc.offsetHeight;
     const barH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barH'))||0;
-    /* where the finished composition sits: bottom edge flush with the screen if it fits, and
-       never further up than the nav bar, which would put the title under the glass */
-    const target=Math.max(0,Math.min(barH,vh-about.offsetHeight));
-    S=docTop(about)-vh;              /* About's top edge on the bottom of the screen */
-    TRAVEL=Math.max(1,vh-target);    /* …and the slide ends when it reaches `target` */
+    /* the frame the reader is held on: the section's content box starting at the bar's lower
+       edge, dropping to bottom-flush only when the section is too tall for even that */
+    const pin=Math.min(0,Math.max(vh-procH,barH-(parseFloat(getComputedStyle(proc).paddingTop)||0)));
+    proc.style.setProperty('--procPin',pin.toFixed(2)+'px');
+    /* ⛔⛔⛔ THE COMPOSITION NEVER LANDS ABOVE THE BAR'S BOTTOM EDGE — 16 Aug 2026 (D270).
+       Client, with a screenshot: *"it is basically cutting off the top part."* This used to sit
+       the section BOTTOM-flush with the screen when it fitted, floored at zero, which is right
+       on a tall window and wrong on every laptop: at 1512x824 About is 791 tall, so bottom-flush
+       put its top at 33px and the title at 70.9 — **7.6px ABOVE the bar's lower edge, behind the
+       glass**, with none of the section's own air above it. ⭐ The floor is the BAR, and the
+       section's own 38px padding then supplies the air, so the landing reads like the page's own
+       rhythm. Any slack left over is split above and below, capped so a tall window does not
+       float the block down the screen. ⚠️ On a window too short to hold the whole section the
+       overflow now falls off the BOTTOM, where it is simply the next thing you scroll to. */
+    const slack=Math.max(0,(vh-barH)-about.offsetHeight);
+    target=barH+Math.min(slack/2,vh*0.06);
+    HOLD =Math.round(vh*REST);
+    SLIDE=Math.round(vh*SHUT);
+    TAIL =Math.round(vh*WELD);
+    TOTAL=HOLD+SLIDE+TAIL;
+    /* the page gives us this much scroll between the pin and the hand-over; buy the rest */
+    const pad=Math.max(0,TOTAL-(procH+pin-target));
+    about.style.marginTop=pad?pad+'px':'';
+    S=docTop(about)-pad-procH-pin;   /* the instant the section pins */
     if(stage)stage.style.setProperty('--weldTop',target+'px');
   }
 
   function frame(){
     ticking=false;
-    const c=Math.max(0,Math.min(1,(window.pageYOffset-S)/TRAVEL));
-    if(c===cur)return;
-    cur=c;
-    if(c>0&&c<1){
-      if(!stage)build();
-      if(!on){on=true;stage.classList.add('on');about.classList.add('weld-hide');
-              proc.classList.remove('weld-past');measure();
-              if(!loop)loop=requestAnimationFrame(pump)}
-      const d=Math.min(1,c/CLOSE),off=(1-easeIO(d))*100;
+    const px=window.pageYOffset-S;
+    if(px===cur)return;
+    cur=px;
+    /* ⚠️ TWO GATES, NOT ONE. The section has to be hidden for the whole phase — it rises up the
+       screen behind a Process that has no background of its own — but the STAGE only has to be
+       up once the slabs are actually moving. Leaving it up through the rest window would park
+       both slab shadows against the screen edges with nothing else happening. */
+    const inPhase=px>0&&px<TOTAL;
+    if(inPhase&&!stage)build();
+    if(inPhase!==phase){
+      phase=inPhase;
+      about.classList.toggle('weld-hide',inPhase);
+      if(inPhase){proc.classList.remove('weld-past');measure()}
+    }
+    if(inPhase){
+      const d=Math.max(0,Math.min(1,(px-HOLD)/SLIDE));
+      if(d>0&&!on){on=true;stage.classList.add('on');if(!loop)loop=requestAnimationFrame(pump)}
+      else if(d<=0&&on){on=false;stage.classList.remove('on')}
+      if(!on){proc.classList.remove('weld-past');return}
+      const off=(1-easeIO(d))*100;
       doorL.style.transform='translate3d('+(-off).toFixed(3)+'%,0,0)';
       doorR.style.transform='translate3d('+off.toFixed(3)+'%,0,0)';
-      const fade=c<=FADE0?1:Math.max(0,1-(c-FADE0)/(FADE1-FADE0));
-      stage.style.setProperty('--edgeA',(d<1?1:fade).toFixed(3));
+      /* after contact the seam and the slab edges fade out over the first four fifths of the
+         weld window, so nothing of the mechanism is still on screen at the hand-over */
+      const w=Math.max(0,Math.min(1,(px-HOLD-SLIDE)/TAIL));
+      const fade=Math.max(0,1-Math.max(0,w-0.25)/0.55);
+      stage.style.setProperty('--edgeA',(d<1?Math.min(1,d/EDGE_IN):fade).toFixed(3));
       stage.style.setProperty('--seamA',(d<1?0:fade).toFixed(3));
       if(d>=1&&!welded){
         welded=true;
         stage.classList.remove('welding');void stage.offsetWidth;stage.classList.add('welding');
-      }else if(c<ARM&&welded){welded=false;stage.classList.remove('welding')}
+      }else if(d<ARMD&&welded){welded=false;stage.classList.remove('welding')}
       mirror();
     }else{
       /* ⚠️ ONE LAST MIRROR ON THE WAY OUT. `on` goes false here and the pump stops with it, so
          without this the clone keeps the frame BEFORE the hand-over for the whole time the
          stage is down — and it is the picture the user sees again on the way back up. */
-      if(on){on=false;mirror();stage.classList.remove('on');about.classList.remove('weld-hide')}
-      proc.classList.toggle('weld-past',c>=1);
+      if(on){on=false;mirror();stage.classList.remove('on')}
+      proc.classList.toggle('weld-past',px>=TOTAL);
     }
   }
   function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame)}}
@@ -16308,8 +16361,9 @@ function viewSequence(host,tiles,apply,opts){
     window.removeEventListener('scroll',onScroll);
     document.body.classList.remove('weld-live');
     about.classList.remove('weld-hide');proc.classList.remove('weld-past');
+    about.style.marginTop='';        /* ⛔ the bought scroll goes with it, or the tablet inherits a hole */
     if(stage){stage.classList.remove('on','welding')}
-    on=false;welded=false;cur=-1;
+    on=false;phase=false;welded=false;cur=-1;
     if(loop){cancelAnimationFrame(loop);loop=null}
   }
 
