@@ -519,14 +519,18 @@
     text-align:center;overflow:hidden;
     --curveR:48px;--curveOut:14px;
     /* D196 — the landing hero's own night kitchen. Declared here rather than per page so a new
-       page cannot be built without it, and so there is one place to change the picture. */
-    --pageHeadImg:url('/assets/site/hero-kitchen-2000.webp');
+       page cannot be built without it, and so there is one place to change the picture.
+       ⚠️ **IT FOLLOWED THE HERO TO THE NEW PHOTOGRAPH ON 17 Aug 2026 (D283)**, which is the whole
+       point of the rule above: this band IS the landing hero's picture, and leaving it behind
+       would have put a different kitchen on the seven internal pages from the one on the home
+       page. ⛔ If the hero changes again, change these two lines with it. */
+    --pageHeadImg:url('/assets/site/hero-night-2000.webp');
   }
   /* ⚠️ the head is ~340px tall on a phone; cover-scaling the 2000px master to it wastes most of
      the download, and this file is the ONE image on these pages (the performance rule from
      11 Aug: size by the cover-scaled render width, not the element width) */
   @media(max-width:720px){
-    .page-head{--pageHeadImg:url('/assets/site/hero-kitchen-1400.webp')}
+    .page-head{--pageHeadImg:url('/assets/site/hero-night-1400.webp')}
   }
   /* ⭐⭐ THE PROJECTS PAGE RUNS THE GALLERY AS A COLUMN AT EVERY WIDTH — D195.
      `build_pages.py` puts `.pg-col` on that page's <main>. Setting `--galMode` is the whole

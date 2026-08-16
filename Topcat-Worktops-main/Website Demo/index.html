@@ -9,7 +9,7 @@
      two sides. ⚠️ It is a FILE now, not a data-URI: the old one pasted the hand-rebuilt mark
      into the head of all 155 pages, which is 155 copies of a drawing to correct next time. -->
 <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="preload" as="image" fetchpriority="high" href="/assets/site/hero-kitchen-2000.webp" imagesrcset="/assets/site/hero-kitchen-1400.webp 1400w, /assets/site/hero-kitchen-2000.webp 2000w, /assets/site/hero-kitchen-2750.webp 2750w" imagesizes="(max-width:720px) 1000px, 1739px">
+<link rel="preload" as="image" fetchpriority="high" href="/assets/site/hero-night-2000.webp" imagesrcset="/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w" imagesizes="(max-width:720px) 1000px, 1739px">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
@@ -532,14 +532,18 @@
     text-align:center;overflow:hidden;
     --curveR:48px;--curveOut:14px;
     /* D196 — the landing hero's own night kitchen. Declared here rather than per page so a new
-       page cannot be built without it, and so there is one place to change the picture. */
-    --pageHeadImg:url('/assets/site/hero-kitchen-2000.webp');
+       page cannot be built without it, and so there is one place to change the picture.
+       ⚠️ **IT FOLLOWED THE HERO TO THE NEW PHOTOGRAPH ON 17 Aug 2026 (D283)**, which is the whole
+       point of the rule above: this band IS the landing hero's picture, and leaving it behind
+       would have put a different kitchen on the seven internal pages from the one on the home
+       page. ⛔ If the hero changes again, change these two lines with it. */
+    --pageHeadImg:url('/assets/site/hero-night-2000.webp');
   }
   /* ⚠️ the head is ~340px tall on a phone; cover-scaling the 2000px master to it wastes most of
      the download, and this file is the ONE image on these pages (the performance rule from
      11 Aug: size by the cover-scaled render width, not the element width) */
   @media(max-width:720px){
-    .page-head{--pageHeadImg:url('/assets/site/hero-kitchen-1400.webp')}
+    .page-head{--pageHeadImg:url('/assets/site/hero-night-1400.webp')}
   }
   /* ⭐⭐ THE PROJECTS PAGE RUNS THE GALLERY AS A COLUMN AT EVERY WIDTH — D195.
      `build_pages.py` puts `.pg-col` on that page's <main>. Setting `--galMode` is the whole
@@ -8027,7 +8031,7 @@
       </defs>
     </svg>
     <div class="hero-bg" aria-hidden="true">
-      <img src="/assets/site/hero-kitchen-2750.webp" srcset="/assets/site/hero-kitchen-1400.webp 1400w, /assets/site/hero-kitchen-2000.webp 2000w, /assets/site/hero-kitchen-2750.webp 2750w" sizes="(max-width:720px) 1000px, 1739px" width="2750" height="1536" alt="" id="heroImg" draggable="false" fetchpriority="high" decoding="async">
+      <img src="/assets/site/hero-night-2752.webp" srcset="/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w" sizes="(max-width:720px) 1000px, 1739px" width="2752" height="1536" alt="" id="heroImg" draggable="false" fetchpriority="high" decoding="async">
       <div class="hero-shade"></div>
     </div>
     <div class="hero-inner">
@@ -9606,7 +9610,7 @@ const SS={
  "/assets/projects/harlow-1400.webp":"/assets/projects/harlow-560.webp 560w, /assets/projects/harlow-1400.webp 1400w",
  "/assets/projects/rickmansworth-1400.webp":"/assets/projects/rickmansworth-560.webp 560w, /assets/projects/rickmansworth-1400.webp 1400w",
  "/assets/projects/watford-1400.webp":"/assets/projects/watford-560.webp 560w, /assets/projects/watford-1400.webp 1400w",
- "/assets/site/hero-kitchen-2750.webp":"/assets/site/hero-kitchen-1400.webp 1400w, /assets/site/hero-kitchen-2000.webp 2000w, /assets/site/hero-kitchen-2750.webp 2750w",
+ "/assets/site/hero-night-2752.webp":"/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w",
  "/assets/site/cta-slab-2752.webp":"/assets/site/cta-slab-1958.webp 1958w, /assets/site/cta-slab-2752.webp 2752w",
  "/assets/site/kitchen-day-1188.webp":"/assets/site/kitchen-day-626.webp 626w, /assets/site/kitchen-day-1188.webp 1188w",
  "/assets/site/quarry-955.webp":"/assets/site/quarry-518.webp 518w, /assets/site/quarry-955.webp 955w",

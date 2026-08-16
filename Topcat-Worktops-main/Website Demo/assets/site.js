@@ -215,7 +215,7 @@ const SS={
  "/assets/projects/harlow-1400.webp":"/assets/projects/harlow-560.webp 560w, /assets/projects/harlow-1400.webp 1400w",
  "/assets/projects/rickmansworth-1400.webp":"/assets/projects/rickmansworth-560.webp 560w, /assets/projects/rickmansworth-1400.webp 1400w",
  "/assets/projects/watford-1400.webp":"/assets/projects/watford-560.webp 560w, /assets/projects/watford-1400.webp 1400w",
- "/assets/site/hero-kitchen-2750.webp":"/assets/site/hero-kitchen-1400.webp 1400w, /assets/site/hero-kitchen-2000.webp 2000w, /assets/site/hero-kitchen-2750.webp 2750w",
+ "/assets/site/hero-night-2752.webp":"/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w",
  "/assets/site/cta-slab-2752.webp":"/assets/site/cta-slab-1958.webp 1958w, /assets/site/cta-slab-2752.webp 2752w",
  "/assets/site/kitchen-day-1188.webp":"/assets/site/kitchen-day-626.webp 626w, /assets/site/kitchen-day-1188.webp 1188w",
  "/assets/site/quarry-955.webp":"/assets/site/quarry-518.webp 518w, /assets/site/quarry-955.webp 955w",
