@@ -7013,6 +7013,195 @@ function viewSequence(host,tiles,apply,opts){
   },{start:0.94,end:0.02,span:0.42,step:0.112,scrub:0.062});
 })();
 
+/* ---------- THE WELD: About closes over Process like two slabs — 16 Aug 2026 (D269) ----------
+   DESKTOP ONLY (≥1121px), client's instruction, and the CSS half is in the block headed
+   ⭐⭐⭐ THE WELD. Read that first — it carries the geometry and the reason the seam is invisible.
+
+   THE FOUR MOMENTS:
+     c = 0        Process has just pinned. Its bottom edge is on the bottom of the screen, which
+                  is his "when the process section is perfectly in view". The leaves are off
+                  screen and the stage is not even visible.
+     0 → 0.72     the leaves slide in from both edges, each carrying its own half of the About
+                  and its own half of the page floor.
+     0.72         contact. The weld fires: a bright head runs the full height in 420ms and draws
+                  a gold line behind it. ⚠️ TIME-BASED ON PURPOSE — see the CSS note.
+     0.72 → 1     the seam and the slab edges fade out, and at 1 the stage hands over to the real
+                  `#about`, which by then is sitting at exactly the offset the clones were drawn
+                  at. The hand-over is a visibility swap between two identical pictures.
+
+   ⛔⛔ THE CLONE IS MIRRORED PER FRAME, NOT SNAPSHOTTED. The collage tiles are placed every
+   frame by scrollSequence off the REAL section's travel, and that build runs its whole course
+   behind the closing doors. A clone frozen at "finished" would be right only if the user
+   scrolled at exactly the speed the damping expects; on a fast flick the real tiles are still
+   mid-build at the hand-over and the swap would pop. Copying the two inline properties the
+   sequence writes costs six reads a frame and makes the swap exact at any scroll speed.
+
+   ⛔ AND THE `.rise` COPY IS FORCED IN, TRANSITION AND ALL. Same failure in the other column:
+   the paragraphs fade over 1s with delays out to 480ms, and a fast scroller would arrive at the
+   hand-over with the real ones still half faded while the clone showed them solid. */
+(function(){
+  const proc=document.getElementById('process'), about=document.getElementById('about');
+  /* the generated pages link this file and have one of these two at most */
+  if(!proc||!about)return;
+  const mqWide=window.matchMedia('(min-width:1121px)');
+  const mqCalm=window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const CLOSE=0.72,   /* the leaves touch here */
+        FADE0=0.80,   /* the seam and the slab edges start going */
+        FADE1=0.94,   /* and are gone by here, so nothing of the mechanism reaches the hand-over */
+        ARM  =0.66;   /* scroll back up past this and the weld re-arms */
+
+  let stage=null,doorL=null,doorR=null,tilesReal=null,tilesL=null,tilesR=null;
+  let S=0,TRAVEL=1,cur=-1,on=false,welded=false,ticking=false,armed=false,loop=null;
+
+  /* offsetTop up the chain, NOT getBoundingClientRect: `#process` is sticky by the time this
+     runs and its rect lies about where it lives (§12). offsetTop is a layout property. */
+  function docTop(el){let y=0;for(let n=el;n;n=n.offsetParent)y+=n.offsetTop;return y}
+  function easeIO(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+
+  function cloneAbout(){
+    const c=about.cloneNode(true);
+    c.removeAttribute('id');
+    /* ⛔ every id inside goes too — `#aboutCollage` in a second copy would hand the next
+       getElementById caller the wrong node */
+    c.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+    c.classList.add('weld-about');          /* the three `#about ...` rules name this as well */
+    c.setAttribute('aria-hidden','true');
+    c.querySelectorAll('.rise').forEach(el=>{el.style.transition='none';el.classList.add('in')});
+    return c;
+  }
+
+  function build(){
+    if(stage)return;
+    stage=document.createElement('div');
+    stage.id='weldStage';
+    stage.setAttribute('aria-hidden','true');
+    const leaf=side=>{
+      const d=document.createElement('div');
+      d.className='weld-door weld-'+side;
+      const f=document.createElement('div'); f.className='weld-floor';
+      const face=document.createElement('div'); face.className='weld-face';
+      face.appendChild(cloneAbout());
+      d.appendChild(f); d.appendChild(face);
+      return d;
+    };
+    doorL=leaf('l'); doorR=leaf('r');
+    const seam=document.createElement('div'); seam.id='weldSeam';
+    seam.innerHTML='<span class="ws-glow"></span><span class="ws-run"></span><span class="ws-head"></span>';
+    stage.appendChild(doorL); stage.appendChild(doorR); stage.appendChild(seam);
+    document.body.appendChild(stage);
+    tilesReal=[].slice.call(about.querySelectorAll('.ac-tile'));
+    tilesL=[].slice.call(doorL.querySelectorAll('.ac-tile'));
+    tilesR=[].slice.call(doorR.querySelectorAll('.ac-tile'));
+    /* the real section's copy is forced in as well, so both sides of the swap are final */
+    about.querySelectorAll('.rise').forEach(el=>{el.style.transition='none';el.classList.add('in')});
+  }
+
+  function mirror(){
+    for(let i=0;i<tilesReal.length;i++){
+      const t=tilesReal[i].style.transform,o=tilesReal[i].style.opacity;
+      if(tilesR[i].style.transform!==t){tilesR[i].style.transform=t;tilesL[i].style.transform=t}
+      if(tilesR[i].style.opacity!==o){tilesR[i].style.opacity=o;tilesL[i].style.opacity=o}
+    }
+  }
+  /* ⛔⛔ THE MIRROR NEEDS ITS OWN FRAME LOOP, NOT THE SCROLL HANDLER. scrollSequence runs a
+     DAMPED playhead: the tiles keep settling for the best part of a second after the wheel
+     stops. Mirroring only on scroll froze the clone at whatever the tiles looked like at the
+     last scroll event, so pausing mid-slide left the slab carrying a half-built collage while
+     the real one finished behind it — and the hand-over popped. Six property reads a frame,
+     and only while the stage is up. */
+  function pump(){ if(!on){loop=null;return} mirror(); loop=requestAnimationFrame(pump) }
+
+  /* ⚠️ MEASURE AFTER `weld-live` IS ON THE BODY. It hides the divider between the two sections,
+     which moves `#about` up by 110px — measure first and the hand-over lands 110px out.
+
+     ⛔⛔⛔ AND EVERY FIGURE IS TAKEN OFF `#about`, NEVER OFF `#process`, BECAUSE A PINNED STICKY
+     ELEMENT LIES ABOUT WHERE IT LIVES. `offsetTop` carries the sticky shift in Chrome, exactly
+     as `getBoundingClientRect()` does — so re-measuring while Process is pinned returned its
+     PINNED top, which put the start line at the reader's own scroll position and read c=0
+     forever. The doors sat wide open and the numbers all looked plausible. Process's bottom
+     edge IS About's top edge (the divider between them is display:none here), so
+     `docTop(about) − vh` is the same instant, stated in the one coordinate that cannot move.
+     ⚠️ `offsetHeight` is safe — sticky shifts a box, it does not resize it. */
+  function measure(){
+    const vh=window.innerHeight;
+    proc.style.setProperty('--procH',proc.offsetHeight+'px');
+    const barH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barH'))||0;
+    /* where the finished composition sits: bottom edge flush with the screen if it fits, and
+       never further up than the nav bar, which would put the title under the glass */
+    const target=Math.max(0,Math.min(barH,vh-about.offsetHeight));
+    S=docTop(about)-vh;              /* About's top edge on the bottom of the screen */
+    TRAVEL=Math.max(1,vh-target);    /* …and the slide ends when it reaches `target` */
+    if(stage)stage.style.setProperty('--weldTop',target+'px');
+  }
+
+  function frame(){
+    ticking=false;
+    const c=Math.max(0,Math.min(1,(window.pageYOffset-S)/TRAVEL));
+    if(c===cur)return;
+    cur=c;
+    if(c>0&&c<1){
+      if(!stage)build();
+      if(!on){on=true;stage.classList.add('on');about.classList.add('weld-hide');
+              proc.classList.remove('weld-past');measure();
+              if(!loop)loop=requestAnimationFrame(pump)}
+      const d=Math.min(1,c/CLOSE),off=(1-easeIO(d))*100;
+      doorL.style.transform='translate3d('+(-off).toFixed(3)+'%,0,0)';
+      doorR.style.transform='translate3d('+off.toFixed(3)+'%,0,0)';
+      const fade=c<=FADE0?1:Math.max(0,1-(c-FADE0)/(FADE1-FADE0));
+      stage.style.setProperty('--edgeA',(d<1?1:fade).toFixed(3));
+      stage.style.setProperty('--seamA',(d<1?0:fade).toFixed(3));
+      if(d>=1&&!welded){
+        welded=true;
+        stage.classList.remove('welding');void stage.offsetWidth;stage.classList.add('welding');
+      }else if(c<ARM&&welded){welded=false;stage.classList.remove('welding')}
+      mirror();
+    }else{
+      /* ⚠️ ONE LAST MIRROR ON THE WAY OUT. `on` goes false here and the pump stops with it, so
+         without this the clone keeps the frame BEFORE the hand-over for the whole time the
+         stage is down — and it is the picture the user sees again on the way back up. */
+      if(on){on=false;mirror();stage.classList.remove('on');about.classList.remove('weld-hide')}
+      proc.classList.toggle('weld-past',c>=1);
+    }
+  }
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame)}}
+
+  function enable(){
+    if(armed||!mqWide.matches||mqCalm.matches)return;
+    armed=true;
+    document.body.classList.add('weld-live');
+    requestAnimationFrame(()=>{measure();cur=-1;frame()});
+    window.addEventListener('scroll',onScroll,{passive:true});
+  }
+  function disable(){
+    if(!armed)return;
+    armed=false;
+    window.removeEventListener('scroll',onScroll);
+    document.body.classList.remove('weld-live');
+    about.classList.remove('weld-hide');proc.classList.remove('weld-past');
+    if(stage){stage.classList.remove('on','welding')}
+    on=false;welded=false;cur=-1;
+    if(loop){cancelAnimationFrame(loop);loop=null}
+  }
+
+  /* the clone is built on approach rather than at the first frame that needs it: cloning the
+     section costs a couple of milliseconds and that is a dropped frame if it lands mid-slide */
+  new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting&&armed){build();measure();cur=-1;frame()}})
+  },{rootMargin:'150% 0px 150% 0px'}).observe(proc);
+
+  let rt=null;
+  window.addEventListener('resize',()=>{
+    clearTimeout(rt);
+    rt=setTimeout(()=>{
+      if(!mqWide.matches||mqCalm.matches){disable();return}
+      enable();measure();cur=-1;frame();
+    },160);
+  });
+  mqWide.addEventListener('change',()=>{mqWide.matches?enable():disable()});
+  enable();
+})();
+
 /* ---------- scroll reveal (headers/eyebrows fade up once) ----------
    The PROCESS journey stations are deliberately NOT observed here — they ride the line-draw
    clock (.flow on #procFlow) set up in the PROCESS FLOW block. */

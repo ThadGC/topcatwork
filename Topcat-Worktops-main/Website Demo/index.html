@@ -5643,14 +5643,19 @@
      Everywhere else on the site these buttons already sit in a flex row, which is why this only
      surfaced here. */
   .about-cta{margin-top:auto;padding-top:clamp(15px,2.6vh,30px);align-self:flex-start;display:flex}
-  #about .rise{transition-delay:var(--rd,0ms)}
+  /* ⚠️ `.weld-about` IS THE DOOR CLONE AND IT MUST MATCH THESE THREE RULES OR THE SWAP POPS.
+     The weld (see THE WELD, below) carries a clone of this section inside the two sliding
+     slabs, and a clone cannot keep `id="about"`. Every rule that dresses this section through
+     its ID has to name the clone as well — these three are the whole list at desktop width,
+     and the `max-width:880px` ones below never meet the doors (the weld is ≥1121px only). */
+  #about .rise,.weld-about .rise{transition-delay:var(--rd,0ms)}
   /* Three long paragraphs need air to be readable: a shorter measure, a looser leading and a
      real gap BETWEEN paragraphs (the shared .section-sub margin is tuned for a one-line sub). */
   /* ⚠️ The leading and the paragraph gaps were both eased back on 6 Aug when the TEAM ROW
      joined this section — three paragraphs at 1.85 plus a row of people ran the section past
      the fold on a laptop. 1.72 still reads as air around long copy. */
-  #about .section-sub{max-width:52ch;line-height:1.72;margin-top:clamp(10px,1.6vh,18px)}
-  #about .section-title + .section-sub{margin-top:clamp(9px,1.4vh,15px)}
+  #about .section-sub,.weld-about .section-sub{max-width:52ch;line-height:1.72;margin-top:clamp(10px,1.6vh,18px)}
+  #about .section-title + .section-sub,.weld-about .section-title + .section-sub{margin-top:clamp(9px,1.4vh,15px)}
   /* the TEAM MOSAIC (client, 30 July, second round): six tiles of the team, every tile its
      own shape, packed tight into one slab-proportioned 3x4 grid — "almost Tetris". No message
      card, no captions, just the people. Width is capped by vw AND by the viewport's height
@@ -5888,6 +5893,126 @@
     #about .about-copy .section-sub{margin-left:auto;margin-right:auto}
     #about .about-cta{align-self:center}
   }
+
+  /* ==========================================================================================
+     ⭐⭐⭐ THE WELD — ABOUT CLOSES OVER PROCESS LIKE TWO SLABS — 16 Aug 2026 (D269)
+     DESKTOP ONLY (≥1121px). Client: *"as the user scrolls, it's essentially going to slide in
+     from both sides, left and right, like a sliding door exactly in half and then have this
+     golden line that merges exactly, and it creates this quick flash line down essentially,
+     almost welding the two pieces together very quickly so that they sit perfectly together,
+     and that simulates Topcat adding two stones perfectly together to match up."*
+
+     HOW IT WORKS, IN ONE PARAGRAPH. `#process` goes `position:sticky` at `100vh − its own
+     height`, so it pins at the exact moment its bottom edge reaches the bottom of the screen —
+     "when the process section is perfectly in view", his words, and no sooner. From there the
+     page keeps scrolling but nothing in it moves, which is the "the scroll technically stops"
+     he asked for. What moves is `#weldStage`: a fixed, pointer-transparent layer carrying two
+     50%-wide leaves, each holding a CLONE of the About section, each sliding in from its own
+     edge. When they touch, the seam welds and the stage hands over to the real `#about`.
+
+     ⛔⛔ THE SEAM AT 50% FALLS IN THE COLUMN GUTTER AT EVERY DESKTOP WIDTH, AND THAT IS WHY THE
+     CUT IS INVISIBLE. `.about-wrap` is copy 1.02fr / collage 0.98fr inside a 1140 cap, so the
+     midline lands between the copy's right edge and the collage's left edge from 1121px up
+     (measured: 1121 → gutter 533.6–623.9, midline 560.5; 1440 → 694.7–779.9, midline 720;
+     1920 → 934.7–1019.9, midline 960). **The left slab therefore carries the story and the
+     right slab carries the collage** — which is the section cut exactly in half, as asked.
+     ⚠️ If the wrap's columns or its gap ever change, re-measure that the midline still misses
+     both columns, or the doors will slice a word in half when they close.
+
+     ⛔⛔ EACH LEAF PAINTS ITS OWN HALF OF THE PAGE FLOOR, offset so the two halves rejoin into
+     one continuous slab when they meet. That is the "two stones matching up" and it is also
+     what makes the hand-over to the real section invisible: `body::before` is FIXED, so a leaf
+     that reproduces it exactly is pixel-identical to the floor behind it.
+
+     ⛔ NOTHING HERE MAY SURVIVE INTO THE FROZEN BANDS. The query is ≥1121px and every rule is
+     additionally gated on `body.weld-live`, which the IIFE only adds on the landing page, on a
+     wide screen, with reduced-motion off. Without that class this whole block is inert — which
+     is also what keeps it out of the generated pages that link `site.css`. */
+  /* ⛔⛔⛔ THIS ONE LINE IS AT BASE SCOPE AND IT IS LOAD-BEARING. The stage holds TWO complete
+     copies of the About section, and every rule that gives it a shape lives in the desktop query
+     below. Resize a desktop window down to the tablet and the stage would keep its clones with
+     no rules at all — two full-width About sections unfolded into the bottom of the page, in a
+     frozen band. It is `display:none` by default and the desktop query turns it back on. */
+  #weldStage{display:none}
+  @media(min-width:1121px){
+    /* the pin. `--procH` is written by the IIFE from the section's own height, so the top
+       offset is exactly "stick when your bottom edge reaches the bottom of the screen". */
+    body.weld-live #process{position:sticky;top:calc(100vh - var(--procH,100vh))}
+    body.weld-live #weldStage{display:block}
+    /* ⛔ IT HAS TO BE HIDDEN ONCE THE DOORS ARE SHUT, NOT LEFT PINNED. `#process` is
+       `position:relative;z-index:1` and `#about` is static, so a still-pinned Process paints
+       OVER the About that has just landed on top of it. */
+    body.weld-live #process.weld-past{visibility:hidden}
+    /* the real section is hidden for the length of the slide — the doors are showing its clone,
+       and a section rising up the gap between two half-closed slabs would give the trick away */
+    body.weld-live #about.weld-hide{visibility:hidden}
+    /* ⛔ THE GOLD DIVIDER BETWEEN THE TWO SECTIONS GOES: the weld IS that seam now. It would
+       never be seen anyway (Process is pinned over it), and its 110px of height is 110px of
+       scroll where nothing happens. */
+    body.weld-live #process + .section-divider{display:none}
+
+    #weldStage{position:fixed;inset:0;z-index:40;pointer-events:none;visibility:hidden;
+      contain:layout paint size}
+    #weldStage.on{visibility:visible}
+    /* ⚠️ 50% OF THE STAGE, NEVER 50vw — `inset:0` on a fixed layer measures the viewport WITHOUT
+       the scrollbar, `50vw` measures it WITH. The 8px difference would put the seam off centre
+       and leave a sliver of Process showing down the middle at full close. */
+    .weld-door{position:absolute;top:0;bottom:0;width:50%;overflow:hidden;will-change:transform;
+      transform:translate3d(0,0,0)}
+    .weld-l{left:0}
+    .weld-r{left:50%}
+    /* the floor each slab carries. 200% of a half-width leaf is the full viewport, and the right
+       leaf pulls its copy back by one leaf so the two halves are consecutive, not identical. */
+    .weld-floor{position:absolute;top:0;height:100%;width:200%;
+      background:
+        radial-gradient(120% 80% at 80% -10%, rgba(198,166,100,var(--floorGlowA)), transparent 55%),
+        radial-gradient(90% 70% at 10% 110%, rgba(198,166,100,var(--floorGlowB)), transparent 55%),
+        linear-gradient(rgba(var(--floorVeilRGB),var(--floorVeil)), rgba(var(--floorVeilRGB),var(--floorVeil))),
+        var(--marbleBG) center / cover no-repeat}
+    .weld-l .weld-floor{left:0}
+    .weld-r .weld-floor{left:-100%}
+    /* the clone rides at the exact viewport offset the real section will occupy at hand-over */
+    .weld-face{position:absolute;left:0;width:200%;top:var(--weldTop,0px)}
+    .weld-r .weld-face{left:-100%}
+    /* ⭐ THE LEADING EDGE IS WHAT MAKES IT A SLAB. Without it the leaf is invisible against the
+       floor it is carrying and the effect reads as a wipe. A polished bevel, a hairline of gold
+       on the cut face, and a shadow thrown onto the Process behind. `--edgeA` fades all three
+       out with the seam, so nothing of the mechanism survives into the finished composition. */
+    .weld-door::before{content:"";position:absolute;top:0;bottom:0;width:26px;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,calc(var(--edgeA,1) * 0.045)))}
+    .weld-door::after{content:"";position:absolute;top:0;bottom:0;width:1px;
+      background:linear-gradient(180deg,rgba(198,166,100,0),
+        rgba(198,166,100,calc(var(--edgeA,1) * 0.55)) 14%,
+        rgba(230,205,150,calc(var(--edgeA,1) * 0.8)) 50%,
+        rgba(198,166,100,calc(var(--edgeA,1) * 0.55)) 86%,rgba(198,166,100,0))}
+    .weld-l::before{right:0}
+    .weld-l::after{right:0}
+    .weld-r::before{left:0;transform:scaleX(-1);transform-origin:left}
+    .weld-r::after{left:0}
+    .weld-l{box-shadow:18px 0 44px rgba(0,0,0,calc(var(--edgeA,1) * 0.55))}
+    .weld-r{box-shadow:-18px 0 44px rgba(0,0,0,calc(var(--edgeA,1) * 0.55))}
+
+    /* ---- the weld itself. ⚠️ TIME-BASED, NOT SCROLL-BASED, AND DELIBERATELY SO: he asked for
+       a QUICK flash, and a flash scrubbed by the wheel is as slow as the slowest scroller. It
+       fires once when the leaves touch and re-arms if you scroll back up past the contact. ---- */
+    #weldSeam{position:absolute;left:50%;top:0;bottom:0;width:0;opacity:var(--seamA,0)}
+    .ws-glow{position:absolute;left:-46px;width:92px;top:0;bottom:0;opacity:0;
+      background:radial-gradient(closest-side,rgba(214,183,120,0.32),transparent 72%)}
+    .ws-run{position:absolute;left:-1.5px;width:3px;top:0;bottom:0;clip-path:inset(0 0 100% 0);
+      background:linear-gradient(180deg,rgba(198,166,100,0),rgba(232,208,152,0.95) 8%,
+        rgba(255,244,214,1) 50%,rgba(232,208,152,0.95) 92%,rgba(198,166,100,0))}
+    .ws-head{position:absolute;left:-2.5px;width:5px;height:120px;top:-120px;opacity:0;
+      border-radius:3px;
+      background:linear-gradient(180deg,rgba(255,247,226,0),rgba(255,250,236,1) 55%,rgba(255,247,226,0));
+      box-shadow:0 0 22px 6px rgba(238,214,158,0.55),0 0 60px 18px rgba(198,166,100,0.28)}
+    #weldStage.welding .ws-run{animation:wsRun .42s cubic-bezier(.22,.9,.3,1) forwards}
+    #weldStage.welding .ws-head{animation:wsHead .42s cubic-bezier(.22,.9,.3,1) forwards}
+    #weldStage.welding .ws-glow{animation:wsGlow .52s ease-out forwards}
+    @keyframes wsRun{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+    @keyframes wsHead{0%{top:-120px;opacity:0}12%{opacity:1}88%{opacity:1}100%{top:100%;opacity:0}}
+    @keyframes wsGlow{0%{opacity:0}22%{opacity:1}100%{opacity:0}}
+  }
+
   /* --- hero: responsive call button (mobile dials, desktop requests a call) --- */
   /* ⭐ WIDENED 760px → 1120px — 13 August 2026 (D198), THE TABLET ROUND. Client: *"same text as on
      the mobile version, same styling as on the mobile version."* ⛔⛔ **WITHOUT THIS THE TABLET KEPT
@@ -16015,6 +16140,195 @@ function viewSequence(host,tiles,apply,opts){
                        '('+((1-e)*h.deg).toFixed(2)+'deg)';
     el.style.opacity=Math.min(1,e*2.1).toFixed(3);
   },{start:0.94,end:0.02,span:0.42,step:0.112,scrub:0.062});
+})();
+
+/* ---------- THE WELD: About closes over Process like two slabs — 16 Aug 2026 (D269) ----------
+   DESKTOP ONLY (≥1121px), client's instruction, and the CSS half is in the block headed
+   ⭐⭐⭐ THE WELD. Read that first — it carries the geometry and the reason the seam is invisible.
+
+   THE FOUR MOMENTS:
+     c = 0        Process has just pinned. Its bottom edge is on the bottom of the screen, which
+                  is his "when the process section is perfectly in view". The leaves are off
+                  screen and the stage is not even visible.
+     0 → 0.72     the leaves slide in from both edges, each carrying its own half of the About
+                  and its own half of the page floor.
+     0.72         contact. The weld fires: a bright head runs the full height in 420ms and draws
+                  a gold line behind it. ⚠️ TIME-BASED ON PURPOSE — see the CSS note.
+     0.72 → 1     the seam and the slab edges fade out, and at 1 the stage hands over to the real
+                  `#about`, which by then is sitting at exactly the offset the clones were drawn
+                  at. The hand-over is a visibility swap between two identical pictures.
+
+   ⛔⛔ THE CLONE IS MIRRORED PER FRAME, NOT SNAPSHOTTED. The collage tiles are placed every
+   frame by scrollSequence off the REAL section's travel, and that build runs its whole course
+   behind the closing doors. A clone frozen at "finished" would be right only if the user
+   scrolled at exactly the speed the damping expects; on a fast flick the real tiles are still
+   mid-build at the hand-over and the swap would pop. Copying the two inline properties the
+   sequence writes costs six reads a frame and makes the swap exact at any scroll speed.
+
+   ⛔ AND THE `.rise` COPY IS FORCED IN, TRANSITION AND ALL. Same failure in the other column:
+   the paragraphs fade over 1s with delays out to 480ms, and a fast scroller would arrive at the
+   hand-over with the real ones still half faded while the clone showed them solid. */
+(function(){
+  const proc=document.getElementById('process'), about=document.getElementById('about');
+  /* the generated pages link this file and have one of these two at most */
+  if(!proc||!about)return;
+  const mqWide=window.matchMedia('(min-width:1121px)');
+  const mqCalm=window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const CLOSE=0.72,   /* the leaves touch here */
+        FADE0=0.80,   /* the seam and the slab edges start going */
+        FADE1=0.94,   /* and are gone by here, so nothing of the mechanism reaches the hand-over */
+        ARM  =0.66;   /* scroll back up past this and the weld re-arms */
+
+  let stage=null,doorL=null,doorR=null,tilesReal=null,tilesL=null,tilesR=null;
+  let S=0,TRAVEL=1,cur=-1,on=false,welded=false,ticking=false,armed=false,loop=null;
+
+  /* offsetTop up the chain, NOT getBoundingClientRect: `#process` is sticky by the time this
+     runs and its rect lies about where it lives (§12). offsetTop is a layout property. */
+  function docTop(el){let y=0;for(let n=el;n;n=n.offsetParent)y+=n.offsetTop;return y}
+  function easeIO(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+
+  function cloneAbout(){
+    const c=about.cloneNode(true);
+    c.removeAttribute('id');
+    /* ⛔ every id inside goes too — `#aboutCollage` in a second copy would hand the next
+       getElementById caller the wrong node */
+    c.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+    c.classList.add('weld-about');          /* the three `#about ...` rules name this as well */
+    c.setAttribute('aria-hidden','true');
+    c.querySelectorAll('.rise').forEach(el=>{el.style.transition='none';el.classList.add('in')});
+    return c;
+  }
+
+  function build(){
+    if(stage)return;
+    stage=document.createElement('div');
+    stage.id='weldStage';
+    stage.setAttribute('aria-hidden','true');
+    const leaf=side=>{
+      const d=document.createElement('div');
+      d.className='weld-door weld-'+side;
+      const f=document.createElement('div'); f.className='weld-floor';
+      const face=document.createElement('div'); face.className='weld-face';
+      face.appendChild(cloneAbout());
+      d.appendChild(f); d.appendChild(face);
+      return d;
+    };
+    doorL=leaf('l'); doorR=leaf('r');
+    const seam=document.createElement('div'); seam.id='weldSeam';
+    seam.innerHTML='<span class="ws-glow"></span><span class="ws-run"></span><span class="ws-head"></span>';
+    stage.appendChild(doorL); stage.appendChild(doorR); stage.appendChild(seam);
+    document.body.appendChild(stage);
+    tilesReal=[].slice.call(about.querySelectorAll('.ac-tile'));
+    tilesL=[].slice.call(doorL.querySelectorAll('.ac-tile'));
+    tilesR=[].slice.call(doorR.querySelectorAll('.ac-tile'));
+    /* the real section's copy is forced in as well, so both sides of the swap are final */
+    about.querySelectorAll('.rise').forEach(el=>{el.style.transition='none';el.classList.add('in')});
+  }
+
+  function mirror(){
+    for(let i=0;i<tilesReal.length;i++){
+      const t=tilesReal[i].style.transform,o=tilesReal[i].style.opacity;
+      if(tilesR[i].style.transform!==t){tilesR[i].style.transform=t;tilesL[i].style.transform=t}
+      if(tilesR[i].style.opacity!==o){tilesR[i].style.opacity=o;tilesL[i].style.opacity=o}
+    }
+  }
+  /* ⛔⛔ THE MIRROR NEEDS ITS OWN FRAME LOOP, NOT THE SCROLL HANDLER. scrollSequence runs a
+     DAMPED playhead: the tiles keep settling for the best part of a second after the wheel
+     stops. Mirroring only on scroll froze the clone at whatever the tiles looked like at the
+     last scroll event, so pausing mid-slide left the slab carrying a half-built collage while
+     the real one finished behind it — and the hand-over popped. Six property reads a frame,
+     and only while the stage is up. */
+  function pump(){ if(!on){loop=null;return} mirror(); loop=requestAnimationFrame(pump) }
+
+  /* ⚠️ MEASURE AFTER `weld-live` IS ON THE BODY. It hides the divider between the two sections,
+     which moves `#about` up by 110px — measure first and the hand-over lands 110px out.
+
+     ⛔⛔⛔ AND EVERY FIGURE IS TAKEN OFF `#about`, NEVER OFF `#process`, BECAUSE A PINNED STICKY
+     ELEMENT LIES ABOUT WHERE IT LIVES. `offsetTop` carries the sticky shift in Chrome, exactly
+     as `getBoundingClientRect()` does — so re-measuring while Process is pinned returned its
+     PINNED top, which put the start line at the reader's own scroll position and read c=0
+     forever. The doors sat wide open and the numbers all looked plausible. Process's bottom
+     edge IS About's top edge (the divider between them is display:none here), so
+     `docTop(about) − vh` is the same instant, stated in the one coordinate that cannot move.
+     ⚠️ `offsetHeight` is safe — sticky shifts a box, it does not resize it. */
+  function measure(){
+    const vh=window.innerHeight;
+    proc.style.setProperty('--procH',proc.offsetHeight+'px');
+    const barH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--barH'))||0;
+    /* where the finished composition sits: bottom edge flush with the screen if it fits, and
+       never further up than the nav bar, which would put the title under the glass */
+    const target=Math.max(0,Math.min(barH,vh-about.offsetHeight));
+    S=docTop(about)-vh;              /* About's top edge on the bottom of the screen */
+    TRAVEL=Math.max(1,vh-target);    /* …and the slide ends when it reaches `target` */
+    if(stage)stage.style.setProperty('--weldTop',target+'px');
+  }
+
+  function frame(){
+    ticking=false;
+    const c=Math.max(0,Math.min(1,(window.pageYOffset-S)/TRAVEL));
+    if(c===cur)return;
+    cur=c;
+    if(c>0&&c<1){
+      if(!stage)build();
+      if(!on){on=true;stage.classList.add('on');about.classList.add('weld-hide');
+              proc.classList.remove('weld-past');measure();
+              if(!loop)loop=requestAnimationFrame(pump)}
+      const d=Math.min(1,c/CLOSE),off=(1-easeIO(d))*100;
+      doorL.style.transform='translate3d('+(-off).toFixed(3)+'%,0,0)';
+      doorR.style.transform='translate3d('+off.toFixed(3)+'%,0,0)';
+      const fade=c<=FADE0?1:Math.max(0,1-(c-FADE0)/(FADE1-FADE0));
+      stage.style.setProperty('--edgeA',(d<1?1:fade).toFixed(3));
+      stage.style.setProperty('--seamA',(d<1?0:fade).toFixed(3));
+      if(d>=1&&!welded){
+        welded=true;
+        stage.classList.remove('welding');void stage.offsetWidth;stage.classList.add('welding');
+      }else if(c<ARM&&welded){welded=false;stage.classList.remove('welding')}
+      mirror();
+    }else{
+      /* ⚠️ ONE LAST MIRROR ON THE WAY OUT. `on` goes false here and the pump stops with it, so
+         without this the clone keeps the frame BEFORE the hand-over for the whole time the
+         stage is down — and it is the picture the user sees again on the way back up. */
+      if(on){on=false;mirror();stage.classList.remove('on');about.classList.remove('weld-hide')}
+      proc.classList.toggle('weld-past',c>=1);
+    }
+  }
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame)}}
+
+  function enable(){
+    if(armed||!mqWide.matches||mqCalm.matches)return;
+    armed=true;
+    document.body.classList.add('weld-live');
+    requestAnimationFrame(()=>{measure();cur=-1;frame()});
+    window.addEventListener('scroll',onScroll,{passive:true});
+  }
+  function disable(){
+    if(!armed)return;
+    armed=false;
+    window.removeEventListener('scroll',onScroll);
+    document.body.classList.remove('weld-live');
+    about.classList.remove('weld-hide');proc.classList.remove('weld-past');
+    if(stage){stage.classList.remove('on','welding')}
+    on=false;welded=false;cur=-1;
+    if(loop){cancelAnimationFrame(loop);loop=null}
+  }
+
+  /* the clone is built on approach rather than at the first frame that needs it: cloning the
+     section costs a couple of milliseconds and that is a dropped frame if it lands mid-slide */
+  new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting&&armed){build();measure();cur=-1;frame()}})
+  },{rootMargin:'150% 0px 150% 0px'}).observe(proc);
+
+  let rt=null;
+  window.addEventListener('resize',()=>{
+    clearTimeout(rt);
+    rt=setTimeout(()=>{
+      if(!mqWide.matches||mqCalm.matches){disable();return}
+      enable();measure();cur=-1;frame();
+    },160);
+  });
+  mqWide.addEventListener('change',()=>{mqWide.matches?enable():disable()});
+  enable();
 })();
 
 /* ---------- scroll reveal (headers/eyebrows fade up once) ----------
