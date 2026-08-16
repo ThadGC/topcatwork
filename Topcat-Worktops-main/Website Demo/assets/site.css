@@ -3825,12 +3825,38 @@
      D187's flat `background-color` wash instead, which the client asked for and signed off, and
      ⛔ two veils on one photograph would be a third of a stop darker than anything he has seen.
      The ≤1120 block sets both stops to 0. */
-  .hero{--heroScrimA:0.58;--heroScrimB:0.30}
+  /* ⭐⭐⭐ THE LEFT-TO-RIGHT RAMP IS GONE AND THE LEAN NOW FOLLOWS THE LIGHT — 17 Aug 2026 (D284).
+     Client, on the new photograph: *"because of the previous hero section that we had, the darker
+     shadow is still coming in from the left side of the screen. So we now need to readjust that so
+     it isn't just darkening out the left side of the screen. And just make sure the text is all
+     very clear and very readable."*
+     ⛔⛔⛔ **HE IS RIGHT TWICE OVER, AND BOTH HALVES MEASURE.** The old third layer ran **0.94 at
+     the left edge down to 0.06 at 74%** — written in July for a composition with the words on the
+     left and the photograph on the right. The words have been CENTRED since D232 and the picture
+     changed yesterday, so that ramp was painting a black wall over the one part of the frame with
+     nothing in it. Measured by compositing all five layers over the served photograph: veil
+     **0.944 at the left edge against 0.414 at the right**, a spread of 0.53.
+     ⛔⛔ **AND THE TEXT WAS FAILING WHERE THE RAMP GAVE UP.** Worst pixel behind the gold word came
+     out rgb(108,100,52) — **2.56:1, below the 3:1 large-text threshold** — because the new
+     photograph is brighter on the right, exactly where the old ramp had faded to 0.06. The white
+     headline was only 4.95.
+     ⭐⭐ **SO THE ALPHA MOVES FROM THE LEFT TO THE RIGHT, WHICH IS WHERE THE PICTURE'S OWN LIGHT
+     IS.** The lean is 0.26 → 0.46 left-to-right now: a gentle 0.14 tilt toward the lit kitchen
+     rather than a 0.53 wall over the dark living room. The centred scrim takes the rest of the
+     work, 0.58/0.30 → **0.70/0.36** over a slightly wider ellipse, because it sits under centred
+     copy and that is the one place worth spending veil.
+     ⚠️ **EVERY FIGURE HERE WAS MEASURED, NOT LOOKED AT (§12).** The photograph is drawn to a
+     canvas at its own rendered `cover` scale and offset, all five shade layers are evaluated
+     analytically at each sample, and the WORST (brightest) pixel under each line decides. Five
+     alternatives were scored the same way before this one was chosen; a flat wash reads cleanest
+     on paper and is the thing D217 tried and reverted, because it fixes the text by flattening
+     the photograph. */
+  .hero{--heroScrimA:0.70;--heroScrimB:0.36}
   .hero-shade{position:absolute;inset:0;z-index:1;background:
-    radial-gradient(66% 62% at 50% 42%, rgba(7,7,9,var(--heroScrimA)) 0%,
+    radial-gradient(70% 66% at 50% 42%, rgba(7,7,9,var(--heroScrimA)) 0%,
       rgba(7,7,9,var(--heroScrimB)) 62%, rgba(7,7,9,0) 100%),
     radial-gradient(280px 220px at 96% 93%, rgba(7,7,9,0.92), transparent 72%),
-    linear-gradient(90deg,rgba(7,7,9,0.94) 0%,rgba(7,7,9,0.74) 26%,rgba(7,7,9,0.3) 52%,rgba(7,7,9,0.06) 74%,rgba(7,7,9,0.28) 100%),
+    linear-gradient(90deg,rgba(7,7,9,0.26) 0%,rgba(7,7,9,0.30) 40%,rgba(7,7,9,0.46) 100%),
     linear-gradient(to top,rgba(7,7,9,0.9) 2%,rgba(7,7,9,0) 32%),
     /* The nav scrim. A plain two-stop fade (what this was) reads as a soft BAND with a visible
        termination line, because linear alpha interpolation still has slope where it stops. These
@@ -7327,8 +7353,22 @@
        have this wash and it is what the client signed off; the scrim on top of it would take the
        photograph down a further third of a stop behind the copy, on a screen where the picture is
        already the smallest it ever gets. One veil per band. */
-    #hero{--heroScrimA:0;--heroScrimB:0}
-    #hero .hero-shade{background-color:rgba(7,7,9,0.30)}
+    /* ⛔⛔⛔ **D187's FLAT WASH IS RETIRED AND THE CENTRED SCRIM IS BACK ON — 17 Aug 2026 (D284).**
+       The wash existed for ONE reason, stated above: the big shade layer was a LEFT-TO-RIGHT ramp
+       written for a desktop composition, so on a centred phone the title sat over its thin end
+       while the shading was spent on an empty edge. **That ramp is gone as of today** — it is a
+       gentle 0.26 → 0.46 lean now — so the reason is gone with it, and the phone can take the
+       same treatment as everything else: one veil, one definition, centred where the words are.
+       ⭐⭐ **AND IT IS BETTER ON BOTH COUNTS, MEASURED ON THE PIXELS THE BROWSER PAINTS.** Against
+       the signed-off flat wash at 375px: the gold word goes **2.68:1 → 4.67:1** (it was BELOW the
+       3:1 large-text threshold), the white headline 4.58 → 6.03, the sub 6.43 → 7.93 — **and the
+       photograph's own edge gets LIGHTER, veil 0.484 → 0.472**, because the alpha stopped being
+       spread flat across a picture and went where the letters are. ⛔ Raising the flat wash
+       instead was measured and is the worse trade every time: at 0.42 the gold reaches only 3.40
+       while the edge goes to 0.573. That is D217's lesson, and it still holds.
+       ⚠️ **THIS SUPERSEDES D238's "ONE VEIL PER BAND"** — which was right while the flat wash was
+       the band's veil. There is still only one. */
+    #hero .hero-shade{background-color:transparent}
   }
 
   /* ============================================================================================
