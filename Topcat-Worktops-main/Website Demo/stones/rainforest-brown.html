@@ -236,6 +236,6 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 });
 </script>
-<script>document.addEventListener('DOMContentLoaded',function(){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});});</script>
+<script>document.addEventListener('DOMContentLoaded',function(){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>
 </body>
 </html>

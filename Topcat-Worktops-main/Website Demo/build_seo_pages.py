@@ -136,7 +136,53 @@ def nav_html(depth):
   <a class="brand" href="/index.html#hero" aria-label="Topcat Worktops, home">{BRAND_LOGO}</a>
   <nav class="top" aria-label="Primary">{links}</nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
-</header>"""
+</header>
+{TC_DEFS}"""
+
+
+# ⭐ D263 — THE THREE CONSTANTS THIS FAMILY SHARES WITH THE SERVICE LEAVES. The originals and the
+# reasoning are in `services/build_services.py`; they are repeated here because each builder emits
+# its own page shell, and there is no import path between them. ⛔ A change to any of the three has
+# to be made in `services/build_services.py`, here, and in `stones/build_stones.py`.
+TC_DEFS = ('<svg class="tc-defs" aria-hidden="true" focusable="false" width="0" height="0"><defs>'
+           '<linearGradient id="tcGold" x1="0" y1="0" x2="0" y2="1">'
+           '<stop offset="0" stop-color="#E9D5A0"/><stop offset=".55" stop-color="#C6A664"/>'
+           '<stop offset="1" stop-color="#96723A"/></linearGradient></defs></svg>')
+
+HERO_CHIPS = """<div class="hero-chips">
+        <span class="chip chip-google">
+          <svg class="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span class="g-stack" aria-hidden="true">
+            <span class="g-word">Google reviews</span>
+            <span class="g-rating"><b class="g-score">5.0</b><span class="g-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span>
+          </span>
+          <span class="chip-legacy">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 on Google</span>
+        </span>
+        <span class="chip chip-guarantee"><b class="chip-mk">10</b> year guarantee</span>
+        <span class="chip chip-reason"><b class="chip-mk">72</b> hour aftercare</span>
+        <span class="chip chip-reason"><span class="chip-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.4 10.6 12 3.8l8.6 6.8M5.9 9.2V20h12.2V9.2M9.9 20v-5.6h4.2V20" stroke="url(#tcGold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Free home visit</span>
+{extra}      </div>"""
+
+
+def hero_chips(*extra):
+    """The four bubbles, plus any place-specific ones this page wants.
+
+    ⭐ THE LOCATION PAGES KEEP THEIR LOCAL FACT (D263). The county and town heroes carried a
+    dialling code and a postcode range in their trust line, which is the one thing on those pages
+    that is genuinely local, and dropping it to make a shared component fit would have traded real
+    content for tidiness. A fifth bubble spans both columns on its own — `.hero-chips`'s
+    `:last-child:nth-child(odd)` rule was written for exactly this and has been dormant since.
+    """
+    rows = "".join(f'        <span class="chip chip-reason">{x}</span>\n' for x in extra if x)
+    return HERO_CHIPS.format(extra=rows)
+
+# ⚠️ THIS FAMILY HAD NO SCRIPT AT ALL until D263, and the bar's glass needs one. It is appended to
+# `footer_html()` rather than added to eight page templates by hand — the footer is the last thing
+# before `</body>` on every one of them, so that is one place instead of eight.
+BAR_JS = ("<script>document.addEventListener('DOMContentLoaded',function(){"
+          "var bar=document.querySelector('header.bar'),on=false;"
+          "function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}"
+          "if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>")
 
 
 def footer_html():
@@ -182,7 +228,8 @@ def footer_html():
          span or the link would be gapped off an anonymous flex box. -->
     <span class="foot-legal"><span>Free home visit and samples. Ten year guarantee. No showroom visit needed, we come to you.</span><a class="foot-sitemap" href="/sitemap.html">Sitemap</a></span>
   </div>
-</footer>"""
+</footer>
+""" + BAR_JS
 
 
 def head_html(title, metadesc, url, css_depth, extra_ld=""):
@@ -288,14 +335,21 @@ def cta_band(heading, line):
 </section>"""
 
 
-def faq_block(faqs, heading="Common questions"):
+def faq_block(faqs, heading="Frequently asked questions"):
     """⚠️ VISIBLE CONTENT ONLY. No FAQPage schema, it was deprecated on
     7 May 2026 and the documentation deleted on 15 June 2026. The content still
-    earns its place for readers and for AI extraction."""
+    earns its place for readers and for AI extraction.
+
+    ⭐ D263: it says "Frequently asked questions" now, his instruction, and it takes `gold_last`
+    like every other heading on the site. ⚠️ The location pages pass their own heading and keep the
+    place in it ("Frequently asked questions in St Albans") — that place name is the reason those
+    pages rank, and a shared default must not quietly delete it.
+    ⭐ The rows are wrapped in `.faq-grid`, which is what makes them cards in two columns."""
     rows = "".join(
         f"<details><summary>{e(q)}</summary><div class='a'>{e(a)}</div></details>"
         for q, a in faqs)
-    return f'<section class="faq"><div class="wrap"><h2>{e(heading)}</h2>{rows}</div></section>'
+    return (f'<section class="faq"><div class="wrap"><h2>{gold_last(heading)}</h2>'
+            f'<div class="faq-grid">{rows}</div></div></section>')
 
 
 def table_block(caption, head, rows):
@@ -1656,11 +1710,10 @@ def material_page(m):
         <a class="btn-gold" href="/estimate/">Price it in a minute</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
-      <div class="trust">
-        <span><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</span>
-        <span><b>{GUARANTEE_YEARS}</b> year guarantee</span>
-        <span>Free home visit across {e(AREA)}</span>
-      </div>
+      <!-- ⭐⭐ D263: the landing page's four bubbles replace the three spans of grey trust text.
+           ⚠️ The county list goes with them and is not lost - it is still named in full in the
+           footer, in the schema and in the page's own copy. -->
+      {hero_chips()}
     </div>
   </section>
 
@@ -1837,11 +1890,9 @@ def county_page(c):
         <a class="btn-gold" href="/contact/">Book a free home visit</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
-      <div class="trust">
-        <span><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</span>
-        <span><b>{GUARANTEE_YEARS}</b> year guarantee</span>
-        <span>Local dialling {e(c['dial'])}</span>
-      </div>
+      <!-- ⭐⭐ D263: the landing page's bubbles, with this county's dialling code kept as a
+           fifth that spans the row. -->
+      {hero_chips("Local dialling " + e(c['dial']))}
     </div>
   </section>
 
@@ -1875,7 +1926,7 @@ def county_page(c):
   {applications_html(c['name'])}
   {included_html()}
   {process_html()}
-  {faq_block(faqs, "Common questions in " + c['name'])}
+  {faq_block(faqs, "Frequently asked questions in " + c['name'])}
 
   <section class="block"><div class="wrap">
     <h2>Other areas we cover</h2>
@@ -1934,11 +1985,9 @@ def town_page(t):
         <a class="btn-gold" href="/contact/">Book a free home visit</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
-      <div class="trust">
-        <span><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</span>
-        <span>{e(t['postcodes'])}</span>
-        <span>Dialling {e(t['dial'])}</span>
-      </div>
+      <!-- ⭐⭐ D263: the landing page's bubbles, with this town's postcodes and dialling code
+           kept as two more. Six bubbles is three even rows. -->
+      {hero_chips(e(t['postcodes']), "Dialling " + e(t['dial']))}
     </div>
   </section>
 
@@ -1971,7 +2020,7 @@ def town_page(t):
   {applications_html(t['name'])}
   {included_html()}
   {process_html()}
-  {faq_block(faqs, "Common questions in " + t['name'])}
+  {faq_block(faqs, "Frequently asked questions in " + t['name'])}
 
   <section class="block"><div class="wrap">
     <h2>Worth reading before you buy</h2>

@@ -12,25 +12,131 @@
   --sans:"Montserrat",system-ui,-apple-system,sans-serif;
   --brand:"Montserrat",var(--sans);
   --maxw:1160px;
+  /* ⭐⭐ THE LANDING PAGE'S OWN THREE CONSTANTS, BROUGHT ACROSS — 16 Aug 2026 (D263). Client:
+     *"the inner pages, the hero section should have the same design as on the landing page, and
+     the nav bar should have the same design as on the landing page. And the background in those
+     pages should still be the stone background."*
+     ⚠️ `--barH` is the height of the fixed bar, declared rather than left as an outcome, exactly
+     as it now is on the landing page (D259) — the hero below reads it to clear the bar.
+     ⛔ `--marbleBG` IS ROOT-RELATIVE AND HAS TO BE: this sheet is loaded from `/services/`,
+     `/materials/`, `/worktops/<county>/<town>/` and `/stones/`, so a relative url would resolve
+     four different ways and the floor would vanish on three of them. */
+  --barH:78.5px;
+  --marbleBG:url('/assets/stone-floor.webp');
+  --floorVeil:0.70; --floorVeilRGB:2,2,4; --floorGlowA:0.06; --floorGlowB:0.04;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+/* ⚠️ ANCHORS HAVE TO CLEAR THE FIXED BAR (D263) — a jump to `#compare` or a FAQ id used to land
+   flush with the top of the window, which is now 78.5px of glass. */
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--barH) + 8px)}
 body{
   background:var(--ink); color:var(--bone); font-family:var(--sans); font-weight:300;
   line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  /* ⭐⭐⭐ **ONE RULE HOLDS ALL 176 PAGES CLEAR OF THE NOW-FIXED BAR — D263.** The bar stopped
+     occupying flow when it became `fixed`, and these pages start three different ways: 22 open with
+     `.svc-hero`, 147 with a bare breadcrumb, and the trail is `display:none` on a phone, so a rule
+     hung on either of those would have left a whole family sliding under the glass at some width.
+     ⛔ The alternative — padding the hero, padding the crumb, and then padding `main` on the phone
+     for the pages whose crumb has gone — is three live descriptions of one clearance, which is the
+     D106/D113/D114 failure. The hero takes it straight back with a negative margin below, because
+     it is the one element that WANTS the photograph running up behind a transparent bar. */
+  padding-top:var(--barH);
+}
+/* ⭐⭐⭐ THE STONE FLOOR, ON ALL 176 GENERATED PAGES — D263.
+   The same photographed Portoro slab the landing page has stood on since 9 August, under the same
+   0.70 scrim and the same two warm corner glows, at the same numbers to the digit. These pages
+   were flat `--ink`, which is the "some sections just look black" complaint the floor was
+   introduced to answer — and it is the reason an internal page did not feel like the same site.
+   ⛔ **`z-index:-1`, NOT THE LANDING PAGE'S `0`.** There it works because almost every section is
+   positioned; here `section.block` is static, and a fixed pseudo at z-index 0 paints ABOVE static
+   text (positioned boxes come after inline content in the paint order) — it would have hidden the
+   copy on every page. At -1 it sits above the canvas colour and below everything else, and no
+   section needs a z-index of its own.
+   ⛔ `position:fixed` so the stone stays still while the page moves over it. Not
+   `background-attachment:fixed`, which iOS Safari refuses and renders scrolled and stretched.
+   ⚠️ The numbers are D123's: 0.70 on desktop and tablet, 0.46 on the phone where the same veil
+   left the brightest tenth of the floor darker than the sections sitting on it. Measured there,
+   not eyeballed — re-measure before moving either. */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 80% -10%, rgba(198,166,100,var(--floorGlowA)), transparent 55%),
+    radial-gradient(90% 70% at 10% 110%, rgba(198,166,100,var(--floorGlowB)), transparent 55%),
+    linear-gradient(rgba(var(--floorVeilRGB),var(--floorVeil)), rgba(var(--floorVeilRGB),var(--floorVeil))),
+    var(--marbleBG) center / cover no-repeat;
+}
+@media(max-width:720px){
+  :root{ --floorVeil:0.46; --floorGlowA:0.10; --floorGlowB:0.07; }
 }
 a{color:inherit}
 img{max-width:100%;display:block}
+/* paint-server sprite only (D263) — it must stay in the layout tree but occupy nothing */
+.tc-defs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
 em{font-style:normal;color:var(--gold-soft)}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px)}
 
-/* ---------- header ---------- */
+/* ---------- header ----------
+   ⭐⭐⭐ THE SAME BAR AS THE LANDING PAGE — 16 August 2026 (D263), his instruction.
+   It was a sticky strip of 82%-opaque grey with a flat hairline under it, 14px of padding and a
+   32px logo, and it announced "different site" before you had read a word. The landing bar floats
+   TRANSPARENT over the hero photograph and only pours its glass in once you scroll, and that is
+   the whole character of the thing.
+   ⛔⛔ **THE GLASS IS ON A PSEUDO SO IT CAN FADE.** A background on the bar itself cannot be
+   transitioned from nothing to stone without the blur popping on at frame one.
+   ⚠️ **IT IS `fixed` NOW, NOT `sticky`, SO IT NO LONGER OCCUPIES FLOW** — `.svc-hero` and
+   `.stp-hero` clear it with `--barH` of their own padding. A sticky bar reserved that space itself;
+   a fixed one does not, and every page under this sheet would have started 60px too high.
+   ⚠️ 78.5px is the landing bar's own height and `--barH` is the number both sheets now name.
+   ⭐ The `.scrolled` class comes from four lines of inline script in each builder — the same
+   listener the landing page's own bar has used since 9 August. */
 header.bar{
-  position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
-  gap:20px;padding:14px clamp(20px,5vw,64px);
-  background:rgba(11,11,13,0.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--hair-soft);
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;height:var(--barH);padding:18px clamp(20px,5vw,64px);
+  --navCurveR:34px;--navCurveOut:9px;
 }
+/* black-marble glass: the SAME stone as the page floor, whispered in under the dark gradient so
+   the scrolled bar reads as material and not as a grey strip. One shared asset, one marble. */
+/* ⛔⛔⛔ **THE GLASS IS CUT TO THE CURVE — 16 Aug 2026 (D264).** Client, with a screenshot of the
+   corner: *"there's still a black corner or something attached to it… you should see the section
+   behind, in that corner where it curves. It's not just a rectangle with a curve line on it."*
+   The arc below is a BORDER on a rounded box, so it only ever drew a line; this layer is what
+   actually paints the bar, and at `inset:0` it filled both bottom corners square. Same box and the
+   same two variables as the arc, so the phone's 18/5 needs no second rule. ⚠️ The clip takes the
+   `backdrop-filter` with it — an unclipped blur leaves square corners of softened photograph. */
+/* ⚠️ A BORDER-RADIUS, NOT A `clip-path`: a radius clips both the element's own background and the
+   region its `backdrop-filter` samples in every engine, where `clip-path` + `backdrop-filter` is
+   the pairing Safari has historically dropped half of. The hero below needs `clip-path` because it
+   has to cut a CHILD; this layer has none. */
+header.bar::before{
+  content:"";position:absolute;top:0;bottom:0;z-index:-1;pointer-events:none;
+  left:calc(-1 * var(--navCurveOut));right:calc(-1 * var(--navCurveOut));
+  border-bottom-left-radius:var(--navCurveR);border-bottom-right-radius:var(--navCurveR);
+  background:
+    linear-gradient(rgba(8,8,10,0.82),rgba(8,8,10,0.64)),
+    var(--marbleBG) center / cover no-repeat;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  opacity:0;transition:opacity .6s var(--ease);
+}
+/* ⭐ THE CURVED BOTTOM EDGE, DRAWN FROM THE CENTRE OUT (D235's mechanism, same two numbers as the
+   landing's desktop). ⛔ A BORDER on a rounded box, not a gradient: an arc has no single angle, so
+   a gradient can only ever draw a straight band across it. The box is R+1px tall so the straight
+   part of each side border is zero and only the corners paint.
+   ⚠️ The out-hang puts 9px of horizontal overflow either side, which is safe because `body` carries
+   `overflow-x:hidden` at the top of this sheet. Do not remove that. */
+header.bar::after{
+  content:"";position:absolute;bottom:0;z-index:-1;pointer-events:none;
+  left:calc(-1 * var(--navCurveOut));right:calc(-1 * var(--navCurveOut));
+  height:calc(var(--navCurveR) + 1px);
+  border:0 solid rgba(198,166,100,0.5);
+  border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
+  border-bottom-left-radius:var(--navCurveR);border-bottom-right-radius:var(--navCurveR);
+  opacity:0;transform:scaleX(0);transform-origin:50% 50%;
+  transition:opacity .52s var(--ease),transform .76s var(--ease);
+}
+header.bar.scrolled::before{opacity:1}
+header.bar.scrolled::after{opacity:1;transform:scaleX(1)}
+@media(max-width:720px){header.bar{--navCurveR:18px;--navCurveOut:5px}}
 /* ⭐ THE REAL LOGO — client's artwork, supplied 10 Aug 2026, in /assets/brand/. This sheet is
    loaded by EVERY generated page (services, stones, trade, materials, guides, towns, sitemap),
    so these four lines dress all 154 of them. It replaces a hand-rebuilt mark beside a type-set
@@ -39,17 +145,37 @@ header.bar{
    now match.
    ⚠️ HEIGHT ONLY. Width follows the intrinsic ratio (horizontal 4.5053:1, vertical 1.0664:1). */
 .brand{display:flex;align-items:center;text-decoration:none}
-.brand-logo{height:32px;width:auto;display:block}
-.brand-stack .brand-logo{height:96px}
-nav.top{display:flex;gap:clamp(16px,2vw,28px);align-items:center}
-nav.top a{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;transition:color .4s var(--ease)}
+/* ⚠️ 34px and 104px are the landing page's own two numbers (D263). HEIGHT ONLY, always. */
+.brand-logo{height:34px;width:auto;display:block}
+.brand-stack .brand-logo{height:104px}
+nav.top{display:flex;gap:clamp(18px,2.2vw,30px);align-items:center}
+nav.top a{position:relative;color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:0.16em;
+  text-transform:uppercase;padding:8px 1px;transition:color .4s var(--ease)}
+/* the hairline grows in under the word — no boxes, no bullets, and the links stay quieter than
+   the CTA. Lifted from the landing page's nav so a link behaves the same on every page. */
+nav.top a::after{content:"";position:absolute;left:0;right:0;bottom:1px;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(228,205,146,0.9) 50%,transparent);
+  transform:scaleX(0);opacity:0;transition:transform .55s var(--ease),opacity .45s var(--ease)}
 nav.top a:hover{color:var(--bone)}
+nav.top a:hover::after{transform:scaleX(1);opacity:1}
+nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:var(--bone)}
+/* ⭐ THE LANDING PAGE'S PILL, WHICH IS A FLAT CHAMPAGNE FILL AND AN ANTIQUE EDGE (D263).
+   ⛔ NOT A 3D SLAB and not a gold-ramped one: *"remove the three dness of it and just make it two
+   d again."* The 2px radius is the site's button radius; the 100px pill this replaces was the one
+   shape on these pages that agreed with nothing else on the site.
+   ⚠️ **IT STAYS VISIBLE AT EVERY WIDTH HERE, WHERE THE LANDING HIDES IT BELOW 1121px (D235).**
+   That rule exists because the landing has a burger holding the navigation; these pages have none,
+   so below 960px the pill is the only control in the bar and removing it would leave a logo alone
+   on a transparent strip. ⚠️ It does mean a phone shows this and the hero's gold button together,
+   which is the pairing D235 disliked on the landing — flagged for him, one line to change. */
 .bar-cta{
-  padding:10px 20px;border:1px solid var(--gold);border-radius:100px;color:var(--gold);
-  text-decoration:none;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:600;
-  transition:background .4s var(--ease),color .4s var(--ease);white-space:nowrap;
+  position:relative;overflow:hidden;
+  font-family:var(--brand);font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;padding:12px 22px;border:1px solid rgba(140,107,52,0.9);
+  border-radius:2px;background:var(--gold);white-space:nowrap;
+  transition:filter .45s var(--ease),border-color .45s var(--ease);
 }
-.bar-cta:hover{background:var(--gold);color:var(--ink)}
+.bar-cta:hover{filter:brightness(1.07);border-color:var(--gold-hi)}
 @media(max-width:960px){nav.top{display:none}}
 
 /* ---------- buttons ---------- */
@@ -92,7 +218,10 @@ nav.top a:hover{color:var(--bone)}
    top — so the current-page word (gold, #C6A664) and the muted links both clear 4.5:1 there.
    ⭐ The stone pages do NOT get this: their trail is not inside a hero, and this selector cannot
    reach it. Deliberate — one component changed, not every page that loads this stylesheet. */
-.svc-hero>.crumb{position:relative;z-index:1;padding-top:0;margin-bottom:18px}
+/* ⚠️ CENTRED AND UNPADDED SINCE D263: the hero carries the page gutter itself now, so the trail's
+   own `padding:22px clamp(20px,5vw,64px) 0` would indent it a second time, and a left-set trail
+   over a centred composition is the one thing left pointing at the old layout. */
+.svc-hero>.crumb{position:relative;z-index:1;padding:0;margin-bottom:18px;justify-content:center}
 /* ⚠️ THE HERO'S TOP PADDING COMES DOWN ONLY WHERE THE TRAIL IS ACTUALLY THERE. `.svc-hero` runs
    clamp(40px,7vh,84px) of top padding, which used to sit above the TITLE; with the trail moved
    inside, that same padding sat above the TRAIL and pushed the title 40px further down the
@@ -100,7 +229,10 @@ nav.top a:hover{color:var(--bone)}
    so on a phone this padding is the only thing holding the title off the header — which is the
    exact trap D197's own comment warned about. Scoped to 721px up, the band where the trail
    exists. ⚠️ The measured gap between the trail and the title was 0px before this rule. */
-@media(min-width:721px){.svc-hero{padding-top:clamp(22px,3.4vh,40px)}}
+/* ⚠️ REWRITTEN, NOT DELETED (D263). The reasoning still holds — where the trail renders it takes
+   the air the title would otherwise want — but the number can no longer be an absolute one: the bar
+   is `fixed` now, so every hero has to clear `--barH` before it starts spending padding on looks. */
+@media(min-width:721px){.svc-hero{padding-top:calc(var(--barH) + clamp(12px,2vh,26px))}}
 /* ⭐ THE ARROW AND NOTHING ELSE (client, 10 Aug): "make it a simple golden gradient back arrow,
    not a circle around it, not anything, just simple." No ring, no plate, no background. The gold
    is the brand gradient carried by the stroke itself, defined inside the SVG so the button stays
@@ -132,19 +264,77 @@ nav.top a:hover{color:var(--bone)}
    element — the D106/D113/D114 rule about two live descriptions of one thing. */
 @media(max-width:720px){.crumb{display:none}}
 
-/* ---------- hero ---------- */
-.svc-hero{position:relative;overflow:hidden;padding:clamp(40px,7vh,84px) 0 clamp(36px,5vh,60px)}
-.svc-hero-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center}
-/* dark veil so the copy stays legible over any photo: stronger on the left where the text sits,
-   and a floor gradient at the bottom. Mobile gets a heavier, more vertical veil (text stacks). */
+/* ---------- hero ----------
+   ⭐⭐⭐ THE SAME COMPOSITION AS THE LANDING PAGE — 16 August 2026 (D263), his instruction.
+   It was left-aligned copy against a photograph veiled 0.95 → 0.5 from the left, with a row of
+   small grey trust text under the buttons. The landing hero and the internal `.page-head` are both
+   CENTRED, both carry the curved bottom edge with its gold arc, and both close on the four
+   bubbles. This is now that object, with the page's own photograph behind it.
+   ⛔ **THE LEFT-TO-RIGHT RAMP HAD TO GO WITH THE ALIGNMENT, NOT AFTER IT.** That veil was aimed at
+   copy sitting in the dark left third; centred over a photograph it shades everything except the
+   words. It is the page-head's stack now — a champagne wash, a flat 0.62, and a fade at each edge —
+   which is even across the frame and measured against this site's own worst case (D232/D238).
+   ⭐ **IT IS ALSO LIGHTER THAN WHAT IT REPLACES**, which closes an open note that has been reported
+   four times: the old veil dimmed all eight service photographs to near-black at the left edge.
+   ⚠️ The section carries the page gutter now and `.svc-hero-inner` narrows to 860px, which is the
+   `.page-head` measure — a centred line longer than that stops reading as a single thought. */
+/* ⚠️ THE NEGATIVE MARGIN IS THE OTHER HALF OF `body`'s `padding-top` (D263), and it is what puts
+   the photograph back under the transparent bar the way the landing hero's does. It collapses out
+   through `main`, so the section starts at y=0 and nothing below it moves. */
+.svc-hero{position:relative;overflow:hidden;text-align:center;margin-top:calc(-1 * var(--barH));
+  padding:calc(var(--barH) + clamp(30px,4.4vh,54px)) clamp(20px,5vw,64px) clamp(34px,5vh,58px);
+  --curveR:48px;--curveOut:14px}
+/* ⚠️ THE PHOTOGRAPH IS WHAT GETS CUT, and the box is widened rather than the clip given negative
+   insets, so the page floor shows through the two corners. ⛔ The clip is deliberately not on
+   `.svc-hero` itself: a pseudo-element is clipped by its parent's clip-path, which would cut the
+   gold arc in half. (The landing hero's own derivation, D122/D235.) */
+/* ⚠️ **THREE MECHANISMS, AND ALL THREE EARN THEIR PLACE (D264).** `clip-path` is what cuts the
+   CHILD — the veil below is `position:absolute;inset:0` and a bare `border-radius` does not clip
+   children. The matching radius and `overflow:hidden` cut it a second time in the normal paint
+   pass, and `translateZ(0)` makes this element own its compositing layer, because on iOS a
+   promoted child is composited AFTER its parent's clip-path is rasterised and paints straight past
+   the corner. That is exactly the "black corners" the client can see and this Mac cannot — the
+   landing hero needed the same three (D144's block). */
+.svc-hero-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center 42%;
+  left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));
+  clip-path:inset(0 round 0 0 var(--curveR) var(--curveR));
+  border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
+  overflow:hidden;transform:translateZ(0)}
+/* ⭐⭐⭐ **A CENTRED SCRIM, NOT A FLAT WASH — D263, AND IT IS THE COST OF CENTRING THE COPY.**
+   ⛔⛔ **THE PAGE HEAD'S OWN 0.62 FLAT VEIL WAS TRIED FIRST AND IT FAILS ON THESE PHOTOGRAPHS.**
+   Measured by the D232/D238 method — each hero drawn to a canvas at its real `cover` scale and
+   offset, composited under every layer here, and the brightest pixel inside each line's own INK
+   rectangle taken: white h1 **5.01**, gold h1 **2.43**, lede **3.36**, nav links **3.38**. The
+   landing hero can live on a flat wash because its photograph is a night kitchen; these nine are
+   daylight interiors, and the gold word in the title was the worst thing on the page.
+   ⚠️⚠️ **AND THE FIRST MEASUREMENT OF THE FIX SAID IT MADE THINGS WORSE, BECAUSE IT SCANNED THE
+   FULL WIDTH OF EACH BAND.** A centred scrim is lightest at the edges, so the brightest pixel in a
+   full-width strip is one the text never touches. **Measure inside the text's own Range rect.**
+   ⭐⭐ **SO THE SHADE GOES WHERE THE WORDS ARE AND NOWHERE ELSE:** a 0.70 → 0.36 → 0 radial under
+   the centred copy, over a flat that comes DOWN from 0.62 to 0.44. The picture's edges are lighter
+   than they have ever been here — this replaces a 0.95 → 0.5 left-to-right ramp — and every band
+   passes on all nine heroes: **gold h1 3.81–4.39, white h1 7.1–8.6, lede 4.59–5.26, nav
+   4.87–5.76**, worst cases being commercial and bathrooms. ⛔ Re-measure across all nine before
+   moving any of these five numbers; a veil tuned on one photograph is tuned on none.
+   ⚠️ The top ramp is the nav band's and it is why the links read against a daylight kitchen. */
 .svc-hero-bg::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,rgba(11,11,13,0.95),rgba(11,11,13,0.82) 42%,rgba(11,11,13,0.5)),
-             linear-gradient(0deg,rgba(11,11,13,0.92),rgba(11,11,13,0.22) 58%)}
-.svc-hero-inner{position:relative;z-index:1}
-@media(max-width:640px){
-  .svc-hero-bg::after{background:linear-gradient(0deg,rgba(11,11,13,0.93),rgba(11,11,13,0.5)),
-                                  linear-gradient(90deg,rgba(11,11,13,0.82),rgba(11,11,13,0.55))}
+  background:
+    linear-gradient(180deg,rgba(198,166,100,0.055),rgba(198,166,100,0) 62%),
+    radial-gradient(66% 62% at 50% 46%, rgba(7,7,9,0.70) 0%, rgba(7,7,9,0.36) 62%, rgba(7,7,9,0) 100%),
+    linear-gradient(rgba(7,7,9,0.44),rgba(7,7,9,0.44)),
+    linear-gradient(to bottom,rgba(7,7,9,0.66) 0%,rgba(7,7,9,0) 30%),
+    linear-gradient(to top,rgba(7,7,9,0.72) 0%,rgba(7,7,9,0) 34%)}
+/* the same hairline arc the landing hero and the page head both draw at their bottom edge */
+.svc-hero::after{
+  content:"";position:absolute;
+  left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));bottom:0;
+  height:calc(var(--curveR) + 1px);
+  border:0 solid var(--hair);border-bottom-width:1px;border-left-width:1px;border-right-width:1px;
+  border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
+  z-index:2;pointer-events:none;
 }
+.svc-hero-inner{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0}
+@media(max-width:720px){.svc-hero{--curveR:30px;--curveOut:9px}}
 /* ⛔⛔ THE EYEBROW IS GONE FROM THIS HERO AT EVERY WIDTH — 14 Aug 2026 (D229). Client: *"I want
    you to remove the eyebrow from each of the services sections in the pages, and then just keep
    the title, the name of the section."*
@@ -164,14 +354,74 @@ nav.top a:hover{color:var(--bone)}
    title is emitted with no span at all, so there is nothing here that could colour it by
    accident. ⚠️ Inherits weight and size — colour is the ONLY thing that changes. */
 .svc-hero h1 .h1-gold{color:var(--gold)}
+/* ⚠️ THE 16ch CAP IS GONE WITH THE LEFT ALIGNMENT (D263): it existed to keep a left-set title off
+   the photograph's lit half, and centred it just makes a short measure shorter. The 860px inner
+   box is the bound now. The drop-led shadow is the page head's — it reads as one block with the
+   lede under it rather than one line lit and one not. */
 .svc-hero h1{
   font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:0.01em;
-  font-size:clamp(34px,5.2vw,60px);line-height:1.05;max-width:16ch;
+  font-size:clamp(34px,min(5.2vw,6.4vh),60px);line-height:1.05;
+  text-shadow:0 0 18px rgba(7,7,9,0.5), 0 2px 10px rgba(7,7,9,0.45);
 }
-.svc-hero .lede{margin-top:22px;max-width:60ch;font-size:clamp(15px,1.3vw,17px);color:var(--muted);line-height:1.7}
-.svc-hero .cta-row{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap}
-.svc-hero .trust{margin-top:26px;display:flex;gap:22px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
-.svc-hero .trust b{color:var(--gold);letter-spacing:2px;font-weight:500}
+/* ⚠️ 0.78 ALPHA AND A CENTRED RIM SHADOW, NOT 0.60 — that is D232, measured against this same
+   photograph treatment: `--muted` over a lit worktop edge under a 0.62 veil lands at 3.51:1, and
+   the fix is shade on the WORDS rather than a deeper veil over the picture. */
+.svc-hero .lede{margin:22px auto 0;max-width:64ch;font-size:clamp(15px,1.3vw,17px);
+  color:rgba(244,241,234,0.78);line-height:1.7;
+  text-shadow:0 0 14px rgba(7,7,9,0.72), 0 1px 6px rgba(7,7,9,0.6)}
+.svc-hero .cta-row{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+/* ---------- the four bubbles ----------
+   ⭐⭐⭐ THE TRUST ROW IS THE LANDING PAGE'S OWN BUBBLES NOW — D263. It was three spans of 12.5px
+   grey text sitting in a row under the buttons, which said the same three things in the weakest
+   voice on the page. This is the `.hero-chips` component from the landing hero, markup and all.
+   ⛔⛔ **THESE RULES ARE A PORT, AND THE ORIGINAL IS `index.html`'s `#hero` / `.page-head` BLOCK.**
+   Two stylesheets is this site's architecture, not an accident — the landing sheet is 533KB of
+   design notes and cannot be served to 176 leaf pages — but it means a change to the bubbles has to
+   be made in BOTH places. ⚠️ Numbers here are the landing page's to the digit: 26px Google mark,
+   23px struck numerals, 520px row, 2 columns.
+   ⛔ NO RINGS AROUND THE MARKS. Client, 16 Aug: *"I don't like the circles. Stop doing that."* */
+.svc-hero .hero-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:stretch;gap:9px;max-width:520px;width:100%;margin:clamp(20px,3vh,30px) auto 0}
+.svc-hero .chip{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:0;
+  padding:8px 10px;border-radius:999px;position:relative;text-align:center;
+  border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  font-size:12px;color:rgba(244,241,234,0.85);font-weight:300;letter-spacing:0.02em;
+  white-space:normal;text-wrap:balance;line-height:1.25;
+}
+/* ⚠️ `:last-child:nth-child(odd)` costs nothing at four and covers the next time the list changes
+   count — a lone bubble with a hole beside it reads as a card that failed to load (D205/D224). */
+.svc-hero .hero-chips > *:last-child:nth-child(odd){grid-column:1/-1}
+.svc-hero .chip-google{align-items:center}
+.svc-hero .g-mark{display:block;flex:none;width:26px;height:26px}
+.svc-hero .g-stack{display:flex;flex-direction:column;justify-content:space-between;
+  height:26px;line-height:1;text-align:left}
+.svc-hero .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
+  color:rgba(244,241,234,0.92)}
+/* ⚠️ `baseline`, not `center`: star glyphs and lining numerals have very different vertical
+   centres and centring them leaves the score visibly riding high. */
+.svc-hero .g-rating{display:flex;align-items:baseline;gap:5px}
+.svc-hero .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
+.svc-hero .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
+  color:rgba(244,241,234,0.92)}
+/* ⚠️ CLIPPED, NOT `display:none` — "5.0 on Google" stays in the accessibility tree, because a logo
+   and five star glyphs do not say it on their own. */
+.svc-hero .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+/* the numeral IS the mark: struck metal in the serif, carrying the champagne ramp every gold
+   accent word on the site takes. ⛔ No ring, no plate, no circle. */
+.svc-hero .chip-mk{
+  flex:none;font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:0;line-height:1;
+  color:#C6A664;
+  background:linear-gradient(180deg,#E4CD92 0%,#C6A664 62%,#BC9A54 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+/* ⚠️ ITS OWN CLASS, because `background-clip:text` on a box holding an SVG clips the box's paint to
+   text that is not there and leaves the icon unpainted. */
+.svc-hero .chip-ico{flex:none;display:inline-flex;align-items:center}
+.svc-hero .chip-ico svg{width:24px;height:24px;display:block}
 
 /* ---------- generic section ---------- */
 section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-soft)}
@@ -206,15 +456,52 @@ section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-sof
   font-size:13px;letter-spacing:0.04em;transition:all .35s var(--ease)}
 .mats a:hover{border-color:var(--gold);color:var(--gold)}
 
-/* ---------- FAQ ---------- */
-.faq details{border-top:1px solid var(--hair-soft);padding:4px 0}
-.faq details:last-of-type{border-bottom:1px solid var(--hair-soft)}
-.faq summary{list-style:none;cursor:pointer;padding:20px 40px 20px 0;position:relative;
-  font-family:var(--serif);font-weight:500;font-size:17px;color:var(--bone)}
+/* ---------- FAQ ----------
+   ⭐⭐⭐ REDESIGNED 16 August 2026 (D263). Client: *"redesign the frequently asked questions thing
+   and also make the title say frequently asked questions. Right now these pages just have way too
+   basic of a design. You can do better than that."*
+   ⭐⭐ **WHAT WAS ACTUALLY BASIC ABOUT IT: IT WAS THE ONLY LIST ON THE SITE WITH NOTHING AROUND
+   IT.** Rows separated by hairlines, a `+` in the corner, and a question set flush left against
+   the page — while the features, the steps, the review cards and the Why tiles are all rimmed
+   cards with a ground of their own. The questions are cards now, in the site's own material.
+   ⛔⛔ **NO GOLD LINE ACROSS THE TOP OF ANY OF THEM (§2 rule 10)** — that is precisely what the old
+   `border-top` on each row was, twelve times down a page, and it is the rule D250 found broken on
+   176 pages. The open card takes a FULL 34% rim, which is the sanctioned alternative.
+   ⭐ The marker is a CHEVRON that turns, not a `+` that becomes an `×`. D249: an × promises
+   destruction, and half of these rows sat under a `+` whose rotated state is exactly that glyph.
+   ⚠️ The grid is one column up to 900px and two above it — twelve questions in one 74ch column is
+   the wall of text the landing page's own FAQ was redesigned away from on 7 August. */
+/* ⚠️ THE SEO FAMILIES EMIT `<section class="faq">` WITH NO `.block`, so this section had no padding
+   at all and its heading fell through to a browser-default `h2` — 26 pages of Times New Roman on a
+   page set in Cinzel and Montserrat. That is a fair part of what "way too basic" was looking at. */
+section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-soft)}
+.faq>.wrap>h2{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3vw,38px);
+  line-height:1.1;max-width:22ch;margin-bottom:26px}
+.faq .faq-grid{display:grid;gap:12px}
+@media(min-width:901px){.faq .faq-grid{grid-template-columns:1fr 1fr;gap:12px 16px;align-items:start}}
+.faq details{
+  border:1px solid var(--hair-soft);border-radius:14px;background:var(--ink-2);
+  transition:border-color .4s var(--ease),background .4s var(--ease);
+}
+.faq details[open]{border-color:var(--hair);background:var(--ink-3)}
+.faq details:hover{border-color:rgba(198,166,100,0.22)}
+.faq summary{list-style:none;cursor:pointer;padding:18px 46px 18px 20px;position:relative;
+  font-family:var(--serif);font-weight:500;font-size:16.5px;line-height:1.35;color:var(--bone);
+  transition:color .35s var(--ease)}
 .faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"+";position:absolute;right:6px;top:18px;color:var(--gold);font-size:22px;font-weight:300;transition:transform .3s var(--ease)}
-.faq details[open] summary::after{transform:rotate(45deg)}
-.faq .a{padding:0 40px 22px 0;color:var(--muted);font-size:15px;line-height:1.7;max-width:74ch}
+.faq summary:hover{color:var(--gold-hi)}
+.faq details[open] summary{color:var(--gold-soft)}
+.faq summary:focus-visible{outline:1px solid var(--gold);outline-offset:-3px;border-radius:14px}
+/* the chevron is drawn, not typed: a glyph borrowed from a text face changes shape with the font
+   that actually loads, and this one has to be the same 2:1 caret the nav and the picker use */
+.faq summary::after{
+  content:"";position:absolute;right:20px;top:22px;width:11px;height:7px;
+  background:var(--gold);
+  clip-path:polygon(0 0, 8% 26%, 50% 100%, 92% 26%, 100% 0, 50% 62%);
+  transition:transform .35s var(--ease);
+}
+.faq details[open] summary::after{transform:rotate(180deg)}
+.faq .a{padding:0 20px 20px;color:var(--muted);font-size:14.5px;line-height:1.7}
 
 /* ---------- CTA band — REDESIGNED 15 Aug 2026 ---------------------------------------------
    Client, with a screenshot of the two bands that close the compare page: *"redesign sections
@@ -240,7 +527,11 @@ section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-sof
    it a plain background, that grey that we have."* No stone, no bloom, no texture.
    ⭐ The heading takes a gold last word through `<em>`, which is the site's white-then-gold title
    shape (D229) and needs nothing here — `em` is already gold-soft at the top of this sheet. */
-.cta-band{background:var(--ink);padding:clamp(30px,5.5vh,64px) clamp(20px,5vw,64px)}
+/* ⚠️ THE GROUND IS THE PAGE'S STONE NOW, NOT A SLAB OF `--ink` (D263), and that is not a reversal
+   of the client's "just make it a plain background, that grey that we have" — HE WAS TALKING ABOUT
+   THE CARD, and the card is still plain `--ink-2`. This is the section behind it, and painting it
+   solid black would have cut a rectangle out of the floor the whole page now stands on. */
+.cta-band{background:transparent;padding:clamp(30px,5.5vh,64px) clamp(20px,5vw,64px)}
 .cta-band .wrap{max-width:980px;text-align:center;
   padding:clamp(30px,4.6vh,58px) clamp(22px,3.6vw,54px);
   border:1px solid var(--hair);border-radius:18px;background:var(--ink-2);
@@ -266,7 +557,9 @@ section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-sof
   color:var(--faint);font-size:12.5px;line-height:1.7;letter-spacing:0.02em}
 
 /* ---------- footer ---------- */
-footer.site{border-top:1px solid var(--hair-soft);padding:clamp(44px,6vh,72px) 0 34px;background:var(--ink)}
+/* ⚠️ transparent since D263, for the same reason as `.cta-band` above — the floor runs to the
+   bottom of the page on the landing page and now does here too. */
+footer.site{border-top:1px solid var(--hair-soft);padding:clamp(44px,6vh,72px) 0 34px;background:transparent}
 .foot-grid{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px);
   display:grid;grid-template-columns:1.4fr 1fr 1fr 1.3fr;gap:40px}
 .foot-tag{color:var(--muted);font-size:14px;max-width:34ch;margin:16px 0 12px}

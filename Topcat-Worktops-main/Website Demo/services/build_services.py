@@ -448,10 +448,52 @@ def footer_html():
 # removed with it, along with /versions.html and the whole v2/ tree. ⚠️ Do not re-add a
 # PILL constant here: there is no second version to switch to.
 
+# ⭐ THE BAR POURS ITS GLASS IN ON SCROLL — 16 Aug 2026 (D263). The landing page's bar has behaved
+# this way since 9 August and these pages now share its design, so they share the one line of
+# script that drives it. ⚠️ `{passive:true}` because this listener must never be able to hold up a
+# scroll frame, and the class is toggled from a cached boolean so it is not written 60 times a
+# second. ⛔ THE SAME SNIPPET IS IN `build_seo_pages.py` AND `stones/build_stones.py` — three
+# builders emit their own page shells, so a change here has to be made in all three.
 REVEAL_JS = ("<script>document.addEventListener('DOMContentLoaded',function(){"
              "var io=new IntersectionObserver(function(es){es.forEach(function(x){"
              "if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});"
-             "document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});});</script>")
+             "document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});"
+             "var bar=document.querySelector('header.bar'),on=false;"
+             "function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}"
+             "if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>")
+
+# ⭐ The champagne paint servers the gold icons resolve against. These must live in the document for
+# `stroke:url(#tcGold)` to resolve at all — a missing paint server draws NOTHING, not a fallback.
+# ⚠️ #tcGold is the ramp tuned for a stroke; #tcGoldSolid, the one for filled glyphs, is not emitted
+# here because nothing on these pages fills against it. Zero-sized and absolutely positioned: a
+# `display:none` SVG kills the paint server in some engines and an unpositioned 0x0 box still takes
+# part in layout.
+TC_DEFS = ('<svg class="tc-defs" aria-hidden="true" focusable="false" width="0" height="0"><defs>'
+           '<linearGradient id="tcGold" x1="0" y1="0" x2="0" y2="1">'
+           '<stop offset="0" stop-color="#E9D5A0"/><stop offset=".55" stop-color="#C6A664"/>'
+           '<stop offset="1" stop-color="#96723A"/></linearGradient></defs></svg>')
+
+# ⭐⭐ THE LANDING PAGE'S FOUR BUBBLES — D263, his instruction that the internal heroes take the
+# landing hero's design. ⛔ THIS MARKUP IS A COPY OF `index.html`'s `.hero-chips`, and the two have
+# to be changed together; the landing page's own internal pages lift theirs verbatim through
+# `build_pages.py`, which is why only these three builders need touching by hand.
+# ⚠️ NO `glow-card` CLASS: that hover glow is attached by `site.js`, which these pages do not load,
+# and a class with nothing behind it is a promise to the next reader that there is.
+# ⛔ DO NOT RECOLOUR THE GOOGLE "G". It is Google's trademark and it is here to attribute the rating
+# to its source, which is the one use that makes a third-party mark legitimate.
+HERO_CHIPS = """<div class="hero-chips">
+        <span class="chip chip-google">
+          <svg class="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span class="g-stack" aria-hidden="true">
+            <span class="g-word">Google reviews</span>
+            <span class="g-rating"><b class="g-score">5.0</b><span class="g-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span>
+          </span>
+          <span class="chip-legacy">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 on Google</span>
+        </span>
+        <span class="chip chip-guarantee"><b class="chip-mk">10</b> year guarantee</span>
+        <span class="chip chip-reason"><b class="chip-mk">72</b> hour aftercare</span>
+        <span class="chip chip-reason"><span class="chip-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.4 10.6 12 3.8l8.6 6.8M5.9 9.2V20h12.2V9.2M9.9 20v-5.6h4.2V20" stroke="url(#tcGold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Free home visit</span>
+      </div>"""
 
 
 def jsonld(s):
@@ -534,6 +576,7 @@ def page(s):
 </head>
 <body>
 {nav_html()}
+{TC_DEFS}
 
 <main>
   <section class="svc-hero">
@@ -561,11 +604,13 @@ def page(s):
         <a class="btn-gold" href="/contact/">Get your free quote</a>
         <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
       </div>
-      <div class="trust">
-        <span><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</span>
-        <span><b>10</b> year guarantee</span>
-        <span>Free home visit across {e(AREA)}</span>
-      </div>
+      <!-- ⭐⭐ D263: THE LANDING PAGE'S FOUR BUBBLES REPLACE THE TRUST LINE. It was three spans of
+           12.5px grey text saying the rating, the guarantee and the visit in the quietest voice on
+           the page. ⚠️ THE COUNTY LIST WENT WITH IT AND THAT IS DELIBERATE, NOT A LOSS: eight named
+           counties in a hero reads as a limit rather than a promise (§4b, and the client rejected
+           exactly that as an eyebrow), and the coverage is still named in full in the "Areas we
+           cover" section below, in the footer and in the schema. -->
+      {HERO_CHIPS}
     </div>
   </section>
 
@@ -601,9 +646,11 @@ def page(s):
     <p class="sub">We fit across {e(AREA)}, with nationwide templating on request. That includes {e(TOWNS)}.</p>
   </div></section>
 
+  <!-- ⭐ D263: "Frequently asked questions", his words, with the gold last word every other heading
+       on the site takes. The rows are cards in a two-column grid now — see `.faq` in service.css. -->
   <section class="block faq"><div class="wrap rise">
-    <h2>Frequently asked</h2>
-    {faqs}
+    <h2>Frequently asked <em>questions</em></h2>
+    <div class="faq-grid">{faqs}</div>
   </div></section>
 
   <section class="block"><div class="wrap rise">

@@ -26,6 +26,7 @@
   <nav class="top"><a href="/services/">Services</a><a href="/projects/">Projects</a><a href="/stones/">Stones</a><a href="/estimate/">Estimate</a><a href="/about/">About us</a><a href="/trade/">Trade</a><a href="/contact/">Contact</a></nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>
+<svg class="tc-defs" aria-hidden="true" focusable="false" width="0" height="0"><defs><linearGradient id="tcGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9D5A0"/><stop offset=".55" stop-color="#C6A664"/><stop offset="1" stop-color="#96723A"/></linearGradient></defs></svg>
 
 <main>
   <section class="svc-hero">
@@ -53,10 +54,24 @@
         <a class="btn-gold" href="/contact/">Get your free quote</a>
         <a class="btn-ghost" href="tel:+448000982812">Call 0800 098 2812</a>
       </div>
-      <div class="trust">
-        <span><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</span>
-        <span><b>10</b> year guarantee</span>
-        <span>Free home visit across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire &amp; Bedfordshire</span>
+      <!-- ⭐⭐ D263: THE LANDING PAGE'S FOUR BUBBLES REPLACE THE TRUST LINE. It was three spans of
+           12.5px grey text saying the rating, the guarantee and the visit in the quietest voice on
+           the page. ⚠️ THE COUNTY LIST WENT WITH IT AND THAT IS DELIBERATE, NOT A LOSS: eight named
+           counties in a hero reads as a limit rather than a promise (§4b, and the client rejected
+           exactly that as an eyebrow), and the coverage is still named in full in the "Areas we
+           cover" section below, in the footer and in the schema. -->
+      <div class="hero-chips">
+        <span class="chip chip-google">
+          <svg class="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span class="g-stack" aria-hidden="true">
+            <span class="g-word">Google reviews</span>
+            <span class="g-rating"><b class="g-score">5.0</b><span class="g-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span>
+          </span>
+          <span class="chip-legacy">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 on Google</span>
+        </span>
+        <span class="chip chip-guarantee"><b class="chip-mk">10</b> year guarantee</span>
+        <span class="chip chip-reason"><b class="chip-mk">72</b> hour aftercare</span>
+        <span class="chip chip-reason"><span class="chip-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.4 10.6 12 3.8l8.6 6.8M5.9 9.2V20h12.2V9.2M9.9 20v-5.6h4.2V20" stroke="url(#tcGold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Free home visit</span>
       </div>
     </div>
   </section>
@@ -93,9 +108,11 @@
     <p class="sub">We fit across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire &amp; Bedfordshire, with nationwide templating on request. That includes St Albans, Harpenden, Watford, Hemel Hempstead, Welwyn Garden City, Hertford, Barnet, Enfield, Chelmsford, Brentwood, Romford, Reading, Windsor and across London.</p>
   </div></section>
 
+  <!-- ⭐ D263: "Frequently asked questions", his words, with the gold last word every other heading
+       on the site takes. The rows are cards in a two-column grid now — see `.faq` in service.css. -->
   <section class="block faq"><div class="wrap rise">
-    <h2>Frequently asked</h2>
-    <details><summary>What is the best worktop for an outdoor kitchen?</summary><div class="a">A hard-wearing granite is the strongest choice outdoors, because it holds its colour in sunlight and copes with water and frost. We steer you away from anything that fades or marks in the weather.</div></details><details><summary>Will an outdoor stone worktop fade in the sun?</summary><div class="a">The materials we recommend for outdoor kitchens are chosen to resist fading. Some stones are not suited to constant sun, and we will tell you which to avoid.</div></details><details><summary>Can you cut around a built-in barbecue and sink?</summary><div class="a">Yes. Openings for built-in barbecues, burners, sinks and fridges are all cut to your template, and we finish every exposed edge.</div></details><details><summary>Do outdoor worktops need sealing?</summary><div class="a">Natural stone used outdoors is sealed on fitting and benefits from resealing over time, which we will explain when we visit.</div></details>
+    <h2>Frequently asked <em>questions</em></h2>
+    <div class="faq-grid"><details><summary>What is the best worktop for an outdoor kitchen?</summary><div class="a">A hard-wearing granite is the strongest choice outdoors, because it holds its colour in sunlight and copes with water and frost. We steer you away from anything that fades or marks in the weather.</div></details><details><summary>Will an outdoor stone worktop fade in the sun?</summary><div class="a">The materials we recommend for outdoor kitchens are chosen to resist fading. Some stones are not suited to constant sun, and we will tell you which to avoid.</div></details><details><summary>Can you cut around a built-in barbecue and sink?</summary><div class="a">Yes. Openings for built-in barbecues, burners, sinks and fridges are all cut to your template, and we finish every exposed edge.</div></details><details><summary>Do outdoor worktops need sealing?</summary><div class="a">Natural stone used outdoors is sealed on fitting and benefits from resealing over time, which we will explain when we visit.</div></details></div>
   </div></section>
 
   <section class="block"><div class="wrap rise">
@@ -154,6 +171,6 @@
     <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
   </div>
 </footer>
-<script>document.addEventListener('DOMContentLoaded',function(){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});});</script>
+<script>document.addEventListener('DOMContentLoaded',function(){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>
 </body>
 </html>

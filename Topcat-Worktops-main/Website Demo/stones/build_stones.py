@@ -306,10 +306,17 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>"""
 
+# ⭐ THE BAR POURS ITS GLASS IN ON SCROLL — 16 Aug 2026 (D263). `service.css` made the bar fixed and
+# transparent so these 134 pages open the way the landing page does; this is what fills it back in
+# once you leave the top. ⛔ THE SAME SNIPPET IS IN `services/build_services.py` AND
+# `build_seo_pages.py` — three builders, three shells, one behaviour to keep in step.
 REVEAL_JS = ("<script>document.addEventListener('DOMContentLoaded',function(){"
              "var io=new IntersectionObserver(function(es){es.forEach(function(x){"
              "if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});"
-             "document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});});</script>")
+             "document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});"
+             "var bar=document.querySelector('header.bar'),on=false;"
+             "function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}"
+             "if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>")
 
 # ⛔ V2 IS GONE (client, 10 Aug 2026): "completely remove version two and everything about
 # it." The V1/V2 switcher pill that used to sit bottom-right on every generated page was

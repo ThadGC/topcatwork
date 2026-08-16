@@ -187,8 +187,30 @@
     height:var(--barH);
     padding:18px clamp(20px,5vw,64px);
   }
+  /* ⛔⛔⛔ **THE GLASS IS CUT TO THE CURVE, NOT JUST DRAWN BEHIND IT — 16 August 2026 (D264).**
+     Client, with a screenshot of the corner: *"everywhere where there's the curved divider, like
+     currently on the nav bar, make sure there's no corner piece still there from the design… you
+     should see the section behind, in that corner where it curves. It's not just a rectangle with
+     a curve line on it."*
+     ⭐⭐⭐ **HE IS DESCRIBING EXACTLY WHAT THIS WAS.** The arc below is a BORDER on a rounded box —
+     it only ever drew a line — while this layer, the thing that actually paints the bar, was a
+     plain rectangle at `inset:0`. So the glass filled both bottom corners right out to the square,
+     and the gold arc ran across the middle of a solid block: a curve with a corner still attached
+     to it, on every page and at every width.
+     ⭐ **SAME BOX AND SAME RADII AS THE ARC, SO THE TWO CANNOT DISAGREE** — it hangs out by
+     `--navCurveOut` at both ends like the arc does, and the clip takes the same two variables, so
+     the phone's 18/5 and the tablet's 26/7 follow it without a second rule.
+     ⚠️ `clip-path` cuts the `backdrop-filter` with it, which is the point: an unclipped blur would
+     have left two square corners of *softened photograph* even after the fill was cut. */
+  /* ⚠️ **A BORDER-RADIUS, NOT A `clip-path`, AND THAT IS ABOUT SAFARI.** A radius clips an
+     element's own background AND the region its `backdrop-filter` samples, in every engine;
+     `clip-path` plus `backdrop-filter` is the combination Safari has historically dropped one half
+     of. The hero uses `clip-path` because it has to cut a transform-scaled CHILD — this layer has
+     no children, so the safer instrument is the right one. */
   header.bar::before{
-    content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    content:"";position:absolute;top:0;bottom:0;z-index:-1;pointer-events:none;
+    left:calc(-1 * var(--navCurveOut));right:calc(-1 * var(--navCurveOut));
+    border-bottom-left-radius:var(--navCurveR);border-bottom-right-radius:var(--navCurveR);
     /* black-marble glass: the SAME stone as the page floor (--marbleBG), whispered in under
        the dark gradient so the scrolled bar reads as material, not a grey strip. One shared
        asset — no second marble scale, so it can't re-open the patchwork complaint. */
@@ -535,8 +557,14 @@
      existing champagne wash is what keeps a 34px title legible over the pendant lights.
      ⚠️ `background-attachment` stays `scroll`. `fixed` costs a full-viewport repaint on every
      scroll frame, which is the exact class of thing D162–D166 spent a round removing. */
+  /* ⛔⛔ **CUT TO THE CURVE — D264, the same fault as the nav bar's glass.** The photograph and its
+     four shade layers were a rectangle at `inset:0` with the gold arc drawn across it, so both
+     bottom corners of the head stayed square and dark against the page floor. Same box and same
+     radii as the `::after` arc, so one pair of variables shapes both. */
   .page-head::before{
-    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    content:"";position:absolute;top:0;bottom:0;z-index:0;pointer-events:none;
+    left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));
+    border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
     background:
       linear-gradient(180deg,rgba(198,166,100,0.055),rgba(198,166,100,0) 62%),
       linear-gradient(rgba(7,7,9,0.62),rgba(7,7,9,0.62)),
@@ -3687,9 +3715,23 @@
      there would cut the hairline below in half. ⭐ `inset() round` rather than `border-radius`,
      because clip-path clips DESCENDANTS and the photo is an `<img>` that is also transform-scaled
      to 1.08 on load. (D122's derivation, now at base scope — D235.) */
+  /* ⛔⛔ **THREE MECHANISMS AND ALL THREE EARN THEIR PLACE — at base scope since D264.** They were
+     written for the phone (the client could see black corners on iOS that this Mac could not) and
+     they are here now because he asked for the curves to be right *"on all platforms"*, and this
+     is not a phone behaviour: `clip-path` cuts the box in the normal paint pass, but `.hero-bg img`
+     is transform-scaled and any engine may promote it to its own layer — **a promoted child is
+     composited AFTER its parent's clip-path is rasterised**, so it paints straight past the corner.
+     The matching radius plus `overflow:hidden` cut it again, and `translateZ(0)` makes this element
+     own the layer so the corner is cut where the img actually lives.
+     ⚠️ `will-change:auto` on the img removes the promotion that causes it in the first place; it
+     only ever bought a one-shot 3s load zoom, which still runs.
+     ⚠️ Adding a transform here changes no containing block: `.hero-shade` is absolute and `.hero-bg`
+     was already its nearest positioned ancestor. */
   .hero-bg{position:absolute;inset:0;z-index:0;
     left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));
-    clip-path:inset(0 round 0 0 var(--curveR) var(--curveR))}
+    clip-path:inset(0 round 0 0 var(--curveR) var(--curveR));
+    border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
+    overflow:hidden;transform:translateZ(0)}
   /* ⭐ **A BORDER ON A ROUNDED BOX, NOT GRADIENTS.** A gradient can only draw a STRAIGHT band and
      an arc has no single angle; a border follows `border-radius` exactly and stays 1px doing it.
      ⭐ **THE BOX IS `R + 1px` TALL** so the straight part of each side border is zero — the left and
@@ -3705,9 +3747,16 @@
     border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
     z-index:3;pointer-events:none;
   }
+  /* ⛔ **`will-change` IS `auto`, NOT `transform` — D264, and it is the corner fix, not tidying.**
+     A `will-change:transform` hint promotes this img to its own compositing layer, and a promoted
+     child is composited AFTER its parent's clip-path is rasterised, so the photograph paints past
+     the curved corner. The hint only ever bought a smoother one-shot 3s load zoom; the zoom still
+     runs, composited the ordinary way. ⚠️ It sits inside this rule rather than in a second one
+     below it — a `will-change:auto` override written elsewhere is a rule waiting to lose a
+     cascade argument to this declaration. */
   .hero-bg img{
     width:100%;height:100%;object-fit:cover;object-position:72% 50%;display:block;
-    transform:scale(1.14);transition:transform 3s var(--ease-slow);will-change:transform;
+    transform:scale(1.14);transition:transform 3s var(--ease-slow);will-change:auto;
   }
   .hero.loaded .hero-bg img{transform:scale(1.08)}
   /* ⭐⭐⭐ **THE CENTRED SCRIM — 14 August 2026 (D238), AND IT IS THE COST OF CENTRING THE COPY.**
@@ -6139,11 +6188,11 @@
        one complaining about smoothness (§9.3).
        ⚠️ Adding a transform to .hero-bg changes no containing block: .hero-shade is
        position:absolute and .hero-bg was already its nearest positioned ancestor. */
-    .hero-bg{
-      border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
-      overflow:hidden;transform:translateZ(0);
-    }
-    .hero-bg img{will-change:auto}
+    /* ⛔⛔ **LIFTED TO BASE SCOPE — 16 August 2026 (D264), MOVED AND NOT COPIED.** The three
+       declarations that used to be here are on `.hero-bg` itself now, because the client asked for
+       the corners to be right *"on all platforms"* and a compositor escape is not a phone
+       behaviour — it is a behaviour of any engine that promotes the child, at any width. The rule
+       above them is the whole derivation and it is unchanged; only its scope is. */
 
     /* --- 3. THE REVIEWS ARE ALREADY THERE -------------------------------------------
        Client: "remove the animation of the 'hear it from your neighbours' coming in. I

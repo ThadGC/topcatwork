@@ -98,6 +98,7 @@
   <nav class="top" aria-label="Primary"><a href="/services/">Services</a><a href="/projects/">Projects</a><a href="/stones/">Stones</a><a href="/estimate/">Estimate</a><a href="/about/">About us</a><a href="/trade/">Trade</a><a href="/contact/">Contact</a></nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>
+<svg class="tc-defs" aria-hidden="true" focusable="false" width="0" height="0"><defs><linearGradient id="tcGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9D5A0"/><stop offset=".55" stop-color="#C6A664"/><stop offset="1" stop-color="#96723A"/></linearGradient></defs></svg>
 
 <main>
   <section class="svc-hero">
@@ -110,10 +111,21 @@
         <a class="btn-gold" href="/estimate/">Price it in a minute</a>
         <a class="btn-ghost" href="tel:+448000982812">Call 0800 098 2812</a>
       </div>
-      <div class="trust">
-        <span><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</span>
-        <span><b>10</b> year guarantee</span>
-        <span>Free home visit across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire &amp; Bedfordshire</span>
+      <!-- ⭐⭐ D263: the landing page's four bubbles replace the three spans of grey trust text.
+           ⚠️ The county list goes with them and is not lost - it is still named in full in the
+           footer, in the schema and in the page's own copy. -->
+      <div class="hero-chips">
+        <span class="chip chip-google">
+          <svg class="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span class="g-stack" aria-hidden="true">
+            <span class="g-word">Google reviews</span>
+            <span class="g-rating"><b class="g-score">5.0</b><span class="g-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span>
+          </span>
+          <span class="chip-legacy">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 on Google</span>
+        </span>
+        <span class="chip chip-guarantee"><b class="chip-mk">10</b> year guarantee</span>
+        <span class="chip chip-reason"><b class="chip-mk">72</b> hour aftercare</span>
+        <span class="chip chip-reason"><span class="chip-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.4 10.6 12 3.8l8.6 6.8M5.9 9.2V20h12.2V9.2M9.9 20v-5.6h4.2V20" stroke="url(#tcGold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Free home visit</span>
       </div>
     </div>
   </section>
@@ -142,7 +154,7 @@
   <h2>How it works</h2>
   <div class="steps"><div class="step"><div class="n">Step 1</div><h3>Free home visit</h3><p>We come to you with samples, look at the actual room and talk through the stone, the edges and the layout. No showroom trip, and no obligation.</p></div><div class="step"><div class="n">Step 2</div><h3>One itemised price</h3><p>Templating, stone, fabrication, all cut-outs, fitting and VAT, in one figure agreed before anything is cut. What you approve is what you pay.</p></div><div class="step"><div class="n">Step 3</div><h3>Template</h3><p>Once your units are level we template the room by hand, to a fraction of a millimetre, and agree joint positions and veining direction with you in the room.</p></div><div class="step"><div class="n">Step 4</div><h3>Your slab, approved</h3><p>You see photographs of your actual slab and approve it before it is cut, so there are no surprises when it arrives.</p></div><div class="step"><div class="n">Step 5</div><h3>Fitted and sealed</h3><p>Our own fitters install it, usually within three to five working days of templating, and we take the packaging away with us.</p></div><div class="step"><div class="n">Step 6</div><h3>Aftercare inside 72 hours</h3><p>If anything needs adjusting afterwards we come back, free of charge, and we have never taken more than 72 hours to get there.</p></div></div>
 </div></section>
-  <section class="faq"><div class="wrap"><h2>Common questions</h2><details><summary>Does marble stain easily?</summary><div class='a'>It can, because it is porous. Sealing helps a great deal and we seal on fitting. The bigger issue is etching, which is different from staining: it is a chemical reaction with acid that dulls the polish rather than adding colour, and no sealer fully prevents it.</div></details><details><summary>What is the difference between Carrara and Calacatta?</summary><div class='a'>Both come from the same region of Italy. Carrara is greyer, with softer, finer, more feathery veining, and it is the more attainable of the two. Calacatta is whiter with bolder, more dramatic veins, often with gold or warm brown, and it costs considerably more.</div></details><details><summary>Is marble a bad idea in a family kitchen?</summary><div class='a'>Often, yes, and we will say so. If nobody in the house is going to wipe up a lemon slice within a few minutes, you will collect etch marks. In that situation a marble effect quartz gives you the look with none of the anxiety.</div></details><details><summary>Can etching be repaired?</summary><div class='a'>Light etching on honed marble can often be polished out by a stone restoration specialist. On a high polish it is more visible and harder to correct invisibly. Prevention, in the form of choosing honed and wiping spills, is much easier.</div></details></div></section>
+  <section class="faq"><div class="wrap"><h2>Frequently asked <em>questions</em></h2><div class="faq-grid"><details><summary>Does marble stain easily?</summary><div class='a'>It can, because it is porous. Sealing helps a great deal and we seal on fitting. The bigger issue is etching, which is different from staining: it is a chemical reaction with acid that dulls the polish rather than adding colour, and no sealer fully prevents it.</div></details><details><summary>What is the difference between Carrara and Calacatta?</summary><div class='a'>Both come from the same region of Italy. Carrara is greyer, with softer, finer, more feathery veining, and it is the more attainable of the two. Calacatta is whiter with bolder, more dramatic veins, often with gold or warm brown, and it costs considerably more.</div></details><details><summary>Is marble a bad idea in a family kitchen?</summary><div class='a'>Often, yes, and we will say so. If nobody in the house is going to wipe up a lemon slice within a few minutes, you will collect etch marks. In that situation a marble effect quartz gives you the look with none of the anxiety.</div></details><details><summary>Can etching be repaired?</summary><div class='a'>Light etching on honed marble can often be polished out by a stone restoration specialist. On a high polish it is more visible and harder to correct invisibly. Prevention, in the form of choosing honed and wiping spills, is much easier.</div></details></div></div></section>
 
   <section class="block"><div class="wrap">
     <h2>Related</h2>
@@ -206,5 +218,6 @@
     <span class="foot-legal"><span>Free home visit and samples. Ten year guarantee. No showroom visit needed, we come to you.</span><a class="foot-sitemap" href="/sitemap.html">Sitemap</a></span>
   </div>
 </footer>
+<script>document.addEventListener('DOMContentLoaded',function(){var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>
 </body>
 </html>
