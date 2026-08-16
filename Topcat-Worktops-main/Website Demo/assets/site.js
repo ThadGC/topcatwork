@@ -6923,9 +6923,11 @@ function viewSequence(host,tiles,apply,opts){
    are NO LONGER .rise — they are placed per frame by scrollSequence (client, 6 Aug). */
 (function(){
   const collage=document.getElementById('aboutCollage'); if(!collage)return;
-  /* ⭐ THREE work photographs since 9 Aug, not six: p1 and p2 are the directors and carry no
-     <img> at all (§4a), which is also why cutting the third portrait in D150 left this list
-     alone — `querySelectorAll('.ac-tile img')` never matched a portrait tile in the first place.
+  /* ⭐ THREE work photographs since 9 Aug, not six. ⛔ **UNTIL D278 (16 Aug 2026) p1 and p2 were
+     the directors and carried no `<img>` at all, which is why cutting the third portrait in D150
+     left this list alone — `querySelectorAll('.ac-tile img')` never matched a portrait tile.
+     THEY CARRY ONE NOW**, written into the markup with its own `srcset`, so the selector matches
+     six elements and `picks` opens with two nulls to hold their places (see `picks`).
      ⚠️ This list maps to `.ac-tile img` in DOM ORDER, and the
      three images are the LAST three tiles, so it fills w1, w2, w3 in that order:
      w1=owner handshake (the big square), w2=samples consultation (short landscape),
@@ -6943,9 +6945,10 @@ function viewSequence(host,tiles,apply,opts){
      w1 and w3 are the two AI stand-ins that remain until the shoot. ⭐ Its ladder is already in
      `SS` under exactly this key (D211, registered for the project gallery), so the lookup below
      hands a phone the 560px rung without anything else being added.
-     ⚠️ The list still maps to `.ac-tile img` in DOM ORDER — the portraits carry no <img> — so the
-     four fill w1, w2, w3, w4. ⛔ `.ac-w4` is `display:none` below 1121px, but it is still in the
-     DOM and still matched here, which is deliberate: one list, one order, every band. */
+     ⚠️ The list still maps to `.ac-tile img` in DOM ORDER, and since D278 the portraits are in
+     that order too, so the four photographs fill w1, w2, w3, w4 only because two nulls run ahead
+     of them. ⛔ `.ac-w4` is `display:none` below 1121px, but it is still in the DOM and still
+     matched here, which is deliberate: one list, one order, every band. */
   /* ⭐⭐ w2 IS A REAL PHOTOGRAPH SINCE 15 Aug 2026. Client: *"use the second screenshot as one of
      the images in the About section, one of the smaller parts."* w2 is the smallest tile in the
      collage — 156x132 on the desktop, 105x66 below it — so the crop is tight on the two people
@@ -6995,8 +6998,14 @@ function viewSequence(host,tiles,apply,opts){
   /* ⭐ `null` AT INDEX 0 SINCE D255: w1 is a Topcat plate and carries its own `src` in the markup.
      ⛔ **KEEP THE NULL RATHER THAN SHORTENING THE ARRAY** — the fill maps to `.ac-tile img` in DOM
      order, so dropping the entry would slide w2, w3 and w4 up by one and quietly re-shuffle the
-     whole collage. The guard below (`if(!picks[i])return`) was already there. */
-  const picks=[null,'/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
+     whole collage. The guard below (`if(!picks[i])return`) was already there.
+     ⛔⛔⛔ **TWO MORE NULLS SINCE D278, AND THEY ARE THE FIRST TWO.** The director plates carry
+     real photographs now, written into the markup with their own `srcset` the way the Topcat
+     plate is, so `.ac-tile img` matches SIX elements here rather than four — p1, p2, w1, w2, w3,
+     w4. **Without the two leading nulls the fitting photograph lands on Nick's face and every
+     tile below it shifts up one.** The comment three blocks up that says "the portraits carry no
+     <img>" was true until D278 and is not any more. */
+  const picks=[null,null,null,'/assets/site/about-fitting-386.webp','/assets/team/fitting.jpg',
                '/assets/projects/harrow-1400.webp'];
   collage.querySelectorAll('.ac-tile img').forEach((im,i)=>{ if(!picks[i])return; im.src=picks[i];
       /* D109: the ladder for these lives in SS, keyed by the original .jpg path */

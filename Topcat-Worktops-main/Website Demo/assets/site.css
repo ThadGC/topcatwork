@@ -5807,13 +5807,44 @@
          the grid row: the section went from 844px to over 1100 and broke the "under one screen"
          rule this whole block is built around. ⚠️ `min-height:0` on the tiles is the same guard
          one level down — a grid ITEM has the same automatic minimum. */
+      /* ⭐⭐⭐ TWELVE COLUMNS, AND THE DIRECTORS ARE A SMALL PAIR — 16 Aug 2026 (D278). Client,
+         sending both photographs: *"make their images in the about us section smaller. Like,
+         make them one of the smaller images next to each other. So add more images to the
+         collage if you have to, but we just can't have their image be very big because I had to
+         edit it with AI… we have to put less focus on them and just make them a part of it."*
+         ⭐⭐ **DOUBLING THE TRACKS IS FREE, THE SAME TRADE D150 MADE GOING 3 -> 6.** Every span
+         doubles, so nothing that was expressible before has moved; the halves just become
+         sixths, which is the only way to seat a PAIR of small portraits in a row that also
+         carries a full tile.
+         ⛔⛔⛔ **THE READING ORDER IS THE DOM ORDER AND THAT IS WHY THIS ARRANGEMENT AND NOT
+         ANOTHER.** Every tile's first cell runs p1(r1c1) p2(r1c4) w1(r1c7) w2(r2c1) w3(r3c1)
+         w4(r3c5) — exactly the order the figures sit in the markup. **So nothing had to move in
+         the DOM, `picks` keeps its mapping, `HINGE` keeps its indices, the six-tile timing is
+         untouched, and the phone and tablet are not altered in any way** (they keep their own
+         6-column grid below this query). Half a dozen tidier-looking arrangements were measured
+         and every one of them needed the markup shuffled, which would have re-ordered the build
+         on the frozen bands for no gain the client asked for.
+         ⚠️ **THE PAIR IS 22% OF THE AREA IT WAS**: 241.4 x 321.9 became 113.7 x 151.7 at
+         1440x900, which puts it just under the smallest photograph in the block — his "one of
+         the smaller images".
+         ⚠️ **AND THE THREE WORK PHOTOGRAPHS KEEP CROPS THEY CAN TAKE.** w2 goes 1.386 -> 1.42,
+         which is no change at all; w3 stays the tall portrait its picture needs (0.443 against
+         a native 0.562); w4 goes from a 2.9 letterbox to 0.925, and it is BETTER for it — the
+         Harrow waterfall end, the gold tap and the navy units all read now where the strip had
+         cut them off. ⛔ Do not give w3 a landscape slot: `team/fitting.jpg` is 506x900. */
+      grid-template-columns:repeat(12,1fr);
       grid-template-rows:auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
       grid-template-areas:
-        "p1 p1 p1 p2 p2 p2"
-        "w1 w1 w1 w1 w2 w2"
-        "w1 w1 w1 w1 w3 w3"
-        "w4 w4 w4 w4 w3 w3";
+        "p1 p1 p1 p2 p2 p2 w1 w1 w1 w1 w1 w1"
+        "w2 w2 w2 w2 w2 w2 w1 w1 w1 w1 w1 w1"
+        "w3 w3 w3 w3 w4 w4 w4 w4 w4 w4 w4 w4"
+        "w3 w3 w3 w3 w4 w4 w4 w4 w4 w4 w4 w4";
     }
+    /* ⚠️ THE NAME PLATE IS RE-KEYED FOR THIS TILE TOO, AND ITS RULES CANNOT LIVE HERE — they
+       are the same specificity as the base `.acp-*` declarations, which sit BELOW this query in
+       the file, so written here they lose on SOURCE ORDER and nothing happens. They are in
+       their own min-width:1121px block directly under those declarations. This is the §5 trap
+       that cost D271 a round, and it caught this edit as well. */
     /* ⭐⭐ THE STORY COLUMN IS TIGHTER ON DESKTOP, AND THE COLLAGE COMES DOWN WITH IT — 16 Aug
        2026 (D271). Client: *"for the about us section as well, if there's any way for us to
        optimise both sides to be a little bit smaller so it doesn't fill up the screen so much."*
@@ -5852,31 +5883,36 @@
      Replaces the .about-team credit strip that used to sit under the story. The client's read
      was that the collage was the half of this section that worked, so the people moved into
      it rather than sitting beside it apologetically.
-     ⚠️ These tiles are built to take a PHOTOGRAPH. The ground and the glyph below are what a
-     tile looks like with no image in it; drop an <img> in above the figcaption and everything
-     else — the scrim, the plate, the name — is already right. Do not restyle to suit the
-     placeholder. */
+     ⭐ THE TILES ARE FILLED NOW — 16 Aug 2026 (D278), the client's own photographs. They were
+     built to take one, and they did: the scrim, the plate and the name were already right. The
+     `.acp-mark` medallion that stood in for the missing face is GONE with the markup that
+     carried it — a ringed glyph over a photograph would have sat on the face. ⛔ Do not put it
+     back to "balance" anything. ⚠️ The gradient below is now only ever seen while the pictures
+     load, but it stays: it is what the tile is when there is nothing in it. */
   .ac-p{
     background:linear-gradient(155deg,#17171d 0%,#0c0c10 100%);
     display:flex;align-items:flex-end}
-  .ac-p img{position:absolute;inset:0}
-  /* The stand-in, held well above the plate so the two never collide. A RINGED medallion
-     rather than a bare glyph: a small icon alone in a tall dark tile reads as an empty box,
-     and this section's whole brief was that it should look finished. */
+  /* ⭐⭐⭐ THE PAIR IS FILTERED DOWN, AND THE STUDIO PAPER STAYS — 16 Aug 2026 (D278, second
+     pass). Client: *"do not remove the backgrounds from their images… and also maybe put a
+     filter on so that they don't look so bright. So don't remove the background."*
+     ⛔ **THE FIRST PASS MASKED THE PAPER OUT** onto the tile's own dark ground, to stop two lit
+     studio rectangles shouting out of a mosaic of dark stone. **He reversed it, and the tone is
+     the part that was actually wrong**, so it is corrected here where it is one line and not
+     baked into the file: the paper measures 195 in the cut, which the collage's own
+     brightness(.85) only brings to 166 — against a mosaic whose photographs mean 124.
+     ⚠️ **FILTERS DO NOT MULTIPLY.** This declaration REPLACES `.ac-tile img`'s, it does not
+     compound with it, so .68 here is the whole of it and not 0.85 x 0.68.
+     ⚠️ And the hover has to be restated too, or `.ac-tile:hover img` (0,2,1) snaps the pair from
+     .68 to full brightness — a jump nothing else in the collage makes. */
+  .ac-p img{position:absolute;inset:0;filter:brightness(.68) saturate(.9)}
+  .ac-p:hover img{filter:brightness(.84) saturate(.98)}
   /* ⚠️ EVERYTHING IN A PORTRAIT TILE IS SIZED OFF --sideW, NOT vw. The collage is capped by
      the viewport's HEIGHT as well as its width, so on a wide short laptop the tiles are narrow
-     while vw is large — type and medallion keyed to vw come out too big for the box they are
-     in, and at 1366x610 the medallion was 84px inside an 87px tile. --sideW is the one measure
-     that knows how big the tiles actually are. Same trap as the display-type-vs-vh rule in §4. */
-  .acp-mark{position:absolute;left:0;right:0;top:0;bottom:32%;
-    display:flex;align-items:center;justify-content:center;color:var(--gold)}
-  .acp-mark::before{content:"";position:absolute;aspect-ratio:1/1;
-    width:clamp(30px,calc(var(--sideW) * 0.15),84px);
-    border-radius:50%;border:1px solid rgba(198,166,100,0.3);
-    background:radial-gradient(circle at 50% 34%,rgba(198,166,100,0.15),transparent 70%)}
-  .acp-mark svg{position:relative;opacity:0.5;
-    width:clamp(15px,calc(var(--sideW) * 0.07),34px);
-    height:clamp(15px,calc(var(--sideW) * 0.07),34px)}
+     while vw is large — type keyed to vw comes out too big for the box it is in, and at
+     1366x610 the old medallion was 84px inside an 87px tile. --sideW is the one measure that
+     knows how big the tiles actually are. Same trap as the display-type-vs-vh rule in §4.
+     ⚠️ The desktop overrides these three sizes again, because the tile is a quarter of the
+     area there since D278 — see THE NAME PLATE IS RE-KEYED in the min-width:1121px block. */
   /* the name plate. Its own scrim rather than .ac-veil's, because it has to hold type at the
      foot of a photograph as well as over the flat placeholder ground. */
   .acp-who{position:relative;z-index:2;width:100%;
@@ -5898,6 +5934,26 @@
     letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);opacity:0.85;
     line-height:1.3;min-height:2.6em}
 
+  /* ⭐⭐ THE PLATE IS RE-KEYED TO THE SMALL DESKTOP TILE — 16 Aug 2026 (D278). The portrait went
+     from 0.486 of --sideW wide to 0.229, so type keyed to --sideW came out nearly twice what the
+     box can hold: a 17px name in a 114px tile, and a plate covering 57% of the picture. Every
+     figure below is the old one scaled by that same 0.47, so the plate lands back at about the
+     27% of tile height it has always been.
+     ⛔⛔⛔ **THIS BLOCK MUST STAY BELOW THE THREE DECLARATIONS IT OVERRIDES.** Written up in the
+     main min-width:1121px query — which sits ABOVE them in this file — it has the same
+     specificity and loses silently on SOURCE ORDER: the grid moved, the type did not, and every
+     other number in the same edit landed, which is exactly what makes it look like it worked.
+     Third time on this project (§5, D271).
+     ⭐ At 0.10em tracking the longest role, "OPERATIONS DIRECTOR", measures about 89px inside
+     102px of content box, so it sits on ONE line — and `min-height:2.6em` above still reserves
+     the second, which is what keeps the two plates level whatever a future title says. */
+  @media(min-width:1121px){
+    .acp-who{padding:clamp(13px,1.9vh,20px) clamp(5px,0.42vw,8px) clamp(7px,1vh,10px)}
+    .acp-name{font-size:clamp(9px,calc(var(--sideW) * 0.021),12px)}
+    .acp-role{margin-top:2px;letter-spacing:0.10em;
+      font-size:clamp(6px,calc(var(--sideW) * 0.0127),7.6px)}
+  }
+
   /* The copy measure still widens on a short window. 52ch is right on a tall screen and three
      wasted lines on a wide short one.
      ⚠️ This block used to be load-bearing for a second reason — the team row in series under
@@ -5906,8 +5962,9 @@
   @media(max-height:840px){
     #about .section-sub{max-width:none;line-height:1.62}
   }
-  /* the stand-in glyph is the first thing that can go on a short window, before any type */
-  @media(max-height:660px){ .acp-mark{display:none} }
+  /* ⛔ THE max-height:660px RULE THAT HID THE STAND-IN GLYPH WENT WITH THE GLYPH (D278). It
+     dropped `.acp-mark` on a short window before sacrificing any type; there is a photograph
+     in the tile now and nothing left to drop. */
 
   @media(max-width:880px){
     /* the mosaic leads on small screens, compact, above the story. The people ride inside it
