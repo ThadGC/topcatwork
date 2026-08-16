@@ -261,8 +261,8 @@ print(subprocess.run(['node','--check',p],capture_output=True,text=True).stderr 
 | `.gal-scroll` height | **4950** |
 | `--revPer` (on `section.mode-grid`) | **3** |
 | `feTurbulence` count | **60** |
-| document height | **14833** |
-| elements | **2692** |
+| document height | **14731** ⚠️ was 14833; D266 removed the brand marquee |
+| elements | **2664** ⚠️ was 2692; D260 added 4, D266 removed 32 |
 | `#svcNav` children | **8** |
 | broken images | 0 |
 | horizontal overflow | none |
@@ -446,7 +446,7 @@ D246 broke it; D258 exists because D257 broke it. He is fine with that and not f
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D264**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D266**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** |
 | **`Website Demo/index.html`** | ⭐⭐ The whole design — inline `<style>` and `<script>`. Search `THE TABLET BAND`, `const SERVICES`, `const SS`, `--plateStone`, `ac-plate`, `proj-brand`, `about-collage` |
 | **`Website Demo/build_pages.py`** | ⭐⭐ Builds the seven internal pages and the shared assets. **Owns `/trade/index.html`.** |
 | **`Website Demo/services/build_services.py`** | ⭐ The nine service leaf pages and `HERO_IMG` |
