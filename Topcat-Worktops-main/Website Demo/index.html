@@ -11001,9 +11001,17 @@ const SLAB_TILES=/*BEGIN-SLAB-TILES*/{"absolute-black-brushed":"absolute-black-b
 
 /* One place decides whether a stone shows a photograph or the drawn slab, so the wheel, the
    picker, the cut plan and the collection grid can never disagree with each other. */
+/* ⛔⛔⛔ SLAB FILES ARE NOT CONTENT-HASHED AND THE FILENAME IS THE SLUG, SO A CORRECTED SLAB IS
+   THE SAME URL AS THE WRONG ONE — 16 Aug 2026 (D276). Argento was re-cut twice and the client
+   was still being shown the old picture, because a browser holding `argento.webp` has no reason
+   to ask for it again. ⭐ BUMP THIS WHENEVER ANY SLAB FILE IS RE-CUT; one string busts all 132,
+   which is right, because slab corrections come in rounds. ⚠️ Keep it in step with `SLAB_V` in
+   `stones/build_stones.py`, which stamps the 132 stone pages, the collection and compare.
+   ⚠️ It does NOT help the review host — that needs the build re-uploading either way. */
+const SLAB_V='2';
 function tileURL(slug){
   const t=slug&&Object.prototype.hasOwnProperty.call(SLAB_TILES,slug)?SLAB_TILES[slug]:null;
-  return t?'/assets/slabs/'+t+'.webp':null;
+  return t?'/assets/slabs/'+t+'.webp?v='+SLAB_V:null;
 }
 /* ⭐ TWO SIZES, AND THE BROWSER PICKS. slabify writes a master (up to 1600px) and a -s thumb (up
    to 800px). Until 10 Aug NOTHING ASKED FOR THE THUMB — every surface loaded the master, so a
@@ -11013,7 +11021,7 @@ function tileURL(slug){
    ("extremely clear with no blurriness, but yet everything must all be optimized"). */
 function tileSrcset(slug){
   const t=slug&&Object.prototype.hasOwnProperty.call(SLAB_TILES,slug)?SLAB_TILES[slug]:null;
-  return t?'/assets/slabs/'+t+'-s.webp 800w, assets/slabs/'+t+'.webp 1600w':null;
+  return t?'/assets/slabs/'+t+'-s.webp?v='+SLAB_V+' 800w, assets/slabs/'+t+'.webp?v='+SLAB_V+' 1600w':null;
 }
 /* markup form, for the wheel cards (which hold an inline <svg>, not a background) */
 function stoneMarkup(s){

@@ -35,6 +35,13 @@ from urllib.parse import quote
 # pages and the wheel can never show a customer a different picture of the same stone.
 # Missing file, or a stone that is not in it, simply falls back to the drawn slab.
 TILE_DIR = "/assets/slabs"
+# ⛔⛔⛔ SLAB FILES ARE NOT CONTENT-HASHED AND THE FILENAME IS THE SLUG, SO A CORRECTED SLAB IS
+# THE SAME URL AS THE WRONG ONE — 16 Aug 2026 (D276). Argento was fixed twice and the client was
+# still shown the old picture, because a browser that already has `argento.webp` has no reason
+# to ask for it again. ⭐ BUMP THIS WHENEVER ANY SLAB FILE IS RE-CUT. It is one string and it
+# busts all 132 at once, which is right: slab corrections come in rounds, not one at a time.
+# ⚠️ It must stay in step with `SLAB_V` in ../index.html, which stamps the wheel's own URLs.
+SLAB_V = "2"
 try:
     TILES = json.loads((pathlib.Path(__file__).parent.parent
                         / "assets" / "slabs" / "manifest.json").read_text())
@@ -97,8 +104,8 @@ def stone_face(s, cls):
         hero = cls == "stp-stone"
         sizes = "(max-width:700px) 92vw, 436px" if hero else "(max-width:700px) 45vw, 290px"
         return (f'<span class="{cls}">'
-                f'<img src="{TILE_DIR}/{tile}.webp" '
-                f'srcset="{TILE_DIR}/{tile}-s.webp 800w, {TILE_DIR}/{tile}.webp 1600w" '
+                f'<img src="{TILE_DIR}/{tile}.webp?v={SLAB_V}" '
+                f'srcset="{TILE_DIR}/{tile}-s.webp?v={SLAB_V} 800w, {TILE_DIR}/{tile}.webp?v={SLAB_V} 1600w" '
                 # ⚠️ The alt names the TRUE stone. It read "Taj Mahal marble slab" on 27 tiles,
                 # which is what a screen reader announces and what Google Images indexes the
                 # photograph as — a wrong material claim in the one place nobody proofreads.
@@ -1141,8 +1148,8 @@ def compare_datum(s):
     }
     tile_id = TILES.get(s["slug"])
     if tile_id:
-        d["img"] = f"{TILE_DIR}/{tile_id}-s.webp"
-        d["img2"] = f"{TILE_DIR}/{tile_id}.webp"
+        d["img"] = f"{TILE_DIR}/{tile_id}-s.webp?v={SLAB_V}"
+        d["img2"] = f"{TILE_DIR}/{tile_id}.webp?v={SLAB_V}"
     else:
         d["preset"], d["seed"] = s["preset"], s["seed"]
     return d
