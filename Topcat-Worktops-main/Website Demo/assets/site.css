@@ -5902,13 +5902,6 @@
   .ac-p{
     background:linear-gradient(155deg,#17171d 0%,#0c0c10 100%);
     aspect-ratio:1;
-    /* ⭐⭐⭐ THE CARD IS ITS OWN QUERY CONTAINER, AND THAT IS THE POINT. Its width is half the
-       collage, and the collage is 497 on a wide desktop, 560 on a 800px tablet held single
-       column, and 333 on a 900px one held in two — so the card runs 275, 241 and 162 in an order
-       that NO viewport breakpoint follows. The plate's contents key off the box they are in
-       instead. ⚠️ `inline-size` containment does not change the layout here: `.ac-p` was already
-       `position:relative`, so it was already the containing block for the photograph. */
-    container-type:inline-size;
     display:flex;align-items:flex-end}
   /* ⭐⭐⭐ THE PAIR IS FILTERED DOWN, AND THE STUDIO PAPER STAYS — 16 Aug 2026 (D278, second
      pass). Client: *"do not remove the backgrounds from their images… and also maybe put a
@@ -5935,9 +5928,13 @@
      foot of a photograph as well as over the flat placeholder ground. */
   .acp-who{position:relative;z-index:2;width:100%;
     display:flex;flex-direction:column;min-width:0;
-    /* the small-card padding is the DEFAULT and the roomy one is the override, so a card that
-       gets smaller than anything anticipated still shows a face rather than a scrim */
-    padding:clamp(12px,1.8vh,20px) clamp(8px,0.8vw,13px) clamp(9px,1.3vh,14px);
+    /* ⭐ THE TEXT SITS LOWER IN THE CARD — 16 Aug 2026 (D280): *"move the text a little further
+       down."* ⚠️ **BOTH PADDINGS DO IT, NOT JUST THE BOTTOM ONE.** `.ac-p` is
+       `align-items:flex-end`, so the plate is anchored to the card's bottom edge and its own
+       height decides where its TOP lands — taking the top padding in moves the whole block down
+       as surely as taking the bottom one in does. Together they carry the name and role about
+       10px lower and hand ~14px of the photograph back. */
+    padding:clamp(9px,1.4vh,15px) clamp(8px,0.8vw,13px) clamp(3px,0.5vh,7px);
     background:linear-gradient(to top,rgba(8,8,10,0.94) 40%,rgba(8,8,10,0.62) 72%,transparent)}
   .acp-name{font-family:var(--serif);font-weight:400;letter-spacing:0.01em;color:var(--bone);
     font-size:clamp(11.5px,calc(var(--sideW) * 0.045),17px);line-height:1.15}
@@ -5958,25 +5955,13 @@
      squeamish: on a 162px card the same sentence runs to three lines and the plate takes 63% of
      the picture. The phone keeps the name and the role, which is what it has always carried.
      ⚠️ The wording describes the ROLE and claims nothing (§2 rule 12) — his own words are owed. */
-  .acp-note{display:none}
-  /* ⛔⛔ 190px IS MEASURED, NOT PICKED. Below it the sentence runs to three lines and the plate
-     takes 59% of the card — on the 900px tablet that put the scrim across both their chins. At
-     190 and up it sits on two lines and the plate settles around 40%, which leaves the face and
-     the shoulders. ⚠️ So the note is ON at the desktop (241px card) and on a tablet held single
-     column (275px), and OFF on the phone and on a two-column tablet (162px). */
-  @container (min-width:190px){
-    .acp-who{padding-top:clamp(18px,2.6vh,30px)}
-    .acp-note{display:block;margin-top:6px;
-      font-size:clamp(9.5px,calc(var(--sideW) * 0.024),12px);line-height:1.42;
-      color:var(--bone);opacity:0.72}
-  }
-
-  /* ⛔⛔ THE D278 SHRINK OF THIS PLATE IS GONE (D279). It keyed the name to 10.4px and the role
-     to 6.3px for a 114px tile, and the client's verdict was flat: *"the text on their names are
-     too small. So that's not gonna work either. It needs to be the correct size for the site."*
-     The card is 241px on the desktop now, twice the width, so the base sizes — 17px name, 10px
-     role — are the right ones and there is nothing to override. ⚠️ Do not re-key type to a tile
-     without checking the tile is still that size. */
+  /* ⛔ THERE IS NO DESCRIPTION LINE. It was added at D279 on his own suggestion — *"some sort of
+     description kind of part for them"* — and removed the same evening, seen: *"remove the
+     details below their name and role."* ⚠️ **THE `@container (min-width:190px)` RULE WENT WITH
+     IT, AND `container-type` CAME OFF `.ac-p` WITH THAT.** It existed only to decide whether the
+     card was wide enough to carry the sentence; with nothing to gate, a query container on every
+     portrait is a containment boundary earning nothing. ⛔ Do not re-add a note without it — the
+     card's width does not follow the viewport's, so no breakpoint can stand in for it.
 
   /* The copy measure still widens on a short window. 52ch is right on a tall screen and three
      wasted lines on a wide short one.
