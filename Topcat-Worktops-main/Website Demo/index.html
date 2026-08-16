@@ -11008,7 +11008,7 @@ const SLAB_TILES=/*BEGIN-SLAB-TILES*/{"absolute-black-brushed":"absolute-black-b
    which is right, because slab corrections come in rounds. ⚠️ Keep it in step with `SLAB_V` in
    `stones/build_stones.py`, which stamps the 132 stone pages, the collection and compare.
    ⚠️ It does NOT help the review host — that needs the build re-uploading either way. */
-const SLAB_V='2';
+const SLAB_V='3';
 function tileURL(slug){
   const t=slug&&Object.prototype.hasOwnProperty.call(SLAB_TILES,slug)?SLAB_TILES[slug]:null;
   return t?'/assets/slabs/'+t+'.webp?v='+SLAB_V:null;

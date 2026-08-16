@@ -41,7 +41,7 @@ TILE_DIR = "/assets/slabs"
 # to ask for it again. ⭐ BUMP THIS WHENEVER ANY SLAB FILE IS RE-CUT. It is one string and it
 # busts all 132 at once, which is right: slab corrections come in rounds, not one at a time.
 # ⚠️ It must stay in step with `SLAB_V` in ../index.html, which stamps the wheel's own URLs.
-SLAB_V = "2"
+SLAB_V = "3"
 try:
     TILES = json.loads((pathlib.Path(__file__).parent.parent
                         / "assets" / "slabs" / "manifest.json").read_text())
