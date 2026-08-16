@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=3c9a96cef3">
+<link rel="stylesheet" href="/assets/site.css?v=fa6a361748">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -491,7 +491,17 @@
           <span class="cs-name" id="ctaStoneName"></span>
           <button type="button" class="cs-x" id="ctaStoneX" aria-label="Remove the stone from this enquiry">&times;</button>
         </div>
-        <textarea name="message" placeholder="Your space, your stone, your timings (optional)"></textarea>
+        <!-- ⭐ **JUST "MESSAGE" — 16 August 2026 (D267).** Client: *"in all of the forms at the
+             bottom, where the contact forms are, change the space where it says 'your space, your
+             stone, your timings, optional' — just say message, like it would normally look."*
+             ⚠️ **THE "(optional)" GOES WITH IT AND THAT IS THE POINT OF THE INSTRUCTION.** No other
+             field on this form marks itself optional or required, so this one was carrying a
+             convention the form does not otherwise use — and nothing here is enforced anyway.
+             ⚠️ The three prompts it dropped are not lost: the stone rides along on its own chip
+             above (`#ctaStone`), and the space and the timings are what step one of "What happens
+             next" is for. This is the same section `build_pages.py` lifts onto five other pages, so
+             one edit and a rebuild carries all six. -->
+        <textarea name="message" placeholder="Message"></textarea>
 
         <!-- The uploader was a permanent 90px drop zone sitting in the middle of the form; the
              client asked for it to become an option you open (6 Aug). ⚠️ It OPENS ITSELF the

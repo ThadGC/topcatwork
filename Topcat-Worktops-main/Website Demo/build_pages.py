@@ -360,7 +360,10 @@ TRADE_CTA_SECTION = """  <section id="tradeCta">
             <option>40 plus, or a rolling programme</option>
           </select>
         </div>
-        <textarea name="message" placeholder="The project, the programme and where it is (optional)"></textarea>
+        <!-- ⭐ D267: "Message", the same as the enquiry card's. He said "all of the forms at the
+             bottom", and the trade form is the other one — it is a different block (TRADE_CTA_SECTION)
+             and would otherwise have been the one place still asking the long way. -->
+        <textarea name="message" placeholder="Message"></textarea>
         <button type="button" class="cta-send">Open a trade account</button>
         <p class="cta-reply">We reply the same working day. Nothing is charged and nothing is
           committed until you have seen the terms.</p>

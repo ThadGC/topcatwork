@@ -6600,10 +6600,20 @@
        away from the other side." */
     #footer .foot-grid{
       grid-template-columns:1fr 1fr;
+      /* ⛔⛔⛔ **`wa` IS A ROW HERE BECAUSE D207 ADDED A FIFTH CONTACT ITEM AND THIS GRID NEVER
+         LEARNED ABOUT IT — 16 August 2026 (D268).** Client, with a screenshot of the footer: *"I
+         don't understand why the WhatsApp number is all the way down there and just randomly
+         placed in that corner."* ⭐⭐ **HE IS DESCRIBING AUTO-PLACEMENT EXACTLY.** `.foot-contact`
+         is `display:contents` here, so its five children are grid items of THIS grid — and every
+         cell of the explicit grid was already claimed by a named area, so the one item without a
+         `grid-area` was pushed into an implicit eighth row, in COLUMN ONE, at half width. It was
+         not placed badly; it was never placed at all. ⚠️ **ANY NEW CONTACT ROW NEEDS A LINE HERE
+         AS WELL AS A `grid-area`, OR IT LANDS IN THAT SAME CORNER.** */
       grid-template-areas:
         "brand   brand"
         "explore browse"
         "phone   phone"
+        "wa      wa"
         "email   email"
         "area    area"
         "hours   hours";
@@ -6662,8 +6672,22 @@
     #footer .foot-c-phone .foot-ck,#footer .foot-c-email .foot-ck{display:none}
     #footer .foot-c-phone{grid-area:phone;margin-top:clamp(20px,3vh,30px)}
     #footer .foot-c-email{grid-area:email;margin-bottom:0}
-    #footer .foot-c-phone,#footer .foot-c-email{align-items:center}
-    #footer .foot-c-phone .foot-cv,#footer .foot-c-email .foot-cv{
+    /* ⭐⭐ **THE WHATSAPP NUMBER JOINS THE OTHER TWO ROUTES — D268.** Same badge, full width,
+       centred, and sat between the landline and the email, which is the order the client set for
+       the three contact routes on the enquiry card (D246: *"the landline, then the WhatsApp number,
+       then the email"*). ⛔ **IT KEEPS ITS LABEL WHERE THE OTHER TWO LOSE THEIRS, AND THAT IS THE
+       DIFFERENCE BETWEEN THEM:** a phone number and an email address announce themselves, and
+       `07464 940287` sitting under `0800 098 2812` in an identical badge reads as a second
+       landline. The label is the same 10px caption AREA and HOURS already carry two rows below, so
+       it is the footer's own language rather than a new one.
+       ⚠️ **PLACED BY `grid-area`, NOT BY MOVING THE MARKUP.** The D200 footer IIFE restores Area
+       and Hours with `appendChild` and only works while those two are the last children of
+       `.foot-contact` (D207's note), and the tablet band is frozen — a DOM reorder would have
+       moved this row on a band nobody asked about. */
+    #footer .foot-c-wa{grid-area:wa;align-items:center;margin:9px 0 0}
+    #footer .foot-c-wa .foot-ck{font-size:9.5px;letter-spacing:.24em;margin-bottom:5px}
+    #footer .foot-c-phone,#footer .foot-c-email,#footer .foot-c-wa{align-items:center}
+    #footer .foot-c-phone .foot-cv,#footer .foot-c-email .foot-cv,#footer .foot-c-wa .foot-cv{
       display:inline-flex;align-items:center;justify-content:center;
       padding:9px 18px;border-radius:999px;
       border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
@@ -8770,7 +8794,17 @@
           <span class="cs-name" id="ctaStoneName"></span>
           <button type="button" class="cs-x" id="ctaStoneX" aria-label="Remove the stone from this enquiry">&times;</button>
         </div>
-        <textarea name="message" placeholder="Your space, your stone, your timings (optional)"></textarea>
+        <!-- ⭐ **JUST "MESSAGE" — 16 August 2026 (D267).** Client: *"in all of the forms at the
+             bottom, where the contact forms are, change the space where it says 'your space, your
+             stone, your timings, optional' — just say message, like it would normally look."*
+             ⚠️ **THE "(optional)" GOES WITH IT AND THAT IS THE POINT OF THE INSTRUCTION.** No other
+             field on this form marks itself optional or required, so this one was carrying a
+             convention the form does not otherwise use — and nothing here is enforced anyway.
+             ⚠️ The three prompts it dropped are not lost: the stone rides along on its own chip
+             above (`#ctaStone`), and the space and the timings are what step one of "What happens
+             next" is for. This is the same section `build_pages.py` lifts onto five other pages, so
+             one edit and a rebuild carries all six. -->
+        <textarea name="message" placeholder="Message"></textarea>
 
         <!-- The uploader was a permanent 90px drop zone sitting in the middle of the form; the
              client asked for it to become an option you open (6 Aug). ⚠️ It OPENS ITSELF the
