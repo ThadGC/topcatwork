@@ -1948,7 +1948,19 @@
      a change to SOLO_GAP, SOLO_NS or SOLO_ANG, and none of those are constants a future round
      would think to check. */
   #reviews.rev-solo .rev-page{
-    top:50%;bottom:auto;transform:translate(-50%,-50%);
+    /* ⛔⛔⛔ **`top:50%` IS THE STAGE'S MIDDLE, NOT THE CARD'S, AND THEY ARE NOT THE SAME BOX** —
+       17 Aug 2026 (D287). Client: *"the arrows next to the review cards are not in the center of
+       the card. Why is it below the center of the card? It has to be in the middle of the card."*
+       ⭐⭐ **THE STAGE CARRIES `padding-bottom:var(--revPagerH)`** — 60px held for the pager row
+       this section used to have below the deck — and the deck is centred in what is LEFT. So the
+       stage's own middle sits half that padding lower than the card's. Measured at 900x1000:
+       stage 472 tall against a 362 card, deck inset 25 from the top, stage centre **432.8**
+       against card centre **402.8**. **The arrow was exactly 30px low, which is half of 60.**
+       ⭐ Taking the padding out of the sum first lands it on the card at any height, with no
+       second measurement to keep in step: `(100% − --revPagerH) / 2`. ⚠️ It must stay in terms of
+       `--revPagerH`; a hard 206px or a `-30px` nudge would drift the moment that reservation or
+       `--revCardH` changes, and both are clamps that move with the viewport. */
+    top:calc((100% - var(--revPagerH)) / 2);bottom:auto;transform:translate(-50%,-50%);
     width:26px;height:44px;border-radius:0;
     /* ⛔ ALL THE BUTTON CHROME GOES. The base rule is a 46px filled disc with a hairline border
        and a backdrop blur — that is a control, and he asked for a hint. What is left is the
