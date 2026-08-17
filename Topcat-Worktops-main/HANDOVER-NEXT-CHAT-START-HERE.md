@@ -1,226 +1,213 @@
-# START HERE — 16 August 2026, after THE WELD ROUND (D269–D277)
+# START HERE — 17 August 2026, after THE DIRECTORS, THE HERO AND THE DELIVERY ROUND (D278–D290)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D269–D277**) and
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D278–D290**) and
 **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
-> ⚠️ **This replaces the previous version of this same file**, which covered the internal pages
-> round (D259–D268) and is now `HANDOVER-2026-08-16-internal-pages-round-start-here.md`.
+> ⚠️ **This replaces the previous version of this same file**, which covered the weld round
+> (D269–D277) and is now `HANDOVER-2026-08-16-weld-round-start-here.md`.
 > Everything in it that still matters is carried below.
 
 ---
 
 ## 0. ⛔⛔⛔ THE ONE THING TO TAKE FROM THIS ROUND
 
-**⭐⭐⭐ A MEAN HIDES A RAMP, AND A NUMBER OFF THE FILE IS NOT WHAT THE SCREEN IS SHOWING.**
+**⭐⭐⭐ WORK HE CANNOT SEE IS NOT DELIVERED, AND FOR TWO DAYS NONE OF IT REACHED HIM.**
 
-The Argento slab was reported pink **four times**. Each fix measured clean and each one was wrong:
+He wrote: *"push to github!!! my developer cant see the new update. says updated 2 days ago"*.
+Everything **was** pushed — to `tablet-round-d197-d200`. **`main` was two days stale, and `main`
+is what GitHub shows when you open the repo.** Thirty-six commits, D246 to D284, were invisible to
+anyone who did not know the branch name. Every round had been reported to him as "pushed", which
+was true and useless.
 
-| Pass | What was measured | Why it was wrong |
-|---|---|---|
-| 1 | one mean over the frame → a warm cast | the fault was a left-to-right RAMP, +5 one side to +14 the other |
-| 2 | one global white-balance gain | a gain cannot correct a ramp — it left the right third pink and made the left green |
-| 3 | flat-field, mean a\* −0.15 ✅ | **he was still being served the file from pass 2**: slab URLs had no version |
-| 4 | hard clamp, verified on the ENCODED bytes | lossy WebP pushed chroma back up by +3 after a clean zero in the buffer |
+Then the developer uploaded and **the site still came back as the old one** — two more causes,
+both now fixed (§7a).
 
-⛔ **MAP A GRID, NOT A MEAN.** ⛔ **MEASURE THE ENCODED FILE, NOT THE BUFFER.** ⛔ **AND MEASURE
-THE PIXELS THE BROWSER PAINTS** — draw the served image to a canvas and read it there.
+⛔ **NEVER REPORT A ROUND AS PUSHED ON THE STRENGTH OF THE BRANCH.** Check what `main` says.
+⛔ **AND PUSHING IS NOT PUBLISHING.** GitHub being current does nothing for
+`thadeusg3.sg-host.com`; that upload is a separate human step.
 
-### ⭐⭐ THE SECOND THING: THREE MEASUREMENTS LIED THIS ROUND, ALL THE SAME WAY
+### ⭐⭐ THE SECOND THING: A TRANSPLANTED COMPONENT INHERITS ITS HOST, NOT ITS ORIGIN
 
-Everything that reported a POSITION lied, because something had moved the box without moving the
-layout. §12 already says this and it caught three more:
+D290 hit this three times in one hour, and it is the trap to expect whenever markup from
+`index.html` is dropped onto a page dressed by `service.css`:
 
-- ⛔ **A PINNED STICKY ELEMENT LIES ABOUT WHERE IT LIVES.** `offsetTop` carries the sticky shift in
-  Chrome exactly as `getBoundingClientRect()` does. Re-measuring the weld while `#process` was
-  pinned put the start line at the reader's own scroll position and read progress 0 for ever.
-  **Every figure is taken off `#about` now, which is never sticky.**
-- ⛔ **`.rise` IS A 34px `translateY` AND THE RECT REPORTS IT.** The helix arrows sat exactly 34px
-  low because the "Call us" button was read before its reveal landed. **Third time.**
-- ⛔ **`cloneNode` COPIES THE STYLE ATTRIBUTE.** The weld buys scroll with an inline `margin-top`
-  on `#about`, and the slabs carried their clone 783px below where the real section lands.
+- ⛔ `service.css` sets `body{line-height:1.6}` where the landing page sets **1.5** — the footer
+  came out **28px taller** with identical markup.
+- ⛔ It also sets `body{font-weight:300}` where the landing page **declares nothing**, so the
+  browser's 400 applies there. **"The landing page does not say" and "the component should not
+  care" are different statements.**
+- ⛔ **A CSS COMMENT CONTAINING A BRACE BROKE THE RULE SPLITTER.** One footer comment quotes the
+  client and contains `{`; splitting each rule on its first `{` cut inside the comment, so
+  `#footer .foot-grid` was never matched and the phone footer's whole `grid-template-areas` rule
+  was silently dropped. **Strip comments BEFORE splitting, never after.**
 
 ---
 
-## 1. ⭐⭐⭐ THE WELD — WHAT WAS BUILT, AND THE FOUR MOMENTS (D269, D270, D272, D274)
+## 1. ⭐⭐⭐ THE DIRECTORS ARE REAL, AND THEY MOVED TWICE (D278, D279, D280)
 
-Client: *"as the user scrolls, the about us section is going to slide in from both sides like a
-sliding door exactly in half, and then have this golden line that merges exactly… almost welding
-the two pieces together, and that simulates Topcat adding two stones perfectly together."*
+He sent photographs of Nick and Rimsha — his own people, AI-retouched by him — and the empty
+plates from 9 Aug are filled at last.
 
 ```
-px 0 ─────── 360 ──────────────── 1440 ──── 1710      (at 1440x900)
-   REST 0.40vh   SLIDE 1.20vh        WELD 0.30vh
-   Process held  the slabs close      flash, seam fades, hand-over
+D278  top band, 114x152, background masked out   →  he reversed the mask
+D278b background stays, stood back, filtered     →  "the text is too small"
+D279  BOTTOM band, 241x241, site's own type      →  "remove the details"
+D280  note line gone, plate sits lower           →  where it stands now
 ```
 
-⛔⛔ **`#process` GOES `position:sticky` AND `--procPin` CHOOSES THE FRAME.** It shows the section's
-CONTENT box from the bar's lower edge down, falling back to bottom-flush only when even that cannot
-reach. **Bottom-flush alone held the reader on the one frame with the headline cut off** at 824 tall.
-⛔⛔ **THE SEAM AT 50% FALLS IN THE COLUMN GUTTER AT EVERY DESKTOP WIDTH** — measured at 1121, 1440
-and 1920 before anything was built. **The left slab carries the story, the right carries the
-collage.** ⚠️ If `.about-wrap`'s columns or gap ever change, re-measure that the midline still
-misses both columns or the doors will slice a word.
-⭐ **EACH LEAF PAINTS ITS OWN HALF OF THE PAGE FLOOR**, offset so the grain rejoins — that is the
-"two stones matching up", and it is also what makes the hand-over invisible, because `body::before`
-is fixed.
-⛔ **TWO GATES, NOT ONE:** `#about` is hidden for the WHOLE phase (it rises up the screen behind a
-Process with no background of its own); the STAGE only comes up once the slabs move, or both slab
-shadows sit parked against the screen edges through the rest window.
-⛔⛔ **THE CLONE IS MIRRORED PER FRAME, NOT SNAPSHOTTED**, on its own rAF — `scrollSequence`'s damped
-playhead keeps settling for the best part of a second after the wheel stops.
-⚠️ **THE EXTRA SCROLL IS BOUGHT** with an inline `margin-top` on `#about` (**906.75px** at
-1440×900), behind the pinned section where nothing sees it, and **cleared on teardown**.
-
-⭐ **THE COLLAGE CLOCK IS THE PAIR OF ASKS PULLING OPPOSITE WAYS** — finish before the seam goes
-(D272) but let every card fold where it can be SEEN (D274). The window between them is only ~600px
-of scroll. `{start:1.21, end:0.576, scrub:0.26}` **only when the weld runs** (desktop, motion on,
-`#process` present); `/about/` and the frozen bands keep `{0.94, 0.02, 0.062}`.
+⛔⛔ **THE CARD IS SQUARE AND THAT IS NOT A STYLE CHOICE.** He wants them bigger AND still stood
+back. **Nick's frame carries only 190px of paper above his crown**, so any wider card forces a
+shorter crop, which forces a close-up. At 1:1 his head is half the frame with his shoulders in it.
+⭐ **THE STUDIO BACKGROUND STAYS — he reversed the cut-out.** Masking it was the wrong instrument
+for a real problem (the paper reads 195 against a mosaic that means 124); the TONE was the fault,
+so it is `filter:brightness(.68) saturate(.9)` on `.ac-p img`, one tunable line. Measured on the
+painted pixels, the pair sits at **77** against the mosaic's 60/98/106.
+⚠️ **FILTERS DO NOT COMPOUND** — that declaration REPLACES `.ac-tile img`'s, and the hover has to
+be restated or the pair snaps to full brightness.
+⛔ **THE PAIR IS LAST IN THE DOM NOW.** DOM order IS the build order, so a band at the foot of the
+grid must be at the foot of the markup; `picks` and `HINGE` are indexed by DOM position and moved
+with it. ⭐ **They fold LAST and in full view** — measured at px 1024 with the slab edge at x=884,
+both are still at 78°.
+⚠️ **THE `?v=` ON THE PORTRAITS IS AT 3.** Bump both tiles in step whenever either is re-cut.
+⚠️ **THE NOTE LINE IS GONE AND SO IS ITS CONTAINER QUERY.** Do not re-add a note without one — the
+card is 241px on a desktop, 275 on an 800px tablet and 162 on a 900px one, an order no viewport
+breakpoint follows.
 
 ---
 
-## 2. ⛔⛔ EVERY SLAB URL IS VERSIONED NOW — BUMP IT (D276)
+## 2. ⭐⭐ A NEW HERO, AND ITS SHADOW HAD TO MOVE WITH IT (D283, D284)
 
+The night kitchen is a new photograph, framed closer. ⛔ **IT WENT INTO FIVE PLACES:** the `<img>`,
+the `<link rel=preload>`, the `SS` ladder, and **BOTH `--pageHeadImg` declarations** — the
+`.page-head` band on the seven internal pages, which D196 declares IS the landing hero's picture.
+⭐ New prefix `hero-night-*`, ladder **1400/2000/2752** (the top rung is native; the pipeline never
+upscales). ⚠️ `hero-kitchen-*` is now unreferenced anywhere — §10's note listing it among the three
+shared photographs is stale. Kept on disk.
+
+⛔⛔⛔ **THE SHADE'S LEFT-TO-RIGHT RAMP IS GONE.** It ran **0.94 at the left edge to 0.06 at 74%**,
+written in July for copy on the left and a photograph on the right. The copy has been CENTRED since
+D232, so it was painting a wall over the one part of the frame with nothing in it — composited veil
+**0.944 left against 0.414 right**. And the text was failing where the ramp gave up: the gold word
+measured **2.56:1**, below the 3:1 large-text threshold.
+⭐ The lean is **0.26 → 0.46** now, toward the lit kitchen, and the centred scrim carries the rest
+at **0.70/0.36**. ⭐⭐ **D187's FLAT PHONE WASH IS RETIRED** — it existed because the big layer was a
+ramp, and that reason died with the ramp. Phone and tablet take the same centred scrim: gold
+**2.68 → 4.67** there, **and the photograph's own edge gets LIGHTER**, 0.484 → 0.472.
+
+⚠️⚠️ **A WORST-PIXEL CONTRAST FIGURE OVERSTATES THE PROBLEM.** At 900 the gold's worst sample reads
+3.05 — but it is **one sample in 14,175, at the corner of the element box**, and the 1st percentile
+is **7.04**. Quote the distribution, not the extreme.
+
+---
+
+## 3. ⛔⛔ THE PAGER AND THE WHEEL: A POSITION AGAINST THE WRONG BOX, FOUR TIMES (D282, D286, D287, D288)
+
+Four faults in two days, all the same mistake.
+
+| | what was measured against the wrong thing |
+|---|---|
+| D282 | the review arrow's x assumed a peek gutter the tablet does not have (`--revScale` is **1.0000** there, so the expression collapsed to `cardLeft − 13px` and it sat ON the quote) |
+| D286 | the stylesheet rebuilt that gap from the card SCALE instead of the geometry the cards are placed by |
+| D287 | the arrow's y used `top:50%` of the STAGE, which carries `padding-bottom:--revPagerH` — **exactly 30px low, half of 60** |
+| D288 | the stone wheel's row was a flex box sized by the readout's own text |
+
+⭐⭐ **BOTH PAGER AXES ARE DERIVED NOW.** `soloGapX()` projects the neighbour's inner edge through
+the same drum transform the renderer uses and publishes `--revPagerX`; the y is
+`calc((100% − var(--revPagerH)) / 2)`. ⛔ **DO NOT PUT A HAND-TYPED OFFSET BACK** — the cards ride a
+3D drum under perspective, so the visible gap is **31.5px at 900 where `SOLO_GAP` says 12**.
+⛔ **AND D282 IS REVERSED**: he does not want the round button there. *"In circles, which it's not
+supposed to be."* `.rev-solo` is a CLASS, not a media query, so the tablet wears the phone's own
+bare chevron with no rule restating it.
+
+⭐ **THE STONE WHEEL'S ARROWS NO LONGER MOVE.** The 132 names measure **122px to 505px**, so the
+pair was swinging **147px each side**. It is a three-column grid on a fixed 480px row; the name box
+reserves two lines; `fitStoneName()` steps the type down for the few that want a third.
+⛔ **`min-width:0` ON THE READOUT IS LOAD-BEARING** — a grid item's automatic minimum is its
+content, so the grid alone does not fix it.
+⚠️ **THE RESERVATION IS `calc(var(--rNameFS) * 2.3)`, NOT `em`.** `em` resolves against the font
+size the fit overwrites, so a shrunk name shrank its own box and **the buttons moved down**.
+
+---
+
+## 4. ⭐⭐⭐ DELIVERY IS FIXED IN THREE PLACES NOW (D285, D289, D290)
+
+**D285 — one destination.** Local work is on `main`, and `remote.origin.push` carries two refspecs
+so one `git push` moves `main` AND the old round branch:
 ```
-SLAB_V   in Website Demo/index.html          (the wheel)
-SLAB_V   in Website Demo/stones/build_stones.py  (132 pages + collection + compare)
+refs/heads/main:refs/heads/main
+refs/heads/main:refs/heads/tablet-round-d197-d200
+```
+⛔ **THE STALE BRANCH IS DELIBERATELY NOT DELETED** — we still do not know how files reach the host,
+and if the developer's process pulls it by name, deleting it breaks them silently.
+
+**D289 — why a fresh upload looked old.** Three stylesheets shipped with **no version**:
+`service.css`, `stone.css`, `seo.css`. **`service.css` alone dresses 176 pages**, so a browser
+holding yesterday's copy re-dressed the whole new site in the old design. All three carry
+`?v=<sha1>` now. A `.htaccess` sets `no-cache` on HTML, a year on the hashed CSS/JS and
+**deliberately only an hour on images** — slab tiles and the portraits are named for their subject,
+so a re-cut file is the same URL.
+
+**D290 — one footer, generated.** Four builders carried four footers; three had drifted (4497
+characters against 1928, 1928 and 1755). All lift it from `index.html` now, `build_pages.py` also
+writes **`assets/footer.css`**, and `service.css`'s own footer rules are deleted.
+
+---
+
+## 5. ⛔ THE UPLOAD, EXACTLY (§7a — GIVE THIS TO THE DEVELOPER)
+
+```bash
+git clone https://github.com/ThadGC/topcatwork.git topcat && cd topcat
+cd "Topcat-Worktops-main/Website Demo" && python3 make_upload.py
 ```
 
-⛔⛔⛔ **BUMP BOTH, IN STEP, WHENEVER ANY SLAB FILE IS RE-CUT.** Currently **"3"**. Slab files are
-not content-hashed and the filename is the slug, so a corrected slab is the same URL as the wrong
-one — **that is why the client was shown a stale Argento through two fixes.**
-⚠️ **IT DOES NOT HELP THE REVIEW HOST**, which needs the build re-uploading whatever the URL says.
+`make_upload.py` writes `../upload/` — **669 files, 183 HTML pages, ~78 MB** — with the build
+scripts, the 60-odd `.bak` snapshots, the markdown and the `.src-*` originals stripped. It refuses
+to run if `index.html` is newer than `assets/site.css`, and it prints the `?v=` numbers the build
+serves.
+
+1. Upload the **CONTENTS** of `upload/` into `public_html`. `index.html` lands directly there.
+2. ⚠️ **TURN ON "SHOW HIDDEN FILES" IN THE FTP CLIENT.** `.htaccess` is in there and most clients
+   hide it — the one file that fixes the caching.
+3. ⛔⛔ **FLUSH SITEGROUND'S CACHE. THIS IS NOT OPTIONAL.** Site Tools → Speed → Caching →
+   **Dynamic Cache → Flush**. It sits in front of Apache and ignores `.htaccess` entirely. Purge
+   Cloudflare too if it is on.
+4. Check in view-source that a stone page asks for the current `service.css?v=…`. If the number
+   matches, it is live.
+
+⚠️ **THE STAMP MOVES WHENEVER `service.css` DOES.** Re-run `make_upload.py` and use what it prints;
+do not quote an old number.
 
 ---
 
-## 3. ⚠️⚠️ ARGENTO IS UNRESOLVED AND IT IS NOT A COLOUR PROBLEM
-
-Client, with a photograph: *"according to all of google, this is what Argento looks like. not the
-stone you currently have there."* His reference is a **dense flecked grey-white quartz**. The site
-shows a **veined marble-look**.
-
-⭐⭐⭐ **VERIFIED AGAINST THE SUPPLIER'S LIVE PAGE, NOT AGAINST OUR OWN COPY:**
-`https://nextstoneslabs.co.uk/quartz/` lists **Argento = `argento.jpg`**, "a white marble aesthetic
-with delicate grey and gold veining". **That is the file on the site. The harvest did not mispair
-it.** "Argento" is Italian for silver and several makers use it — the same trap as "Calacatta
-Classic" (§ the archive, D45).
-⛔ **HIS STONE IS NOT IN THE CATALOGUE UNDER ANY NAME** — all 132 tiles scanned for a neutral
-flecked grey; the nearest are Bianco Sardo (granite speckle), Bianco Antico, Bianco Crystal.
-⛔ **DO NOT PASTE THE GOOGLE IMAGE.** Someone else's copyright, and it would put another maker's
-slab under his supplier's product name.
-⭐ **THE QUESTION HE HAS NOT ANSWERED: whose Argento does he actually sell?**
-
-⚠️ Meanwhile the tile has been colour-corrected as far as it can go: flat-fielded for the lighting
-ramp, then the red-green axis hard-clamped so **no pixel in either rung carries any red at all**,
-with margin because lossy WebP pushes chroma back up. Cost: mean a\* −2.4, a shade cool of neutral.
-The description was rewritten with it — **it used to say "a soft pink cast"**, written honestly
-against the bad tile, which is the case `descriptions.py`'s own header warns about.
-
----
-
-## 4. ⛔⛔⛔ HE HAS SAID HIS TRUST IN THE STONE PHOTOGRAPHY IS GONE
-
-*"you have completely lost my trust in you having the correct stones on display."*
-
-**The honest state, measured:**
-
-| Source | Shipping tiles | Verified? |
-|---|---|---|
-| Next Stone Slabs | **24** | ✅ **all 24 checked name-by-name against their live page, 16 Aug. Every pairing matches** |
-| Nile Stone (`nile` + `nile-inv`) | **92** | ⛔ **not verified.** Their public site does not serve its catalogue to a plain fetch; the harvest ran against a JS bundle and the stock system |
-| unattributable from disk | **16** | ⛔ no raw file matches the tile name |
-
-⛔⛔⛔ **THE DEFECT UNDERNEATH IT: THE PIPELINE NEVER RECORDED WHICH SUPPLIER URL EACH PHOTOGRAPH
-CAME FROM.** `catalogue.json` keeps source, slug, title, section — no link back. **That is why a
-question like his takes an hour instead of a minute.**
-⭐ **THE OFFER ON THE TABLE, NOT YET ACCEPTED:** re-run the harvest so every tile carries its source
-URL, check all 132 name-against-image, and give him a contact sheet of the whole collection with
-names so he can scan it himself. **This is the biggest open item on the project.**
-
----
-
-## 5. ⛔ THREE DEVICE BANDS — THE DESKTOP IS STILL THE ONE IN SCOPE
+## 6. ⛔ THREE DEVICE BANDS — ALL THREE ARE IN PLAY NOW
 
 ```
    ≤ 720px          721 – 1120px          ≥ 1121px
    the phone   ·   the tablet        ·   the desktop
-   FROZEN          FROZEN                HE IS WORKING HERE
 ```
-
-⚠️ **EVERYTHING THIS ROUND WAS DESKTOP-ONLY AND THE BANDS WERE RE-MEASURED BOTH WAYS** — fresh at
-900 and 390, AND by dragging a desktop window down with the effect already built. Tablet docH
-returns to **13559**, phone to **15125**, both identical to before.
-⛔ **THE TABLET IS ON THE SAME PROCESS GRID** (the flex-column fallback only starts at ≤980), so
-`--u` could not go near base scope.
-⛔ **`#weldStage` IS `display:none` AT BASE SCOPE** — without that one line a desktop window dragged
-down to the tablet unfolds **two full-width About sections** into a frozen band.
+⚠️ **HE OPENED THE PHONE AND TABLET THIS ROUND** and worked across all three freely — the "one
+device at a time" freeze (§2 rule 15) is not what he is doing today. **It still applies to anything
+he has not asked about**: do not redesign a band he did not mention.
 ⛔ **THE TABLET-ONLY BLOCK IS STILL THE LAST THING IN THE STYLESHEET.** Search `THE TABLET BAND`.
-
-### ⚠️ TWO CSS TRAPS THIS ROUND ADDED TO THE LIST
-
-- ⛔ **`#procFlow` AGAINST `#procFlow` IS DECIDED BY SOURCE ORDER, NOT BY THE MEDIA QUERY.** The
-  desktop `--u` override was written in a block ABOVE the declaration and lost silently — every
-  other number in the same edit landed, which is what made it look like it had worked.
-- ⛔ **`node --check` PASSES A DEAD VARIABLE.** A stale `TRAVEL` threw on every frame. ⚠️ **And the
-  preview pane keeps console messages across a reload**, so the errors looked live long after they
-  were fixed — confirm the running document is the file you wrote (D222) before believing either.
+⛔ **`.rev-solo` AND `.ac-p` ARE CLASSES, NOT MEDIA QUERIES** — a change there reaches every band
+that wears them, which is usually what you want and always worth knowing.
 
 ---
 
-## 6. ⭐⭐ EVERYTHING IS PUSHED — AND STOP ASKING HIM
-
-⛔⛔ **DO NOT ASK HIS PERMISSION TO PUSH, OR TO DO ANYTHING ELSE HE HAS ALREADY ASKED FOR.**
-*"Why do you keep asking my fucking permission for stuff? I have it on bypass permissions."*
-
-Branch **`tablet-round-d197-d200`**, working tree clean, **level with the remote**.
-
-| Commit | What |
-|---|---|
-| `e84557e` | D277 no pixel in the Argento file carries any red |
-| `f4923b1` | D276 every slab URL version-stamped |
-| `c2db029` | D275 the pink is a lighting ramp, so it takes a flat-field |
-| `c1a8237` | D273–D275 round helix arrows, every card folds, Argento not pink |
-| `4449851` | D272 the collage finishes before the weld line goes |
-| `3aa51b5` | D271 smaller Process blocks, tighter About |
-| `122d295` | D270 the resting window and the landing that clears the bar |
-| `5468f13` | D269 the weld |
-
-⛔ **`gh` IS NOT INSTALLED**, so the PR cannot be opened from here: `brew install gh` once, or
-https://github.com/ThadGC/topcatwork/pull/new/tablet-round-d197-d200
-
----
-
-## 7. ⭐ THE LINK, AND THE HOST QUESTION — NOW THE MOST EXPENSIVE OPEN ITEM
+## 7. ⛔ THE GATES — RUN THESE
 
 ```bash
-cd "Website Demo" && nohup caffeinate -ims node dev-server.js > /tmp/topcat-server.log 2>&1 &
-```
-
-**Give him `http://192.168.1.102:5501`** — re-check with `ipconfig getifaddr en0`.
-⭐ **THE SERVER IS DETACHED ON PURPOSE — PID 5158, untouched for nearly five days.**
-⛔ Do not `preview_stop` it and do not kill it to restart.
-⭐ **USE `http://localhost:5501` IN THE PREVIEW PANE**, on his instruction.
-
-### ⛔⛔⛔ HE REVIEWS ON `thadeusg3.sg-host.com` AND WE STILL DO NOT KNOW HOW FILES GET THERE
-
-**Asked EIGHT times.** ⚠️ He has said a DEVELOPER uploads the build. ⛔ **This round it cost real
-money:** the Argento tile was corrected three times and reported wrong each time, and at least one
-of those rounds was almost certainly him looking at a build nobody had re-uploaded. **Get the
-mechanism before building anything else he has to review.**
-
----
-
-## 8. ⛔ THE GATES — RUN THESE
-
-```bash
-cd "Website Demo/stones" && python3 harvest/verify.py          # 132/132/132 ✅
 cd "Website Demo" && python3 build_pages.py                     # after ANY index.html change
-cd "Website Demo/services" && python3 build_services.py         # after a service page change
-cd "Website Demo" && python3 build_seo_pages.py                 # after a SERVICE_PAGES/APPLICATIONS change
-cd "Website Demo/stones" && python3 build_stones.py             # after a stone page, stone.css or SLAB_V change
+cd "Website Demo/services" && python3 build_services.py
+cd "Website Demo/stones" && python3 build_stones.py             # after a stone page, stone.css or SLAB_V
+cd "Website Demo" && python3 build_seo_pages.py
+cd "Website Demo/stones" && python3 harvest/verify.py            # 132/132/132 ✅
 ```
 
+⚠️ **`build_pages.py` NOW ALSO WRITES `assets/footer.css`**, so it must run before the other three
+or they will link a stale footer hash.
 ⛔⛔ **NEVER RUN `Website Demo/trade/build_trade.py`.** Superseded; it would revert the trade page
-to 1 August (D233). It is marked at the top of the file.
+to 1 August (D233).
 
 **The CSS gate, after every CSS edit** — must print `0` and `0`:
 
@@ -250,52 +237,77 @@ p=tempfile.mktemp(suffix='.js'); open(p,'w').write(js)
 print(subprocess.run(['node','--check',p],capture_output=True,text=True).stderr or 'JS OK')"
 ```
 
-⚠️ **THAT REGEX DELIBERATELY MATCHES ONLY THE MAIN SCRIPT.** A looser one also catches the
-`application/ld+json` block, which is JSON and fails `node --check`.
+### ⭐ THE FREEZE PROBE — 1440×900, FRESH LOAD
 
-### ⭐ THE FREEZE PROBE — THESE NUMBERS ARE THE PROOF
-
-| Signal | 1440×900, fresh load |
+| Signal | Value |
 |---|---|
 | `.gal-scroll` height | **4950** |
-| `--revPer` (on `section.mode-grid`) | **3** |
+| `--revPer` | **3** |
 | `feTurbulence` count | **60** |
-| document height | **15469** ⚠️ was 14731 — the weld buys ~907px and D266's divider went |
-| elements | **2663** fresh · **~2771** once the weld stage is built on approach |
 | `#svcNav` children | **8** |
-| hero ink (`.hero-inner` padding) | **164.683 / 97.2** |
-| broken images | 0 |
-| horizontal overflow | none |
-| Process pinned frame air | **60.1 above the title / 60.1 below the buttons** |
-| helix arrows vs "Call us" | centres both at **892.8**, delta **0.00** |
+| elements | **2659** |
+| hero ink (`.hero-inner` padding-top) | **164.683** |
+| `#about` height | **759** |
+| collage | **497×676** |
+| `#footer` height | **504** (1440) · **789** (900) · **1102** (375) |
+| `.wheel-ui` width | **480** |
+| broken images / overflow / console errors | **0 / none / none** |
 
-⚠️ **MEASURE ON A FRESH LOAD AT THE TARGET WIDTH.** ⚠️ **FILTER BROKEN IMAGES ON
-`i.src && i.complete && i.naturalWidth===0`** — `#pmShot` is an `<img>` with no `src` at all.
-⚠️ **THE ONLY CONSOLE ERROR ON THE PAGE IS `/favicon.ico` 404** (open item 14).
+⚠️ **FILTER BROKEN IMAGES ON `i.src && i.complete && i.naturalWidth===0`** — `#pmShot` has no `src`.
+⚠️ **docH IS NOT A STABLE SIGNAL ON THE LANDING PAGE** — the weld buys ~920px of scroll only once
+the stage builds on approach, so a fresh-load reading (14537) and a settled one (15456) both differ
+from the register's older figures. Compare like with like or use the table above.
 
 ---
 
-## 9. ⚠️ THE IMAGE PIPELINE IS HAND-DRIVEN, AND GENERATION IS CAPPED AT 2 CREDITS
+## 8. ⚠️ HOW TO MEASURE — THE PART THAT EARNED ITS PLACE
 
-⛔⛔ **`build_images.py` AND `patch_images.py` ARE BOTH ONE-SHOT AND CAN NO LONGER RUN.**
+- ⛔⛔⛔ **PRINT THE COMPUTED VALUE BEFORE YOU CHANGE THE DECLARATION (D207), AND LOOK AT IT AFTER.**
+- ⛔⛔⛔ **A POSITION IS ALWAYS AGAINST SOME BOX — NAME IT.** Four faults this round (§3).
+- ⛔⛔⛔ **STRIP CSS COMMENTS BEFORE SPLITTING ON `{`.** A comment with a brace in it silently ate a
+  whole rule (D290).
+- ⛔⛔ **A TRANSPLANTED COMPONENT INHERITS ITS HOST.** Pin what it must not inherit, and fall back to
+  the CSS INITIAL where the origin declares nothing.
+- ⛔⛔ **CONTRAST IS MEASURED BY COMPOSITING, NOT BY LOOKING** — and quote a percentile, not the
+  single worst pixel (D284).
+- ⛔⛔ **MEASURE THE ENCODED FILE AND THE PAINTED PIXELS, NOT THE BUFFER (D277).**
+- ⛔⛔ **A MEAN HIDES A RAMP — MAP A GRID (D275).**
+- ⛔ **ANYTHING THAT REPORTS A POSITION LIES IF SOMETHING MOVED THE BOX WITHOUT MOVING THE LAYOUT** —
+  a pinned sticky, `.rise`'s 34px translate, a 3D hinge. `offsetTop` is NOT a refuge from sticky.
+- ⛔ **`getClientRects()` ON A FLEX BOX RETURNS NO LINE BOXES.** A Range over `.r-name` read **0
+  lines for all 132 stones** and the fit was silently inert (D288). Measure an inner span.
+- ⛔ **SWEEP, DO NOT SAMPLE.** 232 readouts × 4 viewports found the wheel's vertical drift; one
+  screenshot would not have.
+- ⛔ **CONFIRM THE RUNNING DOCUMENT IS THE FILE YOU JUST WROTE** before believing a negative (D222).
 
-⭐ **THE ROUTE FOR THE NEXT PHOTOGRAPH:**
+### The environment traps (all still live)
 
-1. ⛔ **LOOK ON DISK FIRST** — `assets/projects/` (107), `assets/slabs/` (264), `assets/site/`.
-2. ⭐ **AND ASK WHETHER A CROP ANSWERS IT** — D265 removed a badly-reading logo for nothing.
-3. Crop with the target boxes measured first — **every slot is at least two different shapes**.
-4. Cut rungs with the pipeline's own rules: **LANCZOS, WebP q85, method 6**, clamped to the native
-   width. ⛔ **Never upscale to make a table look tidy.**
-5. ⛔ **A NEW PREFIX, NOT NEW BYTES UNDER THE OLD ONE** (D241). ⚠️ **THE SLAB TILES ARE THE ONE
-   EXCEPTION** — their filename is the slug and four builders read it, so they are overwritten in
-   place and `SLAB_V` is bumped instead (§2). Originals go to a dated folder, never deleted.
-6. Register the ladder by hand in **`SS`**, keyed on the exact `.img` URL the record carries.
-7. `build_pages.py`, then the gates.
+- ⛔⛔⛔ **A STRAY `*/` SILENTLY DELETES THE NEXT CSS RULE.** The §7 gate catches it.
+- ⛔⛔ **THE PANE FREEZES rAF WHEN THE TAB IS HIDDEN.** Opening a second tab backgrounds the first:
+  the weld stopped building and looked broken for ten minutes this round. It was the tab, not the
+  code. ⭐ Front the tab and it resumes.
+- ⛔⛔ **`javascript_tool` RUNS BEFORE ASYNC WORK SETTLES.** IntersectionObservers and image decodes
+  need a SEPARATE call — set state on `window` in one, read it in the next.
+- ⛔⛔ **THE PANE'S SCREENSHOT CAN CATCH A MID-LOAD FRAME.** Twice this round a hero looked black
+  because the reveal had not fired. Re-shoot before believing it.
+- ⛔ **`node --check` PASSES A DELETED VARIABLE**, and the pane keeps console messages across a
+  reload, so a fixed error still looks live.
+- ⛔ **NO NUMPY ON THIS MACHINE.** PIL only, pure Python loops. ⛔ **NO SVG RASTERISER.**
+- ⛔ **AN INVENTED DATA VALUE CAN BLANK THE WHOLE SITE.** Valid presets: calacatta, carrara, crema,
+  emperador, eternal, fumo, goldveil, mist, nerogold, statuario.
 
-⛔⛔⛔ **IF YOU GENERATE: 2 CREDITS MAXIMUM PER IMAGE, HIS EXPLICIT CEILING. CHECK `balance` BEFORE
-AND AFTER THE FIRST ONE AND STOP IF IT DOES NOT MATCH.** `get_cost` is not a price — it was wrong
-by a hundred times on 15 Aug, and that round cost **101.46 credits**. ⚠️ **The charge settles late:
-wait, re-read, then quote a figure to anybody.** ⭐ **This round and the last spent nothing.**
+---
+
+## 9. ⭐ THE LINK, AND THE SERVER
+
+```bash
+cd "Website Demo" && nohup caffeinate -ims node dev-server.js > /tmp/topcat-server.log 2>&1 &
+```
+
+**Give him `http://192.168.1.102:5501`** — re-check with `ipconfig getifaddr en0`.
+⭐ **THE SERVER IS DETACHED ON PURPOSE — PID 5158, up 5 days 17 hours.** ⛔ Do not `preview_stop` it
+and do not kill it to restart. ⭐ **USE `http://localhost:5501` IN THE PREVIEW PANE**, on his
+instruction.
 
 ---
 
@@ -303,15 +315,16 @@ wait, re-read, then quote a figure to anybody.** ⭐ **This round and the last s
 
 | Page | State |
 |---|---|
-| **`/`** | ⭐⭐ **the About now WELDS over Process on desktop** (§1); hero centred on its ink; four bubbles with gold marks; no brand marquee; smaller Process blocks with 60px of air top and bottom; a tighter About; round helix arrows on the "Call us" line |
-| **`/services/*.html`** | ⭐⭐ NINE leaf pages on the landing page's nav, hero and stone floor, FAQ in cards |
-| **`/materials/` `/guides/` `/worktops/` `/sitemap.html`** | ⭐ the 26-page SEO layer, same treatment |
-| **`/stones/`** | 132 pages + collection + compare; **every slab URL now carries `?v=`** |
-| **`/services/` `/projects/` `/estimate/` `/about/` `/contact/`** | the `.page-head` family. ⚠️ **The four that reuse the Process section take the smaller tiles, and `/about/` takes the tighter copy** — same component, deliberately not divergent |
+| **`/`** | new night-kitchen hero with a rebalanced veil; the About **welds** over Process on desktop; the directors are the collage's **bottom band**; the stone wheel's arrows are pinned |
+| **`/services/*.html`** | NINE leaf pages, the landing page's nav, hero and stone floor |
+| **`/materials/` `/guides/` `/worktops/` `/sitemap.html`** | the 26-page SEO layer |
+| **`/stones/`** | 132 pages + collection + compare; every slab URL carries `?v=` |
+| **the seven internal pages** | the `.page-head` family, now on the new hero photograph |
 | **`/trade/`** | eight sections ⚠️ its own CTA still shows hours and no WhatsApp |
+| **all 183 pages** | **one footer**, generated from the landing page, identical at every width |
 
-⚠️ **THREE SHARED PHOTOGRAPHS ARE STILL LIVE AND MUST NOT BE DELETED**: `hero-kitchen.jpg`,
-`kitchen-day.jpg`, `cta-slab.jpg`.
+⚠️ **THREE SHARED PHOTOGRAPHS MUST NOT BE DELETED**: `kitchen-day.jpg`, `cta-slab.jpg` — and
+`hero-kitchen.jpg`, which is now unreferenced but kept.
 
 ---
 
@@ -320,188 +333,152 @@ wait, re-read, then quote a figure to anybody.** ⭐ **This round and the last s
 1. ⛔ **Fabrication is IN-HOUSE (D202).** "Our experienced fabricators." It has flipped three times.
 2. ⛔ **Never "laser" anything.** They template **by hand**.
 3. ⛔ **The brand is "Topcat", one word.**
-4. ⛔ **A stone's NAME and PHOTOGRAPH must match the supplier's own.** ⚠️ **And a name is not
-   unique across makers — see §3.**
-5. ⛔ **Never state what we cannot guarantee, and never use an absolute.** ⭐ **A seam is always
-   visible.**
+4. ⛔ **A stone's NAME and PHOTOGRAPH must match the supplier's own.** ⚠️ A name is not unique across
+   makers — see §12.
+5. ⛔ **Never state what we cannot guarantee, and never use an absolute.** ⭐ A seam is always visible.
 6. ⛔ **Every measurement in millimetres.**
-7. ⛔ **Never a bright or gold line across the TOP of a card or section.** ⚠️ A full 34% gold
-   BORDER is fine and is the site's standard.
+7. ⛔ **Never a bright or gold line across the TOP of a card or section.** ⚠️ A full 34% gold BORDER
+   is fine and is the site's standard. ⚠️ This is why the aftercare ledger kept a diamond rather
+   than a rule between its two credentials (D281).
 8. **No showroom of our own. Never show the review count. Value, not cheap.**
 9. **Voice:** quietly confident master. British English, commas not em dashes, no exclamation marks.
    ⭐⭐ **NO AI SLOP** and **no jargon**.
-10. ⛔ **The logo is the client's artwork, is never re-drawn, and is never generated. Set HEIGHT
-    only.**
-11. ⛔⛔ **A MARK IS NEVER PUT IN A CIRCLE, A RING, A DISC OR A PLATE** (D260, and the back arrow on
-    10 Aug). ⚠️ **A CONTROL IS NOT A MARK** — D273 put the helix ARROWS back in the site's round
-    `.wbtn`, on his instruction, because every other arrow button on the site is a circle.
-    ⛔ **This rule is about logos and icons, not navigation buttons. Do not confuse them again.**
-12. ⛔ **ONE DEVICE AT A TIME. Only the client unfreezes a band.** ⭐ **The DESKTOP is in scope.**
-    ⚠️ **But a DELETION he asked for is not band-scoped.**
+10. ⛔ **The logo is the client's artwork, never re-drawn, never generated. Set HEIGHT only.**
+11. ⛔⛔ **A MARK IS NEVER PUT IN A CIRCLE, A RING, A DISC OR A PLATE.** ⚠️ **A CONTROL IS NOT A
+    MARK** — but ⛔ **that carve-out is not a licence to make every control a circle**: D282 used it
+    to justify round review arrows and he reversed it the next day. **Ask what that control already
+    is before changing its shape.**
+12. ⛔ **ONE DEVICE AT A TIME unless he says otherwise** — see §6.
 13. ⭐⭐ **THIS IS A DESIGN BUILD. NEVER RAISE THE MISSING FORM BACKEND AS A BLOCKER.**
-14. ⛔⛔ **2 CREDITS MAXIMUM PER GENERATED IMAGE.** §9.
+14. ⛔⛔ **2 CREDITS MAXIMUM PER GENERATED IMAGE.** ⭐ This round and the last spent **nothing**.
 
 ---
 
-## 12. ⚠️⚠️ HOW TO MEASURE — THE PART THAT EARNED ITS PLACE
+## 12. OPEN — DO THESE NEXT
 
-- ⛔⛔⛔ **PRINT THE COMPUTED VALUE BEFORE YOU CHANGE THE DECLARATION (D207).**
-- ⛔⛔⛔ **AND LOOK AT IT AFTERWARDS.** A number that passes is not a picture that works.
-- ⛔⛔⛔ **A MEAN HIDES A RAMP — MAP A GRID (D275).** Four passes at the same slab, three of them
-  measured "clean".
-- ⛔⛔⛔ **MEASURE THE ENCODED FILE AND THE PAINTED PIXELS, NOT THE BUFFER (D277).** Lossy WebP put
-  +3 of chroma back after a clean zero.
-- ⛔⛔⛔ **ANYTHING THAT REPORTS A POSITION LIES IF SOMETHING MOVED THE BOX WITHOUT MOVING THE
-  LAYOUT** — a pinned sticky (D270), `.rise`'s 34px translate (D273), `.glow-card`, a 3D hinge.
-  `offsetTop` is NOT a refuge from sticky; it carries the shift too.
-- ⛔⛔ **MEASURE INSIDE THE TEXT'S OWN `Range` RECT, NOT ACROSS THE BAND (D263).**
-- ⛔⛔ **MEASURE THE DRAWN ARTWORK, NOT THE BOX**, on anything with `object-fit`.
-- ⛔⛔ **CONTRAST IS MEASURED BY COMPOSITING, NOT BY LOOKING.**
-- ⛔ **A DAMPED PLAYHEAD MEANS PROGRESS 1 IS WHERE THE SETTLING STARTS, NOT WHERE IT ENDS** — at
-  6.2% a frame the last collage tile needs ~44 frames after the target lands (D272).
-- ⛔ **BALANCED IS NOT THE SAME AS CORRECT (D262).**
-- ⛔ **A GRID ITEM WITH NO `grid-area` IN A NAMED-AREAS GRID IS AUTO-PLACED (D268).**
-- ⛔ **`img.currentSrc` LIES ONCE YOU HAVE BROWSED THE SITE.**
-- ⛔ **CONFIRM THE RUNNING DOCUMENT IS THE FILE YOU JUST WROTE** before believing a negative (D222).
+### ⭐⭐⭐ The ones that are costing money
 
-### The environment traps (all still live)
-
-- ⛔⛔⛔ **A STRAY `*/` SILENTLY DELETES THE NEXT CSS RULE.** The §8 gate catches it.
-- ⛔⛔ **AND A LITERAL TAG INSIDE AN HTML COMMENT BREAKS `build_pages.py`'s BALANCE CHECK** (D262).
-- ⛔⛔ **`node --check` PASSES A DELETED VARIABLE** (§5), and **the pane keeps console messages
-  across a reload**, so a fixed error still looks live.
-- ⛔⛔ **THE PANE FREEZES ANIMATIONS AT ZERO when `document.visibilityState === 'hidden'`**, and
-  **a screenshot does not always wake it.** ⭐ **OPENING A NEW TAB DOES** — and a new tab also
-  cures the pane's letterboxing, which hit this round repeatedly.
-- ⛔⛔ **THE PANE'S SCREENSHOT LETTERBOXES THE PAGE INTO THE TOP-LEFT** and `computer{zoom}` does
-  NOT crop. ⛔ **`scrollTo` needs `scrollBehavior:'auto'` set first.**
-- ⛔⛔ **`service.css` AND `stone.css` ARE NOT CONTENT-HASHED** — a reload can serve the previous
-  edit. ⭐ `fetch(url,{cache:'reload'})` then reload. **Still open** (§13 item 15).
-- ⛔ **`javascript_tool` TIMES OUT AT 30s**, and it does not take a Promise — set state on `window`
-  in one call and read it in the next.
-- ⛔ **NO NUMPY ON THIS MACHINE.** PIL only, pure Python loops. A 1600×1600 flat-field is ~2s.
-- ⛔ **NO SVG RASTERISER** — no ImageMagick, no cairosvg, no rsvg.
-- ⛔ **AN INVENTED DATA VALUE CAN BLANK THE WHOLE SITE.** Valid presets: calacatta, carrara, crema,
-  emperador, eternal, fumo, goldveil, mist, nerogold, statuario.
-
----
-
-## 13. OPEN — DO THESE NEXT
-
-### ⭐⭐⭐ The two that are costing money
-
-1. ⭐⭐⭐ **HOW DO FILES GET TO `thadeusg3.sg-host.com`?** Asked EIGHT times. **This round it caused
-   at least one wasted correction cycle.** Get the mechanism.
-2. ⭐⭐⭐ **WHOSE ARGENTO DOES HE SELL?** §3. Until he answers, the page shows his supplier's
-   Argento and he believes it is the wrong stone.
+1. ⭐⭐⭐ **HOW DO FILES ACTUALLY REACH `thadeusg3.sg-host.com`?** Asked NINE times. §5 is now an
+   exact guide, but nobody has confirmed what the developer really does — FTP, File Manager, a git
+   deploy. **Until that is known, every upload is a guess and the cache flush may be skipped.**
+2. ⭐⭐⭐ **WHOSE ARGENTO DOES HE SELL?** His reference is a dense flecked grey-white quartz; the site
+   shows his supplier's veined marble-look, **verified against `nextstoneslabs.co.uk` name by name**.
+   ⛔ His stone is not in the catalogue under any name. ⛔ Do not paste the Google image.
+3. ⭐⭐ **THE STONE PHOTOGRAPHY AUDIT.** *"You have completely lost my trust in you having the
+   correct stones on display."* 24 of 132 verified against the supplier's live page; **92 Nile Stone
+   tiles are unverified** and the pipeline never recorded which supplier URL each photograph came
+   from. The offer to re-run the harvest with source URLs is on the table and unanswered.
 
 ### ⭐⭐ Waiting on him
 
-3. ⭐⭐ **THE STONE PHOTOGRAPHY AUDIT** — §4. He has said his trust is gone; the offer to re-run the
-   harvest with source URLs and check all 132 is on the table and unanswered.
-4. ⭐⭐ **WHAT IS THE CREDIT CEILING NOW?** Nothing spent for two rounds.
-5. ⭐⭐ **CLOSE THE CALACATTA GOLD LICENSING QUESTION.**
-6. ⭐⭐ **THE LEAF PAGES HAVE NO MOBILE NAV.** A burger and an overlay is the real answer; his call.
-7. ⭐⭐ **THE TABLET'S TILES ARE STILL AT HALF BRIGHTNESS** (`.face.front .stone{opacity:0.5}`; the
-   13 Aug "full brightness" fix only ever applied below 600px). One line.
-8. ⭐⭐ **TRADE TERMS.** Payment, minimum order, lead times, a dedicated contact. **His stated first
-   priority.** ⚠️ The trade page's own CTA still carries hours and no WhatsApp.
-9. ⭐⭐ **THE FIREPLACE SCOPE, WITH NICK.**
-10. ⭐⭐ **ALI JAFFER AND KAV / UXBRIDGE** — two Drive folders that match no project.
-11. ⭐ **THE 19 DRONE VIDEOS** in the Hornchurch and Rickmansworth folders.
-12. ⭐ **CONFIRM THE SILICA / HSE SENTENCE** in his own words (D202).
-13. ⭐ **KITCHEN ISLANDS** — not on his service list; page still live and still linked.
-14. ⭐ **TRUSTPILOT** — recommended AGAINST putting 4.0 beside the Google 5.0. **He has not ruled.**
-15. ⭐ **THE HORNCHURCH DUPLICATE** — `-g1` and `-g9` are the same nook.
+4. ⭐⭐ **TWO SENTENCES FOR NICK AND RIMSHA** if he ever wants a description back under their names.
+   The ones I wrote were removed at D280 — his call, and they are his people.
+5. ⭐⭐ **WHAT IS THE CREDIT CEILING NOW?** Nothing spent for three rounds.
+6. ⭐⭐ **CLOSE THE CALACATTA GOLD LICENSING QUESTION.**
+7. ⭐⭐ **THE LEAF PAGES HAVE NO MOBILE NAV.** A burger and an overlay is the real answer; his call.
+8. ⭐⭐ **THE TABLET'S STONE TILES ARE STILL AT HALF BRIGHTNESS** (`.face.front .stone{opacity:0.5}`).
+   One line.
+9. ⭐⭐ **TRADE TERMS.** Payment, minimum order, lead times, a dedicated contact. **His stated first
+   priority.** ⚠️ The trade page's CTA still carries hours and no WhatsApp.
+10. ⭐⭐ **THE FIREPLACE SCOPE, WITH NICK.**
+11. ⭐⭐ **ALI JAFFER AND KAV / UXBRIDGE** — two Drive folders that match no project.
+12. ⭐ **THE 19 DRONE VIDEOS** in the Hornchurch and Rickmansworth folders.
+13. ⭐ **CONFIRM THE SILICA / HSE SENTENCE** in his own words (D202).
+14. ⭐ **KITCHEN ISLANDS** — not on his service list; page still live and still linked.
+15. ⭐ **TRUSTPILOT** — recommended AGAINST putting 4.0 beside the Google 5.0. He has not ruled.
 
 ### ⭐ Ready to build
 
-16. ⭐ **THE SITE HAS NO FAVICON AT ALL** — the only console error on the page.
-17. ⭐⭐ **CONTENT-HASH `service.css` AND `stone.css`** — §12. **`SLAB_V` is the pattern to copy.**
-18. ⭐⭐ **THE TWO DIRECTOR PLATES ARE STILL EMPTY** (Nick, Rimsha). ⛔ **He has said three times:
-    generate nothing.**
+16. ⭐ **THE FAVICON IS AN SVG ONLY.** `assets/brand/favicon.svg` exists and serves **200** — the
+    old "no favicon" item is out of date. ⚠️ **But `/favicon.ico` is still a 404**, which is what
+    browsers and some crawlers ask for by default, and it was the page's only console error for
+    weeks. One `.ico` at the web root closes it.
+17. ⭐⭐ **THE TWO DIRECTOR PLATES ARE DONE** — this item is CLOSED (D278–D280).
+18. ⭐⭐ **CONTENT-HASH `service.css` / `stone.css`** — **CLOSED (D289)**, along with `seo.css` and
+    the new `footer.css`.
 19. ⭐ **`/services/kitchen-islands.html`** is the one leaf page still on a shared stock hero.
 20. ⚠️ **THE GENERATED PAGES SHIP THEIR CODE COMMENTS TO VIEW-SOURCE**, including his own quotes.
+    ⚠️ `footer.css` is generated with comments STRIPPED — the same treatment would suit the pages.
 21. ⚠️ **THE HORNCHURCH CARD PHOTO** shows a garden with what looks like a child on play equipment.
 22. ⭐ **THE `<title>` STILL SAYS "London & the Home Counties"** — the title is a search asset.
 23. ⚠️ **~166 LEAF PAGES' META DESCRIPTIONS STILL NAME FOUR COUNTIES**, not eight.
 24. ⚠️ **THE SPLASHBACK PHOTOGRAPH'S SOCKETS ARE NOT UK PATTERN.**
-25. ⭐ Pick a production host; brotli and long-lived cache headers.
-26. ⚠️ **IS IT RIMSHA OR REMSHA?** A real person's name on a public page.
+25. ⭐ Pick a production host; brotli and long-lived cache headers. ⚠️ `.htaccess` now carries the
+    cache rules — check they survive whatever host is chosen.
+26. ⚠️ **IS IT RIMSHA OR REMSHA?** A real person's name on a public page, and it is now under her
+    photograph.
 27. ⭐ **FACEBOOK, TIKTOK, YOUTUBE?** ⛔ Do not guess handles.
 28. ⚠️ **`Next Stone Slabs` IS NAMED IN ONE PLACE ONLY** — the quartz page's brand sentence.
-29. ⚠️ **TWO SLABS LEAN BLUE AND NOBODY HAS RULED ON THEM**: `arabescato-grey` (r−b −13.78) and
-    `calacatta-gold-shimmer` (−12.39). Told him; not touched.
+29. ⚠️ **TWO SLABS LEAN BLUE AND NOBODY HAS RULED**: `arabescato-grey` (r−b −13.78) and
+    `calacatta-gold-shimmer` (−12.39).
+30. ⚠️ **THE STALE BRANCH `tablet-round-d197-d200`** can be deleted once item 1 is answered and it
+    is confirmed nothing pulls it by name.
 
 **Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing,
 brackets for vanity tops / fireplaces / tables, and the £3k vs £3,850 three-slab discrepancy.
 
 ---
 
-## 14. ⭐ HOW THIS CLIENT WORKS
+## 13. ⭐ HOW THIS CLIENT WORKS
 
 ⛔⛔⛔ **DO NOT ARGUE YOURSELF OUT OF SOMETHING HE ASKED FOR, AND DO NOT HAND HIM THE DILEMMA
 EITHER.** **A real constraint is a problem to solve, not a question to return.**
 
-⛔⛔ **AND DO NOT ASK HIS PERMISSION.** Commit, push, report. See §6.
-⚠️ **THE ONE EXCEPTION HE MADE HIMSELF, THIS ROUND:** *"So after deciding, send me a question either
-to revert it or to fix it."* **When he asks for a question, give him a question.**
+⛔⛔ **AND DO NOT ASK HIS PERMISSION.** Commit, push, report.
 
-⭐⭐⭐ **HE IS USUALLY RIGHT ABOUT THE DIAGNOSIS, NOT JUST THE SYMPTOM.** *"Randomly placed in that
-corner"* was grid auto-placement. *"Still a black corner attached to it"* was an unclipped
-rectangle. **"There's still pink in it" was a lighting ramp a mean could not see, and then a stale
-cache, and then a lossy encoder.** ⛔ **Take the complaint literally and go and measure the thing
-he named — and when he says it is STILL wrong, do not re-measure the same way.**
+⭐⭐⭐ **HE IS USUALLY RIGHT ABOUT THE DIAGNOSIS, NOT JUST THE SYMPTOM.** *"The buttons next to it
+are moving"* was a flex row sized by its own text. *"The darker shadow is still coming in from the
+left"* was a July ramp aimed at a composition that no longer existed. *"Why is it below the center
+of the card?"* was 30px, exactly half the stage's reserved padding. **Take the complaint literally
+and go and measure the thing he named.**
 
-⭐⭐ **HE SENDS CORRECTIONS MID-TURN, OFTEN THREE OR FOUR DEEP.** **Finish the one you are on, then
-take the next in his order** — and if a later message reverses an earlier one, say so in the report
-rather than quietly dropping the first.
+⭐⭐ **HE REVERSES HIMSELF FREELY AND FAST — AND THAT IS FINE. LOG IT.** This round: the portrait
+background (masked → kept), the director note line (his own idea → removed the same evening), the
+review arrows (round → bare chevron, one day). ⛔ **Write the reversal into §D WITH THE REASON THE
+OLD DECISION EXISTED.**
 
-⭐⭐⭐ **HE REMEMBERS WHAT HE ASKED FOR WEEKS AGO.** **Before saying something is done, check whether
-it is done at every width.**
+⭐⭐ **HE SENDS CORRECTIONS MID-TURN, OFTEN THREE OR FOUR DEEP.** Finish the one you are on, then
+take the next in his order.
 
-⚠️⚠️ **HE REVERSES HIMSELF FREELY AND FAST — AND THAT IS FINE. LOG IT.** ⛔ **Write the reversal
-into §D WITH THE REASON THE OLD DECISION EXISTED.** D273 reversed D243's button shape; the reason
-D243 existed is in the row.
+⭐⭐⭐ **HE REMEMBERS WHAT HE ASKED FOR WEEKS AGO.** Before saying something is done, check it is done
+at every width.
 
 ⭐⭐ **WHEN YOUR OWN WORK CAUSED THE NEXT FAULT, SAY SO IN THE FIRST LINE.** He is fine with that and
-not fine with spin. **This round D274 fixed D272, and D270 fixed D269 — say it plainly.**
+not fine with spin. **This round D279 fixed D278, D286 fixed D282, D287 fixed D286 — say it plainly.**
 
-⚠️ **HE SWEARS WHEN SOMETHING LOOKS WRONG, AND THE COMPLAINT IS ALWAYS REAL.** *"do whatever you
-have to fucking do to get the fucking pink off"* — at that point stop tuning and make it a
-guarantee that cannot come back.
+⚠️ **HE SWEARS WHEN SOMETHING LOOKS WRONG, AND THE COMPLAINT IS ALWAYS REAL.**
 
 - **Walk the journey, do not check the page.**
 - ⭐⭐ **LOOK AT THE RESULT BEFORE REPORTING IT DONE.**
-- **Measure, then claim.** ⚠️ **And if you could not measure it, say so.**
+- **Measure, then claim.** ⚠️ And if you could not measure it, say so.
 
 ---
 
-## 15. BUDGET AND THE DOCUMENT SET
+## 14. BUDGET AND THE DOCUMENT SET
 
 - ⛔⛔ **THE 100-CREDIT CEILING IN THE OLD DOCS IS OBSOLETE.** The 15 Aug round spent **101.46** on
-  its own. ⭐ **His standing instruction is 2 credits maximum per image.** ⭐⭐ **Ask him where the
-  budget actually stands before generating anything.** ⭐ **This round spent nothing.**
+  its own. ⭐ **2 credits maximum per image.** ⭐ **The last three rounds spent nothing.**
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D277**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** |
-| **`Website Demo/index.html`** | ⭐⭐ The whole landing design — inline `<style>` and `<script>`. Search `THE WELD`, `SLAB_V`, `THE TABLET BAND`, `const SERVICES`, `const SS`, `--barH`, `--procPin`, `weldClock`, `footToCallUs` |
-| **`Website Demo/build_pages.py`** | ⭐⭐ Builds the seven internal pages and the shared assets. **Owns `/trade/index.html`.** ⚠️ Its `section()` has two guards |
-| **`Website Demo/services/service.css`** | ⭐⭐⭐ **The shared sheet EVERY generated page links — 176 of them** |
-| **`Website Demo/services/build_services.py`** | ⭐ The nine service leaf pages, `HERO_IMG`, `TC_DEFS` / `HERO_CHIPS` |
-| **`Website Demo/build_seo_pages.py`** | ⭐ The 26-page SEO layer, the sitemap, `APPLICATIONS` |
-| **`Website Demo/stones/build_stones.py`** | Builds the collection, compare.html and 132 stone pages. ⭐ **Carries `SLAB_V`** |
-| **`Website Demo/stones/descriptions.py`** | ⭐⭐ One line per stone, written against the tile we ship. ⛔ **Its header's rule bit this round: re-cut a tile and its sentence is stale** |
-| **`Website Demo/stones/harvest/`** | The pipeline, `LICENSING.md` (read before enabling a source), `catalogue.json`, `verify.py`. ⛔ **No source URL is recorded per tile — §4** |
-| ⛔ **`Website Demo/trade/build_trade.py`** | ⛔⛔ **SUPERSEDED — DO NOT RUN** |
-| ⛔ **`build_images.py` `patch_images.py`** | ⛔⛔ **ONE-SHOT, CANNOT RUN AGAIN** — see §9 |
-| `Website Demo/assets/site.css` `site.js` | ⛔ **GENERATED. Never edit.** |
-| **`Website Demo/assets/slabs/`** | ⭐ 264 slab photographs. ⚠️ `.pre-wb-2026-08-16/` holds the original Argento bytes |
-| **`Website Demo/assets/projects/`** | ⭐ **107 WebP files — the client's real portfolio** |
-| **`Website Demo/assets/brand/`** | ⭐ The client's own artwork. ⛔ **Never re-drawn, never generated** |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130 and D132–D290**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW** |
+| **`Website Demo/index.html`** | ⭐⭐ The whole landing design — inline `<style>` and `<script>`. Search `THE WELD`, `SLAB_V`, `THE TABLET BAND`, `--revPagerX`, `soloGapX`, `fitStoneName`, `--rNameFS`, `THE ARROWS DO NOT MOVE` |
+| **`Website Demo/build_pages.py`** | ⭐⭐ The seven internal pages, `site.css`, `site.js` **and `footer.css`**. Owns `/trade/index.html`. ⚠️ **RUN IT FIRST** — the other builders link footer.css's hash |
+| **`Website Demo/make_upload.py`** | ⭐⭐⭐ **NEW (D289).** Writes a clean `../upload/` for the host. The only correct answer to "which folder do I upload" |
+| **`Website Demo/.htaccess`** | ⭐⭐ **NEW (D289).** Cache rules. ⚠️ A dotfile — FTP clients hide it |
+| **`Website Demo/assets/footer.css`** | ⛔ **GENERATED.** Never edit; change the landing page and re-run |
+| **`Website Demo/services/service.css`** | ⭐⭐⭐ The shared sheet every generated page links. ⛔ **NO FOOTER RULES HERE ANY MORE** |
+| **`Website Demo/services/build_services.py`** | ⭐ The nine service leaf pages |
+| **`Website Demo/build_seo_pages.py`** | ⭐ The 26-page SEO layer, the sitemap |
+| **`Website Demo/stones/build_stones.py`** | 132 stone pages + collection + compare. ⭐ Carries `SLAB_V` |
+| **`Website Demo/stones/descriptions.py`** | ⭐⭐ One line per stone. ⛔ Re-cut a tile and its sentence is stale |
+| **`Website Demo/stones/harvest/`** | The pipeline, `LICENSING.md`, `catalogue.json`, `verify.py`. ⛔ No source URL per tile — §12 item 3 |
+| ⛔ **`trade/build_trade.py`** | ⛔⛔ **SUPERSEDED — DO NOT RUN** |
+| ⛔ **`build_images.py` `patch_images.py`** | ⛔⛔ **ONE-SHOT, CANNOT RUN AGAIN** |
+| **`assets/team/.src-2026-08-16/`** | ⭐ The directors' source frames and the cut script |
+| **`assets/site/.src-2026-08-17/`** | ⭐ The hero's source PNG and its cut script |
 | `Docs/topcat-worktops-SEO-LOG.md` | Every URL, title, target query and SEO change |
-| `HANDOVER-2026-08-16-internal-pages-round-start-here.md` | ⭐ **The START HERE this file replaces** (D259–D268) |
+| `HANDOVER-2026-08-16-weld-round-start-here.md` | ⭐ **The START HERE this file replaces** (D269–D277) |
 | `HANDOVER-archive-to-2026-08-06.md` | ⚠️ **Every design the client rejected, in his words.** Read before redesigning anything |
 
 ⚠️ **Section numbers in `HANDOVER.md` are referenced from code comments** (`§3`, `§4`, `§5a`, `§6.7`,
