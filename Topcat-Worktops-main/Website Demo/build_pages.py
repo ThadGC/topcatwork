@@ -47,6 +47,119 @@ import sys
 # from data lists, so the text goes through here. ⛔ The older templates are deliberately NOT
 # retro-fitted — they contain intentional entities (`&middot;`, `&#9733;`) that escaping would
 # print as literal text.
+
+# ⭐⭐ SPLIT THE FOOTER'S RULES OUT OF THE LANDING STYLESHEET (D290).
+# ⚠️ A rule counts as the footer's if its SELECTOR mentions `foot` — which catches `#footer`,
+#    every `.foot-*` and `footer.site` — or the brand lockup the footer reuses. Media queries are
+#    walked and rebuilt with only their footer rules, so a query that carries one survives and one
+#    that carries none is dropped.
+def _css_rules(text):
+    """Split a stylesheet into top-level rules, keeping comments attached and never
+    breaking inside one — the same walk the CSS gate in §8 does."""
+    out, buf, depth, i = [], "", 0, 0
+    while i < len(text):
+        if text.startswith("/*", i):
+            j = text.find("*/", i + 2)
+            if j == -1:
+                buf += text[i:]
+                break
+            buf += text[i:j + 2]
+            i = j + 2
+            continue
+        buf += text[i]
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                out.append(buf)
+                buf = ""
+        i += 1
+    if buf.strip():
+        out.append(buf)
+    return out
+
+
+def _strip_comments(text):
+    out, i = [], 0
+    while i < len(text):
+        if text.startswith("/*", i):
+            j = text.find("*/", i + 2)
+            if j == -1:
+                break
+            i = j + 2
+            continue
+        out.append(text[i])
+        i += 1
+    return "".join(out)
+
+
+def _rule_head(rule):
+    """The selector, with the rule's leading comment removed.
+
+    ⛔⛔⛔ STRIP THE COMMENTS *BEFORE* SPLITTING ON `{`, NOT AFTER, AND THIS COST A ROUND.
+    `_css_rules` keeps each rule's leading comment attached, and one of this file's footer
+    comments quotes the client saying *"the footer parts should be centre"* in a block that also
+    contains a BRACE. Splitting the raw text on its first `{` therefore cut inside the COMMENT:
+    the head came back as half a sentence, the real selector `#footer .foot-grid` was never
+    tested, and the phone footer's whole `grid-template-areas` rule was silently dropped from the
+    generated stylesheet. The footer then auto-placed into three columns instead of the named
+    grid, which is the exact fault this was meant to fix."""
+    return _strip_comments(rule).split("{", 1)[0]
+
+
+def _is_footer_sel(head):
+    return ("foot" in head) or ("brand-stack" in head) or ("brand-logo" in head)
+
+
+def _footer_css(css):
+    keep = []
+    for rule in _css_rules(css):
+        head = _rule_head(rule)
+        if head.strip().startswith("@media"):
+            # ⚠️ the OPENING brace of the query is the first one after the comments are gone
+            body = _strip_comments(rule)
+            inner = body[body.index("{") + 1:body.rindex("}")]
+            hits = [r for r in _css_rules(inner) if _is_footer_sel(_rule_head(r))]
+            if hits:
+                keep.append(head + "{" + "".join(hits) + "}")
+        elif _is_footer_sel(head):
+            keep.append(rule)
+    # ⭐⭐⭐ AND THE FOOTER IS TOLD WHAT IT INHERITS. It is a component transplanted onto pages
+    # dressed by a DIFFERENT stylesheet, and `service.css` sets `body{line-height:1.6}` where this
+    # page sets 1.5. Nothing in the footer's own rules says otherwise, so every line in it came
+    # out 1.6 on the generated pages: measured at 375, the column links ran 22.4px against 21,
+    # and the footer finished **28px taller** than the same markup on the landing page. Pinning
+    # the one inherited value it actually depends on is the whole fix — and it is READ FROM THIS
+    # PAGE'S OWN `body` rule, not typed in, so it cannot drift from the thing it is copying.
+    # ⛔ IT IS NOT JUST LINE-HEIGHT. `service.css` also sets `body{font-weight:300}` where this
+    #    page sets 400, and the legal row came out 3px narrower for it. Every INHERITABLE text
+    #    property the landing body declares is pinned, or the next one to differ is another round.
+    m = re.search(r"(?:^|[}\s])body\s*\{([^}]*)\}", _strip_comments(css), re.M)
+    if m:
+        # ⛔⛔ WHERE THIS PAGE DECLARES NOTHING, PIN THE CSS INITIAL — DO NOT LEAVE IT OPEN.
+        #    That is the trap this went round twice on: the landing `body` never sets
+        #    `font-weight`, so it is the browser's 400 — while `service.css` sets 300, and an
+        #    unset property inherits the HOST page's value, not this one's. "The landing page
+        #    does not say" and "the footer should not care" are different statements.
+        DEFAULTS = {"font-weight": "normal", "letter-spacing": "normal"}
+        inherit = []
+        for prop in ("font-family", "font-size", "font-weight",
+                     "line-height", "letter-spacing"):
+            d = re.search(r"(?:^|;)\s*%s\s*:\s*([^;}]+)" % prop, m.group(1))
+            if d:
+                inherit.append("%s:%s" % (prop, d.group(1).strip()))
+            elif prop in DEFAULTS:
+                inherit.append("%s:%s" % (prop, DEFAULTS[prop]))
+        if inherit:
+            keep.insert(0, "#footer{%s}" % ";".join(inherit))
+
+    # ⚠️ COMMENTS ARE STRIPPED FROM THE OUTPUT. They are the reasoning behind the rules and they
+    # belong in index.html, where they are read; shipped, they were 62 KB of the 77 this file
+    # weighed, on all 167 pages that link it (open item 20 is the same complaint about the
+    # generated pages' own markup).
+    return _strip_comments("".join(keep))
+
 def e(s):
     return html.escape(str(s), quote=True)
 
@@ -656,6 +769,26 @@ def main():
         fh.write(css_note + parts["css"])
     with open(os.path.join(assets, "site.js"), "w", encoding="utf-8") as fh:
         fh.write(js_note + parts["js"])
+
+    # ⭐⭐⭐ AND THE FOOTER'S OWN STYLESHEET — 17 Aug 2026 (D290). Client: *"the inner pages footer
+    # on mobile doesn't look like the hero section foot on mobile. Just make sure that the footer
+    # are consistent on every device all across the site, the same as on the landing page."*
+    # ⛔⛔ THE MARKUP WAS ONLY HALF THE PROBLEM. Three builders each hand-wrote their own footer
+    # and all three had drifted; those are lifted from index.html now. But the service, stone and
+    # SEO pages do NOT load site.css — they are dressed by `services/service.css`, which carries
+    # **19 footer rules against this page's 93**. Lifting the markup alone rendered the Instagram
+    # icon at ~500px, because service.css has no `.foot-social svg` sizing to give it.
+    # ⛔ AND LINKING site.css THERE IS NOT THE ANSWER: it is 572 KB of landing-page stylesheet
+    # that would restyle everything else on those pages.
+    # ⭐ So the footer-scoped rules are split out here, from the SAME <style> block, and the three
+    # builders link this after service.css. One source, generated, cannot drift.
+    # ⚠️ THE MEDIA QUERIES COME WITH IT. Four of them carry footer rules — 34 of the 93 — and a
+    # footer that is only correct at one width is the bug being fixed, not a fix.
+    foot_css = _footer_css(parts["css"])
+    with open(os.path.join(assets, "footer.css"), "w", encoding="utf-8") as fh:
+        fh.write("/* \u26d4 GENERATED BY build_pages.py — the footer-scoped rules out of\n"
+                 "   index.html's <style>. Do not edit; change the landing page and re-run. */\n"
+                 + foot_css)
 
     # ⛔⛔ CONTENT-HASHED URLS, AND THIS IS NOT HOUSEKEEPING — IT IS THE FIX FOR A REAL BUG.
     # dev-server.js serves assets `public, max-age=300` while index.html is `no-cache`. The first

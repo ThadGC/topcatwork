@@ -17,7 +17,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/services/service.css?v=6f8f58392f">
+<link rel="stylesheet" href="/services/service.css?v=c7d4617dee">
+<link rel="stylesheet" href="/assets/footer.css?v=32e3e12343">
 <link rel="stylesheet" href="/stones/stone.css?v=4c72f6abc6">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topcatworktops.co.uk/index.html"},{"@type":"ListItem","position":2,"name":"The Stone Collection","item":"https://www.topcatworktops.co.uk/stones/"},{"@type":"ListItem","position":3,"name":"Concrete Earth","item":"https://www.topcatworktops.co.uk/stones/concrete-earth.html"}]},{"@type":"LocalBusiness","@id":"https://www.topcatworktops.co.uk/#business","name":"Topcat Worktops","url":"https://www.topcatworktops.co.uk","telephone":"0800 098 2812","email":"info@topcatworktops.co.uk","priceRange":"££","areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"18:00"}]}]}</script>
 </head>
@@ -144,46 +145,145 @@
   </div></section>
 </main>
 
-<footer class="site">
-  <div class="foot-grid">
-    <div class="foot-brand">
-      <a class="brand brand-stack" href="/index.html#hero" aria-label="Topcat Worktops home"><img class="brand-logo" src="/assets/brand/topcat-vertical.svg" alt="" width="528" height="495" decoding="async"></a>
-      <p class="foot-tag">Bespoke stone worktops, templated, fitted and guaranteed by one team.</p>
-      <span class="foot-stars"><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 &middot; Google reviews</span>
+<footer class="site" id="footer">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <!-- ⚠️ The old footer mark filled itself from a gradient defined inside the NAV's inline
+             SVG at the top of the document, so it rendered only because the two shared one page.
+             That coupling is gone: each lockup is a self-contained file. -->
+        <a class="brand brand-stack" href="/" aria-label="Topcat Worktops, home">
+          <img class="brand-logo" src="/assets/brand/topcat-vertical.svg" alt="" width="528" height="495" decoding="async">
+        </a>
+        <p class="foot-tag">Bespoke stone worktops, from slab selection to a flawless fit.</p>
+        <span class="foot-stars"><b>★★★★★</b> 5.0 · Google reviews</span>
+        <!-- ⭐ THE GUARANTEE MARK, ASKED FOR IN THE FOOTER ON 12 Aug 2026 (D153): "then the Google
+             reviews and ten year guarantee also there". Only the Google line was ever here; the
+             pair has lived in the HERO since the start (`.hero-chips`), so this is the second half
+             of a set arriving where he expects it, not a new claim — the ten year guarantee is
+             stated in the CTA copy, the stone readout, the process copy and the FAQ.
+             ⛔ It takes the footer's own quiet `.foot-stars` treatment, NOT the hero's `.chip`
+             pill: a bordered badge is hero furniture and would be the loudest thing down here.
+             ⛔ `display:none` in the base rule — new markup exists at every width the moment it is
+             added (D120), and the footer above 720px is frozen (§2 rule 15). -->
+        <span class="foot-stars foot-guar"><b>10</b> year guarantee</span>
+        <!-- ⭐⭐ **THE SOCIAL LINKS — 13 August 2026 (D178).** Client: *"go find all of Topcat's social
+             media or some sort of links, and we add that to the footer."*
+             ⛔⛔ **THESE TWO CAME OFF TOPCAT'S OWN LIVE SITE, NOT OFF A SEARCH GUESS, AND THAT
+             DISTINCTION IS THE WHOLE POINT.** `topcatworktops.co.uk` links to exactly these two and
+             no others; both were then checked and both return 200. A search for the brand name turns
+             up Top Cat Furniture, Top Cat Media Group and several unrelated "topcat" handles, so a
+             plausible-looking guess here would have put a stranger's account on the client's footer.
+             ⛔ **NOTHING WAS INVENTED TO FILL THE ROW.** `facebook.com/topcatworktops` returns 400 —
+             it does not exist. `tiktok.com/@topcatworktops` answers 200 but serves a 1.4KB stub with
+             no profile in it, and it is not linked from their own site, so it is NOT trusted and NOT
+             included. If he has Facebook, TikTok or YouTube, they need to come from him.
+             ⭐ WhatsApp rides along because it is now a real contact channel (D173) and the footer is
+             where the other three live. Same number as the floating button, one place to change.
+             ⚠️ It is on every width: he named the footer, and this is additive — a new row under the
+             brand block that re-composes nothing above it. One rule makes it phone-only. -->
+        <div class="foot-social">
+          <a href="https://www.instagram.com/topcatworktops/" target="_blank" rel="noopener noreferrer" aria-label="Topcat Worktops on Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/>
+              <circle cx="12" cy="12" r="4.1"/>
+              <circle cx="17.1" cy="6.9" r="1.15" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+          <a href="https://www.linkedin.com/company/topcat-worktops/" target="_blank" rel="noopener noreferrer" aria-label="Topcat Worktops on LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.6 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.35 4.33 5.4V21h-3.6v-5.02c0-1.2-.02-2.74-1.73-2.74-1.73 0-2 1.3-2 2.65V21H9.6z"/>
+            </svg>
+          </a>
+          <a href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer" aria-label="Message Topcat Worktops on WhatsApp">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0zm-.001 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <!-- ⭐ CUT FROM FIVE LINK COLUMNS TO TWO, 9 Aug (client: "completely clean up the footer,
+           it is way too big... you won't have to list everything out, you'll have those main
+           pages. Services counts as one page, when they click on that it goes to the services
+           page and all that section of the site").
+           It was 31 links over five columns and stood 931px tall, taller than the viewport.
+
+           ⚠️ READ THIS BEFORE TRIMMING FURTHER. The footer is the ONLY sitewide route into
+           /materials/, /guides/ and /worktops/, and an unlinked page set is the textbook
+           doorway signature — enforcement for that is site-level, so it would drag the whole
+           domain. The fix was NOT to drop those families but to link each one ONCE, at its
+           hub, and let the hub link its own children. That is cleaner hub-and-spoke than 25
+           sitewide links were, and it keeps every family reachable. Do not remove the Browse
+           column; if it has to shrink further, take rows from Explore instead. -->
+      <!-- ⚠️ `foot-explore` / `foot-browse` / `foot-c-*` below are NAME HOOKS ONLY, added 12 Aug
+           2026 for the phone's two-column footer (D153). No base rule references any of them, so
+           they are inert at every width above 720px — which is the point: the alternative was
+           positional `:nth-child()` selectors against a markup order nobody would know was
+           load-bearing. -->
+      <div class="foot-col foot-explore">
+        <div class="foot-k">Explore</div>
+        <ul>
+          <!-- ⭐ REPOINTED 13 August 2026 (D189): `/services/` is a real hub page now, which is
+               what this comment had been waiting for. Every item below goes to its own page. -->
+          <li><a href="/services/">Services</a></li>
+          <li><a href="/projects/">Projects</a></li>
+          <li><a href="/stones/">Stones</a></li>
+          <li><a href="/estimate/">Estimate</a></li>
+          <li><a href="/about/">About us</a></li>
+          <li><a href="/trade/">For the trade</a></li>
+        </ul>
+      </div>
+      <div class="foot-col foot-browse">
+        <div class="foot-k">Browse</div>
+        <ul>
+          <li><a href="/materials/">Materials</a></li>
+          <li><a href="/guides/">Worktop guides</a></li>
+          <li><a href="/worktops/">Areas we cover</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="foot-col foot-contact">
+        <div class="foot-k">Contact</div>
+        <div class="foot-c-phone"><span class="foot-ck">Phone</span><a class="foot-cv" href="tel:+448000982812">0800 098 2812</a></div>
+        <div class="foot-c-email"><span class="foot-ck">Email</span><a class="foot-cv" href="mailto:info@topcatworktops.co.uk">info@topcatworktops.co.uk</a></div>
+        <!-- ⭐ THE WHATSAPP NUMBER, WRITTEN OUT — 14 Aug 2026 (D207). Client: *"add WhatsApp to the
+             footer or the bottom icon so that they can still text WhatsApp if they have WhatsApp.
+             I can see it's in the photo already, but we should have the WhatsApp number displayed
+             as well."* The glyph in `.foot-social` and the floating button were both silent about
+             WHICH number they open, so a customer who wanted to save it or type it into their own
+             phone had nowhere to read it.
+             ⛔ **IT SITS ABOVE AREA AND HOURS, AND THAT ORDER IS LOAD-BEARING.** The D200 footer
+             IIFE moves those two to `.foot-tail` on the tablet and restores them with
+             `appendChild`, which only puts them back correctly while they are the LAST TWO
+             children of `.foot-contact`. Anything new goes above them, never below.
+             ⚠️ Displayed in the national form a British customer would dial and save, `07464
+             940287`, while the href keeps the international `447464940287` that `wa.me` requires
+             — same number, and the only format that link accepts (D173). -->
+        <div class="foot-c-wa"><span class="foot-ck">WhatsApp</span><a class="foot-cv" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer">07464 940287</a></div>
+        <div class="foot-c-area"><span class="foot-ck">Area</span><span class="foot-cv">London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire &amp; Bedfordshire, plus nationwide templating</span></div>
+        <div class="foot-c-hours"><span class="foot-ck">Hours</span><span class="foot-cv">Monday to Friday, 8am to 6pm</span></div>
+      </div>
     </div>
-    <div class="foot-col">
-      <div class="foot-k">Explore</div>
-      <ul>
-        <li><a href="/services/">Services</a></li>
-        <li><a href="/projects/">Projects</a></li>
-        <li><a href="/stones/">Stones</a></li>
-        <li><a href="/estimate/">Estimate</a></li>
-        <li><a href="/about/">About us</a></li>
-        <li><a href="/trade/">For the trade</a></li>
-      </ul>
+    <!-- ⭐⭐ THE TABLET'S HOME FOR "AREA" AND "HOURS" — 13 Aug 2026 (D200). Client, twice:
+         *"the footer area and hours have to go at the bottom, like, above just that bottom line."*
+         ⛔ **EMPTY IN THE MARKUP ON PURPOSE.** The two blocks live inside `.foot-contact` for every
+         other width, and no CSS can lift a nested element out of its grid parent — `display:contents`
+         on that column dissolves Phone and Email along with them. So the footer IIFE MOVES the two
+         nodes in here when the stylesheet says to, and moves them back when it does not. One copy of
+         the markup, so nothing is duplicated into the page source (§4, D168's lesson). -->
+    <div class="foot-tail" id="footTail"></div>
+    <div class="foot-bar">
+      <span>© 2026 Topcat Worktops Ltd. All rights reserved.</span>
+      <!-- Sitemap is the only one of these four that is a real page. Privacy, Terms and
+           Cookies are still href="#" placeholders waiting on the client's policies. -->
+      <div class="foot-legal">
+        <a href="/sitemap.html">Sitemap</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
     </div>
-    <div class="foot-col">
-      <div class="foot-k">Browse</div>
-      <ul>
-        <li><a href="/materials/">Materials</a></li>
-        <li><a href="/guides/">Worktop guides</a></li>
-        <li><a href="/worktops/">Areas we cover</a></li>
-        <li><a href="/index.html#faq">FAQ</a></li>
-      </ul>
-    </div>
-    <div class="foot-col foot-contact">
-      <div class="foot-k">Contact</div>
-      <div><span class="foot-ck">Phone</span><a class="foot-cv" href="tel:+448000982812">0800 098 2812</a></div>
-      <div><span class="foot-ck">Email</span><a class="foot-cv" href="mailto:info@topcatworktops.co.uk">info@topcatworktops.co.uk</a></div>
-      <div><span class="foot-ck">Area</span><span class="foot-cv">London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire, plus nationwide templating</span></div>
-      <div><span class="foot-ck">Hours</span><span class="foot-cv">Monday to Friday, 8am to 6pm</span></div>
-    </div>
-  </div>
-  <div class="foot-bar">
-    <span>&copy; 2026 Topcat Worktops Ltd. All rights reserved.</span>
-    <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
-  </div>
-</footer>
+  </footer><script>(function(){var f=document.querySelector('#footer')||document.querySelector('footer'),t=document.getElementById('footTail'),c=document.querySelector('.foot-contact'),a=document.querySelector('.foot-c-area'),h=document.querySelector('.foot-c-hours');if(!f||!t||!c||!a||!h)return;function p(){var on=getComputedStyle(f).getPropertyValue('--footTail').trim()==='on',host=on?t:c;if(a.parentElement!==host){host.appendChild(a);host.appendChild(h);}}p();window.addEventListener('resize',p,{passive:true});})();</script>
 <script>
 var UID=0;
 var STONES={

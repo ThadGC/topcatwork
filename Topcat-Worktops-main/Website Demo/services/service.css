@@ -556,30 +556,14 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
 .cta-band .cta-note,.cta-band .cmp-cta-note{margin:26px auto 0;max-width:60ch;
   color:var(--faint);font-size:12.5px;line-height:1.7;letter-spacing:0.02em}
 
-/* ---------- footer ---------- */
-/* ⚠️ transparent since D263, for the same reason as `.cta-band` above — the floor runs to the
-   bottom of the page on the landing page and now does here too. */
-footer.site{border-top:1px solid var(--hair-soft);padding:clamp(44px,6vh,72px) 0 34px;background:transparent}
-.foot-grid{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px);
-  display:grid;grid-template-columns:1.4fr 1fr 1fr 1.3fr;gap:40px}
-.foot-tag{color:var(--muted);font-size:14px;max-width:34ch;margin:16px 0 12px}
-.foot-stars{font-size:13px;color:var(--muted)}.foot-stars b{color:var(--gold);letter-spacing:2px}
-.foot-k{font-family:var(--brand);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
-.foot-col ul{list-style:none}
-.foot-col li{margin-bottom:10px}
-.foot-col a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .3s var(--ease)}
-.foot-col a:hover{color:var(--bone)}
-.foot-contact>div{margin-bottom:12px;font-size:14px}
-.foot-ck{display:block;color:var(--faint);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:3px}
-.foot-cv{color:var(--muted);text-decoration:none}
-a.foot-cv:hover{color:var(--gold)}
-.foot-bar{max-width:var(--maxw);margin:38px auto 0;padding:22px clamp(20px,5vw,64px) 0;border-top:1px solid var(--hair-soft);
-  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--faint);font-size:12px}
-.foot-legal{display:flex;gap:20px}.foot-legal a{color:var(--faint);text-decoration:none}.foot-legal a:hover{color:var(--gold)}
-@media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr;gap:30px}}
-@media(max-width:520px){.foot-grid{grid-template-columns:1fr}}
-
 /* ---------- reveal on scroll ---------- */
 .rise{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
 .rise.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.rise{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+/* ⛔⛔⛔ THE FOOTER'S RULES ARE NOT HERE ANY MORE — 17 August 2026 (D290).
+   They live in `assets/footer.css`, which build_pages.py generates from index.html's own
+   <style> block, and every page that links this sheet links that one after it.
+   ⚠️ THIS FILE USED TO CARRY 18 FOOTER RULES AGAINST THE LANDING PAGE'S 93, and the client's
+   report was the result: *"the inner pages footer on mobile doesn't look like the hero section
+   foot on mobile."* Two sheets describing one component is how they drift, and they had.
+   ⛔ Do not add a `.foot-*` rule here. Change the landing page and re-run build_pages.py. */

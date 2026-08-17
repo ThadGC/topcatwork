@@ -34,6 +34,7 @@ def _sig(path):
 
 _HERE_SIG = pathlib.Path(__file__).resolve().parent
 SVC_SIG = _sig(_HERE_SIG / "service.css")
+FOOT_SIG = _sig(_HERE_SIG.parent / "assets" / "footer.css")
 
 
 # ---- production origin used for canonical + Open Graph + JSON-LD urls.
@@ -418,48 +419,47 @@ def nav_html():
   <a class="bar-cta" href="/contact/">Get a quote</a>
 </header>"""
 
+# ⭐⭐⭐ THE FOOTER IS LIFTED FROM index.html, NOT WRITTEN AGAIN HERE — 17 Aug 2026 (D290).
+# Client: *"the inner pages footer on mobile doesn't look like the hero section foot on mobile.
+# Just make sure that the footer are consistent on every device all across the site, the same as
+# on the landing page."*
+# ⛔⛔ THREE BUILDERS EACH CARRIED THEIR OWN HAND-WRITTEN FOOTER and all three had drifted: the
+# landing footer is 4497 characters, these were 1928 (services, stones) and 1755 (the SEO layer,
+# which used `class="foot"` instead of `class="site"` and so missed every `#footer` rule in the
+# stylesheet). `build_pages.py` has always LIFTED it for the seven internal pages, which is why
+# those seven were the only ones that matched. Now everything does.
+# ⚠️ SAFE TO LIFT VERBATIM AT ANY DEPTH: every href in it is root-relative or absolute — checked,
+# there is not one relative path — and its only image is /assets/brand/topcat-vertical.svg.
+def _footer_from_index():
+    import pathlib as _p
+    src = (_p.Path(__file__).resolve().parent.parent / "index.html").read_text(encoding="utf-8")
+    i = src.index('<footer class="site"')
+    j = src.index("</footer>", i) + len("</footer>")
+    return src[i:j]
+
+
+FOOTER_HTML = _footer_from_index()
+
+# ⭐⭐ AND THE FOOTER'S OWN SCRIPT COMES WITH IT. On the tablet the Area and Hours blocks move out
+# of the contact column into `.foot-tail`, and there is no CSS property that re-parents a node
+# (D200) — so the landing page does it in JS. These pages do NOT load `assets/site.js`, which is
+# the whole 509 KB landing bundle and has no business on a stone page, so the fifteen lines that
+# matter are inlined instead. ⛔ Without this the footer LOOKS right and then rearranges wrongly
+# the moment the window is a tablet.
+# ⚠️ It reads `--footTail` off the stylesheet rather than deciding for itself what a tablet is —
+# a matchMedia here would be a second opinion, and the two would disagree at the edge.
+FOOT_JS = ("<script>(function(){var f=document.querySelector('#footer')||document.querySelector('footer'),"
+           "t=document.getElementById('footTail'),c=document.querySelector('.foot-contact'),"
+           "a=document.querySelector('.foot-c-area'),h=document.querySelector('.foot-c-hours');"
+           "if(!f||!t||!c||!a||!h)return;function p(){var on=getComputedStyle(f)"
+           ".getPropertyValue('--footTail').trim()==='on',host=on?t:c;"
+           "if(a.parentElement!==host){host.appendChild(a);host.appendChild(h);}}"
+           "p();window.addEventListener('resize',p,{passive:true});})();</script>")
+
 
 def footer_html():
-    return f"""<footer class="site">
-  <div class="foot-grid">
-    <div class="foot-brand">
-      <a class="brand brand-stack" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO_STACK}</a>
-      <p class="foot-tag">Bespoke stone worktops, templated, fitted and guaranteed by one team.</p>
-      <span class="foot-stars"><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 &middot; Google reviews</span>
-    </div>
-    <div class="foot-col">
-      <div class="foot-k">Explore</div>
-      <ul>
-        <li><a href="/services/">Services</a></li>
-        <li><a href="/projects/">Projects</a></li>
-        <li><a href="/stones/">Stones</a></li>
-        <li><a href="/estimate/">Estimate</a></li>
-        <li><a href="/about/">About us</a></li>
-        <li><a href="/trade/">For the trade</a></li>
-      </ul>
-    </div>
-    <div class="foot-col">
-      <div class="foot-k">Browse</div>
-      <ul>
-        <li><a href="/materials/">Materials</a></li>
-        <li><a href="/guides/">Worktop guides</a></li>
-        <li><a href="/worktops/">Areas we cover</a></li>
-        <li><a href="/index.html#faq">FAQ</a></li>
-      </ul>
-    </div>
-    <div class="foot-col foot-contact">
-      <div class="foot-k">Contact</div>
-      <div><span class="foot-ck">Phone</span><a class="foot-cv" href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></div>
-      <div><span class="foot-ck">Email</span><a class="foot-cv" href="mailto:{EMAIL}">{EMAIL}</a></div>
-      <div><span class="foot-ck">Area</span><span class="foot-cv">{AREA}, plus nationwide templating</span></div>
-      <div><span class="foot-ck">Hours</span><span class="foot-cv">{HOURS}</span></div>
-    </div>
-  </div>
-  <div class="foot-bar">
-    <span>&copy; 2026 Topcat Worktops Ltd. All rights reserved.</span>
-    <div class="foot-legal"><a href="/contact/">Get a quote</a><a href="/index.html#faq">FAQ</a><a href="/sitemap.html">Sitemap</a></div>
-  </div>
-</footer>"""
+    return FOOTER_HTML + FOOT_JS
+
 
 
 # ⛔ V2 IS GONE (client, 10 Aug 2026): "completely remove version two and everything about
@@ -591,6 +591,7 @@ def page(s):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="service.css{SVC_SIG}">
+<link rel="stylesheet" href="/assets/footer.css{FOOT_SIG}">
 {jsonld(s)}
 </head>
 <body>
