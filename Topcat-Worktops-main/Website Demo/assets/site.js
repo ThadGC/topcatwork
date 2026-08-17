@@ -2876,6 +2876,9 @@ function gridLayout(){
        one distance is exactly how the peek and the drag come apart. */
     soloR=soloRadius(cellW);
     soloOff=Math.round(soloStep(soloR));
+    /* ⭐ AND THE GAP'S MIDPOINT GOES OUT TOO (D286), so the pager can sit in it without the
+       stylesheet holding a second opinion about where the cards are. */
+    revSection.style.setProperty('--revPagerX',soloGapX(soloR,cellW).toFixed(1)+'px');
     gridSlots=revNodes.map(()=>({x:0,y:0,s:GS}));
     soloPlace(0,true);
     dots.forEach(d=>d.classList.remove('on'));
@@ -3071,6 +3074,23 @@ function soloRadius(cellW){
   const C=cellW*SOLO_NS*Math.cos(a)/2;             // the turned neighbour's own projected half-width
   const den=SOLO_P*Math.sin(a)-E*(1-Math.cos(a));
   return den>1 ? SOLO_P*(E+C)/den : cellW*2;
+}
+/* ⭐⭐⭐ WHERE THE GAP BETWEEN THE CENTRE CARD AND A NEIGHBOUR ACTUALLY IS, ON SCREEN — 17 Aug
+   2026 (D286). The pager arrow wants the MIDDLE of that gap, and there is only one honest way to
+   get it: the neighbour rides a 3D drum under perspective, so its inner edge is a PROJECTED
+   position, not `card/2 + gap`. Measured at 900px, the visible gap is 31.5px where SOLO_GAP says
+   12 — the flat arithmetic is out by a factor of two and a half.
+   ⛔ `cellW` IS ALREADY THE ON-SCREEN WIDTH (`cw * GS` in gridLayout), and `scale()` is the
+   INNERMOST transform, so the edge below is in the space the drum then turns. The centre card is
+   at 0deg, where the projection is identity, so its own edge is simply cellW/2.
+   ⚠️ This is the same projection `soloRadius` inverts. Verified against the rendered rects: it
+   returns the neighbour's inner edge at 233.2 where the browser puts it at 233.4. */
+function soloGapX(R,cellW){
+  const a=SOLO_ANG*Math.PI/180;
+  const px=-cellW*SOLO_NS/2;                       // the neighbour's inner edge, in its own scaled space
+  const x1=px*Math.cos(a)+R*Math.sin(a);
+  const z1=-px*Math.sin(a)+R*Math.cos(a);
+  return (cellW/2 + x1*SOLO_P/(SOLO_P+R-z1))/2;    // midway between the two edges
 }
 /* how far one step of the drum actually moves a card ACROSS THE SCREEN. The drag divides by this
    to turn finger px into steps, so a swipe tracks the rim 1:1 rather than at some ratio of it. */

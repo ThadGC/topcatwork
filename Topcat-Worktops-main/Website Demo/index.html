@@ -1945,32 +1945,35 @@
      the card stops being centred between its own copy. Measured before: 30px above, 110px below.
      ============================================================================ */
   #reviews.rev-solo{--revPagerH:0px}
-  /* ⭐ **THE GUTTER IS 22px AND IT IS NOT A FIXED NUMBER** — it is the peek, and it comes out of
-     `--revScale`, which gridLayout() measures and publishes. The card is transform-scaled inside
-     the deck, so it sits `deckW × (1 − scale) / 2` in from each deck edge, and the visible gap
-     between it and the neighbour behind it is that inset. The arrow wants the MIDDLE of that gap:
-     the deck's own offset inside the stage, plus half the inset, less half the arrow.
-     ⛔ A hard `left:20px` was measured and rejected — correct at 375px, but the inset scales with
-     the card, so on a 320px handset the same 20px lands ON the card instead of beside it. */
+  /* ⭐⭐⭐ **THE ARROW SITS IN THE EXACT MIDDLE OF THE GAP, AND THE LAYOUT MEASURES WHERE THAT IS.**
+     `--revPagerX` is published by gridLayout(): `soloGapX()` projects the neighbour's inner edge
+     through the same drum transform the renderer uses, and hands back the midpoint between it and
+     the centre card's edge. The stage and the deck are concentric, so `50% ± --revPagerX` is the
+     gap at any width.
+     ⛔⛔ **THIS REPLACED AN EXPRESSION BUILT OUT OF `--revScale` — 17 Aug 2026 (D286) — AND THE OLD
+     ONE WAS A SECOND OPINION ABOUT WHERE THE CARDS ARE.** It reconstructed the peek from the card
+     scale (`deckW × (1 − scale) / 2`) and placed the arrow in the middle of THAT, which was right
+     on a phone and collapsed on the tablet, where the scale measures 1.0000 and the whole term
+     goes to zero: the arrow landed 13px INSIDE the quote. ⚠️ It was also 2.59px off centre on the
+     phone, because the drum's perspective means the visible gap is not the flat arithmetic — 21.3px
+     against the 12 `SOLO_GAP` states. **One distance, one derivation, and it is the one the cards
+     themselves are placed by.** ⛔ Do not re-introduce a hand-typed offset here; it cannot survive
+     a change to SOLO_GAP, SOLO_NS or SOLO_ANG, and none of those are constants a future round
+     would think to check. */
   #reviews.rev-solo .rev-page{
-    top:50%;bottom:auto;transform:translateY(-50%);
+    top:50%;bottom:auto;transform:translate(-50%,-50%);
     width:26px;height:44px;border-radius:0;
     /* ⛔ ALL THE BUTTON CHROME GOES. The base rule is a 46px filled disc with a hairline border
        and a backdrop blur — that is a control, and he asked for a hint. What is left is the
-       glyph. */
+       glyph. ⚠️ D282 put the disc back on the tablet and he reversed it the next day: *"in
+       circles, which it's not supposed to be."* This block dresses BOTH bands. */
     background:none;border:0;-webkit-backdrop-filter:none;backdrop-filter:none;
     color:var(--gold);opacity:.42;
   }
   #reviews.rev-solo .rev-page.prev{
-    left:calc((100% - min(86vw, var(--revCardW))) / 2
-              + (min(86vw, var(--revCardW)) * (1 - var(--revScale,1))) / 4 - 13px);
-    right:auto;margin-left:0;
-  }
+    left:calc(50% - var(--revPagerX,64px));right:auto;margin-left:0}
   #reviews.rev-solo .rev-page.next{
-    right:calc((100% - min(86vw, var(--revCardW))) / 2
-               + (min(86vw, var(--revCardW)) * (1 - var(--revScale,1))) / 4 - 13px);
-    left:auto;margin-right:0;
-  }
+    left:calc(50% + var(--revPagerX,64px));right:auto;margin-right:0}
   /* thin and small: a chevron at 2px would read as a button glyph, at 1.6px it reads as a mark */
   #reviews.rev-solo .rev-page svg{width:15px;height:15px;stroke-width:1.6}
   /* ⚠️ `:hover` on the base rule repaints these gold-on-gold; harmless on a phone, but the
@@ -7672,40 +7675,18 @@
 
     .wy-p img{object-position:50% 88%}
 
-    /* ⭐⭐⭐ THE REVIEW PAGER IS A BUTTON AGAIN HERE, AND IT IS CLEAR OF THE CARD — 16 Aug 2026
-       (D282). Client: *"the arrows between the reviews have to be better on tablet."*
-       ⛔⛔⛔ **THE BUG IS THAT THE PHONE'S ARROW POSITION ASSUMES A GUTTER THIS BAND DOES NOT
-       HAVE.** `.rev-solo`'s `left` is built out of `--revScale`: the card is transform-scaled
-       inside the deck, so it sits `deckW x (1 - scale) / 2` in from the edge and the arrow is
-       placed in the MIDDLE of that inset. **On the tablet `--revScale` measures 1.0000** — there
-       is no scale-down, so the inset is zero and the whole expression collapses to
-       `cardLeft - 13px`. Measured at 900x1000: card left **248.1**, arrow spanning **235.1 to
-       261.1** — thirteen pixels of it sitting ON the quote. It is not a styling complaint, the
-       glyph is in the wrong place.
-       ⭐⭐ **AND A BARE CHEVRON WAS A PHONE DECISION, NOT A SITE ONE (D93** — *"he asked for a
-       hint"*, and on a 375px screen a 46px disc beside a card that fills the screen is a control
-       shouting over the content). This band has 210px of empty margin on each side of the card,
-       where a hint reads as a stray mark. **§2 rule 11's own carve-out applies: a CONTROL IS NOT
-       A MARK, and every arrow control on this site is a circle** — the lightbox pair, the stone
-       wheel's pair, the helix pair that D273 put back into `.wbtn`. So the base `.rev-page` disc
-       comes back, at 46px, which is also a real touch target.
-       ⭐ The offset is `-60px`: the 46px button plus a 14px gap, measured OUT from the card's own
-       left edge rather than in from the stage's, so it holds wherever `--revCardW` lands. */
-    #reviews.rev-solo .rev-page{
-      width:46px;height:46px;border-radius:50%;
-      background:rgba(8,8,10,0.55);border:1px solid var(--hair);color:var(--bone);
-      -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-      opacity:1;
-    }
-    #reviews.rev-solo .rev-page svg{width:18px;height:18px;stroke-width:1.8}
-    #reviews.rev-solo .rev-page.prev{
-      left:calc((100% - min(86vw, var(--revCardW))) / 2 - 60px);right:auto;margin-left:0}
-    #reviews.rev-solo .rev-page.next{
-      right:calc((100% - min(86vw, var(--revCardW))) / 2 - 60px);left:auto;margin-right:0}
-    #reviews.rev-solo .rev-page:hover{border-color:var(--gold);color:var(--gold)}
-    /* ⚠️ not the base 0.22: at 46px on a dark ground that reads as a smudge rather than an
-       end-of-run arrow. The phone holds its own floor at .16 for the same reason. */
-    #reviews.rev-solo .rev-page:disabled{opacity:.3;border-color:var(--hair);color:var(--bone)}
+    /* ⭐⭐⭐ THE TABLET'S PAGER NEEDS NO RULE OF ITS OWN — 17 Aug 2026 (D286), AND THAT IS THE
+       FIX. ⛔⛔ **THIS REVERSES D282, WHICH WAS YESTERDAY.** The arrows were landing ON the quote,
+       which was real: `.rev-solo` placed them from `--revScale`, and on this band that measures
+       1.0000, so the expression collapsed to `cardLeft - 13px`. ⛔ **WHAT D282 GOT WRONG WAS THE
+       ANSWER** — it dressed them as the site's round `.wbtn` on the argument that every other
+       arrow on the site is a circle. Client: *"you added two arrows... in circles, which it's not
+       supposed to be. It's supposed to look like the two golden arrows... in the exact center
+       between the two cards, like it is on mobile."*
+       ⭐⭐ **SO THE POSITION WAS FIXED AT THE SOURCE INSTEAD**, in the shared `.rev-solo` block, and
+       every override this band was carrying is deleted. `.rev-solo` is a CLASS, not a media query,
+       so the tablet simply wears the phone's own bare chevron — 26x44, no disc, no border, gold at
+       0.42 — with nothing here restating it. One dress, one position, two bands. */
   }
 
 </style>
@@ -12311,6 +12292,9 @@ function gridLayout(){
        one distance is exactly how the peek and the drag come apart. */
     soloR=soloRadius(cellW);
     soloOff=Math.round(soloStep(soloR));
+    /* ⭐ AND THE GAP'S MIDPOINT GOES OUT TOO (D286), so the pager can sit in it without the
+       stylesheet holding a second opinion about where the cards are. */
+    revSection.style.setProperty('--revPagerX',soloGapX(soloR,cellW).toFixed(1)+'px');
     gridSlots=revNodes.map(()=>({x:0,y:0,s:GS}));
     soloPlace(0,true);
     dots.forEach(d=>d.classList.remove('on'));
@@ -12506,6 +12490,23 @@ function soloRadius(cellW){
   const C=cellW*SOLO_NS*Math.cos(a)/2;             // the turned neighbour's own projected half-width
   const den=SOLO_P*Math.sin(a)-E*(1-Math.cos(a));
   return den>1 ? SOLO_P*(E+C)/den : cellW*2;
+}
+/* ⭐⭐⭐ WHERE THE GAP BETWEEN THE CENTRE CARD AND A NEIGHBOUR ACTUALLY IS, ON SCREEN — 17 Aug
+   2026 (D286). The pager arrow wants the MIDDLE of that gap, and there is only one honest way to
+   get it: the neighbour rides a 3D drum under perspective, so its inner edge is a PROJECTED
+   position, not `card/2 + gap`. Measured at 900px, the visible gap is 31.5px where SOLO_GAP says
+   12 — the flat arithmetic is out by a factor of two and a half.
+   ⛔ `cellW` IS ALREADY THE ON-SCREEN WIDTH (`cw * GS` in gridLayout), and `scale()` is the
+   INNERMOST transform, so the edge below is in the space the drum then turns. The centre card is
+   at 0deg, where the projection is identity, so its own edge is simply cellW/2.
+   ⚠️ This is the same projection `soloRadius` inverts. Verified against the rendered rects: it
+   returns the neighbour's inner edge at 233.2 where the browser puts it at 233.4. */
+function soloGapX(R,cellW){
+  const a=SOLO_ANG*Math.PI/180;
+  const px=-cellW*SOLO_NS/2;                       // the neighbour's inner edge, in its own scaled space
+  const x1=px*Math.cos(a)+R*Math.sin(a);
+  const z1=-px*Math.sin(a)+R*Math.cos(a);
+  return (cellW/2 + x1*SOLO_P/(SOLO_P+R-z1))/2;    // midway between the two edges
 }
 /* how far one step of the drum actually moves a card ACROSS THE SCREEN. The drag divides by this
    to turn finger px into steps, so a swipe tracks the rim 1:1 rather than at some ratio of it. */
