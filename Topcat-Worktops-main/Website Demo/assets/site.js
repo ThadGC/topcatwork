@@ -931,7 +931,26 @@ if(svcReduce){
      ⚠️ The geometry below is written from `items.length`, so it absorbed six → seven → eight
      with no tuning; the "60° apart" in the comment above is 6-service arithmetic and the code
      computes 360/N. */
-  const ORDER=SERVICES.map((_,i)=>i);
+  /* ⭐⭐ **COMMERCIAL AND BATHROOMS TRADE PLACES, IN THE HELIX ONLY — 17 Aug 2026 (D309).**
+     Client: *"in the slab helix where the commercial card is with a new image, I want you to
+     switch positions commercial with bathrooms. So in the helix, it will have kitchens as the
+     number one, and then above that will be splashbacks, and below that will say bathrooms"*, and
+     then, unprompted: *"I've only ordered that way in the helix. Don't have to change anything
+     else in any of the other devices."*
+     ⭐ **MEASURED BEFORE TOUCHING IT**, because a drum's "above" and "below" are not obvious from
+     the source order. Reading the eight cards' actual y-centres at 1440 gave, top to bottom:
+     Fireplaces, Outdoor, Bathrooms, Splashbacks, **Kitchen Worktops (front)**, Commercial, Vanity
+     Tops, Dining Tables. So Splashbacks was already where he wants it and **Commercial held the
+     slot directly under the front** — swapping array slots 2 and 7 is the whole change.
+     ⛔ **THIS IS A LOCAL PERMUTATION, NOT A RE-ORDERED `SERVICES`.** The array itself is read BY
+     POSITION by two other things — the phone grid's arrangement and the project gallery, which
+     captions its first four photographs from `SERVICES[0..3]` — so moving it would re-spin the
+     phone and swap the gallery's captions out from under its pictures. His "nothing else on the
+     other devices" is satisfied by construction: this list lives inside the helix IIFE.
+     ⚠️ **THE HELIX'S OWN NAV FOLLOWS IT**, because the buttons are built from this same list one
+     loop below — which is the file's stated principle (one order, declared once, no second list to
+     drift). D206's popularity order still governs the phone grid and every other surface. */
+  const ORDER=[0,1,7,3,4,5,6,2];
   const items=ORDER.map(i=>SERVICES[i]);
   const N=items.length;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;

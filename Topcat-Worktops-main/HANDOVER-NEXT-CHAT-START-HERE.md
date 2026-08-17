@@ -1,6 +1,6 @@
-# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D307)
+# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D309)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D307**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D309**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which covered the directors, the
@@ -31,7 +31,7 @@ the non-weld branch only; `span`/`step` and the whole weld branch untouched.
 
 ---
 
-## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D307)
+## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D309)
 
 Two instructions, the audit and then the composition round: *"make sure the About Us pages are
 perfect throughout everything... every inner page designed very nicely... do a full audit... things
@@ -77,6 +77,10 @@ D306  EVERY section subtitle is white — and that fixed a bug I shipped at
 D307  the quote card is centred in the margin (and the grid was 60px out of
       line with every other section), starts level with the first line of
       copy, and its copy no longer promises a quote-by-email process
+D308  About copy measure 52ch -> 47ch so it stops short of the weld's seam,
+      and the title gap 9.9 -> 27px. ⚠️ The first attempt was DEAD — see below
+D309  Commercial and Bathrooms swap slots in the HELIX ONLY (a local ORDER
+      permutation; the SERVICES array is read by position elsewhere)
 ```
 
 ### What the audit scanned and found CLEAN (do not re-scan without cause)
@@ -188,6 +192,13 @@ newer instruction. `.section-sub`, `.faq-sub` and the generated `.block .sub` al
 `.weld-about` lives in `#weldStage`, so `#about .about-copy .section-sub` never matched it — the
 clone stayed grey while the real section was white, and the hand-over read as the text changing
 colour on screen. **Anything the weld carries must be styled by CLASS.**
+
+⚠️⚠️ **AND THE MIRROR OF THAT TRAP, ONE HOUR LATER (D308): THE ABOUT COPY'S REAL RULES ARE
+`#about .section-sub,.weld-about .section-sub` AND THEY ALREADY CARRY THE CLONE.** A new
+`.about-copy .section-sub` rule looks right and is DEAD — the id-scoped pair is later in the file
+and wins. **Check what governs a value (read the computed number) before adding a rule for it.**
+Search `#about .section-sub` — the measure lives at base, the title gap in the ≥1121 block as
+`#about .section-title + .section-sub`.
 
 ---
 
