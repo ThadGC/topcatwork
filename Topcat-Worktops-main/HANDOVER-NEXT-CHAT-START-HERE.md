@@ -1,6 +1,6 @@
-# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D302)
+# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D303)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D302**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D303**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which covered the directors, the
@@ -31,7 +31,7 @@ the non-weld branch only; `span`/`step` and the whole weld branch untouched.
 
 ---
 
-## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D302)
+## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D303)
 
 Two instructions, the audit and then the composition round: *"make sure the About Us pages are
 perfect throughout everything... every inner page designed very nicely... do a full audit... things
@@ -65,6 +65,8 @@ D300  THE INNER PAGES GET A SECOND COLUMN with a sticky quote card — see §2b
 D301  About copy 6 paragraphs -> 5, 178 words -> 139, and the freed height is
       SPENT on the two gaps he named rather than quietly shrinking the section
 D302  Rimsha re-cut further back, hairline gap 13px -> 5.7px; ?v= bumped to 4
+D303  phone + tablet centre BELOW the bar (the opposite of the desktop, and
+      both are right — see §2a); hero subtitle is full --bone at every band
 ```
 
 ### What the audit scanned and found CLEAN (do not re-scan without cause)
@@ -111,9 +113,16 @@ constraint runs with viewport HEIGHT and a constant is wrong in both directions.
 72px where the phone renders 38). ⚠️ `#hero .hero-inner` in the ≤1120 block out-specifies a bare
 `.hero-inner` in the phone block — an edit written there does nothing.
 
-**Measured:** 1440×900 **0.00px** imbalance · 375×812 **0.00** · 900×1000 **0.00** · 390×676
-**3.0** · 1024×768 **2.5** · 375×667 **38** (the one window where the floor deliberately holds it
-low). Cap clearance below the bar never under 10px.
+⭐⭐⭐ **AND THE TWO BANDS CENTRE ON DIFFERENT FRAMES — D303, ONE DAY LATER, ON HIS INSTRUCTION.**
+The desktop reads from **y=0** (the bar is transparent glass over the photograph, 8.7% of the
+hero). The phone and tablet centre **below the bar**, which carries `+ var(--barH)` in their
+relation: there the same bar is **12%** of a shorter hero and holds the logo and burger, so it is
+furniture and the title must not crowd it. ⭐ It also dissolved the one window D297 could not
+solve — at 375x667 the block can no longer walk into the bar, so the floor stops binding.
+
+**Measured after D303** (cap to chips, against the bar's foot and the hero's):
+1440×900 **0.00** from y=0 · 390×676 **59.8 / 61.3** · 375×667 **60.6 / 62.1** ·
+1024×768 **58.8 / 60.3** · 900×1000 **155.1 / 156.6** — every mobile band even to 1.5px.
 
 ---
 

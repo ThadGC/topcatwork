@@ -4083,7 +4083,14 @@
      ⛔ **DO NOT "TIDY" THE CAP AWAY.** Without it the line is one 796px run inside a 1040px box,
      which is the arrangement he has now looked at and rejected. ⚠️ And a cap much tighter than
      56ch would stop breaking after "fitted by us" and strand a word instead. */
-  .hero-sub{color:rgba(244,241,234,0.9);font-size:clamp(16px,min(1.42vw,2.3vh),19.5px);
+  /* ⭐ **THE SUBTITLE IS WHITE AT EVERY BAND — 17 Aug 2026 (D303).** Client: *"where it says
+     quartz granite and marble worktops, chosen with you and fitted by our own team, that must be
+     white text. Same on tablet and same on desktop."* It was bone at 90%, which is the site's
+     softened body tone; at full `--bone` it reads as the headline's own colour rather than a
+     dimmer note under it. ⭐ Base scope on purpose — one declaration, all three bands, which is
+     exactly what he asked for. ⚠️ It only IMPROVES the hero contrast the veil was tuned around
+     (D284), so no re-measure of the shade is owed. */
+  .hero-sub{color:var(--bone);font-size:clamp(16px,min(1.42vw,2.3vh),19.5px);
     font-weight:300;line-height:1.58;margin-bottom:clamp(24px,3.8vh,44px);
     max-width:56ch;margin-inline:auto}
   .hero-sub .nowrap{white-space:nowrap}
@@ -7508,8 +7515,22 @@
        rule, four blocks up), so subtracting `var(--hTitle) * 0.1234` over-corrected by 4.2px on
        every handset. Read the size the band really uses. ⚠️ With the hero's short-window height
        above, this floor now binds only below ~640px of viewport. */
+    /* ⛔⛔ **THE PHONE CENTRES BELOW THE BAR, NOT ON THE WHOLE FRAME — 17 Aug 2026 (D303), AND
+       THAT IS THE OPPOSITE OF THE DESKTOP ON PURPOSE.** Client: *"on mobile, the title is slightly
+       too close to the navbar. So we need to move a little bit down and space things out correctly
+       so that everything is spaced out evenly."*
+       ⭐⭐ **THE BAR IS NOT THE SAME OBJECT AT THE TWO WIDTHS.** On the desktop it is 78.5px of
+       glass across 900 of hero, 8.7%, with the photograph running under it — which is why D297
+       reads the frame from y=0 there, on his instruction. On a 676-tall handset it is 80px of a
+       660px hero, **12%**, and it carries the logo and the burger: it is furniture, and a title
+       tucked 22px under it crowds them. ⭐ So the `+ var(--barH)` term comes BACK here and only
+       here, which centres the composition in the frame the reader actually sees. Measured on his
+       own 390x676: the block moves down 38.5px, the title clears the bar by **60.6px** instead of
+       22.1, and the gaps above and below it are equal to the pixel.
+       ⚠️ The floors stay as a backstop but no longer bind — they existed to stop the title reaching
+       the bar, and centring below it cannot. */
     #hero .hero-inner{
-      padding-top:max(calc(120px - 12vh), calc(clamp(40px,6vh,72px)
+      padding-top:max(calc(120px - 12vh), calc(clamp(40px,6vh,72px) + var(--barH)
                   - clamp(38px,min(4.7vw,8.6vh),64px) * 0.1234));
       padding-bottom:clamp(40px,6vh,72px)}
     #hero .hero-copy{gap:0}
@@ -7629,8 +7650,12 @@
        and the phone takes the relation on its own floor. ⚠️ If he asks for the tablet too, the fix
        is not a floor — it is buying height back out of the inter-element gaps, which are his own
        (D174's "even spacing"), so that is a decision to put to him rather than to tune quietly. */
+    /* ⭐ D303 — the tablet takes the same reading as the phone: its bar is furniture too, and
+       centring below it also fixes the tightest window on the site. At 1024x768 the title's
+       clearance goes 20.8 → 59.6px with the gaps still equal. */
     #hero .hero-inner{padding-top:max(calc(132px - 12vh),
-                        calc(clamp(40px,6vh,72px) - clamp(52px,min(7.4vw,9.2vh),72px) * 0.1234))}
+                        calc(clamp(40px,6vh,72px) + var(--barH)
+                        - clamp(52px,min(7.4vw,9.2vh),72px) * 0.1234))}
     /* ⭐⭐ **AND THE LANDSCAPE TABLET BUYS HEIGHT AND SPENDS LESS ON GAPS — 17 Aug 2026 (D297).**
        ⛔⛔⛔ **THIS BAND IS THE TIGHTEST COMPOSITION ON THE SITE AND THE FIRST ATTEMPT BROKE IT:**
        applying the base relation alone put the title cap **11.1px ABOVE the bar's bottom edge** at
