@@ -176,7 +176,15 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
   transition:filter .45s var(--ease),border-color .45s var(--ease);
 }
 .bar-cta:hover{filter:brightness(1.07);border-color:var(--gold-hi)}
-@media(max-width:960px){nav.top{display:none}}
+/* ⭐⭐ THE BURGER ARRIVES ON THE GENERATED PAGES — 17 Aug 2026 (D295), §13 item 7. This hide
+   used to sit at 960 with NOTHING replacing the links: below it a phone visitor's only door was
+   "Get a quote". The burger + overlay now come from the landing page (markup lifted by the
+   builders, rules in the generated /assets/nav.css), so this breakpoint moves to 1120 to MATCH
+   the burger's own — one bar state per width, same as the landing (D235: wherever the burger
+   is, the bar is logo + burger). ⛔ Do not re-split these breakpoints: 961-1120 showing links
+   with no burger, or both at once, is the drift this closes. */
+@media(max-width:1120px){nav.top{display:none}}
+@media(max-width:1120px){header.bar .bar-cta{display:none}}
 
 /* ---------- buttons ---------- */
 .btn-gold,.btn-ghost{

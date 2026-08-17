@@ -4,7 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quartz, Granite &amp; Marble Worktops | London &amp; the Home Counties | Topcat</title>
-<meta name="description" content="Bespoke quartz, marble and granite worktops, chosen from the slab, templated to the millimetre and fitted in days. Serving St Albans, Hertfordshire and London.">
+<meta name="description" content="Bespoke quartz, marble and granite worktops, chosen from the slab, templated to the millimetre and fitted in days. Free home visit across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire &amp; Bedfordshire.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Quartz, Granite &amp; Marble Worktops | London &amp; the Home Counties | Topcat">
+<meta property="og:description" content="Bespoke quartz, marble and granite worktops, chosen from the slab, templated to the millimetre and fitted in days. Free home visit across London and the Home Counties.">
+<meta property="og:url" content="https://www.topcatworktops.co.uk/">
+<meta property="og:site_name" content="Topcat Worktops">
+<meta property="og:image" content="https://www.topcatworktops.co.uk/assets/site/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <!-- The real icon, squared off so it fills the 16px box rather than sitting in it with air on
      two sides. ⚠️ It is a FILE now, not a data-URI: the old one pasted the hand-rebuilt mark
      into the head of all 155 pages, which is 155 copies of a drawing to correct next time. -->
@@ -2379,7 +2388,16 @@
     }
     #services .services-grid .svc .front-text{padding:10px}
     #services .services-grid .svc .desc{display:none}
-
+    }
+    /* ⭐⭐ **THE FIVE RULES BELOW LEFT THE PHONE BLOCK ON 17 Aug 2026 (D293) — THE 13-AUG RULING
+       REACHES THE TABLET NOW.** They were written inside `@media(max-width:600px)`, which predates
+       the tablet round, so the tablet's grid kept the base `opacity:0.5` and the client's own
+       "full brightness" ruling stopped at the phone (§13 item 8: one line). His 13-Aug words even
+       offered the name move "on mobile AND ON TABLET". The phone block is CLOSED above and
+       RE-OPENED after these five rules, so they widen to ≤1120 with ONE definition — the D290
+       footer lesson: two copies of a component's rules is how they drift. ⛔ The desktop helix
+       (≥1121) keeps its own veiled-back look; it was never part of the complaint. */
+    @media(max-width:1120px){
     /* ⭐⭐ **THE TILE PHOTOGRAPHS COME UP TO FULL BRIGHTNESS — 13 Aug 2026.** Client: "there is
        some sort of dark radiant across each one of the blocks… I want the images to be full
        brightness, but the wording must still be clear on it."
@@ -2451,7 +2469,8 @@
        solving this on the type instead of on the scrim. */
     #services .services-grid .svc .idx{
       text-shadow:0 1px 2px rgba(0,0,0,0.96),0 0 9px rgba(0,0,0,0.88),0 2px 14px rgba(0,0,0,0.70)}
-
+    }
+    @media(max-width:600px){
     /* ⭐ THE BLOCKS COME TOGETHER. Client, correcting a first attempt that rotated them like
        doors: "I did not tell you to make it look like doors, I told you the animation. The
        blocks were supposed to look pretty much the same as they did before, but just come
@@ -8298,7 +8317,7 @@
   <section class="section mode-grid" id="reviews">
     <div class="section-head rise">
       <h2 class="section-title">Hear it from your <em>neighbours</em></h2>
-      <p class="section-sub">Real, unedited Google reviews from across London, Hertfordshire, Essex and Berkshire, rated 5.0 across the board.</p>
+      <p class="section-sub">Real, unedited Google reviews from across London and the Home Counties, rated 5.0 across the board.</p>
     </div>
     <div class="rev-stage" id="revStage">
       <div class="rev-deck" id="revDeck"></div>
@@ -16605,7 +16624,21 @@ function viewSequence(host,tiles,apply,opts){
      collage with no pin at all, and the frozen bands must not be re-clocked, so the test is the
      weld's own three conditions: desktop width, motion allowed, and `#process` on the page.
      ⚠️ It is read ONCE at load, like every other option here — a window dragged from desktop to
-     tablet keeps the weld clocking until the next reload. */
+     tablet keeps the weld clocking until the next reload.
+     ⛔⛔⛔ **AND THE NON-WELD CLOCK HAD TO MOVE TOO — 17 Aug 2026 (D291).** Client, on /about/:
+     *"Why can I see Nick and Rimsha's photos on the landing page, but not on the inner about
+     us page?"* **He could not see them because the clock hid them, not because they were
+     missing** — the markup, the files and the live host all checked current. The 6 Aug numbers
+     (`end:0.02, scrub:0.062`) were tuned when the portraits sat EARLY in the build; D279 moved
+     the pair to the FOOT of the DOM, so the two most important tiles became the 0.56–0.98 tail
+     of a playhead that only reaches 1 once the collage top is 18px from the viewport top, then
+     settles for ~44 more frames. On /about/, where this clock always runs (no #process), the
+     directors finished thousands of pixels after the collage had left the screen: two dark
+     slots at every reading pace. `end` 0.02 → **0.20** lands progress 1 while the pair's own
+     band is still on screen at 1440 AND inside the 721–1120 band, and `scrub` 0.062 → **0.14**
+     halves the settle so the lag does not push the landing off-screen again. ⚠️ `span`/`step`
+     — the choreography the client approved — are untouched, and the phone still receives the
+     lower tiles pre-built below the fold, which it always did. */
   const weldClock=window.matchMedia('(min-width:1121px)').matches
     && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
     && !!document.getElementById('process');
@@ -16618,7 +16651,7 @@ function viewSequence(host,tiles,apply,opts){
                        '('+((1-e)*h.deg).toFixed(2)+'deg)';
     el.style.opacity=Math.min(1,e*2.1).toFixed(3);
   },weldClock?{start:1.21,end:0.576,span:0.42,step:0.112,scrub:0.26}
-             :{start:0.94,end:0.02,span:0.42,step:0.112,scrub:0.062});
+             :{start:0.94,end:0.20,span:0.42,step:0.112,scrub:0.14});
 })();
 
 /* ---------- THE WELD: About closes over Process like two slabs — 16 Aug 2026 (D269) ----------

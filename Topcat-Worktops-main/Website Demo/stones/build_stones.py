@@ -46,6 +46,7 @@ def _sig(path):
 _HERE_SIG = pathlib.Path(__file__).resolve().parent
 SVC_SIG = _sig(_HERE_SIG.parent / "services" / "service.css")
 FOOT_SIG = _sig(_HERE_SIG.parent / "assets" / "footer.css")
+NAV_SIG = _sig(_HERE_SIG.parent / "assets" / "nav.css")
 STONE_SIG = _sig(_HERE_SIG / "stone.css")
 
 from urllib.parse import quote
@@ -369,7 +370,10 @@ def nav_html():
   <a class="brand" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO}</a>
   <nav class="top">{links}</nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
-</header>"""
+  {NAV_BURGER}
+</header>
+{NAV_SHEET}
+{NAV_JS}"""
 
 # ⭐⭐⭐ THE FOOTER IS LIFTED FROM index.html, NOT WRITTEN AGAIN HERE — 17 Aug 2026 (D290).
 # Client: *"the inner pages footer on mobile doesn't look like the hero section foot on mobile.
@@ -413,6 +417,54 @@ def footer_html():
     return FOOTER_HTML + FOOT_JS
 
 
+# ⭐⭐ THE MOBILE NAV IS LIFTED FROM index.html TOO — 17 Aug 2026 (D295), §13 item 7. Below
+# 1121px these pages hid `nav.top` and offered NOTHING in its place: no way off a leaf page on
+# a phone except "Get a quote". The landing page has carried the burger + full-screen overlay
+# since D184, with the D194 submenus the client demanded in his own words ("did I not fucking
+# ask you to create a drop down in the menu?"), so the leaf pages take the SAME component the
+# D290 way: markup lifted from index.html at build time, rules in the generated
+# /assets/nav.css, and the toggle JS inlined below (these pages do not load site.js).
+# ⚠️ ONE REWRITE ON THE LIFT: the overlay's CTA is `href="#cta"` on the landing, and no leaf
+# page carries that id — it becomes /contact/, which is where the leaf bar's own CTA goes.
+def _nav_from_index():
+    import pathlib as _p, re as _re
+    src = (_p.Path(__file__).resolve().parent.parent / "index.html").read_text(encoding="utf-8")
+    i = src.index('<button class="nav-burger"')
+    j = src.index("</button>", i) + len("</button>")
+    burger = _re.sub(r"<!--.*?-->", "", src[i:j], flags=_re.S)
+    i = src.index('<nav class="mobile-nav"')
+    j = src.index("</nav>", i) + len("</nav>")
+    sheet = _re.sub(r"<!--.*?-->", "", src[i:j], flags=_re.S)
+    sheet = sheet.replace('href="#cta"', 'href="/contact/"')
+    # the bar template is an f-string; a stray brace in lifted markup would crash the build
+    assert "{" not in burger and "}" not in burger, "brace in lifted burger markup"
+    assert "{" not in sheet and "}" not in sheet, "brace in lifted overlay markup"
+    return burger, sheet
+
+
+NAV_BURGER, NAV_SHEET = _nav_from_index()
+
+# The landing's burger IIFE, comment-stripped (same treatment as FOOT_JS): toggle + Escape +
+# close-on-link + the D194 caret expansion, one panel open at a time.
+NAV_JS = ("<script>(function(){var b=document.getElementById('navBurger'),"
+          "s=document.getElementById('mobileNav');if(!b||!s)return;"
+          "function o(v){document.documentElement.classList.toggle('nav-open',v);"
+          "b.setAttribute('aria-expanded',v);b.setAttribute('aria-label',v?'Close menu':'Open menu');"
+          "if(!v)c();}"
+          "b.addEventListener('click',function(){o(!document.documentElement.classList.contains('nav-open'));});"
+          "s.addEventListener('click',function(e){if(e.target.closest('a'))o(false);});"
+          "window.addEventListener('keydown',function(e){if(e.key==='Escape')o(false);});"
+          "s.addEventListener('click',function(e){var t=e.target.closest('.mn-toggle');if(!t)return;"
+          "var p=document.getElementById(t.getAttribute('aria-controls'));if(!p)return;"
+          "var open=!p.classList.contains('open');c();"
+          "if(open){p.classList.add('open');p.style.maxHeight=p.scrollHeight+'px';"
+          "t.setAttribute('aria-expanded','true');}});"
+          "function c(){s.querySelectorAll('.mn-sub').forEach(function(p){p.classList.remove('open');p.style.maxHeight='';});"
+          "s.querySelectorAll('.mn-toggle').forEach(function(x){x.setAttribute('aria-expanded','false');});}"
+          "})();</script>")
+
+
+
 
 def head(title, desc, url, extra=""):
     return f"""<meta charset="UTF-8">
@@ -426,6 +478,9 @@ def head(title, desc, url, extra=""):
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{url}">
 <meta property="og:site_name" content="Topcat Worktops">
+<meta property="og:image" content="https://www.topcatworktops.co.uk/assets/site/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -433,6 +488,7 @@ def head(title, desc, url, extra=""):
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/services/service.css{SVC_SIG}">
 <link rel="stylesheet" href="/assets/footer.css{FOOT_SIG}">
+<link rel="stylesheet" href="/assets/nav.css{NAV_SIG}">
 <link rel="stylesheet" href="/stones/stone.css{STONE_SIG}">
 {extra}"""
 
@@ -627,7 +683,8 @@ def collection_page():
     url = f"{BASE}/stones/"
     title = "The Stone Collection | Marble, Quartz & Granite Worktops | Topcat Worktops"
     desc = ("Browse every stone we fit, marble, quartz and granite worktops across London, "
-            "Hertfordshire, Essex and Berkshire. Search by name, filter by material, then "
+            "Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire and "
+            "Bedfordshire. Search by name, filter by material, then "
             "open any stone for the detail and an estimate. Free home visit with samples.")
     graph = [
         {"@type": "CollectionPage", "name": "The Stone Collection", "url": url,

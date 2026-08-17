@@ -2366,7 +2366,16 @@
     }
     #services .services-grid .svc .front-text{padding:10px}
     #services .services-grid .svc .desc{display:none}
-
+    }
+    /* ⭐⭐ **THE FIVE RULES BELOW LEFT THE PHONE BLOCK ON 17 Aug 2026 (D293) — THE 13-AUG RULING
+       REACHES THE TABLET NOW.** They were written inside `@media(max-width:600px)`, which predates
+       the tablet round, so the tablet's grid kept the base `opacity:0.5` and the client's own
+       "full brightness" ruling stopped at the phone (§13 item 8: one line). His 13-Aug words even
+       offered the name move "on mobile AND ON TABLET". The phone block is CLOSED above and
+       RE-OPENED after these five rules, so they widen to ≤1120 with ONE definition — the D290
+       footer lesson: two copies of a component's rules is how they drift. ⛔ The desktop helix
+       (≥1121) keeps its own veiled-back look; it was never part of the complaint. */
+    @media(max-width:1120px){
     /* ⭐⭐ **THE TILE PHOTOGRAPHS COME UP TO FULL BRIGHTNESS — 13 Aug 2026.** Client: "there is
        some sort of dark radiant across each one of the blocks… I want the images to be full
        brightness, but the wording must still be clear on it."
@@ -2438,7 +2447,8 @@
        solving this on the type instead of on the scrim. */
     #services .services-grid .svc .idx{
       text-shadow:0 1px 2px rgba(0,0,0,0.96),0 0 9px rgba(0,0,0,0.88),0 2px 14px rgba(0,0,0,0.70)}
-
+    }
+    @media(max-width:600px){
     /* ⭐ THE BLOCKS COME TOGETHER. Client, correcting a first attempt that rotated them like
        doors: "I did not tell you to make it look like doors, I told you the animation. The
        blocks were supposed to look pretty much the same as they did before, but just come

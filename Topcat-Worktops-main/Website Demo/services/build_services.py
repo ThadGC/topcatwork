@@ -35,6 +35,7 @@ def _sig(path):
 _HERE_SIG = pathlib.Path(__file__).resolve().parent
 SVC_SIG = _sig(_HERE_SIG / "service.css")
 FOOT_SIG = _sig(_HERE_SIG.parent / "assets" / "footer.css")
+NAV_SIG = _sig(_HERE_SIG.parent / "assets" / "nav.css")
 
 
 # ---- production origin used for canonical + Open Graph + JSON-LD urls.
@@ -104,8 +105,8 @@ TOWNS = ("St Albans, Harpenden, Watford, Hemel Hempstead, Welwyn Garden City, He
 SERVICES = [
   dict(
     slug="kitchen-worktops", h1="Kitchen Worktops",
-    title="Kitchen Worktops in London, Hertfordshire, Essex & Berkshire | Topcat Worktops",
-    metadesc="Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
+    title="Kitchen Worktops | Supplied & Fitted Across London & the Home Counties | Topcat Worktops",
+    metadesc="Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
     lede="Quartz, granite and marble kitchen worktops, chosen from the slab you approve, cut to your kitchen and fitted by the same team that measured it. Free home visit, fixed pricing and a ten-year guarantee.",
     intro=[
       "A kitchen worktop is the surface you use every day, so it needs to be right in both looks and wear. We help you choose the stone that suits how you cook and live, then cut it from a single slab wherever the run allows, matching the veining across every joint so the surface reads as one piece.",
@@ -127,7 +128,7 @@ SERVICES = [
   dict(
     slug="kitchen-islands", h1="Kitchen Islands",
     title="Kitchen Island Worktops & Waterfall Ends | Topcat Worktops",
-    metadesc="Stone kitchen islands with mitred waterfall ends, vein-matched around every corner and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
+    metadesc="Stone kitchen islands with mitred waterfall ends, vein-matched around every corner and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
     lede="The island is the centre of the kitchen, so it earns a little more attention. We build islands with mitred waterfall ends that fold the stone to the floor, with the veining planned around every corner.",
     intro=[
       "An island worktop takes more planning than a straight run. The overhangs need support, the waterfall ends need the veining to turn the corner without breaking, and any breakfast bar has to sit at a comfortable height. We plan all of it before a single cut.",
@@ -149,7 +150,7 @@ SERVICES = [
   dict(
     slug="splashbacks", h1="Splashbacks",
     title="Stone Splashbacks & Upstands | Quartz, Granite & Marble | Topcat Worktops",
-    metadesc="Vein-matched stone splashbacks and upstands cut to fit around sockets and hobs, with no grout lines. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex and Berkshire.",
+    metadesc="Vein-matched stone splashbacks and upstands cut to fit around sockets and hobs, with no grout lines. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
     lede="Carry the same stone up the wall for a clean, vein-matched finish behind the hob and along the run. No grout lines to scrub and no visual break between the worktop and the wall.",
     intro=[
       "A stone splashback runs the worktop material up the wall, so the eye reads one continuous surface instead of tiles and grout. It wipes clean in seconds and stands up to heat behind the hob, which is why so many kitchens now choose it over tiling.",
@@ -177,7 +178,7 @@ SERVICES = [
   dict(
     slug="bathroom-worktops", h1="Bathrooms",
     title="Bathroom Worktops & Shower Surrounds in Stone | Topcat Worktops",
-    metadesc="Stone shower surrounds, thresholds, window sills and bath surrounds cut from one material and fitted by our own team. Free home visit across London, Hertfordshire, Essex and Berkshire.",
+    metadesc="Stone shower surrounds, thresholds, window sills and bath surrounds cut from one material and fitted by our own team. Free home visit across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
     lede="Shower surrounds, thresholds, window sills and bath panels cut from one stone, so a bathroom reads as a single material rather than a set of parts. Basin tops have a page of their own.",
     intro=[
       "A bathroom is a small room that gets looked at closely, and it is usually the tiling and the joints that give it away. Running one stone across the shower wall, the threshold, the sill and the bath panel takes most of those joints out, and what is left is stone rather than grout.",
@@ -228,7 +229,7 @@ SERVICES = [
   dict(
     slug="commercial-worktops", h1="Commercial",
     title="Commercial Worktops & Stone Surfaces | Topcat Worktops",
-    metadesc="Hard-wearing stone worktops and surfaces for offices, bars, restaurants and shops, fitted to your programme by one team from template to install. Serving London, Hertfordshire, Essex and Berkshire.",
+    metadesc="Hard-wearing stone worktops and surfaces for offices, bars, restaurants and shops, fitted to your programme by one team from template to install. Serving London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
     lede="Reception desks, counters, tables and washroom surfaces for offices, bars, restaurants and shops. Hard-wearing stone, fitted to your programme by one team from template to install.",
     intro=[
       "Commercial spaces need surfaces that look sharp on opening day and still hold up after months of heavy use. We supply and fit stone for reception desks, bar tops, restaurant tables, retail counters and washrooms, choosing materials that take the wear the setting will give them.",
@@ -250,7 +251,7 @@ SERVICES = [
   dict(
     slug="outdoor-kitchens", h1="Outdoor Spaces",
     title="Outdoor Kitchen Worktops in Stone | Topcat Worktops",
-    metadesc="Weatherproof stone worktops for garden kitchens and barbecue runs, chosen to hold colour outdoors and cut around sinks, hobs and appliances. Serving London, Hertfordshire, Essex and Berkshire.",
+    metadesc="Weatherproof stone worktops for garden kitchens and barbecue runs, chosen to hold colour outdoors and cut around sinks, hobs and appliances. Serving London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
     lede="Weatherproof stone for garden kitchens and barbecue runs, chosen to hold its colour outdoors and cut to fit around sinks, hobs and built-in appliances.",
     intro=[
       "An outdoor kitchen has to cope with sun, rain and frost as well as cooking. Certain granites are well suited to it because they hold their colour in daylight and shrug off the weather, so the surface still looks right season after season.",
@@ -340,7 +341,14 @@ HERO_IMG = {
     # no longer any service page's hero — splashbacks and this page both moved off it in one run,
     # which is also the end of two service pages opening on the same picture.
     "kitchen-worktops": "../assets/site/service-worktops-quartz-1600.webp",
-    "kitchen-islands": "../assets/kitchen-day.jpg",
+    # ⭐⭐ HIS OWN PROJECT PHOTOGRAPH — 17 Aug 2026 (D294), closing §13 item 19: this was the ONE
+    # leaf still opening on a shared stock photo (`kitchen-day.jpg`, also the landing's day
+    # kitchen). The Harrow project lead IS this page's subject — a Calacatta-look waterfall end
+    # folded to the floor, the gold tap, the navy units — the lede's own sentence in a picture.
+    # ⚠️ Referenced IN PLACE from /assets/projects/ — no re-encode (webp→webp loses), no new
+    # bytes, 1400 is that file's native width. ⚠️ `kitchen-day.jpg` STAYS ON DISK — §10 lists it
+    # among the shared photographs that must never be deleted.
+    "kitchen-islands": "../assets/projects/harrow-1400.webp",
     # ⭐⭐ HIS OWN PHOTOGRAPH — D241. This page shared `hero-kitchen.jpg` with kitchen-worktops,
     # so the two pages opened on the same picture; it now opens on a marble splashback behind a
     # hob, which is what it is about. ⚠️ 1620 is the NATIVE top of that ladder (a 1920x1080
@@ -353,7 +361,9 @@ HERO_IMG = {
     # CTA band — this line moved, that file did not.
     "bathroom-worktops": "../assets/site/service-bathrooms-1600.webp",
     # ⭐⭐⭐ HIS OWN PHOTOGRAPH — D241, and the last of the wrong subjects. A DOMESTIC kitchen was
-    # opening the commercial page. ⚠️ `kitchen-day.jpg` stays: kitchen-islands is still using it.
+    # opening the commercial page. ⚠️ `kitchen-day.jpg` stays ON DISK even though no service hero
+    # uses it any more (kitchen-islands moved off it at D294) — §10 protects it as a shared
+    # photograph, and deleting a photograph cannot be undone from the browser.
     "commercial-worktops": "../assets/site/service-commercial-1600.webp",
     # ⭐⭐ A REAL OUTDOOR KITCHEN INSTEAD OF THE QUARRY — D241, his own file. The quarry shot was
     # the second of the three wrong-subject tiles he had already asked to have replaced: it is a
@@ -366,8 +376,9 @@ HERO_IMG = {
     # top, and the client had twice said generate nothing. He sent photographs of all three
     # instead. ⛔ `cta-slab.jpg` IS STILL LIVE and must not be deleted: it is the landing page's
     # CTA band. It is simply no longer any service page's hero.
-    # ⚠️ THE ONE WRONG SUBJECT LEFT IS COMMERCIAL, which still carries `kitchen-day.jpg` — a
-    # domestic kitchen against copy about reception desks and washrooms. He has asked for it.
+    # ⚠️ (A note here used to say commercial was the one wrong subject left — stale since the
+    # `service-commercial` ladder landed above. Every page in this table now opens on its own
+    # subject; kitchen-islands was the last, fixed at D294.)
     "vanity-tops": "../assets/site/service-vanity-1600.webp",
     # ⭐⭐ HIS OWN PHOTOGRAPH — D241. ⚠️ THIS ONE TAKES ITS NATIVE 1550 RUNG AND NOT A 1600 LIKE
     # the other three: the source is 3000x2000, so 1550 is the whole crop and there is nothing
@@ -417,7 +428,10 @@ def nav_html():
   <a class="brand" href="/index.html#hero" aria-label="Topcat Worktops home">{BRAND_LOGO}</a>
   <nav class="top">{links}</nav>
   <a class="bar-cta" href="/contact/">Get a quote</a>
-</header>"""
+  {NAV_BURGER}
+</header>
+{NAV_SHEET}
+{NAV_JS}"""
 
 # ⭐⭐⭐ THE FOOTER IS LIFTED FROM index.html, NOT WRITTEN AGAIN HERE — 17 Aug 2026 (D290).
 # Client: *"the inner pages footer on mobile doesn't look like the hero section foot on mobile.
@@ -459,6 +473,54 @@ FOOT_JS = ("<script>(function(){var f=document.querySelector('#footer')||documen
 
 def footer_html():
     return FOOTER_HTML + FOOT_JS
+
+
+# ⭐⭐ THE MOBILE NAV IS LIFTED FROM index.html TOO — 17 Aug 2026 (D295), §13 item 7. Below
+# 1121px these pages hid `nav.top` and offered NOTHING in its place: no way off a leaf page on
+# a phone except "Get a quote". The landing page has carried the burger + full-screen overlay
+# since D184, with the D194 submenus the client demanded in his own words ("did I not fucking
+# ask you to create a drop down in the menu?"), so the leaf pages take the SAME component the
+# D290 way: markup lifted from index.html at build time, rules in the generated
+# /assets/nav.css, and the toggle JS inlined below (these pages do not load site.js).
+# ⚠️ ONE REWRITE ON THE LIFT: the overlay's CTA is `href="#cta"` on the landing, and no leaf
+# page carries that id — it becomes /contact/, which is where the leaf bar's own CTA goes.
+def _nav_from_index():
+    import pathlib as _p, re as _re
+    src = (_p.Path(__file__).resolve().parent.parent / "index.html").read_text(encoding="utf-8")
+    i = src.index('<button class="nav-burger"')
+    j = src.index("</button>", i) + len("</button>")
+    burger = _re.sub(r"<!--.*?-->", "", src[i:j], flags=_re.S)
+    i = src.index('<nav class="mobile-nav"')
+    j = src.index("</nav>", i) + len("</nav>")
+    sheet = _re.sub(r"<!--.*?-->", "", src[i:j], flags=_re.S)
+    sheet = sheet.replace('href="#cta"', 'href="/contact/"')
+    # the bar template is an f-string; a stray brace in lifted markup would crash the build
+    assert "{" not in burger and "}" not in burger, "brace in lifted burger markup"
+    assert "{" not in sheet and "}" not in sheet, "brace in lifted overlay markup"
+    return burger, sheet
+
+
+NAV_BURGER, NAV_SHEET = _nav_from_index()
+
+# The landing's burger IIFE, comment-stripped (same treatment as FOOT_JS): toggle + Escape +
+# close-on-link + the D194 caret expansion, one panel open at a time.
+NAV_JS = ("<script>(function(){var b=document.getElementById('navBurger'),"
+          "s=document.getElementById('mobileNav');if(!b||!s)return;"
+          "function o(v){document.documentElement.classList.toggle('nav-open',v);"
+          "b.setAttribute('aria-expanded',v);b.setAttribute('aria-label',v?'Close menu':'Open menu');"
+          "if(!v)c();}"
+          "b.addEventListener('click',function(){o(!document.documentElement.classList.contains('nav-open'));});"
+          "s.addEventListener('click',function(e){if(e.target.closest('a'))o(false);});"
+          "window.addEventListener('keydown',function(e){if(e.key==='Escape')o(false);});"
+          "s.addEventListener('click',function(e){var t=e.target.closest('.mn-toggle');if(!t)return;"
+          "var p=document.getElementById(t.getAttribute('aria-controls'));if(!p)return;"
+          "var open=!p.classList.contains('open');c();"
+          "if(open){p.classList.add('open');p.style.maxHeight=p.scrollHeight+'px';"
+          "t.setAttribute('aria-expanded','true');}});"
+          "function c(){s.querySelectorAll('.mn-sub').forEach(function(p){p.classList.remove('open');p.style.maxHeight='';});"
+          "s.querySelectorAll('.mn-toggle').forEach(function(x){x.setAttribute('aria-expanded','false');});}"
+          "})();</script>")
+
 
 
 
@@ -585,6 +647,9 @@ def page(s):
 <meta property="og:description" content="{e(s['metadesc'])}">
 <meta property="og:url" content="{url}">
 <meta property="og:site_name" content="Topcat Worktops">
+<meta property="og:image" content="https://www.topcatworktops.co.uk/assets/site/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -592,6 +657,7 @@ def page(s):
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="service.css{SVC_SIG}">
 <link rel="stylesheet" href="/assets/footer.css{FOOT_SIG}">
+<link rel="stylesheet" href="/assets/nav.css{NAV_SIG}">
 {jsonld(s)}
 </head>
 <body>

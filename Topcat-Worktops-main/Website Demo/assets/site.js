@@ -7141,7 +7141,21 @@ function viewSequence(host,tiles,apply,opts){
      collage with no pin at all, and the frozen bands must not be re-clocked, so the test is the
      weld's own three conditions: desktop width, motion allowed, and `#process` on the page.
      ⚠️ It is read ONCE at load, like every other option here — a window dragged from desktop to
-     tablet keeps the weld clocking until the next reload. */
+     tablet keeps the weld clocking until the next reload.
+     ⛔⛔⛔ **AND THE NON-WELD CLOCK HAD TO MOVE TOO — 17 Aug 2026 (D291).** Client, on /about/:
+     *"Why can I see Nick and Rimsha's photos on the landing page, but not on the inner about
+     us page?"* **He could not see them because the clock hid them, not because they were
+     missing** — the markup, the files and the live host all checked current. The 6 Aug numbers
+     (`end:0.02, scrub:0.062`) were tuned when the portraits sat EARLY in the build; D279 moved
+     the pair to the FOOT of the DOM, so the two most important tiles became the 0.56–0.98 tail
+     of a playhead that only reaches 1 once the collage top is 18px from the viewport top, then
+     settles for ~44 more frames. On /about/, where this clock always runs (no #process), the
+     directors finished thousands of pixels after the collage had left the screen: two dark
+     slots at every reading pace. `end` 0.02 → **0.20** lands progress 1 while the pair's own
+     band is still on screen at 1440 AND inside the 721–1120 band, and `scrub` 0.062 → **0.14**
+     halves the settle so the lag does not push the landing off-screen again. ⚠️ `span`/`step`
+     — the choreography the client approved — are untouched, and the phone still receives the
+     lower tiles pre-built below the fold, which it always did. */
   const weldClock=window.matchMedia('(min-width:1121px)').matches
     && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
     && !!document.getElementById('process');
@@ -7154,7 +7168,7 @@ function viewSequence(host,tiles,apply,opts){
                        '('+((1-e)*h.deg).toFixed(2)+'deg)';
     el.style.opacity=Math.min(1,e*2.1).toFixed(3);
   },weldClock?{start:1.21,end:0.576,span:0.42,step:0.112,scrub:0.26}
-             :{start:0.94,end:0.02,span:0.42,step:0.112,scrub:0.062});
+             :{start:0.94,end:0.20,span:0.42,step:0.112,scrub:0.14});
 })();
 
 /* ---------- THE WELD: About closes over Process like two slabs — 16 Aug 2026 (D269) ----------
