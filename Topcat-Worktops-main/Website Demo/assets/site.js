@@ -242,7 +242,7 @@ const SS={
     not add a 2400 here to make the table look tidy; it would be an upscale. */
  "/assets/site/service-fireplaces-1550.webp":"/assets/site/service-fireplaces-880.webp 880w, /assets/site/service-fireplaces-1550.webp 1550w",
  "/assets/site/service-vanity-2400.webp":"/assets/site/service-vanity-880.webp 880w, /assets/site/service-vanity-1600.webp 1600w, /assets/site/service-vanity-2400.webp 2400w",
- "/assets/site/service-commercial-2400.webp":"/assets/site/service-commercial-880.webp 880w, /assets/site/service-commercial-1600.webp 1600w, /assets/site/service-commercial-2400.webp 2400w",
+ "/assets/site/service-commercial-bar-2400.webp":"/assets/site/service-commercial-bar-880.webp 880w, /assets/site/service-commercial-bar-1600.webp 1600w, /assets/site/service-commercial-bar-2400.webp 2400w",
  /* ⚠️ TWO RUNGS AGAIN, AND AGAIN THE SOURCE DECIDED IT — 1920x1080 in, 1620 out. ⛔ And note the
     prefix: `service-splash-hob` is THIS photograph, re-cropped at D296 to clear two non-UK sockets (`service-splash-marble` is the uncropped original, kept); `service-splashbacks-706` is the July one
     it replaced and is a different picture entirely. */
@@ -422,7 +422,7 @@ const SERVICES=[
      OUT OF FRAME**: the original looks across the room to a street window carrying Cyrillic
      lettering, and a UK company's commercial page should not be showing it. Cut to
      (3974,1398)–(7360,3654) — the right-hand third — it is out entirely. */
-  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/service-commercial-2400.webp"}
+  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/service-commercial-bar-2400.webp"}
 ];
 /* ⭐⭐⭐ NO TILE CARRIES `ph` ANY MORE — 15 Aug 2026 (D241). All eight are photographs. The
    client sent five files in one run and they closed the three "PHOTO TO COME" plates (Dining

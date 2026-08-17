@@ -30,6 +30,20 @@
     --ink-3:#1D1D23;         /* slate 2 */
     --bone:#F4F1EA;          /* limestone */
     --muted:rgba(244,241,234,0.55);
+    /* ⭐⭐⭐ **READING COPY IS WHITE, SUPPORTING DETAIL STAYS GREY — 17 Aug 2026 (D304).**
+       Client, after seeing the About section go white: *"I would prefer most of the places having
+       white text... where the text is technically just sub details, where it's gray, then that's
+       fine... use white text where there's a lot of text and it's necessary and where it's gonna
+       look best because some of it is quite hard to read because of the dark background."*
+       ⛔⛔ **`--muted` WAS DOING TWO JOBS AND THAT IS THE WHOLE FAULT.** It dressed one-line
+       captions, chips, counts and field placeholders — where 55% is right and deliberate — AND it
+       dressed FAQ answers, project descriptions and review quotes, where 55% of bone on #0B0B0D
+       composites to about 139 and is genuinely hard work on a dark ground.
+       ⭐ **`--body` SPLITS THE ROLE, IT DOES NOT JUST RAISE A NUMBER.** Anything a visitor READS
+       takes this; anything that LABELS keeps `--muted`. One token, so a future round can soften
+       all body copy without touching a single caption, and the distinction is written down rather
+       than living in whoever last edited a rule. */
+    --body:var(--bone);
     --faint:rgba(244,241,234,0.32);
     --gold:#C6A664;          /* champagne — the brand's primary metal */
     --gold-lo:#8C6B34;       /* antique */
@@ -635,7 +649,7 @@
      page head, so every page gets it; the photograph is the same on all of them. */
   .page-head p{
     font-size:clamp(14px,min(1.4vw,2.2vh),16.5px);line-height:1.72;font-weight:300;
-    color:rgba(244,241,234,0.78);
+    color:var(--body);
     text-shadow:0 0 14px rgba(7,7,9,0.72), 0 1px 6px rgba(7,7,9,0.6);
     max-width:64ch;margin:0 auto;
   }
@@ -1055,7 +1069,7 @@
   .front-text .idx{font-size:11px;letter-spacing:0.28em;color:var(--gold)}
   .ft-bottom{margin-top:auto}
   .svc h3{font-family:var(--serif);font-weight:400;font-size:clamp(24px,1.85vw,32px);line-height:1.07;margin-bottom:12px}
-  .svc .desc{color:var(--muted);font-size:14.5px;font-weight:300;max-width:30ch}
+  .svc .desc{color:var(--body);font-size:14.5px;font-weight:300;max-width:30ch}
   .flip-hint{
     display:inline-flex;align-items:center;gap:8px;margin-top:18px;
     font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);opacity:0.8;
@@ -1068,7 +1082,7 @@
   .back-text{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,1.8vw,32px);overflow-y:auto;overscroll-behavior:contain}
   .back-text .idx{font-size:11px;letter-spacing:0.28em;color:var(--gold);margin-bottom:16px}
   .back-text h3{margin-bottom:14px}
-  .back-text p{color:var(--muted);font-size:14.5px;font-weight:300;line-height:1.68}
+  .back-text p{color:var(--body);font-size:14.5px;font-weight:300;line-height:1.68}
   .back-text .flip-hint{margin-top:20px;align-self:flex-start}
 
   /* interaction states */
@@ -2634,7 +2648,7 @@
   .pstep[data-side="right"] .pstep-copy{text-align:right}
   .pstep-eyebrow{display:block;font-size:11px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
   .pstep-title{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.4vw,58px);line-height:1.02;margin-bottom:20px}
-  .pstep-desc{color:var(--muted);font-weight:300;font-size:clamp(15px,1.15vw,17px);line-height:1.75;max-width:46ch}
+  .pstep-desc{color:var(--body);font-weight:300;font-size:clamp(15px,1.15vw,17px);line-height:1.75;max-width:46ch}
   .pstep[data-side="right"] .pstep-desc{margin-left:auto}
 
   .proc-progress{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:5;display:flex;gap:10px}
@@ -2905,7 +2919,7 @@
   .pm-body{padding:clamp(18px,2.6vh,28px) clamp(18px,2.6vw,32px) clamp(20px,3vh,32px)}
   .pm-title{font-family:var(--serif);font-weight:500;text-transform:uppercase;letter-spacing:0.09em;
     font-size:clamp(19px,2vw,27px);color:var(--bone);margin:0 0 8px}
-  .pm-lede{margin:0 0 clamp(14px,2vh,20px);color:rgba(244,241,234,0.88);
+  .pm-lede{margin:0 0 clamp(14px,2vh,20px);color:var(--body);
     font-size:clamp(14px,1.05vw,16px);line-height:1.65;max-width:62ch}
   .pm-points{display:grid;gap:clamp(10px,1.6vh,15px);margin:0;padding:0;list-style:none;
     border-top:1px solid var(--hair-soft);padding-top:clamp(13px,2vh,18px)}
@@ -2914,7 +2928,7 @@
     font-family:var(--brand);font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);
     padding-top:2px}
   .pm-points .pk::before{content:"";width:5px;height:5px;transform:rotate(45deg);background:var(--gold);flex:none}
-  .pm-points .pv{color:rgba(244,241,234,0.8);font-size:clamp(13px,1vw,14.5px);line-height:1.6}
+  .pm-points .pv{color:var(--body);font-size:clamp(13px,1vw,14.5px);line-height:1.6}
   .pm-foot{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:clamp(16px,2.4vh,24px)}
   .pm-x{
     position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;
@@ -2984,7 +2998,7 @@
     border-top:1px solid var(--hair-soft);border-bottom:1px solid var(--hair-soft);
   }
   .tp-mark{flex:none;width:7px;height:7px;transform:rotate(45deg);background:var(--gold);opacity:0.75}
-  .tp-copy{flex:1 1 320px;margin:0;color:var(--muted);font-size:clamp(13px,1vw,14.5px);line-height:1.6}
+  .tp-copy{flex:1 1 320px;margin:0;color:var(--body);font-size:clamp(13px,1vw,14.5px);line-height:1.6}
   .tp-link{
     flex:none;font-family:var(--brand);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
     color:var(--gold);text-decoration:none;white-space:nowrap;
@@ -3149,7 +3163,7 @@
   .fp-rule{display:block;height:1px;width:clamp(40px,5.5vw,78px);transform-origin:left;
     margin:clamp(9px,1.6vh,18px) 0 0;
     background:linear-gradient(90deg,var(--gold),rgba(198,166,100,0))}
-  .fp-a{color:var(--muted);font-weight:300;margin:0;max-width:60ch;
+  .fp-a{color:var(--body);font-weight:300;margin:0;max-width:60ch;
     font-size:clamp(12.5px,min(1vw,2vh),15.5px);line-height:1.7}
 
   /* the swap: the plate's parts arrive in order rather than the block cutting over, which is
@@ -3641,7 +3655,7 @@
   .pm-k{font-size:10px;letter-spacing:0.26em;text-transform:uppercase;color:var(--faint)}
   .pm-v{font-size:15px;color:var(--bone)}
   .proj-desc .proj-lead{font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
-  .proj-desc p{color:var(--muted);font-weight:300;font-size:clamp(15px,1.15vw,17px);line-height:1.8;margin-bottom:18px}
+  .proj-desc p{color:var(--body);font-weight:300;font-size:clamp(15px,1.15vw,17px);line-height:1.8;margin-bottom:18px}
   .proj-desc p.big{font-family:var(--sans);font-weight:300;font-size:clamp(19px,1.9vw,24px);color:var(--bone);line-height:1.55;margin-bottom:26px}
   /* ⭐ THE CUSTOMER'S REVIEW FOR THIS JOB, BESIDE WHAT WAS DONE — 14 Aug 2026 (client's ask).
      ⛔ NO RULE ACROSS ITS TOP: §2 rule 10 forbids a bright line over any card or panel outright,
@@ -3652,7 +3666,7 @@
   .proj-rev .stars{color:var(--gold);font-size:13px;letter-spacing:0.14em}
   .proj-rev-src{font-size:10px;letter-spacing:0.26em;text-transform:uppercase;color:var(--faint)}
   .proj-rev blockquote{font-family:var(--sans);font-weight:300;font-size:clamp(15px,1.15vw,17px);
-    line-height:1.8;color:var(--muted);margin:0 0 14px}
+    line-height:1.8;color:var(--body);margin:0 0 14px}
   .proj-rev figcaption{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--bone)}
   /* ⭐⭐ THE NAV BAR STAYS ON A PROJECT PAGE — 14 Aug 2026. Client: *"there must still be a nav
      bar when they go into one of the project pages."* The detail view is a fixed overlay at
@@ -5208,7 +5222,7 @@
   .wy-n{font-family:var(--serif);font-size:10.5px;letter-spacing:0.22em;color:var(--gold-lo)}
   .wy-r h3{font-family:var(--sans);font-weight:400;color:var(--bone);letter-spacing:0.01em;
     font-size:clamp(13.5px,1.15vw,15.5px);line-height:1.3;margin-bottom:clamp(3px,0.7vh,8px)}
-  .wy-r p{color:var(--muted);font-weight:300;margin:0;
+  .wy-r p{color:var(--body);font-weight:300;margin:0;
     font-size:clamp(12px,1.02vw,14px);line-height:1.55}
 
   /* ⚠️ The shared placeholder skin (.ph-slot / .ph-title / .ph-note — a dashed gold frame with
@@ -5349,7 +5363,7 @@
   .trade-card h3,.trade-card p{position:relative;z-index:1}
   .trade-card h3{font-family:var(--sans);font-weight:400;color:var(--bone);letter-spacing:0.01em;
     font-size:clamp(15px,1.3vw,18px);line-height:1.3;margin:0 0 clamp(9px,1.3vh,14px)}
-  .trade-card p{color:var(--muted);font-weight:300;margin:0;
+  .trade-card p{color:var(--body);font-weight:300;margin:0;
     font-size:clamp(13px,1.05vw,14.5px);line-height:1.62}
   @media(max-width:900px){
     .trade-grid,#tradeWho .trade-grid{grid-template-columns:repeat(2,1fr)}
@@ -5646,7 +5660,7 @@
        the same edge and the number has to live in one place. */
     counter-increment:cn;position:relative;padding-left:var(--cnIndent);
     font-size:clamp(11.5px,min(0.95vw,1.6vh),14px);line-height:1.45;
-    color:var(--muted);font-weight:300;
+    color:var(--body);font-weight:300;
   }
   /* the numeral in the site's serif, so the list reads as part of the page rather than a
      browser default. Baseline-nudged 1px because Cinzel's digits sit high against Montserrat. */
@@ -9887,7 +9901,7 @@ const SS={
     not add a 2400 here to make the table look tidy; it would be an upscale. */
  "/assets/site/service-fireplaces-1550.webp":"/assets/site/service-fireplaces-880.webp 880w, /assets/site/service-fireplaces-1550.webp 1550w",
  "/assets/site/service-vanity-2400.webp":"/assets/site/service-vanity-880.webp 880w, /assets/site/service-vanity-1600.webp 1600w, /assets/site/service-vanity-2400.webp 2400w",
- "/assets/site/service-commercial-2400.webp":"/assets/site/service-commercial-880.webp 880w, /assets/site/service-commercial-1600.webp 1600w, /assets/site/service-commercial-2400.webp 2400w",
+ "/assets/site/service-commercial-bar-2400.webp":"/assets/site/service-commercial-bar-880.webp 880w, /assets/site/service-commercial-bar-1600.webp 1600w, /assets/site/service-commercial-bar-2400.webp 2400w",
  /* ⚠️ TWO RUNGS AGAIN, AND AGAIN THE SOURCE DECIDED IT — 1920x1080 in, 1620 out. ⛔ And note the
     prefix: `service-splash-hob` is THIS photograph, re-cropped at D296 to clear two non-UK sockets (`service-splash-marble` is the uncropped original, kept); `service-splashbacks-706` is the July one
     it replaced and is a different picture entirely. */
@@ -10067,7 +10081,7 @@ const SERVICES=[
      OUT OF FRAME**: the original looks across the room to a street window carrying Cyrillic
      lettering, and a UK company's commercial page should not be showing it. Cut to
      (3974,1398)–(7360,3654) — the right-hand third — it is out entirely. */
-  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/service-commercial-2400.webp"}
+  {t:"Commercial",long:"Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",href:"/services/commercial-worktops.html",img:"/assets/site/service-commercial-bar-2400.webp"}
 ];
 /* ⭐⭐⭐ NO TILE CARRIES `ph` ANY MORE — 15 Aug 2026 (D241). All eight are photographs. The
    client sent five files in one run and they closed the three "PHOTO TO COME" plates (Dining

@@ -364,7 +364,12 @@ HERO_IMG = {
     # opening the commercial page. ⚠️ `kitchen-day.jpg` stays ON DISK even though no service hero
     # uses it any more (kitchen-islands moved off it at D294) — §10 protects it as a shared
     # photograph, and deleting a photograph cannot be undone from the browser.
-    "commercial-worktops": "../assets/site/service-commercial-1600.webp",
+    # ⭐⭐ **HIS OWN FRAME, SENT 17 Aug 2026 (D305):** a curved MARBLE bar counter under a gold-lit
+    # back bar. It replaces a bright white salon interior with no stone in it — generic, and the
+    # opposite of this site's register. ⚠️ Cropped 16:9 from a portrait source so the worktop leads
+    # and the light sits behind it; the cut script and the reasoning are in
+    # `assets/site/.src-2026-08-18/`. ⛔ The salon ladder stays on disk.
+    "commercial-worktops": "../assets/site/service-commercial-bar-1600.webp",
     # ⭐⭐ A REAL OUTDOOR KITCHEN INSTEAD OF THE QUARRY — D241, his own file. The quarry shot was
     # the second of the three wrong-subject tiles he had already asked to have replaced: it is a
     # picture of where stone comes FROM, not of a garden kitchen. ⚠️ `quarry.jpg` and its two

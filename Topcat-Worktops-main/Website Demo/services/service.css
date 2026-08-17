@@ -5,6 +5,14 @@
 :root{
   --ink:#0B0B0D; --ink-2:#15151A; --ink-3:#1D1D23;
   --bone:#F4F1EA; --muted:rgba(244,241,234,0.60); --faint:rgba(244,241,234,0.34);
+  /* ⭐⭐⭐ **READING COPY IS WHITE, SUPPORTING DETAIL STAYS GREY — 17 Aug 2026 (D304).** Client:
+     *"use white text where there's a lot of text and it's necessary... some of it is quite hard to
+     read because of the dark background"*, keeping grey for *"sub details"* and for the form's
+     fields. ⛔ `--muted` was dressing BOTH a one-line caption and a four-line FAQ answer; this
+     token splits the two roles so the distinction is written down rather than re-decided per rule.
+     ⚠️ It is defined here and therefore reaches the SEO layer and the stone pages too — both load
+     this sheet — so `seo.css` and `stone.css` can use it without declaring their own. */
+  --body:var(--bone);
   --gold:#C6A664; --gold-lo:#8C6B34; --gold-hi:#E4CD92; --gold-soft:#D4B778;
   --hair:rgba(198,166,100,0.34); --hair-soft:rgba(244,241,234,0.10);
   --ease:cubic-bezier(0.16,1,0.3,1);
@@ -435,18 +443,18 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
 section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-soft)}
 .block h2{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3vw,38px);line-height:1.1;max-width:22ch;margin-bottom:8px}
 .block .sub{color:var(--muted);max-width:64ch;margin-bottom:34px;font-size:15px}
-.prose p{max-width:70ch;margin-bottom:18px;color:rgba(244,241,234,0.82);font-size:15.5px}
+.prose p{max-width:70ch;margin-bottom:18px;color:var(--body);font-size:15.5px}
 .prose p:last-child{margin-bottom:0}
 
 /* ---------- feature grid ---------- */
 .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
 .feat{border:1px solid var(--hair);border-radius:6px;padding:clamp(20px,2.2vw,28px);background:var(--ink-2)}
 .feat h3{font-family:var(--serif);font-weight:500;color:var(--gold-soft);font-size:18px;letter-spacing:0.01em;margin-bottom:10px}
-.feat p{color:var(--muted);font-size:14.5px;line-height:1.65}
+.feat p{color:var(--body);font-size:14.5px;line-height:1.65}
 
 /* ---------- checklist ---------- */
 .ticks{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px 34px;list-style:none}
-.ticks li{position:relative;padding-left:30px;color:rgba(244,241,234,0.82);font-size:15px;line-height:1.6}
+.ticks li{position:relative;padding-left:30px;color:var(--body);font-size:15px;line-height:1.6}
 .ticks li::before{content:"";position:absolute;left:0;top:7px;width:15px;height:15px;border-radius:50%;
   background:radial-gradient(circle at 50% 50%,var(--gold-hi),var(--gold-lo));box-shadow:0 0 0 4px rgba(198,166,100,0.12)}
 .ticks li strong{display:block;color:var(--bone);font-weight:500;margin-bottom:3px}
@@ -456,7 +464,7 @@ section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-sof
 .step{border:1px solid var(--hair-soft);border-radius:6px;padding:24px;background:var(--ink-2)}
 .step .n{font-family:var(--serif);color:var(--gold);font-size:13px;letter-spacing:0.2em;margin-bottom:12px}
 .step h3{font-family:var(--serif);font-weight:500;font-size:17px;margin-bottom:8px}
-.step p{color:var(--muted);font-size:14px;line-height:1.6}
+.step p{color:var(--body);font-size:14px;line-height:1.6}
 
 /* ---------- materials strip ---------- */
 .mats{display:flex;gap:12px;flex-wrap:wrap}
@@ -509,7 +517,7 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
   transition:transform .35s var(--ease);
 }
 .faq details[open] summary::after{transform:rotate(180deg)}
-.faq .a{padding:0 20px 20px;color:var(--muted);font-size:14.5px;line-height:1.7}
+.faq .a{padding:0 20px 20px;color:var(--body);font-size:14.5px;line-height:1.7}
 
 /* ---------- CTA band — REDESIGNED 15 Aug 2026 ---------------------------------------------
    Client, with a screenshot of the two bands that close the compare page: *"redesign sections
@@ -546,7 +554,7 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
   box-shadow:0 40px 90px -50px rgba(0,0,0,0.9)}
 .cta-band h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.4vw,42px);
   line-height:1.12;letter-spacing:0.005em;margin-bottom:14px}
-.cta-band p{color:var(--muted);max-width:56ch;margin:0 auto 28px;font-size:15.5px}
+.cta-band p{color:var(--body);max-width:56ch;margin:0 auto 28px;font-size:15.5px}
 .cta-band .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
 /* ⭐ ONCE THE PAIR WRAPS, THE TWO BUTTONS MATCH. Sized to their own text they stack as two
    different widths down one centreline, which is the exact thing the client rejected on the
@@ -639,7 +647,7 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
     font-family:var(--serif);font-weight:400;font-size:23px;line-height:1.15;
     color:var(--bone);margin-bottom:7px}
   .qform h3 em{font-style:normal;color:var(--gold)}
-  .qform .qf-sub{color:var(--muted);font-size:13.5px;line-height:1.55;margin-bottom:18px}
+  .qform .qf-sub{color:var(--body);font-size:13.5px;line-height:1.55;margin-bottom:18px}
   .qform input,.qform select{
     width:100%;margin-bottom:10px;
     background:rgba(244,241,234,0.03);
@@ -667,7 +675,7 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
     color:var(--muted);font-size:11.5px;line-height:1.5;margin-top:12px;text-align:center}
   /* the demo acknowledgement, in place of the fields — same behaviour as the landing page's form */
   .qform.sent .qf-fields{display:none}
-  .qform .qf-done{display:none;color:rgba(244,241,234,0.82);font-size:14px;line-height:1.6}
+  .qform .qf-done{display:none;color:var(--body);font-size:14px;line-height:1.6}
   .qform.sent .qf-done{display:block}
 }
 

@@ -1,6 +1,6 @@
-# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D303)
+# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D305)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D303**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D305**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which covered the directors, the
@@ -31,7 +31,7 @@ the non-weld branch only; `span`/`step` and the whole weld branch untouched.
 
 ---
 
-## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D303)
+## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D305)
 
 Two instructions, the audit and then the composition round: *"make sure the About Us pages are
 perfect throughout everything... every inner page designed very nicely... do a full audit... things
@@ -67,6 +67,10 @@ D301  About copy 6 paragraphs -> 5, 178 words -> 139, and the freed height is
 D302  Rimsha re-cut further back, hairline gap 13px -> 5.7px; ?v= bumped to 4
 D303  phone + tablet centre BELOW the bar (the opposite of the desktop, and
       both are right — see §2a); hero subtitle is full --bone at every band
+D304  READING COPY IS WHITE, SUPPORTING DETAIL STAYS GREY — one `--body`
+      token across all four families; contrast 6.58:1 -> 17.43:1 (see §2d)
+D305  Commercial opens on his marble-bar frame, 16:9 out of a portrait source,
+      q80 because the frame is high-frequency; salon ladder kept on disk
 ```
 
 ### What the audit scanned and found CLEAN (do not re-scan without cause)
@@ -140,6 +144,28 @@ card ride down and then be carried away as the full-width band arrives. **No scr
 and tablet pages are unchanged by construction. A phone form is his call, not an inference.
 ⚠️ The markup is lifted into both builders (`qform_html()`), the service select is seeded with the
 page's own subject, and there is no backend — acknowledged in place, §11 rule 13.
+
+---
+
+## 2d. ⭐⭐⭐ TEXT COLOUR HAS TWO ROLES NOW (D304)
+
+```
+--body   (= --bone)   anything a visitor READS      17.43:1
+--muted  (55-60%)     anything that LABELS           6.58:1
+```
+
+⛔ **`--muted` USED TO DO BOTH**, which is why FAQ answers and project write-ups were as dim as a
+chip count. ⭐ Declared in `index.html` AND `service.css` — the stone and SEO pages load the
+latter, so one declaration reaches all four families.
+
+**White:** FAQ answers, the prose column, Why bullets, feature/step copy, closing CTA paragraph,
+project descriptions, trade cards, the process modal, internal-page hero ledes, stone ledes, the
+SEO price table and card copy, the quote card's line, the hero subtitle (D303).
+**Grey, on his instruction:** section subtitles, breadcrumbs, nav links, chips, counts, captions,
+notes, byline, footer, estimator labels — **and the form's placeholders** ("gray in the fields").
+
+⚠️ Two colours look wrong in a probe and are correct: `.proj-desc p` first matches the gold
+"What we did" label, and `.rev-author` has been bone since it was built.
 
 ---
 
