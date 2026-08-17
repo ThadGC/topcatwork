@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="service.css?v=6679a739fb">
+<link rel="stylesheet" href="service.css?v=61e63cd33d">
 <link rel="stylesheet" href="/assets/footer.css?v=32e3e12343">
 <link rel="stylesheet" href="/assets/nav.css?v=349149e16f">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","name":"Kitchen Worktops","serviceType":"Kitchen Worktops","description":"Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.","url":"https://www.topcatworktops.co.uk/services/kitchen-worktops.html","provider":{"@type":"LocalBusiness","name":"Topcat Worktops","@id":"https://www.topcatworktops.co.uk/#business"},"areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topcatworktops.co.uk/index.html"},{"@type":"ListItem","position":2,"name":"Services","item":"https://www.topcatworktops.co.uk/services/"},{"@type":"ListItem","position":3,"name":"Kitchen Worktops","item":"https://www.topcatworktops.co.uk/services/kitchen-worktops.html"}]},{"@type":"LocalBusiness","@id":"https://www.topcatworktops.co.uk/#business","name":"Topcat Worktops","url":"https://www.topcatworktops.co.uk","telephone":"0800 098 2812","email":"info@topcatworktops.co.uk","priceRange":"££","areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"18:00"}]}]}</script>
@@ -142,6 +142,11 @@
     </div>
   </section>
 
+  <!-- ⭐ D300 — the reading sections and the quote card share a grid; see THE LEAD LAYOUT in
+       service.css for why it ends where it does. Below 1121px the aside is not rendered and these
+       sections are exactly what they were. -->
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap prose rise">
     <p>A kitchen worktop is the surface you use every day, so it needs to be right in both looks and wear. We help you choose the stone that suits how you cook and live, then cut it from a single slab wherever the run allows, matching the veining across every joint so the surface reads as one piece.</p><p>One team runs the whole job. We template your kitchen once the units are level, have the stone cut and polished to that template, and fit it ourselves, so there is one team accountable from the first measurement to the final seal.</p>
   </div></section>
@@ -176,6 +181,28 @@
 
   <!-- ⭐ D263: "Frequently asked questions", his words, with the gold last word every other heading
        on the site takes. The rows are cards in a two-column grid now — see `.faq` in service.css. -->
+   </div>
+   <aside class="lead-aside">
+  <form class="qform" id="qform" novalidate>
+    <div class="qf-fields">
+      <h3>Get your <em>free quote</em></h3>
+      <p class="qf-sub">A quick chat, then a clear, itemised quote by email.</p>
+      <label class="sr-only" for="qfName">Your name</label>
+      <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
+      <label class="sr-only" for="qfEmail">Email address</label>
+      <input id="qfEmail" name="email" type="email" placeholder="Email address" autocomplete="email">
+      <label class="sr-only" for="qfPhone">Phone number</label>
+      <input id="qfPhone" name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+      <label class="sr-only" for="qfService">What do you need</label>
+      <select id="qfService" name="service"><option>Kitchen worktops</option><option>Kitchen islands</option><option>Splashbacks</option><option>Bathrooms and vanity tops</option><option>Outdoor kitchens</option><option>Fireplaces</option><option>Dining tables</option><option>Commercial</option><option>Something else</option></select>
+      <button type="submit">Send my enquiry</button>
+      <p class="qf-note">A quick call with us, then your fixed quote by email. We reply within one working day.</p>
+    </div>
+    <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call 0800 098 2812.</p>
+  </form>
+</aside>
+  </div>
+
   <section class="block faq"><div class="wrap rise">
     <h2>Frequently asked <em>questions</em></h2>
     <div class="faq-grid"><details><summary>How much do kitchen worktops cost?</summary><div class="a">Price depends on the stone, the size of the kitchen and the detail involved, such as waterfall ends or cut-outs. We give you a fixed, itemised quote after a free home visit, and the number we quote is the number you pay. We lead on value and finish rather than the lowest headline price.</div></details><details><summary>Which stone is best for a kitchen worktop?</summary><div class="a">Quartz is hard-wearing and low-maintenance, granite is heat and scratch resistant, and marble gives a softer, natural look that suits some kitchens beautifully. We talk you through how each behaves in daily use and help you pick the one that fits your kitchen, not the one that is easiest to sell.</div></details><details><summary>How long does it take to fit a kitchen worktop?</summary><div class="a">Most kitchens are templated once the units are level and fitted within days of the slab being approved. We confirm every date in writing so you can plan the rest of the work around it.</div></details><details><summary>Do you template and fit the worktops yourselves?</summary><div class="a">Yes. Templating, cutting and fitting are all ours, so one point of contact looks after your project from start to finish.</div></details></div>
@@ -337,5 +364,6 @@
     </div>
   </footer><script>(function(){var f=document.querySelector('#footer')||document.querySelector('footer'),t=document.getElementById('footTail'),c=document.querySelector('.foot-contact'),a=document.querySelector('.foot-c-area'),h=document.querySelector('.foot-c-hours');if(!f||!t||!c||!a||!h)return;function p(){var on=getComputedStyle(f).getPropertyValue('--footTail').trim()==='on',host=on?t:c;if(a.parentElement!==host){host.appendChild(a);host.appendChild(h);}}p();window.addEventListener('resize',p,{passive:true});})();</script>
 <script>document.addEventListener('DOMContentLoaded',function(){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>
+<script>(function(){var f=document.getElementById('qform');if(!f)return;f.addEventListener('submit',function(ev){ev.preventDefault();f.classList.add('sent');});})();</script>
 </body>
 </html>

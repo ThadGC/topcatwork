@@ -575,3 +575,105 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
    report was the result: *"the inner pages footer on mobile doesn't look like the hero section
    foot on mobile."* Two sheets describing one component is how they drift, and they had.
    ⛔ Do not add a `.foot-*` rule here. Change the landing page and re-run build_pages.py. */
+
+/* ═══════════════════════════════════════════════════════════════════════════════════════
+   ⭐⭐⭐ THE LEAD LAYOUT — A SIDEBAR QUOTE CARD THAT TRAVELS — 17 August 2026 (D300)
+   ═══════════════════════════════════════════════════════════════════════════════════════
+   Client, with an SBX screenshot: *"When you go to a main page like kitchen worktops on desktop,
+   everything is just to the side. It's very content heavy... the text under the hero section is on
+   the left and then leaves a lot of space on the right, which looks bad. So we can do that, but
+   then we should at least have a contact form... it attaches to the nav bar as the user scrolls
+   down into that section, and then it folds behind sections that go across it."*
+
+   ⛔⛔ **THE EMPTY RIGHT-HAND SIDE WAS REAL AND MEASURABLE.** `.wrap` is 1160px wide and
+   `.prose p` is capped at 70ch, so on a 1440 desktop the copy ran ~640px and left ~390px of dead
+   ground down the whole page. The column was not too narrow — reading measure is right at 70ch —
+   **the page simply had nothing in the other half**, which is exactly what he is describing.
+
+   ⭐⭐ **SO THE SPACE GETS A JOB RATHER THAN A WIDER PARAGRAPH.** The reading sections move into a
+   two-column grid and the freed column carries the quote card, which is the one thing every one of
+   these pages exists to produce. ⚠️ `--maxw` is deliberately overridden to 1280 HERE ONLY: the
+   sidebar has to come out of new width, not out of the reading measure.
+
+   ⛔ **WHERE THE GRID STOPS IS A DESIGN DECISION, NOT AN ACCIDENT.** It covers the reading
+   sections and ENDS before the FAQ. Two reasons: the FAQ and the related-services cards are
+   themselves two- and three-column grids that would be squeezed to ~240px beside a sidebar, and
+   ending the sticky container there is what produces the behaviour he asked for — the card rides
+   down with the copy and is then carried up out of view as the full-width FAQ band arrives over
+   it. That is the "folds behind sections that go across it" moment, and it needs no script.
+
+   ⛔⛔ **DESKTOP ONLY (≥1121), AND THE ASIDE IS NOT RENDERED BELOW IT.** He said "for desktop
+   specifically" and §2 rule 12 freezes what he did not ask for, so the phone and tablet pages are
+   byte-identical to yesterday's. ⚠️ A form is worth having on a handset too, but that is his call
+   and a different composition, not this one at a narrower width.
+   ═══════════════════════════════════════════════════════════════════════════════════════ */
+.lead-aside{display:none}
+
+@media(min-width:1121px){
+  .lead-grid{
+    max-width:1280px;margin:0 auto;
+    padding:0 clamp(20px,5vw,64px);
+    display:grid;grid-template-columns:minmax(0,1fr) 372px;
+    gap:clamp(32px,3.4vw,56px);
+    align-items:start}
+  /* ⚠️ THE SECTIONS INSIDE KEEP THEIR OWN `.wrap` and it must stop constraining them — it is
+     already inside the grid's max-width and padding, so a second 1160px cap plus a second helping
+     of side padding would inset the copy twice and re-open the gap this rule closes. */
+  .lead-grid .block .wrap{max-width:none;padding:0;margin:0}
+  .lead-grid .block:first-child{border-top:0;padding-top:clamp(30px,4.6vh,54px)}
+
+  .lead-aside{
+    display:block;
+    /* ⭐ THE CARD ATTACHES UNDER THE BAR, WHICH IS WHAT HE DESCRIBED. `--barH` is the shared
+       measure of the fixed header, so the offset cannot drift from the thing it clears. */
+    position:sticky;top:calc(var(--barH) + 18px);
+    /* ⚠️ BELOW the page's own content in the stacking order, so a full-width band that arrives
+       over it reads as passing IN FRONT rather than colliding with it. */
+    z-index:0}
+
+  .qform{
+    background:var(--ink-2);border:1px solid var(--hair);border-radius:8px;
+    padding:clamp(22px,1.8vw,28px);
+    box-shadow:0 26px 54px -34px rgba(0,0,0,0.9)}
+  .qform h3{
+    font-family:var(--serif);font-weight:400;font-size:23px;line-height:1.15;
+    color:var(--bone);margin-bottom:7px}
+  .qform h3 em{font-style:normal;color:var(--gold)}
+  .qform .qf-sub{color:var(--muted);font-size:13.5px;line-height:1.55;margin-bottom:18px}
+  .qform input,.qform select{
+    width:100%;margin-bottom:10px;
+    background:rgba(244,241,234,0.03);
+    border:1px solid var(--hair);border-radius:5px;
+    padding:12px 14px;color:var(--bone);
+    font-family:var(--sans);font-size:14px;font-weight:300;
+    transition:border-color .35s var(--ease),background .35s var(--ease)}
+  .qform input::placeholder{color:rgba(244,241,234,0.42)}
+  /* ⚠️ The native select inherits the page's dark ground but its OPTION list is drawn by the
+     operating system, so the options are given an explicit dark pair or they render as black text
+     on black on a Mac. */
+  .qform select option{background:var(--ink-2);color:var(--bone)}
+  .qform input:focus,.qform select:focus{
+    outline:none;border-color:var(--gold);background:rgba(244,241,234,0.05)}
+  .qform button{
+    width:100%;margin-top:4px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:14px 20px;border-radius:2px;
+    font-family:var(--brand);font-size:12px;font-weight:600;letter-spacing:0.18em;
+    text-transform:uppercase;
+    background:var(--gold);color:var(--ink);border:1px solid var(--gold);
+    transition:filter .4s var(--ease)}
+  .qform button:hover{filter:brightness(1.07)}
+  .qform .qf-note{
+    color:var(--muted);font-size:11.5px;line-height:1.5;margin-top:12px;text-align:center}
+  /* the demo acknowledgement, in place of the fields — same behaviour as the landing page's form */
+  .qform.sent .qf-fields{display:none}
+  .qform .qf-done{display:none;color:rgba(244,241,234,0.82);font-size:14px;line-height:1.6}
+  .qform.sent .qf-done{display:block}
+}
+
+/* ⚠️ D300 — the quote card labels every field for a screen reader and shows none of them: the
+   fields are identified by placeholder visually, which is a design decision, and a placeholder is
+   not an accessible name. This class is what carries that, and it must clip rather than
+   `display:none` — a hidden label is not announced. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}

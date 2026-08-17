@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="service.css?v=6679a739fb">
+<link rel="stylesheet" href="service.css?v=61e63cd33d">
 <link rel="stylesheet" href="/assets/footer.css?v=32e3e12343">
 <link rel="stylesheet" href="/assets/nav.css?v=349149e16f">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","name":"Fireplaces","serviceType":"Fireplaces","description":"Fireplace hearths, surrounds and mantel shelves cut from granite, marble or quartz to your opening, templated by hand and fitted by our own team across London and the Home Counties.","url":"https://www.topcatworktops.co.uk/services/fireplaces.html","provider":{"@type":"LocalBusiness","name":"Topcat Worktops","@id":"https://www.topcatworktops.co.uk/#business"},"areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topcatworktops.co.uk/index.html"},{"@type":"ListItem","position":2,"name":"Services","item":"https://www.topcatworktops.co.uk/services/"},{"@type":"ListItem","position":3,"name":"Fireplaces","item":"https://www.topcatworktops.co.uk/services/fireplaces.html"}]},{"@type":"LocalBusiness","@id":"https://www.topcatworktops.co.uk/#business","name":"Topcat Worktops","url":"https://www.topcatworktops.co.uk","telephone":"0800 098 2812","email":"info@topcatworktops.co.uk","priceRange":"££","areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"18:00"}]}]}</script>
@@ -142,6 +142,11 @@
     </div>
   </section>
 
+  <!-- ⭐ D300 — the reading sections and the quote card share a grid; see THE LEAD LAYOUT in
+       service.css for why it ends where it does. Below 1121px the aside is not rendered and these
+       sections are exactly what they were. -->
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap prose rise">
     <p>A fireplace is usually the thing everyone in the room ends up looking at, and stone suits it because it is heavy, quiet, and it wears well. We cut hearths, side slips, headers and mantel shelves to the opening you have, in the same granite, marble and quartz we use everywhere else in the house.</p><p>What we do here is the stonework. We template the opening by hand once it is formed, have the pieces cut and polished by our experienced fabricators, and fit them. We do not install stoves, flues or gas appliances, and we do not set hearth sizes or clearances, because those belong to your installer and to whoever made the appliance. Give us the figures they need and we will cut to them.</p><p>Most fireplaces are a set of pieces rather than one, so we lay them out together. Where the sizes allow, the hearth, the slips and the header come off the same slab, which is what makes the grain run around the opening instead of meeting at the corners by accident.</p>
   </div></section>
@@ -176,6 +181,28 @@
 
   <!-- ⭐ D263: "Frequently asked questions", his words, with the gold last word every other heading
        on the site takes. The rows are cards in a two-column grid now — see `.faq` in service.css. -->
+   </div>
+   <aside class="lead-aside">
+  <form class="qform" id="qform" novalidate>
+    <div class="qf-fields">
+      <h3>Get your <em>free quote</em></h3>
+      <p class="qf-sub">A quick chat, then a clear, itemised quote by email.</p>
+      <label class="sr-only" for="qfName">Your name</label>
+      <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
+      <label class="sr-only" for="qfEmail">Email address</label>
+      <input id="qfEmail" name="email" type="email" placeholder="Email address" autocomplete="email">
+      <label class="sr-only" for="qfPhone">Phone number</label>
+      <input id="qfPhone" name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+      <label class="sr-only" for="qfService">What do you need</label>
+      <select id="qfService" name="service"><option>Kitchen worktops</option><option>Kitchen islands</option><option>Splashbacks</option><option>Bathrooms and vanity tops</option><option>Outdoor kitchens</option><option selected>Fireplaces</option><option>Dining tables</option><option>Commercial</option><option>Something else</option></select>
+      <button type="submit">Send my enquiry</button>
+      <p class="qf-note">A quick call with us, then your fixed quote by email. We reply within one working day.</p>
+    </div>
+    <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call 0800 098 2812.</p>
+  </form>
+</aside>
+  </div>
+
   <section class="block faq"><div class="wrap rise">
     <h2>Frequently asked <em>questions</em></h2>
     <div class="faq-grid"><details><summary>Which stone suits a fireplace?</summary><div class="a">Granite and natural stone are the usual choice for a hearth, because they take heat well. Engineered quartz is bound with resin, so it is better kept away from direct heat and suits a surround or a mantel shelf rather than the hearth under an appliance. The clearances themselves are your installer&#x27;s call and we cut to them.</div></details><details><summary>Do you fit the stove or the fire itself?</summary><div class="a">No. We cut and fit the stone. Stoves, flues and gas appliances are for a registered installer, and the hearth size and clearances come from them and from the appliance manufacturer. We work to the figures they give us.</div></details><details><summary>Can you cut a hearth that is not a rectangle?</summary><div class="a">Yes. Curved fronts, chamfered corners and cut-outs around a chimney breast are all cut to a template we make on site. The more unusual the shape, the more the template earns its keep.</div></details><details><summary>Can you match a fireplace to worktops we already have?</summary><div class="a">Often, yes. If you know what the stone is we can look for the same material or something close to it. If you do not, send a photograph taken in daylight and we will tell you what we think it is.</div></details><details><summary>When should we template?</summary><div class="a">Once the opening is formed and the plaster is back, so the template records the room as it will be. If the appliance is going in first, we template after it and work to the clearances your installer has set.</div></details></div>
@@ -337,5 +364,6 @@
     </div>
   </footer><script>(function(){var f=document.querySelector('#footer')||document.querySelector('footer'),t=document.getElementById('footTail'),c=document.querySelector('.foot-contact'),a=document.querySelector('.foot-c-area'),h=document.querySelector('.foot-c-hours');if(!f||!t||!c||!a||!h)return;function p(){var on=getComputedStyle(f).getPropertyValue('--footTail').trim()==='on',host=on?t:c;if(a.parentElement!==host){host.appendChild(a);host.appendChild(h);}}p();window.addEventListener('resize',p,{passive:true});})();</script>
 <script>document.addEventListener('DOMContentLoaded',function(){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>
+<script>(function(){var f=document.getElementById('qform');if(!f)return;f.addEventListener('submit',function(ev){ev.preventDefault();f.classList.add('sent');});})();</script>
 </body>
 </html>

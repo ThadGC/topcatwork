@@ -1,7 +1,7 @@
-# START HERE — 17 August 2026, after THE FULL-AUDIT ROUND (D291–D295)
+# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D302)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D295**) and
-**§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D302**)
+and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which covered the directors, the
 > hero and delivery (D278–D290) and is now
@@ -31,12 +31,13 @@ the non-weld branch only; `span`/`step` and the whole weld branch untouched.
 
 ---
 
-## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D295)
+## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D302)
 
-His instruction: *"make sure the About Us pages are perfect throughout everything... every inner
-page designed very nicely... do a full audit... things aren't contradicting... triple check
-everything."* Explicitly design and information wires only — form/email wiring stays on his
-schedule (§2 rule 13 of the old file still stands: never raise it as a blocker).
+Two instructions, the audit and then the composition round: *"make sure the About Us pages are
+perfect throughout everything... every inner page designed very nicely... do a full audit... things
+aren't contradicting... triple check everything"*, then a run of specific corrections on the hero,
+the inner pages, the About copy and the portraits. Design and information only — form/email wiring
+stays on his schedule (§11 rule 13: never raise it as a blocker).
 
 ```
 D291  the non-weld collage clock — the directors now land ON SCREEN on /about/ at all
@@ -52,6 +53,18 @@ D294  kitchen-islands opens on the HARROW WATERFALL — his own project photo, r
 D295  ONE MOBILE NAV on every generated page — the 170-odd leaf pages had NOTHING below
       1121px; the landing's burger + D194 overlay ported by the D290 mechanism:
       generated assets/nav.css + markup lifted at build + ~20 lines of JS inlined (item 7)
+D296  the splashback hero re-cropped so the Australian sockets leave the frame;
+      new prefix service-splash-hob-*, ladder tops out at 1200 (its own width)
+D297  THE HERO IS CENTRED ON THE WHOLE FRAME at every band, and a short window
+      buys hero height to make that possible — see §2a
+D298  the directors' tone-down DELETED: they take the collage's own
+      brightness(.85) at rest and its brightness(1) on hover, like every tile
+D299  About body copy is white (--bone), scoped to that section. A TEST he asked
+      for, not a settled decision — the revert is deleting one line
+D300  THE INNER PAGES GET A SECOND COLUMN with a sticky quote card — see §2b
+D301  About copy 6 paragraphs -> 5, 178 words -> 139, and the freed height is
+      SPENT on the two gaps he named rather than quietly shrinking the section
+D302  Rimsha re-cut further back, hairline gap 13px -> 5.7px; ?v= bumped to 4
 ```
 
 ### What the audit scanned and found CLEAN (do not re-scan without cause)
@@ -68,7 +81,60 @@ D295  ONE MOBILE NAV on every generated page — the 170-odd leaf pages had NOTH
 
 ---
 
-## 2. ⛔ THE COLLAGE CLOCK — WHO GETS WHICH NUMBERS NOW
+## 2a. ⭐⭐⭐ THE HERO IS CENTRED ON THE WHOLE FRAME NOW (D297)
+
+⛔ **D259 CENTRED IT BELOW THE BAR AND HE REJECTED THAT.** The bar is a floating glass pill with
+the photograph running under it, so the frame the eye reads starts at **y=0**, not at the bar's foot.
+
+⭐⭐ **THE RELATION IS THE WHOLE THING:** `.hero` centres `.hero-inner`, so the paddings do not
+place the ink — only their difference does.
+
+```
+gapAbove − gapBelow = padTop − padBottom + titleLeading    →   padTop = padBottom − leading
+moving padTop by X moves the composition by X/2
+```
+
+⛔⛔ **BUT ON A SHORT WINDOW THE COMPOSITION DOES NOT FIT, AND NO PADDING FIXES THAT.** At 390×676
+the copy is 463.5px inside a 608px hero with a fixed 80px bar: centring needs 667px and there are
+608. **A composition that does not fit cannot be centred, only squeezed.** So the hero BUYS height
+when it is short, and only when it is short:
+
+```
+phone   .hero{min-height:max(90vh, min(100vh, 660px))}
+tablet  .hero{min-height:max(90vh, min(100vh, 780px))}  + gaps 4/4.4/4.4vh → 3.2/3.4/3.4vh
+```
+
+⭐ 90vh is untouched above ~733px, so **D97's peek of the next section survives where it was
+designed**. ⚠️ The floors are `calc(120px − 12vh)` and `calc(132px − 12vh)`, **not constants** — the
+constraint runs with viewport HEIGHT and a constant is wrong in both directions.
+⚠️ **The phone's leading term is the phone's own title size, not `--hTitle`** (that is the desktop's
+72px where the phone renders 38). ⚠️ `#hero .hero-inner` in the ≤1120 block out-specifies a bare
+`.hero-inner` in the phone block — an edit written there does nothing.
+
+**Measured:** 1440×900 **0.00px** imbalance · 375×812 **0.00** · 900×1000 **0.00** · 390×676
+**3.0** · 1024×768 **2.5** · 375×667 **38** (the one window where the floor deliberately holds it
+low). Cap clearance below the bar never under 10px.
+
+---
+
+## 2b. ⭐⭐⭐ THE INNER PAGES HAVE A SECOND COLUMN (D300)
+
+The reading sections sit in `.lead-grid` (`minmax(0,1fr) 372px`, `max-width:1280px`) and the freed
+column carries a sticky quote card at `top:calc(var(--barH) + 18px)`.
+
+⛔ **THE GRID ENDS BEFORE THE FAQ ON PURPOSE** — the FAQ and related-services blocks are themselves
+multi-column and would be crushed beside a sidebar, and ending the container there is what makes the
+card ride down and then be carried away as the full-width band arrives. **No script does it.**
+⭐ **22 pages carry it:** 9 service leaves, 5 materials, 9 guides, 4 counties, 4 towns.
+⛔ **NOT** the indexes, the sitemap, the collection or any of the 132 stone pages.
+⛔ **DESKTOP ONLY (≥1121)** — every rule but the `display:none` sits inside the query, so the phone
+and tablet pages are unchanged by construction. A phone form is his call, not an inference.
+⚠️ The markup is lifted into both builders (`qform_html()`), the service select is seeded with the
+page's own subject, and there is no backend — acknowledged in place, §11 rule 13.
+
+---
+
+## 2c. ⛔ THE COLLAGE CLOCK — WHO GETS WHICH NUMBERS NOW
 
 ```
 weldClock (≥1121 + motion + #process on the page)   start 1.21  end 0.576  scrub 0.26   (D274)
@@ -174,10 +240,11 @@ there or from HANDOVER.md §8.
 | `--revPer` (on `#reviews`) | **3** |
 | `feTurbulence` count | **60** |
 | `#svcNav` children | **8** |
-| elements | **2659** |
-| hero ink (`.hero-inner` padding-top) | **164.683** |
-| `#about` height | **759** |
-| collage | **497×676** |
+| elements | **2667** ⚠️ was 2659 — D292's nine Open Graph meta tags |
+| hero ink (`.hero-inner` padding-top) | **86.183** ⚠️ was 164.683 — D297 centred the hero |
+| `#about` height | **704** ⚠️ was 759 — D301 shortened the copy |
+| collage | **497×621** ⚠️ was 497×676, same reason |
+| portrait tiles | **241×241**, `?v=4` |
 | `#footer` height | **504** (1440) · **789** (900) · **1102** (375) |
 | `.wheel-ui` width | **480** |
 | broken images / overflow / console errors | **0 / none / none** |

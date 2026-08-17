@@ -10,28 +10,44 @@
 from PIL import Image, ImageChops, ImageFilter
 import os, sys
 
-SRC='/Users/thadeusgous/Downloads/'
+# ⚠️ D302: reads the COPIES kept beside this script, not a Downloads folder that may
+#    not exist on the next machine. The two originals are the same frames as 16 Aug.
+SRC=os.path.join(os.path.dirname(os.path.abspath(__file__)),'')
 # landmarks read off a measured grid over each source frame, in source pixels
 P = {
- 'nick':   dict(src=SRC+'Gemini_Generated_Image_t8snj6t8snj6t8sn.jpeg',
+ 'nick':   dict(src=SRC+'nick-source.jpeg',
                 crown=190, eye=610, chin=1030, cx=750, side=1600),
- 'rimsha': dict(src=SRC+'Gemini_Generated_Image_i1u8oai1u8oai1u8.jpeg',
-                crown=440, eye=960, chin=1390, cx=762, side=1638),
+ 'rimsha': dict(src=SRC+'rimsha-source.jpeg',
+                crown=440, eye=960, chin=1390, cx=762, side=1684),
 }
-# ⭐ THE EYE LINE, as a fraction of the card. The two are cut to the SAME value, which is what
-#   the eye actually reads across a pair. ⛔ ITS CEILING IS NICK'S HEADROOM: 190px of paper over
-#   his crown is 11.9% of a 1600 crop, so E cannot exceed 0.262 + 0.119. At 0.375 he keeps 11%
-#   of air above his hair and Rimsha keeps 5.8% — she simply has 100px more hair above her eyes,
-#   and shrinking her face to even that up would be the wrong trade.
-E=0.375
+# ⭐ THE EYE LINE, as a fraction of the card.
+# ⛔⛔ **THEY ARE NO LONGER CUT TO THE SAME VALUE — 17 Aug 2026 (D302).** Client: *"Nick seems
+#   slightly further away than Rimsha in the image. So move Rimsha slightly further back in her
+#   image so that it matches with Nick in terms of depth. Her hair is also going higher than his,
+#   so it's not matching up very well."*
+# ⭐⭐ **HE IS READING A REAL NUMBER.** Matching eye lines put her HAIR at 5.75% of the card
+#   against Nick's 11.25% — a 13px difference on a 241px card — because she carries 520px of hair
+#   above her eyes to his 420. Matching the eyes and matching the head box are different cuts and
+#   the pair cannot have both.
+# ⛔⛔⛔ **AND "FURTHER BACK" IS CAPPED BY HER OWN FRAME.** Moving her back means a WIDER crop, and
+#   an exact hair match at the old eye line needs a 1981px square out of a source that is 1684px
+#   wide. Her crop takes the whole width now (1638 → 1684, the maximum square) and the rest of the
+#   correction is made by dropping HER eye line alone. ⛔ The alternative was extending the canvas
+#   with invented studio paper beside her shoulders, which is retouching a real person's
+#   photograph on a public page, and it was rejected for that reason.
+# ⭐ 0.398 is the midpoint between matching the eyes (0.375) and matching the hair (0.421), chosen
+#   by cutting all four candidates and looking at them side by side at the shipped 241px size: it
+#   takes the hair gap from 13px to 5.7px and costs about 5px of eye-line offset, and 5px of eye
+#   is far less visible across a pair than 13px of hairline against the card's top edge.
+E={'nick':0.375,'rimsha':0.398}
 # ⭐ the sides are chosen so face size matches: eye-to-chin is 420px on Nick and 430 on Rimsha,
 #   so her crop is 2.4% larger and the two heads come out the same size on the page.
 RUNGS=[640,320]
 
 def build(key,p,outdir):
     im=Image.open(p['src']).convert('RGB'); W,H=im.size
-    S=p['side']
-    t=p['eye']-E*S; l=p['cx']-S/2
+    S=p['side']; e=E[key]
+    t=p['eye']-e*S; l=p['cx']-S/2
     # ⚠️ the crop is nearly as wide as the frame, so centring on the head runs off the left edge
     #    on both; clamped, each head sits at ~47% instead of 50, the same on both.
     l=max(0,min(l,W-S)); t=max(0,min(t,H-S))
@@ -49,7 +65,7 @@ def build(key,p,outdir):
         r.save(f,'WEBP',quality=85,method=6)
         made.append((f,os.path.getsize(f)))
     print('%-7s %dx%d at %d,%d   crown %.3f  eye %.3f  chin %.3f  headX %.3f  ->  %s' %
-          (key,S,S,round(l),round(t),(p['crown']-t)/S,E,(p['chin']-t)/S,(p['cx']-l)/S,
+          (key,S,S,round(l),round(t),(p['crown']-t)/S,e,(p['chin']-t)/S,(p['cx']-l)/S,
            '  '.join('%s %.1fKB'%(os.path.basename(a),b/1024) for a,b in made)))
     return c
 

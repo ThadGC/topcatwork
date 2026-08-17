@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="service.css?v=6679a739fb">
+<link rel="stylesheet" href="service.css?v=61e63cd33d">
 <link rel="stylesheet" href="/assets/footer.css?v=32e3e12343">
 <link rel="stylesheet" href="/assets/nav.css?v=349149e16f">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","name":"Kitchen Islands","serviceType":"Kitchen Islands","description":"Stone kitchen islands with mitred waterfall ends, vein-matched around every corner and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.","url":"https://www.topcatworktops.co.uk/services/kitchen-islands.html","provider":{"@type":"LocalBusiness","name":"Topcat Worktops","@id":"https://www.topcatworktops.co.uk/#business"},"areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topcatworktops.co.uk/index.html"},{"@type":"ListItem","position":2,"name":"Services","item":"https://www.topcatworktops.co.uk/services/"},{"@type":"ListItem","position":3,"name":"Kitchen Islands","item":"https://www.topcatworktops.co.uk/services/kitchen-islands.html"}]},{"@type":"LocalBusiness","@id":"https://www.topcatworktops.co.uk/#business","name":"Topcat Worktops","url":"https://www.topcatworktops.co.uk","telephone":"0800 098 2812","email":"info@topcatworktops.co.uk","priceRange":"££","areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"18:00"}]}]}</script>
@@ -142,6 +142,11 @@
     </div>
   </section>
 
+  <!-- ⭐ D300 — the reading sections and the quote card share a grid; see THE LEAD LAYOUT in
+       service.css for why it ends where it does. Below 1121px the aside is not rendered and these
+       sections are exactly what they were. -->
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap prose rise">
     <p>An island worktop takes more planning than a straight run. The overhangs need support, the waterfall ends need the veining to turn the corner without breaking, and any breakfast bar has to sit at a comfortable height. We plan all of it before a single cut.</p><p>We mitre the waterfall ends so the joint at the corner is barely visible, then match the pattern so it flows unbroken from the top and down each side. The whole piece is cut to one template and fitted by one team, so the finish you approve is the finish you get.</p>
   </div></section>
@@ -176,6 +181,28 @@
 
   <!-- ⭐ D263: "Frequently asked questions", his words, with the gold last word every other heading
        on the site takes. The rows are cards in a two-column grid now — see `.faq` in service.css. -->
+   </div>
+   <aside class="lead-aside">
+  <form class="qform" id="qform" novalidate>
+    <div class="qf-fields">
+      <h3>Get your <em>free quote</em></h3>
+      <p class="qf-sub">A quick chat, then a clear, itemised quote by email.</p>
+      <label class="sr-only" for="qfName">Your name</label>
+      <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
+      <label class="sr-only" for="qfEmail">Email address</label>
+      <input id="qfEmail" name="email" type="email" placeholder="Email address" autocomplete="email">
+      <label class="sr-only" for="qfPhone">Phone number</label>
+      <input id="qfPhone" name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+      <label class="sr-only" for="qfService">What do you need</label>
+      <select id="qfService" name="service"><option>Kitchen worktops</option><option>Kitchen islands</option><option>Splashbacks</option><option>Bathrooms and vanity tops</option><option>Outdoor kitchens</option><option>Fireplaces</option><option>Dining tables</option><option>Commercial</option><option>Something else</option></select>
+      <button type="submit">Send my enquiry</button>
+      <p class="qf-note">A quick call with us, then your fixed quote by email. We reply within one working day.</p>
+    </div>
+    <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call 0800 098 2812.</p>
+  </form>
+</aside>
+  </div>
+
   <section class="block faq"><div class="wrap rise">
     <h2>Frequently asked <em>questions</em></h2>
     <div class="faq-grid"><details><summary>What is a waterfall island?</summary><div class="a">A waterfall island has the worktop stone continuing down the sides to the floor, rather than stopping at the edge. The corner is mitred so the joint is barely visible and the veining carries around it.</div></details><details><summary>Can you match the veining on the island to the worktops?</summary><div class="a">Yes. Where the island and the perimeter come from the same slab or batch we lay them out together so the colour and movement sit well side by side.</div></details><details><summary>How big can a kitchen island worktop be?</summary><div class="a">Larger islands may need a joint or a supported overhang, which we plan around the slab size and your layout. We talk you through the options at the home visit.</div></details><details><summary>Do island worktops need extra support?</summary><div class="a">Overhangs for seating usually need brackets or a support bar under the stone. We advise on this as part of the quote so the finished island is solid and safe to lean on.</div></details></div>
@@ -337,5 +364,6 @@
     </div>
   </footer><script>(function(){var f=document.querySelector('#footer')||document.querySelector('footer'),t=document.getElementById('footTail'),c=document.querySelector('.foot-contact'),a=document.querySelector('.foot-c-area'),h=document.querySelector('.foot-c-hours');if(!f||!t||!c||!a||!h)return;function p(){var on=getComputedStyle(f).getPropertyValue('--footTail').trim()==='on',host=on?t:c;if(a.parentElement!==host){host.appendChild(a);host.appendChild(h);}}p();window.addEventListener('resize',p,{passive:true});})();</script>
 <script>document.addEventListener('DOMContentLoaded',function(){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>
+<script>(function(){var f=document.getElementById('qform');if(!f)return;f.addEventListener('submit',function(ev){ev.preventDefault();f.classList.add('sent');});})();</script>
 </body>
 </html>

@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/services/service.css?v=6679a739fb">
+<link rel="stylesheet" href="/services/service.css?v=61e63cd33d">
 <link rel="stylesheet" href="/assets/footer.css?v=32e3e12343">
 <link rel="stylesheet" href="/assets/nav.css?v=349149e16f">
 <link rel="stylesheet" href="/seo.css?v=2ee91ef254">
@@ -196,6 +196,10 @@
     </div>
   </section>
 
+  <!-- ⭐ D300 — the reading sections share a grid with the sticky quote card; see THE LEAD LAYOUT
+       in service.css. The grid ends before the FAQ, which is where the card is carried away. -->
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap">
     <div class="prose lead-answer"><p>Granite is a natural igneous rock, quarried in blocks and sawn into slabs. It is mostly feldspar, quartz and mica, formed under heat and pressure over millions of years, which is why every slab is different and why it copes with heat better than any engineered surface.</p></div>
     <dl class="facts"><div class='fact'><dt>Composition</dt><dd>Natural rock, mainly feldspar, quartz and mica</dd></div><div class='fact'><dt>Porosity</dt><dd>Porous, seal on fitting then roughly annually</dd></div><div class='fact'><dt>Heat</dt><dd>Excellent, hot pans direct on the surface</dd></div><div class='fact'><dt>Outdoors</dt><dd>Yes, hard granites suit outdoor kitchens</dd></div><div class='fact'><dt>Typical slab</dt><dd>3000mm x 1700mm</dd></div><div class='fact'><dt>Silica</dt><dd>Much lower than engineered quartz</dd></div></dl>
@@ -220,6 +224,28 @@
   <h2>How it works</h2>
   <div class="steps"><div class="step"><div class="n">Step 1</div><h3>Free home visit</h3><p>We come to you with samples, look at the actual room and talk through the stone, the edges and the layout. No showroom trip, and no obligation.</p></div><div class="step"><div class="n">Step 2</div><h3>One itemised price</h3><p>Templating, stone, fabrication, all cut-outs, fitting and VAT, in one figure agreed before anything is cut. What you approve is what you pay.</p></div><div class="step"><div class="n">Step 3</div><h3>Template</h3><p>Once your units are level we template the room by hand, to a fraction of a millimetre, and agree joint positions and veining direction with you in the room.</p></div><div class="step"><div class="n">Step 4</div><h3>Your slab, approved</h3><p>You see photographs of your actual slab and approve it before it is cut, so there are no surprises when it arrives.</p></div><div class="step"><div class="n">Step 5</div><h3>Fitted and sealed</h3><p>Our own fitters install it, usually within three to five working days of templating, and we take the packaging away with us.</p></div><div class="step"><div class="n">Step 6</div><h3>Aftercare inside 72 hours</h3><p>If anything needs adjusting afterwards we come back, free of charge, and we have never taken more than 72 hours to get there.</p></div></div>
 </div></section>
+   </div>
+   <aside class="lead-aside">
+  <form class="qform" id="qform" novalidate>
+    <div class="qf-fields">
+      <h3>Get your <em>free quote</em></h3>
+      <p class="qf-sub">A quick chat, then a clear, itemised quote by email.</p>
+      <label class="sr-only" for="qfName">Your name</label>
+      <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
+      <label class="sr-only" for="qfEmail">Email address</label>
+      <input id="qfEmail" name="email" type="email" placeholder="Email address" autocomplete="email">
+      <label class="sr-only" for="qfPhone">Phone number</label>
+      <input id="qfPhone" name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+      <label class="sr-only" for="qfService">What do you need</label>
+      <select id="qfService" name="service"><option>Kitchen worktops</option><option>Kitchen islands</option><option>Splashbacks</option><option>Bathrooms and vanity tops</option><option>Outdoor kitchens</option><option>Fireplaces</option><option>Dining tables</option><option>Commercial</option><option>Something else</option></select>
+      <button type="submit">Send my enquiry</button>
+      <p class="qf-note">A quick call with us, then your fixed quote by email. We reply within one working day.</p>
+    </div>
+    <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call 0800 098 2812.</p>
+  </form>
+</aside>
+  </div>
+
   <section class="faq"><div class="wrap"><h2>Frequently asked <em>questions</em></h2><div class="faq-grid"><details><summary>How often does granite need sealing?</summary><div class='a'>Once when we fit it, then roughly once a year. It is a ten minute job with a cloth and a bottle you can buy anywhere. A quick test: leave a few drops of water on the surface for half an hour, and if it darkens the stone, it is ready for resealing.</div></details><details><summary>Can you put hot pans straight onto granite?</summary><div class='a'>Yes. Granite came out of the ground under heat and pressure and a hot pan does not trouble it. It is the main practical reason people still choose granite over quartz.</div></details><details><summary>Will my granite look like the sample?</summary><div class='a'>Not exactly, and that is the point of it. A sample the size of a postcard cannot show the movement in a three metre slab. We send you photographs of your actual slab before anything is cut, so you approve the real thing rather than a representative piece.</div></details><details><summary>Is granite going out of fashion?</summary><div class='a'>Quartz outsells it now, but granite has a loyal following and is not going anywhere. If you cook seriously, or you want a surface nobody else has, it is still the better answer. Fashion is a poor reason to choose a surface you will keep for twenty years.</div></details></div></div></section>
 
   <section class="block"><div class="wrap">
@@ -380,6 +406,6 @@
         <a href="#">Cookies</a>
       </div>
     </div>
-  </footer><script>(function(){var f=document.querySelector('#footer')||document.querySelector('footer'),t=document.getElementById('footTail'),c=document.querySelector('.foot-contact'),a=document.querySelector('.foot-c-area'),h=document.querySelector('.foot-c-hours');if(!f||!t||!c||!a||!h)return;function p(){var on=getComputedStyle(f).getPropertyValue('--footTail').trim()==='on',host=on?t:c;if(a.parentElement!==host){host.appendChild(a);host.appendChild(h);}}p();window.addEventListener('resize',p,{passive:true});})();</script><script>document.addEventListener('DOMContentLoaded',function(){var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>
+  </footer><script>(function(){var f=document.querySelector('#footer')||document.querySelector('footer'),t=document.getElementById('footTail'),c=document.querySelector('.foot-contact'),a=document.querySelector('.foot-c-area'),h=document.querySelector('.foot-c-hours');if(!f||!t||!c||!a||!h)return;function p(){var on=getComputedStyle(f).getPropertyValue('--footTail').trim()==='on',host=on?t:c;if(a.parentElement!==host){host.appendChild(a);host.appendChild(h);}}p();window.addEventListener('resize',p,{passive:true});})();</script><script>document.addEventListener('DOMContentLoaded',function(){var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script><script>(function(){var f=document.getElementById('qform');if(!f)return;f.addEventListener('submit',function(ev){ev.preventDefault();f.classList.add('sent');});})();</script>
 </body>
 </html>

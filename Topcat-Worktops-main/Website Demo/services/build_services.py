@@ -354,7 +354,7 @@ HERO_IMG = {
     # hob, which is what it is about. ⚠️ 1620 is the NATIVE top of that ladder (a 1920x1080
     # source), not a choice. ⚠️ `hero-kitchen.jpg` stays — kitchen-worktops still uses it, and
     # so does the landing page.
-    "splashbacks": "../assets/site/service-splash-marble-1620.webp",
+    "splashbacks": "../assets/site/service-splash-hob-1200.webp",
     # ⭐⭐ THE CLIENT'S OWN PHOTOGRAPH — D241, sent with the dining one. It replaced the slab shot
     # on the Bathrooms TILE and this hero follows it, so the tile and the page it opens show the
     # same room. ⚠️ `cta-slab.jpg` is still the hero two lines below and still the landing page's
@@ -621,6 +621,54 @@ def related_html(current):
     return '<div class="mats">' + "".join(items) + "</div>"
 
 
+# ⭐⭐⭐ THE SIDEBAR QUOTE CARD — 17 August 2026 (D300). Client, with an SBX screenshot: the inner
+# pages are "very content heavy", the copy sits left and "leaves a lot of space on the right, which
+# looks bad", so the empty column earns its place by carrying a form that "attaches to the nav bar
+# as the user scrolls down into that section, and then it folds behind sections that go across it".
+# The layout, the sticky offset and the desktop-only gate all live in service.css under THE LEAD
+# LAYOUT; this is the markup and the demo behaviour.
+# ⚠️ THE FIELDS MATCH THE LANDING PAGE'S ENQUIRY FORM so there is one set of questions on the site,
+# and the service select is seeded with the page's own subject where there is one — a visitor who
+# clicked "Kitchen worktops" should not have to say so twice.
+# ⛔ NO BACKEND IS WIRED AND THAT IS NOT A BLOCKER (§2 rule 13, his own pre-launch task). The submit
+# is intercepted and acknowledged in place, exactly as the landing page's form has done since
+# 7 August. ⭐ TO GO LIVE: POST the FormData to a handler and replace the acknowledgement.
+QFORM_OPTIONS = [
+    "Kitchen worktops", "Kitchen islands", "Splashbacks", "Bathrooms and vanity tops",
+    "Outdoor kitchens", "Fireplaces", "Dining tables", "Commercial", "Something else",
+]
+
+
+def qform_html(preselect=""):
+    opts = "".join(
+        '<option%s>%s</option>' % (" selected" if o == preselect else "", e(o))
+        for o in QFORM_OPTIONS)
+    return f"""<aside class="lead-aside">
+  <form class="qform" id="qform" novalidate>
+    <div class="qf-fields">
+      <h3>Get your <em>free quote</em></h3>
+      <p class="qf-sub">A quick chat, then a clear, itemised quote by email.</p>
+      <label class="sr-only" for="qfName">Your name</label>
+      <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
+      <label class="sr-only" for="qfEmail">Email address</label>
+      <input id="qfEmail" name="email" type="email" placeholder="Email address" autocomplete="email">
+      <label class="sr-only" for="qfPhone">Phone number</label>
+      <input id="qfPhone" name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+      <label class="sr-only" for="qfService">What do you need</label>
+      <select id="qfService" name="service">{opts}</select>
+      <button type="submit">Send my enquiry</button>
+      <p class="qf-note">A quick call with us, then your fixed quote by email. We reply within one working day.</p>
+    </div>
+    <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call {PHONE_DISPLAY}.</p>
+  </form>
+</aside>"""
+
+
+QFORM_JS = ("<script>(function(){var f=document.getElementById('qform');if(!f)return;"
+            "f.addEventListener('submit',function(ev){ev.preventDefault();"
+            "f.classList.add('sent');});})();</script>")
+
+
 def page(s):
     url = f"{BASE}/services/{s['slug']}.html"
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(p)}</p></div>' for t, p in s["feats"])
@@ -700,6 +748,11 @@ def page(s):
     </div>
   </section>
 
+  <!-- ⭐ D300 — the reading sections and the quote card share a grid; see THE LEAD LAYOUT in
+       service.css for why it ends where it does. Below 1121px the aside is not rendered and these
+       sections are exactly what they were. -->
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap prose rise">
     {intro}
   </div></section>
@@ -734,6 +787,10 @@ def page(s):
 
   <!-- ⭐ D263: "Frequently asked questions", his words, with the gold last word every other heading
        on the site takes. The rows are cards in a two-column grid now — see `.faq` in service.css. -->
+   </div>
+   {qform_html(s['h1'])}
+  </div>
+
   <section class="block faq"><div class="wrap rise">
     <h2>Frequently asked <em>questions</em></h2>
     <div class="faq-grid">{faqs}</div>
@@ -757,6 +814,7 @@ def page(s):
 
 {footer_html()}
 {REVEAL_JS}
+{QFORM_JS}
 </body>
 </html>"""
 

@@ -244,9 +244,9 @@ const SS={
  "/assets/site/service-vanity-2400.webp":"/assets/site/service-vanity-880.webp 880w, /assets/site/service-vanity-1600.webp 1600w, /assets/site/service-vanity-2400.webp 2400w",
  "/assets/site/service-commercial-2400.webp":"/assets/site/service-commercial-880.webp 880w, /assets/site/service-commercial-1600.webp 1600w, /assets/site/service-commercial-2400.webp 2400w",
  /* ⚠️ TWO RUNGS AGAIN, AND AGAIN THE SOURCE DECIDED IT — 1920x1080 in, 1620 out. ⛔ And note the
-    prefix: `service-splash-marble` is THIS photograph; `service-splashbacks-706` is the July one
+    prefix: `service-splash-hob` is THIS photograph, re-cropped at D296 to clear two non-UK sockets (`service-splash-marble` is the uncropped original, kept); `service-splashbacks-706` is the July one
     it replaced and is a different picture entirely. */
- "/assets/site/service-splash-marble-1620.webp":"/assets/site/service-splash-marble-880.webp 880w, /assets/site/service-splash-marble-1620.webp 1620w",
+ "/assets/site/service-splash-hob-1200.webp":"/assets/site/service-splash-hob-880.webp 880w, /assets/site/service-splash-hob-1200.webp 1200w",
  /* ⛔ `service-worktops-quartz` IS NOT A RUNG OF `service-worktops-554`. Different photograph,
     deliberately different prefix. */
  "/assets/site/service-worktops-quartz-2400.webp":"/assets/site/service-worktops-quartz-880.webp 880w, /assets/site/service-worktops-quartz-1600.webp 1600w, /assets/site/service-worktops-quartz-2400.webp 2400w",
@@ -332,7 +332,7 @@ const SERVICES=[
      SOCKETS ARE IN SHOT ON PURPOSE** — this tile's own copy says "cut around sockets and hobs",
      so they are the sentence, not clutter. ⚠️ They are not UK sockets; at card size it is not
      legible, and the alternative crop lost the run of marble that makes the point. */
-  {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splash-marble-1620.webp"},
+  {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splash-hob-1200.webp"},
 
   /* ⭐⭐ A REAL BATHROOM INSTEAD OF THE BARE SLAB — D241, his own file, sent in the same run as
      the dining photograph. This tile was one of the three the handover had listed as showing the

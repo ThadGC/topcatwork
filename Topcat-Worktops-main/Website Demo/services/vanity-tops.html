@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="service.css?v=6679a739fb">
+<link rel="stylesheet" href="service.css?v=61e63cd33d">
 <link rel="stylesheet" href="/assets/footer.css?v=32e3e12343">
 <link rel="stylesheet" href="/assets/nav.css?v=349149e16f">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Service","name":"Vanity Tops","serviceType":"Vanity Tops","description":"Vanity tops cut in quartz, granite or marble for undermount and countertop basins, with the tap holes where you want them. Templated by hand and fitted by our own team across London and the Home Counties.","url":"https://www.topcatworktops.co.uk/services/vanity-tops.html","provider":{"@type":"LocalBusiness","name":"Topcat Worktops","@id":"https://www.topcatworktops.co.uk/#business"},"areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.topcatworktops.co.uk/index.html"},{"@type":"ListItem","position":2,"name":"Services","item":"https://www.topcatworktops.co.uk/services/"},{"@type":"ListItem","position":3,"name":"Vanity Tops","item":"https://www.topcatworktops.co.uk/services/vanity-tops.html"}]},{"@type":"LocalBusiness","@id":"https://www.topcatworktops.co.uk/#business","name":"Topcat Worktops","url":"https://www.topcatworktops.co.uk","telephone":"0800 098 2812","email":"info@topcatworktops.co.uk","priceRange":"££","areaServed":["London","Hertfordshire","Essex","Berkshire","Buckinghamshire","Surrey","Oxfordshire","Bedfordshire"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"18:00"}]}]}</script>
@@ -142,6 +142,11 @@
     </div>
   </section>
 
+  <!-- ⭐ D300 — the reading sections and the quote card share a grid; see THE LEAD LAYOUT in
+       service.css for why it ends where it does. Below 1121px the aside is not rendered and these
+       sections are exactly what they were. -->
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap prose rise">
     <p>A vanity top is a small piece of stone that gets looked at from a foot away, every morning. That is why the details count for more here than almost anywhere else in the house: where the tap sits, how far the top oversails the unit, whether the basin is cut in from beneath or stands on top of it.</p><p>Bring us the basin and the tap, or their make and model, and we will template around them. An undermount basin is cut from below and the inside edge is polished, so the stone runs down to the bowl. A countertop basin sits on an uncut top with one hole for the waste. Wall-mounted taps mean no holes at all, which is worth settling early, because a hole is quick to cut and impossible to un-cut.</p><p>Cloakrooms, family bathrooms and en-suites all get the same treatment. Where more than one of them is being done at once we plan the pieces together, so the same stone runs through the house rather than nearly matching from room to room.</p>
   </div></section>
@@ -176,6 +181,28 @@
 
   <!-- ⭐ D263: "Frequently asked questions", his words, with the gold last word every other heading
        on the site takes. The rows are cards in a two-column grid now — see `.faq` in service.css. -->
+   </div>
+   <aside class="lead-aside">
+  <form class="qform" id="qform" novalidate>
+    <div class="qf-fields">
+      <h3>Get your <em>free quote</em></h3>
+      <p class="qf-sub">A quick chat, then a clear, itemised quote by email.</p>
+      <label class="sr-only" for="qfName">Your name</label>
+      <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
+      <label class="sr-only" for="qfEmail">Email address</label>
+      <input id="qfEmail" name="email" type="email" placeholder="Email address" autocomplete="email">
+      <label class="sr-only" for="qfPhone">Phone number</label>
+      <input id="qfPhone" name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+      <label class="sr-only" for="qfService">What do you need</label>
+      <select id="qfService" name="service"><option>Kitchen worktops</option><option>Kitchen islands</option><option>Splashbacks</option><option>Bathrooms and vanity tops</option><option>Outdoor kitchens</option><option>Fireplaces</option><option>Dining tables</option><option>Commercial</option><option>Something else</option></select>
+      <button type="submit">Send my enquiry</button>
+      <p class="qf-note">A quick call with us, then your fixed quote by email. We reply within one working day.</p>
+    </div>
+    <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call 0800 098 2812.</p>
+  </form>
+</aside>
+  </div>
+
   <section class="block faq"><div class="wrap rise">
     <h2>Frequently asked <em>questions</em></h2>
     <div class="faq-grid"><details><summary>Can you cut a vanity top for an undermount basin?</summary><div class="a">Yes. The opening is cut from beneath and the inside edge is polished, so the stone runs cleanly to the bowl. We need the basin itself, or its make and model, before we cut.</div></details><details><summary>Where do the tap holes go?</summary><div class="a">Wherever you want them, as long as the tap and the basin agree with each other. Bring the tap or its specification to the template and we will drill to it. If the taps come out of the wall, the top stays solid.</div></details><details><summary>What is the best stone for a vanity top?</summary><div class="a">Quartz is the easiest to live with, because toothpaste, cosmetics and cleaning products come off it with a wipe. Marble and other natural stones look wonderful on a vanity and want a little care: sealed on fitting, and acidic things wiped up rather than left. We will tell you which one suits the way the room is used.</div></details><details><summary>Can I have a matching upstand and window sill?</summary><div class="a">Yes. Upstands, sills, shelves and shower thresholds can come from the same stone, cut at the same time so the colour and the movement sit together.</div></details><details><summary>How thick is a vanity top?</summary><div class="a">20mm and 30mm are the usual thicknesses. A mitred edge can be built up to look thicker than the slab, which suits a vanity meant to be a feature. We confirm the thickness and the edge profile at the template.</div></details></div>
@@ -337,5 +364,6 @@
     </div>
   </footer><script>(function(){var f=document.querySelector('#footer')||document.querySelector('footer'),t=document.getElementById('footTail'),c=document.querySelector('.foot-contact'),a=document.querySelector('.foot-c-area'),h=document.querySelector('.foot-c-hours');if(!f||!t||!c||!a||!h)return;function p(){var on=getComputedStyle(f).getPropertyValue('--footTail').trim()==='on',host=on?t:c;if(a.parentElement!==host){host.appendChild(a);host.appendChild(h);}}p();window.addEventListener('resize',p,{passive:true});})();</script>
 <script>document.addEventListener('DOMContentLoaded',function(){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{threshold:0.12});document.querySelectorAll('.rise').forEach(function(el){io.observe(el);});var bar=document.querySelector('header.bar'),on=false;function s(){var y=window.scrollY>12;if(y!==on){on=y;bar.classList.toggle('scrolled',y);}}if(bar){s();window.addEventListener('scroll',s,{passive:true});}});</script>
+<script>(function(){var f=document.getElementById('qform');if(!f)return;f.addEventListener('submit',function(ev){ev.preventDefault();f.classList.add('sent');});})();</script>
 </body>
 </html>

@@ -3976,8 +3976,36 @@
        both paddings themselves, so neither inherits this. Checked after, not assumed.
        ⚠️ `--heroPadB` exists so the short-viewport block below can move the floor and have the top
        follow it; setting `padding-bottom` there alone would silently break the relation. */
+    /* ⛔⛔⛔ **THE BAR IS OUT OF THE FRAME — 17 August 2026 (D297), REVERSING D259's FRAME CHOICE.**
+       Client, a day after D259 shipped: *"I asked a while ago to move all the content on the hero
+       section exactly as it is together, move it slightly up because there's more gaps from the top
+       than there is to the bottom. So that needs to be fixed so that the text is perfectly center."*
+       ⭐⭐⭐ **HE IS RIGHT, AND D259's OWN NOTE ABOVE IS THE RECORD OF ME CHOOSING WRONG.** That note
+       says centring on the hero BOX was built and rejected as "plainly top-heavy" — but that was my
+       eye, not his, and the reason it looked top-heavy on a screenshot is that a screenshot shows
+       the bar as furniture. On the live page the bar is a floating glass pill with the photograph
+       running underneath it, so the frame the eye reads starts at y=0. Measured from there the
+       block sat **269.7 above / 191.3 below at 1440x900** — the 78.4px he is describing, which is
+       the bar, exactly as the old relation put it there.
+       ⭐⭐⭐ **AND THE RELATION IS SIMPLER THAN THE ONE IT REPLACES, BECAUSE `.hero` CENTRES
+       `.hero-inner`.** The inner box is centred in the hero, so the two paddings do not place the
+       ink — only their DIFFERENCE does: gapAbove − gapBelow = padTop − padBottom + leading, and
+       moving padTop by X moves the composition by X/2. So perfect visual centring is
+       **padTop = padBottom − leading**, with no viewport term in it at all. ⭐ That formula predicted
+       all three measured corrections before a line changed — desktop 39.2px, tablet 24.1, phone
+       32.8 — which is why it is written as a relation and not as three tuned clamps (D259's own
+       warning, still right).
+       ⚠️ **THE LEADING TERM IS D259's AND IT STAYS**: the headline's first line box carries
+       `--hTitle * 0.1234` of air above the cap, so a box centred by arithmetic still reads low by
+       that much. The chips' bottom edge IS their ink.
+       ⛔⛔ **THE `max()` FLOOR IS NOT TASTE, IT IS THE SHORT-WINDOW GUARD.** The gap this relation
+       produces is `(H + leading − C) / 2`, so on a window short enough that the copy fills the hero
+       the centred position walks up into the bar — at 1080x863 the exact answer leaves the cap 5px
+       under a floating pill. The floor stops that, and the cost is that such a window sits a few
+       pixels low rather than centred, which is the right way round. ⚠️ It binds ONLY there; at every
+       ordinary window the calc wins and the centring is exact. */
     --heroPadB:clamp(72px,10.8vh,132px);
-    padding:calc(var(--heroPadB) + var(--barH) - var(--hTitle) * 0.1234)
+    padding:max(72px, calc(var(--heroPadB) - var(--hTitle) * 0.1234))
             clamp(20px,5vw,64px) var(--heroPadB)}
   /* ⭐⭐⭐ **THE HERO IS ONE CENTRED COMPOSITION AT EVERY WIDTH — 14 August 2026 (D238).**
      Client: *"for the desktop version, remove the line next to the subtitle, and then center the
@@ -4389,7 +4417,24 @@
        screen instead of the hero filling it exactly.
        ⚠️ min-height ALONE would have done nothing — the content is taller than 90vh here, so the
        padding had to come down with it or the hero would simply have kept its old height. */
-    .hero{min-height:90vh}
+    /* ⭐⭐⭐ **THE HERO TAKES THE ROOM IT NEEDS ON A SHORT WINDOW — 17 August 2026 (D297).**
+       Client, on the phone and tablet hero: *"The spacing still has to be good for mobile and
+       tablet... not too close to the top, not too close to the bottom, just very well spaced out.
+       This is one of the most important parts. It's going to convert clients."*
+       ⛔⛔⛔ **THE PADDING WAS NEVER THE FAULT HERE — THE COMPOSITION DID NOT FIT.** Measured at
+       390x676 (his own preview): the copy is **463.5px inside a 608px hero**, 76% of it, and the
+       fixed bar owns the top 80. Centring that with any clearance at all needs 2x104 + 459 = 667px
+       of hero and there were 608, so every "fix" applied to the paddings could only trade the top
+       gap against the bottom one. **A composition that does not fit cannot be centred, only
+       squeezed.**
+       ⭐⭐ **SO THE SHORT WINDOW BUYS HEIGHT, AND ONLY THE SHORT WINDOW DOES.** `max(90vh, min(100vh,
+       660px))` is 90vh on every handset taller than ~733px — D97's peek of the next section is
+       untouched there, which is the client's own decision — and on a shorter one it grows to 660
+       and stops, so it can never exceed the screen. At 676 that is the difference between a title
+       13px under the bar and a composition centred with 20px of air above it.
+       ⚠️ The tablet re-declares this below with its own ceiling; a landscape tablet is shorter
+       still relative to its copy. */
+    .hero{min-height:max(90vh, min(100vh, 660px))}
     .hero-inner{padding-top:clamp(84px,14vh,136px);padding-bottom:clamp(60px,8.6vh,96px)}
     /* ⛔⛔ **THE 11 AUG DERIVED WIDTH IS GONE WITH THE ROW IT MEASURED — 14 August 2026 (D237).**
        It read `calc(66.667% + var(--hfGap)*0.667 + var(--hfIcon))`: the distance from the first
@@ -5801,6 +5846,30 @@
      button drops below the collage's bottom edge because there is no slack left for `auto` to
      eat. That is the failure mode to watch if anyone lengthens this copy again. */
   .about-copy{grid-area:copy;align-self:stretch;display:flex;flex-direction:column}
+  /* ⚠️⚠️ **A TEST HE ASKED FOR, NOT A SETTLED DECISION — 17 August 2026 (D299).** Client: *"in the
+     about us section, I want you to make the text, the body text white and not gray. I just wanna
+     see what that looks like. So only do it for that section for now."*
+     ⭐ `.section-sub` is the site's body-copy class and it is `--muted` (bone at 55%) EVERYWHERE —
+     every section sub, every generated page. So this is scoped to `#about .about-copy` and nothing
+     else, which is the "only that section" he asked for; the rest of the site is untouched and the
+     one-line revert is deleting this rule.
+     ⚠️ The white is `--bone`, the brand's own off-white (#F4F1EA), not `#fff` — pure white is not a
+     colour this site uses anywhere and would read colder than the headlines it sits under.
+     ⚠️ It reaches `/about/` too, which builds this same section from this file. That is correct —
+     one component, one appearance — but it does mean the test is visible on two pages. */
+  #about .about-copy .section-sub{color:var(--bone)}
+  /* ⭐⭐ **THE COPY BREATHES — D301, THE OTHER HALF OF THE SHORTENING.** Client: *"creating a
+     little bit more space in the about us section text so that it's not so close to the title and
+     not so close to the Chat with Topcat CTA."*
+     ⛔ **SHORTENING THE COPY ALONE WOULD HAVE GIVEN HIM NEITHER.** `.about-copy` is a flex column
+     and the collage is `align-self:stretch` (D244), so the COPY drives the section's height: take
+     four lines out and the whole section simply gets shorter, with every gap exactly as tight as
+     it was. The freed height has to be SPENT or it is not felt — the D157/D169 lesson again.
+     ⭐ So it goes to the two gaps he named, and nowhere else: under the title, and above the CTA.
+     ⚠️ `.about-cta` is `margin-top:auto`, so its padding is a MINIMUM — on a tall column the auto
+     margin gives it more, which is the behaviour we want and the reason this is padding. */
+  #about .about-copy .section-sub:first-of-type{margin-top:clamp(15px,2.3vh,26px)}
+  #about .about-cta{padding-top:clamp(19px,3vh,36px)}
   /* The section's one action. Left-aligned under the copy rather than centred: this column is
      a column of prose, and a centred button in it reads as a stray. ⚠️ `align-self:flex-start`
      keeps it its own width — in a flex column it would otherwise stretch the full measure. */
@@ -6011,7 +6080,12 @@
       margin-top:clamp(8px,1.2vh,12px)}
     #about .section-title + .section-sub,.weld-about .section-title + .section-sub{
       margin-top:clamp(7px,1.1vh,11px)}
-    #about .about-cta,.weld-about .about-cta{padding-top:clamp(11px,1.9vh,22px)}
+    /* ⭐ D301 — the desktop's own figure, raised with the copy's shortening. ⛔ THE CLONE IS IN
+       THE SELECTOR AND MUST STAY THERE: `.weld-about` is the copy the weld slides, and a padding
+       that differs between the clone and the real section would show as a jump at the hand-over.
+       ⚠️ This out-specifies the base rule above (same weight, later in the file), so the desktop
+       number lives HERE and the base one serves the phone and tablet. */
+    #about .about-cta,.weld-about .about-cta{padding-top:clamp(18px,2.9vh,34px)}
     .about-collage>.ac-tile{min-height:0;min-width:0}
     /* ⛔⛔⛔ THIS ONE LINE IS WHAT MAKES THE COPY DRIVE THE ROW, AND WITHOUT IT THE WHOLE BLOCK
        DOES THE OPPOSITE OF WHAT IT SAYS. `minmax(0,1fr)` sets each track's MINIMUM to zero, but
@@ -6045,20 +6119,27 @@
     background:linear-gradient(155deg,#17171d 0%,#0c0c10 100%);
     aspect-ratio:1;
     display:flex;align-items:flex-end}
-  /* ⭐⭐⭐ THE PAIR IS FILTERED DOWN, AND THE STUDIO PAPER STAYS — 16 Aug 2026 (D278, second
-     pass). Client: *"do not remove the backgrounds from their images… and also maybe put a
-     filter on so that they don't look so bright. So don't remove the background."*
-     ⛔ **THE FIRST PASS MASKED THE PAPER OUT** onto the tile's own dark ground, to stop two lit
-     studio rectangles shouting out of a mosaic of dark stone. **He reversed it, and the tone is
-     the part that was actually wrong**, so it is corrected here where it is one line and not
-     baked into the file: the paper measures 195 in the cut, which the collage's own
-     brightness(.85) only brings to 166 — against a mosaic whose photographs mean 124.
-     ⚠️ **FILTERS DO NOT MULTIPLY.** This declaration REPLACES `.ac-tile img`'s, it does not
-     compound with it, so .68 here is the whole of it and not 0.85 x 0.68.
-     ⚠️ And the hover has to be restated too, or `.ac-tile:hover img` (0,2,1) snaps the pair from
-     .68 to full brightness — a jump nothing else in the collage makes. */
-  .ac-p img{position:absolute;inset:0;filter:brightness(.68) saturate(.9)}
-  .ac-p:hover img{filter:brightness(.84) saturate(.98)}
+  /* ⛔⛔⛔ **THE TONE-DOWN IS GONE — 17 August 2026 (D298), REVERSING D278's SECOND PASS.**
+     Client: *"there's a dull shadow or something over the image of Nick and Rimsha where if I
+     hover the mouse over it, only then does the image brighten. So on mobile and tablet, the
+     image has to be bright already, and then also on desktop bright already, but every other
+     mouse interactive animation can stay."*
+     ⭐⭐ **THE OLD DECISION AND WHY IT EXISTED:** on 16 Aug he asked for the opposite — *"maybe put
+     a filter on so that they don't look so bright"* — after reversing a first pass that had masked
+     the studio paper out entirely. The measurement behind it was real: the paper reads 195 in the
+     cut against a mosaic whose photographs mean 124, so `brightness(.68) saturate(.9)` pulled the
+     pair to 77. ⭐ **WHAT CHANGED IS THE LAYOUT, NOT THE ARITHMETIC.** D279 moved them out of the
+     top band and made them a 241px square pair at the FOOT of the collage, where two lit
+     rectangles read as the people the section is about rather than as a bright patch in the
+     middle of the stone. At that size and position he is looking at faces in shadow.
+     ⛔⛔ **AND THE FIX IS A DELETION, NOT A NEW NUMBER.** Both declarations go, so the portraits
+     take `.ac-tile img`'s own `brightness(.85) saturate(.96)` at rest and `.ac-tile:hover img`'s
+     `brightness(1)` on hover — **the same treatment as every other photograph in the collage,
+     with one definition again** (D273's lesson: delete the override, do not retype it). The hover
+     scale, the sheen and the fold are all untouched, which is the rest of his sentence.
+     ⭐ `.ac-p` is a CLASS, not a media query, so this lands on the phone, the tablet and the
+     desktop in one edit, which is what he asked for. */
+  .ac-p img{position:absolute;inset:0}
   /* ⚠️ EVERYTHING IN A PORTRAIT TILE IS SIZED OFF --sideW, NOT vw. The collage is capped by
      the viewport's HEIGHT as well as its width, so on a wide short laptop the tiles are narrow
      while vw is large — type keyed to vw comes out too big for the box it is in, and at
@@ -7413,7 +7494,24 @@
        D174 are NOT touched** — 35/34/35 is the even spacing he asked for and did not complain about;
        only the block's start moves. ⚠️ Stacking the buttons (D177) adds ~55px back to the content,
        so the foot fills without the top having to hold it. */
-    #hero .hero-inner{padding-top:clamp(84px,13.5vh,132px);padding-bottom:clamp(40px,6vh,72px)}
+    /* ⭐⭐ **THE PHONE TAKES THE D297 CENTRING, ON A FLOOR THAT GROWS AS THE WINDOW SHORTENS.**
+       ⚠️ THIS RULE IS THE ONE THAT GOVERNS THE PHONE — a plain `.hero-inner` edit in the phone
+       block below is out-specified by this `#hero` selector and does nothing, which cost a pass.
+       The tablet re-declares `padding-top` after this, so what follows reaches the phone alone.
+       ⭐ The relation is the base rule's (padding-bottom − the headline's leading), with a
+       `calc(120px - 12vh)` floor rather than a constant: the constraint runs with viewport HEIGHT,
+       so the shorter the window the more the fixed bar costs and the more top reserve is held back.
+       ⛔ A CONSTANT FLOOR IS WRONG IN BOTH DIRECTIONS and was tried first — 56px tucks a short
+       handset's title under the glass, and anything safe there stops a tall one centring.
+       ⛔⛔ **AND THE LEADING TERM IS THE PHONE'S OWN TITLE SIZE, NOT `--hTitle`.** `--hTitle` is the
+       DESKTOP variable and computes to 72px here while the phone actually renders 38px (its own
+       rule, four blocks up), so subtracting `var(--hTitle) * 0.1234` over-corrected by 4.2px on
+       every handset. Read the size the band really uses. ⚠️ With the hero's short-window height
+       above, this floor now binds only below ~640px of viewport. */
+    #hero .hero-inner{
+      padding-top:max(calc(120px - 12vh), calc(clamp(40px,6vh,72px)
+                  - clamp(38px,min(4.7vw,8.6vh),64px) * 0.1234));
+      padding-bottom:clamp(40px,6vh,72px)}
     #hero .hero-copy{gap:0}
     #hero .hero-title{margin-bottom:clamp(28px,4.8vh,42px)}
     #hero .hero-sub{margin-bottom:clamp(24px,4.2vh,36px)}
@@ -7518,10 +7616,37 @@
        than below it. At a 64px floor the landing measured a title top of **77px on a 1024×768
        landscape tablet — 8px of clearance.** 96px floors it there while 10vh still gives the lift he
        asked for on a portrait iPad: 132px → 102px. */
-    #hero .hero-inner{padding-top:clamp(96px,10vh,110px)}
-    #hero .hero-title{margin-bottom:clamp(30px,4vh,44px)}
-    #hero .hero-sub{margin-bottom:clamp(32px,4.4vh,48px)}
-    #hero .hero-ctas{gap:14px;margin-bottom:clamp(32px,4.4vh,48px)}
+    /* ⛔⛔ **THE TABLET IS DELIBERATELY NOT RE-CENTRED — 17 August 2026 (D297), AND THIS IS A
+       MEASUREMENT, NOT A SHRUG.** The base rule's relation was applied here first and it broke the
+       band: at **1024x768 the title cap landed 11.1px ABOVE the bar's bottom edge**, i.e. under the
+       glass, which is precisely what this 96px floor was written to prevent. ⛔⛔⛔ **ONE PIXEL
+       FLOOR CANNOT SERVE THIS BAND, BECAUSE THE NEED RUNS THE WRONG WAY:** a 1000-tall tablet wants
+       a SMALL top padding to sit centred, a 768-tall one needs a LARGE one to clear the bar, and a
+       `max()` floor takes the larger everywhere. The honest reading is that at 768 the copy is
+       603px inside a 709px hero — **it does not fit centred, with or without this change**, and the
+       shipped design has always sat it low there (measured: ~7px of clearance before today).
+       ⭐ So the desktop gets the exact centring he asked for, this band keeps the protection it has,
+       and the phone takes the relation on its own floor. ⚠️ If he asks for the tablet too, the fix
+       is not a floor — it is buying height back out of the inter-element gaps, which are his own
+       (D174's "even spacing"), so that is a decision to put to him rather than to tune quietly. */
+    #hero .hero-inner{padding-top:max(calc(132px - 12vh),
+                        calc(clamp(40px,6vh,72px) - clamp(52px,min(7.4vw,9.2vh),72px) * 0.1234))}
+    /* ⭐⭐ **AND THE LANDSCAPE TABLET BUYS HEIGHT AND SPENDS LESS ON GAPS — 17 Aug 2026 (D297).**
+       ⛔⛔⛔ **THIS BAND IS THE TIGHTEST COMPOSITION ON THE SITE AND THE FIRST ATTEMPT BROKE IT:**
+       applying the base relation alone put the title cap **11.1px ABOVE the bar's bottom edge** at
+       1024x768 — under the glass — because the copy is 603px inside a 709px hero, 78% of the whole
+       screen. ⭐ Three things move together, and none of them alone is enough: the hero takes
+       `max(90vh, min(100vh, 780px))` so a 768-tall window stops losing 77px to the 90vh rule; the
+       three gaps drop from 4/4.4/4.4vh to 3.2/3.4/3.4vh, which costs a TALL tablet almost nothing
+       (32→25.6px at 1000) and gives a short one back ~22px; and the title's own size gains a `9.2vh`
+       term so it eases off on a short window instead of pinning at its 7.4vw value.
+       ⚠️ Portrait tablets were already comfortable — at 900x1000 the relation centres with 100px of
+       clearance — so every number here is chosen to leave that case where it is. */
+    .hero{min-height:max(90vh, min(100vh, 780px))}
+    #hero .hero-title{font-size:clamp(52px,min(7.4vw,9.2vh),72px)}
+    #hero .hero-title{margin-bottom:clamp(24px,3.2vh,44px)}
+    #hero .hero-sub{margin-bottom:clamp(24px,3.4vh,48px)}
+    #hero .hero-ctas{gap:14px;margin-bottom:clamp(24px,3.4vh,48px)}
     #hero .hero-chips{gap:14px}
 
     /* --- ⭐⭐ THE PROJECT GALLERY IS A TWO-UP GRID, AND THE ENGINE IS OFF -----------------------
@@ -8880,12 +9005,24 @@
            position as of this document — it reverses the 7 Aug outsourcing rule (§2 rule 1). -->
       <div class="about-copy">
         <h2 class="section-title rise" style="--rd:0ms;max-width:22ch">About <em>us</em></h2>
-        <p class="section-sub rise" style="--rd:120ms">We built Topcat because we believed buying a worktop should be simpler, clearer and more personal. It is the heart of your home after all.</p>
-        <p class="section-sub rise" style="--rd:180ms">With a background in distribution, and after seeing customers faced with inflated and unclear quotes along with terrible service, we knew there was a better way. Too often, the person who sells the job is not the person who measures it, makes it or fits it. We wanted to change that.</p>
-        <p class="section-sub rise" style="--rd:240ms">At Topcat, we take responsibility and accountability for the entire process. From helping you choose the right stone and templating your kitchen, fabricating and completing the installation, we keep everything under one roof and make sure you always know who is responsible.</p>
+        <!-- ⛔⛔ **THE CLIENT'S OWN COPY, TIGHTENED ON HIS INSTRUCTION — 17 Aug 2026 (D301), AND
+             THIS REVERSES D271's "NOT ONE WORD IS CUT".** He asked for it himself: *"I also think
+             that the about us section text is at least one paragraph too long. I know the client
+             sent it, but let's find where we can summarise some of the things or word it
+             differently saying the exact same things while creating a little bit more space."*
+             ⭐ SIX PARAGRAPHS BECOME FIVE and the word count goes 178 → 139, which is four fewer
+             rendered lines at the desktop measure. ⛔ **EVERY CLAIM SURVIVES AND NONE IS
+             STRENGTHENED**: why they built it, the distribution background, the seller who is not
+             the fitter, one roof, one contact, precision and communication, ask for Nick and the
+             reviews. ⛔ **"One contractor. One contact. No chasing around." KEEPS ITS OWN LINE** —
+             it is the positioning, and `/about/`'s own title is built on it.
+             ⚠️ The `--rd` stagger is re-numbered rather than left with a hole in it: the delays are
+             a rhythm, and a missing 300ms reads as a stutter in the reveal. -->
+        <p class="section-sub rise" style="--rd:120ms">We built Topcat because buying a worktop should be simpler, clearer and more personal. It is the heart of your home after all.</p>
+        <p class="section-sub rise" style="--rd:180ms">With a background in distribution, we saw customers handed inflated and unclear quotes with service to match, and jobs where the person who sells the work is not the person who measures it, makes it or fits it. We wanted to change that.</p>
+        <p class="section-sub rise" style="--rd:240ms">So we take responsibility for the whole process, from helping you choose your stone to templating, fabricating and fitting it, all under one roof.</p>
         <p class="section-sub rise" style="--rd:300ms">One contractor. One contact. No chasing around.</p>
-        <p class="section-sub rise" style="--rd:360ms">We believe great worktops are about more than just the stone. They are about precision, communication and making the whole experience feel effortless.</p>
-        <p class="section-sub rise" style="--rd:420ms">And if you want to speak to someone who knows your project from start to finish, ask for Nick. His is the name you will see time and time again in the reviews above.</p>
+        <p class="section-sub rise" style="--rd:360ms">Great worktops are about more than the stone. They are about precision, communication and an experience that feels effortless. If you want to speak to someone who knows your project from start to finish, ask for Nick. His is the name you will see time and time again in the reviews above.</p>
         <!-- the section's one action (client, 9 Aug: "have a chat CTA, chat with Topcat") -->
         <div class="about-cta rise" style="--rd:480ms">
           <a class="rev-cta-primary" href="#cta">Chat with Topcat</a>
@@ -8951,16 +9088,16 @@
              makes; Rimsha's says what an Operations Director does and stops there. **Owed: his
              own wording.** -->
         <figure class="ac-tile ac-p ac-p1 glow-card">
-          <img src="/assets/team/nick-320.webp?v=3"
-               srcset="/assets/team/nick-320.webp?v=3 320w, /assets/team/nick-640.webp?v=3 640w"
+          <img src="/assets/team/nick-320.webp?v=4"
+               srcset="/assets/team/nick-320.webp?v=4 320w, /assets/team/nick-640.webp?v=4 640w"
                sizes="(max-width:1120px) 162px, 241px"
                alt="Nick, Managing Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
           <div class="sheen"></div>
           <figcaption class="acp-who"><b class="acp-name">Nick</b><span class="acp-role">Managing Director</span></figcaption>
         </figure>
         <figure class="ac-tile ac-p ac-p2 glow-card">
-          <img src="/assets/team/rimsha-320.webp?v=3"
-               srcset="/assets/team/rimsha-320.webp?v=3 320w, /assets/team/rimsha-640.webp?v=3 640w"
+          <img src="/assets/team/rimsha-320.webp?v=4"
+               srcset="/assets/team/rimsha-320.webp?v=4 320w, /assets/team/rimsha-640.webp?v=4 640w"
                sizes="(max-width:1120px) 162px, 241px"
                alt="Rimsha, Operations Director at Topcat Worktops" draggable="false" loading="lazy" decoding="async">
           <div class="sheen"></div>
@@ -9727,9 +9864,9 @@ const SS={
  "/assets/site/service-vanity-2400.webp":"/assets/site/service-vanity-880.webp 880w, /assets/site/service-vanity-1600.webp 1600w, /assets/site/service-vanity-2400.webp 2400w",
  "/assets/site/service-commercial-2400.webp":"/assets/site/service-commercial-880.webp 880w, /assets/site/service-commercial-1600.webp 1600w, /assets/site/service-commercial-2400.webp 2400w",
  /* ⚠️ TWO RUNGS AGAIN, AND AGAIN THE SOURCE DECIDED IT — 1920x1080 in, 1620 out. ⛔ And note the
-    prefix: `service-splash-marble` is THIS photograph; `service-splashbacks-706` is the July one
+    prefix: `service-splash-hob` is THIS photograph, re-cropped at D296 to clear two non-UK sockets (`service-splash-marble` is the uncropped original, kept); `service-splashbacks-706` is the July one
     it replaced and is a different picture entirely. */
- "/assets/site/service-splash-marble-1620.webp":"/assets/site/service-splash-marble-880.webp 880w, /assets/site/service-splash-marble-1620.webp 1620w",
+ "/assets/site/service-splash-hob-1200.webp":"/assets/site/service-splash-hob-880.webp 880w, /assets/site/service-splash-hob-1200.webp 1200w",
  /* ⛔ `service-worktops-quartz` IS NOT A RUNG OF `service-worktops-554`. Different photograph,
     deliberately different prefix. */
  "/assets/site/service-worktops-quartz-2400.webp":"/assets/site/service-worktops-quartz-880.webp 880w, /assets/site/service-worktops-quartz-1600.webp 1600w, /assets/site/service-worktops-quartz-2400.webp 2400w",
@@ -9815,7 +9952,7 @@ const SERVICES=[
      SOCKETS ARE IN SHOT ON PURPOSE** — this tile's own copy says "cut around sockets and hobs",
      so they are the sentence, not clutter. ⚠️ They are not UK sockets; at card size it is not
      legible, and the alternative crop lost the run of marble that makes the point. */
-  {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splash-marble-1620.webp"},
+  {t:"Splashbacks",long:"The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",href:"/services/splashbacks.html",img:"/assets/site/service-splash-hob-1200.webp"},
 
   /* ⭐⭐ A REAL BATHROOM INSTEAD OF THE BARE SLAB — D241, his own file, sent in the same run as
      the dining photograph. This tile was one of the three the handover had listed as showing the

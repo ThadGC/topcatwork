@@ -248,7 +248,10 @@ FOOT_JS = ("<script>(function(){var f=document.querySelector('#footer')||documen
 
 
 def footer_html():
-    return FOOTER_HTML + FOOT_JS + BAR_JS
+    # ⚠️ QFORM_JS ships on every page in this family, including the three indexes and the sitemap
+    # that carry no card: its IIFE returns immediately when `#qform` is absent, which is cheaper
+    # than a second template branch and cannot drift out of step with the markup.
+    return FOOTER_HTML + FOOT_JS + BAR_JS + QFORM_JS
 
 # ⭐⭐ THE MOBILE NAV IS LIFTED FROM index.html TOO — 17 Aug 2026 (D295), §13 item 7. Below
 # 1121px these pages hid `nav.top` and offered NOTHING in its place: no way off a leaf page on
@@ -337,6 +340,54 @@ def head_html(title, metadesc, url, css_depth, extra_ld=""):
 BACK_BTN = (
     '<a class="crumb-back" href="{href}" aria-label="Back to {label}" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'
 )
+
+
+# ⭐⭐⭐ THE SIDEBAR QUOTE CARD — 17 August 2026 (D300). Client, with an SBX screenshot: the inner
+# pages are "very content heavy", the copy sits left and "leaves a lot of space on the right, which
+# looks bad", so the empty column earns its place by carrying a form that "attaches to the nav bar
+# as the user scrolls down into that section, and then it folds behind sections that go across it".
+# The layout, the sticky offset and the desktop-only gate all live in service.css under THE LEAD
+# LAYOUT; this is the markup and the demo behaviour.
+# ⚠️ THE FIELDS MATCH THE LANDING PAGE'S ENQUIRY FORM so there is one set of questions on the site,
+# and the service select is seeded with the page's own subject where there is one — a visitor who
+# clicked "Kitchen worktops" should not have to say so twice.
+# ⛔ NO BACKEND IS WIRED AND THAT IS NOT A BLOCKER (§2 rule 13, his own pre-launch task). The submit
+# is intercepted and acknowledged in place, exactly as the landing page's form has done since
+# 7 August. ⭐ TO GO LIVE: POST the FormData to a handler and replace the acknowledgement.
+QFORM_OPTIONS = [
+    "Kitchen worktops", "Kitchen islands", "Splashbacks", "Bathrooms and vanity tops",
+    "Outdoor kitchens", "Fireplaces", "Dining tables", "Commercial", "Something else",
+]
+
+
+def qform_html(preselect=""):
+    opts = "".join(
+        '<option%s>%s</option>' % (" selected" if o == preselect else "", e(o))
+        for o in QFORM_OPTIONS)
+    return f"""<aside class="lead-aside">
+  <form class="qform" id="qform" novalidate>
+    <div class="qf-fields">
+      <h3>Get your <em>free quote</em></h3>
+      <p class="qf-sub">A quick chat, then a clear, itemised quote by email.</p>
+      <label class="sr-only" for="qfName">Your name</label>
+      <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
+      <label class="sr-only" for="qfEmail">Email address</label>
+      <input id="qfEmail" name="email" type="email" placeholder="Email address" autocomplete="email">
+      <label class="sr-only" for="qfPhone">Phone number</label>
+      <input id="qfPhone" name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+      <label class="sr-only" for="qfService">What do you need</label>
+      <select id="qfService" name="service">{opts}</select>
+      <button type="submit">Send my enquiry</button>
+      <p class="qf-note">A quick call with us, then your fixed quote by email. We reply within one working day.</p>
+    </div>
+    <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call {PHONE_DISPLAY}.</p>
+  </form>
+</aside>"""
+
+
+QFORM_JS = ("<script>(function(){var f=document.getElementById('qform');if(!f)return;"
+            "f.addEventListener('submit',function(ev){ev.preventDefault();"
+            "f.classList.add('sent');});})();</script>")
 
 
 def crumbs(items):
@@ -1789,6 +1840,10 @@ def material_page(m):
     </div>
   </section>
 
+  <!-- ⭐ D300 — the reading sections share a grid with the sticky quote card; see THE LEAD LAYOUT
+       in service.css. The grid ends before the FAQ, which is where the card is carried away. -->
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap">
     <div class="prose lead-answer"><p>{e(m['defn'])}</p></div>
     <dl class="facts">{facts}</dl>
@@ -1799,6 +1854,10 @@ def material_page(m):
   {applications_html()}
   {included_html()}
   {process_html()}
+   </div>
+   {qform_html()}
+  </div>
+
   {faq_block(m['faqs'])}
 
   <section class="block"><div class="wrap">
@@ -1865,7 +1924,13 @@ def guide_page(g):
     <div class="prose lead-answer"><p>{e(g['answer'])}</p></div>
   </div></section>
 
+  <div class="lead-grid">
+   <div class="lead-main">
   {render_sections(g['sections'])}
+   </div>
+   {qform_html()}
+  </div>
+
   {faq_block(g['faqs'])}
 
   <section class="block"><div class="wrap">
@@ -1968,6 +2033,8 @@ def county_page(c):
     </div>
   </section>
 
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap">
     <div class="prose lead-answer"><p>{e(c['intro'])}</p></div>
     <p class="note">{e(c['travel'])} {e(c['lead'])}</p>
@@ -1998,6 +2065,10 @@ def county_page(c):
   {applications_html(c['name'])}
   {included_html()}
   {process_html()}
+   </div>
+   {qform_html()}
+  </div>
+
   {faq_block(faqs, "Frequently asked questions in " + c['name'])}
 
   <section class="block"><div class="wrap">
@@ -2063,6 +2134,8 @@ def town_page(t):
     </div>
   </section>
 
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap">
     <h2>Worktops for {e(t['name'])} kitchens</h2>
     <div class="prose"><p>{e(t['local'])}</p></div>
@@ -2092,6 +2165,10 @@ def town_page(t):
   {applications_html(t['name'])}
   {included_html()}
   {process_html()}
+   </div>
+   {qform_html()}
+  </div>
+
   {faq_block(faqs, "Frequently asked questions in " + t['name'])}
 
   <section class="block"><div class="wrap">
