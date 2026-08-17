@@ -2049,8 +2049,34 @@ function slabReadout(i){
      picked Marble, the readout said MARBLE over Fusion Black, and the page it opened said
      Quartzite. It now says QUARTZITE here too, and the tab above it names the range as
      "Marble & Quartzite", so the two agree before the click rather than after it. */
-  readout.innerHTML=`<div class="r-mat">${s.kind||s.mat}</div><div class="r-name">${s.name}</div><div class="r-sup">Fitted with a ten-year guarantee</div>`;
+  readout.innerHTML=`<div class="r-mat">${s.kind||s.mat}</div><div class="r-name"><span>${s.name}</span></div><div class="r-sup">Fitted with a ten-year guarantee</div>`;
+  fitStoneName(readout.querySelector('.r-name'));
   if(stoneViewBtn)stoneViewBtn.href=`/stones/${s.slug}.html`;
+}
+/* ⭐⭐ THE LAST RESORT FOR A NAME THAT WILL NOT FIT ON TWO LINES — 17 Aug 2026 (D288). The row is
+   a fixed-width grid now (see THE ARROWS DO NOT MOVE in the stylesheet) and the name box reserves
+   two lines, which is enough for all 132 stones on a desktop column. On a narrow phone the column
+   is about 190px and the longest, "Travertine Romano Classico Honed", still wants three — so it
+   is stepped down until it does not.
+   ⛔⛔ **THE COUNT COMES OFF AN INNER SPAN, NOT OFF `.r-name` ITSELF, AND THAT IS THE WHOLE
+   SUBTLETY.** The box carries `min-height:2.3em` to hold its two lines open, so its own height
+   reads that reservation whether the text needs it or not and can never report an overflow. And
+   a `Range` over the box returns NOTHING — `.r-name` is `display:flex`, so the text lives in an
+   anonymous flex item and there are no line boxes to select. **Measured: the Range read 0 lines
+   for all 132 stones, which meant this fit was silently doing nothing.** The span is a real
+   element that wraps to the text, so its own height divided by the line height IS the line count.
+   ⚠️ It clears the inline size FIRST — the element is reused for every stone, so a size left on
+   it by a long name would quietly shrink the short one after it. */
+function fitStoneName(el){
+  if(!el)return;
+  el.style.fontSize='';
+  const sp=el.firstElementChild; if(!sp)return;
+  const base=parseFloat(getComputedStyle(el).fontSize)||26;
+  const lines=()=>{
+    const lh=parseFloat(getComputedStyle(el).lineHeight)||base*1.15;
+    return Math.round(sp.getBoundingClientRect().height/lh);
+  };
+  for(let fs=base; lines()>2 && fs>base*0.6; ){ fs-=1; el.style.fontSize=fs+'px'; }
 }
 function showArrows(on){const v=on?'1':'0',p=on?'auto':'none';prevBtn.style.opacity=v;nextBtn.style.opacity=v;prevBtn.style.pointerEvents=p;nextBtn.style.pointerEvents=p;}
 function shortestOffset(i){ const n=SLABS.length; let d=mod(i-mod(Math.round(current),n),n); if(d>n/2)d-=n; return d; }

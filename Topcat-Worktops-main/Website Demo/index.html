@@ -1304,7 +1304,10 @@
     #stones .eyebrow{margin-bottom:9px}
     #stones .stone-stage{margin-top:8px}
     #stones .wheel-ui{margin-top:8px}
-    #stones .readout .r-name{font-size:23px}
+    /* ⚠️ THE VARIABLE, NOT THE PROPERTY — the two-line reservation is derived from it (see
+       THE RESERVATION IS IN --rNameFS). Setting `font-size` here would leave the box sized for
+       26px type on a phone. */
+    #stones .readout{--rNameFS:23px}
   }
   /* Below this the wheel is already pinned at its 288px floor and there is genuinely nothing
      left to trim, so the sub steps aside rather than pushing the wheel past the fold — the
@@ -1366,14 +1369,47 @@
       0 0 0 1px var(--hair) inset;
   }
 
-  .wheel-ui{max-width:1320px;margin:clamp(12px,2vh,20px) auto 0;display:flex;align-items:center;justify-content:center;gap:28px}
+  /* ⭐⭐⭐ THE ARROWS DO NOT MOVE WHEN THE NAME CHANGES — 17 Aug 2026 (D288). Client: *"some of
+     the names are longer, and therefore, the buttons next to it are moving, and then the person
+     has to move their fingers... the buttons have to be in one spot, and then all the words must
+     fit between that... On all devices."*
+     ⛔⛔ **THE ROW WAS A FLEX BOX CENTRED ON A READOUT SIZED BY ITS OWN TEXT.** `.readout` had a
+     `min-width` and no maximum, so it grew with the stone: measured in the shipped font, the 132
+     names run from **122px ("Argento") to 505px ("Travertine Romano Classico Honed")** — the
+     buttons were swinging **up to 147px each side**, and a customer paging the wheel had to chase
+     them. ⭐ **IT IS A THREE-COLUMN GRID ON A FIXED-WIDTH ROW NOW**, so the two `auto` columns are
+     the buttons and they sit at the same x for every stone, on every device.
+     ⚠️ 480px is chosen, not inherited: it puts the pair at ±240 from centre, which is the middle
+     of the range they used to swing through (±159 at the shortest name, ±306 at the longest), so
+     nothing lurches relative to the wheel above. ⚠️ `min(100%, …)` keeps it inside a narrow
+     phone, where the row is simply the stage. */
+  .wheel-ui{width:min(100%,480px);max-width:1320px;margin:clamp(12px,2vh,20px) auto 0;
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
+    gap:clamp(12px,2.6vw,28px)}
   .wbtn{width:52px;height:52px;border-radius:50%;border:1px solid var(--hair);background:transparent;color:var(--bone);display:grid;place-items:center;cursor:pointer;transition:background .4s var(--ease),color .4s var(--ease),transform .4s var(--ease),border-color .4s var(--ease)}
   .wbtn:hover{background:var(--gold);color:var(--ink);border-color:var(--gold);transform:scale(1.06)}
   .wbtn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   .wbtn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.4}
-  .readout{min-width:210px;text-align:center}
+  /* ⛔ `min-width:0` IS LOAD-BEARING: a grid item's automatic minimum is its content, so without
+     it the middle column would still be sized by the longest name and the buttons would still
+     move — the grid alone does not fix this. */
+  .readout{min-width:0;text-align:center}
   .readout .r-mat{font-size:11px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold)}
-  .readout .r-name{font-family:var(--serif);font-size:26px;font-weight:400;margin:4px 0 2px}
+  /* ⭐⭐ TWO LINES ARE ALWAYS RESERVED AND THE NAME IS CENTRED IN THEM. A long stone wraps rather
+     than pushing the buttons out, and a short one does not pull the line below it up — so the
+     row's HEIGHT is as fixed as its width, and the arrows do not move on either axis.
+     ⚠️ The handful of names that will not fit even on two lines are stepped down by `fitStoneName()`
+     (see the WHEEL JS); at 320px of column that is only the very longest on a narrow phone. */
+  /* ⛔⛔⛔ THE RESERVATION IS IN `--rNameFS`, NOT IN `em`, AND THAT IS NOT A TIDY-UP. `em` resolves
+     against the element's OWN font-size, which `fitStoneName()` overwrites inline on the longest
+     names — so a shrunk name shrank its own two-line box with it and the buttons moved DOWN.
+     Measured on a 375 phone before the fix: horizontal position held at one value across all 232
+     readouts, **vertical took four**. The variable is the size the stylesheet chose, so the box
+     is the same height whatever the fit does to the text inside it. */
+  .readout{--rNameFS:26px}
+  .readout .r-name{font-family:var(--serif);font-size:var(--rNameFS);font-weight:400;margin:4px 0 2px;
+    line-height:1.15;min-height:calc(var(--rNameFS) * 2.3);
+    display:flex;align-items:center;justify-content:center;text-wrap:balance}
   .readout .r-sup{font-size:12px;color:var(--faint);letter-spacing:0.04em}
   /* the actions rail — the conversion path for the SELECTED stone. Reuses the site's shared
      button dress (.rev-cta-primary / .rev-cta-ghost, see 5f in the handover). In the rail the
@@ -11477,8 +11513,34 @@ function slabReadout(i){
      picked Marble, the readout said MARBLE over Fusion Black, and the page it opened said
      Quartzite. It now says QUARTZITE here too, and the tab above it names the range as
      "Marble & Quartzite", so the two agree before the click rather than after it. */
-  readout.innerHTML=`<div class="r-mat">${s.kind||s.mat}</div><div class="r-name">${s.name}</div><div class="r-sup">Fitted with a ten-year guarantee</div>`;
+  readout.innerHTML=`<div class="r-mat">${s.kind||s.mat}</div><div class="r-name"><span>${s.name}</span></div><div class="r-sup">Fitted with a ten-year guarantee</div>`;
+  fitStoneName(readout.querySelector('.r-name'));
   if(stoneViewBtn)stoneViewBtn.href=`/stones/${s.slug}.html`;
+}
+/* ⭐⭐ THE LAST RESORT FOR A NAME THAT WILL NOT FIT ON TWO LINES — 17 Aug 2026 (D288). The row is
+   a fixed-width grid now (see THE ARROWS DO NOT MOVE in the stylesheet) and the name box reserves
+   two lines, which is enough for all 132 stones on a desktop column. On a narrow phone the column
+   is about 190px and the longest, "Travertine Romano Classico Honed", still wants three — so it
+   is stepped down until it does not.
+   ⛔⛔ **THE COUNT COMES OFF AN INNER SPAN, NOT OFF `.r-name` ITSELF, AND THAT IS THE WHOLE
+   SUBTLETY.** The box carries `min-height:2.3em` to hold its two lines open, so its own height
+   reads that reservation whether the text needs it or not and can never report an overflow. And
+   a `Range` over the box returns NOTHING — `.r-name` is `display:flex`, so the text lives in an
+   anonymous flex item and there are no line boxes to select. **Measured: the Range read 0 lines
+   for all 132 stones, which meant this fit was silently doing nothing.** The span is a real
+   element that wraps to the text, so its own height divided by the line height IS the line count.
+   ⚠️ It clears the inline size FIRST — the element is reused for every stone, so a size left on
+   it by a long name would quietly shrink the short one after it. */
+function fitStoneName(el){
+  if(!el)return;
+  el.style.fontSize='';
+  const sp=el.firstElementChild; if(!sp)return;
+  const base=parseFloat(getComputedStyle(el).fontSize)||26;
+  const lines=()=>{
+    const lh=parseFloat(getComputedStyle(el).lineHeight)||base*1.15;
+    return Math.round(sp.getBoundingClientRect().height/lh);
+  };
+  for(let fs=base; lines()>2 && fs>base*0.6; ){ fs-=1; el.style.fontSize=fs+'px'; }
 }
 function showArrows(on){const v=on?'1':'0',p=on?'auto':'none';prevBtn.style.opacity=v;nextBtn.style.opacity=v;prevBtn.style.pointerEvents=p;nextBtn.style.pointerEvents=p;}
 function shortestOffset(i){ const n=SLABS.length; let d=mod(i-mod(Math.round(current),n),n); if(d>n/2)d-=n; return d; }
