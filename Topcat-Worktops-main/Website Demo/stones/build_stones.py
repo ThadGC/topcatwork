@@ -27,6 +27,26 @@ no porcelain anywhere, the owner does not offer it. British English,
 no em dashes, no exclamation marks.
 """
 import html, json, pathlib, re
+
+# ⭐⭐⭐ CACHE IDENTITY FOR THE HAND-MAINTAINED STYLESHEETS — 17 Aug 2026 (D289).
+# `assets/site.css` and `site.js` have carried a content hash for weeks; `service.css`,
+# `stone.css` and `seo.css` never have, and they are the sheets every GENERATED page links.
+# ⛔ THAT IS WHY A RE-UPLOADED SITE CAME BACK LOOKING UNCHANGED: the HTML was new, the
+# stylesheet was the browser's old copy, and `service.css` alone dresses 176 pages.
+# ⚠️ The hash is of the file ON DISK at build time, so it can only be wrong if the builder is
+# not re-run — which is already a gate (§8).
+def _sig(path):
+    import hashlib, pathlib as _p
+    p = _p.Path(path)
+    try:
+        return "?v=" + hashlib.sha1(p.read_bytes()).hexdigest()[:10]
+    except OSError:
+        return ""
+
+_HERE_SIG = pathlib.Path(__file__).resolve().parent
+SVC_SIG = _sig(_HERE_SIG.parent / "services" / "service.css")
+STONE_SIG = _sig(_HERE_SIG / "stone.css")
+
 from urllib.parse import quote
 
 # ---------------------------------------------------------------------------
@@ -411,8 +431,8 @@ def head(title, desc, url, extra=""):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/services/service.css">
-<link rel="stylesheet" href="/stones/stone.css">
+<link rel="stylesheet" href="/services/service.css{SVC_SIG}">
+<link rel="stylesheet" href="/stones/stone.css{STONE_SIG}">
 {extra}"""
 
 

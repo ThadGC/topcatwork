@@ -26,3 +26,9 @@ Thumbs.db
 
 # ─── Agent session state ─────────────────────────────────────────────────────
 .claude/
+
+# ─── The upload folder ───────────────────────────────────────────────────────
+# `Website Demo/make_upload.py` writes a clean copy of the site here for the
+# developer to drag onto the host (D289). It is 77 MB of files that already
+# exist one directory up — a build artefact, not source.
+**/upload/

@@ -54,6 +54,26 @@ SCHEMA POLICY (verified 7 Aug 2026, see the build plan):
 """
 import html, json, pathlib, shutil
 
+# ⭐⭐⭐ CACHE IDENTITY FOR THE HAND-MAINTAINED STYLESHEETS — 17 Aug 2026 (D289).
+# `assets/site.css` and `site.js` have carried a content hash for weeks; `service.css`,
+# `stone.css` and `seo.css` never have, and they are the sheets every GENERATED page links.
+# ⛔ THAT IS WHY A RE-UPLOADED SITE CAME BACK LOOKING UNCHANGED: the HTML was new, the
+# stylesheet was the browser's old copy, and `service.css` alone dresses 176 pages.
+# ⚠️ The hash is of the file ON DISK at build time, so it can only be wrong if the builder is
+# not re-run — which is already a gate (§8).
+def _sig(path):
+    import hashlib, pathlib as _p
+    p = _p.Path(path)
+    try:
+        return "?v=" + hashlib.sha1(p.read_bytes()).hexdigest()[:10]
+    except OSError:
+        return ""
+
+HERE = pathlib.Path(__file__).resolve().parent
+SVC_SIG = _sig(HERE / "services" / "service.css")
+SEO_SIG = _sig(HERE / "seo.css")
+
+
 ROOT = pathlib.Path(__file__).resolve().parent
 BASE = "https://www.topcatworktops.co.uk"
 
@@ -253,8 +273,8 @@ def head_html(title, metadesc, url, css_depth, extra_ld=""):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/services/service.css">
-<link rel="stylesheet" href="/seo.css">
+<link rel="stylesheet" href="/services/service.css{SVC_SIG}">
+<link rel="stylesheet" href="/seo.css{SEO_SIG}">
 {extra_ld}
 </head>
 <body>

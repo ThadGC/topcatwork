@@ -1,0 +1,64 @@
+# ============================================================================
+# Topcat Worktops — cache rules for the review host (SiteGround / Apache)
+# Added 17 August 2026 (D289).
+#
+# WHY THIS FILE EXISTS: the developer uploaded a new build and the site still
+# showed the old one. Two causes, and this file is the second half of the fix.
+#
+#   1. Three stylesheets shipped WITHOUT a version — service.css, stone.css and
+#      seo.css. service.css alone dresses 176 generated pages, so a browser
+#      holding yesterday's copy re-dressed the whole new site in the old design.
+#      FIXED IN THE BUILDERS: every one now carries ?v=<content hash>, the same
+#      way assets/site.css and site.js already did.
+#
+#   2. Nothing told the server how long to hold the HTML. The pages themselves
+#      are the one thing that must never be served stale, because they are what
+#      carries the new ?v= for everything else.
+#
+# ⚠️ THIS FILE CANNOT REACH SITEGROUND'S OWN DYNAMIC CACHE, which sits in front
+#    of Apache. That has to be flushed in Site Tools after each upload — see the
+#    upload guide in HANDOVER.md.
+# ============================================================================
+
+<IfModule mod_headers.c>
+
+  # ---- HTML: never reuse without asking ------------------------------------
+  # Cheap: these are small, and it is the only way a re-upload is guaranteed to
+  # be seen. The assets they point at are content-hashed, so they cost nothing
+  # to re-download when unchanged.
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+    Header unset Pragma
+  </FilesMatch>
+
+  # ---- Fingerprinted CSS and JS: hold them --------------------------------
+  # Every reference to these carries ?v=<sha1 of the file>, so a change to the
+  # file changes the URL. A year is safe and correct.
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # ---- Images and fonts: one hour -----------------------------------------
+  # ⛔ DELIBERATELY NOT `immutable`. Slab tiles and the director portraits are
+  #    named for their subject, not their contents — a re-cut file is the SAME
+  #    URL, and they rely on a ?v= bumped by hand (SLAB_V, and the portraits'
+  #    own stamp). If that bump is ever forgotten, an hour is a mistake that
+  #    heals itself; a year is the Argento correction being invisible for
+  #    twelve months.
+  <FilesMatch "\.(webp|jpg|jpeg|png|svg|ico|woff2)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
+</IfModule>
+
+# Correct types for the two the server may not know
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/svg+xml .svg
+</IfModule>
+
+# Compress text. Images and WebP are already compressed — do NOT add them.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
+                                application/javascript application/json image/svg+xml
+</IfModule>
