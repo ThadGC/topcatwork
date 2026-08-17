@@ -651,8 +651,8 @@ def qform_html(preselect=""):
     return f"""<aside class="lead-aside">
   <form class="qform" id="qform" novalidate>
     <div class="qf-fields">
-      <h3>Get your <em>free quote</em></h3>
-      <p class="qf-sub">A quick chat, then a clear, itemised quote by email.</p>
+      <h3>Get in touch with <em>Topcat</em></h3>
+      <p class="qf-sub">Tell us what you need and we will come back to you.</p>
       <label class="sr-only" for="qfName">Your name</label>
       <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
       <label class="sr-only" for="qfEmail">Email address</label>
@@ -662,7 +662,7 @@ def qform_html(preselect=""):
       <label class="sr-only" for="qfService">What do you need</label>
       <select id="qfService" name="service">{opts}</select>
       <button type="submit">Send my enquiry</button>
-      <p class="qf-note">A quick call with us, then your fixed quote by email. We reply within one working day.</p>
+      <p class="qf-note">We reply within one working day.</p>
     </div>
     <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call {PHONE_DISPLAY}.</p>
   </form>

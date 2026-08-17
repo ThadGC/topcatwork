@@ -1,6 +1,6 @@
-# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D305)
+# START HERE — 17 August 2026, after THE FULL-AUDIT AND COMPOSITION ROUND (D291–D307)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D305**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D307**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which covered the directors, the
@@ -31,7 +31,7 @@ the non-weld branch only; `span`/`step` and the whole weld branch untouched.
 
 ---
 
-## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D305)
+## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D307)
 
 Two instructions, the audit and then the composition round: *"make sure the About Us pages are
 perfect throughout everything... every inner page designed very nicely... do a full audit... things
@@ -71,6 +71,12 @@ D304  READING COPY IS WHITE, SUPPORTING DETAIL STAYS GREY — one `--body`
       token across all four families; contrast 6.58:1 -> 17.43:1 (see §2d)
 D305  Commercial opens on his marble-bar frame, 16:9 out of a portrait source,
       q80 because the frame is high-frequency; salon ladder kept on disk
+D306  EVERY section subtitle is white — and that fixed a bug I shipped at
+      D299: an #about-scoped rule cannot reach the weld's CLONE, so the copy
+      turned white only at hand-over. Style by CLASS anything the weld carries
+D307  the quote card is centred in the margin (and the grid was 60px out of
+      line with every other section), starts level with the first line of
+      copy, and its copy no longer promises a quote-by-email process
 ```
 
 ### What the audit scanned and found CLEAN (do not re-scan without cause)
@@ -145,6 +151,14 @@ and tablet pages are unchanged by construction. A phone form is his call, not an
 ⚠️ The markup is lifted into both builders (`qform_html()`), the service select is seeded with the
 page's own subject, and there is no backend — acknowledged in place, §11 rule 13.
 
+⭐⭐ **D307 RE-ANCHORED THE WHOLE THING.** The container is full-bleed with its left padding computed
+onto the page's own content edge — `max(sidePad, calc((100% − var(--maxw))/2 + sidePad))` — because
+the first version's `max-width:1280px` put the reading column **60px out of line with every other
+section**. The card carries `width:372px` (a block grid item with auto width fills its track, so
+`justify-self:center` had nothing to centre), sits in a zero-gap column so the space either side is
+equal by construction, and starts on a `margin-top` — never padding, which would ride along and
+push the pinned card down the page.
+
 ---
 
 ## 2d. ⭐⭐⭐ TEXT COLOUR HAS TWO ROLES NOW (D304)
@@ -166,6 +180,14 @@ notes, byline, footer, estimator labels — **and the form's placeholders** ("gr
 
 ⚠️ Two colours look wrong in a probe and are correct: `.proj-desc p` first matches the gold
 "What we did" label, and `.rev-author` has been bone since it was built.
+
+⭐⭐ **AND SECTION SUBTITLES ARE WHITE TOO (D306), REVERSING THE GREY-SUBTITLE HALF OF D304** — his
+newer instruction. `.section-sub`, `.faq-sub` and the generated `.block .sub` all take `--body`.
+
+⛔⛔⛔ **THE TRAP THAT COST A ROUND: AN ID-SCOPED RULE CANNOT DRESS WHAT THE WELD CLONES.**
+`.weld-about` lives in `#weldStage`, so `#about .about-copy .section-sub` never matched it — the
+clone stayed grey while the real section was white, and the hand-over read as the text changing
+colour on screen. **Anything the weld carries must be styled by CLASS.**
 
 ---
 

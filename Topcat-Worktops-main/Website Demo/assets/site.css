@@ -954,7 +954,23 @@
   .eyebrow{display:inline-flex;align-items:center;gap:12px;font-family:var(--brand);font-size:10.5px;letter-spacing:0.34em;text-transform:uppercase;color:var(--gold);margin-bottom:15px}
   .section-title{font-family:var(--serif);font-weight:400;font-size:clamp(28px,min(4.6vw,5.4vh),54px);line-height:1.07;letter-spacing:0.01em;max-width:18ch}
   .section-title em{font-style:normal;color:var(--gold-soft)}
-  .section-sub{margin-top:clamp(7px,1.2vh,13px);max-width:52ch;color:var(--muted);font-size:clamp(13.5px,min(1.4vw,2.2vh),16px);font-weight:300}
+  /* ⭐⭐⭐ **EVERY SECTION SUBTITLE IS WHITE — 17 Aug 2026 (D306), AND THIS ALSO FIXES A BUG I
+     SHIPPED AT D299.** Client: *"all the subtitles of pretty much every section should be white as
+     well under every title. So go ahead and fix that in the surfaces for every space and every
+     other place, even the viewer project gallery."*
+     ⛔⛔⛔ **AND THE BUG: THE ABOUT COPY TURNED WHITE ONLY WHEN THE WELD FINISHED.** He caught it —
+     *"when the animation of the about us section is still happening... only after the animation
+     finishes does the text move into place and turn white."* **D299 scoped its rule to
+     `#about .about-copy`, and the thing you watch during the weld is `.weld-about`, a CLONE that
+     lives in `#weldStage` and is NOT inside `#about`** — so the clone kept `--muted` and the real
+     section underneath was white, and the swap at hand-over read as the text changing colour.
+     ⭐ **THE FIX IS THIS RULE, NOT A SECOND SELECTOR.** Colouring `.section-sub` itself at base
+     scope reaches the clone, the real section, `/about/` and every other section's subtitle in one
+     declaration — which is what he asked for anyway. **D299's scoped rule is DELETED**, so there is
+     one description of this colour again (the D290/D273 lesson).
+     ⚠️ An id-scoped rule cannot dress a component the weld clones. Anything the weld carries must
+     be styled by CLASS. */
+  .section-sub{margin-top:clamp(7px,1.2vh,13px);max-width:52ch;color:var(--body);font-size:clamp(13.5px,min(1.4vw,2.2vh),16px);font-weight:300}
 
   .rise{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
   .rise.in{opacity:1;transform:none}
@@ -3005,7 +3021,7 @@
   }
   .faq-section .faq-title em{font-style:normal;font-weight:600;color:var(--gold-soft,#F6D269)}
   .faq-section .faq-sub{
-    margin:8px auto 0;max-width:60ch;color:var(--muted);
+    margin:8px auto 0;max-width:60ch;color:var(--body);
     font-size:clamp(13px,1.05vw,15px);line-height:1.65;
   }
 
@@ -5845,18 +5861,6 @@
      button drops below the collage's bottom edge because there is no slack left for `auto` to
      eat. That is the failure mode to watch if anyone lengthens this copy again. */
   .about-copy{grid-area:copy;align-self:stretch;display:flex;flex-direction:column}
-  /* ⚠️⚠️ **A TEST HE ASKED FOR, NOT A SETTLED DECISION — 17 August 2026 (D299).** Client: *"in the
-     about us section, I want you to make the text, the body text white and not gray. I just wanna
-     see what that looks like. So only do it for that section for now."*
-     ⭐ `.section-sub` is the site's body-copy class and it is `--muted` (bone at 55%) EVERYWHERE —
-     every section sub, every generated page. So this is scoped to `#about .about-copy` and nothing
-     else, which is the "only that section" he asked for; the rest of the site is untouched and the
-     one-line revert is deleting this rule.
-     ⚠️ The white is `--bone`, the brand's own off-white (#F4F1EA), not `#fff` — pure white is not a
-     colour this site uses anywhere and would read colder than the headlines it sits under.
-     ⚠️ It reaches `/about/` too, which builds this same section from this file. That is correct —
-     one component, one appearance — but it does mean the test is visible on two pages. */
-  #about .about-copy .section-sub{color:var(--bone)}
   /* ⭐⭐ **THE COPY BREATHES — D301, THE OTHER HALF OF THE SHORTENING.** Client: *"creating a
      little bit more space in the about us section text so that it's not so close to the title and
      not so close to the Chat with Topcat CTA."*
