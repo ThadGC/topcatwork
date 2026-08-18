@@ -5745,7 +5745,7 @@ if(faqIndex && panel && faqBody){
      ⚠️ The blur is quantised to half a pixel for the same reason — it is depth of field as the words
      cross the focal plane, and it does not need to be smooth to read as soft. */
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
-    el, at:0, out:0, o:-1, z:-1, b:-1
+    el, at:0, out:0, o:-1, z:-1, b:-1, g:-1
   }));
   /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS. A line may carry `data-at-narrow` /
      `data-out-narrow`; below 1121 those win. ⚠️ Re-read from `sync()` so a window dragged across
@@ -5756,11 +5756,37 @@ if(faqIndex && panel && faqBody){
       const d=L.el.dataset;
       L.at =+((n&&d.atNarrow )||d.at )||0;
       L.out=+((n&&d.outNarrow)||d.out)||0;
-      L.o=L.z=L.b=-1;                        // force the next tick to write all three
+      L.o=L.z=L.b=L.g=-1;                    // force the next tick to write them all
     }
   }
   retimeStory();
   const Z_FAR=-150, Z_NEAR=560;
+  /* ⭐⭐ ONE `drawImage` PER FRAME AT MOST, because only one line is ever on screen: the sampler runs
+     for the line whose opacity is up and skips the other two. It reuses `gcv`/`gctx` — allocating a
+     canvas per frame is the version of this that shows up in a profile (grade()'s own lesson).
+     ⛔ IT READS THE VIDEO, NOT THE SCREEN: a `cover` video is cropped by CSS, so the source rectangle
+     has to be worked out the way the browser lays it out, or the sample is of the wrong pixels. */
+  function bandGrade(el){
+    if(!vid.videoWidth||vid.readyState<2)return -1;
+    const bg=heroBg.getBoundingClientRect(); if(!bg.height)return -1;
+    const r=el.getBoundingClientRect(); if(!r.height)return -1;
+    const vr=vid.videoWidth/vid.videoHeight, br=bg.width/bg.height;
+    let dw,dh,dx,dy;
+    if(vr>br){ dh=bg.height; dw=dh*vr; dx=(bg.width-dw)/2; dy=0; }
+    else { dw=bg.width; dh=dw/vr; dx=0; dy=(bg.height-dh)/2; }
+    const sc=vid.videoWidth/dw;
+    const sx=(r.left-bg.left-dx)*sc, sy=(r.top-bg.top-dy)*sc;
+    const sw=Math.max(1,r.width*sc), sh=Math.max(1,r.height*sc);
+    try{ gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,4); }catch(e){ return -1; }
+    let d; try{ d=gctx.getImageData(0,0,48,4).data; }catch(e){ return -1; }
+    const cell=[];
+    for(let i=0;i<192;i++) cell.push(0.2126*d[i*4]+0.7152*d[i*4+1]+0.0722*d[i*4+2]);
+    cell.sort((a,b)=>a-b);
+    /* the 97th percentile, exactly as the nav grade takes it: one bright block asks for the wash, a
+       stray speck does not. No floor here — over the black scenes there is nothing to cover, and a
+       wash that never fully leaves would be a smudge on a void. */
+    return clamp((cell[187]-GRADE_LO)/(GRADE_HI-GRADE_LO));
+  }
   let firstAlpha=0;                 // the opening title's own alpha, for the scroll cue below
   function story(t){
     for(const L of STORY){
@@ -5772,6 +5798,12 @@ if(faqIndex && panel && faqBody){
       const z=Math.round(Z_FAR+(Z_NEAR-Z_FAR)*p*p);
       const b=p>0.72?Math.round(((p-0.72)/0.28)*9)/2:0;     // 0 … 4.5px, in half-pixel steps
       if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+      /* the wash only matters while the words are up, and it rides their own alpha so it can never
+         outlive them (the bug the scroll cue taught) */
+      if(o>0.02){
+        const g=bandGrade(L.el);
+        if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+      } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
       if(z!==L.z){ L.z=z; L.el.style.setProperty('--lz',z); }
       if(b!==L.b){ L.b=b; L.el.style.filter=b?'blur('+b+'px)':'none'; }
     }

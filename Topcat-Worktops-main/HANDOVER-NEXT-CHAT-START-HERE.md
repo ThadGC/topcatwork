@@ -1,6 +1,6 @@
 # START HERE — 18 August 2026, after THE SCROLL FILM ROUND (D310–D314)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D316**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D317**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which is now
@@ -75,8 +75,8 @@ container and `hidden` does** — sticky works here only because of that earlier
 
 | What | Where | Value |
 |---|---|---|
-| pace | `--cineH` on `.cine` | **1000vh** desktop · **800vh** tablet · **700vh** phone |
-| the hero's beat at the end | `--cineHold` | **0.10** of travel (~90vh) |
+| pace | `--cineH` on `.cine` | **1100vh** desktop · **900vh** tablet · **800vh** phone |
+| ⭐ THE DEAD SCROLL | `--cineHold` | **0.1818** desktop · **0.2000** tablet · **0.2125** phone — **182vh** of hold on the finished hero (D317). ⛔ Raise `--cineH` by the same amount or the film speeds up |
 | where the veil starts | `--cineVeilAt` | **38** (seconds into the film) |
 | the veil's floor | `--cineVeilMin` | **0.20** |
 | where the copy rises | `INK_AT` in the scrub | 0.93 of the film |
@@ -179,8 +179,8 @@ landscape-only framing nudge is one line.
 | File | What and why |
 |---|---|
 | `assets/video/topcat-intro-1920.mp4` | **11.7 MB.** 1920×1080, 12fps, **crf 25, keyframe every 8**, `-bf 0 -refs 4`. Desktop |
-| `assets/video/topcat-intro-812.mp4` | **5.5 MB.** The tablet cut, 812×1080 (0.752), PANNED. 721–1120 |
-| `assets/video/topcat-intro-556.mp4` | **3.4 MB.** The phone cut, 556×1080 (0.515), PANNED. ≤720 |
+| `assets/video/topcat-intro-864.mp4` | **5.0 MB.** The tablet cut, D312's 4:5 crop at x=680. 721–1120 |
+| `assets/video/topcat-intro-9x16-864.mp4` | **4.59 MB.** ⭐ THE CLIENT'S OWN 9:16 MASTER at 864×1536, crf 28. ≤720. ⛔ Not a crop |
 | `…-poster.webp` / `…-864-poster.webp` | Each film's own first frame, 122 KB / 82 KB |
 | `assets/video/.src-2026-08-18/` | His 86 MB master + `encode.sh`. ⛔ **The master is `.gitignore`d** — GitHub warns past 50 MB — but it is ON DISK and must not be deleted |
 
@@ -222,7 +222,7 @@ This build serves:
 changed the source the hashes are taken from. ⭐ The file on the host is the STRIPPED copy and is
 deliberately not byte-identical to the hash's source, which was already true of `site.css`.
 
-1. Upload the **CONTENTS** of `upload/` into `public_html`. **635 files, 176 HTML pages, 80.6 MB** (was 676/98.4 MB before D315 stopped shipping unreferenced photography and stripped the comments).
+1. Upload the **CONTENTS** of `upload/` into `public_html`. **635 files, 176 HTML pages, 81.2 MB** (was 676/98.4 MB before D315 stopped shipping unreferenced photography and stripped the comments).
 2. ⚠️ **"SHOW HIDDEN FILES" ON** — `.htaccess` is the caching fix and most clients hide it.
 3. ⛔⛔ **FLUSH SITEGROUND'S DYNAMIC CACHE** (Site Tools → Speed → Caching). It sits in front of
    Apache and ignores `.htaccess` entirely.
@@ -275,13 +275,13 @@ D314 for the day it is ever revived — that is not permission to run it; `/trad
 | `--revPer` (on `#reviews`) | **3** |
 | `feTurbulence` count | **60** |
 | `#svcNav` children | **8** |
-| elements | **2672** |
+| elements | **2680** (the story layer, the cue, the skip control) |
 | hero ink (`.hero-inner` padding-top) | **86.1828** |
 | `#about` height | **704** |
 | collage | **497×621** |
 | `#footer` height | **504** |
 | `.wheel-ui` width | **480** |
-| document height | **23543** (was 15443 — the film's travel) |
+| document height | **24443** (was 23543 — the dead scroll's 900px) |
 | broken images / overflow / console errors | **0 / none / none** |
 
 ⚠️ **ELEMENTS MOVED 2667 → 2672 AND NONE OF IT IS A REGRESSION**: the `.cine` wrapper, the
@@ -479,7 +479,7 @@ it"* was a background whose brightness swings 247 levels inside one frame.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D316**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D317**. ⭐ §2s is SITE SPEED, a standing rule. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
 | **`Website Demo/index.html`** | ⭐⭐ The whole landing design, inline `<style>` and three `<script>` blocks. Search `THE SCROLL FILM`, `THE VEIL COMES OFF`, `SKELETON`, `--cineH`, `hero-navgrade`, `THE WELD`, `SLAB_V`, `THE TABLET BAND` |
 | **`Website Demo/build_pages.py`** | ⭐⭐ The seven internal pages, `site.css`, `site.js`, **`footer.css` and `nav.css`**. ⚠️ **RUN IT FIRST** |
 | **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. ⚠️ Dot-prefixed folders no longer ship (D314), and **code comments are stripped on the way out** (D315) |

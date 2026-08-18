@@ -58,3 +58,34 @@ python3 -c "from PIL import Image; Image.open('/tmp/introposter864.png').convert
 for f in "$OUT" "$NARROW"; do
   ffprobe -v error -show_entries format=duration,size -show_entries stream=width,height,nb_frames -of default=noprint_wrappers=1 "$f"
 done
+
+# ── D317: THE PHONE'S OWN FILM, FROM THE CLIENT'S 9:16 MASTER ────────────────
+# ⭐⭐⭐ He sent `TC FINAL VIDEO 9x16.mp4` — 1080x1920, 24fps, no audio, and the SAME
+# 44.250s as the landscape master, so the scroll maths and every story beat carry
+# over untouched. This replaces D316's panned 556 crop; the tablet went back to the
+# 864 crop above. ⛔ NOTHING IS RE-CROPPED HERE: the composition is his editor's.
+#
+# ⭐⭐ THE SIZE WAS MEASURED, NOT PICKED. Mean SSIM against the master (each candidate
+# scaled back up to 1080x1920, which is the honest question — how much detail survives):
+#
+#   1080x1920 crf 28   6.71 MB   0.9907    upscale 1.27x on a DPR-3 phone
+#    864x1536 crf 27   5.20 MB   0.9895    1.59x
+#    864x1536 crf 28   4.59 MB   0.9886    1.59x   <- what ships
+#    864x1536 crf 29   4.06 MB   0.9877    1.59x
+#    864x1536 crf 30   3.61 MB   0.9867    1.59x
+#     720x1280 crf 26  4.52 MB   0.9890    1.90x
+#
+# ⭐ 864/crf28 beats 720/crf26 on both counts at the same size — less upscale for the
+# same bytes — so resolution was spent where it shows and compression where it does not.
+# ⚠️ CRF 28 IS THE KNEE AND IT WAS FOUND BY EYE, not by the SSIM column: at 1125 device px
+# the dark pine mass above the quarry holds its needles at 28 and smears at 29. SSIM moves
+# 0.0009 across that step and cannot see it.
+# ⭐ 4.59 MB against the 5.0 MB 864 crop it replaces on the phone: SMALLER, and 1.59x
+# upscale instead of 2.11x. Site speed is not traded for the better picture here.
+ffmpeg -y -i "TC-FINAL-VIDEO-9x16-master.mp4" -an -sn -dn -map 0:v:0 \
+  -vf "fps=12,scale=864:1536:flags=lanczos" \
+  -c:v libx264 -crf 28 -preset veryslow -g 8 -bf 0 -refs 4 \
+  -pix_fmt yuv420p -profile:v high -level 4.0 \
+  -write_tmcd 0 -movflags +faststart "../topcat-intro-9x16-864.mp4"
+ffmpeg -y -v error -i "../topcat-intro-9x16-864.mp4" -frames:v 1 /tmp/vposter.png
+python3 -c "from PIL import Image; Image.open('/tmp/vposter.png').convert('RGB').save('../topcat-intro-9x16-864-poster.webp','WEBP',quality=80,method=6)"

@@ -4339,13 +4339,33 @@
      ============================================================================ */
   .cine{position:relative}
   .hero-vid{display:none}
-  html.cine-on .cine{--cineH:1000vh;--cineHold:0.10;--cineVeilAt:38;--cineVeilMin:0.20;
+  /* ⭐⭐⭐ THE DEAD SCROLL — 18 August 2026 (D317). Client: *"add a deadscroll on the hero section if
+     the video was played so they dont scroll right past the hero section after going through the
+     video."* ⭐⭐ IT IS `--cineHold` AND IT ALREADY EXISTED, at one viewport — the point is that one
+     viewport is nothing against nine screens of built-up scroll momentum, so the finished hero was
+     being flicked past before its staged copy had finished rising.
+     ⛔⛔ **THE FILM'S PACE MUST NOT CHANGE, WHICH IS WHY BOTH NUMBERS MOVE TOGETHER.** The scrub
+     computes `film = eased/(1 - hold)`, so raising the hold alone would squeeze the whole film into
+     less travel and speed the scrub up. `--cineH` is raised by exactly the extra hold, leaving the
+     film's own travel — and therefore its scroll-per-second — identical:
+
+         band      film travel   dead scroll   --cineH   --cineHold
+         desktop      900vh         200vh       1100vh     0.1818
+         tablet       720vh         180vh        900vh     0.2000
+         phone        630vh         170vh        800vh     0.2125
+
+     ⭐ TWO SCREENS OF HOLD ON THE FINISHED HERO, with the veil at 1, the copy up and the bar formed:
+     nothing changes through it, which is the whole idea. ⚠️ It only exists under `cine-on`, so a
+     browser that never runs the film gets the ordinary hero and no dead scroll — "if the video was
+     played" is satisfied by where these live rather than by a test.
+     ⚠️ **THIS IS THE FIRST THING HE IS LIKELY TO WANT MOVED**, and it is one number per band. */
+  html.cine-on .cine{--cineH:1100vh;--cineHold:0.1818;--cineVeilAt:38;--cineVeilMin:0.20;
     height:var(--cineH)}
   @media(max-width:1120px){
-    html.cine-on .cine{--cineH:800vh}
+    html.cine-on .cine{--cineH:900vh;--cineHold:0.2}
     html.cine-on .cine > #hero{min-height:100vh}
   }
-  @media(max-width:720px){html.cine-on .cine{--cineH:700vh}}
+  @media(max-width:720px){html.cine-on .cine{--cineH:800vh;--cineHold:0.2125}}
   html.cine-on .cine > #hero{position:sticky;top:0}
   /* ⭐ BETWEEN THE PHOTOGRAPH AND `.hero-shade`, which is the reason nothing about the copy's
      contrast has to be re-measured: D238's veil dresses the film and the still identically. */
@@ -4516,6 +4536,32 @@
        contact shadow so the type reads as an object in the room; the veil's 0.20 floor and
        `--navGrade` do the contrast work, exactly as they do for the hero's headline. */
     text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5);
+  }
+  /* ⭐⭐⭐ THE WORDS CARRY THEIR OWN GRADE, AND IT IS D313'S MECHANISM REUSED, NOT A NEW IDEA.
+     ⛔⛔ MEASURED ON THE PHONE'S 9:16 FILM: the band behind the opening title runs min 1 to max 227
+     with a 97th percentile of 222, because quarried marble blocks sit in it. Cream ink on 222 under
+     the veil's 0.20 floor composites to **1.92:1**. The median is 8.28:1, so an average would have
+     said this was fine — the same trap D313 fell into twice with the nav bar.
+     ⭐ So the answer is where D313 put it: in the PICTURE, at a strength the scrub works out from how
+     bright that band actually is, with no edge and no shape of its own. An ellipse of the site's own
+     ink, widest at the type and gone before it reaches anything — a wash, not a plate. ⛔ He rejected
+     a frosted-glass PANEL for the nav; this is the gradient he accepted in its place.
+     ⚠️ `z-index:-1` sits it behind the type but inside the line's own stacking context, which the
+     `translateZ` already creates — so it travels with the words as they approach. */
+  html.cine-on .cine-line::before{
+    content:"";position:absolute;inset:-1.15em -2.4em;z-index:-1;pointer-events:none;
+    /* ⛔⛔ THE GRADIENT MUST REACH ZERO INSIDE ITS OWN BOX. Written first at `62% 130%`, which is
+       LARGER than the box on the vertical axis, so the box clipped it and the wash landed as a dark
+       BAND with a straight edge top and bottom — screenshotted, and it is precisely the "slab of
+       black marble across the top" he rejected at D311 and again at D313. `farthest-side` with the
+       last stop at 100% ends the fade exactly at the edge, so there is no line anywhere.
+       ⭐⭐ AND IT IS LIGHT, BECAUSE THE MEASUREMENT SAYS IT CAN BE. Behind the phone's opening title
+       the 97th percentile is 219; under the veil's 0.20 floor, **0.36 of black is what AA 4.5:1
+       actually costs**. 0.62 at the centre gives 9:1 with room to spare and still reads as a wash
+       rather than a panel. ⛔ The first version used 0.94 and looked like a plate. */
+    background:radial-gradient(farthest-side at 50% 50%,
+      rgba(6,6,9,0.62), rgba(6,6,9,0.34) 46%, rgba(6,6,9,0.10) 72%, rgba(6,6,9,0) 100%);
+    opacity:var(--lg,0);
   }
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
      not using — the quarry's sky is at the TOP, the slab and the island both sit LOW */
@@ -8536,7 +8582,22 @@
     </svg>
     <div class="hero-bg" aria-hidden="true">
       <img src="/assets/site/hero-night-2752.webp" srcset="/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w" sizes="(max-width:720px) 1000px, 1739px" width="2752" height="1536" alt="" id="heroImg" draggable="false" fetchpriority="high" decoding="async">
-      <!-- ⭐⭐ **THE FILM.**
+      <!-- ⭐⭐ **THE FILM — THREE OF THEM, ONE PER BAND, AND ⛔ ONLY ONE IS EVER FETCHED.**
+           ⭐⭐⭐ **THE PHONE HAS THE CLIENT'S OWN 9:16 MASTER** — 18 Aug 2026 (D317). He sent a
+           purpose-made vertical cut and asked for it on mobile only, with the tablet put back where
+           D312 had it:
+             ≤720      `topcat-intro-9x16-864.mp4`  864x1536, **4.59 MB** — HIS film, not a crop
+             721-1120  `topcat-intro-864.mp4`       864x1080, 5.0 MB — D312's 4:5 crop at x=680
+             ≥1121     `topcat-intro-1920.mp4`      1920x1080, 11.7 MB
+           ⚠️ All three are **44.250s at 12fps**, so the scroll maths and every story beat are the
+           same at every band and nothing had to be re-timed for the new file.
+           ⛔⛔ **THREE FILES COST NOTHING IN LOAD TIME BECAUSE A BAND FETCHES EXACTLY ONE** — the
+           in-place script below attaches one src during parse, and it is measured as zero requests
+           for the other two. ⭐ The phone's file is SMALLER than the crop it replaces (4.59 MB
+           against 5.0) and needs a **1.59x** upscale instead of **2.11x**. Site speed was not traded
+           away for the better picture; see §SPEED in HANDOVER.md.
+           ⚠️ D316's panned crops are reverted — `assets/video/.reverted-2026-08-18-pan/` keeps them
+           and keeps the arithmetic that explains why a 9:16 master beats any crop of a 16:9 one.
            ⛔⛔⛔ **`preload="none"` IS THE WHOLE REASON PHONES DO NOT PAY FOR THIS.** A `display:none`
            video still DOWNLOADS: CSS decides what is painted, `preload` decides what is fetched, and
            `auto` here would have posted 11.7 MB to every phone and tablet visitor for a film only
@@ -8555,10 +8616,10 @@
       <video class="hero-vid" id="heroVid" playsinline muted preload="none"
              data-src="/assets/video/topcat-intro-1920.mp4?v=1"
              data-poster="/assets/video/topcat-intro-poster.webp?v=1"
-             data-src-tablet="/assets/video/topcat-intro-812.mp4?v=1"
-             data-poster-tablet="/assets/video/topcat-intro-812-poster.webp?v=1"
-             data-src-phone="/assets/video/topcat-intro-556.mp4?v=1"
-             data-poster-phone="/assets/video/topcat-intro-556-poster.webp?v=1"
+             data-src-tablet="/assets/video/topcat-intro-864.mp4?v=1"
+             data-poster-tablet="/assets/video/topcat-intro-864-poster.webp?v=1"
+             data-src-phone="/assets/video/topcat-intro-9x16-864.mp4?v=1"
+             data-poster-phone="/assets/video/topcat-intro-9x16-864-poster.webp?v=1"
              width="1920" height="1080" aria-hidden="true" tabindex="-1"
              disablepictureinpicture disableremoteplayback></video>
       <!-- ⭐⭐ **THE FILM'S TWO HEAVY URLS ARE ATTACHED HERE, IN PLACE, AND THAT IS THE POINT.**
@@ -15754,7 +15815,7 @@ if(faqIndex && panel && faqBody){
      ⚠️ The blur is quantised to half a pixel for the same reason — it is depth of field as the words
      cross the focal plane, and it does not need to be smooth to read as soft. */
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
-    el, at:0, out:0, o:-1, z:-1, b:-1
+    el, at:0, out:0, o:-1, z:-1, b:-1, g:-1
   }));
   /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS. A line may carry `data-at-narrow` /
      `data-out-narrow`; below 1121 those win. ⚠️ Re-read from `sync()` so a window dragged across
@@ -15765,11 +15826,37 @@ if(faqIndex && panel && faqBody){
       const d=L.el.dataset;
       L.at =+((n&&d.atNarrow )||d.at )||0;
       L.out=+((n&&d.outNarrow)||d.out)||0;
-      L.o=L.z=L.b=-1;                        // force the next tick to write all three
+      L.o=L.z=L.b=L.g=-1;                    // force the next tick to write them all
     }
   }
   retimeStory();
   const Z_FAR=-150, Z_NEAR=560;
+  /* ⭐⭐ ONE `drawImage` PER FRAME AT MOST, because only one line is ever on screen: the sampler runs
+     for the line whose opacity is up and skips the other two. It reuses `gcv`/`gctx` — allocating a
+     canvas per frame is the version of this that shows up in a profile (grade()'s own lesson).
+     ⛔ IT READS THE VIDEO, NOT THE SCREEN: a `cover` video is cropped by CSS, so the source rectangle
+     has to be worked out the way the browser lays it out, or the sample is of the wrong pixels. */
+  function bandGrade(el){
+    if(!vid.videoWidth||vid.readyState<2)return -1;
+    const bg=heroBg.getBoundingClientRect(); if(!bg.height)return -1;
+    const r=el.getBoundingClientRect(); if(!r.height)return -1;
+    const vr=vid.videoWidth/vid.videoHeight, br=bg.width/bg.height;
+    let dw,dh,dx,dy;
+    if(vr>br){ dh=bg.height; dw=dh*vr; dx=(bg.width-dw)/2; dy=0; }
+    else { dw=bg.width; dh=dw/vr; dx=0; dy=(bg.height-dh)/2; }
+    const sc=vid.videoWidth/dw;
+    const sx=(r.left-bg.left-dx)*sc, sy=(r.top-bg.top-dy)*sc;
+    const sw=Math.max(1,r.width*sc), sh=Math.max(1,r.height*sc);
+    try{ gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,4); }catch(e){ return -1; }
+    let d; try{ d=gctx.getImageData(0,0,48,4).data; }catch(e){ return -1; }
+    const cell=[];
+    for(let i=0;i<192;i++) cell.push(0.2126*d[i*4]+0.7152*d[i*4+1]+0.0722*d[i*4+2]);
+    cell.sort((a,b)=>a-b);
+    /* the 97th percentile, exactly as the nav grade takes it: one bright block asks for the wash, a
+       stray speck does not. No floor here — over the black scenes there is nothing to cover, and a
+       wash that never fully leaves would be a smudge on a void. */
+    return clamp((cell[187]-GRADE_LO)/(GRADE_HI-GRADE_LO));
+  }
   let firstAlpha=0;                 // the opening title's own alpha, for the scroll cue below
   function story(t){
     for(const L of STORY){
@@ -15781,6 +15868,12 @@ if(faqIndex && panel && faqBody){
       const z=Math.round(Z_FAR+(Z_NEAR-Z_FAR)*p*p);
       const b=p>0.72?Math.round(((p-0.72)/0.28)*9)/2:0;     // 0 … 4.5px, in half-pixel steps
       if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+      /* the wash only matters while the words are up, and it rides their own alpha so it can never
+         outlive them (the bug the scroll cue taught) */
+      if(o>0.02){
+        const g=bandGrade(L.el);
+        if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+      } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
       if(z!==L.z){ L.z=z; L.el.style.setProperty('--lz',z); }
       if(b!==L.b){ L.b=b; L.el.style.filter=b?'blur('+b+'px)':'none'; }
     }

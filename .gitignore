@@ -41,4 +41,10 @@ Thumbs.db
 # script that made it, on disk, but NOT in git: GitHub warns past 50 MB and hard
 # blocks at 100, and a master nothing serves would be in every clone forever.
 # ⛔ Do not delete it — a re-cut needs the master, not the encode (D241's rule).
+# ⛔ THE FILM MASTERS STAY ON DISK AND OUT OF GIT. The landscape master is 86 MB and the client's
+# 9:16 master is 35 MB; GitHub warns past 50 MB and the repo is already over a gigabyte. Both live in
+# `assets/video/.src-*/` and MUST NOT BE DELETED — every shipped cut is derived from them by
+# `encode.sh`. ⚠️ The rule covers .mp4 as well as .mov: the 9:16 master arrived as an .mp4 and the
+# .mov-only rule silently let 35 MB into a commit (caught at D317, before the push).
 **/assets/video/.src-*/*.mov
+**/assets/video/.src-*/*.mp4
