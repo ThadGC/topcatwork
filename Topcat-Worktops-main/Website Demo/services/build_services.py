@@ -45,7 +45,7 @@ BASE = "https://www.topcatworktops.co.uk"
 PHONE_DISPLAY = "0800 098 2812"
 PHONE_TEL = "+448000982812"
 EMAIL = "info@topcatworktops.co.uk"
-HOURS = "Monday to Friday, 8am to 6pm"
+HOURS = "Monday to Friday, 7am to 9pm"
 AREA = "London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire"
 AREAS_SERVED = ["London", "Hertfordshire", "Essex", "Berkshire", "Buckinghamshire",
                 "Surrey", "Oxfordshire", "Bedfordshire"]
@@ -591,7 +591,7 @@ def jsonld(s):
         "openingHoursSpecification": [{
             "@type": "OpeningHoursSpecification",
             "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            "opens": "08:00", "closes": "18:00"}],
+            "opens": "07:00", "closes": "21:00"}],
     }
     graph = [
         {"@type": "Service", "name": s["h1"], "serviceType": s["h1"],

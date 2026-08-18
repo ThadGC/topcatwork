@@ -33,7 +33,13 @@ SKIP_NAMES = {"dev-server.js", "make_upload.py", ".DS_Store"}
 def shippable(p: pathlib.Path) -> bool:
     rel = p.relative_to(HERE)
     for part in rel.parts[:-1]:
-        if part in SKIP_DIRS or part.startswith(".src-") or part.startswith(".pre-"):
+        # ⛔⛔ **`.removed-` IS HERE BECAUSE IT WAS FOUND SHIPPING — 18 Aug 2026 (D314).** Seven
+        # stone pages the client had taken OFF the site were being uploaded to the host: the rule
+        # knew about `.src-` and `.pre-` and nothing had ever archived under a third prefix. They
+        # are unlinked, so nothing on the site points at them — but they were public, indexable,
+        # and still carrying whatever the site said on the day they were pulled (the stale
+        # `8am to 6pm` is how they surfaced). ⭐ Any dot-prefixed FOLDER is workshop, not site.
+        if part in SKIP_DIRS or part.startswith("."):
             return False
     if p.name in SKIP_NAMES:
         return False
