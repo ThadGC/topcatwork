@@ -228,12 +228,12 @@
     /* black-marble glass: the SAME stone as the page floor (--marbleBG), whispered in under
        the dark gradient so the scrolled bar reads as material, not a grey strip. One shared
        asset — no second marble scale, so it can't re-open the patchwork complaint. */
-    /* ⚠️ D311 MOVED THE TWO ALPHAS INTO VARIABLES AND CHANGED NEITHER. The scroll film runs a
-       daylight quarry under this bar with the hero's veil lifted off it, and the plate is what
-       carries the nav there — see the film's rule for the measurement. Everywhere else, and at the
-       end of the film, they resolve to the 0.82 / 0.64 they have always been. */
+    /* ⚠️ D311 made these two alphas variables so the film could thicken the plate; **D313 took the
+       plate out of the film entirely** (the bar floats as a skeleton until the hero has gone by),
+       so nothing overrides them any more and they are literals again. One less indirection on a
+       frozen rule. */
     background:
-      linear-gradient(rgba(8,8,10,var(--barGlassA,0.82)),rgba(8,8,10,var(--barGlassB,0.64))),
+      linear-gradient(rgba(8,8,10,0.82),rgba(8,8,10,0.64)),
       var(--marbleBG) center / cover no-repeat;
     -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
     opacity:0;transition:opacity .6s var(--ease);
@@ -3957,7 +3957,12 @@
        termination line, because linear alpha interpolation still has slope where it stops. These
        stops trace an ease-out curve instead: the alpha lands on zero with zero slope, so the
        shade dissolves into the photo with no edge to find. Don't collapse it back to two stops. */
-    linear-gradient(to bottom,
+    var(--navScrim)}
+  /* ⚠️ D313 NAMED THESE STOPS AND CHANGED NONE OF THEM. The film needs this one layer on its own,
+     at its own strength, and a second copy of twelve stops would be a second description of one
+     curve. Every layer in the stack above is the same colour, so their composite does not depend
+     on the order and lifting this one out changes nothing. */
+  .hero{--navScrim:linear-gradient(to bottom,
       rgba(7,7,9,0.60) 0%,   rgba(7,7,9,0.555) 2.4%, rgba(7,7,9,0.474) 5.1%,
       rgba(7,7,9,0.378) 7.5%, rgba(7,7,9,0.282) 10.2%, rgba(7,7,9,0.198) 12.6%,
       rgba(7,7,9,0.126) 15%,  rgba(7,7,9,0.078) 17.4%, rgba(7,7,9,0.042) 20.1%,
@@ -4526,10 +4531,105 @@
      leaves zero and arrives at one with no slope at either end, so neither the start nor the settle
      has an edge you can find. */
   html.cine-on .cine .hero-shade{opacity:var(--cineVeil,1)}
-  html.cine-on header.bar{
-    --barGlassA:calc(0.82 + 0.13 * (1 - var(--cineVeil,1)));
-    --barGlassB:calc(0.64 + 0.20 * (1 - var(--cineVeil,1)));
-  }
+
+  /* ============================================================================
+     ⭐⭐⭐ **THE BAR IS A SKELETON UNTIL THE HERO HAS GONE BY — 18 August 2026 (D313).**
+     Client: *"the nav bar doesn't have the stone background when it starts, and it doesn't have to
+     be visible yet. So… have the skeleton nav bar, which just has a logo and the text in it, and
+     the get a quote button… change [the words] to black in the meantime, or, you know, whatever
+     works for its background so it stands out, or maybe frosted glass at the back… because the
+     black isn't working with it. Then only near the end when we actually get to the final frame or
+     the last hero section… the nav bar will still be the skeleton until the user scrolls, like our
+     animation that we had before on the navbar."*
+     ⛔⛔ **THIS REVERSES D311's SECOND HALF AFTER AN HOUR, AND HIS REASON IS BETTER THAN MINE.** I
+     poured the bar's stone glass from the first pixel to carry the nav over the daylight quarry.
+     It carried it, and it also put a slab of black marble across the top of his film for nine
+     screens. **The legibility problem was real; the instrument was wrong.**
+     ⛔⛔⛔ **AND NO ONE INK COLOUR CAN SOLVE IT, WHICH IS WHY THE ANSWER IS THE GLASS AND NOT THE
+     WORDS.** He offered black text, and black is right over the quarry and INVISIBLE eight seconds
+     later when the film cuts to a slab on a black ground; bone is right there and invisible over
+     the quarry. **The background under this bar runs from near-white to near-black inside one
+     scroll**, so any fixed colour is wrong for half the film. Sampling the frame per tick and
+     flipping the ink was built in my head and rejected: at t≈15 the band is black at both ends and
+     white in the middle, so a mean flips the whole nav to a colour that is wrong at the edges.
+     ⭐⭐ **FROSTED GLASS IS THE ONE ANSWER THAT ADAPTS BY CONSTRUCTION** — his own second suggestion.
+     It carries NO colour of its own: it is the film behind it, blurred and dimmed, so it darkens
+     exactly as much as the picture is bright and disappears over the dark scenes. ⛔ No stone, no
+     gradient, no hairline — the material that says "bar" stays off until the bar forms.
+     ⭐ **THE INK GOES TO FULL STRENGTH WHILE IT FLOATS**, because 55% bone on frosted quarry
+     measures 2.6:1 and full bone measures 4.9:1. ⚠️ That is a legibility measure on one surface for
+     the length of one animation, not a reversal of D304's ruling that nav links are grey — the
+     moment the bar forms they are grey again.
+     ⭐⭐ **AND THE FORMING IS THE OLD ONE, UNTOUCHED.** `.scrolled` still does everything it always
+     did — the glass pours over .6s and D33's hairline draws out from the centre with its flare.
+     All that changed is WHEN it is asked for: not 40px from the top of the document, but 40px
+     after the hero itself has started to leave, which is the site's own idiom (the phone's action
+     bar reads the CTA row's rect rather than a scroll number, for the same reason).
+     ============================================================================ */
+  /* ⛔⛔⛔ **THE THIRD ANSWER, AND THE FIRST TWO WERE BOTH REJECTED BY HIM AND BOTH WERE MINE.**
+     Client on the stone plate: *"the dark nav bar… doesn't look good with the background."* Then on
+     the dark frosted glass that replaced it: *"I still don't like that it's a dark frosted glass.
+     Maybe make it a light one or something so it stands out… make a different plan."*
+     ⛔⛔ **A LIGHT PANEL WAS HIS OWN SUGGESTION AND IT CANNOT BE BUILT, FOR A REASON THAT IS HIS OWN
+     RULE.** Every supplied lockup is the LIGHT artwork — a gold gradient wordmark made for a dark
+     ground (`assets/brand/README.md`: the three originals are all `*_Gradient_Light`). Gold on the
+     brand's own bone measures **1.9:1**, so a cream bar would erase his wordmark, and §2 rule 14
+     says the logo is never re-drawn, re-coloured or generated.
+     ⛔⛔ **AND A HALO ON THE WORDS WAS TRIED AND LOOKED AT AND IS NOT ENOUGH.** Cream letters with a
+     two-stop contour hold their edge on white marble but the fill still merges — screenshotted, and
+     the right-hand links were plainly washed out.
+     ⭐⭐⭐ **SO IT IS MEASURED INSTEAD OF ARGUED: THE BAND BEHIND THIS BAR IS NOT ONE BACKGROUND.**
+     Sampled every two seconds across the whole film, the top 78px runs **mean 121→220 for the first
+     fifteen seconds and exactly 0 from t=16 to t=24**, and — the number that decides everything —
+     the SPREAD WITHIN A SINGLE FRAME reaches **247 of 255** (black pines beside white marble, in
+     the same band). ⛔ No fixed ink colour survives that, and neither does a per-word one: at t=0
+     the spread inside one link's own box is already 208.
+     ⭐⭐⭐ **WHICH LEAVES ONE HONEST INSTRUMENT — SOMETHING BETWEEN THE WORDS AND THE PICTURE — AND
+     THE DIFFERENT PLAN IS TO PUT IT IN THE PICTURE'S GRADE RATHER THAN IN A BAR.** `.hero-navgrade`
+     is the veil's OWN nav-scrim curve, the one that has always been in `.hero-shade`, on its own
+     element: it has no edge, no shape and no colour of its own, so it reads as the top of the frame
+     falling off rather than as a panel with a bottom to it.
+     ⭐⭐ **AND IT IS ONLY THERE WHEN THE PICTURE IS BRIGHT.** The scrub samples the mean luminance of
+     that band each tick and writes `--navGrade`: **0 below 40, full by 190**, smoothed. Over the
+     slab on black it is exactly 0 — nothing whatever over his picture, a true skeleton — and over
+     the quarry it is a soft fall. A mid value on a mixed frame is safe here in a way a mid INK
+     colour never was, because a grade has no glyph to lose.
+     ⚠️ The bar itself is still nothing: no stone, no frosted glass, no hairline, no plate.
+     ⭐ The links go to full `--bone` while they float, because 55% has no weight to spare on a
+     picture. D304's grey returns the instant the bar forms. */
+  /* ⚠️ **THE CURVE IS STACKED TWICE, AND THAT IS ONE DESCRIPTION USED TWICE RATHER THAN A SECOND
+     ONE.** `--navScrim` was tuned to carry this bar over a night PHOTOGRAPH; the film opens on
+     daylight, where the same curve leaves a link at 3.0:1. Two passes of the identical stops
+     composite to `1−(1−a)²` — the same shape, the same edgeless landing on zero, a heavier fall —
+     which is what the brighter picture needs, and it still costs nothing when the sampler says 0. */
+  .hero-navgrade{display:none;position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:var(--navScrim),var(--navScrim)}
+  html.cine-on .cine .hero-navgrade{display:block;opacity:var(--navGrade,0)}
+  /* ⛔⛔⛔ **AND IT CROSSES AN EXISTING CLIENT RULING ON THE PHONE, WHICH IS FLAGGED RATHER THAN
+     BURIED.** 11 Aug 2026: *"the nav bar should already be formed, so already a gold line below it
+     and everything, from the top. Not after you start scrolling."* That block (`max-width:1120px`,
+     below) forces BOTH pseudo-elements on, and its stated reason was that a bar arriving late
+     *"looks like something loading rather than like a deliberate reveal"*. ⭐ **THE FILM IS THE
+     DELIBERATE REVEAL THAT RULING SAID DID NOT EXIST**, and he has now described the skeleton
+     without naming a band — so it applies everywhere the film runs, and only while it runs.
+     ⚠️ **LEAVING THE PHONE ALONE WAS NOT AN OPTION EITHER**: `.preform::before` already out-
+     specifies the 1120 block on its own, so the phone was showing a bar with no plate and a gold
+     hairline under it — a half-state neither ruling asked for. One word from him puts the phone
+     back: delete these two `::after` lines. */
+  header.bar.preform::before{opacity:0}
+  header.bar.preform::after{opacity:0;transform:scaleX(0)}
+  /* ⭐ **AND ONE CONTOUR ON TOP, FOR THE CASE THE GRADE SHOULD NOT BE ASKED TO SOLVE.** Measured
+     under each link's OWN box rather than across the whole bar — which is the honest question, and
+     it is far kinder than the band figure: at t=4 every link runs **8.4 to 11.5:1**, and at t=38
+     six of the seven run **14.8 to 16.5**. The exception is one word, **Trade at 3.46**, sitting
+     over a pendant lamp for about two seconds. ⛔ Raising the grade until that one word clears
+     would put a heavier fall over the whole film to fix a specular highlight. A 2px contour costs
+     nothing on a dark frame, is invisible against everything else, and gives that glyph an edge
+     where it needs one. ⚠️ On its own a contour was NOT enough — that was tried first and
+     screenshotted washing out on white marble. It works here because the grade is doing the work
+     and this only has the remainder to cover. */
+  header.bar.preform nav.top a{color:var(--bone);text-shadow:0 1px 2px rgba(6,6,8,0.70)}
+  header.bar.preform .brand-logo{filter:drop-shadow(0 1px 2px rgba(6,6,8,0.55))}
   /* ============================================================================
      ⭐ MOBILE HERO — 11 Aug 2026 (D92). MOBILE ONLY.
      ⛔ Desktop is frozen (D91, §2 rule 15), so every rule below lives inside this query and

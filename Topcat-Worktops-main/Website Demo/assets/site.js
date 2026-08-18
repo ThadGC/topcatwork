@@ -5616,13 +5616,22 @@ if(faqIndex && panel && faqBody){
 /* ---------- header: pours its glass in once you leave the top ---------- */
 (function(){
   const bar=document.getElementById('siteBar'); if(!bar)return;
-  /* ⭐ D311: and it is poured from the first pixel while the scroll film is running. The film
-     opens on a daylight quarry with the hero's veil lifted off it, where a link over the white
-     marble measures 2.2:1; the bar's own glass takes the same pixel to 5.2:1 without putting
-     anything back over the picture. ⚠️ `cine-on` is only ever set on the desktop band, so nothing
-     below 1121 and nothing on any other page is touched by this clause. */
-  const on=()=>bar.classList.toggle('scrolled',
-    window.scrollY>40||document.documentElement.classList.contains('cine-on'));
+  /* ⭐⭐ D313: while the scroll film is running the bar does not form at all — it floats as a
+     skeleton over the whole film AND over the hero, and only pours its glass once the hero itself
+     has started to leave. ⛔ THE TRIGGER IS THE HERO'S OWN EDGE, NOT A SCROLL NUMBER: the hero is
+     `sticky`, so it sits at top 0 for the entire film and goes negative the instant it unpins —
+     `scrollY` would have to be told the film's length, and would be wrong at every other viewport
+     height. Same reasoning as the phone's action bar, which reads the CTA row's rect. ⚠️ 40 is the
+     same 40 the ordinary rule uses, so the bar forms after the same distance of movement it always
+     did. ⚠️ With no film — reduced motion, no MP4, a file that errors — `cine-on` is absent and
+     this is the rule it has always been. */
+  const hero=document.getElementById('hero');
+  const on=()=>{
+    const film=document.documentElement.classList.contains('cine-on')&&hero;
+    const formed=film?(hero.getBoundingClientRect().top<=-40):(window.scrollY>40);
+    bar.classList.toggle('scrolled',formed);
+    bar.classList.toggle('preform',!!film&&!formed);
+  };
   on();
   window.addEventListener('scroll',on,{passive:true});
 })();
@@ -5714,9 +5723,19 @@ if(faqIndex && panel && faqBody){
   const narrow=matchMedia('(max-width:1120px)');
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
+  /* ⭐ D313's sampler: one 24×1 read of the band the bar sits over, reused every tick. The canvas
+     is made once — allocating one per frame is the version of this that shows up in a profile. */
+  const GRADE_LO=30, GRADE_HI=185;      // band brightness where the grade starts and where it is full
+  const GRADE_MIN=0.20;                 // a floor: free on a dark frame, and it covers a lit edge
+  const gcv=document.createElement('canvas'); gcv.width=48; gcv.height=4;
+  const gctx=gcv.getContext('2d',{willReadFrequently:true});
+  let graded=-1;
   let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false;
   let veiled=-1;
   const clamp=v=>v<0?0:v>1?1:v;
+  const heroBg=hero.querySelector('.hero-bg');
+  const barEl=document.querySelector('header.bar');
+  const barH=()=>barEl?barEl.getBoundingClientRect().height:78;
 
   /* the hero's staged entrance needs its hidden state to PAINT before the class lands, or the copy
      simply appears — the same double-rAF the hero has always used, borrowed for the paths where
@@ -5739,6 +5758,7 @@ if(faqIndex && panel && faqBody){
     root.classList.remove('cine-on');
     window.__cineHold=false;
     document.documentElement.style.removeProperty('--cineVeil');
+    root.style.removeProperty('--navGrade'); graded=-1;
     stage();
     dispatchEvent(new Event('scroll'));
     if(raf)cancelAnimationFrame(raf);
@@ -5773,6 +5793,51 @@ if(faqIndex && panel && faqBody){
     veiled=v;
     document.documentElement.style.setProperty('--cineVeil',v);
   }
+  /* ⭐⭐ **THE GRADE FOLLOWS THE PICTURE, WHICH IS WHY IT CAN BE ABSENT MOST OF THE FILM.** The band
+     behind the bar is drawn to a 24×1 canvas and its mean luminance decides how much of the veil's
+     own nav curve is on. ⛔ It is read from the VIDEO, not from the screen: a `cover` video is
+     cropped by CSS, so the source rectangle has to be worked out the same way the browser does it,
+     or the sample is of the wrong pixels. ⚠️ Two decimal places and a change test — a custom
+     property written at full precision every frame is a style recalculation for nothing. */
+  function grade(){
+    if(!vid.videoWidth||vid.readyState<2)return;
+    const bg=heroBg.getBoundingClientRect(); if(!bg.height)return;
+    const bandH=barH();
+    const vr=vid.videoWidth/vid.videoHeight, br=bg.width/bg.height;
+    let dw,dh,dx,dy;
+    if(vr>br){ dh=bg.height; dw=dh*vr; dx=(bg.width-dw)/2; dy=0; }
+    else { dw=bg.width; dh=dw/vr; dx=0; dy=(bg.height-dh)/2; }
+    const sc=vid.videoWidth/dw;                       // css px → source px
+    const sx=(0-dx)*sc, sy=(0-dy)*sc, sw=bg.width*sc, sh=bandH*sc;
+    try{ gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,4); }catch(e){ return; }
+    let d; try{ d=gctx.getImageData(0,0,48,4).data; }catch(e){ return; }
+    /* ⛔⛔⛔ **THE STATISTIC IS THE WHOLE THING HERE, AND TWO WRONG ONES WERE MEASURED FIRST.**
+       A MEAN failed at t=4: the band averages 121 because black pines sit beside white marble, so
+       it asked for 0.61 of grade while the pixel that actually loses the word was 200-level marble
+       — the link came out at **3.0:1**. The 85th PERCENTILE then failed at t=16, where the slab
+       crosses under the bar in a black frame: four bright cells out of twenty-four do not reach
+       p85, the grade read 0, and the worst link measured **1.15:1**.
+       ⭐ **IT IS THE 97th PERCENTILE OF A 48×4 GRID** — high enough that one narrow lit shape asks
+       for the grade, not the single maximum, so a stray speck cannot. ⚠️ **THE GRID'S RESOLUTION IS
+       PART OF THE ANSWER**: at 24×1 a bright patch in the lower half of the bar was averaged away
+       against dark pixels above it, and the dim kitchen at t=34 still measured 3.05 at 24×3 because
+       the sampler could not see a lit shelf that a finer probe could. ⚠️ Every cell is 0 through
+       the black scenes, so this still lands on exactly 0 where he wants nothing at all. */
+    const cell=[];
+    for(let i=0;i<192;i++) cell.push(0.2126*d[i*4]+0.7152*d[i*4+1]+0.0722*d[i*4+2]);
+    cell.sort((a,b)=>a-b);
+    const hi=cell[187];   // p97 of 192 — a lit shelf counts, a speck does not
+    /* ⭐ **THE FLOOR IS FREE AND IT CLOSES THE LAST GAP.** However fine the grid, a finer probe
+       finds a brighter pixel — at t=38 the sampler read 0.13 and a 96×12 probe still found a lit
+       shelf edge behind one link at 3.05:1. Rather than chase resolution, the grade never drops
+       below 0.20, which composites to about 0.19 of alpha at the very top of the frame: **on a dark
+       scene that is black over black and cannot be seen**, and it takes that link to 5:1. */
+    const g=+Math.max(GRADE_MIN,clamp((hi-GRADE_LO)/(GRADE_HI-GRADE_LO))).toFixed(2);
+    if(g===graded)return;
+    graded=g;
+    root.style.setProperty('--navGrade',g);
+  }
+
   function tick(){
     raf=null;
     if(eased<0)eased=target;
@@ -5784,6 +5849,7 @@ if(faqIndex && panel && faqBody){
     seek();
     ink(film);
     veil(film);
+    grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
   }
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
