@@ -1,244 +1,231 @@
-# START HERE — 17 August 2026, after THE AUDIT AND COMPOSITION ROUND (D291–D309)
+# START HERE — 18 August 2026, after THE SCROLL FILM ROUND (D310–D314)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D291–D309**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D314**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which is now
-> `HANDOVER-2026-08-17-full-audit-and-composition-start-here.md`. The round before it
-> (D278–D290) is `HANDOVER-2026-08-17-directors-hero-delivery-start-here.md`.
+> `HANDOVER-2026-08-17-full-audit-and-composition-start-here.md` (D291–D309). The round before
+> that (D278–D290) is `HANDOVER-2026-08-17-directors-hero-delivery-start-here.md`.
 > Everything that still matters is carried below.
 
 ---
 
 ## 0. ⛔⛔⛔ THE ONE THING TO TAKE FROM THIS ROUND
 
-**⭐⭐⭐ FOUR TIMES THIS ROUND I MADE A CHANGE THAT LOOKED RIGHT AND DID NOTHING WHERE HE WAS
-LOOKING. THE COMMON FAULT IS NOT CHECKING WHAT ACTUALLY GOVERNS.**
+**⭐⭐⭐ TWICE I CHOSE AN INSTRUMENT BEFORE MEASURING WHAT I WAS DRESSING, AND HE REJECTED BOTH.
+THE THIRD ANSWER CAME OUT OF ONE MEASUREMENT AND WAS OBVIOUS ONCE I HAD IT.**
 
 ```
-D291  the collage clock was verified on the landing; /about/ shares the file with no
-      #process, so it kept a clock nobody had re-tuned and the directors never appeared
-D306  a colour scoped `#about …` never reached `.weld-about`, the CLONE the weld slides,
-      so the copy turned white only when the animation ended — he saw it, I had not
-D308  `.about-copy .section-sub{max-width}` was plainly in the document and DEAD: an
-      `#about …` pair later in the file out-specifies it. Computed said 520px throughout
-D307  `.lead-grid` carried its own `max-width:1280px`, 120px wider than every other
-      section, so the reading column sat 60px out of line and nobody had measured it
+D311  the nav could not be read over the film's daylight quarry, so I poured the bar's own
+      stone glass from the first pixel. It carried the nav — and put a slab of black marble
+      across the top of his film for nine screens. He said it "doesn't look good"
+D313  so I replaced it with dark FROSTED glass. Same mistake, lighter. "I still don't like
+      that it's a dark frosted glass... make a different plan"
+      ⭐ THEN I MEASURED THE BAND BEHIND THE BAR, every two seconds, for the whole film:
+        mean 121→220 for fifteen seconds, exactly 0 from t=16 to t=24,
+        and a SPREAD INSIDE ONE FRAME of 247 of 255 — black pines beside white marble
+      **No fixed ink colour can survive that, and no per-word one either.** The answer is
+      something between the words and the picture, and it belongs in the picture's own grade
 ```
 
-⭐ **THE HABIT THAT CATCHES ALL FOUR: read the COMPUTED value before and after, on the surface he
-is actually looking at.** A rule present in the file proves nothing. `getComputedStyle` told me in
-one call each time.
-⛔ **AND ANYTHING THE WELD CLONES MUST BE STYLED BY CLASS.** `.weld-about` lives inside
-`#weldStage`, so no `#about`-scoped rule can ever dress it.
+⭐⭐ **AND MEASURE IT WHERE HE ACTUALLY LOOKS.** A worst-pixel-anywhere-behind-the-bar figure said
+**3.05:1** and nearly sent me darkening the whole film. Measured under each link's OWN box —
+the honest question — the same frame ran **14.8 to 16.5:1 on six of the seven links**, and the one
+exception was a single word over a pendant lamp. **A contour on that word cost nothing; darkening
+the film for it would have cost everything.**
+
+⛔ **HE REVERSED ME TWICE IN ONE HOUR AND WAS RIGHT BOTH TIMES.** When your own fix is the thing
+he is complaining about, say so in the first line and rebuild it.
 
 ---
 
-## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D291–D309)
+## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D310–D314)
 
-Two instructions: a full audit (*"make sure every inner page is designed very nicely… things
-aren't contradicting… triple check everything"*), then a run of corrections on the hero, the inner
-pages, the text colour, the About copy and the photographs.
+He sent an 86 MB master and asked for it to be tied to the scroll, then corrected the result four
+times in a row. Every correction is in the register with its measurement.
 
 ```
-D291  the non-weld collage clock — the directors now land ON SCREEN on /about/
-D292  eight counties everywhere; og:image on all 183 pages; /favicon.ico
-D293  the tablet's service tiles at full brightness (his 13-Aug ruling, ≤600 only)
-D294  kitchen-islands opens on the Harrow waterfall — his own project photo
-D295  ONE MOBILE NAV on every generated page (the leaves had none below 1121)
-D296  the splashback hero re-cropped so the Australian sockets leave the frame
-D297  THE HERO IS CENTRED, and a short window buys hero height to allow it — §2
-D298  the directors' tone-down deleted; they match every other collage tile
-D299  About body copy white (superseded by D306, which made it site-wide)
-D300  THE INNER PAGES GET A SECOND COLUMN with a sticky quote card — §3
-D301  About copy 6 paragraphs → 5, and the freed height SPENT on his two gaps
-D302  Rimsha re-cut further back; hairline gap 13px → 5.7px; portraits ?v=4
-D303  phone + tablet centre BELOW the bar (opposite of desktop, both right) — §2
-D304  READING COPY IS WHITE, supporting detail stays grey — one `--body` token — §4
-D305  Commercial opens on his marble-bar frame, 16:9 out of a portrait source
-D306  EVERY section subtitle white — and that fixed the weld-clone bug — §5
-D307  the quote card centred in the margin, level with the first line of copy
-D308  About measure 52ch → 47ch so it stops short of the seam; title gap 10 → 27px
-D309  Commercial ⇄ Bathrooms in the HELIX ONLY (a local ORDER permutation)
+D310  THE LANDING PAGE OPENS ON HIS FILM, scrubbed by the scroll — desktop, §2
+D311  the veil comes OFF the film and rides back in for the hero, from t=38 — §3
+D312  the film reaches the PHONE AND TABLET as its own 4:5 cut, not the same one squeezed — §4
+D313  the bar is a SKELETON for the whole film and the hero, and forms only after it — §3
+D314  the working day is 7am to 9pm across all 176 pages — and the upload was shipping
+      seven pages the client had removed
 ```
-
-### What the audit scanned and found CLEAN (do not re-scan without cause)
-
-- **"laser"** zero · **cm** one hit, inside a customer's verbatim review · **exclamation marks**
-  two, both inside reviews · **em dashes in visible copy** zero · **absolutes** zero
-- **reviewCount / aggregateRating** zero live · **supplier names** only the sanctioned quartz
-  sentence · **"showroom"** only as "No showroom trip"
-- **internal links** zero broken across 176 files · **JSON-LD** parses on every page ·
-  **duplicate `<title>`s** none
 
 ---
 
-## 2. ⭐⭐⭐ THE HERO — TWO FRAMES, AND THAT IS DELIBERATE (D297, D303)
+## 2. ⭐⭐⭐ THE FILM IS THE HERO'S OWN BACKDROP (D310)
 
-⭐⭐ **THE RELATION IS THE WHOLE THING:** `.hero` centres `.hero-inner`, so the paddings do not
-place the ink — only their DIFFERENCE does.
+⭐⭐ **THERE IS NO SECOND SECTION, AND THAT IS THE WHOLE DESIGN.** `.cine` is a tall box and
+`#hero` is `position:sticky` inside it, so the hero pins for the length of the film and then
+unpins and scrolls away exactly as it always did. *"The end frame becomes the hero"* is then true
+**by construction** — the film simply stops on its last frame and the copy rises on it.
 
-```
-gapAbove − gapBelow = padTop − padBottom + titleLeading
-moving padTop by X moves the composition by X/2
-```
+⛔⛔ **THE OBVIOUS BUILD — a film section handing over to the hero photograph — CANNOT BE MADE
+SEAMLESS.** `hero-night` is a brighter grade of this same shot, so the handover reads as a light
+coming on. (It IS the same shot: the hero's own comment has said *"the intro animation's end frame
+is the backdrop"* since it was written.)
 
-| Band | Frame it centres in | Why |
+⚠️⚠️ `html` and `main` carry `overflow-x:**clip**`, not `hidden`. **`clip` does not create a scroll
+container and `hidden` does** — sticky works here only because of that earlier choice. Do not
+"tidy" either to `hidden` or the hero stops pinning.
+
+### The numbers, and where each one lives
+
+| What | Where | Value |
 |---|---|---|
-| **desktop ≥1121** | the WHOLE hero, from y=0 | the bar is transparent glass over the photograph, 78.5 of 900 = **8.7%** |
-| **phone + tablet** | the frame BELOW the bar (`+ var(--barH)` in the relation) | the same bar is 80 of 660 = **12%** and carries the logo and burger: furniture, not glass |
+| pace | `--cineH` on `.cine` | **1000vh** desktop · **800vh** tablet · **700vh** phone |
+| the hero's beat at the end | `--cineHold` | **0.10** of travel (~90vh) |
+| where the veil starts | `--cineVeilAt` | **38** (seconds into the film) |
+| the veil's floor | `--cineVeilMin` | **0.20** |
+| where the copy rises | `INK_AT` in the scrub | 0.93 of the film |
 
-⛔⛔ **ON A SHORT WINDOW THE COMPOSITION DOES NOT FIT AND NO PADDING FIXES THAT.** At 390×676 the
-copy is 463.5px inside a 608px hero. **A composition that does not fit cannot be centred, only
-squeezed** — so the hero BUYS height when it is short, and only then:
+⭐ **THE HERO'S OWN STAGED ENTRANCE IS THE REVEAL** — the scrub sets `.loaded`, the same class the
+hero has always used, so the choreography he approved plays at the END of the film instead of at
+page load. `window.__cineHold` is what tells the hero's IIFE to leave that class alone.
 
-```
-phone   .hero{min-height:max(90vh, min(100vh, 660px))}
-tablet  .hero{min-height:max(90vh, min(100vh, 780px))}  + gaps 4/4.4/4.4vh → 3.2/3.4/3.4vh
-```
-
-⭐ 90vh is untouched above ~733px, so **D97's peek of the next section survives where it was
-designed**. ⚠️ The floors are `calc(120px − 12vh)` / `calc(132px − 12vh)`, **not constants** — the
-constraint runs with viewport HEIGHT and a constant is wrong in both directions.
-⚠️ **The phone's leading term is the phone's own title size, not `--hTitle`** (that is the
-desktop's 72px where the phone renders 38).
-⚠️ `#hero .hero-inner` in the ≤1120 block out-specifies a bare `.hero-inner` in the phone block.
-
-**Measured:** 1440×900 **0.00px** from y=0 · 390×676 **59.8 / 61.3** · 375×667 **60.6 / 62.1** ·
-1024×768 **58.8 / 60.3** · 900×1000 **155.1 / 156.6** — every mobile band even to 1.5px.
-⭐ The hero subtitle is full `--bone` at every band (D303).
+⛔⛔ **A `display:none` VIDEO STILL DOWNLOADS.** CSS decides what is painted; `preload` and the URLs
+decide what is FETCHED. Both films live on the element as `data-*` and an in-place script attaches
+the right one during parse — **verified as zero requests for either file on the wrong band.**
 
 ---
 
-## 3. ⭐⭐⭐ THE INNER PAGES HAVE A SECOND COLUMN (D300, D307)
+## 3. ⭐⭐⭐ THE VEIL AND THE BAR — TWO SEPARATE ANSWERS, BOTH SCRUBBED (D311, D313)
 
-The reading sections sit in `.lead-grid` and the freed column carries a sticky quote card.
+**The veil** (`.hero-shade`) is scrubbed with the film: a **0.20 floor** across every scene, then a
+smoothstep to **1.00** over the closing shot. Measured: 0.20 held to t=38, **0.39 at 40, 0.76 at
+42, 1.00 at 44.2**. ⭐ The frame he named was matched in the browser at his own 1.587 aspect — the
+island's top edge runs 0.335→0.74 at **t=38.0s** against 0.34→0.75 in his screenshot.
 
-```
-.lead-grid   padding-left:max(sidePad, calc((100% − var(--maxw))/2 + sidePad))   ← the page's own
-             grid-template-columns:minmax(0,724px) minmax(372px,1fr); gap:0        content edge
-.lead-aside  position:sticky; top:calc(var(--barH) + 18px); justify-self:center
-             margin-top:clamp(30px,4.6vh,54px)   ← starts level with the first line, not the hero
-.qform       width:372px                          ← without this the card fills its track
-```
+**The bar** is a **skeleton** — logo, links, Get a Quote, and nothing else. No stone, no frosted
+glass, no gold hairline, for the whole film AND the hero. It forms only once the hero itself starts
+to leave, with the same pour and D33's hairline drawing out from the centre.
 
-⛔ **THE GRID ENDS BEFORE THE FAQ ON PURPOSE** — the FAQ and related-services blocks are
-themselves multi-column and would be crushed beside a sidebar, and ending the container there is
-what makes the card ride down and then be carried away as the full-width band arrives. **No script
-does it.**
-⭐ **22 pages carry it:** 9 service leaves, 5 materials, 9 guides, 4 counties, 4 towns.
-⛔ **NOT** the indexes, the sitemap, the collection or any of the 132 stone pages.
-⛔ **DESKTOP ONLY (≥1121)** — every rule but the `display:none` sits inside the query, so phone and
-tablet are unchanged by construction. **A phone form is his call, not an inference.**
-⚠️ Measured at 1800: reading column left **384 = the page's own content left**, card **128px from
-the copy and 128px from the page border**, card top **0px** from the first paragraph.
-⚠️ Markup is lifted into both builders (`qform_html()`), the select is seeded with the page's own
-subject, and there is no backend — acknowledged in place, §13 rule 13. The card says *"Get in
-touch with Topcat"* and promises nothing about how a quote is produced (his correction).
+⛔ **THE TRIGGER IS THE HERO'S OWN RECT, NOT A SCROLL NUMBER** (`top <= -40`). The hero is sticky,
+so it sits at 0 for the entire film; `scrollY` would have to be told the film's length and would be
+wrong at every other viewport height. Same idiom as the phone's action bar.
 
----
+⭐⭐ **LEGIBILITY LIVES IN `.hero-navgrade` — the picture's grade, not a bar.** It is the veil's own
+`--navScrim` curve (one description, stacked twice for a daylight picture) on its own element: no
+edge, no shape, no colour of its own. The scrub writes `--navGrade` from **how bright that band
+actually is** — floor 0.20, full by 185 — so over the slab on black it is black-on-black and
+invisible, and over the quarry it is a soft fall.
 
-## 4. ⭐⭐⭐ TEXT COLOUR HAS TWO ROLES (D304, D306)
+⛔⛔ **THE STATISTIC IS THE WHOLE THING, AND TWO WRONG ONES WERE MEASURED FIRST.** A **mean** failed
+at t=4 (the band averages 121 because pines sit beside marble → link at **3.0:1**). The **85th
+percentile** failed at t=16, where the slab crosses under the bar in a black frame — four bright
+cells of twenty-four never reach p85, so the grade read 0 and the worst link measured **1.15:1**.
+It is the **97th percentile of a 48×4 grid** now, with a floor.
 
-```
---body   (= --bone)   anything a visitor READS      17.43:1
---muted  (55–60%)     anything that LABELS           6.58:1
-```
+⛔ **A LIGHT PANEL WAS HIS OWN SUGGESTION AND CANNOT BE BUILT.** Every supplied lockup is the LIGHT
+artwork — gold gradient for a dark ground. **Gold on the brand's bone is 1.9:1**: a cream bar erases
+his wordmark, and §12 rule 10 says the logo is never re-drawn or re-coloured.
 
-⛔ **`--muted` USED TO DO BOTH**, which is why FAQ answers were as dim as a chip count. ⭐ Declared
-in `index.html` AND `service.css` — the stone and SEO pages load the latter, so one declaration
-reaches all four families.
-
-**White:** every section subtitle (`.section-sub`, `.faq-sub`, the generated `.block .sub`), FAQ
-answers, the prose column, Why bullets, feature and step copy, closing CTA paragraphs, project
-descriptions, trade cards, the process modal, internal-page hero ledes, stone ledes, the SEO price
-table and card copy, the quote card's line, the hero subtitle.
-**Grey, on his instruction:** breadcrumbs, nav links, chips, counts, captions, notes, byline, the
-footer, estimator labels — **and the form's placeholders** ("gray in the fields").
-
-⚠️ Two colours look wrong in a probe and are correct: `.proj-desc p` first matches the gold "What
-we did" label, and `.rev-author` has been bone since it was built.
+⚠️ **THIS CROSSES THE 11-AUG PHONE RULING** (*"the nav bar should already be formed… from the
+top"*). Its reason was that a late bar *"looks like something loading rather than a deliberate
+reveal"* — the film IS that reveal, and he described the skeleton without naming a band. **One word
+puts the phone back: delete the two `header.bar.preform::after` lines.**
 
 ---
 
-## 5. ⛔⛔⛔ THE WELD CLONES THE ABOUT SECTION — STYLE IT BY CLASS
+## 4. ⭐⭐ THE PHONE AND TABLET GET THEIR OWN CUT (D312)
 
-`.weld-about` is a **clone** of `#about` living inside `#weldStage`. It is what you watch for the
-whole animation, and **no `#about`-scoped rule can reach it**.
+⛔⛔ **`object-fit:cover` ON THE 16:9 MASTER IS BAD ARITHMETIC.** A 390×660 hero is 0.59; covering a
+1.78 film into it throws away **67% of the width** and blows the surviving third up to 1170 device
+pixels — **a 2.7× upscale of a third of his picture**. A 4:5 crop shows **all 864px** across the
+same 1170: a 1.35× upscale.
 
-- **D306** — a white colour scoped `#about .about-copy .section-sub` left the clone grey, so the
-  copy appeared to turn white at the hand-over. He spotted it before I did.
-- **D308** — the mirror image: the rules that DO govern this copy are
-  `#about .section-sub,.weld-about .section-sub` (base, the measure) and
-  `#about .section-title + .section-sub,.weld-about …` (in the ≥1121 block, the title gap). They
-  already carry the clone, they sit later in the file, and they out-specify anything you add with
-  a class selector. **A new `.about-copy …` rule is dead on arrival.**
+⭐ **THE CROP IS x=680, NOT THE CENTRE, AND THE LAST FRAME CHOSE IT** — that frame becomes the
+phone's hero. Four offsets were cut and looked at at the shipped size: 380 cuts the island's right
+edge, 528 (dead centre) is slack, **680 puts the island and its three pendants in the middle**, 830
+reads busy. The whole film was then re-checked at 680.
 
-⭐ **Search `#about .section-sub` before changing anything about that copy, and read the computed
-value to confirm your edit won.**
+⛔ **THE HERO TAKES 100vh WHILE THE FILM RUNS** — the phone's hero is `max(90vh,…)`, so at 390×844
+it is 759.6 and would leave **84px of bare floor** under a pinned hero. ⭐ D303's centring survives
+it, measured both ways: **105.8/100.1 film-off and 148.0/142.3 film-on** — the same 5.7px, which is
+pre-existing at that viewport.
+
+⚠️ The tight case is a **1024-wide tablet held landscape**: the 4:5 cut shows its middle band and
+the pendant tops clip. Rare — an iPad landscape at 1180 is in the desktop band — and a
+landscape-only framing nudge is one line.
 
 ---
 
-## 6. ⭐ PHOTOGRAPHS ADDED OR RE-CUT THIS ROUND
+## 5. ⭐ THE FILES THIS ROUND ADDED
 
 | File | What and why |
 |---|---|
-| `assets/site/service-commercial-bar-*` | **D305, his frame.** A marble bar counter under a gold-lit back bar, replacing a white salon interior with no stone in it. 16:9 cut out of a 3024×4032 portrait at y1500 — chosen from three, because that band puts the worktop in the foreground. ⚠️ **q80, not the pipeline's 85**: the frame is high-frequency and 85 came out at 280 KB; 76 already showed nothing by eye |
-| `assets/site/service-splash-hob-*` | **D296.** The splashback re-cropped so two Australian sockets on OPPOSITE edges leave the frame. Ladder tops out at **1200**, the crop's own width |
-| `assets/team/nick-* rimsha-*` | **D302.** Rimsha's crop takes her full 1684 width and her eye line alone drops to 0.398, closing the hairline gap 13px → 5.7. ⚠️ **`E` is per-portrait now.** Stamps at **`?v=4`**, bump both in step |
-| `assets/site/og-cover.jpg` | **D292.** 1200×630 share card cut from the hero source; every page declares it |
-| `favicon.ico` | **D292.** Browser-rasterised from his own SVG (no SVG rasteriser on this machine) |
+| `assets/video/topcat-intro-1920.mp4` | **11.7 MB.** 1920×1080, 12fps, **crf 25, keyframe every 8**, `-bf 0 -refs 4`. Desktop |
+| `assets/video/topcat-intro-864.mp4` | **5.0 MB.** The 4:5 crop at x=680, crf 26. ≤1120 |
+| `…-poster.webp` / `…-864-poster.webp` | Each film's own first frame, 122 KB / 82 KB |
+| `assets/video/.src-2026-08-18/` | His 86 MB master + `encode.sh`. ⛔ **The master is `.gitignore`d** — GitHub warns past 50 MB — but it is ON DISK and must not be deleted |
 
-⛔ **NEW PREFIX, NEVER NEW BYTES UNDER THE OLD ONE (D241).** Every replaced ladder is **kept on
-disk** — a deleted photograph cannot be recovered from the browser.
-⚠️ Cut scripts and sources live in `assets/site/.src-2026-08-18/` and `assets/team/.src-2026-08-16/`.
+⭐⭐⭐ **THE ENCODE WAS MEASURED AND THE STANDARD SCROLL-SCRUB ADVICE LOSES.** That advice is
+all-intra (`-g 1`). Mean SSIM against his master at 1920×1080/12fps:
+
+```
+-g 1  crf 34   10.5 MB   0.9717     ← all-intra, the usual advice
+-g 1  crf 31   14.2 MB   0.9791
+-g 8  crf 25   11.7 MB   0.9911     ← what ships: smaller AND better
+```
+
+An intra-only file spends its whole budget re-describing a slow dolly. The seek cost it was
+supposed to buy is not real: **measured in the browser, 6.5 ms median and 13.2 ms worst**, forward
+and backward alike. ⚠️ **12fps is a SCROLL rate, not a frame rate** — over 900vh the 531 frames land
+one every ~15px, so the wheel is the limit, not the file.
+
+⚠️ `?v=1` is hand-stamped and `.htaccess` holds mp4/webm for a **week**. ⛔ **Re-encode and bump the
+stamp in the same edit, poster included.**
 
 ---
 
-## 7. ⛔ DELIVERY — AND IT IS VERIFIED, NOT ASSUMED
+## 6. ⛔ DELIVERY
 
 ```bash
 git clone https://github.com/ThadGC/topcatwork.git topcat && cd topcat
 cd "Topcat-Worktops-main/Website Demo" && python3 make_upload.py
 ```
 
-⭐ **THIS WAS TESTED FROM A CLEAN CLONE AT THE END OF THIS ROUND**: cloned from GitHub into a
-scratch folder, ran `make_upload.py`, and **diffed the result against the local `upload/` file by
-file — zero differences.** 679 files, 183 HTML pages, ~81.5 MB, `.htaccess` present.
-
 This build serves:
 
 ```
-/assets/site.css?v=9da47fcc97      /assets/site.js?v=9eb6f3b313
-/services/service.css?v=23cff11fdb /assets/footer.css?v=32e3e12343
+/assets/site.css?v=deaa51cf5b      /assets/site.js?v=6c3d5e0d07
+/services/service.css?v=23cff11fdb /assets/footer.css?v=d77df19cd6
 /assets/nav.css?v=349149e16f       /stones/stone.css?v=5e7fdddb8d
 /seo.css?v=6c5fddc3a1
 ```
 
-1. Upload the **CONTENTS** of `upload/` into `public_html`.
+1. Upload the **CONTENTS** of `upload/` into `public_html`. **676 files, 176 HTML pages, 98.4 MB.**
 2. ⚠️ **"SHOW HIDDEN FILES" ON** — `.htaccess` is the caching fix and most clients hide it.
 3. ⛔⛔ **FLUSH SITEGROUND'S DYNAMIC CACHE** (Site Tools → Speed → Caching). It sits in front of
    Apache and ignores `.htaccess` entirely.
-4. View-source a stone page and check the `?v=` matches. If it does, it is live.
+4. View-source a stone page and check the `?v=` matches.
 
-⚠️ **THE STAMPS MOVE WHENEVER THE FILES DO** — always quote what `make_upload.py` prints.
-⭐ **`main` and `origin/main` are identical** and one `git push` moves both refs (D285).
+⚠️⚠️ **THE PAGE COUNT IS 176, NOT 183, AND IT ALWAYS WAS.** `make_upload.py` was shipping
+`stones/.removed-2026-08-10/` and `.removed-2026-08-11/` — **seven stone pages the client had taken
+off the site** — because the skip rule knew `.src-` and `.pre-` and nobody had archived under a
+third prefix. Unlinked, but public and indexable. **Fixed (D314): any dot-prefixed FOLDER is
+workshop, not site.** Every older handover's "183" included those seven.
+
+⭐ **`main` and `origin/main` are identical** and one `git push` moves both refs.
+⛔ **NOTHING FROM D291 ONWARD IS LIVE.** The film has never been on the host.
 
 ---
 
-## 8. ⛔ THREE DEVICE BANDS
+## 7. ⛔ THREE DEVICE BANDS
 
 ```
    ≤ 720px          721 – 1120px          ≥ 1121px
    the phone   ·   the tablet        ·   the desktop
 ```
 ⛔ **THE TABLET-ONLY BLOCK IS STILL LAST IN THE STYLESHEET** (search `THE TABLET BAND`).
-⚠️ He worked across all three this round, so the "one device at a time" freeze is not what he is
-doing — but it still applies to anything he has not mentioned.
+⚠️ The film deliberately runs at **all three** — he asked for it (D312) — so its rules sit at base
+scope with only `--cineH` per band. Everything else stays one-device-at-a-time.
 
 ---
 
-## 9. ⛔ THE GATES — RUN THESE
+## 8. ⛔ THE GATES — RUN THESE
 
 ```bash
 cd "Website Demo" && python3 build_pages.py                     # FIRST — writes footer.css AND nav.css
@@ -248,12 +235,13 @@ cd "Website Demo" && python3 build_seo_pages.py
 cd "Website Demo/stones" && python3 harvest/verify.py            # 132/132/132 ✅
 ```
 
-⛔⛔ **NEVER RUN `trade/build_trade.py`** (reverts trade to 1 Aug). ⛔ `build_images.py` /
-`patch_images.py` are one-shot.
-**The CSS gate** (0 comment issues, 0 brace delta) and **`node --check` on the inline JS** after
-every edit to `index.html`; the CSS gate also runs against `service.css`.
+⛔⛔ **NEVER RUN `trade/build_trade.py`** (reverts trade to 1 Aug). ⚠️ Its constants were updated in
+D314 for the day it is ever revived — that is not permission to run it; `/trade/` is built by
+`build_pages.py`. ⛔ `build_images.py` / `patch_images.py` are one-shot.
+**The CSS gate** (comment delta 0 against the file's own baseline of one, brace delta 0) and
+**`node --check` on all three inline `<script>` blocks** after every edit to `index.html`.
 
-### ⭐ THE FREEZE PROBE — 1440×900, FRESH LOAD
+### ⭐ THE FREEZE PROBE — 1440×900, FRESH LOAD, TAB IN FRONT
 
 | Signal | Value |
 |---|---|
@@ -261,77 +249,87 @@ every edit to `index.html`; the CSS gate also runs against `service.css`.
 | `--revPer` (on `#reviews`) | **3** |
 | `feTurbulence` count | **60** |
 | `#svcNav` children | **8** |
-| elements | **2667** |
-| hero ink (`.hero-inner` padding-top) | **86.183** |
+| elements | **2672** |
+| hero ink (`.hero-inner` padding-top) | **86.1828** |
 | `#about` height | **704** |
 | collage | **497×621** |
-| `#footer` height | **504** (1440) · **789** (900) · **1102** (375) |
+| `#footer` height | **504** |
 | `.wheel-ui` width | **480** |
-| portrait tiles | **241×241**, `?v=4` |
+| document height | **23543** (was 15443 — the film's travel) |
 | broken images / overflow / console errors | **0 / none / none** |
 
-⚠️⚠️ **FOUR OF THESE MOVED ON 17 AUG AND NONE IS A REGRESSION** — hero ink (D297 centred it),
-`#about` and the collage (D301 shortened the copy), elements (D292's nine Open Graph tags).
-**Compare against THIS table, never against an older handover.**
+⚠️ **ELEMENTS MOVED 2667 → 2672 AND NONE OF IT IS A REGRESSION**: the `.cine` wrapper, the
+`<video>`, the head guard, the in-place loader, and `.hero-navgrade`.
 ⚠️ **THE ELEMENT COUNT IS ONLY VALID ON A FRESH LOAD** — the weld stage adds ~93 nodes once built.
 ⚠️ **Filter broken images on `i.src && i.complete && i.naturalWidth===0`** (`#pmShot` has no src).
 
 ---
 
-## 10. ⚠️ THE ENVIRONMENT TRAPS — ALL LIVE, THREE NEW
+## 9. ⚠️ THE ENVIRONMENT TRAPS — ALL LIVE, THREE NEW
 
-- ⛔⛔⛔ **A CSS EDIT DOES NOT SHOW UNTIL THE BUILDERS RE-RUN.** `dev-server.js` serves assets
-  `max-age=300` and the page asks for `service.css?v=<hash>`; editing the file does not change the
-  URL, so the browser keeps the cached copy. **Re-run the builder (the hash changes) and reload.**
-  This cost a confusing measurement this round.
-- ⛔⛔ **THE PANE'S SCREENSHOT GOES SOLID BLACK ON THE LANDING PAGE AFTER `resize_window`** — local
-  AND live, so it is the capture path, not the site: a hidden full-viewport overlay with
-  `backdrop-filter` breaks the rasteriser. Open a FRESH tab for screenshots after any resize.
-- ⛔⛔ **LAZY IMAGES NEVER FETCH AFTER resize + instant `scrollTo`** — zero network requests.
-  Set `img.loading='eager'` to wake them. Judge missing images by `naturalWidth`, never by a shot.
-- ⛔ **`.rise` REVEALS DO NOT FIRE AFTER AN INSTANT JUMP** — the observers never see the entry, so a
-  screenshot shows an empty section. Add `.in` yourself for the shot.
-- ⛔ **THE WELD STAGE TEARS DOWN PAST THE HAND-OVER** — to read the clone you must be INSIDE the
-  phase (`procTop + ~900`), and the damped playhead needs a separate call to settle.
-- ⛔ **NAVIGATING THE PANE TO A `file://` URL WEDGES THE TAB** — every later navigation is blocked.
+- ⛔⛔⛔ **A SCROLL ANIMATION IS DEAD IN A BACKGROUND TAB, AND IT LOOKS EXACTLY LIKE A BUG.** rAF
+  does not run in a tab that is not in front, so the scrub froze at `currentTime` 0 with a
+  perfectly healthy video (readyState 4, seekable 0–44.25) and no custom property ever written.
+  **I debugged a non-existent fault for several minutes.** Front the tab first.
+- ⛔⛔ **CONSOLE ERRORS PERSIST ACROSS RELOADS.** Two 404s from a deliberate fail-path test were
+  still listed on a clean load. **Check `performance.getEntriesByType('resource')` for
+  `responseStatus >= 400` before believing the console.**
+- ⛔ **A `display:none` VIDEO STILL DOWNLOADS ITS `src` AND ITS `poster`.** See §2.
+- ⛔⛔ **A CSS EDIT DOES NOT SHOW UNTIL THE BUILDERS RE-RUN.** `dev-server.js` serves assets
+  `max-age=300` and the page asks for `site.css?v=<hash>`; editing the file does not change the URL.
+- ⭐ **`dev-server.js` ANSWERS BYTE RANGES NOW (206).** It read whole files and replied 200, and
+  Safari will not seek a video without ranges — a scrub verified here would not have been verifying
+  what Apache does.
+- ⛔⛔ **THE PANE'S SCREENSHOT SCALES DOWN OR GOES BLACK after `resize_window` + reload.** Open a
+  FRESH tab, navigate, resize, and shoot **without** reloading.
+- ⛔ **LAZY IMAGES NEVER FETCH AFTER resize + instant `scrollTo`** — judge by `naturalWidth`.
+- ⛔ **`.rise` REVEALS DO NOT FIRE AFTER AN INSTANT JUMP** — add `.in` yourself for a shot.
+- ⛔ **THE WELD STAGE TEARS DOWN PAST THE HAND-OVER** — to read the clone you must be inside the
+  phase (`procTop + ~900`).
+- ⛔ **NAVIGATING THE PANE TO A `file://` URL WEDGES THE TAB.**
 - ⭐ **`scroll-behavior:smooth` eats programmatic scrolls** — use `scrollTo({top,behavior:'instant'})`.
-- (Carried) rAF freezes in background tabs · `javascript_tool` runs before async work settles ·
-  console messages persist across reloads · `node --check` passes deleted variables · **no numpy,
-  PIL only; the browser canvas is the only SVG rasteriser** · valid stone presets: calacatta,
-  carrara, crema, emperador, eternal, fumo, goldveil, mist, nerogold, statuario.
+  ⚠️ **AND THE EASED SCRUB NEEDS ~2s TO SETTLE after a big jump** — a 1400ms wait read the film at
+  the wrong frame and looked like a broken mapping.
+- (Carried) `javascript_tool` runs before async work settles · `node --check` passes deleted
+  variables · **no numpy, PIL only; no libwebp in this ffmpeg (PIL does the WebP); the browser
+  canvas is the only SVG rasteriser** · valid stone presets: calacatta, carrara, crema, emperador,
+  eternal, fumo, goldveil, mist, nerogold, statuario.
 
 ---
 
-## 11. ⭐ THE LINK, AND THE SERVER
+## 10. ⭐ THE LINK, AND THE SERVER
 
 ```bash
 cd "Website Demo" && nohup caffeinate -ims node dev-server.js > /tmp/topcat-server.log 2>&1 &
 ```
 
-**Give him `http://192.168.1.102:5501`** — re-check with `ipconfig getifaddr en0`.
-⭐ **THE SERVER IS DETACHED ON PURPOSE.** ⛔ Do not `preview_stop` it or kill it to restart.
+**Give him `http://192.168.1.106:5501`** — ⚠️ **the IP MOVED this round (was .102)**; re-check with
+`ipconfig getifaddr en0` every session.
+⭐ **THE SERVER IS DETACHED ON PURPOSE.** ⛔ Do not `preview_stop` it. ⚠️ It DOES need a restart
+after any edit to `dev-server.js` itself.
 ⭐ **USE `http://localhost:5501` IN THE PREVIEW PANE**, on his instruction.
 
 ---
 
-## 12. ⭐ WHERE THINGS STAND
+## 11. ⭐ WHERE THINGS STAND
 
 | Page | State |
 |---|---|
-| **`/`** | hero centred at every band with a white subtitle; helix reads Splashbacks / **Kitchen Worktops** / Bathrooms; About copy tightened, white, clear of the seam; directors bright and matched |
+| **`/`** | **opens on his film**, scrubbed by the scroll at every band, ending on the hero; skeleton bar until the hero leaves; helix reads Splashbacks / **Kitchen Worktops** / Bathrooms |
 | **`/about/` + six internal** | the `.page-head` family; directors visible and bright at all bands |
 | **`/services/*.html`** | nine leaves, each on its OWN photograph; burger nav ≤1120; quote card ≥1121 |
-| **`/stones/`** | 132 pages + collection + compare; white ledes; burger nav; **no quote card, deliberately** |
-| **`/materials/` `/guides/` `/worktops/` `/sitemap.html`** | the 26-page SEO layer; 22 of them carry the quote card |
+| **`/stones/`** | 132 pages + collection + compare; white ledes; **no quote card, deliberately** |
+| **`/materials/` `/guides/` `/worktops/` `/sitemap.html`** | the 26-page SEO layer; 22 carry the quote card |
 | **`/trade/`** | eight sections; CTA carries WhatsApp |
-| **all 183 pages** | one footer, one mobile nav, og:image + twitter:card, favicon |
+| **all 176 pages** | one footer, one mobile nav, og:image + twitter:card, favicon, **hours 7am–9pm** |
 
 ⚠️ **SHARED PHOTOGRAPHS NOT TO DELETE**: `kitchen-day.jpg`, `cta-slab.jpg`, `hero-kitchen.jpg`,
-and now the superseded `service-commercial.*` and `service-splash-marble.*` ladders.
+`hero-night-*` (still the fallback hero and the phone/tablet still), and the superseded
+`service-commercial.*` / `service-splash-marble.*` ladders.
 
 ---
 
-## 13. ⛔ RULES THAT MUST NOT BE BROKEN
+## 12. ⛔ RULES THAT MUST NOT BE BROKEN
 
 1. ⛔ **Fabrication is IN-HOUSE (D202)** — "our experienced fabricators". It has flipped three times.
 2. ⛔ **Never "laser" anything.** They template **by hand**.
@@ -339,103 +337,105 @@ and now the superseded `service-commercial.*` and `service-splash-marble.*` ladd
 4. ⛔ **A stone's NAME and PHOTOGRAPH must match the supplier's own.**
 5. ⛔ **Never state what we cannot guarantee, and never use an absolute.** A seam is always visible.
 6. ⛔ **Every measurement in millimetres.**
-7. ⛔ **Never a bright or gold line across the TOP of a card or section.** A full 34% gold border is
-   the site's standard.
+7. ⛔ **Never a bright or gold line across the TOP of a card or section.**
 8. **No showroom. Never show the review count. Value, not cheap.**
 9. **Voice:** quietly confident master. British English, commas not em dashes, no exclamation
    marks, **no AI slop, no jargon**. ⚠️ Customer review quotes are verbatim and exempt.
-10. ⛔ **The logo is the client's artwork, never re-drawn, never generated. Set HEIGHT only.**
-11. ⛔⛔ **A mark is never put in a circle, ring, disc or plate.** ⚠️ A control is not a mark — but
-    D282/D286 prove that carve-out is not a licence; ask what a control already is.
+10. ⛔ **The logo is the client's artwork, never re-drawn, never re-coloured, never generated. Set
+    HEIGHT only.** ⚠️ **Every supplied lockup is the LIGHT artwork** — it needs a dark ground, and
+    that is a real design constraint, not a preference (D313).
+11. ⛔⛔ **A mark is never put in a circle, ring, disc or plate.** ⚠️ A control is not a mark.
 12. ⛔ **One device at a time unless he says otherwise.**
-13. ⭐⭐ **THIS IS A DESIGN BUILD. NEVER RAISE THE MISSING FORM BACKEND AS A BLOCKER.** He named it
-    himself as his own pre-launch task.
-14. ⛔⛔ **2 CREDITS MAXIMUM PER GENERATED IMAGE.** ⭐ **The last six rounds spent nothing.**
+13. ⭐⭐ **THIS IS A DESIGN BUILD. NEVER RAISE THE MISSING FORM BACKEND AS A BLOCKER.**
+14. ⛔⛔ **2 CREDITS MAXIMUM PER GENERATED IMAGE.** ⭐ **The last seven rounds spent nothing.**
 
 ---
 
-## 14. OPEN — DO THESE NEXT
+## 13. OPEN — DO THESE NEXT
 
 ### ⭐⭐⭐ The ones that are costing money
 
-1. ⭐⭐⭐ **HOW DO FILES ACTUALLY REACH `thadeusg3.sg-host.com`?** Asked nine times. ⭐ An upload DID
-   land on 17 Aug (the live site matched local byte-for-byte), so the flow works once someone runs
-   it. §7 is exact and now clone-tested. **Everything from D291 onward is still NOT live.**
+1. ⭐⭐⭐ **HOW DO FILES ACTUALLY REACH `thadeusg3.sg-host.com`?** Asked ten times. §6 is exact and
+   clone-tested. **Everything from D291 onward is still NOT live, including the entire film.**
 2. ⭐⭐⭐ **WHOSE ARGENTO DOES HE SELL?** His reference is a dense flecked grey-white; the site shows
-   the supplier's veined marble-look, verified name by name. ⛔ Do not paste the Google image.
-3. ⭐⭐ **THE STONE PHOTOGRAPHY AUDIT** — 24 of 132 verified; **92 Nile Stone tiles unverified**; the
-   re-harvest with recorded source URLs is offered and unanswered.
+   the supplier's veined marble-look. ⛔ Do not paste the Google image.
+3. ⭐⭐ **THE STONE PHOTOGRAPHY AUDIT** — 24 of 132 verified; **92 Nile Stone tiles unverified**.
+
+### ⭐⭐ New this round, and his call
+
+4. ⭐⭐ **THE FILM'S PACE.** `--cineH` is 1000/800/700vh ≈ 20vh of scroll per second of film. One
+   number per band, and the first thing he is likely to want moved.
+5. ⭐⭐ **THE PHONE'S BAR** — the skeleton crosses his 11-Aug "already formed from the top" ruling
+   (§3). Ask, or wait for him to react.
+6. ⭐ **THE HOURS' DAYS DISAGREE.** The landing page's schema declares **six** days (Mon–Sat) where
+   every other page and every visible line says **Monday to Friday**. Pre-existing, survived the
+   17-Aug contradiction sweep. He named the times only, so it is listed, not guessed.
+7. ⭐ **THE LANDSCAPE-TABLET CROP** — a 1024-wide tablet held landscape clips the pendant tops (§4).
+8. ⭐ **DOES THE FILM WANT SOUND?** The master carries 24-bit PCM; the site drops it entirely and
+   nothing on the page can play audio. Never discussed.
 
 ### ⭐⭐ Waiting on him
 
-4. ⭐⭐ **Trade terms** — payment, minimum order, lead times, a dedicated contact. **His stated first
+9. ⭐⭐ **Trade terms** — payment, minimum order, lead times, a dedicated contact. **His stated first
    priority.**
-5. ⭐⭐ **Two sentences for Nick and Rimsha** if he wants descriptions back under their names.
-6. ⭐⭐ **What is the credit ceiling now?**
-7. ⭐⭐ **Calacatta Gold licensing.**
-8. ⭐⭐ **The fireplace scope, with Nick.**
-9. ⭐⭐ **Ali Jaffer and Kav / Uxbridge** — two Drive folders matching no project.
-10. ⭐ **The 19 drone videos** (Hornchurch, Rickmansworth).
-11. ⭐ **Confirm the silica / HSE sentence in his own words (D202).**
-12. ⭐ **Kitchen islands is not on his service list** — the page is live, linked and now properly
-    dressed (D294); confirm it stays.
-13. ⭐ **Trustpilot** — recommended against putting 4.0 beside the Google 5.0. He has not ruled.
-14. ⚠️ **RIMSHA OR REMSHA?** Still unresolved. Her name is on a public page under her photograph.
-15. ⚠️ **THE HORNCHURCH GALLERY SET** — the lead frame is clear (play equipment, **no child**), but
-    the other 11 images were never checked frame by frame. Do it before launch.
-16. ⚠️ **Two slabs lean blue and nobody has ruled**: `arabescato-grey` (−13.78),
+10. ⭐⭐ **Two sentences for Nick and Rimsha** if he wants descriptions back under their names.
+11. ⭐⭐ **What is the credit ceiling now?**
+12. ⭐⭐ **Calacatta Gold licensing.**
+13. ⭐⭐ **The fireplace scope, with Nick.**
+14. ⭐⭐ **Ali Jaffer and Kav / Uxbridge** — two Drive folders matching no project.
+15. ⭐ **The 19 drone videos** (Hornchurch, Rickmansworth) — ⚠️ now that the site can carry film,
+    these are worth re-asking about.
+16. ⭐ **Confirm the silica / HSE sentence in his own words (D202).**
+17. ⭐ **Kitchen islands is not on his service list** — the page is live, linked and dressed (D294).
+18. ⭐ **Trustpilot** — recommended against putting 4.0 beside the Google 5.0. He has not ruled.
+19. ⚠️ **RIMSHA OR REMSHA?** Still unresolved. Her name is on a public page under her photograph.
+20. ⚠️ **THE HORNCHURCH GALLERY SET** — the lead frame is clear, the other 11 were never checked
+    frame by frame. Do it before launch.
+21. ⚠️ **Two slabs lean blue and nobody has ruled**: `arabescato-grey` (−13.78),
     `calacatta-gold-shimmer` (−12.39).
-17. ⭐ **Facebook, TikTok, YouTube?** ⛔ Do not guess handles.
+22. ⭐ **Facebook, TikTok, YouTube?** ⛔ Do not guess handles.
 
 ### ⭐ Ready to build
 
-18. ⭐⭐ **A QUOTE CARD FOR THE PHONE AND TABLET.** D300 is desktop-only because he said "for desktop
-    specifically". A handset form is worth having and is a different composition — **his call.**
-19. ⭐ **Per-stone og:image** (each stone page sharing its own slab photograph) — 132 conversions,
-    his call on the weight.
-20. ⚠️ **The generated pages still ship their code comments to view-source.** `footer.css` and
-    `nav.css` strip theirs; the same treatment would suit the pages.
-21. ⚠️ **`Next Stone Slabs` is named in one place** (the quartz page's brand sentence) — sanctioned
-    by D203, listed so nobody "fixes" it either way without reading D203.
-22. ⚠️ **The stale branch `tablet-round-d197-d200`** — deletable once item 1 is answered and nothing
-    pulls it by name. The double refspec keeps it current meanwhile.
-23. ⭐ **Pick a production host**; brotli; check the `.htaccess` cache rules survive it.
+23. ⭐⭐ **A QUOTE CARD FOR THE PHONE AND TABLET.** D300 is desktop-only because he said "for desktop
+    specifically". **His call.**
+24. ⭐ **Per-stone og:image** (each stone page sharing its own slab photograph) — 132 conversions.
+25. ⚠️ **The generated pages still ship their code comments to view-source.** `footer.css` and
+    `nav.css` strip theirs.
+26. ⚠️ **`Next Stone Slabs` is named in one place** — sanctioned by D203. Read D203 before "fixing".
+27. ⚠️ **The stale branch `tablet-round-d197-d200`** — deletable once item 1 is answered.
+28. ⭐ **Pick a production host**; brotli; check the `.htaccess` cache rules survive it. ⚠️ **The
+    video makes this urgent** — 98.4 MB, and the mp4 rules are new and untested on the host.
 
 **Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing,
 brackets for vanity tops / fireplaces / tables, and the £3k vs £3,850 three-slab discrepancy.
 
-**CLOSED this round:** the leaf pages' missing mobile nav, the tablet's half-brightness tiles, the
-missing `favicon.ico`, kitchen-islands' stock hero, the `<title>` question, the four-county metas,
-the trade-CTA note (was already stale), **the splashback's foreign sockets** and **the commercial
-page's wrong photograph**.
+**CLOSED this round:** the hero's static photograph on desktop, phone and tablet; the nav bar's
+material over the film (three attempts); the film's compression; the working hours; and the upload
+shipping removed pages.
 
 ---
 
-## 15. ⭐ HOW THIS CLIENT WORKS
+## 14. ⭐ HOW THIS CLIENT WORKS
 
 ⛔⛔⛔ **DO NOT ARGUE YOURSELF OUT OF SOMETHING HE ASKED FOR, AND DO NOT HAND HIM THE DILEMMA.**
-**A real constraint is a problem to solve, not a question to return.** When the hero would not fit,
-the answer was to buy height on short windows — not to ask him which gap he preferred.
+**A real constraint is a problem to solve, not a question to return.** When the phone could not
+carry a 16:9 film, the answer was to cut a 4:5 frame out of it — not to ask him which he preferred.
 
 ⛔⛔ **DO NOT ASK HIS PERMISSION. Commit, push, report.**
 
-⭐⭐⭐ **HE IS USUALLY RIGHT ABOUT THE DIAGNOSIS, NOT JUST THE SYMPTOM** — *"only after the animation
-finishes does the text turn white"* was a clone the stylesheet could not reach; *"the buttons next
-to it are moving"* was a flex row sized by its own text. ⚠️ **But not always the mechanism**: *"we
-pushed to GitHub and the update just wasn't there"* was a delivered file hidden by a clock.
-**Take the complaint literally, measure the thing he named, and prove the mechanism before
-touching anything.**
-
-⭐⭐ **HE REVERSES HIMSELF FREELY AND FAST, AND THAT IS FINE — LOG IT WITH THE REASON THE OLD
-DECISION EXISTED.** This round: grey subtitles (D304) → white (D306) within the hour; the
-directors' filter (D278) → deleted (D298); the hero frame (D259) → the whole box (D297) → below the
-bar on mobile (D303).
+⭐⭐⭐ **HE REVERSES HIMSELF FREELY AND FAST, AND HE REVERSES YOU FASTER.** This round: the veil came
+off the film and then a light one went back on within the hour; the bar's material was rejected
+twice in a row. **Log it with the reason the old decision existed** and rebuild without argument.
 
 ⭐⭐ **HE SENDS CORRECTIONS MID-TURN, THREE OR FOUR DEEP.** Finish the one you are on, then take the
 next in his order.
 
 ⭐⭐ **WHEN YOUR OWN WORK CAUSED THE FAULT, SAY SO IN THE FIRST LINE.** He is fine with that and not
 fine with spin.
+
+⭐ **HE IS USUALLY RIGHT ABOUT THE DIAGNOSIS, NOT JUST THE SYMPTOM.** *"The black isn't working with
+it"* was a background whose brightness swings 247 levels inside one frame.
 
 ⚠️ **HE SWEARS WHEN SOMETHING LOOKS WRONG, AND THE COMPLAINT IS ALWAYS REAL.**
 
@@ -444,29 +444,27 @@ fine with spin.
 
 ---
 
-## 16. BUDGET AND THE DOCUMENT SET
+## 15. BUDGET AND THE DOCUMENT SET
 
-⭐ **This round spent 0 credits.** Every photograph was his own, cropped or re-cut; the favicon was
-his own SVG rasterised.
+⭐ **This round spent 0 credits.** The film is his own; every encode and crop was `ffmpeg`
+(installed this round via Homebrew — it was not on this machine).
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D309**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
-| **`Website Demo/index.html`** | ⭐⭐ The whole landing design, inline `<style>` and `<script>`. Search `THE WELD`, `SLAB_V`, `THE TABLET BAND`, `#about .section-sub`, `weldClock`, `soloGapX`, `fitStoneName` |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D314**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
+| **`Website Demo/index.html`** | ⭐⭐ The whole landing design, inline `<style>` and three `<script>` blocks. Search `THE SCROLL FILM`, `THE VEIL COMES OFF`, `SKELETON`, `--cineH`, `hero-navgrade`, `THE WELD`, `SLAB_V`, `THE TABLET BAND` |
 | **`Website Demo/build_pages.py`** | ⭐⭐ The seven internal pages, `site.css`, `site.js`, **`footer.css` and `nav.css`**. ⚠️ **RUN IT FIRST** |
-| **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. The only correct answer to "which folder do I upload" |
-| **`Website Demo/.htaccess`** | ⭐⭐ Cache rules. ⚠️ A dotfile — FTP clients hide it |
-| **`assets/footer.css` `assets/nav.css`** | ⛔ **GENERATED.** Never edit; change the landing page and re-run |
-| **`services/service.css`** | ⭐⭐⭐ Dresses all 176 generated pages. ⛔ No footer rules; `nav.top`/`.bar-cta` hide at 1120; carries `THE LEAD LAYOUT` |
-| **`services/build_services.py`** | ⭐ Nine leaves. `HERO_IMG` maps each to its own photograph; `qform_html()` |
+| **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. ⚠️ Dot-prefixed folders no longer ship (D314) |
+| **`Website Demo/.htaccess`** | ⭐⭐ Cache rules, now including **mp4/webm for a week**. ⚠️ A dotfile |
+| **`assets/video/`** | ⭐⭐ Both cuts, both posters, and `.src-2026-08-18/` with the master and `encode.sh` |
+| **`assets/footer.css` `assets/nav.css`** | ⛔ **GENERATED.** Never edit |
+| **`services/service.css`** | ⭐⭐⭐ Dresses all **167** generated pages (⚠️ older docs say 176 — that counted the seven removed). ⛔ No footer rules; carries `THE LEAD LAYOUT` |
+| **`services/build_services.py`** | ⭐ Nine leaves. `HERO_IMG`; `qform_html()` |
 | **`build_seo_pages.py`** | ⭐ The 26-page SEO layer and the sitemap |
 | **`stones/build_stones.py`** | 132 stone pages + collection + compare. Carries `SLAB_V` |
 | **`stones/descriptions.py`** | ⭐⭐ One line per stone. ⛔ Re-cut a tile and its sentence is stale |
-| **`stones/harvest/`** | The pipeline, `LICENSING.md`, `verify.py`. ⛔ No source URL per tile — §14 item 3 |
 | ⛔ **`trade/build_trade.py`** | ⛔⛔ **SUPERSEDED — DO NOT RUN** |
 | ⛔ **`build_images.py` `patch_images.py`** | ⛔⛔ **ONE-SHOT, CANNOT RUN AGAIN** |
-| **`assets/site/.src-2026-08-17/` `.src-2026-08-18/`** | Hero, splashback and commercial-bar sources with their cut scripts |
-| **`assets/team/.src-2026-08-16/`** | The directors' sources and `build_portraits.py` |
-| `Docs/topcat-worktops-SEO-LOG.md` | Every URL, title and target query — **the recorded title strategy lives here** |
+| `Docs/topcat-worktops-SEO-LOG.md` | Every URL, title and target query |
 | `HANDOVER-2026-08-17-full-audit-and-composition-start-here.md` | ⭐ The START HERE this file replaces |
 | `HANDOVER-archive-to-2026-08-06.md` | ⚠️ **Every design the client rejected, in his words.** Read before redesigning anything |
