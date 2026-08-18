@@ -5609,8 +5609,14 @@ if(faqIndex && panel && faqBody){
   const INK_AT=0.93;                      // where in the FILM the copy starts to rise
   const HALF=0.5/FPS;
   /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
-     is playing. Both are the same 44.25s at the same 12fps, so the scroll maths never changes. */
-  const narrow=matchMedia('(max-width:1120px)');
+     is playing. All three are the same 44.25s at the same 12fps, so the scroll maths never changes.
+     ⭐ D316: THREE cuts, one per band, each at its band's own aspect (see the element's comment).
+     ⚠️ `Phone` is tested FIRST because the queries overlap — 390px matches both. */
+  const mPhone=matchMedia('(max-width:720px)');
+  const mNarrow=matchMedia('(max-width:1120px)');
+  const bandKey=()=>mPhone.matches?'Phone':mNarrow.matches?'Tablet':'';
+  const wantSrc=()=>{const k=bandKey();return k?vid.dataset['src'+k]:vid.dataset.src;};
+  const wantPoster=()=>{const k=bandKey();return k?vid.dataset['poster'+k]:vid.dataset.poster;};
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   /* ⭐ D313's sampler: one 24×1 read of the band the bar sits over, reused every tick. The canvas
@@ -5728,6 +5734,84 @@ if(faqIndex && panel && faqBody){
     root.style.setProperty('--navGrade',g);
   }
 
+  /* ⭐⭐⭐ THE COPY IS PASSED BY THE CAMERA — D316. Each line owns a window of FILM SECONDS and
+     inside it runs one local 0..1. Opacity is a plateau (in over the first 16%, out over the last
+     26%) so the words are readable for the middle half of their window, while `--lz` runs the whole
+     window and ACCELERATES — `p*p`, not `p` — so the approach starts as a drift and ends as a pass.
+     Against the layer's 1000px perspective, -150 → 560 is an apparent 0.87x → 2.27x.
+     ⚠️ Written to the element only when the ROUNDED value changes: a custom property re-set every
+     frame at full precision is a style recalculation for nothing, which is the lesson `veil()` and
+     `grade()` above already carry.
+     ⚠️ The blur is quantised to half a pixel for the same reason — it is depth of field as the words
+     cross the focal plane, and it does not need to be smooth to read as soft. */
+  const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
+    el, at:0, out:0, o:-1, z:-1, b:-1
+  }));
+  /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS. A line may carry `data-at-narrow` /
+     `data-out-narrow`; below 1121 those win. ⚠️ Re-read from `sync()` so a window dragged across
+     1120 re-times the story rather than keeping the other band's beats. */
+  function retimeStory(){
+    const n=mNarrow.matches;
+    for(const L of STORY){
+      const d=L.el.dataset;
+      L.at =+((n&&d.atNarrow )||d.at )||0;
+      L.out=+((n&&d.outNarrow)||d.out)||0;
+      L.o=L.z=L.b=-1;                        // force the next tick to write all three
+    }
+  }
+  retimeStory();
+  const Z_FAR=-150, Z_NEAR=560;
+  let firstAlpha=0;                 // the opening title's own alpha, for the scroll cue below
+  function story(t){
+    for(const L of STORY){
+      if(L.out<=L.at)continue;
+      const p=clamp((t-L.at)/(L.out-L.at));
+      const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
+      const o=+(a*a*(3-2*a)).toFixed(2);
+      if(L===STORY[0])firstAlpha=o;
+      const z=Math.round(Z_FAR+(Z_NEAR-Z_FAR)*p*p);
+      const b=p>0.72?Math.round(((p-0.72)/0.28)*9)/2:0;     // 0 … 4.5px, in half-pixel steps
+      if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+      if(z!==L.z){ L.z=z; L.el.style.setProperty('--lz',z); }
+      if(b!==L.b){ L.b=b; L.el.style.filter=b?'blur('+b+'px)':'none'; }
+    }
+  }
+  /* the invitation, and the escape hatch */
+  const cueEl=document.getElementById('cineCue');
+  const skipEl=document.getElementById('cineSkip');
+  let cued=null, skipped=null;
+  function chrome(film){
+    /* ⭐⭐ THE CUE BELONGS TO THE FIRST TITLE AND LEAVES WITH IT. Client: *"a prompt for them to
+       scroll underneath the first title."* ⛔ It was first written to go on the first pixel of
+       movement (film > 0.012), which is 0.5s of film — screenshotted, and the prompt had already
+       gone while the title it belongs to was still arriving. It now carries the opening line's own
+       alpha, so it fades in with those words and out with them, and it cannot outlive them. */
+    /* ⛔⛔ AND THE INLINE OPACITY HAS TO BE CLEARED ON THE WAY OUT, which is the bug this line
+       replaces: `.gone{opacity:0}` is a CLASS rule and the alpha written here is an INLINE one, so
+       inline won and the cue froze at whatever it last held — screenshotted at 0.11, sitting beside
+       the second title for the rest of the film. Hand the property back to the stylesheet. */
+    const g=firstAlpha<=0.02;
+    if(g!==cued){
+      cued=g;
+      if(cueEl){ cueEl.classList.toggle('gone',g); if(g)cueEl.style.opacity=''; }
+    }
+    if(cueEl&&!g)cueEl.style.opacity=firstAlpha;
+    /* ⛔ `hidden`, not opacity: a control you cannot see must leave the tab order with it */
+    const d=film>0.985;
+    if(d!==skipped){ skipped=d; if(skipEl)skipEl.hidden=d; }
+  }
+  if(skipEl)skipEl.addEventListener('click',()=>{
+    /* ⭐⭐ SKIP MEANS LAND ON THE PAGE AS THE FILM LEAVES IT, so this moves the scroll AND snaps the
+       playhead. Without the snap, the eased chase would run all 44 seconds of film past the viewer
+       at speed, which is the opposite of skipping it.
+       ⚠️ `instant`: the page sets `scroll-behavior:smooth`, and a smooth scroll of nine screens is
+       precisely the thing being skipped. */
+    measure();
+    window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
+    target=1; eased=1; want=dur;
+    seek(); ink(1); veil(1); story(dur); chrome(1); grade();
+  });
+
   function tick(){
     raf=null;
     if(eased<0)eased=target;
@@ -5739,6 +5823,8 @@ if(faqIndex && panel && faqBody){
     seek();
     ink(film);
     veil(film);
+    story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
+    chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
   }
@@ -5750,14 +5836,14 @@ if(faqIndex && panel && faqBody){
     kick();
   }
 
-  /* ⭐ the fetch is asked for HERE and nowhere else, and it is also where the two cuts change over
-     — a rotation or a dragged window can cross 1120 long after the in-place script has run.
+  /* ⭐ the fetch is asked for HERE and nowhere else, and it is also where the cuts change over
+     — a rotation or a dragged window can cross 720 or 1120 long after the in-place script has run.
      ⚠️ A swap costs a `load()` and the playhead, so it happens ONLY when the wanted file differs
-     from the one already attached; `fetched` on its own stopped being enough once there were two. */
+     from the one already attached; `fetched` on its own stopped being enough once there were two,
+     and there are THREE since D316. */
   function fetchFilm(){
-    const n=narrow.matches;
-    const src=n?vid.dataset.srcNarrow:vid.dataset.src;
-    const post=n?vid.dataset.posterNarrow:vid.dataset.poster;
+    const src=wantSrc();
+    const post=wantPoster();
     const have=vid.getAttribute('src');
     if(fetched&&have===src){ if(vid.preload!=='auto')vid.preload='auto'; return; }
     fetched=true;
@@ -5772,6 +5858,7 @@ if(faqIndex && panel && faqBody){
   function sync(){
     root.classList.add('cine-on');
     window.__cineHold=true;
+    retimeStory();
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1;
     onScroll();
@@ -5799,7 +5886,10 @@ if(faqIndex && panel && faqBody){
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',sync);
   addEventListener('load',sync);
-  if(narrow.addEventListener)narrow.addEventListener('change',sync);
+  /* ⚠️ BOTH queries, not just the outer one: a 700px window widened to 900px crosses 720 without
+     crossing 1120, and the phone cut would have stayed attached on a tablet. */
+  if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
+  if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

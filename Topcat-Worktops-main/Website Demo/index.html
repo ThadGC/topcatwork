@@ -4482,6 +4482,115 @@
   .hero-navgrade{display:none;position:absolute;inset:0;z-index:1;pointer-events:none;
     background:var(--navScrim),var(--navScrim)}
   html.cine-on .cine .hero-navgrade{display:block;opacity:var(--navGrade,0)}
+
+  /* ═════ THE FILM'S OWN COPY — 18 August 2026 (D316) ═══════════════════════════════════════
+     Three titles that sit IN the film and are passed by the camera rather than laid over it.
+     ⛔ Base state is `display:none`: every rule here hangs off `cine-on`, so a browser that
+     never runs the film (reduced motion, no MP4, a 404, a narrow-loaded window) gets today's
+     hero with nothing extra in it — the same contract the rest of the film keeps. */
+  .cine-story,.cine-cue,.cine-skip{display:none}
+
+  /* ⭐⭐ THE DEPTH IS REAL, NOT A SCALE. Client: *"the words stay there and as the camera moves
+     past it, it moves closer to the camera as if it's actual part of the video… it almost comes
+     close to your face."* A `scale()` grows type on a flat plane and reads as a zoom; a
+     `translateZ` under a perspective grows it the way the lens would, so it passes the viewer.
+     ⚠️ The perspective belongs HERE, on the parent — a perspective on the element itself is
+     applied to its children, not to it, and nothing would move. */
+  html.cine-on .cine-story{
+    display:block;position:absolute;inset:0;z-index:2;pointer-events:none;
+    perspective:1000px;perspective-origin:26% 50%;
+  }
+  /* ⭐ DESKTOP PUTS THEM IN THE GAP HE POINTED AT — the left of the frame, which is sky and
+     mountains for the whole quarry, void for the whole slab section, and the living room at the
+     end. One position serves all three beats because the film keeps that side clear. */
+  html.cine-on .cine-line{
+    position:absolute;top:50%;left:clamp(20px,7vw,132px);width:min(21ch,44vw);margin:0;
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(30px,4.6vw,70px);line-height:1.05;letter-spacing:-0.004em;
+    color:var(--bone);text-wrap:balance;
+    opacity:0;                                    /* the scrub owns opacity from the first tick */
+    --ly:-50%;
+    transform:translateY(var(--ly)) translateZ(calc(var(--lz,-150) * 1px));
+    /* ⚠️ NOT a text-shadow for legibility alone — these words cross a daylight quarry AND a black
+       void, and §2's own lesson from D313 is that no fixed ink survives that. The shadow is a
+       contact shadow so the type reads as an object in the room; the veil's 0.20 floor and
+       `--navGrade` do the contrast work, exactly as they do for the hero's headline. */
+    text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5);
+  }
+  /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
+     not using — the quarry's sky is at the TOP, the slab and the island both sit LOW */
+  @media(max-width:1120px){
+    html.cine-on .cine-line{
+      left:0;right:0;width:auto;padding:0 clamp(20px,7vw,54px);text-align:center;
+      font-size:clamp(27px,6.6vw,44px);
+    }
+    html.cine-on .cine-line[data-vpos="top"]{top:13vh;--ly:0%}
+    html.cine-on .cine-line[data-vpos="low"]{top:auto;bottom:17vh;--ly:0%}
+    /* ⭐ a narrow-band override wins over the desktop anchor for the same element */
+    html.cine-on .cine-line[data-vpos-narrow="top"]{top:13vh;bottom:auto;--ly:0%}
+    html.cine-on .cine-line[data-vpos-narrow="low"]{top:auto;bottom:17vh;--ly:0%}
+  }
+
+  /* ═════ the scroll invitation ════════════════════════════════════════════════════════════ */
+  html.cine-on .cine-cue{
+    display:flex;position:absolute;z-index:3;left:clamp(20px,7vw,132px);top:calc(50% + 108px);
+    flex-direction:column;gap:12px;align-items:flex-start;pointer-events:none;
+    /* ⛔ NOT `--faint`, which is what this was first written with and it vanished: the cue only
+       ever appears during the OPENING title, and that beat is the daylight quarry — the brightest
+       frame in the film. It takes the same bone and the same contact shadow the titles take. */
+    font-size:10.5px;letter-spacing:0.34em;text-transform:uppercase;color:var(--bone);
+    text-shadow:0 1px 16px rgba(6,6,8,0.8),0 1px 3px rgba(6,6,8,0.7);
+    transition:opacity .6s var(--ease),transform .6s var(--ease);
+  }
+  html.cine-on .cine-cue i{
+    width:2px;height:46px;border-radius:2px;
+    background:linear-gradient(to bottom,var(--gold),rgba(198,166,100,0));
+    box-shadow:0 0 10px rgba(6,6,8,0.7);
+    transform-origin:top;animation:cineCue 2.6s var(--ease) infinite;
+  }
+  @keyframes cineCue{
+    0%,100%{transform:scaleY(0.35);opacity:0.35}
+    45%    {transform:scaleY(1);opacity:1}
+    75%    {transform:scaleY(1);opacity:0.2}
+  }
+  html.cine-on .cine-cue.gone{opacity:0;transform:translateY(10px)}
+  /* ⭐ ON A PHONE THE TITLE IS AT THE TOP, so the cue goes UNDER IT rather than to the foot of the
+     screen. Client: *"a prompt for them to scroll underneath the first title."* At 13vh plus the
+     two lines the opening title wraps to, that lands at about 25vh. ⛔ `bottom:12vh` was tried and
+     is wrong on this band: it put the prompt four hundred pixels below the words it belongs to, and
+     into the same corner as the WhatsApp float and the phone's action bar. */
+  @media(max-width:1120px){
+    html.cine-on .cine-cue{left:0;right:0;top:25vh;bottom:auto;align-items:center}
+    html.cine-on .cine-cue i{height:34px}
+  }
+  @media (prefers-reduced-motion:reduce){ html.cine-on .cine-cue i{animation:none;opacity:.8} }
+
+  /* ═════ skip intro ═══════════════════════════════════════════════════════════════════════
+     ⛔ NOT a gold line across the top of anything (§2 rule 10) and not a mark in a disc
+     (rule 11) — a plain bordered control, the same vocabulary as `.rev-back` was. */
+  html.cine-on .cine-skip{
+    display:inline-flex;position:absolute;z-index:4;right:clamp(18px,3.4vw,46px);bottom:clamp(20px,4vh,42px);
+    align-items:center;gap:9px;padding:10px 20px;
+    background:rgba(10,10,12,0.42);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    border:1px solid var(--hair);border-radius:2px;color:var(--bone);
+    font-family:var(--brand,inherit);font-size:10.5px;letter-spacing:0.24em;text-transform:uppercase;
+    cursor:pointer;transition:border-color .4s var(--ease),color .4s var(--ease),opacity .5s var(--ease);
+  }
+  /* ⛔⛔ WITHOUT THIS THE `hidden` ATTRIBUTE DOES NOTHING. `hidden` works through the UA rule
+     `[hidden]{display:none}`, and `html.cine-on .cine-skip{display:inline-flex}` is more specific,
+     so it won: the control stayed on screen after the film had finished, screenshotted sitting over
+     the hero. A class-based `display` always has to answer for `[hidden]` itself. */
+  html.cine-on .cine-skip[hidden]{display:none}
+  html.cine-on .cine-skip:hover{border-color:var(--gold);color:var(--gold)}
+  html.cine-on .cine-skip:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  /* ⛔⛔ THE WHATSAPP FLOAT OWNS THE BOTTOM-RIGHT CORNER ON EVERY NARROW BAND, and this control
+     landed on top of it — caught in a tablet screenshot at 834x1112, the two overlapping. So the
+     control is centred instead, clear of the float and clear of the phone's action bar.
+     ⚠️ THE PHONE RULE'S OWN QUERY IS WIDENED TO REACH THE TABLET rather than a second block being
+     copied for it (§12): one description, both bands. */
+  @media(max-width:1120px){
+    html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px)}
+  }
   /* ⛔⛔⛔ **AND IT CROSSES AN EXISTING CLIENT RULING ON THE PHONE, WHICH IS FLAGGED RATHER THAN
      BURIED.** 11 Aug 2026: *"the nav bar should already be formed, so already a gold line below it
      and everything, from the top. Not after you start scrolling."* That block (`max-width:1120px`,
@@ -8446,8 +8555,10 @@
       <video class="hero-vid" id="heroVid" playsinline muted preload="none"
              data-src="/assets/video/topcat-intro-1920.mp4?v=1"
              data-poster="/assets/video/topcat-intro-poster.webp?v=1"
-             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=1"
-             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=1"
+             data-src-tablet="/assets/video/topcat-intro-812.mp4?v=1"
+             data-poster-tablet="/assets/video/topcat-intro-812-poster.webp?v=1"
+             data-src-phone="/assets/video/topcat-intro-556.mp4?v=1"
+             data-poster-phone="/assets/video/topcat-intro-556-poster.webp?v=1"
              width="1920" height="1080" aria-hidden="true" tabindex="-1"
              disablepictureinpicture disableremoteplayback></video>
       <!-- ⭐⭐ **THE FILM'S TWO HEAVY URLS ARE ATTACHED HERE, IN PLACE, AND THAT IS THE POINT.**
@@ -8458,15 +8569,19 @@
            as early as an attribute would have started it, and the poster is on screen before the
            first frame decodes — there is no gap and nothing to swap.
            ⚠️ `cine-on` is the head's own decision and nothing here re-derives it. ⭐ **THE ONE
-           THING IT DOES DECIDE IS WHICH CUT** (D312): the 16:9 master above 1120, the 4:5 crop at
+           THING IT DOES DECIDE IS WHICH CUT** — THREE of them since D316, one per band, each cut
+           at its band's own aspect so `object-fit:cover` has nothing left to throw away (D312's
+           single 864 cut was losing 36% of its width to the phone's 0.514 box): the 16:9 master above 1120, the 4:5 crop at
            or below it. ⚠️ A window dragged across 1120 after load is handled by `fetchFilm()` in
            the scrub, which swaps the source and re-seeks. -->
       <script>
       (function(){var v=document.getElementById('heroVid');
        if(!v||!document.documentElement.classList.contains('cine-on'))return;
-       var n=matchMedia('(max-width:1120px)').matches;
-       v.poster=n?v.dataset.posterNarrow:v.dataset.poster; v.preload='auto';
-       v.src=n?v.dataset.srcNarrow:v.dataset.src;})();
+       var d=v.dataset;
+       var b=matchMedia('(max-width:720px)').matches?'Phone'
+            :matchMedia('(max-width:1120px)').matches?'Tablet':'';
+       v.poster=b?d['poster'+b]:d.poster; v.preload='auto';
+       v.src=b?d['src'+b]:d.src;})();
       </script>
       <div class="hero-shade"></div>
       <!-- ⭐ D313: the film's own top grade. It carries the SAME `--navScrim` stops the hero's veil
@@ -8474,6 +8589,52 @@
            the bar — nothing at all over the dark scenes, a soft fall over the quarry. -->
       <div class="hero-navgrade" aria-hidden="true"></div>
     </div>
+
+    <!-- ⭐⭐⭐ THE FILM'S OWN COPY — 18 August 2026 (D316). Client: *"this gap is where I want you
+         to add text… it's basically going to tell the story of how going from the marble quarry to
+         being a slab, to being the centre of your kitchen, and then it ends on the hero section."*
+         ⭐⭐ FOUR BEATS, AND THE FOURTH IS THE HERO ITSELF, which is why only three sit here. The
+         chain reads as one sentence across the whole scroll:
+             It starts as a mountain. -> Then one slab, chosen for its veining. ->
+             Then the centre of your kitchen. -> *Surfaces worth building around*
+         ⚠️ The hero's own words are "Surfaces worth building around", not "surfaces for every
+         space" — he quoted it from memory. The story lands on what the page actually says.
+         ⛔⛔ EACH `data-at`/`data-out` IS A FILM SECOND, NOT A SCROLL POSITION, and they come from
+         the measured film rather than from even spacing:
+           1.0-6.0    the quarry, over the sky and the mountains, which ARE the left half of the
+                      frame until the camera pushes into the stone at t=6
+           13.5-23.5  the slab laid down on black. Its lit mass measures x 1349..1443 of 1920 through
+                      this stretch, so the LEFT of the frame is void and the words have it to
+                      themselves — this is his "once the slab goes into that black void" beat
+           31.5-39.0  the kitchen, as the night grade falls (measured: lit coverage collapses from
+                      90% at t=33 to under 1% by t=37), so the words sit on a darkening room
+         ⚠️ The third ends at 39.0 and the hero's ink rises at INK_AT 0.93 (t=41.1), so there is a
+         beat of dark between the last word and the headline. They never overlap.
+         ⭐ NOT `aria-hidden`: this is real copy and a screen reader should have it. It reads before
+         the h1, which is the order it is written in. -->
+    <div class="cine-story">
+      <p class="cine-line" data-at="1.0"  data-out="6.0"  data-vpos="top">It starts as a mountain.</p>
+      <!-- ⛔⛔ THIS BEAT NEEDS ITS OWN TIMING ON A NARROW CROP, and screenshotting it is the only
+           way that showed up. On the 16:9 desktop frame the slab sits RIGHT (its lit mass measures
+           x 1349..1443 of 1920) and the void is a clear left half, so 13.5-23.5 puts the words on
+           black. A 556-wide window centred on that same slab is FILLED by it — the words landed on
+           bright marble, which is the one thing D313 already proved cannot be made to work.
+           ⭐ So the narrow bands take the beat LATER, at 21.0-27.5, where the slab has laid down
+           small and low and the frame is measured at 1% lit coverage — the void his note describes.
+           They also take it at the TOP, because that is where the black is once the slab is down. -->
+      <p class="cine-line" data-at="13.5" data-out="23.5" data-vpos="low"
+         data-at-narrow="21.0" data-out-narrow="27.5" data-vpos-narrow="top">Then one slab, chosen for its veining.</p>
+      <p class="cine-line" data-at="31.5" data-out="39.0" data-vpos="low">Then the centre of your kitchen.</p>
+    </div>
+
+    <!-- ⭐ The invitation, under the first title. It goes the moment the film has moved at all, so
+         it never sits over the picture arguing with the copy. Decorative — the instruction is
+         "scroll", which is what the page already does. -->
+    <div class="cine-cue" id="cineCue" aria-hidden="true"><span>Scroll</span><i></i></div>
+    <!-- ⛔ A REAL BUTTON, and it removes itself with `hidden` once the film is done rather than
+         going transparent — a control you cannot see must not still be in the tab order. -->
+    <button type="button" class="cine-skip" id="cineSkip">Skip intro</button>
+
     <div class="hero-inner">
       <div class="hero-copy">
         <!-- ⛔ NO EYEBROW HERE, and this is a decision rather than an omission.
@@ -15457,8 +15618,14 @@ if(faqIndex && panel && faqBody){
   const INK_AT=0.93;                      // where in the FILM the copy starts to rise
   const HALF=0.5/FPS;
   /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
-     is playing. Both are the same 44.25s at the same 12fps, so the scroll maths never changes. */
-  const narrow=matchMedia('(max-width:1120px)');
+     is playing. All three are the same 44.25s at the same 12fps, so the scroll maths never changes.
+     ⭐ D316: THREE cuts, one per band, each at its band's own aspect (see the element's comment).
+     ⚠️ `Phone` is tested FIRST because the queries overlap — 390px matches both. */
+  const mPhone=matchMedia('(max-width:720px)');
+  const mNarrow=matchMedia('(max-width:1120px)');
+  const bandKey=()=>mPhone.matches?'Phone':mNarrow.matches?'Tablet':'';
+  const wantSrc=()=>{const k=bandKey();return k?vid.dataset['src'+k]:vid.dataset.src;};
+  const wantPoster=()=>{const k=bandKey();return k?vid.dataset['poster'+k]:vid.dataset.poster;};
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   /* ⭐ D313's sampler: one 24×1 read of the band the bar sits over, reused every tick. The canvas
@@ -15576,6 +15743,84 @@ if(faqIndex && panel && faqBody){
     root.style.setProperty('--navGrade',g);
   }
 
+  /* ⭐⭐⭐ THE COPY IS PASSED BY THE CAMERA — D316. Each line owns a window of FILM SECONDS and
+     inside it runs one local 0..1. Opacity is a plateau (in over the first 16%, out over the last
+     26%) so the words are readable for the middle half of their window, while `--lz` runs the whole
+     window and ACCELERATES — `p*p`, not `p` — so the approach starts as a drift and ends as a pass.
+     Against the layer's 1000px perspective, -150 → 560 is an apparent 0.87x → 2.27x.
+     ⚠️ Written to the element only when the ROUNDED value changes: a custom property re-set every
+     frame at full precision is a style recalculation for nothing, which is the lesson `veil()` and
+     `grade()` above already carry.
+     ⚠️ The blur is quantised to half a pixel for the same reason — it is depth of field as the words
+     cross the focal plane, and it does not need to be smooth to read as soft. */
+  const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
+    el, at:0, out:0, o:-1, z:-1, b:-1
+  }));
+  /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS. A line may carry `data-at-narrow` /
+     `data-out-narrow`; below 1121 those win. ⚠️ Re-read from `sync()` so a window dragged across
+     1120 re-times the story rather than keeping the other band's beats. */
+  function retimeStory(){
+    const n=mNarrow.matches;
+    for(const L of STORY){
+      const d=L.el.dataset;
+      L.at =+((n&&d.atNarrow )||d.at )||0;
+      L.out=+((n&&d.outNarrow)||d.out)||0;
+      L.o=L.z=L.b=-1;                        // force the next tick to write all three
+    }
+  }
+  retimeStory();
+  const Z_FAR=-150, Z_NEAR=560;
+  let firstAlpha=0;                 // the opening title's own alpha, for the scroll cue below
+  function story(t){
+    for(const L of STORY){
+      if(L.out<=L.at)continue;
+      const p=clamp((t-L.at)/(L.out-L.at));
+      const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
+      const o=+(a*a*(3-2*a)).toFixed(2);
+      if(L===STORY[0])firstAlpha=o;
+      const z=Math.round(Z_FAR+(Z_NEAR-Z_FAR)*p*p);
+      const b=p>0.72?Math.round(((p-0.72)/0.28)*9)/2:0;     // 0 … 4.5px, in half-pixel steps
+      if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+      if(z!==L.z){ L.z=z; L.el.style.setProperty('--lz',z); }
+      if(b!==L.b){ L.b=b; L.el.style.filter=b?'blur('+b+'px)':'none'; }
+    }
+  }
+  /* the invitation, and the escape hatch */
+  const cueEl=document.getElementById('cineCue');
+  const skipEl=document.getElementById('cineSkip');
+  let cued=null, skipped=null;
+  function chrome(film){
+    /* ⭐⭐ THE CUE BELONGS TO THE FIRST TITLE AND LEAVES WITH IT. Client: *"a prompt for them to
+       scroll underneath the first title."* ⛔ It was first written to go on the first pixel of
+       movement (film > 0.012), which is 0.5s of film — screenshotted, and the prompt had already
+       gone while the title it belongs to was still arriving. It now carries the opening line's own
+       alpha, so it fades in with those words and out with them, and it cannot outlive them. */
+    /* ⛔⛔ AND THE INLINE OPACITY HAS TO BE CLEARED ON THE WAY OUT, which is the bug this line
+       replaces: `.gone{opacity:0}` is a CLASS rule and the alpha written here is an INLINE one, so
+       inline won and the cue froze at whatever it last held — screenshotted at 0.11, sitting beside
+       the second title for the rest of the film. Hand the property back to the stylesheet. */
+    const g=firstAlpha<=0.02;
+    if(g!==cued){
+      cued=g;
+      if(cueEl){ cueEl.classList.toggle('gone',g); if(g)cueEl.style.opacity=''; }
+    }
+    if(cueEl&&!g)cueEl.style.opacity=firstAlpha;
+    /* ⛔ `hidden`, not opacity: a control you cannot see must leave the tab order with it */
+    const d=film>0.985;
+    if(d!==skipped){ skipped=d; if(skipEl)skipEl.hidden=d; }
+  }
+  if(skipEl)skipEl.addEventListener('click',()=>{
+    /* ⭐⭐ SKIP MEANS LAND ON THE PAGE AS THE FILM LEAVES IT, so this moves the scroll AND snaps the
+       playhead. Without the snap, the eased chase would run all 44 seconds of film past the viewer
+       at speed, which is the opposite of skipping it.
+       ⚠️ `instant`: the page sets `scroll-behavior:smooth`, and a smooth scroll of nine screens is
+       precisely the thing being skipped. */
+    measure();
+    window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
+    target=1; eased=1; want=dur;
+    seek(); ink(1); veil(1); story(dur); chrome(1); grade();
+  });
+
   function tick(){
     raf=null;
     if(eased<0)eased=target;
@@ -15587,6 +15832,8 @@ if(faqIndex && panel && faqBody){
     seek();
     ink(film);
     veil(film);
+    story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
+    chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
   }
@@ -15598,14 +15845,14 @@ if(faqIndex && panel && faqBody){
     kick();
   }
 
-  /* ⭐ the fetch is asked for HERE and nowhere else, and it is also where the two cuts change over
-     — a rotation or a dragged window can cross 1120 long after the in-place script has run.
+  /* ⭐ the fetch is asked for HERE and nowhere else, and it is also where the cuts change over
+     — a rotation or a dragged window can cross 720 or 1120 long after the in-place script has run.
      ⚠️ A swap costs a `load()` and the playhead, so it happens ONLY when the wanted file differs
-     from the one already attached; `fetched` on its own stopped being enough once there were two. */
+     from the one already attached; `fetched` on its own stopped being enough once there were two,
+     and there are THREE since D316. */
   function fetchFilm(){
-    const n=narrow.matches;
-    const src=n?vid.dataset.srcNarrow:vid.dataset.src;
-    const post=n?vid.dataset.posterNarrow:vid.dataset.poster;
+    const src=wantSrc();
+    const post=wantPoster();
     const have=vid.getAttribute('src');
     if(fetched&&have===src){ if(vid.preload!=='auto')vid.preload='auto'; return; }
     fetched=true;
@@ -15620,6 +15867,7 @@ if(faqIndex && panel && faqBody){
   function sync(){
     root.classList.add('cine-on');
     window.__cineHold=true;
+    retimeStory();
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1;
     onScroll();
@@ -15647,7 +15895,10 @@ if(faqIndex && panel && faqBody){
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',sync);
   addEventListener('load',sync);
-  if(narrow.addEventListener)narrow.addEventListener('change',sync);
+  /* ⚠️ BOTH queries, not just the outer one: a 700px window widened to 900px crosses 720 without
+     crossing 1120, and the phone cut would have stayed attached on a tablet. */
+  if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
+  if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

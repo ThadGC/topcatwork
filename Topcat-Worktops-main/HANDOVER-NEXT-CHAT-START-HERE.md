@@ -1,6 +1,6 @@
 # START HERE — 18 August 2026, after THE SCROLL FILM ROUND (D310–D314)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D315**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D316**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which is now
@@ -129,7 +129,29 @@ puts the phone back: delete the two `header.bar.preform::after` lines.**
 
 ---
 
-## 4. ⭐⭐ THE PHONE AND TABLET GET THEIR OWN CUT (D312)
+## 4. ⭐⭐ THE PHONE AND TABLET GET THEIR OWN CUT (D312, RE-CUT AT D316)
+
+⛔⛔⛔ **READ THIS BEFORE TRUSTING ANY FIGURE BELOW.** D316 replaced both narrow cuts and found that
+D312's central arithmetic was wrong. The claim was that a 4:5 cut "shows all 864px across the same
+1170, a 1.35× upscale". **That is only true of a 4:5 BOX, and the phone's hero is not one** —
+`.hero-vid` is `object-fit:cover` over a hero that is 100vh on this band, so a 375×812 phone gives
+an aspect of **0.462**. Covering 0.8 into 0.462 fills the HEIGHT and discards the sides:
+
+```
+864×1080 covered into 375×812  →  555 of 864 px survive, 36% thrown away
+master window actually seen:   x 835..1389   (D312 intended 680..1544)
+upscale on a DPR-3 phone:      2.11×          (D312 recorded 1.35×)
+```
+
+That is why the client said the phone was *"facing more towards the kitchen side"* — it was seeing
+the middle of the middle. **Each band now has its own cut at its own aspect** (phone 556×1080,
+tablet 812×1080), measured in the browser as **0% discarded on tablet and 10% on phone**, and each
+**pans** through the film so every beat is framed on purpose. Tables in
+`assets/video/.src-2026-08-18/pan.py`. ⚠️ The 2.1× upscale does NOT go away — the master is 1080
+tall and a DPR-3 phone hero is 2277 device px. Only a taller master fixes that.
+
+### The superseded D312 text follows, kept because it explains what the site used to do
+
 
 ⛔⛔ **`object-fit:cover` ON THE 16:9 MASTER IS BAD ARITHMETIC.** A 390×660 hero is 0.59; covering a
 1.78 film into it throws away **67% of the width** and blows the surviving third up to 1170 device
@@ -157,7 +179,8 @@ landscape-only framing nudge is one line.
 | File | What and why |
 |---|---|
 | `assets/video/topcat-intro-1920.mp4` | **11.7 MB.** 1920×1080, 12fps, **crf 25, keyframe every 8**, `-bf 0 -refs 4`. Desktop |
-| `assets/video/topcat-intro-864.mp4` | **5.0 MB.** The 4:5 crop at x=680, crf 26. ≤1120 |
+| `assets/video/topcat-intro-812.mp4` | **5.5 MB.** The tablet cut, 812×1080 (0.752), PANNED. 721–1120 |
+| `assets/video/topcat-intro-556.mp4` | **3.4 MB.** The phone cut, 556×1080 (0.515), PANNED. ≤720 |
 | `…-poster.webp` / `…-864-poster.webp` | Each film's own first frame, 122 KB / 82 KB |
 | `assets/video/.src-2026-08-18/` | His 86 MB master + `encode.sh`. ⛔ **The master is `.gitignore`d** — GitHub warns past 50 MB — but it is ON DISK and must not be deleted |
 
@@ -199,7 +222,7 @@ This build serves:
 changed the source the hashes are taken from. ⭐ The file on the host is the STRIPPED copy and is
 deliberately not byte-identical to the hash's source, which was already true of `site.css`.
 
-1. Upload the **CONTENTS** of `upload/` into `public_html`. **633 files, 176 HTML pages, 76.5 MB** (was 676/98.4 MB before D315 stopped shipping unreferenced photography and stripped the comments).
+1. Upload the **CONTENTS** of `upload/` into `public_html`. **635 files, 176 HTML pages, 80.6 MB** (was 676/98.4 MB before D315 stopped shipping unreferenced photography and stripped the comments).
 2. ⚠️ **"SHOW HIDDEN FILES" ON** — `.htaccess` is the caching fix and most clients hide it.
 3. ⛔⛔ **FLUSH SITEGROUND'S DYNAMIC CACHE** (Site Tools → Speed → Caching). It sits in front of
    Apache and ignores `.htaccess` entirely.
@@ -456,7 +479,7 @@ it"* was a background whose brightness swings 247 levels inside one frame.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D315**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D316**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
 | **`Website Demo/index.html`** | ⭐⭐ The whole landing design, inline `<style>` and three `<script>` blocks. Search `THE SCROLL FILM`, `THE VEIL COMES OFF`, `SKELETON`, `--cineH`, `hero-navgrade`, `THE WELD`, `SLAB_V`, `THE TABLET BAND` |
 | **`Website Demo/build_pages.py`** | ⭐⭐ The seven internal pages, `site.css`, `site.js`, **`footer.css` and `nav.css`**. ⚠️ **RUN IT FIRST** |
 | **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. ⚠️ Dot-prefixed folders no longer ship (D314), and **code comments are stripped on the way out** (D315) |

@@ -4460,6 +4460,115 @@
   .hero-navgrade{display:none;position:absolute;inset:0;z-index:1;pointer-events:none;
     background:var(--navScrim),var(--navScrim)}
   html.cine-on .cine .hero-navgrade{display:block;opacity:var(--navGrade,0)}
+
+  /* ═════ THE FILM'S OWN COPY — 18 August 2026 (D316) ═══════════════════════════════════════
+     Three titles that sit IN the film and are passed by the camera rather than laid over it.
+     ⛔ Base state is `display:none`: every rule here hangs off `cine-on`, so a browser that
+     never runs the film (reduced motion, no MP4, a 404, a narrow-loaded window) gets today's
+     hero with nothing extra in it — the same contract the rest of the film keeps. */
+  .cine-story,.cine-cue,.cine-skip{display:none}
+
+  /* ⭐⭐ THE DEPTH IS REAL, NOT A SCALE. Client: *"the words stay there and as the camera moves
+     past it, it moves closer to the camera as if it's actual part of the video… it almost comes
+     close to your face."* A `scale()` grows type on a flat plane and reads as a zoom; a
+     `translateZ` under a perspective grows it the way the lens would, so it passes the viewer.
+     ⚠️ The perspective belongs HERE, on the parent — a perspective on the element itself is
+     applied to its children, not to it, and nothing would move. */
+  html.cine-on .cine-story{
+    display:block;position:absolute;inset:0;z-index:2;pointer-events:none;
+    perspective:1000px;perspective-origin:26% 50%;
+  }
+  /* ⭐ DESKTOP PUTS THEM IN THE GAP HE POINTED AT — the left of the frame, which is sky and
+     mountains for the whole quarry, void for the whole slab section, and the living room at the
+     end. One position serves all three beats because the film keeps that side clear. */
+  html.cine-on .cine-line{
+    position:absolute;top:50%;left:clamp(20px,7vw,132px);width:min(21ch,44vw);margin:0;
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(30px,4.6vw,70px);line-height:1.05;letter-spacing:-0.004em;
+    color:var(--bone);text-wrap:balance;
+    opacity:0;                                    /* the scrub owns opacity from the first tick */
+    --ly:-50%;
+    transform:translateY(var(--ly)) translateZ(calc(var(--lz,-150) * 1px));
+    /* ⚠️ NOT a text-shadow for legibility alone — these words cross a daylight quarry AND a black
+       void, and §2's own lesson from D313 is that no fixed ink survives that. The shadow is a
+       contact shadow so the type reads as an object in the room; the veil's 0.20 floor and
+       `--navGrade` do the contrast work, exactly as they do for the hero's headline. */
+    text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5);
+  }
+  /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
+     not using — the quarry's sky is at the TOP, the slab and the island both sit LOW */
+  @media(max-width:1120px){
+    html.cine-on .cine-line{
+      left:0;right:0;width:auto;padding:0 clamp(20px,7vw,54px);text-align:center;
+      font-size:clamp(27px,6.6vw,44px);
+    }
+    html.cine-on .cine-line[data-vpos="top"]{top:13vh;--ly:0%}
+    html.cine-on .cine-line[data-vpos="low"]{top:auto;bottom:17vh;--ly:0%}
+    /* ⭐ a narrow-band override wins over the desktop anchor for the same element */
+    html.cine-on .cine-line[data-vpos-narrow="top"]{top:13vh;bottom:auto;--ly:0%}
+    html.cine-on .cine-line[data-vpos-narrow="low"]{top:auto;bottom:17vh;--ly:0%}
+  }
+
+  /* ═════ the scroll invitation ════════════════════════════════════════════════════════════ */
+  html.cine-on .cine-cue{
+    display:flex;position:absolute;z-index:3;left:clamp(20px,7vw,132px);top:calc(50% + 108px);
+    flex-direction:column;gap:12px;align-items:flex-start;pointer-events:none;
+    /* ⛔ NOT `--faint`, which is what this was first written with and it vanished: the cue only
+       ever appears during the OPENING title, and that beat is the daylight quarry — the brightest
+       frame in the film. It takes the same bone and the same contact shadow the titles take. */
+    font-size:10.5px;letter-spacing:0.34em;text-transform:uppercase;color:var(--bone);
+    text-shadow:0 1px 16px rgba(6,6,8,0.8),0 1px 3px rgba(6,6,8,0.7);
+    transition:opacity .6s var(--ease),transform .6s var(--ease);
+  }
+  html.cine-on .cine-cue i{
+    width:2px;height:46px;border-radius:2px;
+    background:linear-gradient(to bottom,var(--gold),rgba(198,166,100,0));
+    box-shadow:0 0 10px rgba(6,6,8,0.7);
+    transform-origin:top;animation:cineCue 2.6s var(--ease) infinite;
+  }
+  @keyframes cineCue{
+    0%,100%{transform:scaleY(0.35);opacity:0.35}
+    45%    {transform:scaleY(1);opacity:1}
+    75%    {transform:scaleY(1);opacity:0.2}
+  }
+  html.cine-on .cine-cue.gone{opacity:0;transform:translateY(10px)}
+  /* ⭐ ON A PHONE THE TITLE IS AT THE TOP, so the cue goes UNDER IT rather than to the foot of the
+     screen. Client: *"a prompt for them to scroll underneath the first title."* At 13vh plus the
+     two lines the opening title wraps to, that lands at about 25vh. ⛔ `bottom:12vh` was tried and
+     is wrong on this band: it put the prompt four hundred pixels below the words it belongs to, and
+     into the same corner as the WhatsApp float and the phone's action bar. */
+  @media(max-width:1120px){
+    html.cine-on .cine-cue{left:0;right:0;top:25vh;bottom:auto;align-items:center}
+    html.cine-on .cine-cue i{height:34px}
+  }
+  @media (prefers-reduced-motion:reduce){ html.cine-on .cine-cue i{animation:none;opacity:.8} }
+
+  /* ═════ skip intro ═══════════════════════════════════════════════════════════════════════
+     ⛔ NOT a gold line across the top of anything (§2 rule 10) and not a mark in a disc
+     (rule 11) — a plain bordered control, the same vocabulary as `.rev-back` was. */
+  html.cine-on .cine-skip{
+    display:inline-flex;position:absolute;z-index:4;right:clamp(18px,3.4vw,46px);bottom:clamp(20px,4vh,42px);
+    align-items:center;gap:9px;padding:10px 20px;
+    background:rgba(10,10,12,0.42);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    border:1px solid var(--hair);border-radius:2px;color:var(--bone);
+    font-family:var(--brand,inherit);font-size:10.5px;letter-spacing:0.24em;text-transform:uppercase;
+    cursor:pointer;transition:border-color .4s var(--ease),color .4s var(--ease),opacity .5s var(--ease);
+  }
+  /* ⛔⛔ WITHOUT THIS THE `hidden` ATTRIBUTE DOES NOTHING. `hidden` works through the UA rule
+     `[hidden]{display:none}`, and `html.cine-on .cine-skip{display:inline-flex}` is more specific,
+     so it won: the control stayed on screen after the film had finished, screenshotted sitting over
+     the hero. A class-based `display` always has to answer for `[hidden]` itself. */
+  html.cine-on .cine-skip[hidden]{display:none}
+  html.cine-on .cine-skip:hover{border-color:var(--gold);color:var(--gold)}
+  html.cine-on .cine-skip:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  /* ⛔⛔ THE WHATSAPP FLOAT OWNS THE BOTTOM-RIGHT CORNER ON EVERY NARROW BAND, and this control
+     landed on top of it — caught in a tablet screenshot at 834x1112, the two overlapping. So the
+     control is centred instead, clear of the float and clear of the phone's action bar.
+     ⚠️ THE PHONE RULE'S OWN QUERY IS WIDENED TO REACH THE TABLET rather than a second block being
+     copied for it (§12): one description, both bands. */
+  @media(max-width:1120px){
+    html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px)}
+  }
   /* ⛔⛔⛔ **AND IT CROSSES AN EXISTING CLIENT RULING ON THE PHONE, WHICH IS FLAGGED RATHER THAN
      BURIED.** 11 Aug 2026: *"the nav bar should already be formed, so already a gold line below it
      and everything, from the top. Not after you start scrolling."* That block (`max-width:1120px`,
