@@ -49,8 +49,8 @@ D310  THE LANDING PAGE OPENS ON HIS FILM, scrubbed by the scroll — desktop, §
 D311  the veil comes OFF the film and rides back in for the hero, from t=38 — §3
 D312  the film reaches the PHONE AND TABLET as its own 4:5 cut, not the same one squeezed — §4
 D313  the bar is a SKELETON for the whole film and the hero, and forms only after it — §3
-D314  the working day is 7am to 9pm across all 176 pages — and the upload was shipping
-      seven pages the client had removed
+D314  the working day is Monday to Sunday, 7am to 9pm across all 176 pages — and the
+      upload was shipping seven pages the client had removed
 ```
 
 ---
@@ -321,7 +321,7 @@ after any edit to `dev-server.js` itself.
 | **`/stones/`** | 132 pages + collection + compare; white ledes; **no quote card, deliberately** |
 | **`/materials/` `/guides/` `/worktops/` `/sitemap.html`** | the 26-page SEO layer; 22 carry the quote card |
 | **`/trade/`** | eight sections; CTA carries WhatsApp |
-| **all 176 pages** | one footer, one mobile nav, og:image + twitter:card, favicon, **hours 7am–9pm** |
+| **all 176 pages** | one footer, one mobile nav, og:image + twitter:card, favicon, **hours Mon–Sun 7am–9pm** |
 
 ⚠️ **SHARED PHOTOGRAPHS NOT TO DELETE**: `kitchen-day.jpg`, `cta-slab.jpg`, `hero-kitchen.jpg`,
 `hero-night-*` (still the fallback hero and the phone/tablet still), and the superseded
@@ -367,9 +367,10 @@ after any edit to `dev-server.js` itself.
    number per band, and the first thing he is likely to want moved.
 5. ⭐⭐ **THE PHONE'S BAR** — the skeleton crosses his 11-Aug "already formed from the top" ruling
    (§3). Ask, or wait for him to react.
-6. ⭐ **THE HOURS' DAYS DISAGREE.** The landing page's schema declares **six** days (Mon–Sat) where
-   every other page and every visible line says **Monday to Friday**. Pre-existing, survived the
-   17-Aug contradiction sweep. He named the times only, so it is listed, not guessed.
+6. ⭐ **THE HOURS ARE `Monday to Sunday, 7am to 9pm`** on all 176 pages, visible line and schema
+   together (seven `dayOfWeek` entries, `Mo-Su 07:00-21:00` in the SEO layer). ⭐ That closed a
+   contradiction that had only been flagged: the landing page's schema had said **six** days
+   where everything else said five, and it survived the 17-Aug sweep. Nothing open here now.
 7. ⭐ **THE LANDSCAPE-TABLET CROP** — a 1024-wide tablet held landscape clips the pendant tops (§4).
 8. ⭐ **DOES THE FILM WANT SOUND?** The master carries 24-bit PCM; the site drops it entirely and
    nothing on the page can play audio. Never discussed.

@@ -473,7 +473,7 @@ TRADE_CTA_SECTION = """  <section id="tradeCta">
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M12 7v5.3l3.4 2"/></svg>
-              <span>Monday to Friday, 7am to 9pm</span>
+              <span>Monday to Sunday, 7am to 9pm</span>
             </li>
           </ul>
           <div class="cta-trust">
