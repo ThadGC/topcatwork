@@ -1,6 +1,6 @@
 # START HERE — 18 August 2026, after THE SCROLL FILM ROUND (D310–D314)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D314**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D315**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which is now
@@ -190,13 +190,16 @@ cd "Topcat-Worktops-main/Website Demo" && python3 make_upload.py
 This build serves:
 
 ```
-/assets/site.css?v=deaa51cf5b      /assets/site.js?v=6c3d5e0d07
-/services/service.css?v=23cff11fdb /assets/footer.css?v=d77df19cd6
+/assets/site.css?v=3c36d5a457      /assets/site.js?v=65d7a04914
+/services/service.css?v=23cff11fdb /assets/footer.css?v=fb17d2d341
 /assets/nav.css?v=349149e16f       /stones/stone.css?v=5e7fdddb8d
-/seo.css?v=6c5fddc3a1
+/seo.css?v=8c1340947e
 ```
+⚠️ **`site.css`, `site.js`, `footer.css` and `seo.css` all moved at D315** — the dead-code removal
+changed the source the hashes are taken from. ⭐ The file on the host is the STRIPPED copy and is
+deliberately not byte-identical to the hash's source, which was already true of `site.css`.
 
-1. Upload the **CONTENTS** of `upload/` into `public_html`. **676 files, 176 HTML pages, 98.4 MB.**
+1. Upload the **CONTENTS** of `upload/` into `public_html`. **633 files, 176 HTML pages, 76.5 MB** (was 676/98.4 MB before D315 stopped shipping unreferenced photography and stripped the comments).
 2. ⚠️ **"SHOW HIDDEN FILES" ON** — `.htaccess` is the caching fix and most clients hide it.
 3. ⛔⛔ **FLUSH SITEGROUND'S DYNAMIC CACHE** (Site Tools → Speed → Caching). It sits in front of
    Apache and ignores `.htaccess` entirely.
@@ -401,8 +404,9 @@ after any edit to `dev-server.js` itself.
 23. ⭐⭐ **A QUOTE CARD FOR THE PHONE AND TABLET.** D300 is desktop-only because he said "for desktop
     specifically". **His call.**
 24. ⭐ **Per-stone og:image** (each stone page sharing its own slab photograph) — 132 conversions.
-25. ⚠️ **The generated pages still ship their code comments to view-source.** `footer.css` and
-    `nav.css` strip theirs.
+25. ✅ **CLOSED at D315 — the comments no longer reach view-source.** `make_upload.py` strips every
+    `.html`/`.css`/`.js` on the way out via `strip_for_host.py`; the working files keep all of them.
+    The landing page's first load of html+css+js went **2.35 MB → 0.83 MB**.
 26. ⚠️ **`Next Stone Slabs` is named in one place** — sanctioned by D203. Read D203 before "fixing".
 27. ⚠️ **The stale branch `tablet-round-d197-d200`** — deletable once item 1 is answered.
 28. ⭐ **Pick a production host**; brotli; check the `.htaccess` cache rules survive it. ⚠️ **The
@@ -452,10 +456,11 @@ it"* was a background whose brightness swings 247 levels inside one frame.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D314**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D315**. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
 | **`Website Demo/index.html`** | ⭐⭐ The whole landing design, inline `<style>` and three `<script>` blocks. Search `THE SCROLL FILM`, `THE VEIL COMES OFF`, `SKELETON`, `--cineH`, `hero-navgrade`, `THE WELD`, `SLAB_V`, `THE TABLET BAND` |
 | **`Website Demo/build_pages.py`** | ⭐⭐ The seven internal pages, `site.css`, `site.js`, **`footer.css` and `nav.css`**. ⚠️ **RUN IT FIRST** |
-| **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. ⚠️ Dot-prefixed folders no longer ship (D314) |
+| **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. ⚠️ Dot-prefixed folders no longer ship (D314), and **code comments are stripped on the way out** (D315) |
+| **`Website Demo/strip_for_host.py`** | ⭐⭐ The comment scanners `make_upload.py` calls — CSS, JS and HTML, each aware of strings, template literals and regex. ⛔ Never touches a working file. ⚠️ Read its foot: it records a fake proof written there first |
 | **`Website Demo/.htaccess`** | ⭐⭐ Cache rules, now including **mp4/webm for a week**. ⚠️ A dotfile |
 | **`assets/video/`** | ⭐⭐ Both cuts, both posters, and `.src-2026-08-18/` with the master and `encode.sh` |
 | **`assets/footer.css` `assets/nav.css`** | ⛔ **GENERATED.** Never edit |

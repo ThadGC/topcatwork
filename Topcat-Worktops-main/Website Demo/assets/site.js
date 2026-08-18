@@ -215,6 +215,13 @@ const SS={
  "/assets/projects/harlow-1400.webp":"/assets/projects/harlow-560.webp 560w, /assets/projects/harlow-1400.webp 1400w",
  "/assets/projects/rickmansworth-1400.webp":"/assets/projects/rickmansworth-560.webp 560w, /assets/projects/rickmansworth-1400.webp 1400w",
  "/assets/projects/watford-1400.webp":"/assets/projects/watford-560.webp 560w, /assets/projects/watford-1400.webp 1400w",
+ /* ⛔⛔ THE EIGHTH PROJECT WAS MISSING FROM THIS TABLE — 18 Aug 2026 (D315). Wimbledon arrived at
+    D211+ and this registry was written for the seven that existed then, so the comment above was
+    describing exactly what was happening: an unregistered path silently shipped the 1400px file to
+    every handset. `wimbledon-560.webp` had been cut all along (560x840, 17 KB against 72 KB) and
+    was sitting on the host unrequested — it turned up as an UNREFERENCED asset while clearing
+    those out, which is the only reason it was found. ⚠️ Eight projects, eight rows. */
+ "/assets/projects/wimbledon-1400.webp":"/assets/projects/wimbledon-560.webp 560w, /assets/projects/wimbledon-1400.webp 1400w",
  "/assets/site/hero-night-2752.webp":"/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w",
  "/assets/site/cta-slab-2752.webp":"/assets/site/cta-slab-1958.webp 1958w, /assets/site/cta-slab-2752.webp 2752w",
  "/assets/site/kitchen-day-1188.webp":"/assets/site/kitchen-day-626.webp 626w, /assets/site/kitchen-day-1188.webp 1188w",
@@ -2657,17 +2664,14 @@ const REVIEWS=[
   .filter(r=>!/luke|copley|thadeus|tabrez/i.test(r.n))
   .map(r=>({...r,a:r.n,img:phImg("PROJECT PHOTO")}));
 
-const SENSITIVITY=160;                        // px you must throw a card before it's sent to the back
 /* ⚠️ D190: /estimate/ carries no reviews section, and `revNodes` appends to this deck at the
    top level — see `orNull` for why an unguarded append there kills the whole file. */
 const deck=orNull(document.getElementById('revDeck'));
-const dotsEl=orNull(document.getElementById('revDots'));
 const revSection=orNull(document.getElementById('reviews'));
 const revStage=orNull(document.getElementById('revStage'));   /* was relying on the implicit id-global */
-const revHint=orNull(document.getElementById('revHint'));
-let order=REVIEWS.map((_,i)=>i);              // order[0] is the top card of the stack
-let revMode='grid';                           // 'grid' (browse all) or 'stack' (read + throw)
-const TILT=[-4,2.5,-2,3.5,-3];                // gentle resting tilt per depth, so it reads as a real stack
+/* ⭐ `order`, `revMode`, `TILT` and `SENSITIVITY` went with the stack view — 18 Aug 2026 (D315).
+   The section has ONE mode now (the paged wall) and the class that names it, `mode-grid`, is in
+   the markup rather than set by script. See the note in the stylesheet. */
 
 const revNodes=REVIEWS.map((r,i)=>{
   const el=document.createElement('article');el.className='rev';el.dataset.i=i;el.tabIndex=0;
@@ -2714,8 +2718,6 @@ const revNodes=REVIEWS.map((r,i)=>{
   marbleFill(el.querySelector('.rev-stone'), +el.querySelector('.rev-stone').dataset.marble);
   deck.appendChild(el);return el;
 });
-if(dotsEl){ REVIEWS.forEach(()=>{const d=document.createElement('span');d.className='rev-dot';dotsEl.appendChild(d);}); }
-const dots=dotsEl?[...dotsEl.children]:[];   // stack nav removed; dots may not exist
 
 /* the new desktop entrance/paging only run at desktop widths (matches the nav breakpoint);
    tablet & phone keep the from-the-sides deal-in and page-of-N paging untouched */
@@ -2926,7 +2928,6 @@ function gridLayout(){
     revSection.style.setProperty('--revPagerX',soloGapX(soloR,cellW).toFixed(1)+'px');
     gridSlots=revNodes.map(()=>({x:0,y:0,s:GS}));
     soloPlace(0,true);
-    dots.forEach(d=>d.classList.remove('on'));
     updatePageBtns();
     markClamped();
     return;
@@ -2936,11 +2937,9 @@ function gridLayout(){
     return {x:Math.round(-totalW/2+cellW/2+col*(cellW+gap)), y:0, s:GS};   // one row, centred on the deck
   });
   revNodes.forEach((el,i)=>{
-    el.classList.remove('top','flipped','tossed','tucking','dragging');
     el.style.zIndex=1;
     placeGridCard(i);
   });
-  dots.forEach(d=>d.classList.remove('on'));
   updatePageBtns();
   markClamped();
 }
@@ -3208,7 +3207,6 @@ function soloRender(){
     const d=soloDist(i);
     const u=d+soloAnim;                            // where this card is standing right now
     const au=Math.abs(u);
-    el.classList.remove('top','flipped','tossed','tucking','dragging');
     if(el._revEndT){ clearTimeout(el._revEndT); el._revEndT=null; }
     /* the entrance still owns the seated/waiting state — before the section has been scrolled
        into, all three wait off-screen and ride in together (runRevSequence) */
@@ -3279,137 +3277,15 @@ function soloPlace(drag,settle){
 }
 
 /* ---- stack view: the chosen review on top, the rest clearly peeking behind it ---- */
-function stackLayout(){
-  order.forEach((ri,depth)=>{
-    const el=revNodes[ri];
-    el.classList.toggle('top',depth===0);
-    el.classList.remove('tossed','tucking');
-    if(depth>0)el.classList.remove('flipped');
-    const t=TILT[depth%TILT.length];
-    /* A generous peek so it reads as a stack you can work through, not one lone review.
-       The stack grows DOWNWARD, so it's lifted by half its own depth — otherwise the whole
-       thing hangs below the deck's centre and shoves the controls off the bottom of the screen. */
-    const STEP=30, VISIBLE=4;
-    const dy=depth*STEP-(VISIBLE*STEP)/2;
-    const sc=1-depth*0.04;                                 // shrink less, so they stay legible
-    el.style.transform=`translate3d(${depth===0?0:depth*11}px,${dy}px,0) scale(${sc.toFixed(3)}) rotate(${depth===0?0:t}deg)`;
-    el.style.opacity=depth>VISIBLE?0:1;                         // up to four cards peek behind the top one
-    el.style.zIndex=REVIEWS.length-depth;
-    el.style.pointerEvents=depth===0?'auto':'none';
-  });
-  dots.forEach((d,i)=>d.classList.toggle('on',i===order[0]));
-}
-
-/* the grab-and-throw demo runs on entering the stack and is cancelled by any real interaction */
-function stopRevCue(){ revSection.classList.remove('cue-on'); }
-function setRevMode(m){
-  revMode=m;
-  revSection.classList.toggle('mode-grid',m==='grid');
-  revSection.classList.toggle('mode-stack',m==='stack');
-  revSection.classList.toggle('cue-on',m==='stack');
-  if(revHint)revHint.textContent=(m==='grid')
-    ? 'Tap a review to open it'
-    : 'Drag a card away · click it to see the project';
-}
-
-/* ---- keep the deck centred across a mode change ----
-   Stack mode hides the section header and trims the padding, so the section is ~390px shorter
-   than the grid. The scroll position doesn't move with it, so switching modes slid the deck up
-   near the top of the screen (stack) and left the wall sitting low (grid) — you had to scroll
-   to chase it. Re-centre the stage in the viewport instead, so whichever mode you're in the
-   cards are simply in front of you. Smooth, because it reads as the page presenting the stack
-   rather than as a jump. */
-const BAR_H=76;                                    // the fixed header owns the top of the screen
-let revAutoUntil=0;                                // programmatic scroll in flight until this time
-function centreRevStage(){
-  const vh=window.innerHeight||1;
-  const r=revStage.getBoundingClientRect();        // read AFTER the mode class has been applied
-  const want=window.scrollY + r.top + r.height/2 - (BAR_H + (vh-BAR_H)/2);
-  const max=Math.max(0,document.documentElement.scrollHeight-vh);
-  const y=Math.max(0,Math.min(Math.round(want),max));
-  if(Math.abs(y-window.scrollY)<2) return;
-  /* The entrance watcher reads scroll DIRECTION; an automated scroll up would look like the
-     user leaving and would ride the whole wall back off-screen. Mute it while we move. */
-  revAutoUntil=performance.now()+1400;
-  window.scrollTo({top:y,behavior:reduceRev?'auto':'smooth'});
-}
-function selectCard(ri){                                  // grid → stack: chosen card to the middle, rest fall behind
-  order=[ri,...REVIEWS.map((_,i)=>i).filter(i=>i!==ri)];
-  setRevMode('stack');
-  stackLayout();
-  centreRevStage();
-}
-function backToGrid(){
-  order=REVIEWS.map((_,i)=>i);
-  revNodes.forEach(el=>el.classList.remove('flipped','top','tossed','tucking'));
-  /* Returning from the stack must always land on a SEATED wall. gridLayout seats cards only
-     when revEntered is true, and the scroll watcher can have flipped it false while you were
-     reading the stack (its run is skipped in stack mode) — so the whole wall would park itself
-     off-screen and the reviews would vanish. Assert the state instead: you're plainly looking
-     at the section, and resync the scroll baseline so a stale direction can't fire the exit. */
-  revEntered=true;
-  revLastY=window.scrollY; revDir=0;
-  setRevMode('grid');
-  gridLayout();
-  centreRevStage();
-}
-function sendToBack(vx,vy){
-  stopRevCue();
-  const ri=order[0], el=revNodes[ri];
-  const len=Math.hypot(vx,vy)||1;
-  const ux=vx/len, uy=vy/len;                  // throw direction (any angle)
-  el.classList.remove('flipped');
-  el.classList.add('tucking');
-  el.style.zIndex=0;                           // drop behind the deck immediately
-  // phase 1: carry out a short way in the thrown direction, shrinking as it goes back in depth
-  el.style.transform=`translate3d(${ux*190}px,${uy*150}px,0) rotate(${ux*10}deg) scale(0.74)`;
-  el.style.opacity=0.35;
-  // phase 2: it settles into the back slot of the stack, and the rest step forward
-  setTimeout(()=>{ order.push(order.shift()); stackLayout(); },300);
-}
-function bringToFront(){                       // "previous" — the back card lifts up over the deck
-  stopRevCue();
-  order.unshift(order.pop());
-  const el=revNodes[order[0]];
-  el.classList.add('tucking');
-  el.style.zIndex=REVIEWS.length+1;
-  el.style.transform='translate3d(0,26px,0) scale(0.8)';
-  el.style.opacity=0.4;
-  requestAnimationFrame(()=>requestAnimationFrame(stackLayout));
-}
-
-/* drag the top card — any direction */
-let dx=0, dy=0, sx=0, sy=0, down=false, dragMoved=false;
-function topEl(){return revNodes[order[0]];}
-function onDown(x,y,e){
-  if(revMode!=='stack')return;
-  const el=topEl();
-  if(!el.contains(e.target))return;
-  stopRevCue();                                   // you're driving now — the demo steps aside
-  down=true;dragMoved=false;sx=x;sy=y;dx=0;dy=0;el.classList.add('dragging');
-}
-function onMove(x,y){
-  if(!down)return;
-  dx=x-sx; dy=y-sy;
-  if(Math.hypot(dx,dy)>5)dragMoved=true;
-  const el=topEl();
-  el.style.transform=`translate3d(${dx}px,${dy}px,0) rotate(${dx*0.045}deg)`;
-  el.style.opacity=Math.max(0.35,1-Math.hypot(dx,dy)/(SENSITIVITY*3));
-}
-function onUp(){
-  if(!down)return;
-  down=false;
-  const el=topEl();el.classList.remove('dragging');
-  if(Math.hypot(dx,dy)>SENSITIVITY){ sendToBack(dx,dy); }
-  else { el.classList.add('tossed'); stackLayout(); }
-  dx=dy=0;
-}
-deck.addEventListener('mousedown',e=>{ if(revMode==='stack')e.preventDefault(); onDown(e.clientX,e.clientY,e);});
-window.addEventListener('mousemove',e=>onMove(e.clientX,e.clientY));
-window.addEventListener('mouseup',onUp);
-deck.addEventListener('touchstart',e=>onDown(e.touches[0].clientX,e.touches[0].clientY,e),{passive:true});
-deck.addEventListener('touchmove',e=>onMove(e.touches[0].clientX,e.touches[0].clientY),{passive:true});
-deck.addEventListener('touchend',onUp);
+/* ⭐⭐ THE STACK VIEW'S SCRIPT WAS DELETED HERE — 18 August 2026 (D315). Gone, in order:
+   `stackLayout()` (the fanned pile), `stopRevCue()` and the `cue-on` demo, `setRevMode()` (one
+   mode left, and `mode-grid` is in the markup), `centreRevStage()` with `BAR_H`/`revAutoUntil`,
+   `selectCard()` and `backToGrid()` — NEITHER HAD A CALLER — `sendToBack()`, `bringToFront()`,
+   `topEl()`, `onDown/onMove/onUp` and the six mouse and touch listeners that drove the throw.
+   ⛔ The entry point had been gone for weeks: nothing called `selectCard`, so no click could
+   reach stack mode, and the deck's click handler below says it plainly — "the stack view is
+   gone". ⚠️ THE PHONE'S SWIPE IS A DIFFERENT MECHANISM AND IS UNTOUCHED: it is `attachSwipe` on
+   the STAGE (the drum, `soloPlace`), not these listeners on the deck. Restore from git. */
 
 /* ⭐ PHONE SWIPE — ONE PATH FOR FINGER, TRACKPAD-DRAG AND MOUSE. Rebuilt 11 Aug 2026.
    ⛔ WHAT THIS REPLACES, AND WHY IT MATTERS. D93 shipped touch-only and did not work on the
@@ -3427,7 +3303,7 @@ const SOLO_THROW=48;                                    // px before a slow drag
 const SOLO_FLICK=0.45;                                  // px/ms — above this it is a flick, not a drag
 const SOLO_FLICK_MIN=10;                                // …but it still has to be a deliberate movement
 attachSwipe(revStage,{
-  enabled:()=>revSolo()&&revMode==='grid',
+  enabled:revSolo,
   ignore:t=>!!(t.closest&&t.closest('.rev-page')),
   /* ⭐ A NEW GESTURE PICKS THE DRUM UP WHEREVER IT IS. soloDragBase is the residual of a settle
      still in flight, so the finger continues the roll instead of restarting it — this is the
@@ -3467,7 +3343,7 @@ attachSwipe(revStage,{
    flick turns exactly one review. */
 let wheelAcc=0,wheelLock=false,wheelQuietT=null;
 deck.addEventListener('wheel',e=>{
-  if(!revSolo()||revMode!=='grid')return;
+  if(!revSolo())return;
   if(Math.abs(e.deltaX)<=Math.abs(e.deltaY))return;     // vertical intent — the page keeps it
   e.preventDefault();
   clearTimeout(wheelQuietT);
@@ -3500,14 +3376,14 @@ deck.addEventListener('keydown',e=>{
 /* pager: DESKTOP shifts the 3-up window by one review (cartwheel); smaller screens page as before */
 if(pagePrevBtn)pagePrevBtn.onclick=()=>{ isDesktopRev()?shiftCards(-1):goPage(-1); };
 if(pageNextBtn)pageNextBtn.onclick=()=>{ isDesktopRev()?shiftCards(1):goPage(1); };
-window.addEventListener('resize',()=>{ revMode==='grid'?gridLayout():stackLayout(); });
+window.addEventListener('resize',gridLayout);
 /* webfonts change the wrap, and so which cards are clamped — re-measure once they've landed */
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{ revMode==='grid'?gridLayout():stackLayout(); });
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(gridLayout);
 /* If the first layout pass runs before the page has real dimensions, the scale falls back to a
    default and nothing recomputes it until a resize. Re-measure once the page is actually laid
    out — and again after webfonts land, which changes the card heights. */
-window.addEventListener('load',()=>{ if(revMode==='grid')gridLayout(); });
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{ if(revMode==='grid')gridLayout(); });
+window.addEventListener('load',gridLayout);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(gridLayout);
 
 /* ============ DESKTOP reviews (≥1121px): scroll-driven backflip entrance + cartwheel paging ====
    Replaces the from-the-sides deal-in and page-of-three paging. Each of the three visible cards
@@ -3628,7 +3504,6 @@ function shiftCards(dir){
   setTimeout(()=>{ revPaging=false; revPhase='settled'; placeDesktopRest(); },800);
 }
 
-setRevMode('grid');
 gridLayout();
 
 /* ---- entrance: the six cards ride in from off-screen one at a time ----
@@ -3654,7 +3529,7 @@ function runRevSequence(seating){               // seating=true → ride in · f
   const seq=REV_PAGE_ORDER.filter(k=>k<ids.length).map(k=>ids[k]);
   const step=seating?REV_STEP_IN:REV_STEP_OUT;
   seq.forEach((ri,k)=>{
-    revSeqTimers.push(setTimeout(()=>{ if(revMode==='grid')seatGridCard(ri,!seating); },k*step));
+    revSeqTimers.push(setTimeout(()=>seatGridCard(ri,!seating),k*step));
   });
 }
 /* The in and out triggers sit on DIFFERENT lines: the arrival waits until the wall is properly
@@ -3677,9 +3552,13 @@ function checkRevSequence(){
      desktop width into a phone one arrives here with revEntered already false. */
   if(revSolo()){ if(!revEntered){ revEntered=true; soloPlace(0,true); } return; }
   if(isDesktopRev())return;                              // desktop uses the backflip module instead
-  /* a mode-change re-centre is driving the scroll — keep the baseline fresh but don't read a
-     direction from it, or the automated travel would fire the exit and empty the wall */
-  if(performance.now()<revAutoUntil){ revLastY=window.scrollY; revDir=0; return; }
+  /* ⚠️ A `revAutoUntil` guard stood here, muting this watcher for 1400ms after `centreRevStage()`
+     smooth-scrolled the section into view on a mode change. Both went with the stack view (D315):
+     with one mode there is no mode change, and nothing on the page scrolls the reviews
+     programmatically any more, so there is no automated travel left to mistake for the user
+     leaving. ⛔ If a programmatic scroll to this section is ever added back, the guard comes with
+     it — without one, the travel reads as the user scrolling away and rides the whole wall
+     off-screen. */
   const y=window.scrollY;
   if(Math.abs(y-revLastY)>=6){ revDir=y>revLastY?1:-1; revLastY=y; }   // deadband: jitter can't flip direction
   const topFrac=revStage.getBoundingClientRect().top/(window.innerHeight||1);
@@ -3816,8 +3695,10 @@ requestAnimationFrame(glowTick);
     /* ⚠️ TWO OF HIS SITE'S SIX CAME OUT HERE, 14 Aug 2026, and it is a judgement call worth
        reading: the old `-g2` was a slab on a trolley in a dusty workshop with an air hose across
        the floor, and the old `-g3` was a half-built room with a stepladder, a mitre saw and loose
-       cables. Client: *"if something doesn't look good, don't use it."* Both files are still on
-       disk — put the two paths back in this array to restore them. g7–g10 are his Drive set. */
+       cables. Client: *"if something doesn't look good, don't use it."* ⭐ Both files are still on
+       disk, in `assets/projects/.unused-frames-2026-08-18/` since D315 stopped shipping frames no
+       array names (`-g6` was in neither place either) — move a file back up beside its siblings
+       and put its path in this array to restore it. g7–g10 are his Drive set. */
     {key:'hornchurch', name:'The Hornchurch Project', place:'Essex',
      img:'/assets/projects/hornchurch-1400.webp', brand:true, type:'Worktop, island and splashbacks',
      story:'Taj Mahal quartzite at 30mm, across the worktop, the island and the splashbacks, with a single ogee edge worked through the run.',
@@ -5500,7 +5381,16 @@ if(faqIndex && panel && faqBody){
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* head → tail spans the composition that has to be visible together */
   const FIT={
-    reviews  :['#reviews .section-head'  ,'#reviews .rev-hint'],
+    /* ⛔⛔ THE TAIL WAS `#reviews .rev-hint` AND THAT ELEMENT NO LONGER EXISTS — 18 Aug 2026
+       (D315). `.rev-hint` was the stack view's one-line instruction ("Tap a review to open it"),
+       and it left the markup with the rest of the stack chrome. `targetFor()` needs BOTH ends
+       (`if(h&&t)`), so reviews was the one entry in this table that could only fall through to
+       the plain section-top fallback. ⚠️ MEASURED: NOTHING ON THE SITE LINKS TO `#reviews` TODAY —
+       not one of the 176 pages — so this was latent and no visitor has hit it. It is fixed because
+       the next link to this section would land wrong and the cause would be invisible.
+       ⭐ `.rev-cta` is the real tail — the strap line under the wall is the lowest thing in the
+       composition. */
+    reviews  :['#reviews .section-head'  ,'#reviews .rev-cta'],
     /* desktop shows the helix (the grid is display:none there), so frame the whole two-column
        wrap; on smaller screens the section is taller than a screen and the fallback path in
        targetFor() pins the heading near the top anyway */

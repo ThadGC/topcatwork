@@ -336,10 +336,13 @@ SERVICES = [
 # ---------------------------------------------------------------------------
 # Hero photos reuse the existing shared assets (no new images generated). Loose but on-brand.
 HERO_IMG = {
-    # ⭐⭐⭐ HIS OWN PHOTOGRAPH — D241, the eighth and last. ⚠️ `hero-kitchen.jpg` IS NOT RETIRED
-    # AND MUST NOT BE: it is the LANDING PAGE's hero, the first thing anybody sees. It is simply
-    # no longer any service page's hero — splashbacks and this page both moved off it in one run,
-    # which is also the end of two service pages opening on the same picture.
+    # ⭐⭐⭐ HIS OWN PHOTOGRAPH — D241, the eighth and last. ⚠️⚠️ `hero-kitchen.jpg` IS RETIRED NOW
+    # AND THIS NOTE USED TO SAY THE OPPOSITE — it claimed the file was "the LANDING PAGE's hero,
+    # the first thing anybody sees". That was true when it was written and stopped being true when
+    # the hero moved to the night grade: the landing page serves `hero-night-2752.webp` and asks
+    # for no `hero-kitchen` URL at all. Nothing on the site references it, so as of D315 it lives
+    # in `assets/site/.superseded-2026-08-18/` and no longer ships. ⛔ Still on disk, do not delete.
+    # ⭐ MEASURE WHAT THE PAGE ASKS FOR BEFORE BELIEVING A COMMENT ABOUT IT, this one included.
     "kitchen-worktops": "../assets/site/service-worktops-quartz-1600.webp",
     # ⭐⭐ HIS OWN PROJECT PHOTOGRAPH — 17 Aug 2026 (D294), closing §13 item 19: this was the ONE
     # leaf still opening on a shared stock photo (`kitchen-day.jpg`, also the landing's day
@@ -352,8 +355,9 @@ HERO_IMG = {
     # ⭐⭐ HIS OWN PHOTOGRAPH — D241. This page shared `hero-kitchen.jpg` with kitchen-worktops,
     # so the two pages opened on the same picture; it now opens on a marble splashback behind a
     # hob, which is what it is about. ⚠️ 1620 is the NATIVE top of that ladder (a 1920x1080
-    # source), not a choice. ⚠️ `hero-kitchen.jpg` stays — kitchen-worktops still uses it, and
-    # so does the landing page.
+    # source), not a choice. ⚠️ `hero-kitchen.jpg` is retired as of D315 — kitchen-worktops moved
+    # to the quartz ladder above and the landing page moved to the night grade, so nothing uses it.
+    # It is kept on disk in `assets/site/.superseded-2026-08-18/`.
     "splashbacks": "../assets/site/service-splash-hob-1200.webp",
     # ⭐⭐ THE CLIENT'S OWN PHOTOGRAPH — D241, sent with the dining one. It replaced the slab shot
     # on the Bathrooms TILE and this hero follows it, so the tile and the page it opens show the
@@ -372,15 +376,19 @@ HERO_IMG = {
     "commercial-worktops": "../assets/site/service-commercial-bar-1600.webp",
     # ⭐⭐ A REAL OUTDOOR KITCHEN INSTEAD OF THE QUARRY — D241, his own file. The quarry shot was
     # the second of the three wrong-subject tiles he had already asked to have replaced: it is a
-    # picture of where stone comes FROM, not of a garden kitchen. ⚠️ `quarry.jpg` and its two
-    # WebP rungs stay on disk and stay in the SS table — nothing else pointed at them, but a
-    # deleted photograph cannot be put back from the browser.
+    # picture of where stone comes FROM, not of a garden kitchen. ⚠️ `quarry.jpg`'s two WebP rungs
+    # stay live and stay in the SS table; the `quarry.jpg` MASTER is what the rungs were cut from
+    # and no page ever asked for it, so D315 moved it to
+    # `assets/site/.src-photography-2026-08-18/`. ⛔ On disk, not deleted — a deleted photograph
+    # cannot be put back from the browser.
     "outdoor-kitchens": "../assets/site/service-outdoor-1600.webp",
     # ⭐⭐⭐ D228's SLAB SHOT IS GONE FROM THIS TABLE ENTIRELY — 15 Aug 2026 (D241). Three pages
     # took `cta-slab.jpg` because the portfolio held no fireplace, no dining table and no vanity
     # top, and the client had twice said generate nothing. He sent photographs of all three
-    # instead. ⛔ `cta-slab.jpg` IS STILL LIVE and must not be deleted: it is the landing page's
-    # CTA band. It is simply no longer any service page's hero.
+    # instead. ⭐ The CTA band IS still live and must not be deleted — but it is the WebP ladder
+    # (`cta-slab-1958/2752.webp`) that the landing page serves, not `cta-slab.jpg`. The master was
+    # never requested by a browser, so D315 moved it to `assets/site/.src-photography-2026-08-18/`.
+    # ⛔ On disk, not deleted. The subject is simply no longer any service page's hero.
     # ⚠️ (A note here used to say commercial was the one wrong subject left — stale since the
     # `service-commercial` ladder landed above. Every page in this table now opens on its own
     # subject; kitchen-islands was the last, fixed at D294.)

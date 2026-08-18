@@ -17,11 +17,73 @@ about 40 MB that must never be served, sitting in the same place as the 155 page
 stale site. It refuses to run if the generated pages are older than index.html.
 """
 import pathlib
+import re
 import shutil
+import subprocess
 import sys
+import tempfile
+
+from strip_for_host import balance_report, is_idempotent, strip_css, strip_html, strip_js
 
 HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE.parent / "upload"
+
+STRIP = {"html": strip_html, "css": strip_css, "js": strip_js}
+
+# ⚠️ Set by _check_strip so the summary can say how many scripts V8 actually parsed.
+CHECKED = {"node": 0, "css": 0, "html": 0, "node_missing": False}
+
+
+def _check_strip(rel, kind, raw, lean):
+    """⛔ STOP THE BUILD rather than publish a file the strip may have damaged.
+
+    ⭐ The load-bearing check is `node --check`: V8's own parser reading the stripped script. A
+    comment scanner that mis-reads a string, a template literal or a regex nearly always leaves a
+    syntax error behind, and V8 is the one reader here that shares no code with the scanner.
+    ⚠️ It is not a proof of equivalence — see strip_for_host.py. The browser probe is.
+    """
+    b = balance_report(lean, kind)
+    bad = {k: v for k, v in b.items() if v != 0 and k != "comment_open_left"}
+    # a CSS file's own baseline is one unterminated /* in prose; after stripping there must be none
+    if b["comment_open_left"] != 0:
+        bad["comment_open_left"] = b["comment_open_left"]
+    if bad:
+        raise SystemExit("! strip damaged %s — unbalanced %s" % (rel, bad))
+    if not is_idempotent(raw, kind):
+        raise SystemExit("! strip of %s is not idempotent — the scanner mis-reads its own output" % rel)
+
+    scripts = []
+    if kind == "js":
+        scripts = [lean]
+    elif kind == "html":
+        # every inline block that is real script, JSON-LD and external src excluded
+        for m in re.finditer(r"<script([^>]*)>(.*?)</script>", lean, flags=re.S | re.I):
+            attrs, body = m.group(1).lower(), m.group(2)
+            if "json" in attrs or "src=" in attrs or not body.strip():
+                continue
+            scripts.append(body)
+    for s in scripts:
+        f = tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8")
+        f.write(s)
+        f.close()
+        try:
+            r = subprocess.run(["node", "--check", f.name], capture_output=True, text=True)
+        except FileNotFoundError:
+            CHECKED["node_missing"] = True
+            os_unlink(f.name)
+            return
+        os_unlink(f.name)
+        if r.returncode != 0:
+            raise SystemExit("! strip broke a script in %s:\n%s" % (rel, r.stderr[:900]))
+        CHECKED["node"] += 1
+    CHECKED[kind if kind != "js" else "node"] = CHECKED.get(kind, 0)
+
+
+def os_unlink(p):
+    try:
+        pathlib.Path(p).unlink()
+    except OSError:
+        pass
 
 # ⛔ Anything matching these never ships. `.src-*` holds the original photography (kept on
 #    purpose, never served); `harvest/` is the slab pipeline and its licensing notes.
@@ -79,15 +141,33 @@ def main() -> int:
     n = 0
     total = 0
     pages = 0
+    src_bytes = 0          # what the same files weigh in Website Demo, for the saving line
+    stripped = 0
     for p in sorted(HERE.rglob("*")):
         if p.is_dir() or not shippable(p):
             continue
         rel = p.relative_to(HERE)
         dest = OUT / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(p, dest)
+
+        # ⭐⭐⭐ THE COMMENTS COME OFF ON THE WAY OUT — 18 August 2026 (D315). 60.7% of the shipped
+        #     text was code comment: index.html 62%, site.css 71%, site.js 53%. They are the design
+        #     record and they stay in `Website Demo/` untouched; the host gets the code.
+        #     ⛔ SOURCE IS NEVER WRITTEN TO. This reads `p` and writes `dest`.
+        kind = {".html": "html", ".css": "css", ".js": "js"}.get(p.suffix.lower())
+        if kind:
+            raw = p.read_text(encoding="utf-8")
+            lean = STRIP[kind](raw)
+            _check_strip(rel, kind, raw, lean)
+            dest.write_text(lean, encoding="utf-8")
+            src_bytes += len(raw.encode("utf-8"))
+            stripped += 1
+        else:
+            shutil.copy2(p, dest)
+            src_bytes += p.stat().st_size
+
         n += 1
-        total += p.stat().st_size
+        total += dest.stat().st_size
         if p.suffix == ".html":
             pages += 1
 
@@ -96,7 +176,6 @@ def main() -> int:
     #    which is not byte-identical to the file it then writes, so hashing the file here printed
     #    a number that appears nowhere in the site and would send anyone checking on a false hunt.
     #    ⛔ The only useful figure is the one in view-source.
-    import re
     seen, sigs = set(), []
     for page in ("about/index.html", "stones/argento.html", "materials/quartz-worktops.html"):
         f = OUT / page
@@ -110,6 +189,15 @@ def main() -> int:
 
     print("upload/ written  —  %d files, %d HTML pages, %.1f MB" % (n, pages, total / 1048576))
     print("  htaccess included:", (OUT / ".htaccess").exists())
+    saved = src_bytes - total
+    print("  comments stripped from %d html/css/js files — %.1f MB of source became %.1f MB "
+          "on the host (%.1f MB, %.0f%% off)" % (stripped, src_bytes / 1048576, total / 1048576,
+                                                 saved / 1048576, 100 * saved / src_bytes))
+    if CHECKED["node_missing"]:
+        print("  ⚠️ node not found — the stripped scripts were NOT parse-checked")
+    else:
+        print("  ✅ node --check passed on %d stripped scripts; balance and idempotence passed on all"
+              % CHECKED["node"])
     print("\nthe versions this build serves (check one in view-source after uploading):")
     for s in sigs:
         print("   ", s)

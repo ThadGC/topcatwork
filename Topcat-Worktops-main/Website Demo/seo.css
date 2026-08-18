@@ -180,7 +180,14 @@
 }
 .sm-stone-col h3 .sm-count{color:var(--muted)}
 .sm-stone-col .rel a{font-size:13.5px;padding:.5rem 0}
-/* The generated footers carry the sitemap link inside .foot-legal, which is
+/* ⛔⛔ THIS RULE CURRENTLY MATCHES NOTHING AND IS KEPT ON PURPOSE — 18 Aug 2026 (D315).
+   No footer on any of the 176 pages puts `class="foot-sitemap"` on the Sitemap link any more, so
+   the link renders as faint small print like the rest of the legal sentence. ⚠️ THAT IS A
+   REGRESSION, NOT DEAD CSS: the rule below is the design and the HOOK is what went missing, so
+   deleting it would delete the evidence. The fix is one attribute in the footer builder
+   (`build_pages.py`, the `.foot-legal` sentence) — left for the client to rule on, because it
+   changes how 176 footers look and this round was a clean-up, not a redesign.
+   The generated footers carry the sitemap link inside .foot-legal, which is
    otherwise a sentence of small print, so the link needs to read as a link.
    ⚠️ Specificity: service.css already sets `.foot-legal a{color:var(--faint)}`
    (0,1,1) and seo.css loads after it, so a bare `.foot-sitemap` (0,1,0) loses.
