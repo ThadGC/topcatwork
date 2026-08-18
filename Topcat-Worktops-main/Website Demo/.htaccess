@@ -49,11 +49,25 @@
     Header set Cache-Control "public, max-age=3600"
   </FilesMatch>
 
+  # ---- The scroll film: a week, and it carries a hand-bumped ?v= -----------
+  # D310. `/assets/video/topcat-intro-1920.mp4` is 11.7 MB and it is the first
+  # thing a desktop visitor loads, so the one-hour window above would have them
+  # fetching it again every hour of a long session. It is named for its subject
+  # rather than its contents, exactly like the slab tiles, so it takes the same
+  # answer they do: a ?v= stamp written into index.html by hand.
+  # ⛔⛔ RE-ENCODE THE FILM AND BUMP `?v=` IN THE SAME EDIT — both the <source>
+  #    and the poster. A week of a stale film is the D289 failure again, and the
+  #    stamp is the only thing standing between the two.
+  <FilesMatch "\.(mp4|webm)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+
 </IfModule>
 
 # Correct types for the two the server may not know
 <IfModule mod_mime.c>
   AddType image/webp .webp
+  AddType video/mp4 .mp4
   AddType image/svg+xml .svg
 </IfModule>
 

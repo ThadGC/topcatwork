@@ -71,6 +71,8 @@ const TYPES = {
   '.jpeg':'image/jpeg',   '.webp':'image/webp', '.avif':'image/avif',
   '.mp4':'video/mp4',     '.webm':'video/webm', '.woff2':'font/woff2'
 };
+/* ⭐ D310: the types served with `Accept-Ranges` and a 206, streamed */
+const RANGEABLE = new Set(['.mp4','.webm','.mov']);
 
 /* Only text compresses usefully. ⚠️ Do NOT add jpg/webp/avif/mp4/woff2 here — they are
    already compressed, and running them through gzip costs CPU to make them very slightly
@@ -105,6 +107,38 @@ http.createServer((req, res) => {
      ⚠️ The example used to be /v2/, which no longer exists — the rule itself is generic and is
      what makes /stones/, /services/, /guides/ and the location folders resolve. */
   try { if (fs.statSync(file).isDirectory()) file = path.join(file, 'index.html'); } catch (e) {}
+
+  /* ── ⭐⭐ BYTE RANGES FOR VIDEO — 18 Aug 2026 (D310). ────────────────────────────────────────
+     The scroll film is an 11.7 MB MP4 the landing page seeks inside constantly, and this server
+     answered every request by reading the whole file and replying 200. Chrome tolerates that;
+     ⛔ **Safari will not seek a video at all unless the server can answer a `Range` with a 206**,
+     so a scrub verified here would have been verifying something production does not do — Apache
+     has served ranges since forever, and dev/prod divergence is the trap this file has been bitten
+     by before (the compression note below). Streamed rather than buffered: reading 11.7 MB into
+     memory per request to hand back 200 KB of it is the other half of the same mistake. */
+  if (RANGEABLE.has(path.extname(file).toLowerCase())) {
+    let st = null; try { st = fs.statSync(file); } catch (e) {}
+    if (st && st.isFile()) {
+      const type = TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream';
+      const m = req.headers.range && /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range).trim());
+      if (m) {
+        let start = m[1] === '' ? null : parseInt(m[1], 10);
+        let end   = m[2] === '' ? null : parseInt(m[2], 10);
+        if (start === null) { start = Math.max(0, st.size - (end || 0)); end = st.size - 1; }
+        if (end === null || end >= st.size) end = st.size - 1;
+        if (!(start >= 0) || start > end || start >= st.size) {
+          res.writeHead(416, { 'Content-Range': 'bytes */' + st.size }); res.end(); return;
+        }
+        res.writeHead(206, { 'Content-Type': type, 'Accept-Ranges': 'bytes',
+          'Content-Range': 'bytes ' + start + '-' + end + '/' + st.size,
+          'Content-Length': end - start + 1, 'Cache-Control': ASSET_CACHE });
+        fs.createReadStream(file, { start, end }).pipe(res); return;
+      }
+      res.writeHead(200, { 'Content-Type': type, 'Accept-Ranges': 'bytes',
+        'Content-Length': st.size, 'Cache-Control': ASSET_CACHE });
+      fs.createReadStream(file).pipe(res); return;
+    }
+  }
 
   fs.readFile(file, (err, buf) => {
     if (err) { res.writeHead(404, {'Content-Type':'text/plain'}); res.end('Not found: ' + rel); return; }

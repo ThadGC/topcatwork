@@ -32,3 +32,13 @@ Thumbs.db
 # developer to drag onto the host (D289). It is 77 MB of files that already
 # exist one directory up — a build artefact, not source.
 **/upload/
+
+# ─── The scroll film's 86 MB master ──────────────────────────────────────────
+# D310. `assets/video/topcat-intro-1920.mp4` is the 11.7 MB file the site
+# actually serves and it IS committed — the delivery flow is a clean clone plus
+# `make_upload.py`, so anything the site loads has to be in here.
+# The client's master (.mov, ProRes-sized, PCM audio) is kept beside the encode
+# script that made it, on disk, but NOT in git: GitHub warns past 50 MB and hard
+# blocks at 100, and a master nothing serves would be in every clone forever.
+# ⛔ Do not delete it — a re-cut needs the master, not the encode (D241's rule).
+**/assets/video/.src-*/*.mov

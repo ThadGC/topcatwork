@@ -4382,6 +4382,77 @@
   .hl > .hero-el{transform:translateY(116%);opacity:1}   /* the mask hides it — no fade needed */
   .hero.loaded .hl > .hero-el{transform:none}
   /* ============================================================================
+     ⭐⭐⭐ **THE SCROLL FILM — 18 August 2026 (D310). DESKTOP ONLY (≥1121px).**
+     Client, sending the 86 MB master: *"this video needs to tie to the scroll of the user. It's a
+     scroll animation, that plays through the video, then the end frame becomes the hero section of
+     the desktop website… just make sure it's tied to the user's scroll and it works."*
+
+     ⭐⭐⭐ **THERE IS NO SECOND SECTION, AND THAT IS THE WHOLE DESIGN.** The film is the HERO'S OWN
+     BACKDROP, so "the end frame becomes the hero" is true BY CONSTRUCTION: the film stops on its
+     last frame and the copy rises on it. ⛔⛔ **THE OBVIOUS ALTERNATIVE — a film section that hands
+     over to the hero photograph — CANNOT BE MADE SEAMLESS**, because `hero-night` is a brighter
+     grade of this same shot (measured: the still is visibly lifted against the film's last frame),
+     so a crossfade would read as a light coming on at the seam. ⭐ It IS the same shot: the hero's
+     own comment has said *"the intro animation's end frame is the backdrop"* since it was written.
+
+     ⭐⭐ **`.cine` IS A TALL BOX AND `#hero` IS `sticky` INSIDE IT.** The hero pins for the length of
+     the film and then unpins and scrolls away exactly as it does today — ⛔ no script positions
+     anything, and D97's peek of the next section survives untouched below it.
+     ⚠️⚠️ `html` and `main` carry `overflow-x:CLIP`, not `hidden` (line 136). **`clip` does not make a
+     scroll container and `hidden` does**, so sticky works here only because of that earlier choice.
+     Do not "tidy" either of them to `hidden` or the hero stops pinning.
+
+     ⚠️⚠️ **THE HEIGHT IS THE PACE, AND IT IS THE ONE NUMBER TO TUNE.** Travel is `--cineH − 100vh`
+     spread over the film's 44.25s, so **1000vh gives 900vh of travel ≈ 20vh of scroll per second of
+     film**, about nine screens end to end. Raise it for a slower, more deliberate scrub, lower it
+     for a brisk one. ⭐ **`--cineHold` KEEPS THE LAST 10% OF THE TRAVEL FOR THE HERO ITSELF** — the
+     film finishes with ≈90vh still to go, so the copy arrives and then holds for about one screen
+     before the section unpins. Without that hold the hero would arrive and leave in the same
+     instant. ⚠️ The scrub JS READS BOTH VALUES OFF THIS RULE, so this is the only place they live.
+
+     ⛔⛔ **PHONE AND TABLET ARE UNTOUCHED BY CONSTRUCTION** (§2 rule 15, and he said "desktop"): the
+     film is `display:none` at base scope and every other rule below sits inside the ≥1121 query, so
+     under 1121 this is a plain `<div>` wrapped round the hero it has always been.
+     ⚠️⚠️ **THE PHOTOGRAPH IS THE FALLBACK, NOT DECORATION, AND EVERY WAY OUT PUTS IT BACK.** The
+     still is hidden only while `html.cine-on` is present, and that class is set by one guard in the
+     `<head>` that requires desktop width, no `prefers-reduced-motion`, and a browser that can play
+     MP4 — so reduced motion, no JavaScript, an old browser and a video that 404s all land on
+     today's hero with the box collapsed to one screen. ⛔ **NEVER WRITE THIS AS A BARE
+     `.hero-bg img` RULE**: the SEO and project pages build `.hero-bg` too and load this stylesheet,
+     and an unscoped rule would blank the photograph on nineteen other pages.
+     ============================================================================ */
+  .cine{position:relative}
+  .hero-vid{display:none}
+  @media(min-width:1121px){
+    html.cine-on .cine{--cineH:1000vh;--cineHold:0.10;height:var(--cineH)}
+    html.cine-on .cine > #hero{position:sticky;top:0}
+    /* ⭐ BETWEEN THE PHOTOGRAPH AND `.hero-shade`, which is the reason nothing about the copy's
+       contrast has to be re-measured: D238's veil dresses the film and the still identically. */
+    html.cine-on .hero-vid{display:block;position:absolute;inset:0;z-index:0;
+      width:100%;height:100%;object-fit:cover;object-position:50% 50%;
+      transform:translateZ(0);pointer-events:none}
+    html.cine-on .cine .hero-bg img{opacity:0}
+    /* ⛔⛔⛔ **THE TITLE NEEDS ITS OWN HOLD, AND FINDING OUT WHY IS THE MEASUREMENT OF THIS ROUND.**
+       Every other piece of hero ink hides itself through `.hero-el`, which is `opacity:0` until
+       `.loaded`. The two title lines do NOT: they are `<span class="hero-el">` inside
+       `.hl`, `.hl > .hero-el` overrides them back to `opacity:1` and hides them with
+       `transform:translateY(116%)` behind the mask instead — and **a transform does not apply to a
+       non-replaced INLINE element**, which those spans are. Computed transform reads
+       `matrix(1,0,0,1,0,0)`, so the mask has never actually hidden anything.
+       ⭐ **THAT IS PRE-EXISTING AND HARMLESS UNTIL NOW**: `.loaded` has always landed two frames
+       after load, so nobody could see the two lines sitting still. Held back for a whole film they
+       are plainly visible, and the headline would have run across the quarry for nine screens.
+       ⛔ **THE FIX IS NOT `display:inline-block` ON THE SPANS.** That would make the mask reveal
+       real for the first time on a composition the client has frozen and D297 measured to 86.183px
+       of ink — a layout change dressed up as a bug fix. ⭐ `.hero-title` is a BLOCK, so it takes a
+       transform and an opacity of its own, film-scoped, and hands the element back untouched the
+       moment `.loaded` lands. ⚠️ 180ms is the first line's own `--hd`, so the order the client
+       approved is unchanged: title, then subtitle, then buttons, then chips. */
+    html.cine-on .cine .hero-title{
+      transition:opacity 1.15s var(--ease) 180ms,transform 1.15s var(--ease) 180ms}
+    html.cine-on .cine .hero:not(.loaded) .hero-title{opacity:0;transform:translateY(26px)}
+  }
+  /* ============================================================================
      ⭐ MOBILE HERO — 11 Aug 2026 (D92). MOBILE ONLY.
      ⛔ Desktop is frozen (D91, §2 rule 15), so every rule below lives inside this query and
      nothing above 720px moves. 720px is the hero's established mobile ceiling and it clears

@@ -5648,12 +5648,180 @@ if(faqIndex && panel && faqBody){
   window.addEventListener('resize',on);
 })();
 
+/* ---------- ⭐⭐⭐ THE SCROLL FILM: the hero's backdrop is scrubbed by the scroll (D310) ----------
+   Client: *"this video needs to tie to the scroll of the user… then the end frame becomes the hero
+   section of the desktop website."*
+
+   ⭐⭐⭐ **THE SCRUB IS EASED, AND THAT IS NOT A FLOURISH — IT IS WHAT MAKES IT SMOOTH.** Writing
+   `video.currentTime` straight off the scroll offset ties the picture to the wheel's own steps, and
+   a wheel arrives in 100px lurches: the film jumps in the same lurches. The playhead chases the
+   scroll instead, ~12% of the remaining distance each frame, so a flick lands as a glide and the
+   film keeps moving for a beat after the wheel stops. ⚠️ THE LOOP STOPS ITSELF once it has caught
+   up — there is no permanent rAF running behind the rest of the page.
+
+   ⛔⛔ **NEVER SEEK WHILE A SEEK IS IN FLIGHT.** A decoder given a new `currentTime` mid-seek drops
+   the first one, and on a fast scroll that reads as the film freezing and then snapping. `want`
+   holds the frame we actually want and the `seeked` handler drains it, so every seek completes and
+   the last one always wins. ⭐ Seeks smaller than half a frame are skipped outright — at 12fps the
+   decoder would be asked to do work no eye could see.
+
+   ⭐⭐ **THE FILE IS SHORT-GOP, NOT ALL-INTRA, AND THAT WAS MEASURED RATHER THAN ASSUMED.** The
+   usual advice for scrubbing is every frame a keyframe. Encoded that way this film needs **14.2 MB
+   to reach SSIM 0.979**; a keyframe every 8 frames with no B-frames reaches **0.991 in 11.7 MB** —
+   smaller AND visibly better, because an intra-only file spends its whole budget re-describing a
+   slow dolly. A seek then costs at most seven extra frame decodes, which is nothing at 1080p, and
+   `-refs 4` keeps the decoder's reference list short for the same reason.
+   ⚠️ **12fps, NOT 24 — and it is a scroll rate, not a frame rate.** Over 900vh of travel the film's
+   531 frames land one every ~15px of scroll, so the limit on smoothness is the wheel, not the file;
+   the halved frame count buys the bitrate that made crf 25 affordable.
+
+   ⚠️ **`--cineH` AND `--cineHold` ARE READ OFF THE STYLESHEET, NOT DECLARED HERE**, so the pace has
+   one description and it is next to the layout it controls.
+   ⛔ **THE HERO'S OWN ENTRANCE IS THE REVEAL** — this sets `.loaded`, the same class the hero has
+   always used, so the staged rise the client approved plays at the end of the film instead of at
+   page load. `window.__cineHold` is what tells the hero's IIFE below to leave that class alone.
+   ⚠️ Anything that goes wrong REMOVES `cine-on`, which hands the page straight back to the ordinary
+   hero: the stylesheet's film rules all hang off that one class. */
+(function(){
+  const root=document.documentElement;
+  const cine=document.getElementById('cine');
+  const vid=document.getElementById('heroVid');
+  const hero=document.getElementById('hero');
+  if(!cine||!vid||!hero)return;
+
+  /* ⛔⛔ **ELIGIBILITY IS TESTED HERE, NOT READ OFF `cine-on`, AND THAT IS DELIBERATE.** The head's
+     guard answers "should the FIRST PAINT be the film"; this answers "may this browser ever run
+     it". They differ on exactly one case and it is the one he will hit: a window loaded narrow and
+     then dragged wider than 1121. Reading the class would leave the scrub asleep while the
+     stylesheet built a 1000vh box for it — a page you can scroll for nine screens past a still
+     photograph. The band is owned by `sync()` below instead, in both directions. */
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+  if(reduce.matches||!vid.canPlayType('video/mp4')){ root.classList.remove('cine-on'); return; }
+  window.__cineHold=true;                 // the hero's IIFE below must not stage itself in on load
+
+  const FPS=12, DUR=44.25;                // the file's own rate and length, and the fallback
+  const EASE=0.12;                        // how hard the playhead chases the scroll
+  const INK_AT=0.93;                      // where in the FILM the copy starts to rise
+  const HALF=0.5/FPS;
+  const mq=matchMedia('(min-width:1121px)');
+
+  let hold=0.10, top=0, travel=1, dur=DUR;
+  let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false;
+  const clamp=v=>v<0?0:v>1?1:v;
+
+  /* the hero's staged entrance needs its hidden state to PAINT before the class lands, or the copy
+     simply appears — the same double-rAF the hero has always used, borrowed for the paths where
+     there is no film to reveal it */
+  const stage=()=>{ if(!hero.classList.contains('loaded'))
+    requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
+
+  function measure(){
+    const h=parseFloat(getComputedStyle(cine).getPropertyValue('--cineHold'));
+    if(h>0&&h<0.9)hold=h;
+    top=cine.getBoundingClientRect().top+window.scrollY;
+    travel=Math.max(1,cine.offsetHeight-window.innerHeight);
+  }
+  function fail(){
+    root.classList.remove('cine-on');
+    window.__cineHold=false;
+    stage();
+    if(raf)cancelAnimationFrame(raf);
+    raf=null;
+  }
+  vid.addEventListener('error',fail);
+
+  /* the seek queue: one in flight, one waiting, and the waiting one is always the newest */
+  function seek(){
+    if(vid.seeking){pending=true;return;}
+    pending=false;
+    const t=Math.min(want,Math.max(0,dur-HALF));
+    if(Math.abs(vid.currentTime-t)>HALF){ try{vid.currentTime=t;}catch(e){} }
+  }
+  vid.addEventListener('seeked',()=>{ if(pending)seek(); });
+
+  function ink(film){
+    const on=film>=INK_AT;
+    if(on===inked)return;
+    inked=on;
+    hero.classList.toggle('loaded',on);
+  }
+  function tick(){
+    raf=null;
+    if(eased<0)eased=target;
+    const d=target-eased;
+    eased+=d*EASE;
+    if(Math.abs(d)<0.0002)eased=target;
+    const film=clamp(eased/(1-hold));     // the hold at the end belongs to the hero, not the film
+    want=film*dur;
+    seek();
+    ink(film);
+    if(eased!==target)raf=requestAnimationFrame(tick);
+  }
+  const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
+
+  function onScroll(){
+    if(!mq.matches||!live)return;
+    target=clamp((window.scrollY-top)/travel);
+    kick();
+  }
+
+  /* ⭐ the fetch is asked for HERE and nowhere else, so a visitor who never reaches the desktop
+     band never pays for the film */
+  function fetchFilm(){
+    if(fetched)return; fetched=true;
+    const need=!vid.getAttribute('src');          // the in-place script above usually got there first
+    if(need){ if(vid.dataset.poster)vid.poster=vid.dataset.poster; vid.src=vid.dataset.src; }
+    if(vid.preload!=='auto')vid.preload='auto';
+    if(need){ try{ vid.load(); }catch(e){} }
+  }
+
+  /* ⭐⭐ ONE FUNCTION OWNS THE BAND, and it is idempotent so resize can call it freely */
+  function sync(){
+    if(!mq.matches){
+      root.classList.remove('cine-on');
+      window.__cineHold=false;
+      inked=null;
+      stage();                            // below 1121 the hero is the hero, exactly as before
+      return;
+    }
+    root.classList.add('cine-on');
+    window.__cineHold=true;
+    fetchFilm();
+    measure(); eased=-1; inked=null;
+    onScroll();
+  }
+
+  /* ⭐ the loop is only allowed to run while the film is on screen — below it the page has its own
+     scroll work to do and this one has nothing left to say */
+  if(window.IntersectionObserver){
+    new IntersectionObserver(es=>{ live=es[0].isIntersecting; if(live)onScroll(); }).observe(cine);
+  }
+  vid.addEventListener('loadedmetadata',()=>{
+    if(isFinite(vid.duration)&&vid.duration>1)dur=vid.duration;
+    /* ⚠️ ONE MUTED PLAY/PAUSE AT THE VERY TOP, AND ONLY THERE. Some engines will not paint a seek
+       on a video that has never played; two frames at scroll 0 is invisible, the same prime a
+       screen further down would be a visible twitch. */
+    if(window.scrollY<4){ const p=vid.play(); if(p&&p.then)p.then(()=>vid.pause()).catch(()=>{}); }
+    measure(); onScroll();
+  });
+
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',sync);
+  addEventListener('load',sync);
+  if(mq.addEventListener)mq.addEventListener('change',sync);
+  if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
+  sync();
+})();
+
 /* ---------- hero: staged entrance + a soft cursor drift on the photo ---------- */
 (function(){
   const hero=document.getElementById('hero'); if(!hero)return;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // double-rAF so the initial (hidden) states paint before the transitions run
-  requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded')));
+  /* ⚠️ D310: when the scroll film is running it owns this class — the staged entrance below is the
+     film's ending, not the page's opening, and adding it here would show the copy over the quarry
+     at scroll 0. `__cineHold` is set by the film's IIFE directly above, which runs first. */
+  if(!window.__cineHold)requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded')));
   if(reduce)return;
   /* parallax takes over only after the push-in settle has finished, and always re-states the
      settled scale — inline transforms override the class, so a mismatch would land as a jump */
