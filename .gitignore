@@ -48,3 +48,7 @@ Thumbs.db
 # .mov-only rule silently let 35 MB into a commit (caught at D317, before the push).
 **/assets/video/.src-*/*.mov
 **/assets/video/.src-*/*.mp4
+# ⚠️ AND BY NAME, NOT ONLY BY FOLDER: the 9:16 master was parked out of `.src-*` into a
+# `.reverted-*` folder at D318 and immediately fell back into the index. A master is a master
+# wherever it is filed.
+**/assets/video/.*/TC-FINAL-VIDEO-*

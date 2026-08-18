@@ -5610,13 +5610,11 @@ if(faqIndex && panel && faqBody){
   const HALF=0.5/FPS;
   /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
      is playing. All three are the same 44.25s at the same 12fps, so the scroll maths never changes.
-     ⭐ D316: THREE cuts, one per band, each at its band's own aspect (see the element's comment).
-     ⚠️ `Phone` is tested FIRST because the queries overlap — 390px matches both. */
-  const mPhone=matchMedia('(max-width:720px)');
+     ⭐ D318: back to TWO cuts — the narrow bands share D312's 4:5 crop again, so one query answers
+     both which file to attach and which story beats to use. */
   const mNarrow=matchMedia('(max-width:1120px)');
-  const bandKey=()=>mPhone.matches?'Phone':mNarrow.matches?'Tablet':'';
-  const wantSrc=()=>{const k=bandKey();return k?vid.dataset['src'+k]:vid.dataset.src;};
-  const wantPoster=()=>{const k=bandKey();return k?vid.dataset['poster'+k]:vid.dataset.poster;};
+  const wantSrc=()=>mNarrow.matches?vid.dataset.srcNarrow:vid.dataset.src;
+  const wantPoster=()=>mNarrow.matches?vid.dataset.posterNarrow:vid.dataset.poster;
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   /* ⭐ D313's sampler: one 24×1 read of the band the bar sits over, reused every tick. The canvas
@@ -5918,10 +5916,7 @@ if(faqIndex && panel && faqBody){
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',sync);
   addEventListener('load',sync);
-  /* ⚠️ BOTH queries, not just the outer one: a 700px window widened to 900px crosses 720 without
-     crossing 1120, and the phone cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
-  if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

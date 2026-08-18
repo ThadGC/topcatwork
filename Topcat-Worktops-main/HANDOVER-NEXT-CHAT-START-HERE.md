@@ -1,6 +1,6 @@
 # START HERE — 18 August 2026, after THE SCROLL FILM ROUND (D310–D314)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D317**)
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D310–D318**)
 and **§2** (the standing rules). That is about twenty minutes and it is enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, which is now
@@ -179,8 +179,8 @@ landscape-only framing nudge is one line.
 | File | What and why |
 |---|---|
 | `assets/video/topcat-intro-1920.mp4` | **11.7 MB.** 1920×1080, 12fps, **crf 25, keyframe every 8**, `-bf 0 -refs 4`. Desktop |
-| `assets/video/topcat-intro-864.mp4` | **5.0 MB.** The tablet cut, D312's 4:5 crop at x=680. 721–1120 |
-| `assets/video/topcat-intro-9x16-864.mp4` | **4.59 MB.** ⭐ THE CLIENT'S OWN 9:16 MASTER at 864×1536, crf 28. ≤720. ⛔ Not a crop |
+| `assets/video/topcat-intro-864.mp4` | **5.0 MB.** D312's 4:5 crop at x=680 — **≤1120, phone AND tablet** (D318 put the phone back on it) |
+| ⛔ *(withdrawn D318)* | His 9:16 master and its encode are parked in `assets/video/.reverted-2026-08-18-9x16/` — that folder is the ONLY copy of the master |
 | `…-poster.webp` / `…-864-poster.webp` | Each film's own first frame, 122 KB / 82 KB |
 | `assets/video/.src-2026-08-18/` | His 86 MB master + `encode.sh`. ⛔ **The master is `.gitignore`d** — GitHub warns past 50 MB — but it is ON DISK and must not be deleted |
 
@@ -222,7 +222,7 @@ This build serves:
 changed the source the hashes are taken from. ⭐ The file on the host is the STRIPPED copy and is
 deliberately not byte-identical to the hash's source, which was already true of `site.css`.
 
-1. Upload the **CONTENTS** of `upload/` into `public_html`. **635 files, 176 HTML pages, 81.2 MB** (was 676/98.4 MB before D315 stopped shipping unreferenced photography and stripped the comments).
+1. Upload the **CONTENTS** of `upload/` into `public_html`. **633 files, 176 HTML pages, 76.6 MB** (was 676/98.4 MB before D315 stopped shipping unreferenced photography and stripped the comments).
 2. ⚠️ **"SHOW HIDDEN FILES" ON** — `.htaccess` is the caching fix and most clients hide it.
 3. ⛔⛔ **FLUSH SITEGROUND'S DYNAMIC CACHE** (Site Tools → Speed → Caching). It sits in front of
    Apache and ignores `.htaccess` entirely.
@@ -479,7 +479,7 @@ it"* was a background whose brightness swings 247 levels inside one frame.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D317**. ⭐ §2s is SITE SPEED, a standing rule. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D318**. ⭐ §2s is SITE SPEED, a standing rule. §2 the standing rules, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
 | **`Website Demo/index.html`** | ⭐⭐ The whole landing design, inline `<style>` and three `<script>` blocks. Search `THE SCROLL FILM`, `THE VEIL COMES OFF`, `SKELETON`, `--cineH`, `hero-navgrade`, `THE WELD`, `SLAB_V`, `THE TABLET BAND` |
 | **`Website Demo/build_pages.py`** | ⭐⭐ The seven internal pages, `site.css`, `site.js`, **`footer.css` and `nav.css`**. ⚠️ **RUN IT FIRST** |
 | **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. ⚠️ Dot-prefixed folders no longer ship (D314), and **code comments are stripped on the way out** (D315) |

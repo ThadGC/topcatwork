@@ -8582,22 +8582,26 @@
     </svg>
     <div class="hero-bg" aria-hidden="true">
       <img src="/assets/site/hero-night-2752.webp" srcset="/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w" sizes="(max-width:720px) 1000px, 1739px" width="2752" height="1536" alt="" id="heroImg" draggable="false" fetchpriority="high" decoding="async">
-      <!-- ⭐⭐ **THE FILM — THREE OF THEM, ONE PER BAND, AND ⛔ ONLY ONE IS EVER FETCHED.**
-           ⭐⭐⭐ **THE PHONE HAS THE CLIENT'S OWN 9:16 MASTER** — 18 Aug 2026 (D317). He sent a
-           purpose-made vertical cut and asked for it on mobile only, with the tablet put back where
-           D312 had it:
-             ≤720      `topcat-intro-9x16-864.mp4`  864x1536, **4.59 MB** — HIS film, not a crop
-             721-1120  `topcat-intro-864.mp4`       864x1080, 5.0 MB — D312's 4:5 crop at x=680
-             ≥1121     `topcat-intro-1920.mp4`      1920x1080, 11.7 MB
-           ⚠️ All three are **44.250s at 12fps**, so the scroll maths and every story beat are the
-           same at every band and nothing had to be re-timed for the new file.
-           ⛔⛔ **THREE FILES COST NOTHING IN LOAD TIME BECAUSE A BAND FETCHES EXACTLY ONE** — the
-           in-place script below attaches one src during parse, and it is measured as zero requests
-           for the other two. ⭐ The phone's file is SMALLER than the crop it replaces (4.59 MB
-           against 5.0) and needs a **1.59x** upscale instead of **2.11x**. Site speed was not traded
-           away for the better picture; see §SPEED in HANDOVER.md.
-           ⚠️ D316's panned crops are reverted — `assets/video/.reverted-2026-08-18-pan/` keeps them
-           and keeps the arithmetic that explains why a 9:16 master beats any crop of a 16:9 one.
+      <!-- ⭐⭐ **THE FILM — TWO CUTS, AND ⛔ ONLY ONE IS EVER FETCHED.**
+           ⭐⭐⭐ **BACK TO D312's ARRANGEMENT — 18 Aug 2026 (D318).** Client: *"remove the new mobile
+           video I sent and revert it and take it back to what it was the first time we cropped the
+           full desktop video to work for mobile."* So the narrow bands share one 4:5 crop again:
+             ≤1120   `topcat-intro-864.mp4`    864x1080, 5.0 MB — D312's crop at x=680
+             ≥1121   `topcat-intro-1920.mp4`   1920x1080, 11.7 MB
+           ⚠️ Both are 44.250s at 12fps, so the scroll maths and every story beat are the same at
+           both bands. ⚠️ **THIS IS THE THIRD ARRANGEMENT IN ONE DAY AND THE FIRST ONE WON.** D316 cut
+           two panned windows (556 phone / 812 tablet); D317 replaced the phone's with his own 9:16
+           master and put the tablet back here; D318 puts the phone back too. Everything tried is on
+           disk — `.reverted-2026-08-18-pan/` (the panned cuts, `pan.py`, the arithmetic) and
+           `.reverted-2026-08-18-9x16/` (his vertical master and its measured encode table).
+           ⛔⛔ **THE 36% FINDING IS STILL TRUE AND IS THE ONE THING NOT TO LOSE**: on a 375x812 phone
+           the hero box is aspect 0.462, so `object-fit:cover` on this 0.8 file discards 36% of its
+           width, shows master x 835..1389 rather than the intended 680..1544, and upscales 2.11x.
+           That is the arrangement he has chosen — a deliberate choice now rather than an unnoticed
+           one, which is the only thing that changed about it.
+           ⛔ **TWO FILES COST NOTHING IN LOAD TIME BECAUSE A BAND FETCHES EXACTLY ONE** — the
+           in-place script below attaches one src during parse, measured as zero requests for the
+           other. See §2s in HANDOVER.md; site speed is a standing rule.
            ⛔⛔⛔ **`preload="none"` IS THE WHOLE REASON PHONES DO NOT PAY FOR THIS.** A `display:none`
            video still DOWNLOADS: CSS decides what is painted, `preload` decides what is fetched, and
            `auto` here would have posted 11.7 MB to every phone and tablet visitor for a film only
@@ -8616,10 +8620,8 @@
       <video class="hero-vid" id="heroVid" playsinline muted preload="none"
              data-src="/assets/video/topcat-intro-1920.mp4?v=1"
              data-poster="/assets/video/topcat-intro-poster.webp?v=1"
-             data-src-tablet="/assets/video/topcat-intro-864.mp4?v=1"
-             data-poster-tablet="/assets/video/topcat-intro-864-poster.webp?v=1"
-             data-src-phone="/assets/video/topcat-intro-9x16-864.mp4?v=1"
-             data-poster-phone="/assets/video/topcat-intro-9x16-864-poster.webp?v=1"
+             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=1"
+             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=1"
              width="1920" height="1080" aria-hidden="true" tabindex="-1"
              disablepictureinpicture disableremoteplayback></video>
       <!-- ⭐⭐ **THE FILM'S TWO HEAVY URLS ARE ATTACHED HERE, IN PLACE, AND THAT IS THE POINT.**
@@ -8638,11 +8640,9 @@
       <script>
       (function(){var v=document.getElementById('heroVid');
        if(!v||!document.documentElement.classList.contains('cine-on'))return;
-       var d=v.dataset;
-       var b=matchMedia('(max-width:720px)').matches?'Phone'
-            :matchMedia('(max-width:1120px)').matches?'Tablet':'';
-       v.poster=b?d['poster'+b]:d.poster; v.preload='auto';
-       v.src=b?d['src'+b]:d.src;})();
+       var n=matchMedia('(max-width:1120px)').matches;
+       v.poster=n?v.dataset.posterNarrow:v.dataset.poster; v.preload='auto';
+       v.src=n?v.dataset.srcNarrow:v.dataset.src;})();
       </script>
       <div class="hero-shade"></div>
       <!-- ⭐ D313: the film's own top grade. It carries the SAME `--navScrim` stops the hero's veil
@@ -15680,13 +15680,11 @@ if(faqIndex && panel && faqBody){
   const HALF=0.5/FPS;
   /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
      is playing. All three are the same 44.25s at the same 12fps, so the scroll maths never changes.
-     ⭐ D316: THREE cuts, one per band, each at its band's own aspect (see the element's comment).
-     ⚠️ `Phone` is tested FIRST because the queries overlap — 390px matches both. */
-  const mPhone=matchMedia('(max-width:720px)');
+     ⭐ D318: back to TWO cuts — the narrow bands share D312's 4:5 crop again, so one query answers
+     both which file to attach and which story beats to use. */
   const mNarrow=matchMedia('(max-width:1120px)');
-  const bandKey=()=>mPhone.matches?'Phone':mNarrow.matches?'Tablet':'';
-  const wantSrc=()=>{const k=bandKey();return k?vid.dataset['src'+k]:vid.dataset.src;};
-  const wantPoster=()=>{const k=bandKey();return k?vid.dataset['poster'+k]:vid.dataset.poster;};
+  const wantSrc=()=>mNarrow.matches?vid.dataset.srcNarrow:vid.dataset.src;
+  const wantPoster=()=>mNarrow.matches?vid.dataset.posterNarrow:vid.dataset.poster;
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   /* ⭐ D313's sampler: one 24×1 read of the band the bar sits over, reused every tick. The canvas
@@ -15988,10 +15986,7 @@ if(faqIndex && panel && faqBody){
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',sync);
   addEventListener('load',sync);
-  /* ⚠️ BOTH queries, not just the outer one: a 700px window widened to 900px crosses 720 without
-     crossing 1120, and the phone cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
-  if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();
