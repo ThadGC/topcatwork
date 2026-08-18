@@ -5616,7 +5616,13 @@ if(faqIndex && panel && faqBody){
 /* ---------- header: pours its glass in once you leave the top ---------- */
 (function(){
   const bar=document.getElementById('siteBar'); if(!bar)return;
-  const on=()=>bar.classList.toggle('scrolled',window.scrollY>40);
+  /* ⭐ D311: and it is poured from the first pixel while the scroll film is running. The film
+     opens on a daylight quarry with the hero's veil lifted off it, where a link over the white
+     marble measures 2.2:1; the bar's own glass takes the same pixel to 5.2:1 without putting
+     anything back over the picture. ⚠️ `cine-on` is only ever set on the desktop band, so nothing
+     below 1121 and nothing on any other page is touched by this clause. */
+  const on=()=>bar.classList.toggle('scrolled',
+    window.scrollY>40||document.documentElement.classList.contains('cine-on'));
   on();
   window.addEventListener('scroll',on,{passive:true});
 })();
@@ -5705,8 +5711,9 @@ if(faqIndex && panel && faqBody){
   const HALF=0.5/FPS;
   const mq=matchMedia('(min-width:1121px)');
 
-  let hold=0.10, top=0, travel=1, dur=DUR;
+  let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false;
+  let veiled=-1;
   const clamp=v=>v<0?0:v>1?1:v;
 
   /* the hero's staged entrance needs its hidden state to PAINT before the class lands, or the copy
@@ -5716,15 +5723,22 @@ if(faqIndex && panel && faqBody){
     requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
 
   function measure(){
-    const h=parseFloat(getComputedStyle(cine).getPropertyValue('--cineHold'));
+    const cs=getComputedStyle(cine);
+    const h=parseFloat(cs.getPropertyValue('--cineHold'));
     if(h>0&&h<0.9)hold=h;
+    const va=parseFloat(cs.getPropertyValue('--cineVeilAt'));
+    if(va>=0&&va<dur)veilAt=va;
+    const vm=parseFloat(cs.getPropertyValue('--cineVeilMin'));
+    if(vm>=0&&vm<=1)veilMin=vm;
     top=cine.getBoundingClientRect().top+window.scrollY;
     travel=Math.max(1,cine.offsetHeight-window.innerHeight);
   }
   function fail(){
     root.classList.remove('cine-on');
     window.__cineHold=false;
+    document.documentElement.style.removeProperty('--cineVeil');
     stage();
+    dispatchEvent(new Event('scroll'));
     if(raf)cancelAnimationFrame(raf);
     raf=null;
   }
@@ -5745,6 +5759,18 @@ if(faqIndex && panel && faqBody){
     inked=on;
     hero.classList.toggle('loaded',on);
   }
+  /* ⭐ D311: the veil is 0 across the film and rides in over the closing shot. Smoothstep rather
+     than linear, because "slowly fade in" is a curve that leaves 0 and lands on 1 with no slope at
+     either end — a linear ramp has a visible start. ⚠️ Written to two decimal places: a custom
+     property set every frame at full precision is a style recalculation for nothing. */
+  function veil(film){
+    const t=film*dur;
+    const k=clamp((t-veilAt)/Math.max(0.001,dur-veilAt));
+    const v=+(veilMin+(1-veilMin)*(k*k*(3-2*k))).toFixed(2);
+    if(v===veiled)return;
+    veiled=v;
+    document.documentElement.style.setProperty('--cineVeil',v);
+  }
   function tick(){
     raf=null;
     if(eased<0)eased=target;
@@ -5755,6 +5781,7 @@ if(faqIndex && panel && faqBody){
     want=film*dur;
     seek();
     ink(film);
+    veil(film);
     if(eased!==target)raf=requestAnimationFrame(tick);
   }
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
@@ -5780,15 +5807,22 @@ if(faqIndex && panel && faqBody){
     if(!mq.matches){
       root.classList.remove('cine-on');
       window.__cineHold=false;
-      inked=null;
+      inked=null; veiled=-1;
+      document.documentElement.style.removeProperty('--cineVeil');  // shade and bar both go back
       stage();                            // below 1121 the hero is the hero, exactly as before
+      dispatchEvent(new Event('scroll'));  // ⭐ the bar re-reads its own glass — D311's clause
       return;
     }
     root.classList.add('cine-on');
     window.__cineHold=true;
     fetchFilm();
-    measure(); eased=-1; inked=null;
+    measure(); eased=-1; inked=null; veiled=-1;
     onScroll();
+    /* ⛔ AND THE PAGE HAS TO BE TOLD, IN BOTH DIRECTIONS. A window dragged past 1121 turns the film
+       on from here, and the header's own IIFE only re-reads `cine-on` when it sees a scroll — so
+       without this the bar sat transparent over a daylight quarry, which is the exact fault the
+       plate above was measured to fix. Caught in a screenshot, not in the code. */
+    dispatchEvent(new Event('scroll'));
   }
 
   /* ⭐ the loop is only allowed to run while the film is on screen — below it the page has its own

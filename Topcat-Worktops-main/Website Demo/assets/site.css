@@ -228,8 +228,12 @@
     /* black-marble glass: the SAME stone as the page floor (--marbleBG), whispered in under
        the dark gradient so the scrolled bar reads as material, not a grey strip. One shared
        asset — no second marble scale, so it can't re-open the patchwork complaint. */
+    /* ⚠️ D311 MOVED THE TWO ALPHAS INTO VARIABLES AND CHANGED NEITHER. The scroll film runs a
+       daylight quarry under this bar with the hero's veil lifted off it, and the plate is what
+       carries the nav there — see the film's rule for the measurement. Everywhere else, and at the
+       end of the film, they resolve to the 0.82 / 0.64 they have always been. */
     background:
-      linear-gradient(rgba(8,8,10,0.82),rgba(8,8,10,0.64)),
+      linear-gradient(rgba(8,8,10,var(--barGlassA,0.82)),rgba(8,8,10,var(--barGlassB,0.64))),
       var(--marbleBG) center / cover no-repeat;
     -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
     opacity:0;transition:opacity .6s var(--ease);
@@ -4451,6 +4455,57 @@
     html.cine-on .cine .hero-title{
       transition:opacity 1.15s var(--ease) 180ms,transform 1.15s var(--ease) 180ms}
     html.cine-on .cine .hero:not(.loaded) .hero-title{opacity:0;transform:translateY(26px)}
+
+    /* ⭐⭐⭐ **THE VEIL COMES OFF THE FILM AND BACK ON FOR THE HERO — 18 August 2026 (D311).**
+       Client, on the first build: *"you still have the dark gradient over the whole animation. So
+       we should remove the dark gradient, and that dark gradient should only slowly fade in from
+       this frame in the screenshot onward. It starts at this one, and then as it moves into its
+       final position, the gradient or the dark overlay will then be there for the hero section."*
+       ⭐⭐ **THE VEIL IS FOR THE COPY, AND UNTIL THE COPY ARRIVES IT IS PAYING FOR MOST OF NOTHING.**
+       D238 tuned `.hero-shade` so a centred headline clears its background; over a film with no
+       words on it, the same layers are just 0.70 of black across his quarry. So the shade's OPACITY
+       is scrubbed with the film — held at a floor for the first six sevenths, then in over the
+       closing shot.
+       ⭐ **`--cineVeilMin` IS THE FLOOR, AND IT IS HIS SECOND INSTRUCTION**, sent while the first
+       build was on screen: *"add a very, very light dark gradient over all of the scenes, and then
+       the darker one can come in where I said I wanted it to come in."* At 0.20 the centred radial
+       composites to 0.14 of black rather than 0.70 — a grade, not a filter — and it keeps the film
+       inside the site's own dark register instead of punching a lit window through it.
+       ⛔⛔ **THE FRAME HE NAMED WAS MEASURED, NOT ESTIMATED.** His screenshot was reproduced in the
+       browser at its own 1.587 aspect and matched against the film second by second: the island's
+       top edge runs 0.335→0.74 of the frame at **t=38.0s** against 0.34→0.75 in his picture, and
+       t=40 is already 0.375→0.76 with the camera moved right. `--cineVeilAt:38` is that frame.
+       ⛔⛔ **AND THE HEADER THEN HAD TO CARRY ITSELF, WHICH WAS MEASURED, NOT ASSUMED.** The bar is
+       transparent glass until 40px of scroll, and the film OPENS on a daylight quarry: with the
+       shade at 0, the worst pixel behind the nav is **rgb(124,121,126)** and a link composites to
+       **2.2:1**, which is unreadable. ⛔ The obvious fix — keeping the shade's own nav scrim alive
+       on top of the film — is the very thing he asked to remove, a dark band across his picture.
+       ⭐ **THE BAR ALREADY OWNS A MATERIAL FOR EXACTLY THIS**: its `.scrolled` glass, 0.82→0.64 of
+       near-black on the site's stone under a 14px blur, which it pours the moment you leave the
+       top anyway. While the film is running the bar simply has it from the first pixel — **the same
+       worst pixel then measures 5.2:1** — and it costs the picture nothing, because the plate is
+       the bar's own 78.5px and not a gradient over the frame. That clause lives in the header's own
+       IIFE, which is the one thing that decides this class.
+       ⚠️ **THE RAMP IS A SMOOTHSTEP, NOT LINEAR** — "slowly fade in from this frame" is a curve
+       that leaves zero and arrives at one with no slope at either end, so neither the start nor the
+       settle has an edge you can find. The JS writes `--cineVeil`; this one rule reads it, and at
+       the end it is 1, which is today's hero untouched. */
+    html.cine-on .cine{--cineVeilAt:38;--cineVeilMin:0.20}
+    html.cine-on .cine .hero-shade{opacity:var(--cineVeil,1)}
+    /* ⭐⭐ **THE BAR'S PLATE THICKENS BY EXACTLY WHAT THE VEIL GAVE UP, AND IT IS MEASURED.** With
+       the veil at its 0.20 floor the worst pixel behind a nav link over the quarry composited to
+       **3.40:1**, against the site's own **4.76:1** on the finished hero — the picture got brighter
+       and nothing replaced what was taken off it. ⛔ Putting a scrim back over the top of the frame
+       is the one thing he asked to remove. ⭐ So the bar's own glass carries it: `1 − --cineVeil`
+       is the amount the veil has lifted, and the plate takes that much more density. At the end of
+       the film `--cineVeil` is 1, both terms are zero, and the plate is the 0.82 / 0.64 it has
+       always been — **the frozen bar is untouched at the only place it is frozen.**
+       ⚠️ `--cineVeil` is written on the ROOT, not on `.cine`, precisely so the header can read it:
+       the bar is a sibling of `<main>` and a property set inside `main` never reaches it. */
+    html.cine-on header.bar{
+      --barGlassA:calc(0.82 + 0.13 * (1 - var(--cineVeil,1)));
+      --barGlassB:calc(0.64 + 0.20 * (1 - var(--cineVeil,1)));
+    }
   }
   /* ============================================================================
      ⭐ MOBILE HERO — 11 Aug 2026 (D92). MOBILE ONLY.
