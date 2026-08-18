@@ -5709,7 +5709,9 @@ if(faqIndex && panel && faqBody){
   const EASE=0.12;                        // how hard the playhead chases the scroll
   const INK_AT=0.93;                      // where in the FILM the copy starts to rise
   const HALF=0.5/FPS;
-  const mq=matchMedia('(min-width:1121px)');
+  /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
+     is playing. Both are the same 44.25s at the same 12fps, so the scroll maths never changes. */
+  const narrow=matchMedia('(max-width:1120px)');
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false;
@@ -5787,32 +5789,31 @@ if(faqIndex && panel && faqBody){
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
 
   function onScroll(){
-    if(!mq.matches||!live)return;
+    if(!live)return;
     target=clamp((window.scrollY-top)/travel);
     kick();
   }
 
-  /* ⭐ the fetch is asked for HERE and nowhere else, so a visitor who never reaches the desktop
-     band never pays for the film */
+  /* ⭐ the fetch is asked for HERE and nowhere else, and it is also where the two cuts change over
+     — a rotation or a dragged window can cross 1120 long after the in-place script has run.
+     ⚠️ A swap costs a `load()` and the playhead, so it happens ONLY when the wanted file differs
+     from the one already attached; `fetched` on its own stopped being enough once there were two. */
   function fetchFilm(){
-    if(fetched)return; fetched=true;
-    const need=!vid.getAttribute('src');          // the in-place script above usually got there first
-    if(need){ if(vid.dataset.poster)vid.poster=vid.dataset.poster; vid.src=vid.dataset.src; }
-    if(vid.preload!=='auto')vid.preload='auto';
-    if(need){ try{ vid.load(); }catch(e){} }
+    const n=narrow.matches;
+    const src=n?vid.dataset.srcNarrow:vid.dataset.src;
+    const post=n?vid.dataset.posterNarrow:vid.dataset.poster;
+    const have=vid.getAttribute('src');
+    if(fetched&&have===src){ if(vid.preload!=='auto')vid.preload='auto'; return; }
+    fetched=true;
+    if(post)vid.poster=post;
+    vid.preload='auto';
+    if(have!==src){ vid.src=src; want=-1; try{ vid.load(); }catch(e){} }
   }
 
-  /* ⭐⭐ ONE FUNCTION OWNS THE BAND, and it is idempotent so resize can call it freely */
+  /* ⭐⭐ ONE FUNCTION OWNS THE STATE, and it is idempotent so resize may call it freely.
+     ⚠️ D312 DELETED ITS "not this band" BRANCH — there is no band without a film now, so the only
+     ways out are reduced motion, no MP4 and a file that errors, and each of those is `fail()`. */
   function sync(){
-    if(!mq.matches){
-      root.classList.remove('cine-on');
-      window.__cineHold=false;
-      inked=null; veiled=-1;
-      document.documentElement.style.removeProperty('--cineVeil');  // shade and bar both go back
-      stage();                            // below 1121 the hero is the hero, exactly as before
-      dispatchEvent(new Event('scroll'));  // ⭐ the bar re-reads its own glass — D311's clause
-      return;
-    }
     root.classList.add('cine-on');
     window.__cineHold=true;
     fetchFilm();
@@ -5842,7 +5843,7 @@ if(faqIndex && panel && faqBody){
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',sync);
   addEventListener('load',sync);
-  if(mq.addEventListener)mq.addEventListener('change',sync);
+  if(narrow.addEventListener)narrow.addEventListener('change',sync);
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

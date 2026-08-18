@@ -4447,87 +4447,110 @@
      `.hero-bg img` RULE**: the SEO and project pages build `.hero-bg` too and load this stylesheet,
      and an unscoped rule would blank the photograph on nineteen other pages.
      ============================================================================ */
+  /* ============================================================================
+     ⭐⭐⭐ **THE FILM REACHES THE PHONE AND THE TABLET — 18 August 2026 (D312), AND IT IS A
+     DIFFERENT CUT OF THE FILM, NOT THE SAME ONE SQUEEZED.** Client: *"remember that you can just
+     crop the video for mobile and tablet and then adjust the sizing so that this video still works
+     perfectly for mobile and tablet even if it's cropped."*
+     ⛔⛔ **`object-fit:cover` ON THE 16:9 MASTER WAS THE LAZY READING AND IT IS BAD ARITHMETIC.** A
+     390×660 hero is 0.59; covering a 1.78 film into it throws away **67% of the width** and then
+     blows the surviving third up to 1170 device pixels — a **2.7× upscale of a third of his
+     picture**. Cutting a 4:5 frame out of the master instead shows **all 864px** across the same
+     1170, a 1.35× upscale, and keeps a composition somebody chose.
+     ⭐⭐ **THE CROP IS x=680, NOT THE CENTRE, AND THE LAST FRAME CHOSE IT.** That frame becomes the
+     phone's hero, so four offsets were cut and looked at at the shipped size: 380 cuts the island's
+     right edge and hands the frame to the sofa; 528 (dead centre) is balanced but slack; **680 puts
+     the marble island and its three pendants in the middle of the frame with the city behind it**;
+     830 drags in the tall units and reads busy. The whole film was then re-checked at 680 — the
+     quarry wall fills it, the slab stays inside the frame for the entire fly-in, and the kitchen
+     builds around the island. ⚠️ 864×1080 out of 1920×1080: the master's own height, so nothing is
+     upscaled in the encode.
+     ⛔ **THE HERO TAKES 100vh WHILE THE FILM RUNS, AND THAT IS NOT COSMETIC.** The phone's hero is
+     `max(90vh,…)`, so at 390×844 it is 759.6 tall — pinned at the top of an 844 viewport it would
+     leave **84px of bare page floor** under it for the whole film. ⭐ The centring is unharmed:
+     `.hero` centres `.hero-inner`, and D303's relation is a DIFFERENCE of two paddings, both
+     viewport-led, so a taller box grows both gaps equally and the composition stays where he put
+     it. ⚠️ **WHAT IT DOES COST IS D97's PEEK** of the next section, for the length of the film —
+     there is no next section to peek at while the hero is the screen.
+     ⚠️ **THE PACE IS PER BAND: A THUMB IS NOT A WHEEL.** 1000vh of travel is a long way on a
+     handset, so it shortens as the screen does. ⛔ Everything else — the hold, the veil floor, the
+     frame the veil starts on — is the same number at every band, because each is a property of the
+     FILM and not of the screen.
+     ============================================================================ */
   .cine{position:relative}
   .hero-vid{display:none}
-  @media(min-width:1121px){
-    html.cine-on .cine{--cineH:1000vh;--cineHold:0.10;height:var(--cineH)}
-    html.cine-on .cine > #hero{position:sticky;top:0}
-    /* ⭐ BETWEEN THE PHOTOGRAPH AND `.hero-shade`, which is the reason nothing about the copy's
-       contrast has to be re-measured: D238's veil dresses the film and the still identically. */
-    html.cine-on .hero-vid{display:block;position:absolute;inset:0;z-index:0;
-      width:100%;height:100%;object-fit:cover;object-position:50% 50%;
-      transform:translateZ(0);pointer-events:none}
-    html.cine-on .cine .hero-bg img{opacity:0}
-    /* ⛔⛔⛔ **THE TITLE NEEDS ITS OWN HOLD, AND FINDING OUT WHY IS THE MEASUREMENT OF THIS ROUND.**
-       Every other piece of hero ink hides itself through `.hero-el`, which is `opacity:0` until
-       `.loaded`. The two title lines do NOT: they are `<span class="hero-el">` inside
-       `.hl`, `.hl > .hero-el` overrides them back to `opacity:1` and hides them with
-       `transform:translateY(116%)` behind the mask instead — and **a transform does not apply to a
-       non-replaced INLINE element**, which those spans are. Computed transform reads
-       `matrix(1,0,0,1,0,0)`, so the mask has never actually hidden anything.
-       ⭐ **THAT IS PRE-EXISTING AND HARMLESS UNTIL NOW**: `.loaded` has always landed two frames
-       after load, so nobody could see the two lines sitting still. Held back for a whole film they
-       are plainly visible, and the headline would have run across the quarry for nine screens.
-       ⛔ **THE FIX IS NOT `display:inline-block` ON THE SPANS.** That would make the mask reveal
-       real for the first time on a composition the client has frozen and D297 measured to 86.183px
-       of ink — a layout change dressed up as a bug fix. ⭐ `.hero-title` is a BLOCK, so it takes a
-       transform and an opacity of its own, film-scoped, and hands the element back untouched the
-       moment `.loaded` lands. ⚠️ 180ms is the first line's own `--hd`, so the order the client
-       approved is unchanged: title, then subtitle, then buttons, then chips. */
-    html.cine-on .cine .hero-title{
-      transition:opacity 1.15s var(--ease) 180ms,transform 1.15s var(--ease) 180ms}
-    html.cine-on .cine .hero:not(.loaded) .hero-title{opacity:0;transform:translateY(26px)}
+  html.cine-on .cine{--cineH:1000vh;--cineHold:0.10;--cineVeilAt:38;--cineVeilMin:0.20;
+    height:var(--cineH)}
+  @media(max-width:1120px){
+    html.cine-on .cine{--cineH:800vh}
+    html.cine-on .cine > #hero{min-height:100vh}
+  }
+  @media(max-width:720px){html.cine-on .cine{--cineH:700vh}}
+  html.cine-on .cine > #hero{position:sticky;top:0}
+  /* ⭐ BETWEEN THE PHOTOGRAPH AND `.hero-shade`, which is the reason nothing about the copy's
+     contrast has to be re-measured: D238's veil dresses the film and the still identically. */
+  html.cine-on .hero-vid{display:block;position:absolute;inset:0;z-index:0;
+    width:100%;height:100%;object-fit:cover;object-position:50% 50%;
+    transform:translateZ(0);pointer-events:none}
+  html.cine-on .cine .hero-bg img{opacity:0}
+  /* ⛔⛔⛔ **THE TITLE NEEDS ITS OWN HOLD, AND FINDING OUT WHY IS THE MEASUREMENT OF THIS ROUND.**
+     Every other piece of hero ink hides itself through `.hero-el`, which is `opacity:0` until
+     `.loaded`. The two title lines do NOT: they are `<span class="hero-el">` inside `.hl`,
+     `.hl > .hero-el` overrides them back to `opacity:1` and hides them with
+     `transform:translateY(116%)` behind the mask instead — and **a transform does not apply to a
+     non-replaced INLINE element**, which those spans are. Computed transform reads
+     `matrix(1,0,0,1,0,0)`, so the mask has never actually hidden anything.
+     ⭐ **THAT IS PRE-EXISTING AND HARMLESS UNTIL NOW**: `.loaded` has always landed two frames after
+     load, so nobody could see the two lines sitting still. Held back for a whole film they are
+     plainly visible, and the headline would have run across the quarry for nine screens.
+     ⛔ **THE FIX IS NOT `display:inline-block` ON THE SPANS.** That would make the mask reveal real
+     for the first time on a composition the client has frozen and D297 measured to 86.183px of ink
+     — a layout change dressed up as a bug fix. ⭐ `.hero-title` is a BLOCK, so it takes a transform
+     and an opacity of its own, film-scoped, and hands the element back untouched the moment
+     `.loaded` lands. ⚠️ 180ms is the first line's own `--hd`, so the order the client approved is
+     unchanged: title, then subtitle, then buttons, then chips. */
+  html.cine-on .cine .hero-title{
+    transition:opacity 1.15s var(--ease) 180ms,transform 1.15s var(--ease) 180ms}
+  html.cine-on .cine .hero:not(.loaded) .hero-title{opacity:0;transform:translateY(26px)}
 
-    /* ⭐⭐⭐ **THE VEIL COMES OFF THE FILM AND BACK ON FOR THE HERO — 18 August 2026 (D311).**
-       Client, on the first build: *"you still have the dark gradient over the whole animation. So
-       we should remove the dark gradient, and that dark gradient should only slowly fade in from
-       this frame in the screenshot onward. It starts at this one, and then as it moves into its
-       final position, the gradient or the dark overlay will then be there for the hero section."*
-       ⭐⭐ **THE VEIL IS FOR THE COPY, AND UNTIL THE COPY ARRIVES IT IS PAYING FOR MOST OF NOTHING.**
-       D238 tuned `.hero-shade` so a centred headline clears its background; over a film with no
-       words on it, the same layers are just 0.70 of black across his quarry. So the shade's OPACITY
-       is scrubbed with the film — held at a floor for the first six sevenths, then in over the
-       closing shot.
-       ⭐ **`--cineVeilMin` IS THE FLOOR, AND IT IS HIS SECOND INSTRUCTION**, sent while the first
-       build was on screen: *"add a very, very light dark gradient over all of the scenes, and then
-       the darker one can come in where I said I wanted it to come in."* At 0.20 the centred radial
-       composites to 0.14 of black rather than 0.70 — a grade, not a filter — and it keeps the film
-       inside the site's own dark register instead of punching a lit window through it.
-       ⛔⛔ **THE FRAME HE NAMED WAS MEASURED, NOT ESTIMATED.** His screenshot was reproduced in the
-       browser at its own 1.587 aspect and matched against the film second by second: the island's
-       top edge runs 0.335→0.74 of the frame at **t=38.0s** against 0.34→0.75 in his picture, and
-       t=40 is already 0.375→0.76 with the camera moved right. `--cineVeilAt:38` is that frame.
-       ⛔⛔ **AND THE HEADER THEN HAD TO CARRY ITSELF, WHICH WAS MEASURED, NOT ASSUMED.** The bar is
-       transparent glass until 40px of scroll, and the film OPENS on a daylight quarry: with the
-       shade at 0, the worst pixel behind the nav is **rgb(124,121,126)** and a link composites to
-       **2.2:1**, which is unreadable. ⛔ The obvious fix — keeping the shade's own nav scrim alive
-       on top of the film — is the very thing he asked to remove, a dark band across his picture.
-       ⭐ **THE BAR ALREADY OWNS A MATERIAL FOR EXACTLY THIS**: its `.scrolled` glass, 0.82→0.64 of
-       near-black on the site's stone under a 14px blur, which it pours the moment you leave the
-       top anyway. While the film is running the bar simply has it from the first pixel — **the same
-       worst pixel then measures 5.2:1** — and it costs the picture nothing, because the plate is
-       the bar's own 78.5px and not a gradient over the frame. That clause lives in the header's own
-       IIFE, which is the one thing that decides this class.
-       ⚠️ **THE RAMP IS A SMOOTHSTEP, NOT LINEAR** — "slowly fade in from this frame" is a curve
-       that leaves zero and arrives at one with no slope at either end, so neither the start nor the
-       settle has an edge you can find. The JS writes `--cineVeil`; this one rule reads it, and at
-       the end it is 1, which is today's hero untouched. */
-    html.cine-on .cine{--cineVeilAt:38;--cineVeilMin:0.20}
-    html.cine-on .cine .hero-shade{opacity:var(--cineVeil,1)}
-    /* ⭐⭐ **THE BAR'S PLATE THICKENS BY EXACTLY WHAT THE VEIL GAVE UP, AND IT IS MEASURED.** With
-       the veil at its 0.20 floor the worst pixel behind a nav link over the quarry composited to
-       **3.40:1**, against the site's own **4.76:1** on the finished hero — the picture got brighter
-       and nothing replaced what was taken off it. ⛔ Putting a scrim back over the top of the frame
-       is the one thing he asked to remove. ⭐ So the bar's own glass carries it: `1 − --cineVeil`
-       is the amount the veil has lifted, and the plate takes that much more density. At the end of
-       the film `--cineVeil` is 1, both terms are zero, and the plate is the 0.82 / 0.64 it has
-       always been — **the frozen bar is untouched at the only place it is frozen.**
-       ⚠️ `--cineVeil` is written on the ROOT, not on `.cine`, precisely so the header can read it:
-       the bar is a sibling of `<main>` and a property set inside `main` never reaches it. */
-    html.cine-on header.bar{
-      --barGlassA:calc(0.82 + 0.13 * (1 - var(--cineVeil,1)));
-      --barGlassB:calc(0.64 + 0.20 * (1 - var(--cineVeil,1)));
-    }
+  /* ⭐⭐⭐ **THE VEIL COMES OFF THE FILM AND BACK ON FOR THE HERO — 18 August 2026 (D311).**
+     Client, on the first build: *"you still have the dark gradient over the whole animation. So we
+     should remove the dark gradient, and that dark gradient should only slowly fade in from this
+     frame in the screenshot onward. It starts at this one, and then as it moves into its final
+     position, the gradient or the dark overlay will then be there for the hero section."*
+     ⭐⭐ **THE VEIL IS FOR THE COPY, AND UNTIL THE COPY ARRIVES IT IS PAYING FOR MOST OF NOTHING.**
+     D238 tuned `.hero-shade` so a centred headline clears its background; over a film with no words
+     on it, the same layers are just 0.70 of black across his quarry. So the shade's OPACITY is
+     scrubbed with the film — held at a floor for the first six sevenths, then in over the closing
+     shot.
+     ⭐ **`--cineVeilMin` IS THE FLOOR, AND IT IS HIS SECOND INSTRUCTION**, sent while the first
+     build was on screen: *"add a very, very light dark gradient over all of the scenes, and then
+     the darker one can come in where I said I wanted it to come in."* At 0.20 the centred radial
+     composites to 0.14 of black rather than 0.70 — a grade, not a filter — and it keeps the film
+     inside the site's own dark register instead of punching a lit window through it.
+     ⛔⛔ **THE FRAME HE NAMED WAS MEASURED, NOT ESTIMATED.** His screenshot was reproduced in the
+     browser at its own 1.587 aspect and matched against the film second by second: the island's top
+     edge runs 0.335→0.74 of the frame at **t=38.0s** against 0.34→0.75 in his picture, and t=40 is
+     already 0.375→0.76 with the camera moved right. `--cineVeilAt:38` is that frame.
+     ⛔⛔ **AND THE HEADER THEN HAD TO CARRY ITSELF, WHICH WAS MEASURED, NOT ASSUMED.** The bar is
+     transparent glass until 40px of scroll, and the film OPENS on a daylight quarry: with the shade
+     at its floor, the worst pixel behind a nav link composites to **3.40:1**, against the site's own
+     **4.76:1** on the finished hero. ⛔ The obvious fix — keeping the shade's nav scrim alive on top
+     of the film — is the very thing he asked to remove, a dark band across his picture.
+     ⭐ **THE BAR ALREADY OWNS A MATERIAL FOR EXACTLY THIS**: its `.scrolled` glass, 0.82→0.64 of
+     near-black on the site's stone under a 14px blur, which it pours the moment you leave the top
+     anyway. While the film runs the bar has it from the first pixel AND its plate thickens by
+     exactly what the veil gave up — `1 − --cineVeil` — so the same worst pixel measures **4.74 to
+     5.67 right through the film** and **4.76 at the hero with the plate back to its own numbers**.
+     ⚠️ `--cineVeil` is written on the ROOT, not on `.cine`, precisely so the header can read it: the
+     bar is a sibling of `<main>` and a property set inside `main` never reaches it.
+     ⚠️ **THE RAMP IS A SMOOTHSTEP, NOT LINEAR** — "slowly fade in from this frame" is a curve that
+     leaves zero and arrives at one with no slope at either end, so neither the start nor the settle
+     has an edge you can find. */
+  html.cine-on .cine .hero-shade{opacity:var(--cineVeil,1)}
+  html.cine-on header.bar{
+    --barGlassA:calc(0.82 + 0.13 * (1 - var(--cineVeil,1)));
+    --barGlassB:calc(0.64 + 0.20 * (1 - var(--cineVeil,1)));
   }
   /* ============================================================================
      ⭐ MOBILE HERO — 11 Aug 2026 (D92). MOBILE ONLY.
@@ -8152,13 +8175,13 @@
      painted would show one frame of the ordinary hero and then swap it, which is exactly the flash
      the site avoids everywhere else.
      ⭐ **EVERY CONDITION IS A REASON TO STAY ON TODAY'S PAGE, NOT A FEATURE TEST FOR ITS OWN SAKE.**
-     No JavaScript, a narrow window, a visitor who asked for reduced motion, or a browser with no
-     MP4 all fall through and get the hero photograph, because the stylesheet's film rules all hang
-     off this one class. ⚠️ 1121 is the site's own desktop floor (§8), not a new number. -->
+     No JavaScript, a visitor who asked for reduced motion, or a browser with no MP4 all fall
+     through and get the hero photograph, because the stylesheet's film rules all hang off this one
+     class. ⚠️ **D312 TOOK THE WIDTH TEST OUT** — the film runs at every band now, and WHICH cut of
+     it plays is a separate question answered next to the video itself. -->
 <script>
 (function(){try{
   if(!window.matchMedia)return;
-  if(!matchMedia('(min-width:1121px)').matches)return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   if(!document.createElement('video').canPlayType('video/mp4'))return;
   document.documentElement.classList.add('cine-on');
@@ -8473,6 +8496,8 @@
       <video class="hero-vid" id="heroVid" playsinline muted preload="none"
              data-src="/assets/video/topcat-intro-1920.mp4?v=1"
              data-poster="/assets/video/topcat-intro-poster.webp?v=1"
+             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=1"
+             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=1"
              width="1920" height="1080" aria-hidden="true" tabindex="-1"
              disablepictureinpicture disableremoteplayback></video>
       <!-- ⭐⭐ **THE FILM'S TWO HEAVY URLS ARE ATTACHED HERE, IN PLACE, AND THAT IS THE POINT.**
@@ -8482,12 +8507,16 @@
            desktop shows. ⭐ This runs DURING PARSE, so on the desktop band the fetch starts exactly
            as early as an attribute would have started it, and the poster is on screen before the
            first frame decodes — there is no gap and nothing to swap.
-           ⚠️ `cine-on` is the head's own decision and nothing here re-derives it. ⚠️ A window
-           dragged past 1121 after load is handled by `fetchFilm()` in the scrub instead. -->
+           ⚠️ `cine-on` is the head's own decision and nothing here re-derives it. ⭐ **THE ONE
+           THING IT DOES DECIDE IS WHICH CUT** (D312): the 16:9 master above 1120, the 4:5 crop at
+           or below it. ⚠️ A window dragged across 1120 after load is handled by `fetchFilm()` in
+           the scrub, which swaps the source and re-seeks. -->
       <script>
       (function(){var v=document.getElementById('heroVid');
        if(!v||!document.documentElement.classList.contains('cine-on'))return;
-       v.poster=v.dataset.poster; v.preload='auto'; v.src=v.dataset.src;})();
+       var n=matchMedia('(max-width:1120px)').matches;
+       v.poster=n?v.dataset.posterNarrow:v.dataset.poster; v.preload='auto';
+       v.src=n?v.dataset.srcNarrow:v.dataset.src;})();
       </script>
       <div class="hero-shade"></div>
     </div>
@@ -15574,7 +15603,9 @@ if(faqIndex && panel && faqBody){
   const EASE=0.12;                        // how hard the playhead chases the scroll
   const INK_AT=0.93;                      // where in the FILM the copy starts to rise
   const HALF=0.5/FPS;
-  const mq=matchMedia('(min-width:1121px)');
+  /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
+     is playing. Both are the same 44.25s at the same 12fps, so the scroll maths never changes. */
+  const narrow=matchMedia('(max-width:1120px)');
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false;
@@ -15652,32 +15683,31 @@ if(faqIndex && panel && faqBody){
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
 
   function onScroll(){
-    if(!mq.matches||!live)return;
+    if(!live)return;
     target=clamp((window.scrollY-top)/travel);
     kick();
   }
 
-  /* ⭐ the fetch is asked for HERE and nowhere else, so a visitor who never reaches the desktop
-     band never pays for the film */
+  /* ⭐ the fetch is asked for HERE and nowhere else, and it is also where the two cuts change over
+     — a rotation or a dragged window can cross 1120 long after the in-place script has run.
+     ⚠️ A swap costs a `load()` and the playhead, so it happens ONLY when the wanted file differs
+     from the one already attached; `fetched` on its own stopped being enough once there were two. */
   function fetchFilm(){
-    if(fetched)return; fetched=true;
-    const need=!vid.getAttribute('src');          // the in-place script above usually got there first
-    if(need){ if(vid.dataset.poster)vid.poster=vid.dataset.poster; vid.src=vid.dataset.src; }
-    if(vid.preload!=='auto')vid.preload='auto';
-    if(need){ try{ vid.load(); }catch(e){} }
+    const n=narrow.matches;
+    const src=n?vid.dataset.srcNarrow:vid.dataset.src;
+    const post=n?vid.dataset.posterNarrow:vid.dataset.poster;
+    const have=vid.getAttribute('src');
+    if(fetched&&have===src){ if(vid.preload!=='auto')vid.preload='auto'; return; }
+    fetched=true;
+    if(post)vid.poster=post;
+    vid.preload='auto';
+    if(have!==src){ vid.src=src; want=-1; try{ vid.load(); }catch(e){} }
   }
 
-  /* ⭐⭐ ONE FUNCTION OWNS THE BAND, and it is idempotent so resize can call it freely */
+  /* ⭐⭐ ONE FUNCTION OWNS THE STATE, and it is idempotent so resize may call it freely.
+     ⚠️ D312 DELETED ITS "not this band" BRANCH — there is no band without a film now, so the only
+     ways out are reduced motion, no MP4 and a file that errors, and each of those is `fail()`. */
   function sync(){
-    if(!mq.matches){
-      root.classList.remove('cine-on');
-      window.__cineHold=false;
-      inked=null; veiled=-1;
-      document.documentElement.style.removeProperty('--cineVeil');  // shade and bar both go back
-      stage();                            // below 1121 the hero is the hero, exactly as before
-      dispatchEvent(new Event('scroll'));  // ⭐ the bar re-reads its own glass — D311's clause
-      return;
-    }
     root.classList.add('cine-on');
     window.__cineHold=true;
     fetchFilm();
@@ -15707,7 +15737,7 @@ if(faqIndex && panel && faqBody){
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',sync);
   addEventListener('load',sync);
-  if(mq.addEventListener)mq.addEventListener('change',sync);
+  if(narrow.addEventListener)narrow.addEventListener('change',sync);
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

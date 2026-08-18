@@ -36,4 +36,25 @@ ffmpeg -y -i "$SRC" -an -sn -dn -map 0:v:0 \
 ffmpeg -y -v error -i "$OUT" -frames:v 1 -vf "scale=1400:-2:flags=lanczos" /tmp/introposter.png
 python3 -c "from PIL import Image; Image.open('/tmp/introposter.png').convert('RGB').save('../topcat-intro-poster.webp','WEBP',quality=80,method=6)"
 
-ffprobe -v error -show_entries format=duration,size -show_entries stream=width,height,nb_frames -of default=noprint_wrappers=1 "$OUT"
+
+# ── D312: the phone and tablet cut ──────────────────────────────────────────
+# ⛔ NOT the same file scaled. A 390x660 hero is 0.59 and this film is 1.78, so
+# `object-fit:cover` would throw away 67% of the width and then blow the rest up
+# 2.7x. A 4:5 frame cut out of the master shows all 864px across the same 1170.
+# ⭐ x=680, NOT the centre: the last frame becomes the phone's hero, and of the
+# four offsets cut and looked at at the shipped size, 680 is the one that puts
+# the island and its three pendants in the middle of the frame. crf 26 because
+# the phone upscales it ~1.35x anyway (5.0 MB at SSIM 0.9893; crf 25 costs
+# another 0.75 MB for 0.001).
+NARROW="../topcat-intro-864.mp4"
+ffmpeg -y -i "$SRC" -an -sn -dn -map 0:v:0 \
+  -vf "fps=12,crop=864:1080:680:0" \
+  -c:v libx264 -crf 26 -preset veryslow -g 8 -bf 0 -refs 4 \
+  -pix_fmt yuv420p -profile:v high -level 4.0 \
+  -write_tmcd 0 -movflags +faststart "$NARROW"
+ffmpeg -y -v error -i "$NARROW" -frames:v 1 /tmp/introposter864.png
+python3 -c "from PIL import Image; Image.open('/tmp/introposter864.png').convert('RGB').save('../topcat-intro-864-poster.webp','WEBP',quality=80,method=6)"
+
+for f in "$OUT" "$NARROW"; do
+  ffprobe -v error -show_entries format=duration,size -show_entries stream=width,height,nb_frames -of default=noprint_wrappers=1 "$f"
+done
