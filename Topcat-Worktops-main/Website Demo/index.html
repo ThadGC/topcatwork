@@ -15820,10 +15820,43 @@ if(faqIndex && panel && faqBody){
      ⛔ **BELOW 1121 THERE IS NO TRACK AT ALL** and `SEGS` stays empty, so `filmAt()` falls through
      to the linear map the phone and tablet have always had. He said desktop; this is desktop. */
   const VH_PER_SEC=22.6;                  // screens of scroll per second of film, during travel
-  const HOLDS=[...document.querySelectorAll('.cine-plates .plate')].map(el=>({
-    el, t:+el.dataset.t, src:el.dataset.src, dwellVh:130, o:-1, wired:false
+  /* ⭐⭐⭐ THE DWELL IS THE DISSOLVE — 21 August 2026 (D321). Client: *"there's a lot of dead scroll
+     in the first part of the site, so fix all the dead scroll. And then the images should not change
+     suddenly. They should fade out and fade in when they need to come in, so it's perfectly smooth."*
+     ⛔⛔⛔ **THOSE TWO ASKS PULL AGAINST EACH OTHER AND THE FILM DECIDES THE ANSWER.** A plate can
+     only be shown while the picture behind it still matches. Measured, per hold, how far the film
+     drifts from the still — the distance DOUBLES within **2 to 7 frames** at every one of the six:
+         f1   2      f122 5      f206 3      f277 2      f472 5      f529 7   (frames)
+     So a fade widened in FILM terms is not available at any price: by ±8 frames the plate is a
+     stale picture over a moving one. ⭐ **The only scroll over which a dissolve can be both wide and
+     honest is scroll where the film is PARKED** — there the plate matches perfectly however long it
+     takes. So the dwell is not dead scroll to be removed, it is where the dissolve happens.
+     ⭐⭐ **WHAT WAS ACTUALLY WRONG WAS THE LENGTH.** D320 parked 130vh at each of five holds — 832vh
+     of frozen camera, and the very first one sat at the top of the page, so the site opened with a
+     screen and a third of scrolling that did nothing at all. A dissolve needs about 350px to read as
+     smooth, not 1170. The dwells below are sized to the dissolve and nothing more.
+     ⚠️ **THE FIRST AND LAST HOLDS ARE ASYMMETRIC ON PURPOSE.** The page OPENS on hold 1, so it has
+     no fade-in — it is already solid and only ever dissolves away. The last hold is the hero, whose
+     182vh is D317's and stays, so it has no fade-out — its picture must not dissolve back into a
+     compressed frame while the copy is being read on it. */
+  /* ⚠️ SIZED AGAINST HIS COMPLAINT, NOT AGAINST THE GUIDE'S FLOOR. The guide says 120vh so that one
+     trackpad flick cannot cross a hold — but that floor exists because ITS holds carry a section's
+     copy to be read. These carry a picture, and 450px is already a slow dissolve. The first is
+     shorter again because it sits at the very top, where frozen scroll is most obvious.
+     ⭐ Frozen scroll: 832vh at D320 → **412vh**, and 182 of that is the hero's, which pre-dates this. */
+  const DWELL=[30,50,50,50,50,182];       // vh of parked scroll per hold
+  /* ⚠️ THE RAMPS COVER THE WHOLE DWELL, WHICH IS THE POINT. At 0.42 each there was a sliver at
+     both ends of every park where the plate was already at zero and the camera had not started
+     again — measured at ~90px in and ~55px out, and that sliver is exactly what "dead scroll"
+     means. At 0.48 the dissolve occupies the park from end to end and only touches 1.0 at its
+     middle, which is all the solid it needs. */
+  const FADE =[[0,0.95],[0.48,0.48],[0.48,0.48],[0.48,0.48],[0.48,0.48],[0.30,0]];  // [in,out] as a share of the dwell
+  const HOLDS=[...document.querySelectorAll('.cine-plates .plate')].map((el,i)=>({
+    el, t:+el.dataset.t, src:el.dataset.src,
+    dwellVh:DWELL[i]!==undefined?DWELL[i]:64,
+    fin:(FADE[i]||[0.42,0.42])[0], fout:(FADE[i]||[0.42,0.42])[1],
+    o:-1, wired:false
   }));
-  if(HOLDS.length)HOLDS[HOLDS.length-1].dwellVh=182;   // the existing dead scroll, now plated
   let SEGS=[], trackPx=0;
 
   function buildTrack(){
@@ -15899,18 +15932,33 @@ if(faqIndex && panel && faqBody){
      The opening plate is wired on `load` instead, because the page opens on that hold and there is
      no approach to trigger it. */
   const PLATE_NEAR=6;
+  const ss=v=>{const t=clamp(v);return t*t*(3-2*t);};
   function wirePlate(H){
     if(H.wired)return; H.wired=true;
     H.el.style.backgroundImage="url('"+H.src+"')";
   }
-  function plates(t){
+  /* ⭐⭐ D321: the dissolve is driven by how far the SCROLL is through the dwell, because that is
+     the only stretch where the picture underneath is guaranteed to be the plate's own frame.
+     ⛔ **AND IT IS STILL GATED ON FRAME DISTANCE**, which is the guide's rule and the thing that
+     stops a plate ever being lit over a moving picture: at a dwell's edges the eased playhead is
+     still arriving or has already left, so the gate holds the plate down until the film has actually
+     settled. The two ramps rise together and the result is smooth — but the gate is what makes it
+     safe, and removing it would put a stale still over a travelling camera. */
+  function plates(t,y){
     if(!SEGS.length)return;
     for(const H of HOLDS){
       const off=Math.abs(t-H.t);
       if(off<PLATE_NEAR)wirePlate(H);
-      const f=off*FPS;
-      const k=clamp((f-0.5)/2.5);
-      const o=H.wired?+(1-k*k*(3-2*k)).toFixed(3):0;
+      let o=0;
+      if(H.wired&&H.len>0){
+        const u=(y-H.from)/H.len;                       // 0..1 through this hold's parked scroll
+        if(u>=0&&u<=1){
+          const fi=H.fin>0?ss(u/H.fin):1;               // no fade-in on the hold the page opens on
+          const fo=H.fout>0?ss((1-u)/H.fout):1;         // no fade-out on the hero's own hold
+          const gate=1-ss((off*FPS-1.5)/4.5);           // solid within 1.5 frames, shut by 6
+          o=+(Math.min(fi,fo)*gate).toFixed(3);
+        }
+      }
       if(o!==H.o){ H.o=o; H.el.style.opacity=o; }
     }
   }
@@ -16121,7 +16169,7 @@ if(faqIndex && panel && faqBody){
        past the plate the hero rests on, and the still would have faded out on arrival. */
     target=1; eased=1; want=filmAt(1);
     const fEnd=clamp(want/dur);
-    seek(); ink(fEnd); veil(fEnd); story(want); plates(want); chrome(fEnd); grade();
+    seek(); ink(fEnd); veil(fEnd); story(want); plates(want,trackPx); chrome(fEnd); grade();
   });
 
   function tick(){
@@ -16139,7 +16187,7 @@ if(faqIndex && panel && faqBody){
     ink(film);
     veil(film);
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
-    plates(want);     /* his generation stills, over the frames they were generated for */
+    plates(want,eased*trackPx);   /* his stills, dissolved across the scroll they are parked on */
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
@@ -16212,7 +16260,7 @@ if(faqIndex && panel && faqBody){
      opacity until the next scroll and the plate would arrive invisible. */
   addEventListener('load',()=>{
     if(!SEGS.length||!HOLDS.length)return;
-    const w=()=>{ wirePlate(HOLDS[0]); plates(want); };
+    const w=()=>{ wirePlate(HOLDS[0]); plates(want,eased*trackPx); };
     if(window.requestIdleCallback)requestIdleCallback(w,{timeout:1500}); else setTimeout(w,300);
   });
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });

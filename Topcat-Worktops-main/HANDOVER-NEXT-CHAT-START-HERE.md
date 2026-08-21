@@ -43,6 +43,10 @@ reverses again, it is a copy and four lines.
 ## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D315–D318)
 
 ```
+D321  THE DWELL IS THE DISSOLVE (21 Aug) — parked scroll halved (832 -> 412vh, page
+      1926 -> 1506vh) and the plates now fade in and out across the park instead of
+      snapping. ⛔ The fade CANNOT be widened in film terms: the picture drifts within
+      2-7 frames at every hold. Measured, not chosen
 D320  THE PLATES (21 Aug) — his six generation stills overlaid on the frames they were
       generated for, and the DESKTOP film now PARKS on each of them. Page 1100 -> 1926vh.
       ⛔ Desktop only; the narrow bands fetch none of it
@@ -115,8 +119,13 @@ stills) and **travel**, and the plates are the reason:
 | 6 | f529 | 44.0833 | `New F7 (1).png` | 0.064 — **the hero rests here** |
 
 - ⛔⛔ **`VH_PER_SEC` (22.6) AND THE DWELLS MOVE TOGETHER.** 22.6 is exactly the old linear pace, so
-  a flight feels as it always did and the only new time is the dwells. Change one alone and you
-  change the feel of the other. Dwells are 130vh × 5 + the 182vh that was already the dead scroll.
+  a flight feels as it always did and the only new time is the dwells. Dwells are **30 / 50 / 50 /
+  50 / 50 / 182vh** (D321), and the 182 is the hero's own from D317.
+- ⛔⛔⛔ **THE DWELL IS WHERE THE DISSOLVE HAPPENS, SO IT CANNOT BE DELETED.** The plate distance
+  doubles within **2–7 frames** at every hold, so a fade widened in FILM terms shows a stale picture
+  over a moving one. Parked scroll is the only scroll a dissolve can be honest on. ⚠️ If he asks for
+  less dead scroll again, the dial is the dwell LENGTH (and the dissolve gets steeper with it) —
+  never the frame window.
 - ⛔⛔ **THE SPACER IS THE TRACK PLUS ONE STICKY SCREEN.** Laid out over the bare sum, every dwell
   comes out 5.8% short and the hero's dead scroll silently loses 100vh.
 - ⭐ Plate opacity is driven by the footage's distance from the hold **in frames**, never by dwell
