@@ -43,6 +43,9 @@ reverses again, it is a copy and four lines.
 ## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D315–D318)
 
 ```
+D322  THE TRACK IS GONE (21 Aug) — linear scrub restored, page back to 1100/900vh and
+      doc 24443. The pace had also been 22% SLOW since D320. Stills now blend as the
+      film passes them, keyed to currentTime. ⭐ TABLET gets its own crop of each still
 D321  THE DWELL IS THE DISSOLVE (21 Aug) — parked scroll halved (832 -> 412vh, page
       1926 -> 1506vh) and the plates now fade in and out across the park instead of
       snapping. ⛔ The fade CANNOT be widened in film terms: the picture drifts within
@@ -104,36 +107,33 @@ band's URL plus `video.getAttribute('src')`, never by finding your own file in t
 | **≥1121** desktop | `topcat-intro-1920.mp4` | 11.7 MB, 1920×1080 |
 
 All three are **44.250s at 12fps / 531 frames**, so the scroll maths is identical at every band.
-### ⭐⭐⭐ THE DESKTOP HOLD TRACK AND THE PLATES (D320) — READ BEFORE TOUCHING THE FILM
+### ⭐⭐⭐ THE PLATES (D320–D322) — READ BEFORE TOUCHING THE FILM
 
-Desktop no longer maps scroll straight to film time. It alternates **dwell** (parked on one of his
-stills) and **travel**, and the plates are the reason:
+His six generation stills are cross-faded over the film at the frames they were generated for. The
+scrub is LINEAR — ⛔ **there is no hold track and there must not be one**; D320 built one, he felt it
+as dead scroll twice, and D322 removed it.
 
-| hold | frame | t | his still | plate distance |
+| hold | frame | t | his still | fade half-width |
 |---|---|---|---|---|
-| 1 | f1 | 0.0833 | `Final F1.png` | 0.097 ⚠️ inside a move |
-| 2 | f122 | 10.1667 | `final f3.png` | 0.180 ⚠️ inside a move |
-| 3 | f206 | 17.1667 | `F4.png` | 0.008 |
-| 4 | f277 | 23.0833 | `F5.png` | 0.006 |
-| 5 | f472 | 39.3333 | `New F6.png` | 0.058 |
-| 6 | f529 | 44.0833 | `New F7 (1).png` | 0.064 — **the hero rests here** |
+| 1 | f1 | 0.0833 | `Final F1.png` | 5 frames |
+| 2 | f122 | 10.1667 | `final f3.png` | 3 frames ⚠️ camera moving |
+| 3 | f206 | 17.1667 | `F4.png` | 6 frames |
+| 4 | f277 | 23.0833 | `F5.png` | 5 frames |
+| 5 | f472 | 39.3333 | `New F6.png` | 4 frames |
+| 6 | f529 | 44.0833 | `New F7 (1).png` | 6 — **the hero rests here, so it is solid for the 182vh hold** |
 
-- ⛔⛔ **`VH_PER_SEC` (22.6) AND THE DWELLS MOVE TOGETHER.** 22.6 is exactly the old linear pace, so
-  a flight feels as it always did and the only new time is the dwells. Dwells are **30 / 50 / 50 /
-  50 / 50 / 182vh** (D321), and the 182 is the hero's own from D317.
-- ⛔⛔⛔ **THE DWELL IS WHERE THE DISSOLVE HAPPENS, SO IT CANNOT BE DELETED.** The plate distance
-  doubles within **2–7 frames** at every hold, so a fade widened in FILM terms shows a stale picture
-  over a moving one. Parked scroll is the only scroll a dissolve can be honest on. ⚠️ If he asks for
-  less dead scroll again, the dial is the dwell LENGTH (and the dissolve gets steeper with it) —
-  never the frame window.
-- ⛔⛔ **THE SPACER IS THE TRACK PLUS ONE STICKY SCREEN.** Laid out over the bare sum, every dwell
-  comes out 5.8% short and the hero's dead scroll silently loses 100vh.
-- ⭐ Plate opacity is driven by the footage's distance from the hold **in frames**, never by dwell
-  progress. Solid within half a frame, gone by three.
-- ⭐ The 0.56 MB of plate is deferred — attached within 6 film-seconds of its hold, the opening one
-  on `load`. ⛔ **Below 1121 nothing is painted and no `src` is ever attached.**
-- ⚠️ Re-run `.plates-2026-08-21/holds.py` if the film is ever re-cut; a stale hold table parks on
-  the wrong frame. The guide itself is versioned at `Docs/Overlay-for-Scroll-Animation-Guide.md`.
+- ⛔⛔⛔ **THE FADE WIDTHS ARE MEASURED, NOT CHOSEN.** They are how far either side of its frame a
+  still still reads as the same picture. Widen one and you put a stale image over a moving camera.
+- ⛔⛔ **OPACITY IS KEYED TO `vid.currentTime`, NOT TO `want`.** The decoder trails the eased target
+  while the page moves; driving from the target lit each plate three frames early.
+- ⭐ **TABLET RUNS THEM TOO, ON ITS OWN CROP** — the same stills through D312's `864:1080:680:0`
+  window, in `assets/video/plates/tablet/` (0.27 MB). ⛔ The phone has none: different film (D319),
+  nothing painted, no `src` attached, zero requests.
+- ⚠️ **THE FILM'S PACE IS 18.49 vh/s DESKTOP / 14.46 TABLET** — that is `(cineH − 100vh) × (1 −
+  cineHold) / 44.25`, NOT `(cineH − 100vh) / 44.25`. Getting that wrong ran the film 22% slow for
+  two rounds.
+- ⚠️ Re-run `.plates-2026-08-21/holds.py` if the film is ever re-cut. The guide is versioned at
+  `Docs/Overlay-for-Scroll-Animation-Guide.md`.
 
 ⛔ **THE PICKER IS A CASCADE — phone → narrow → base** — used identically by the in-place `<script>`,
 `band()` in the scrub and `retimeStory()`. Deleting the phone's pair drops it onto the TABLET's cut,

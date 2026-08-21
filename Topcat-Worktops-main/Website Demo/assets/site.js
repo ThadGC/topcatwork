@@ -5641,113 +5641,39 @@ if(faqIndex && panel && faqBody){
   const stage=()=>{ if(!hero.classList.contains('loaded'))
     requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
 
-  /* ⭐⭐⭐ THE HOLD TRACK — 21 August 2026 (D320), DESKTOP ONLY.
-     ⛔⛔ **THE PLATES ARE THE REASON THIS EXISTS.** A plate is only solid within half a frame of
-     its hold and gone by three; at the old linear map that is 7px of scroll and 42px, so his
-     stills would have flashed past unseen. The guide's answer, and the only one that works, is to
-     PARK the film on each hold while that stretch of scroll is crossed.
-     ⭐ So the track alternates **dwell** (film time does not move) and **travel** (it does), instead
-     of scroll mapping straight to time. The dwell is where the picture is his original.
-     ⚠️ **THE FILM NEVER ACTUALLY STOPS ON ITS OWN** — measured: the stillest stretches (f192–279,
-     f471–530) are slow moves, not parks, so the dwell is not "resting where the film rests", it is
-     the page choosing to rest. That is why every hold needed a plate to be worth holding on.
-     ⭐⭐ **TRAVEL IS PACED AT THE FILM'S OWN OLD RATE.** `VH_PER_SEC` is 22.6, which is exactly what
-     1000vh over 44.25s came to before, so a flight moves at the speed he has already approved and
-     the ONLY new time is the dwells. ⛔ Raising this and the dwells together is what lengthens the
-     page; raising one alone changes the feel of the other.
-     ⚠️ The last hold is the film's END and its dwell IS the 182vh dead scroll D317 already put
-     there — the hero rests on f529 and now rests on his own still of it, rather than on a
-     compressed frame. It is not extra page height, it is the same hold with a picture on it.
-     ⛔ **BELOW 1121 THERE IS NO TRACK AT ALL** and `SEGS` stays empty, so `filmAt()` falls through
-     to the linear map the phone and tablet have always had. He said desktop; this is desktop. */
-  const VH_PER_SEC=22.6;                  // screens of scroll per second of film, during travel
-  /* ⭐⭐⭐ THE DWELL IS THE DISSOLVE — 21 August 2026 (D321). Client: *"there's a lot of dead scroll
-     in the first part of the site, so fix all the dead scroll. And then the images should not change
-     suddenly. They should fade out and fade in when they need to come in, so it's perfectly smooth."*
-     ⛔⛔⛔ **THOSE TWO ASKS PULL AGAINST EACH OTHER AND THE FILM DECIDES THE ANSWER.** A plate can
-     only be shown while the picture behind it still matches. Measured, per hold, how far the film
-     drifts from the still — the distance DOUBLES within **2 to 7 frames** at every one of the six:
-         f1   2      f122 5      f206 3      f277 2      f472 5      f529 7   (frames)
-     So a fade widened in FILM terms is not available at any price: by ±8 frames the plate is a
-     stale picture over a moving one. ⭐ **The only scroll over which a dissolve can be both wide and
-     honest is scroll where the film is PARKED** — there the plate matches perfectly however long it
-     takes. So the dwell is not dead scroll to be removed, it is where the dissolve happens.
-     ⭐⭐ **WHAT WAS ACTUALLY WRONG WAS THE LENGTH.** D320 parked 130vh at each of five holds — 832vh
-     of frozen camera, and the very first one sat at the top of the page, so the site opened with a
-     screen and a third of scrolling that did nothing at all. A dissolve needs about 350px to read as
-     smooth, not 1170. The dwells below are sized to the dissolve and nothing more.
-     ⚠️ **THE FIRST AND LAST HOLDS ARE ASYMMETRIC ON PURPOSE.** The page OPENS on hold 1, so it has
-     no fade-in — it is already solid and only ever dissolves away. The last hold is the hero, whose
-     182vh is D317's and stays, so it has no fade-out — its picture must not dissolve back into a
-     compressed frame while the copy is being read on it. */
-  /* ⚠️ SIZED AGAINST HIS COMPLAINT, NOT AGAINST THE GUIDE'S FLOOR. The guide says 120vh so that one
-     trackpad flick cannot cross a hold — but that floor exists because ITS holds carry a section's
-     copy to be read. These carry a picture, and 450px is already a slow dissolve. The first is
-     shorter again because it sits at the very top, where frozen scroll is most obvious.
-     ⭐ Frozen scroll: 832vh at D320 → **412vh**, and 182 of that is the hero's, which pre-dates this. */
-  const DWELL=[30,50,50,50,50,182];       // vh of parked scroll per hold
-  /* ⚠️ THE RAMPS COVER THE WHOLE DWELL, WHICH IS THE POINT. At 0.42 each there was a sliver at
-     both ends of every park where the plate was already at zero and the camera had not started
-     again — measured at ~90px in and ~55px out, and that sliver is exactly what "dead scroll"
-     means. At 0.48 the dissolve occupies the park from end to end and only touches 1.0 at its
-     middle, which is all the solid it needs. */
-  const FADE =[[0,0.95],[0.48,0.48],[0.48,0.48],[0.48,0.48],[0.48,0.48],[0.30,0]];  // [in,out] as a share of the dwell
+  /* ⭐⭐⭐ THE PLATES ARE PART OF THE FILM, NOT A STOP IN IT — 21 August 2026 (D322).
+     Client, on D320/D321: *"it almost feels like a dead scroll from the first image to the scroll.
+     The whole process should feel smooth. The image must just smoothly overlay into that section.
+     Nothing must be hooked on it, it must just look like it's a part of the video now."*
+     ⛔⛔⛔ **SO THE HOLD TRACK IS GONE AND THE SCRUB IS LINEAR AGAIN, EXACTLY AS IT WAS BEFORE D320.**
+     Parking the film to give the stills room was the wrong trade twice over — it is what he felt as
+     dead scroll, and even with the parks cut in half (D321) the film still stopped six times.
+     ⚠️⚠️ **AND THE PARKS WERE NOT THE ONLY REASON IT FELT SLOW: D320 SET THE TRAVEL PACE TO 22.6vh
+     PER FILM-SECOND ON THE ARITHMETIC `1000vh / 44.25s`, WHICH IS WRONG.** The last 18% of the
+     travel is the hero's hold and has never carried film, so the approved pace was
+     `818vh / 44.25s` = **18.49**, and the film had been running **22% slow** for two rounds.
+     ⭐ Reverting to the linear map restores the pace exactly, because it is the same map that
+     produced those numbers — and it puts the page back to `--cineH` with nothing overridden.
+     ⭐⭐ **A SMOOTHSTEPPED TRACK WOULD HAVE BEEN WRONG EVEN WITH ZERO DWELL.** Each travel segment
+     eases in and out of its holds, so with the parks removed the film would still have pulsed —
+     slowing at every hold and speeding between them. That IS "hooked on it". One linear map has no
+     joins to feel.
+     ⭐⭐⭐ **WHAT THE PLATE CAN BE IS SET BY THE FILM, AND IT WAS MEASURED PER HOLD.** How far either
+     side of its frame a still still reads as the same picture, to within 0.08 of its own distance:
+         f1 5 · f122 3 · f206 6 · f277 5 · f472 4 · f529 6 frames   (the tighter of the two bands)
+     ⛔ `f122` gets 3 because the camera is genuinely moving there — at 6 frames out its distance has
+     more than doubled. It is not a knob; widening it puts a stale picture over a moving one, which
+     is the one thing worse than a quick blend. ⚠️ The tail is deliberately 2 frames past the strict
+     limit: mismatch at the end of a ramp is masked by the low opacity it is wearing.
+     ⚠️ At 18.49vh/s a frame is 1.54vh, so these are dissolves of roughly 80–170px of scroll. Short,
+     smooth, and invisible as an event — which is what he asked for.
+     ⭐ **THE HERO'S PLATE IS THE EXCEPTION AND IT IS FREE**: the film already parks at f529 for the
+     182vh the hero has held since D317, so that one is solid for the whole rest without anything
+     being added to the page. */
+  const PLATE_W=[5,3,6,5,4,6];            // fade half-width in FILM FRAMES, per hold, measured
   const HOLDS=[...document.querySelectorAll('.cine-plates .plate')].map((el,i)=>({
-    el, t:+el.dataset.t, src:el.dataset.src,
-    dwellVh:DWELL[i]!==undefined?DWELL[i]:64,
-    fin:(FADE[i]||[0.42,0.42])[0], fout:(FADE[i]||[0.42,0.42])[1],
-    o:-1, wired:false
+    el, t:+el.dataset.t, w:PLATE_W[i]||4, o:-1, src:''
   }));
-  let SEGS=[], trackPx=0;
-
-  function buildTrack(){
-    SEGS=[]; trackPx=0;
-    if(mNarrow.matches||!HOLDS.length){ cine.style.removeProperty('height'); return; }
-    const vh=window.innerHeight; if(vh<=0)return;      // hidden pane: keep the old track
-    let at=0;
-    /* ⚠️ A run-in only if the first hold is actually INTO the film. His F1 matches f1, so a
-       `>0` test would have bought a 17px travel nobody can scroll and started the page one frame
-       before the plate — the poster IS f0 and f1 is indistinguishable from it. */
-    if(HOLDS[0].t>0.5){
-      const px=HOLDS[0].t*VH_PER_SEC/100*vh;
-      SEGS.push({kind:'travel',t0:0,t1:HOLDS[0].t,from:at,len:px}); at+=px;
-    }
-    HOLDS.forEach((H,i)=>{
-      const px=H.dwellVh/100*vh;
-      SEGS.push({kind:'dwell',t:H.t,from:at,len:px}); H.from=at; H.len=px; at+=px;
-      const nx=HOLDS[i+1];
-      if(nx){
-        const tpx=(nx.t-H.t)*VH_PER_SEC/100*vh;
-        SEGS.push({kind:'travel',t0:H.t,t1:nx.t,from:at,len:tpx}); at+=tpx;
-      }
-    });
-    /* ⛔⛔ THE SPACER IS THE TRACK **PLUS ONE STICKY SCREEN**, and getting this wrong is silent.
-       The scrub normalises scroll over `offsetHeight - innerHeight`, so if the spacer were exactly
-       the sum of the segments then the whole track would be crossed in one screen less than it was
-       laid out in — every dwell would come out 5.8% short at a 900px viewport, and the last one,
-       which is the hero's dead scroll, would lose a full 100vh of its 182. Measured before the fix:
-       16438px of spacer traversed in 15538px of scroll. Adding `vh` here makes the segment lengths
-       and the scrolled pixels the same units, which is what the rest of this function assumes. */
-    trackPx=at;
-    cine.style.height=Math.round(at+vh)+'px';
-  }
-
-  /* u is 0..1 of the whole spacer. Returns FILM SECONDS.
-     ⭐ Smoothstep on every travel, not linear: each one sits between two parked dwells, and a
-     linear map would snap from standstill to full speed at one end and slam to a stop at the
-     other — a velocity discontinuity at exactly the joins where a scrub feels roughest. */
-  function filmAt(u){
-    if(!SEGS.length)return clamp(u/(1-hold))*dur;      // the narrow bands, unchanged
-    const y=u*trackPx, last=SEGS[SEGS.length-1];
-    for(const g of SEGS){
-      if(y<=g.from+g.len||g===last){
-        if(g.kind==='dwell')return g.t;
-        const p=clamp((y-g.from)/g.len);
-        return g.t0+(g.t1-g.t0)*(p*p*(3-2*p));
-      }
-    }
-    return dur;
-  }
 
   function measure(){
     const cs=getComputedStyle(cine);
@@ -5757,52 +5683,49 @@ if(faqIndex && panel && faqBody){
     if(va>=0&&va<dur)veilAt=va;
     const vm=parseFloat(cs.getPropertyValue('--cineVeilMin'));
     if(vm>=0&&vm<=1)veilMin=vm;
-    buildTrack();
     top=cine.getBoundingClientRect().top+window.scrollY;
     travel=Math.max(1,cine.offsetHeight-window.innerHeight);
   }
 
-  /* ⭐⭐ THE PLATE DRIVER. Opacity comes from how far the FOOTAGE is from the hold, in frames —
-     never from how far the scroll is through the dwell. A dwell's own edges are not where the
-     picture stops matching: the eased chase is still catching up at the start of one and has
-     already left at the end, so a scroll-driven plate would be lit over the wrong frame at both
-     ends. Solid within half a frame, gone by three (the guide's §5 numbers).
-     ⚠️ Written only when the ROUNDED value changes — the lesson `veil()` and `grade()` carry.
-     ⭐⭐ **AND THE FETCH IS DEFERRED.** 0.56 MB of plate must not land before the film does, so a
-     plate's `background-image` is attached only once the film is within PLATE_NEAR seconds of it.
-     The opening plate is wired on `load` instead, because the page opens on that hold and there is
-     no approach to trigger it. */
-  const PLATE_NEAR=6;
+  /* ⭐⭐ THE PLATES RUN AT TWO BANDS AND EACH HAS ITS OWN CROP OF THE SAME STILL. Client: *"for
+     tablet you're just gonna crop the image correctly for tablet — since desktop and tablet are
+     using the same video, crop it correctly for desktop and tablet."* The tablet's film is D312's
+     `crop=864:1080:680:0` of the master, so its plates are the SAME window out of the same stills.
+     ⛔ **The phone gets none of it** — different film entirely since D319, and he said not to touch
+     it. `plateSrc` returns '' there, so nothing is ever attached and nothing is ever fetched.
+     ⚠️ The band is re-read on `sync()`, so a window dragged across 1121 swaps the crop. */
+  const plateSrc=H=>mPhone.matches?'':(mNarrow.matches?H.el.dataset.srcTablet:H.el.dataset.src)||'';
+  const PLATE_NEAR=6;                     // film-seconds of lead time before a plate is fetched
   const ss=v=>{const t=clamp(v);return t*t*(3-2*t);};
-  function wirePlate(H){
-    if(H.wired)return; H.wired=true;
-    H.el.style.backgroundImage="url('"+H.src+"')";
-  }
-  /* ⭐⭐ D321: the dissolve is driven by how far the SCROLL is through the dwell, because that is
-     the only stretch where the picture underneath is guaranteed to be the plate's own frame.
-     ⛔ **AND IT IS STILL GATED ON FRAME DISTANCE**, which is the guide's rule and the thing that
-     stops a plate ever being lit over a moving picture: at a dwell's edges the eased playhead is
-     still arriving or has already left, so the gate holds the plate down until the film has actually
-     settled. The two ramps rise together and the result is smooth — but the gate is what makes it
-     safe, and removing it would put a stale still over a travelling camera. */
-  function plates(t,y){
-    if(!SEGS.length)return;
+
+  function plates(t){
+    /* ⛔⛔ **THE OPACITY IS KEYED TO THE FRAME ON SCREEN, NOT TO THE ONE BEING ASKED FOR.** `want` is
+       the eased TARGET; the decoder trails it while the page is actually moving, and driving the
+       fade from the target lit the plate over a frame three ahead of its own — measured in a 20px
+       sweep, peak opacity landing on f209 for a hold at f206. `currentTime` is what the viewer is
+       looking at, so that is what the still has to be registered against. ⚠️ It falls back to the
+       target only before the video can answer, where the plate is at zero anyway. */
+    const shown=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t;
     for(const H of HOLDS){
-      const off=Math.abs(t-H.t);
-      if(off<PLATE_NEAR)wirePlate(H);
-      let o=0;
-      if(H.wired&&H.len>0){
-        const u=(y-H.from)/H.len;                       // 0..1 through this hold's parked scroll
-        if(u>=0&&u<=1){
-          const fi=H.fin>0?ss(u/H.fin):1;               // no fade-in on the hold the page opens on
-          const fo=H.fout>0?ss((1-u)/H.fout):1;         // no fade-out on the hero's own hold
-          const gate=1-ss((off*FPS-1.5)/4.5);           // solid within 1.5 frames, shut by 6
-          o=+(Math.min(fi,fo)*gate).toFixed(3);
-        }
-      }
+      const src=plateSrc(H);
+      if(!src){ if(H.o!==0){H.o=0;H.el.style.opacity=0;} continue; }
+      const off=Math.abs(shown-H.t);
+      /* ⭐ deferred: 0.56 MB of plate must not land before the film does (§2s). The opening one has
+         no approach, so `sync()` wires it once the band is known. */
+      if(Math.abs(t-H.t)<PLATE_NEAR&&H.src!==src){ H.src=src; H.el.style.backgroundImage="url('"+src+"')"; }
+      const o=H.src?+(1-ss(off*FPS/H.w)).toFixed(3):0;
       if(o!==H.o){ H.o=o; H.el.style.opacity=o; }
     }
   }
+  /* ⛔ a band change swaps every plate's file, so the attached URL is dropped and re-attached by
+     the next tick rather than left showing the other band's crop */
+  function replate(){
+    for(const H of HOLDS){
+      const src=plateSrc(H);
+      if(H.src&&H.src!==src){ H.src=''; H.el.style.backgroundImage=''; H.o=-1; }
+    }
+  }
+
   function fail(){
     root.classList.remove('cine-on');
     window.__cineHold=false;
@@ -6005,12 +5928,8 @@ if(faqIndex && panel && faqBody){
        precisely the thing being skipped. */
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
-    /* ⚠️ D320: the end of the TRACK is the last hold, not the end of the film — `filmAt(1)`
-       is 44.0833 where `dur` is 44.25. Snapping to `dur` would have put the playhead one hold
-       past the plate the hero rests on, and the still would have faded out on arrival. */
-    target=1; eased=1; want=filmAt(1);
-    const fEnd=clamp(want/dur);
-    seek(); ink(fEnd); veil(fEnd); story(want); plates(want,trackPx); chrome(fEnd); grade();
+    target=1; eased=1; want=dur;
+    seek(); ink(1); veil(1); story(dur); plates(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -6019,16 +5938,13 @@ if(faqIndex && panel && faqBody){
     const d=target-eased;
     eased+=d*EASE;
     if(Math.abs(d)<0.0002)eased=target;
-    /* ⭐ D320: the scroll no longer maps straight to time on desktop — it maps through the hold
-       track, which parks the film on each of his stills. `film` stays a 0..1 FRACTION of the
-       picture so `ink`, `veil` and `chrome` are untouched by the change. */
-    want=filmAt(eased);
-    const film=clamp(want/dur);
+    const film=clamp(eased/(1-hold));     // the hold at the end belongs to the hero, not the film
+    want=film*dur;
     seek();
     ink(film);
     veil(film);
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
-    plates(want,eased*trackPx);   /* his stills, dissolved across the scroll they are parked on */
+    plates(want);     /* his stills, blended in as the film passes the frames they were made for */
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
@@ -6063,7 +5979,11 @@ if(faqIndex && panel && faqBody){
   function sync(){
     root.classList.add('cine-on');
     window.__cineHold=true;
+    /* ⛔ D322: the D320/D321 track wrote an inline height here. Nothing does now — `--cineH` is the
+       page height again — but a stale inline value would survive a band change, so it is cleared. */
+    cine.style.removeProperty('height');
     retimeStory();
+    replate();
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1;
     onScroll();
@@ -6100,8 +6020,8 @@ if(faqIndex && panel && faqBody){
      ⛔ And it has to repaint itself: at rest the rAF loop has stopped, so nothing would write the
      opacity until the next scroll and the plate would arrive invisible. */
   addEventListener('load',()=>{
-    if(!SEGS.length||!HOLDS.length)return;
-    const w=()=>{ wirePlate(HOLDS[0]); plates(want,eased*trackPx); };
+    if(!HOLDS.length)return;
+    const w=()=>plates(want);
     if(window.requestIdleCallback)requestIdleCallback(w,{timeout:1500}); else setTimeout(w,300);
   });
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });

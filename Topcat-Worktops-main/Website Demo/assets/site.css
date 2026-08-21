@@ -4489,15 +4489,20 @@
      above, `.cine-story` (z 2) above those. The plate takes z-index 0, the same as `.hero-vid`, and
      wins on SOURCE ORDER because it comes later. ⚠️ Do not "clarify" that with a z-index of 1: it
      would jump the veil and the film would stop fading at the end.
-     ⛔ **DESKTOP ONLY (D320).** He said "this is for desktop, will send mobile soon" — the holds
-     are a desktop track and the narrow bands still run the linear scrub. The `display:none` below
-     is the whole guard, and the scrub never attaches a `src` at those bands, so a phone downloads
-     none of it. */
+     ⭐ **DESKTOP AND TABLET (D322).** Client: *"for tablet you're just gonna crop the image correctly
+     for tablet — since desktop and tablet are using the same video, crop it correctly for desktop
+     and tablet."* They DO share the film, so the tablet's plates are the same stills through the
+     same window D312 cut its film with (`864:1080:680:0`), and the scrub picks the crop by band.
+     ⛔ **THE PHONE GETS NONE OF IT** — it has had its own film since D319 and he said to leave it.
+     ⚠️ **THE QUERY IS WIDENED, NOT COPIED** (the standing rule): this one rule was `max-width:1120`
+     and is now `max-width:720`, so the tablet falls out of the hidden band rather than gaining a
+     duplicate block of its own. The scrub also refuses to attach a `src` below 721, so a phone
+     fetches none of the 0.56 MB rather than merely not painting it. */
   .cine-plates{display:none}
   html.cine-on .cine-plates{
     display:block;position:absolute;inset:0;z-index:0;pointer-events:none;
   }
-  @media(max-width:1120px){ html.cine-on .cine-plates{display:none} }
+  @media(max-width:720px){ html.cine-on .cine-plates{display:none} }
   html.cine-on .plate{
     position:absolute;inset:0;display:block;
     background-size:cover;background-position:center;background-repeat:no-repeat;
