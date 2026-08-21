@@ -8722,18 +8722,39 @@
            load on every desktop visit before the film did (§2s). Each is fetched when the film comes
            within PLATE_NEAR seconds of its hold; the opening one is fetched on `load`, after first
            paint, because the page opens on it. -->
+      <!-- ⛔⛔⛔ **TWO PLATES, NOT SIX — 21 August 2026 (D323).** Client: *"I actually don't like the
+           overlaying of the images that you did. So you're just going to keep the first starting
+           frame image, remove all the others. Keep the first one and the last one. Those are the
+           only two that you keep."*
+           ⭐⭐ **AND THESE TWO ARE THE ONLY ONES THAT WERE EVER MORE THAN A BLINK.** The page OPENS on
+           f1 and the hero RESTS on f529 for the 182vh it has held since D317, so both are looked at
+           for a long time; the four that came out were each a dissolve of 80–170px of scroll passed
+           at speed, which is exactly the "overlaying" he did not want.
+           ⭐ Nothing was deleted — `assets/video/plates/.removed-2026-08-21/` holds all four in both
+           crops with a README. Restoring one is a copy and two lines.
+           ⚠️ First load is 180 KB lighter on desktop and 93 KB on tablet as a result. -->
       <div class="cine-plates" aria-hidden="true">
-        <i class="plate" data-t="0.0833"   data-src="/assets/video/plates/plate-f1.webp?v=2"
+        <!-- ⛔⛔ **0, NOT 0.0833 — AND THE ORIGINAL ANCHOR WAS A BUG IN MY OWN MATCHER.** `holds.py`
+             reported f1, but its search window started at `lo+1` so that `d[f-1]` always existed —
+             which silently made **frame 0 unreachable**. The guide's own version allows f=0 and
+             scores it alone, precisely because it cannot be undershot. Measured, his opening still
+             matches **f0 better than f1**: d **0.114 against 0.150** desktop, **0.119 against 0.165**
+             tablet. The script is fixed; this is the frame it now returns.
+             ⚠️ It matters here more than anywhere: the page OPENS on this frame and rests on it
+             until the first scroll. Anchored a frame late the plate sat at **0.92** on the first
+             thing every desktop and tablet visitor sees. -->
+        <i class="plate" data-t="0"        data-src="/assets/video/plates/plate-f1.webp?v=2"
            data-src-tablet="/assets/video/plates/tablet/plate-f1.webp?v=1"></i>
-        <i class="plate" data-t="10.1667"  data-src="/assets/video/plates/plate-f122.webp?v=2"
-           data-src-tablet="/assets/video/plates/tablet/plate-f122.webp?v=1"></i>
-        <i class="plate" data-t="17.1667"  data-src="/assets/video/plates/plate-f206.webp?v=2"
-           data-src-tablet="/assets/video/plates/tablet/plate-f206.webp?v=1"></i>
-        <i class="plate" data-t="23.0833"  data-src="/assets/video/plates/plate-f277.webp?v=2"
-           data-src-tablet="/assets/video/plates/tablet/plate-f277.webp?v=1"></i>
-        <i class="plate" data-t="39.3333"  data-src="/assets/video/plates/plate-f472.webp?v=2"
-           data-src-tablet="/assets/video/plates/tablet/plate-f472.webp?v=1"></i>
-        <i class="plate" data-t="44.0833"  data-src="/assets/video/plates/plate-f529.webp?v=2"
+        <!-- ⛔⛔ **44.2083, NOT 44.0833 — THIS ONE IS ANCHORED WHERE THE PLAYHEAD ACTUALLY RESTS.**
+             `holds.py` picked f529 because its §4.4 criterion deliberately excludes the film's LAST
+             frame as unreachable: an ordinary seek is clamped off the end of the file. ⭐ But the
+             hero's 182vh dead scroll parks here on purpose, so `seek()` settles at `dur − half a
+             frame` = **44.2083 = f530** and sits there for as long as the copy is read.
+             ⚠️ Anchored at 44.0833 the plate reached only **0.84** on the one frame that matters most
+             on the whole page. And f530 is not a compromise — measured, his still matches it BETTER
+             than the frame the script chose: **d 0.069 against 0.074** desktop, **0.068 against
+             0.081** tablet. It is the frame the film was generated toward. -->
+        <i class="plate" data-t="44.2083"  data-src="/assets/video/plates/plate-f529.webp?v=2"
            data-src-tablet="/assets/video/plates/tablet/plate-f529.webp?v=1"></i>
       </div>
       <div class="hero-shade"></div>
@@ -15840,7 +15861,10 @@ if(faqIndex && panel && faqBody){
      ⭐ **THE HERO'S PLATE IS THE EXCEPTION AND IT IS FREE**: the film already parks at f529 for the
      182vh the hero has held since D317, so that one is solid for the whole rest without anything
      being added to the page. */
-  const PLATE_W=[5,3,6,5,4,6];            // fade half-width in FILM FRAMES, per hold, measured
+  const PLATE_W=[5,6];                    // fade half-width in FILM FRAMES, per plate, measured
+  /* ⚠️ D323 cut this from six to two, in the element's own order. The four that came out measured
+     f122 3 · f206 6 · f277 5 · f472 4 frames and their numbers are kept in the removed folder's
+     README, so restoring one is a copy and putting its width back in this array. */
   const HOLDS=[...document.querySelectorAll('.cine-plates .plate')].map((el,i)=>({
     el, t:+el.dataset.t, w:PLATE_W[i]||4, o:-1, src:''
   }));

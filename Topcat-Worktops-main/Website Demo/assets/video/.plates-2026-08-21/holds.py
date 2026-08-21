@@ -102,10 +102,15 @@ def main():
         # THE CRITERION (guide §4.4): the engine settles up to a full frame short
         # of t, so both f and f-1 must be good. Pick the f whose worse half is best.
         # The LAST frame is unreachable (the seek clamps off the end), so stop at n-2.
-        blo=max(lo+1,jf-win_fr); bhi=min(n-2,jf+win_fr,hi)
+        # ⛔⛔ `blo` USED TO BE `max(lo+1, ...)` AND THAT SILENTLY EXCLUDED FRAME 0. It was written
+        # that way so `df[f-1]` always existed, but the guide allows f=0 explicitly and scores it
+        # ALONE, because a frame that cannot be undershot has no f-1 to be good. On this film the
+        # opening still matches f0 better than f1 (0.114 vs 0.150) and the bug cost the frame the
+        # page actually opens on. Caught at D323, by measuring the plate that was sitting at 0.92.
+        blo=max(lo,jf-win_fr); bhi=min(n-2,jf+win_fr,hi)
         best_f,best_v=None,1e9
         for f in range(blo,bhi+1):
-            v=df[f] if f==0 else max(df[f],df[f-1])
+            v=df[f] if f==0 else max(df[f],df.get(f-1,df[f]))
             if v<best_v: best_f,best_v=f,v
         t=best_f/fps
         print('%-24s %-8s %-7.3f %-9.3f f%-7d %-9.4f %.3f'

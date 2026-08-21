@@ -5670,7 +5670,10 @@ if(faqIndex && panel && faqBody){
      ⭐ **THE HERO'S PLATE IS THE EXCEPTION AND IT IS FREE**: the film already parks at f529 for the
      182vh the hero has held since D317, so that one is solid for the whole rest without anything
      being added to the page. */
-  const PLATE_W=[5,3,6,5,4,6];            // fade half-width in FILM FRAMES, per hold, measured
+  const PLATE_W=[5,6];                    // fade half-width in FILM FRAMES, per plate, measured
+  /* ⚠️ D323 cut this from six to two, in the element's own order. The four that came out measured
+     f122 3 · f206 6 · f277 5 · f472 4 frames and their numbers are kept in the removed folder's
+     README, so restoring one is a copy and putting its width back in this array. */
   const HOLDS=[...document.querySelectorAll('.cine-plates .plate')].map((el,i)=>({
     el, t:+el.dataset.t, w:PLATE_W[i]||4, o:-1, src:''
   }));

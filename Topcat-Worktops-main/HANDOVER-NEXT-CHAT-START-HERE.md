@@ -43,6 +43,9 @@ reverses again, it is a copy and four lines.
 ## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D315–D318)
 
 ```
+D323  TWO PLATES ONLY (21 Aug) — he kept the FIRST frame and the LAST and cut the four
+      between. Both were also anchored a frame off and sitting at 0.92 / 0.84 on the two
+      frames that matter most; both fixed, and one was a bug in my port of the matcher
 D322  THE TRACK IS GONE (21 Aug) — linear scrub restored, page back to 1100/900vh and
       doc 24443. The pace had also been 22% SLOW since D320. Stills now blend as the
       film passes them, keyed to currentTime. ⭐ TABLET gets its own crop of each still
@@ -113,14 +116,20 @@ His six generation stills are cross-faded over the film at the frames they were 
 scrub is LINEAR — ⛔ **there is no hold track and there must not be one**; D320 built one, he felt it
 as dead scroll twice, and D322 removed it.
 
-| hold | frame | t | his still | fade half-width |
+| plate | frame | t | his still | fade half-width |
 |---|---|---|---|---|
-| 1 | f1 | 0.0833 | `Final F1.png` | 5 frames |
-| 2 | f122 | 10.1667 | `final f3.png` | 3 frames ⚠️ camera moving |
-| 3 | f206 | 17.1667 | `F4.png` | 6 frames |
-| 4 | f277 | 23.0833 | `F5.png` | 5 frames |
-| 5 | f472 | 39.3333 | `New F6.png` | 4 frames |
-| 6 | f529 | 44.0833 | `New F7 (1).png` | 6 — **the hero rests here, so it is solid for the 182vh hold** |
+| opening | **f0** | 0 | `Final F1.png` | 5 frames — **the page opens and rests here** |
+| hero | **f530** | 44.2083 | `New F7 (1).png` | 6 frames — **the hero rests here for 182vh** |
+
+⛔ **THE OTHER FOUR ARE WITHDRAWN (D323)** and parked in `assets/video/plates/.removed-2026-08-21/`
+with their frames, times, widths and distances. He kept only the two that are looked at for a long
+time. ⛔ Do not re-add one unprompted.
+
+⚠️ **BOTH ANCHORS ARE EDGE CASES AND BOTH WERE WRONG ONCE.** `holds.py` excludes the film's last
+frame (a seek is clamped off the end) — but the hero PARKS there, so its plate is anchored at
+`dur − half a frame`. And the script's window used to start one frame in, which made frame 0
+unreachable; that is fixed, and the opening plate is anchored at 0. ⭐ Re-running the script now
+reproduces both.
 
 - ⛔⛔⛔ **THE FADE WIDTHS ARE MEASURED, NOT CHOSEN.** They are how far either side of its frame a
   still still reads as the same picture. Widen one and you put a stale image over a moving camera.
