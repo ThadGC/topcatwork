@@ -43,6 +43,9 @@ reverses again, it is a copy and four lines.
 ## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D315–D318)
 
 ```
+D319  THE PHONE GETS ITS OWN FILM (21 Aug) — his `TC MOBILE FIXED.mov`, a 9:16 cut that
+      arrived PILLARBOXED inside a 1920x1080 box. Pillars cropped, framing untouched.
+      Three bands are now three different films. Phone crop loss 42% → 18%
 D315  THE CLEAN-OUT — 18.7 MB of unreferenced files off the host, 60.7% of the shipped
       text was code comment and now comes off on the way out, five dead features deleted,
       two real bugs found by the sweep
@@ -89,10 +92,16 @@ band's URL plus `video.getAttribute('src')`, never by finding your own file in t
 
 | band | file | notes |
 |---|---|---|
-| **≤1120** phone AND tablet | `topcat-intro-864.mp4` | 5.0 MB, 864×1080, the 4:5 crop of the landscape master at **x=680** (D312) |
+| **≤720** phone | `topcat-intro-608.mp4` | ⭐ **NEW (D319, 21 Aug).** 3.43 MB, 608×1080 — HIS own vertical cut, de-pillarboxed from `TC MOBILE FIXED.mov` |
+| **721–1120** tablet | `topcat-intro-864.mp4` | 5.0 MB, 864×1080, the 4:5 crop of the landscape master at **x=680** (D312) |
 | **≥1121** desktop | `topcat-intro-1920.mp4` | 11.7 MB, 1920×1080 |
 
-Both are **44.250s at 12fps**, so the scroll maths and every story beat are identical at both bands.
+All three are **44.250s at 12fps / 531 frames**, so the scroll maths is identical at every band.
+⛔ **THE PICKER IS A CASCADE — phone → narrow → base** — used identically by the in-place `<script>`,
+`band()` in the scrub and `retimeStory()`. Deleting the phone's pair drops it onto the TABLET's cut,
+never onto the 11.7 MB desktop film.
+⚠️ **The phone's second story beat is its own: 16.2–24.4, not the tablet's 21.0–27.5.** On his cut
+the shot cuts to black at exactly t=16.0 and the kitchen returns at t=25.
 ⛔ `.htaccess` holds mp4/webm for a **week** and `?v=` is hand-stamped: **re-encode and bump the stamp
 in the same edit, poster included.**
 

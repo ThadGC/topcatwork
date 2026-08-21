@@ -5610,11 +5610,15 @@ if(faqIndex && panel && faqBody){
   const HALF=0.5/FPS;
   /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
      is playing. All three are the same 44.25s at the same 12fps, so the scroll maths never changes.
-     ⭐ D318: back to TWO cuts — the narrow bands share D312's 4:5 crop again, so one query answers
-     both which file to attach and which story beats to use. */
+     ⭐⭐ D319: THREE cuts again, and `band()` is the one cascade the whole film reads — the source,
+     the poster and the story beats all come through it. phone → narrow → base, and a band that
+     names nothing simply inherits the one below it.
+     ⛔ `mPhone` is tested FIRST because the queries overlap: 375px matches both. */
+  const mPhone=matchMedia('(max-width:720px)');
   const mNarrow=matchMedia('(max-width:1120px)');
-  const wantSrc=()=>mNarrow.matches?vid.dataset.srcNarrow:vid.dataset.src;
-  const wantPoster=()=>mNarrow.matches?vid.dataset.posterNarrow:vid.dataset.poster;
+  const band=(d,k)=>(mPhone.matches&&d[k+'Phone'])||(mNarrow.matches&&d[k+'Narrow'])||d[k];
+  const wantSrc=()=>band(vid.dataset,'src');
+  const wantPoster=()=>band(vid.dataset,'poster');
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   /* ⭐ D313's sampler: one 24×1 read of the band the bar sits over, reused every tick. The canvas
@@ -5745,15 +5749,27 @@ if(faqIndex && panel && faqBody){
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1
   }));
-  /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS. A line may carry `data-at-narrow` /
-     `data-out-narrow`; below 1121 those win. ⚠️ Re-read from `sync()` so a window dragged across
-     1120 re-times the story rather than keeping the other band's beats. */
+  /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS, and since D319 the three bands are
+     three different films rather than three crops of one. A line may carry `data-at-phone` /
+     `data-out-phone` and `data-at-narrow` / `data-out-narrow`; the cascade is the SAME one the
+     source uses — phone → narrow → base — so a beat only needs stating where it actually differs.
+     ⛔⛔ **THE PHONE'S SECOND BEAT IS ITS OWN AND THE MEASUREMENT IS WHY.** On his vertical cut the
+     slab FILLS the frame until the shot cuts to black at exactly **t=16.0** (the top band's 97th
+     percentile goes 233 → 0 between 15.5 and 16.0), and the kitchen comes up from **t=25** (69, then
+     88 at 25.5). So the void is 16.0–24.5 and the phone takes **16.2–24.4**, clear of the cut at
+     both ends. The tablet's 21.0–27.5 was measured on the 4:5 CROP, where the slab lies down later;
+     running it on this film would put the closing words over the kitchen shot.
+     ⚠️ `data-vpos-narrow="top"` still positions that line on the phone — measured as correct here,
+     since the black on this cut is at the top too. It is deliberately NOT duplicated as a
+     `-phone` attribute: there is no CSS behind one, and a `-phone` rule that did nothing would read
+     as a setting. ⚠️ If the TABLET's vpos ever changes, check the phone in the same edit.
+     ⚠️ Re-read from `sync()` so a dragged window re-times the story rather than keeping another
+     band's beats. */
   function retimeStory(){
-    const n=mNarrow.matches;
     for(const L of STORY){
       const d=L.el.dataset;
-      L.at =+((n&&d.atNarrow )||d.at )||0;
-      L.out=+((n&&d.outNarrow)||d.out)||0;
+      L.at =+band(d,'at' )||0;
+      L.out=+band(d,'out')||0;
       L.o=L.z=L.b=L.g=-1;                    // force the next tick to write them all
     }
   }
@@ -5916,7 +5932,10 @@ if(faqIndex && panel && faqBody){
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',sync);
   addEventListener('load',sync);
+  /* ⚠️ BOTH queries, not just the outer one: a 700px window widened to 900px crosses 720 without
+     crossing 1120, and the phone's cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
+  if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

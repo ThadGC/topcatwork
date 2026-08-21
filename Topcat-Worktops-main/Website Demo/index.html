@@ -8582,26 +8582,34 @@
     </svg>
     <div class="hero-bg" aria-hidden="true">
       <img src="/assets/site/hero-night-2752.webp" srcset="/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w" sizes="(max-width:720px) 1000px, 1739px" width="2752" height="1536" alt="" id="heroImg" draggable="false" fetchpriority="high" decoding="async">
-      <!-- ⭐⭐ **THE FILM — TWO CUTS, AND ⛔ ONLY ONE IS EVER FETCHED.**
-           ⭐⭐⭐ **BACK TO D312's ARRANGEMENT — 18 Aug 2026 (D318).** Client: *"remove the new mobile
-           video I sent and revert it and take it back to what it was the first time we cropped the
-           full desktop video to work for mobile."* So the narrow bands share one 4:5 crop again:
-             ≤1120   `topcat-intro-864.mp4`    864x1080, 5.0 MB — D312's crop at x=680
-             ≥1121   `topcat-intro-1920.mp4`   1920x1080, 11.7 MB
-           ⚠️ Both are 44.250s at 12fps, so the scroll maths and every story beat are the same at
-           both bands. ⚠️ **THIS IS THE THIRD ARRANGEMENT IN ONE DAY AND THE FIRST ONE WON.** D316 cut
-           two panned windows (556 phone / 812 tablet); D317 replaced the phone's with his own 9:16
-           master and put the tablet back here; D318 puts the phone back too. Everything tried is on
-           disk — `.reverted-2026-08-18-pan/` (the panned cuts, `pan.py`, the arithmetic) and
-           `.reverted-2026-08-18-9x16/` (his vertical master and its measured encode table).
-           ⛔⛔ **THE 36% FINDING IS STILL TRUE AND IS THE ONE THING NOT TO LOSE**: on a 375x812 phone
-           the hero box is aspect 0.462, so `object-fit:cover` on this 0.8 file discards 36% of its
-           width, shows master x 835..1389 rather than the intended 680..1544, and upscales 2.11x.
-           That is the arrangement he has chosen — a deliberate choice now rather than an unnoticed
-           one, which is the only thing that changed about it.
-           ⛔ **TWO FILES COST NOTHING IN LOAD TIME BECAUSE A BAND FETCHES EXACTLY ONE** — the
+      <!-- ⭐⭐ **THE FILM — THREE CUTS, AND ⛔ ONLY ONE IS EVER FETCHED.**
+           ⭐⭐⭐ **THE PHONE HAS ITS OWN FILM, CUT FOR IT BY THE CLIENT — 21 Aug 2026 (D319).**
+           Client: *"here is the video for mobile... this is made perfectly for mobile, no cropping
+           needed."* So the three bands are now three different films:
+             ≤720      `topcat-intro-608.mp4`    608x1080, 3.43 MB — HIS vertical cut, 9:16
+             721-1120  `topcat-intro-864.mp4`    864x1080, 5.0 MB — D312's 4:5 crop at x=680
+             ≥1121     `topcat-intro-1920.mp4`   1920x1080, 11.7 MB — the landscape master
+           ⚠️ All three are **44.250s at 12fps / 531 frames**, so the scroll maths is identical at
+           every band and nothing had to be re-timed for the new file.
+           ⛔⛔⛔ **HIS MASTER ARRIVED PILLARBOXED AND THE BLACK IS NOT PART OF THE PICTURE.**
+           `TC MOBILE FIXED.mov` is a 1920x1080 container carrying a 9:16 film **608 wide, centred at
+           x=656**, with 656px of pure black either side — measured by `cropdetect` over the whole
+           44s, not sampled. ⭐ **"No cropping needed" is about the FRAMING, which is his and is not
+           to be touched — but the pillars had to come off**, or `cover` would have thrown away his
+           composition and kept the bars. Shipping the container as-is would also have paid for 68%
+           black in every frame, which §2s forbids.
+           ⭐⭐ **AND THIS IS THE FIRST ARRANGEMENT THAT IS NOT A CROP OF THE LANDSCAPE FILM.** D312
+           cut one 4:5 window and gave it to both narrow bands; D316 cut two panned windows; D317
+           put his first 9:16 master on the phone; D318 reverted all of it to D312. Everything tried
+           is still on disk — `.reverted-2026-08-18-pan/` and `.reverted-2026-08-18-9x16/`.
+           ⚠️ **THE PHONE'S CROP LOSS IS NOW 18%, NOT 42%.** A 375x812 hero box is aspect 0.462
+           against this film's 0.563, so `cover` discards **18.0% of its width** and upscales
+           **2.26x**. The 42% figure belonged to the 4:5 crop the phone used to carry and no longer
+           applies here. ⛔ The TABLET still carries that 4:5 crop and its own numbers are unchanged
+           — box 0.750 against 0.8, a 6% loss.
+           ⛔ **THREE FILES COST NOTHING IN LOAD TIME BECAUSE A BAND FETCHES EXACTLY ONE** — the
            in-place script below attaches one src during parse, measured as zero requests for the
-           other. See §2s in HANDOVER.md; site speed is a standing rule.
+           other two. See §2s in HANDOVER.md; site speed is a standing rule.
            ⛔⛔⛔ **`preload="none"` IS THE WHOLE REASON PHONES DO NOT PAY FOR THIS.** A `display:none`
            video still DOWNLOADS: CSS decides what is painted, `preload` decides what is fetched, and
            `auto` here would have posted 11.7 MB to every phone and tablet visitor for a film only
@@ -8622,6 +8630,8 @@
              data-poster="/assets/video/topcat-intro-poster.webp?v=1"
              data-src-narrow="/assets/video/topcat-intro-864.mp4?v=1"
              data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=1"
+             data-src-phone="/assets/video/topcat-intro-608.mp4?v=1"
+             data-poster-phone="/assets/video/topcat-intro-608-poster.webp?v=1"
              width="1920" height="1080" aria-hidden="true" tabindex="-1"
              disablepictureinpicture disableremoteplayback></video>
       <!-- ⭐⭐ **THE FILM'S TWO HEAVY URLS ARE ATTACHED HERE, IN PLACE, AND THAT IS THE POINT.**
@@ -8632,17 +8642,24 @@
            as early as an attribute would have started it, and the poster is on screen before the
            first frame decodes — there is no gap and nothing to swap.
            ⚠️ `cine-on` is the head's own decision and nothing here re-derives it. ⭐ **THE ONE
-           THING IT DOES DECIDE IS WHICH CUT** — THREE of them since D316, one per band, each cut
-           at its band's own aspect so `object-fit:cover` has nothing left to throw away (D312's
-           single 864 cut was losing 36% of its width to the phone's 0.514 box): the 16:9 master above 1120, the 4:5 crop at
-           or below it. ⚠️ A window dragged across 1120 after load is handled by `fetchFilm()` in
-           the scrub, which swaps the source and re-seeks. -->
+           THING IT DOES DECIDE IS WHICH CUT** — three of them since D319, one per band, each at its
+           band's own aspect so `object-fit:cover` has as little as possible left to throw away.
+           ⭐⭐ **IT IS A CASCADE, NOT A SWITCH: phone → narrow → base.** A phone takes `-phone` if
+           the attribute exists and falls back to `-narrow`; a tablet takes `-narrow`; the desktop
+           takes the bare attribute. ⛔ That fallback is the safety rail — if the phone's pair is
+           ever removed, the phone lands on the tablet's cut rather than on an 11.7 MB desktop film.
+           ⚠️ The SAME cascade times the story lines (`retimeStory()` below), so one mental model
+           covers both and a band can override either, both, or neither.
+           ⚠️ A window dragged across 720 or 1120 after load is handled by `fetchFilm()` in the
+           scrub, which swaps the source and re-seeks. -->
       <script>
       (function(){var v=document.getElementById('heroVid');
        if(!v||!document.documentElement.classList.contains('cine-on'))return;
-       var n=matchMedia('(max-width:1120px)').matches;
-       v.poster=n?v.dataset.posterNarrow:v.dataset.poster; v.preload='auto';
-       v.src=n?v.dataset.srcNarrow:v.dataset.src;})();
+       var d=v.dataset,
+           p=matchMedia('(max-width:720px)').matches,
+           n=matchMedia('(max-width:1120px)').matches;
+       v.poster=(p&&d.posterPhone)||(n&&d.posterNarrow)||d.poster; v.preload='auto';
+       v.src=(p&&d.srcPhone)||(n&&d.srcNarrow)||d.src;})();
       </script>
       <div class="hero-shade"></div>
       <!-- ⭐ D313: the film's own top grade. It carries the SAME `--navScrim` stops the hero's veil
@@ -8675,16 +8692,24 @@
          the h1, which is the order it is written in. -->
     <div class="cine-story">
       <p class="cine-line" data-at="1.0"  data-out="6.0"  data-vpos="top">It starts as a mountain.</p>
-      <!-- ⛔⛔ THIS BEAT NEEDS ITS OWN TIMING ON A NARROW CROP, and screenshotting it is the only
-           way that showed up. On the 16:9 desktop frame the slab sits RIGHT (its lit mass measures
+      <!-- ⛔⛔ THIS BEAT NEEDS ITS OWN TIMING PER BAND, and screenshotting it is the only way that
+           showed up. On the 16:9 desktop frame the slab sits RIGHT (its lit mass measures
            x 1349..1443 of 1920) and the void is a clear left half, so 13.5-23.5 puts the words on
            black. A 556-wide window centred on that same slab is FILLED by it — the words landed on
            bright marble, which is the one thing D313 already proved cannot be made to work.
-           ⭐ So the narrow bands take the beat LATER, at 21.0-27.5, where the slab has laid down
-           small and low and the frame is measured at 1% lit coverage — the void his note describes.
-           They also take it at the TOP, because that is where the black is once the slab is down. -->
+           ⭐ So the TABLET, which still carries the 4:5 crop, takes the beat LATER at 21.0-27.5,
+           where the slab has laid down small and low and the frame is measured at 1% lit coverage —
+           the void his note describes. It takes it at the TOP, because that is where the black is
+           once the slab is down.
+           ⭐⭐⭐ **AND THE PHONE TAKES A THIRD WINDOW, BECAUSE SINCE D319 IT IS A DIFFERENT FILM.**
+           On his vertical cut the slab fills the frame through the teens and the shot CUTS to black
+           at t=16.0 — the top band's 97th percentile reads 233 at 15.5 and 0 at 16.0, then holds
+           at 0-15 until 24.5 and is back to 69 by t=25 as the kitchen arrives. **16.2-24.4** sits
+           inside that with room at both ends. ⛔ Do not give the phone the tablet's 21.0-27.5: the
+           closing 3 seconds of it land on the kitchen shot on this film. -->
       <p class="cine-line" data-at="13.5" data-out="23.5" data-vpos="low"
-         data-at-narrow="21.0" data-out-narrow="27.5" data-vpos-narrow="top">Then one slab, chosen for its veining.</p>
+         data-at-narrow="21.0" data-out-narrow="27.5" data-vpos-narrow="top"
+         data-at-phone="16.2" data-out-phone="24.4">Then one slab, chosen for its veining.</p>
       <p class="cine-line" data-at="31.5" data-out="39.0" data-vpos="low">Then the centre of your kitchen.</p>
     </div>
 
@@ -15680,11 +15705,15 @@ if(faqIndex && panel && faqBody){
   const HALF=0.5/FPS;
   /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
      is playing. All three are the same 44.25s at the same 12fps, so the scroll maths never changes.
-     ⭐ D318: back to TWO cuts — the narrow bands share D312's 4:5 crop again, so one query answers
-     both which file to attach and which story beats to use. */
+     ⭐⭐ D319: THREE cuts again, and `band()` is the one cascade the whole film reads — the source,
+     the poster and the story beats all come through it. phone → narrow → base, and a band that
+     names nothing simply inherits the one below it.
+     ⛔ `mPhone` is tested FIRST because the queries overlap: 375px matches both. */
+  const mPhone=matchMedia('(max-width:720px)');
   const mNarrow=matchMedia('(max-width:1120px)');
-  const wantSrc=()=>mNarrow.matches?vid.dataset.srcNarrow:vid.dataset.src;
-  const wantPoster=()=>mNarrow.matches?vid.dataset.posterNarrow:vid.dataset.poster;
+  const band=(d,k)=>(mPhone.matches&&d[k+'Phone'])||(mNarrow.matches&&d[k+'Narrow'])||d[k];
+  const wantSrc=()=>band(vid.dataset,'src');
+  const wantPoster=()=>band(vid.dataset,'poster');
 
   let hold=0.10, top=0, travel=1, dur=DUR, veilAt=38, veilMin=0.20;
   /* ⭐ D313's sampler: one 24×1 read of the band the bar sits over, reused every tick. The canvas
@@ -15815,15 +15844,27 @@ if(faqIndex && panel && faqBody){
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1
   }));
-  /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS. A line may carry `data-at-narrow` /
-     `data-out-narrow`; below 1121 those win. ⚠️ Re-read from `sync()` so a window dragged across
-     1120 re-times the story rather than keeping the other band's beats. */
+  /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS, and since D319 the three bands are
+     three different films rather than three crops of one. A line may carry `data-at-phone` /
+     `data-out-phone` and `data-at-narrow` / `data-out-narrow`; the cascade is the SAME one the
+     source uses — phone → narrow → base — so a beat only needs stating where it actually differs.
+     ⛔⛔ **THE PHONE'S SECOND BEAT IS ITS OWN AND THE MEASUREMENT IS WHY.** On his vertical cut the
+     slab FILLS the frame until the shot cuts to black at exactly **t=16.0** (the top band's 97th
+     percentile goes 233 → 0 between 15.5 and 16.0), and the kitchen comes up from **t=25** (69, then
+     88 at 25.5). So the void is 16.0–24.5 and the phone takes **16.2–24.4**, clear of the cut at
+     both ends. The tablet's 21.0–27.5 was measured on the 4:5 CROP, where the slab lies down later;
+     running it on this film would put the closing words over the kitchen shot.
+     ⚠️ `data-vpos-narrow="top"` still positions that line on the phone — measured as correct here,
+     since the black on this cut is at the top too. It is deliberately NOT duplicated as a
+     `-phone` attribute: there is no CSS behind one, and a `-phone` rule that did nothing would read
+     as a setting. ⚠️ If the TABLET's vpos ever changes, check the phone in the same edit.
+     ⚠️ Re-read from `sync()` so a dragged window re-times the story rather than keeping another
+     band's beats. */
   function retimeStory(){
-    const n=mNarrow.matches;
     for(const L of STORY){
       const d=L.el.dataset;
-      L.at =+((n&&d.atNarrow )||d.at )||0;
-      L.out=+((n&&d.outNarrow)||d.out)||0;
+      L.at =+band(d,'at' )||0;
+      L.out=+band(d,'out')||0;
       L.o=L.z=L.b=L.g=-1;                    // force the next tick to write them all
     }
   }
@@ -15986,7 +16027,10 @@ if(faqIndex && panel && faqBody){
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',sync);
   addEventListener('load',sync);
+  /* ⚠️ BOTH queries, not just the outer one: a 700px window widened to 900px crosses 720 without
+     crossing 1120, and the phone's cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
+  if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

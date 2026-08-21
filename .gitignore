@@ -52,3 +52,9 @@ Thumbs.db
 # `.reverted-*` folder at D318 and immediately fell back into the index. A master is a master
 # wherever it is filed.
 **/assets/video/.*/TC-FINAL-VIDEO-*
+# ⚠️ AND BY HIS NAMING, NOT ONE FILE'S NAME. He names every master `TC ...` — `TC FINAL VIDEO.mov`,
+# `TC FINAL VIDEO 9x16.mp4`, `TC MOBILE FIXED.mov` (D319) — so the rule matches the PREFIX in the
+# video folder and in any dot-folder under it. ⛔ Nothing the site serves is named `TC*`; every
+# shipped cut is `topcat-intro-*`, so this cannot swallow a live file.
+**/assets/video/TC*
+**/assets/video/.*/TC*
