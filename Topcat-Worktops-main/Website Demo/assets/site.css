@@ -4481,6 +4481,31 @@
     background:var(--navScrim),var(--navScrim)}
   html.cine-on .cine .hero-navgrade{display:block;opacity:var(--navGrade,0)}
 
+  /* ═════ THE PLATES — 21 August 2026 (D320) ════════════════════════════════════════════════
+     ⭐⭐ His generation stills, cross-faded over the film at the holds so the RESTING picture is
+     the original and not an H.264 frame of it.
+     ⛔ **UNDER THE VEIL AND THE GRADE, OVER THE VIDEO.** The plate is picture, so everything that
+     dresses the picture must still dress it — `.hero-shade` (z 1) and `.hero-navgrade` (z 1) sit
+     above, `.cine-story` (z 2) above those. The plate takes z-index 0, the same as `.hero-vid`, and
+     wins on SOURCE ORDER because it comes later. ⚠️ Do not "clarify" that with a z-index of 1: it
+     would jump the veil and the film would stop fading at the end.
+     ⛔ **DESKTOP ONLY (D320).** He said "this is for desktop, will send mobile soon" — the holds
+     are a desktop track and the narrow bands still run the linear scrub. The `display:none` below
+     is the whole guard, and the scrub never attaches a `src` at those bands, so a phone downloads
+     none of it. */
+  .cine-plates{display:none}
+  html.cine-on .cine-plates{
+    display:block;position:absolute;inset:0;z-index:0;pointer-events:none;
+  }
+  @media(max-width:1120px){ html.cine-on .cine-plates{display:none} }
+  html.cine-on .plate{
+    position:absolute;inset:0;display:block;
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+    opacity:0;
+    /* ⚠️ NO transition. The opacity is written every frame from the film's distance to the hold,
+       so a CSS transition would fight the scrub and lag the cross-fade behind the picture. */
+  }
+
   /* ═════ THE FILM'S OWN COPY — 18 August 2026 (D316) ═══════════════════════════════════════
      Three titles that sit IN the film and are passed by the camera rather than laid over it.
      ⛔ Base state is `display:none`: every rule here hangs off `cine-on`, so a browser that

@@ -58,3 +58,12 @@ Thumbs.db
 # shipped cut is `topcat-intro-*`, so this cannot swallow a live file.
 **/assets/video/TC*
 **/assets/video/.*/TC*
+# ─── The generation stills (D320) ────────────────────────────────────────────
+# ⛔ His six frame images are MASTERS, exactly like the film masters above: 19.6 MB of PNG that
+# nothing serves. The site serves `assets/video/plates/*.webp`, which ARE committed (0.56 MB), and
+# `.plates-2026-08-21/holds.py` is what derives one from the other.
+# ⚠️ He dropped them at the repo root in `Frame images/`; that folder stays on disk and out of git.
+# ⛔ DO NOT DELETE THEM — re-exporting a plate needs the original, never the WebP or the video.
+# ⚠️ The whole drop folder: the guide is versioned at `Topcat-Worktops-main/Docs/` instead, which
+# is where every other reference document lives. Keeping a second copy here would let the two drift.
+Frame images/

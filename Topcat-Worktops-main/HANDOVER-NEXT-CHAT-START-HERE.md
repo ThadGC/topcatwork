@@ -43,6 +43,9 @@ reverses again, it is a copy and four lines.
 ## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D315–D318)
 
 ```
+D320  THE PLATES (21 Aug) — his six generation stills overlaid on the frames they were
+      generated for, and the DESKTOP film now PARKS on each of them. Page 1100 -> 1926vh.
+      ⛔ Desktop only; the narrow bands fetch none of it
 D319  THE PHONE GETS ITS OWN FILM (21 Aug) — his `TC MOBILE FIXED.mov`, a 9:16 cut that
       arrived PILLARBOXED inside a 1920x1080 box. Pillars cropped, framing untouched.
       Three bands are now three different films. Phone crop loss 42% → 18%
@@ -97,6 +100,32 @@ band's URL plus `video.getAttribute('src')`, never by finding your own file in t
 | **≥1121** desktop | `topcat-intro-1920.mp4` | 11.7 MB, 1920×1080 |
 
 All three are **44.250s at 12fps / 531 frames**, so the scroll maths is identical at every band.
+### ⭐⭐⭐ THE DESKTOP HOLD TRACK AND THE PLATES (D320) — READ BEFORE TOUCHING THE FILM
+
+Desktop no longer maps scroll straight to film time. It alternates **dwell** (parked on one of his
+stills) and **travel**, and the plates are the reason:
+
+| hold | frame | t | his still | plate distance |
+|---|---|---|---|---|
+| 1 | f1 | 0.0833 | `Final F1.png` | 0.097 ⚠️ inside a move |
+| 2 | f122 | 10.1667 | `final f3.png` | 0.180 ⚠️ inside a move |
+| 3 | f206 | 17.1667 | `F4.png` | 0.008 |
+| 4 | f277 | 23.0833 | `F5.png` | 0.006 |
+| 5 | f472 | 39.3333 | `New F6.png` | 0.058 |
+| 6 | f529 | 44.0833 | `New F7 (1).png` | 0.064 — **the hero rests here** |
+
+- ⛔⛔ **`VH_PER_SEC` (22.6) AND THE DWELLS MOVE TOGETHER.** 22.6 is exactly the old linear pace, so
+  a flight feels as it always did and the only new time is the dwells. Change one alone and you
+  change the feel of the other. Dwells are 130vh × 5 + the 182vh that was already the dead scroll.
+- ⛔⛔ **THE SPACER IS THE TRACK PLUS ONE STICKY SCREEN.** Laid out over the bare sum, every dwell
+  comes out 5.8% short and the hero's dead scroll silently loses 100vh.
+- ⭐ Plate opacity is driven by the footage's distance from the hold **in frames**, never by dwell
+  progress. Solid within half a frame, gone by three.
+- ⭐ The 0.56 MB of plate is deferred — attached within 6 film-seconds of its hold, the opening one
+  on `load`. ⛔ **Below 1121 nothing is painted and no `src` is ever attached.**
+- ⚠️ Re-run `.plates-2026-08-21/holds.py` if the film is ever re-cut; a stale hold table parks on
+  the wrong frame. The guide itself is versioned at `Docs/Overlay-for-Scroll-Animation-Guide.md`.
+
 ⛔ **THE PICKER IS A CASCADE — phone → narrow → base** — used identically by the in-place `<script>`,
 `band()` in the scrub and `retimeStory()`. Deleting the phone's pair drops it onto the TABLET's cut,
 never onto the 11.7 MB desktop film.
