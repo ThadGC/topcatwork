@@ -5768,6 +5768,25 @@ if(faqIndex && panel && faqBody){
     veiled=v;
     document.documentElement.style.setProperty('--cineVeil',v);
   }
+
+  let curved=-1;
+  /* ⭐⭐ THE CORNERS ARRIVE WITH THE HERO AND NOT BEFORE — D327. Client: *"it shouldn't be like that
+     for the video, only for the final hero section is where that comes in smoothly."* Square for the
+     whole film, then the rounding and the gold hairline draw themselves in over the last tenth of it.
+     ⚠️ `CURVE_AT` is 0.90 against the copy's `INK_AT` 0.93 ON PURPOSE — the frame should have
+     finished becoming the hero before the words land in it, not at the same moment.
+     ⚠️ Smoothstep rather than linear, for the reason the veil already gives: a linear ramp has a
+     visible start. ⭐ `film` reaches 1 at the top of the hold and stays there, so the hero rests for
+     its whole 182vh fully rounded. */
+  const CURVE_AT=0.90;
+  function curve(film){
+    const k=clamp((film-CURVE_AT)/(1-CURVE_AT));
+    const v=+(k*k*(3-2*k)).toFixed(2);
+    if(v===curved)return;
+    curved=v;
+    cine.style.setProperty('--cineCurve',v);
+  }
+
   /* ⭐⭐ **THE GRADE FOLLOWS THE PICTURE, WHICH IS WHY IT CAN BE ABSENT MOST OF THE FILM.** The band
      behind the bar is drawn to a 24×1 canvas and its mean luminance decides how much of the veil's
      own nav curve is on. ⛔ It is read from the VIDEO, not from the screen: a `cover` video is
@@ -5985,7 +6004,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); story(dur); heroCopy(dur); plates(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plates(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -5999,6 +6018,7 @@ if(faqIndex && panel && faqBody){
     seek();
     ink(film);
     veil(film);
+    curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
     heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
     plates(want);     /* his stills, blended in as the film passes the frames they were made for */
@@ -6044,7 +6064,7 @@ if(faqIndex && panel && faqBody){
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
     replate();
     fetchFilm();
-    measure(); eased=-1; inked=null; veiled=-1;
+    measure(); eased=-1; inked=null; veiled=-1; curved=-1;
     onScroll();
     /* ⛔ AND THE PAGE HAS TO BE TOLD, IN BOTH DIRECTIONS. A window dragged past 1121 turns the film
        on from here, and the header's own IIFE only re-reads `cine-on` when it sees a scroll — so

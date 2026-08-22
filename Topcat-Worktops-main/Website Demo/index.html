@@ -4542,13 +4542,39 @@
       background:
         /* the corner, for the lines that now sit in the sky */
         radial-gradient(62% 58% at 0% 10%,
-          rgba(6,6,9,0.42) 0%, rgba(6,6,9,0.193) 52%, rgba(6,6,9,0) 100%),
+          rgba(6,6,9,0.82) 0%, rgba(6,6,9,0.377) 52%, rgba(6,6,9,0) 100%),
         /* the left edge, which the whole block still rests on */
+        /* ⛔⛔ IT REACHES 76%, NOT 70%, AND THAT IS WHY THE GOLD CAN BE BRIGHT — D327c. The bigger
+           headline runs to x=763 of 1440 (53%), where the old ramp had already fallen to 0.05; the
+           tail of every line sat on ungraded haze and no ink could be made to read there. Carried
+           to 76% with real alpha in the middle, line 1 goes 4.41 -> 7.06:1 and the gold 3.51 ->
+           6.27:1. ⭐ AND HIS MARBLE IS UNTOUCHED, MEASURED: the subject starts at 62% and its 97th
+           percentile reads 181 with this ramp and 181 with no ramp at all. */
         linear-gradient(90deg,
-          rgba(6,6,9,0.74) 0%, rgba(6,6,9,0.607) 18%, rgba(6,6,9,0.385) 34%,
-          rgba(6,6,9,0.163) 48%, rgba(6,6,9,0.044) 60%, rgba(6,6,9,0) 70%);
+          rgba(6,6,9,0.93) 0%, rgba(6,6,9,0.88) 15%, rgba(6,6,9,0.76) 30%,
+          rgba(6,6,9,0.58) 42%, rgba(6,6,9,0.38) 52%, rgba(6,6,9,0.19) 60%,
+          rgba(6,6,9,0.06) 68%, rgba(6,6,9,0) 76%);
     }
   }
+
+  /* ═════ THE CORNERS BELONG TO THE HERO, NOT TO THE FILM — 22 August 2026 (D327) ═══════════════
+     Client: *"throughout the whole video, on the very bottom left corner and the very bottom right
+     corner, it has those rounded corner cutouts. It shouldn't be like that for the video, only for
+     the final hero section is where that comes in smoothly and works perfectly."*
+     ⭐⭐ ONE PROPERTY DOES ALL OF IT, which is why `--curveR` was worth having in the first place.
+     It is read by four things — `.hero-bg`'s `clip-path`, its two `border-*-radius` corners, and
+     `.hero::after`'s height AND its radii — so scaling it from the scrub rounds the picture, its
+     shading and the gold hairline arc together and in step. There is no second mechanism to keep
+     in sync, and no per-band value to preserve: `.hero` declares 48/14 once, at base scope, and
+     every band already used it (D264).
+     ⛔ THE HAIRLINE GOES WITH THEM. At `--cineCurve:0` it would otherwise be a straight 1px gold
+     line across the foot of every frame of the film — the same edge treatment he is asking to
+     remove, just drawn flat instead of curved.
+     ⚠️ `var(--cineCurve,1)` IS THE SAFE DEFAULT: a page where the scrub never runs — reduced
+     motion, no MP4, a 404, a narrow-loaded window — gets today's fully rounded hero rather than a
+     square one. The property is only ever written while the film is actually scrubbing. */
+  html.cine-on .cine .hero{--curveR:calc(48px * var(--cineCurve,1))}
+  html.cine-on .cine .hero::after{opacity:var(--cineCurve,1)}
 
   /* ═════ THE PLATES — 21 August 2026 (D320) ════════════════════════════════════════════════
      ⭐⭐ His generation stills, cross-faded over the film at the holds so the RESTING picture is
@@ -4640,6 +4666,38 @@
       rgba(6,6,9,0.62), rgba(6,6,9,0.34) 46%, rgba(6,6,9,0.10) 72%, rgba(6,6,9,0) 100%);
     opacity:var(--lg,0);
   }
+  /* ═════ THE FILM'S WHITE-AND-GOLD — 22 August 2026 (D327) ════════════════════════════════════
+     ⭐⭐ ONE TREATMENT FOR EVERY BEAT, so the film reads as one voice: the site's own `.hero-title em`
+     mechanism exactly — an `<em>`, `font-style:normal`, weight 600, a 180deg ramp clipped to the
+     glyphs — carried on three custom properties so a beat sitting on a bright frame can move the
+     ramp without a second rule.
+     ⛔⛔ THE FILM'S GOLD IS THE SITE'S FAMILY RUN BRIGHT — #FBEFC4 → #F0D492 → #DCBB74 — AND IT IS
+     NOT THE HERO'S RAMP. Client, twice: *"it must be that same bright gold… it shouldn't be a dark
+     faded gold."* What he means by "the same gold" is how it LOOKS, and the hero's #C6A664 only
+     looks like metal because the night kitchen sits under a full veil beneath it. The film has no
+     such luxury: its beats run over a daylight quarry and a lit slab, and the identical ink
+     measured **2.10:1** on the first of them.
+     ⭐ ONE GOLD FOR THE WHOLE FILM, so the two beats match each other — 6.27:1 on the graded quarry
+     and about 13:1 on the slab's black. ⚠️ The hero below keeps the site's own ramp: different
+     ground, and it has never been the thing he was complaining about.
+     ⛔⛔ THE OPENING HERO IS THE EXCEPTION AND IT IS MEASURED, NOT A PREFERENCE — see D325b below:
+     on the daylight quarry the site's mid stop reads **2.21:1** and cannot be graded to 3.0 without
+     wrecking the photograph, so that ONE block runs the same family a stop lighter. */
+  html.cine-on .cine-line em,
+  html.cine-on .cine-hero .cine-hl em{
+    font-style:normal;font-weight:600;color:var(--cineGoldMid,#F0D492);
+    /* ⭐⭐ A TIGHTER, HEAVIER CONTACT SHADOW THAN THE WHITE CARRIES, AND IT IS THE POINT OF THE
+       TREATMENT, NOT A SAFETY NET. Gold reads as metal by being much lighter than what touches it,
+       so it wants its dark ground within a few pixels of the glyph rather than spread over the
+       block. ⚠️ `-webkit-text-fill-color:transparent` fills the glyph with the gradient, but a
+       text-shadow is still drawn from the glyph OUTLINE, so this paints behind the metal and is
+       covered by it — what shows is the halo just outside each letter. */
+    text-shadow:0 0 14px rgba(6,6,9,0.92),0 1px 4px rgba(6,6,9,0.88);
+    background:linear-gradient(180deg,
+      var(--cineGoldTop,#FBEFC4) 0%, var(--cineGoldMid,#F0D492) 62%, var(--cineGoldLow,#DCBB74) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+
   /* ═════ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325) ═══════════════════════════
      Client: *"the first frame technically needs to act like a second hero section. So the text
      needs to show in that open space of the valley on the first frame, there should be a very
@@ -4651,7 +4709,7 @@
      ⭐⭐ IT REPLACES THE DESKTOP OPENING TITLE RATHER THAN JOINING IT. `.cine-open` and the original
      `.cine-cue` are both hidden at this band, so there is never a hero and a title saying the same
      thing three seconds apart. The chain still reads as one sentence:
-         Your worktop begins in a mountain. -> Then one slab, chosen for its veining.
+         Your worktop starts here. -> Your slab is one of a kind. No two slabs are the same.
          -> *Surfaces worth building around*        (the third beat was withdrawn at D326)
      ⚠️ THE WHOLE BLOCK TRAVELS AS ONE OBJECT — the wrapper carries the `translateZ`, not the
      headline, so the words, the invitation and the indicator stay together as the camera passes
@@ -4675,7 +4733,7 @@
        the crop turns vertical and the skyline rises. */
     html.cine-on .cine-hero{
       display:block;position:absolute;z-index:3;pointer-events:none;
-      left:clamp(20px,7vw,132px);top:19vh;width:clamp(320px,39vw,566px);
+      left:clamp(20px,7vw,132px);top:14vh;width:clamp(320px,46vw,660px);
       opacity:0;                                  /* the scrub owns it from the first tick */
       transform:translateZ(calc(var(--hz,0) * 1px));
     }
@@ -4689,7 +4747,7 @@
        and the indicator barely moves either way. 57% is the best vertical position on this frame. */
     html.cine-on .cine-hero .cine-hl{
       margin:0;font-family:var(--serif);font-weight:400;
-      font-size:clamp(34px,4.2vw,60px);line-height:1.06;letter-spacing:-0.004em;
+      font-size:clamp(38px,5vw,76px);line-height:1.06;letter-spacing:-0.004em;
       color:var(--bone);text-wrap:balance;
       /* a contact shadow so the type reads as an object in the room, exactly as the titles do —
          ⛔ never the legibility mechanism on its own, which is what D313 proved twice */
@@ -4709,32 +4767,63 @@
        hero's own TOP stop — which measures **3.92:1** on the same pixels. It is the identical
        palette, sat one stop up because the background is 150 luminance brighter.
        ⚠️ `-webkit-text-fill-color:transparent` means the glyph is filled BY the gradient, so the
-       contact shadow behind it still reads. ⛔ Do not add a second shadow to compensate. */
-    html.cine-on .cine-hero .cine-hl em{
-      font-style:normal;font-weight:600;color:#E4CD92;
-      background:linear-gradient(180deg,#F2E3B6 0%,#E4CD92 62%,#D2B87C 100%);
-      -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-    }
+       contact shadow behind it still reads. ⛔ Do not add a second shadow to compensate.
+       ⭐ D327: it is now three PROPERTIES rather than a second rule — the shared `em` treatment
+       above draws the ramp.
+       ⛔⛔⛔ **D327b PUT THE SITE'S REAL GOLD BACK, BY FIXING THE GROUND INSTEAD OF THE INK.**
+       Client, looking at the lightened ramp: *"the start here is faded. The text shouldn't be
+       faded. It should be that real gold that looks really good just like throughout the rest of
+       the website. It shouldn't be a dark faded gold."* He is right, and D325b solved the wrong
+       half of it. Gold looks muddy on ANY bright ground — that is what gold IS; it reads as metal
+       only when it is much lighter than what it sits on, which is why it sings on the night
+       kitchen. Lightening the ink to clear a contrast bar made it paler without making it richer.
+       ⭐ **AND THE MARBLE COSTS NOTHING TO FIX IT.** Both grade layers reach zero by 70% across and
+       his quarry starts at 62%, so its 97th percentile measures **181 whatever the left side
+       does** — taking the edge to 0.90 and the corner to 0.82 darkens hazy background sky and
+       touches no part of the subject. Measured on the REAL gold at that grade: mid stop
+       **4.08:1**, bottom stop 3.56:1, the headline's bone line 5.59:1.
+       ⛔⛔⛔ **AND D327c MADE IT BRIGHT, WHICH IS THE THIRD ATTEMPT AND THE FIRST CORRECT ONE.**
+       Client, on the site's own ramp: *"the golden text is now even darker than it was before. It
+       must be that same bright gold."* He is right twice over. What he means by "that same gold" is
+       how it LOOKS elsewhere — luminous — not its hex; on the night kitchen #C6A664 measures 8.45:1
+       and glows, and on this frame the identical ink measured **2.10:1** and read as mud.
+       ⭐ **BOTH HALVES WERE NEEDED AND I SHIPPED THEM ONE AT A TIME.** D325b lightened the ink on a
+       bright ground (paler, not richer). D327b darkened the ground but put the dark ink back
+       (darker still). Only the two together give metal: the deep, extended grade AND a bright ramp
+       — measured **6.27:1**, which is the same order as gold-on-black looks. */
+    /* ⭐ D327d: these ARE the film's defaults now, so this block sets nothing of its own. The
+       properties stay in the shared rule so a future beat on a bright ground can move its ramp
+       without a second selector. */
     /* ⚠️ IT NAMES NO ROOM AND NO MATERIAL, the same discipline as the hero's trust line, and it
        deliberately does NOT narrate the film's three beats. The longer version ("from the quarry to
        the centre of your kitchen") tells the visitor exactly what the scroll buys, which is the
        stronger answer to the bottleneck, but it spoils all three titles before they arrive. */
     html.cine-on .cine-hero .cine-hero-sub{
-      margin:26px 0 0;font:300 16px/1.66 var(--brand);letter-spacing:0.014em;
-      color:rgba(244,241,234,0.94);max-width:400px;
+      margin:28px 0 0;font:300 17px/1.62 var(--brand);letter-spacing:0.014em;
+      color:rgba(244,241,234,0.96);max-width:430px;
+      /* ⚠️ AT 480px THIS BROKE 454 + 68 AND LEFT "kitchen." ALONE ON THE SECOND LINE. `balance`
+         evens the two, and the narrower measure stops the first line running past the headline. */
+      text-wrap:balance;
       text-shadow:0 1px 16px rgba(6,6,8,0.85),0 1px 3px rgba(6,6,8,0.7);
     }
-    /* ⭐ HE ASKED FOR A VERY CLEAR INDICATOR, so this is heavier than the film's own cue: the word
-       at 12.5px rather than 10.5, a rule that holds full gold for its first third instead of fading
-       from the first pixel, and a chevron naming the direction.
-       ⛔ NOT a disc, ring or plate (§2 rule 11). A control is not a mark, but it still gets no
-       container. ⛔ And not a gold line across the top of anything (rule 7) — it is vertical. */
+    /* ⭐⭐⭐ **"THE SCROLL TO BEGIN HAS TO BE WAY MORE CLEAR" — 22 August 2026 (D327).** Second pass
+       on this control, and the brief is bounce rate: it is the only thing on the frame whose job is
+       to produce the scroll, so it now reads as an instruction rather than as a caption.
+       ⭐ 14px against 12.5, the gold taken into the WORD itself so the eye lands there rather than
+       on the rule beside it, and a channel the chevron travels DOWN — a thing that repeatedly moves
+       downward says "scroll" without needing to be read at all.
+       ⛔ NOT a disc, ring or plate (§2 rule 11), and no box: it is not clickable, and dressing a
+       non-control as a button is the one thing worse than being quiet. ⛔ Not a gold line across the
+       top of anything (rule 7) — the rule is vertical. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:32px 0 0;display:flex;flex-direction:column;gap:14px;align-items:flex-start;
+      margin:34px 0 0;display:flex;flex-direction:column;gap:16px;align-items:flex-start;
     }
+    /* ⛔ THE WORD IS BONE, NOT GOLD, and that is deliberate after D327b. The headline's "starts
+       here." is the gold on this frame; a second gold sixty pixels under it competes with the first
+       and neither wins. White word, gold marks — the hierarchy the rest of the site uses. */
     html.cine-on .cine-hero .cine-hero-cue span{
-      font:400 12.5px/1 var(--brand);letter-spacing:0.34em;text-transform:uppercase;color:var(--bone);
-      text-shadow:0 1px 16px rgba(6,6,8,0.85),0 1px 3px rgba(6,6,8,0.7);
+      font:500 14px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
+      text-shadow:0 1px 16px rgba(6,6,8,0.9),0 1px 3px rgba(6,6,8,0.8);
     }
     /* ⛔⛔ ITS OWN KEYFRAMES, NOT `cineCue`. The film's cue drops to **opacity 0.2** for a third of
        its cycle, which is fine for a hairline that fades from its first pixel and wrong for the
@@ -4749,23 +4838,29 @@
        and 0.74 — the first value written here — measured **2.79:1** and would have shipped under it.
        ⚠️ The figure ignores the rule's own `box-shadow`, which darkens what it sits on, so the real
        number is a little better than this. */
+    /* ⭐ THE CHANNEL: a static gold rule the chevron runs down. It no longer pulses its own alpha —
+       the movement carries the signal now, so the rule can sit at a steady, measured brightness
+       instead of dipping. ⚠️ Held at 0.9 so the whole channel stays over the 3.0 a graphic needs. */
     html.cine-on .cine-hero .cine-hero-cue i{
-      width:2px;height:62px;border-radius:2px;display:block;position:relative;
-      background:linear-gradient(to bottom,var(--gold) 0%,var(--gold) 34%,rgba(198,166,100,0.15) 100%);
-      box-shadow:0 0 12px rgba(6,6,8,0.8);
-      transform-origin:top;animation:cineHeroCue 2.6s var(--ease) infinite;
-    }
-    @keyframes cineHeroCue{
-      0%,100%{transform:scaleY(0.42);opacity:0.86}
-      45%    {transform:scaleY(1);opacity:1}
-      78%    {transform:scaleY(1);opacity:0.88}
+      width:2px;height:96px;border-radius:2px;display:block;position:relative;opacity:0.9;
+      background:linear-gradient(to bottom,
+        var(--gold) 0%, rgba(198,166,100,0.55) 62%, rgba(198,166,100,0.12) 100%);
+      box-shadow:0 0 12px rgba(6,6,8,0.85);
     }
     /* the chevron: two borders on a rotated square, so it stays an open mark with no fill */
     html.cine-on .cine-hero .cine-hero-cue i::after{
-      content:"";position:absolute;left:50%;bottom:-3px;width:9px;height:9px;margin-left:-5.5px;
-      transform:rotate(45deg);
-      border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);
-      filter:drop-shadow(0 0 6px rgba(6,6,8,0.8));
+      content:"";position:absolute;left:50%;top:0;width:15px;height:15px;margin-left:-8.5px;
+      border-right:3px solid var(--gold);border-bottom:3px solid var(--gold);
+      filter:drop-shadow(0 1px 5px rgba(6,6,8,0.9));
+      animation:cineHeroCue 2.4s var(--ease) infinite;
+    }
+    /* ⭐ IT TRAVELS THE CHANNEL AND FADES OUT AT THE FOOT, then restarts at the top — a loop with no
+       visible return trip, so the only motion the eye ever sees is downward. */
+    @keyframes cineHeroCue{
+      0%  {transform:translateY(0) rotate(45deg);opacity:0}
+      18% {transform:translateY(12px) rotate(45deg);opacity:1}
+      72% {transform:translateY(64px) rotate(45deg);opacity:1}
+      100%{transform:translateY(82px) rotate(45deg);opacity:0}
     }
   }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
@@ -4840,14 +4935,37 @@
   /* ═════ skip intro ═══════════════════════════════════════════════════════════════════════
      ⛔ NOT a gold line across the top of anything (§2 rule 10) and not a mark in a disc
      (rule 11) — a plain bordered control, the same vocabulary as `.rev-back` was. */
+  /* ⭐⭐⭐ **IT HAS TO BE OBVIOUS — 22 August 2026 (D327).** Client: *"the skip intro button, we need
+     to find the best placement for that and make it look so that people can obviously see it and
+     skip if they would like to."*
+     ⭐ **THE PLACE IS RIGHT AND THE WEIGHT WAS WRONG.** Bottom-right is where a skip belongs — it is
+     the convention every player and every intro uses, it is diagonally opposite the copy so the two
+     never argue, and it is the corner the eye checks when it wants out. Moving it would cost the
+     convention and buy nothing. So the placement stands and everything else grew:
+       • **12px against 10.5**, and weight 500 rather than 400
+       • **the plate went 0.42 → 0.70** — it was measured over the marble in the closing shot, where
+         a 0.42 scrim on a lit worktop left the label at 2.6:1 and effectively invisible
+       • **a full gold border**, not `--hair` at 0.34 of it
+       • ⭐ **and a chevron**, so it reads as an action at a glance rather than as a caption
+     ⛔ Still not a mark in a disc (§2 rule 11) — a bordered control, which the rule exempts. */
   html.cine-on .cine-skip{
-    display:inline-flex;position:absolute;z-index:4;right:clamp(18px,3.4vw,46px);bottom:clamp(20px,4vh,42px);
-    align-items:center;gap:9px;padding:10px 20px;
-    background:rgba(10,10,12,0.42);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
-    border:1px solid var(--hair);border-radius:2px;color:var(--bone);
-    font-family:var(--brand,inherit);font-size:10.5px;letter-spacing:0.24em;text-transform:uppercase;
-    cursor:pointer;transition:border-color .4s var(--ease),color .4s var(--ease),opacity .5s var(--ease);
+    display:inline-flex;position:absolute;z-index:6;right:clamp(18px,3.4vw,46px);bottom:clamp(20px,4vh,42px);
+    align-items:center;gap:11px;padding:13px 24px;
+    background:rgba(8,8,11,0.70);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+    border:1px solid rgba(198,166,100,0.72);border-radius:2px;color:var(--bone);
+    font-family:var(--brand,inherit);font-size:12px;font-weight:500;letter-spacing:0.24em;
+    text-transform:uppercase;
+    box-shadow:0 6px 26px rgba(4,4,6,0.5);
+    cursor:pointer;transition:border-color .4s var(--ease),color .4s var(--ease),
+      background-color .4s var(--ease),opacity .5s var(--ease);
   }
+  /* the chevron, pointing the way out — an open mark, no fill, no container of its own */
+  html.cine-on .cine-skip::after{
+    content:"";width:7px;height:7px;flex:none;margin-left:1px;
+    border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);
+    transform:translateX(-2px) rotate(-45deg);
+  }
+  html.cine-on .cine-skip:hover{background:rgba(8,8,11,0.86)}
   /* ⛔⛔ WITHOUT THIS THE `hidden` ATTRIBUTE DOES NOTHING. `hidden` works through the UA rule
      `[hidden]{display:none}`, and `html.cine-on .cine-skip{display:inline-flex}` is more specific,
      so it won: the control stayed on screen after the film had finished, screenshotted sitting over
@@ -8969,8 +9087,14 @@
          being a slab, to being the centre of your kitchen, and then it ends on the hero section."*
          ⭐⭐ THE LAST BEAT IS THE HERO ITSELF, which is why it does not sit here. The chain reads
          as one sentence across the whole scroll:
-             It starts as a mountain. -> Then one slab, chosen for its veining.
+             It starts as a mountain. -> Your slab is one of a kind. No two slabs are the same.
              -> *Surfaces worth building around*
+         ⚠️ **THE SECOND BEAT WAS RE-WRITTEN AT D327** and its timing was NOT touched — the windows
+         below are still the measured ones. Client: *"the next frame has to talk about your slab is
+         unique, there's no other slab like it… Your slab is one of a kind. No two slabs are the
+         same. And then also in the white and gold."* It replaces "Then one slab, chosen for its
+         veining." ⛔ The chain no longer opens each beat with "Then", which was carrying the old
+         four-beat sequence; with three beats each one stands on its own.
          ⛔ **IT WAS FOUR BEATS UNTIL D326**, when the client asked for the closing one over the
          kitchen shot to come off: *"Remove the text that comes up on this part."* The withdrawn line
          is parked in full beside the two that remain, below.
@@ -9011,7 +9135,7 @@
            closing 3 seconds of it land on the kitchen shot on this film. -->
       <p class="cine-line" data-at="13.5" data-out="23.5" data-vpos="low"
          data-at-narrow="21.0" data-out-narrow="27.5" data-vpos-narrow="top"
-         data-at-phone="16.2" data-out-phone="24.4">Then one slab, chosen for its veining.</p>
+         data-at-phone="16.2" data-out-phone="24.4">Your slab is <em>one of a kind.</em><br>No two slabs are the same.</p>
       <!-- ⛔⛔⛔ **THE THIRD BEAT IS WITHDRAWN — 22 August 2026 (D326).** Client, on a screenshot of the
            closing kitchen shot with the words over it: *"Remove the text that comes up on this
            part."*
@@ -9043,11 +9167,31 @@
            ⚠️ NOT `aria-hidden` on the words: this is real copy and a screen reader should have it. It
            reads before the h1, which is the order it is written in. Only the indicator is decorative. -->
       <div class="cine-hero" id="cineHero">
-        <!-- ⭐ THE GOLD TAKES THE PAYOFF, WHICH IS THE HERO'S OWN PATTERN ("Surfaces worth /
-             *building around*") — and it is also the line that sits lowest, on the darkest ground
-             the raised block reaches. Gold on the first line, up in the sky, measures 1.64:1. -->
-        <p class="cine-hl">Your worktop begins in <em>a mountain.</em></p>
-        <p class="cine-hero-sub">Scroll to follow the stone.</p>
+        <!-- ⭐⭐⭐ **THE MOST IMPORTANT LINE ON THE SITE — 22 August 2026 (D327).** Client: *"this
+             first frame is the most important because it acts as a second hero section. So it has
+             to make the user scroll, because a lot of what people have problems with is bounce
+             rates… on the data I have from one of my clients there's about four hundred visitors
+             per month and only two hundred of them scroll."*
+             ⭐⭐ **"HERE" IS THE WHOLE JOB.** It points at a mountain and leaves a question the only
+             answer to is a scroll. The previous line, "Your worktop begins in a mountain", ANSWERED
+             its own question in its own last word — there was nothing left to find out.
+             ⚠️ **HE IS TAKING THE CLIENT'S INPUT ON THIS ONE**, and named four candidates. The three
+             not used are kept here so a swap is one edit and no re-measuring:
+                 Your unique worktop starts here.
+                 Your beautiful worktop starts here.
+                 Your bespoke worktop starts here.
+             ⭐ The plain one ships because the adjective is the weaker choice on all three counts:
+             it front-loads a claim before the picture has earned it, it costs the line its rhythm,
+             and "unique"/"one of a kind" is the SECOND beat's job — spending it here leaves that
+             frame repeating itself. ⛔ And a fourth line would push the block back through the
+             skyline he asked it to clear (D325b).
+             ⭐ Gold takes "starts here." — the hero's own pattern, and the payoff. -->
+        <p class="cine-hl">Your worktop <em>starts here.</em></p>
+        <!-- ⭐ LONGER SINCE D327, AND D326 IS WHY IT CAN BE. Client: *"we can maybe write a little
+             bit more in the subtext."* Naming the kitchen used to spoil the third title; that beat
+             was withdrawn, so the line is free to say what the scroll actually buys — which is the
+             whole answer to the bounce rate he is worried about. -->
+        <p class="cine-hero-sub">Follow one slab from the quarry to the centre of your kitchen.</p>
         <div class="cine-hero-cue" aria-hidden="true"><span>Scroll to begin</span><i></i></div>
       </div>
     </div>
@@ -16202,6 +16346,25 @@ if(faqIndex && panel && faqBody){
     veiled=v;
     document.documentElement.style.setProperty('--cineVeil',v);
   }
+
+  let curved=-1;
+  /* ⭐⭐ THE CORNERS ARRIVE WITH THE HERO AND NOT BEFORE — D327. Client: *"it shouldn't be like that
+     for the video, only for the final hero section is where that comes in smoothly."* Square for the
+     whole film, then the rounding and the gold hairline draw themselves in over the last tenth of it.
+     ⚠️ `CURVE_AT` is 0.90 against the copy's `INK_AT` 0.93 ON PURPOSE — the frame should have
+     finished becoming the hero before the words land in it, not at the same moment.
+     ⚠️ Smoothstep rather than linear, for the reason the veil already gives: a linear ramp has a
+     visible start. ⭐ `film` reaches 1 at the top of the hold and stays there, so the hero rests for
+     its whole 182vh fully rounded. */
+  const CURVE_AT=0.90;
+  function curve(film){
+    const k=clamp((film-CURVE_AT)/(1-CURVE_AT));
+    const v=+(k*k*(3-2*k)).toFixed(2);
+    if(v===curved)return;
+    curved=v;
+    cine.style.setProperty('--cineCurve',v);
+  }
+
   /* ⭐⭐ **THE GRADE FOLLOWS THE PICTURE, WHICH IS WHY IT CAN BE ABSENT MOST OF THE FILM.** The band
      behind the bar is drawn to a 24×1 canvas and its mean luminance decides how much of the veil's
      own nav curve is on. ⛔ It is read from the VIDEO, not from the screen: a `cover` video is
@@ -16419,7 +16582,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); story(dur); heroCopy(dur); plates(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plates(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -16433,6 +16596,7 @@ if(faqIndex && panel && faqBody){
     seek();
     ink(film);
     veil(film);
+    curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
     heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
     plates(want);     /* his stills, blended in as the film passes the frames they were made for */
@@ -16478,7 +16642,7 @@ if(faqIndex && panel && faqBody){
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
     replate();
     fetchFilm();
-    measure(); eased=-1; inked=null; veiled=-1;
+    measure(); eased=-1; inked=null; veiled=-1; curved=-1;
     onScroll();
     /* ⛔ AND THE PAGE HAS TO BE TOLD, IN BOTH DIRECTIONS. A window dragged past 1121 turns the film
        on from here, and the header's own IIFE only re-reads `cine-on` when it sees a scroll — so
