@@ -1,64 +1,61 @@
-# START HERE — 22 August 2026, after THE VIDEO ROUND (D319–D324)
+# START HERE — 22 August 2026, after THE FIRST-SCREEN ROUND (D325–D332)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D319–D324**),
-**§2** (the standing rules) and **§2s** (SITE SPEED). That is about twenty minutes and it is enough
-to work safely.
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D325–D332**),
+**§2** (the standing rules) and **§2s** (SITE SPEED). About twenty minutes, and enough to work safely.
 
-> ⚠️ **This replaces the previous version of this same file**, which is now
-> `HANDOVER-2026-08-18-clean-out-and-film-copy-start-here.md` (D315–D318). Everything that still
-> matters is carried below.
+> ⚠️ **This replaces the previous version of this same file**, now
+> `HANDOVER-2026-08-22-video-round-start-here.md` (D319–D324). Everything that still matters is
+> carried below.
 
-> ⭐⭐ **THE VIDEO IS THE ACTIVE SCOPE AND HE SAID SO TWICE.** He opened this round with *"for the
-> next while we are going to be working on the intro video and text that goes there"* and closed it
-> with *"I just want the first desktop video and separate mobile video tied to the scroll."*
-> **§3 is the film. Start there.**
+> ⭐⭐ **THE ACTIVE SCOPE IS THE FIRST SCREEN, AND A NEW VIDEO IS COMING.** He closed the round with
+> *"we're gonna get a new video"* and *"we'll continue working on this in the new chat."*
+> **§3 is what happens when it lands. §4 is the first screen as it stands.**
 
 ---
 
 ## 0. ⛔⛔⛔ THE ONE THING TO TAKE FROM THIS ROUND
 
-**⭐⭐⭐ I BUILT A MECHANISM TO SHOW HIS STILLS, HE REJECTED IT TWICE, AND THE ANSWER WAS THAT THE
-STILLS ARE SUBORDINATE TO THE FILM — NOT THE OTHER WAY ROUND.**
+**⭐⭐⭐ I CHANGED THE INK THREE TIMES BEFORE READING THE PAINT ORDER, AND HE HAD TO SWEAR AT ME TO
+GET THERE.** The film's gold looked muddy. He said so three times, in plainer and plainer language.
 
 ```
-D320  six stills overlaid, and the film PARKS on each so they can be seen   → he felt dead scroll
-D321  parks halved, and the park becomes the dissolve                       → still dead scroll
-D322  ⭐ the track is deleted. The film scrubs straight through and the
-      stills blend as it passes them. "It must look like it's part of
-      the video now."                                                       → right
-D323  and then only TWO of them: the first frame and the last
+D325b  the ground is bright, so LIGHTEN the ink        → "the start here is faded"
+D327b  put the site's real ink back, DARKEN the ground → "even darker than it was before"
+D327c  lighten the ink again, brighter this time       → still wrong
+D327e  ⭐ read the paint order. `text-shadow` was
+       painting ON TOP of the gold the whole time      → right, first time
 ```
 
-⛔⛔ **AND THE REAL FAULT WAS NOT THE PARKS — IT WAS ARITHMETIC I DID NOT RE-CHECK.** D320 set the
-travel pace from `1000vh / 44.25s`, but **the last 18% of that scroll is the hero's hold and has
-never carried film**. The approved pace is `818vh / 44.25s`. **The film ran 22% slow for two whole
-rounds** and neither of us named it — he only said it "feels dead", which I first read as the parks.
+⛔⛔ **THE MECHANISM, BECAUSE IT WILL CATCH ANYONE AGAIN.** With `background-clip:text` the element's
+BACKGROUND — the gold ramp, clipped to the glyphs — paints FIRST. A `text-shadow` paints after any
+background and before the glyph fill. So a dark shadow lands **on top of the metal**, and
+`-webkit-text-fill-color:transparent` then paints nothing over it to hide it. ⭐ **And it is why
+`.hero-title em` has always looked right: `.hero-title` declares no text-shadow at all.**
+⚠️ `.cine-hl` and `.cine-line` set one for their WHITE and an `em` INHERITS it — it has to be turned
+off explicitly. Use `filter:drop-shadow()` when separation is genuinely needed; it draws behind.
 
-⭐⭐⭐ **THE LESSON, AND IT IS GENERAL: WHEN HE SAYS SOMETHING FEELS WRONG, MEASURE THE THING YOU
-CHANGED *AGAINST THE THING YOU DID NOT*.** The parks were visible and wrong; the pace was invisible
-and also wrong. Fixing only the visible one would have left him still unhappy and me still confident.
-
-⭐⭐ **AND PARK, NEVER DELETE — AGAIN.** Every reversal this round cost minutes because nothing was
-thrown away: `assets/video/plates/.removed-2026-08-21/` holds the four withdrawn stills in both
-crops, with each one's frame, time, fade width and measured distance.
+⭐⭐⭐ **THE GENERAL LESSON: HIS COMPLAINT NAMED THE SYMPTOM CORRECTLY EVERY TIME AND I KEPT TUNING
+THE WRONG VARIABLE.** The evidence was in his first screenshot — dark blur *inside* the letterforms
+is not a hue problem. **Look at what he sends before deciding what to change.**
 
 ---
 
-## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D319–D324)
+## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D325–D332)
 
 ```
-D319  THE PHONE GETS HIS OWN FILM — `TC MOBILE FIXED.mov`, a 9:16 cut that arrived
-      PILLARBOXED inside a 1920x1080 box. Pillars cropped, his framing untouched.
-      The phone's crop loss goes 42% → 18%
-D320  HIS SIX STILLS OVERLAID on the frames they were generated for, and a hold
-      track built so they could be seen                          ⚠️ track reverted
-D321  the parks halved and turned into the dissolve              ⚠️ also reverted
-D322  ⭐ THE TRACK IS GONE. Linear scrub restored, the 22% pace error found and
-      fixed, and the TABLET gets the stills on its own crop
-D323  TWO STILLS ONLY — the first frame and the last. Both were also anchored a
-      frame off, and one of those was a bug in my port of his matcher
-D324  the film audited for leftovers: no dead identifiers, no dead film CSS, no
-      orphan assets. Two small things found and fixed
+D325   the opening frame becomes a SECOND HERO on desktop — copy, invitation,
+       scroll indicator, on a grade anchored to the left frame edge
+D325b  it clears the skyline, and takes white-and-gold
+D326   ⛔ the third title is withdrawn ("Then the centre of your kitchen")
+D327   optimised for bounce rate: bigger title, new slab copy, the skip control
+       made visible, and the hero's rounded corners taken off the film
+D327e  ⭐ THE GOLD FIX — text-shadow, not colour
+D327f  the grade lightened off the mountainside; the arrow rebuilt a third time
+D328   ⭐⭐ HIS TWO NEW MASTERS — and the film is a RE-CUT, so three things moved
+D329   all the overlay plates removed, on his instruction
+D330   the overlay comes back from his two new stills
+D331   ⭐ the morph was GEOMETRY, not colour — the overlay becomes the master's f0
+D332   ⛔ the overlay reverted and parked whole, ahead of the new video
 ```
 
 ---
@@ -66,189 +63,149 @@ D324  the film audited for leftovers: no dead identifiers, no dead film CSS, no
 ## 2. ⭐⭐⭐ SITE SPEED IS A STANDING RULE — HIS OWN WORDS
 
 Unprompted, 18 Aug: *"just make sure you always keep site speed in mind… **site speed is key**."*
-It is `HANDOVER.md` **§2s** and it is §2 material.
+`HANDOVER.md` **§2s**, and it is §2 material.
 
-1. ⛔⛔ **ONE FILM PER BAND AND ONLY ONE IS EVER FETCHED.** Three cuts exist (**20.15 MB** together) and a
+1. ⛔⛔ **ONE FILM PER BAND AND ONLY ONE IS EVER FETCHED.** Three cuts (**21.9 MB** together), a
    visitor downloads exactly one. An in-place `<script>` beside the `<video>` sets `src` and
-   `poster` **during parse**. ⛔ **A `display:none` VIDEO STILL DOWNLOADS ITS `src` AND ITS
-   `poster`** — CSS decides what is painted, the URL decides what is fetched. **Re-verify zero
-   requests for the other two after ANY change to that element or that script.** It is the most
-   expensive thing here to get wrong.
+   `poster` **during parse**. ⛔ **A `display:none` VIDEO STILL DOWNLOADS ITS `src` AND `poster`.**
+   **Re-verify zero requests for the other two after ANY change to that element or that script.**
 2. ⭐ **`preload="none"` in the markup**, flipped to `auto` by the scrub once the band is known.
-3. ⭐⭐ **FIRST PAINT COSTS THE POSTER, NOT THE FILM** — **55 KB** phone, 82 KB tablet, 122 KB desktop,
-   each the film's own first frame so there is nothing to swap.
+3. ⭐⭐ **FIRST PAINT COSTS THE POSTER, NOT THE FILM** — **120 KB** desktop, 80 tablet, 53 phone, each
+   the film's own first frame so there is nothing to swap. ⛔ Do not let them grow; D330 pushed them
+   to 163/125/97 and they had to be walked back down by quality.
 4. ⭐⭐ **COMMENTS COME OFF ON THE WAY OUT (D315).** `make_upload.py` strips every `.html`/`.css`/
-   `.js` into `upload/` through `strip_for_host.py`; the working files keep every comment.
-   ⛔ Never strip comments from the SOURCE to save bytes — they are the design record.
-5. ⭐ **NOTHING UNREFERENCED SHIPS.** Dot-prefixed folders never ship, and an unreferenced-asset scan
-   is part of the round. ⭐ D324 ran it: **zero orphans in either direction.**
+   `.js` into `upload/`. ⛔ Never strip comments from the SOURCE — they are the design record.
+5. ⭐ **NOTHING UNREFERENCED SHIPS.** Dot-folders never ship. ⛔ When you remove an element, move its
+   assets into a dot-folder **in the same edit** (D329 and D332 both had to).
 
 ⚠️ **`dev-server.js` COMPRESSES AND THE HOST MAY NOT.** ⚠️ **A MEDIA ELEMENT'S OWN FETCH OFTEN DOES
-NOT APPEAR IN `resource` TIMING** (byte ranges; the dev server answers 206). Prove "the wrong film
-did not load" by the ABSENCE of the other bands' URLs plus `video.getAttribute('src')`.
+NOT APPEAR IN `resource` TIMING.** Prove "the wrong film did not load" by the ABSENCE of the other
+bands' URLs plus `video.getAttribute('src')`.
 
 ---
 
-## 3. ⭐⭐⭐ THE FILM AS IT STANDS — START THE VIDEO WORK HERE
+## 3. ⭐⭐⭐ WHEN THE NEW VIDEO ARRIVES — DO THESE, IN THIS ORDER
 
-⭐⭐⭐ **HE HAS ONLY EVER SUPPLIED TWO FILMS AND THAT IS WHAT THE SITE SERVES.** His landscape master
-and his separate mobile master. ⛔ **THE TABLET'S 864 IS NOT A THIRD FILM** — it is D312's 4:5 crop
-of the SAME landscape master, which is why desktop and tablet share every story beat and every
-still. Said plainly because *"I just want the first desktop video and separate mobile video tied to
-the scroll"* (22 Aug) describes **what already ships**, and reads like a change when it is not.
+⛔⛔⛔ **D328 IS THE WORKED EXAMPLE. A NEW MASTER IS NEVER JUST A RE-ENCODE.** His last one kept the
+first fourteen seconds and changed everything from t=16, and **three separate things had to move
+with it.** Assume the same until measured otherwise.
 
-| band | file | notes |
-|---|---|---|
-| **≤720** phone | `topcat-intro-608.mp4` | 3.43 MB, 608×1080 — **HIS own vertical cut** (D319) |
-| **721–1120** tablet | `topcat-intro-864.mp4` | 5.0 MB, 864×1080 — the landscape master cropped 4:5 at **x=680** (D312) |
-| **≥1121** desktop | `topcat-intro-1920.mp4` | 11.7 MB, 1920×1080 — the landscape master |
+1. **Copy the masters in.** `assets/video/.src-<date>/`, verify byte-exact by SHA-256.
+   ⚠️ `~/Downloads` access has been blocked before (D319) and worked at D328 — if `cp` returns
+   EPERM, write a `.command` into the scratchpad and `open -a Terminal` it.
+2. ⛔⛔ **CHECK THE MOBILE MASTER FOR A PILLARBOX. IT HAS ARRIVED THAT WAY TWICE** (D319, D328) —
+   a 9:16 film **608 wide centred at x=656** inside a 1920×1080 box. `cropdetect` across the film
+   AND a per-column luminance max; they must agree. ⭐ *"No cropping needed"* is about his FRAMING;
+   the pillars still come off, or `cover` keeps the bars and 68% of every frame ships as black.
+3. **Encode.** `bash .src-2026-08-22/encode.sh` is the template — crf 25/26/27, `fps=12`,
+   `crop=864:1080:680:0` for the tablet. ⛔ All three must be **44.250s / 531 frames** or the scroll
+   maths stops matching across bands.
+4. ⛔ **BUMP `?v=` ON ALL THREE FILMS AND ALL THREE POSTERS IN THE SAME EDIT.** `.htaccess` holds
+   mp4 for a week. Currently films `?v=2`, posters `?v=3`.
+5. ⭐⭐ **RE-MEASURE THE SLAB BEAT ON EVERY BAND.** The void moves with the cut. D328's method:
+   sample the p97 of the band's own copy area every 0.25s and find where it reads ≤6.
+   Current windows — desktop **15.0–24.5** (left 7–46% black 14.75→25.00), tablet **21.0–25.3**
+   (top 18% black 20.50→25.00), phone **16.2–24.0** (top 18% black 16.00→23.50).
+6. ⭐ **RE-CHECK THE OPENING GRADE.** Every contrast figure in §4 was measured on the current f0.
+   If the opening shot changes, re-run them.
+7. ⭐ **REGENERATE THE POSTERS** — `.plates-2026-08-22/make_plates.py` does it, at the §2s budget.
 
-All three are **44.250s at 12fps / 531 frames**, so the scroll maths is identical at every band.
-⛔ `.htaccess` holds mp4/webm for a **week** and `?v=` is hand-stamped: **re-encode and bump the
-stamp in the same edit, poster included.**
+---
 
-### ⛔⛔⛔ HIS MOBILE MASTER ARRIVED PILLARBOXED — THE ONE THING NOT TO MISREAD
+## 4. ⭐⭐⭐ THE FIRST SCREEN AS IT STANDS — DESKTOP ONLY
 
-`TC MOBILE FIXED.mov` is a **1920×1080 container carrying a 9:16 film 608 wide, centred at x=656**,
-with 656px of pure black either side. Measured by `cropdetect` over the whole 44s **and** by a
-per-column luminance max across ten frames — both agree exactly.
+⛔ **DESKTOP ONLY (≥1121), AND THAT IS HIS INSTRUCTION**: *"right now I'm talking about desktop
+specifically, we will talk about mobile and tablet text placement after."* The phone and tablet
+keep their own opening title (`.cine-open`) and their own cue, untouched. **That conversation is
+still owed.**
 
-⭐ **"No cropping needed" is about the FRAMING, which is his and is untouched. The PILLARS still had
-to come off**, or `cover` on a 0.462 phone box would have kept the bars and thrown away his picture,
-and 68% of every frame would have been black. ⚠️ The phone's crop loss is now **18%, not 42%** — the
-42% belonged to the 4:5 crop the phone used to carry. The tablet still carries that crop, at 6%.
-
-### ⭐⭐ THE NUMBERS, AND WHERE EACH ONE LIVES
+```
+Your worktop STARTS HERE.          Cinzel, 76px, gold on "starts here."
+Follow the slab from the quarry to your kitchen.
+SCROLL TO BEGIN  ↓                 the arrow, centred under the word
+```
 
 | What | Where | Value |
 |---|---|---|
-| page height | `--cineH` on `.cine` | **1100vh** desktop · **900vh** tablet · **800vh** phone |
-| the hero's dead scroll | `--cineHold` | **0.1818** · **0.2000** · **0.2125** — 182vh on desktop |
-| ⭐ **the film's actual pace** | derived | **18.49 vh/s** desktop · **14.46** tablet · **12.46** phone |
-| where the veil starts | `--cineVeilAt` | **38** (film seconds) |
-| the veil's floor | `--cineVeilMin` | **0.20** |
-| where the hero's copy rises | `INK_AT` in the scrub | 0.93 of the film |
+| the block | `.cine-hero` | `top:22vh`, left gutter `clamp(20px,7vw,132px)`, width `clamp(320px,46vw,660px)` |
+| the headline | `.cine-hl` | `clamp(38px,5vw,76px)`, line-height 1.06 |
+| its travel | `HERO_Z` | **300**, not the titles' 560 — see below |
+| it is gone by | `HERO_OUT` | **t=6.0**, full until 4.44 |
+| the grade | `.cine-edge` | left edge 0.88→0 by **76%**, plus a top-left corner pool at 0.72 |
+| the corners | `--cineCurve` | 0 through the film, ramping from `CURVE_AT` **0.90** |
 
-⛔⛔⛔ **THE PACE IS `(cineH − 100vh) × (1 − cineHold) / 44.25`, NOT `(cineH − 100vh) / 44.25`.**
-That single missing factor ran the film 22% slow for two rounds. **Write the multiplication out
-before quoting a pace.**
-⛔⛔ **THE PACE AND THE DEAD SCROLL MOVE TOGETHER OR THE FILM SPEEDS UP.** The scrub computes
-`film = eased/(1 − hold)`, so raising the hold alone squeezes the film into less travel. Raise
-`--cineH` by exactly the extra hold.
+⭐ **MEASURED AS SHIPPED**: headline line 1 **4.27:1**, the gold **4.47:1**, the invitation
+**13.16:1**, the cue's word **16.79:1**.
 
-### ⛔ THE PICKER IS ONE CASCADE — phone → narrow → base
+- ⛔⛔ **ANCHORED BY ITS TOP, NOT CENTRED.** On `top:57%` + `translateY(-50%)` the block's position
+  depended on its own height, so a longer headline pushed the first line back down through the
+  skyline. ⭐ The skyline was MEASURED — walking each column until its gradient breaks out of the
+  sky's noise floor puts the ridge at **y 250–280 of 900**, median 30%.
+- ⛔⛔ **HERO_Z IS 300 BECAUSE THE BLOCK IS AT THE TOP.** `perspective-origin` is `26% 50%`, so
+  anything above the middle travels UP as it approaches; the titles' own 560 renders it at 2.27×
+  and takes the headline off the top of the screen while it is still half visible.
+- ⛔⛔⛔ **THE VALLEY LOOKS LIKE THE EMPTY PART OF THE FRAME AND IT IS THE BRIGHTEST PART OF IT.**
+  D313's trap for the third time. Median 76, **p97 188**. Only a percentile finds it.
+- ⭐⭐ **THE GRADE IS ANCHORED TO THE FRAME EDGE, WHICH IS WHY IT CANNOT READ AS A PANEL.** He has
+  twice rejected a dark shape with an edge on it. ⭐ **AND IT COSTS HIS MARBLE NOTHING**: the subject
+  starts at 62% and measures **p97 181 graded, 181 ungraded**. Only background sky darkens.
+- ⚠️ **THE COPY'S RIGHT EDGE AT 42% IS WHAT SEPARATES HIS TWO SHADOW ASKS** — *"slightly lighter on
+  the left, but not much"* and *"don't let the mountain side be too dark."* Everything past 42%
+  protects nothing, so the head came down a little and the tail came down hard.
+- ⛔⛔⛔ **THE ARROW IS THREE LAYERS AND THE FIRST TWO DESIGNS BOTH FAILED THE SAME WAY.** A chevron
+  travelling down a channel is a crossbar when you freeze it. **He reviews from screenshots, so a
+  design that only reads in motion does not read at all.** Now `i` is the shaft and `i::after` the
+  head — both permanent, neither animated — and only `i::before`, the bright stroke, moves.
+- ⚠️ **`clip-path` CLIPS TO THE BORDER BOX**, and the shaft is 2px wide: an `inset(0 0 …)` on it cut
+  the 19px head clean off and shipped a bare line.
 
-Used identically by the in-place `<script>`, `band()` in the scrub and `retimeStory()`. A band that
-names nothing inherits the one below it, so **deleting the phone's pair drops it onto the TABLET's
-cut, never onto the 11.7 MB desktop film.**
-⚠️ The video calls the 721–1120 band `-narrow` (it is a fallback for both narrow bands); the stills
-call it `-tablet` (it is specifically the tablet). Both are correct; the names differ on purpose.
+---
 
-### ⭐⭐⭐ THE FILM'S OWN COPY (D316) — three titles, then the hero
+## 5. ⭐⭐ THE FILM'S COPY — TWO BEATS AND THE HERO
 
 ```
-1.0- 6.0s   It starts as a mountain.
-13.5-23.5s  Then one slab, chosen for its veining.
-              tablet: 21.0-27.5s at the TOP  ·  ⭐ phone: 16.2-24.4s (D319)
-31.5-39.0s  Then the centre of your kitchen.
+first screen  Your worktop STARTS HERE.          (desktop; phone/tablet keep "It starts as a mountain.")
+15.0-24.5s    Your slab is ONE OF A KIND.
+              No two slabs are the same.         tablet 21.0-25.3 · phone 16.2-24.0
    → the hero's own words: Surfaces worth building around
 ```
 
-⚠️ He quoted the hero as *"surfaces for every space"*; its actual words are **"Surfaces worth
-building around"**.
+⛔ **THE THIRD BEAT IS WITHDRAWN (D326)** — *"Remove the text that comes up on this part."* Parked in
+full in a comment where it sat. It came off **every band**, because it carried no per-band timing:
+it was a beat of the STORY, not a placement. ⚠️ `[data-vpos="low"]` now positions nothing and stays
+anyway — it is the restore path.
 
-- ⛔⛔ **THE PHONE'S SECOND BEAT IS ITS OWN BECAUSE IT IS A DIFFERENT FILM.** On his vertical cut the
-  slab FILLS the frame until the shot cuts to black at **exactly t=16.0** (the top band's 97th
-  percentile goes 233 → 0 between 15.5 and 16.0) and the kitchen returns at **t=25**. The tablet's
-  21.0–27.5 was measured on the 4:5 CROP; running it on the phone puts the closing words over the
-  kitchen shot.
-- ⭐⭐ **THE WORDS ARE PASSED BY THE CAMERA, NOT LAID OVER THE PICTURE.** The layer owns
-  `perspective:1000px` and each line runs `translateZ` −150 → +560 on **`p*p`**. ⛔ A `scale()` reads
-  as a zoom, not as depth.
-- ⭐⭐⭐ **EACH LINE CARRIES A MEASURED WASH.** The scrub writes each line's `--lg` from the **97th
-  percentile of a 48×4 read of that line's own band** — behind the opening title the median said
-  8.28:1 while the p97 said **1.98:1**, the identical trap D313 fell into twice. Measured after:
-  **17.87:1**. One `drawImage` per frame, because only one line is ever up.
-- ⛔⛔ **A GRADIENT LARGER THAN ITS BOX GETS CLIPPED INTO A BAND WITH A STRAIGHT EDGE** — the thing he
-  has rejected twice. `farthest-side`, last stop at 100%.
-- ⭐ **Skip intro** moves the scroll AND snaps the playhead. **The scroll prompt carries the opening
-  title's own alpha** so it cannot outlive the words it belongs under.
+⭐ **HIS OTHER HEADLINE CANDIDATES ARE PARKED IN THE MARKUP** (unique / beautiful / bespoke) —
+**he is still taking the client's input on the wording**, so expect this to change.
 
 ---
 
-## 4. ⭐⭐⭐ THE STILLS OVER THE FILM (D320–D323) — READ BEFORE TOUCHING THEM
+## 6. ⭐⭐⭐ THE OVERLAY — OFF, BUT HE LIKES IT
 
-Two of his generation stills are cross-faded over the film at the frames they were generated for.
-⛔⛔ **THE SCRUB IS LINEAR AND THERE MUST NOT BE A HOLD TRACK** — D320 built one so the stills could
-be seen, he called it dead scroll twice, and D322 deleted it. **The stills are subordinate to the
-film.**
+⭐ Client: *"revert the overlay changes for now because we're gonna get a new video. But also keep
+the overlay changes in mind for if we wanna use it again… **because it is looking better**."*
+**A PAUSE, NOT A REJECTION. Expect to bring it back.**
 
-| still | frame | t | his file | fade half-width |
-|---|---|---|---|---|
-| opening | **f0** | 0 | `Final F1.png` | 5 frames — **the page opens and rests here** |
-| hero | **f530** | 44.2083 | `New F7 (1).png` | 6 frames — **the hero rests here for 182vh** |
+⛔⛔⛔ **AND BRING BACK THE D331 VERSION, NOT D330's.** The difference is the whole lesson:
 
-⛔ **THE OTHER FOUR ARE WITHDRAWN (D323)**, parked in `assets/video/plates/.removed-2026-08-21/` with
-their frames, times, widths and distances. ⛔ Do not re-add one unprompted.
-
-- ⛔⛔⛔ **THE FADE WIDTHS ARE MEASURED, NOT CHOSEN** — how far either side of its frame a still still
-  reads as the same picture. **The picture drifts fast: the distance doubles within 2–7 frames at
-  every hold.** Widen one and you put a stale image over a moving camera, which is worse than a
-  quick blend. ⚠️ This is also why a wide, slow dissolve is impossible without parking the film,
-  and parking the film is what he rejected.
-- ⛔⛔ **OPACITY IS KEYED TO `vid.currentTime`, NOT TO `want`.** The decoder trails the eased target
-  while the page moves; driving from the target lit each still **three frames early** (measured).
-- ⛔⛔ **BOTH ANCHORS ARE EDGE CASES AND BOTH WERE WRONG ONCE.** `holds.py` excludes the film's LAST
-  frame (an ordinary seek is clamped off the end) — but the hero **parks** there, so its still is
-  anchored at `dur − half a frame` = f530, which it also matches better. And the script's search
-  window started one frame in, which made **frame 0 unreachable**; his opening still matches f0
-  better than f1. ⭐ Both fixed, and re-running the script now reproduces both anchors.
-- ⭐ **TABLET RUNS THEM TOO, ON ITS OWN CROP** — the same stills through D312's `864:1080:680:0`
-  window, in `assets/video/plates/tablet/`. ⛔ **The phone has none**: different film, nothing
-  painted, **no `src` ever attached, zero requests**.
-- ⚠️ **HIS STILLS ARE 1.7684 AND THE FILM IS 1.7778.** Left alone, `cover` scales them 0.5%
-  differently and the cross-fade **breathes**. Each is cropped to the film's exact aspect first, by
-  height only — the framing is his.
-- ⚠️ Re-run `.plates-2026-08-21/holds.py` if the film is ever re-cut. **A stale hold table parks on
-  the wrong frame.** His written guide is versioned at `Docs/Overlay-for-Scroll-Animation-Guide.md`.
-
----
-
-## 5. ⭐ THE FILES THIS ROUND ADDED OR PARKED
-
-| File | What and why |
+| the fade was blending | distance |
 |---|---|
-| `assets/video/topcat-intro-608.mp4` + poster | ⭐ The phone's film and its 55 KB first frame |
-| `assets/video/plates/` | The two live stills, desktop and `tablet/` |
-| `assets/video/plates/.removed-2026-08-21/` | ⭐ The four withdrawn stills, **both crops**, with a README of every measurement |
-| `assets/video/.src-2026-08-21/` | ⛔ **His mobile master** (`.gitignore`d — the only copy in the repo; he has the original), `encode.sh` with the full SSIM/MB table, and how the file was got out of `~/Downloads` |
-| `assets/video/.plates-2026-08-21/` | ⭐⭐ `holds.py` — his guide's §4 matcher **rewritten without numpy** — and the mapping with its confidences |
-| `Docs/Overlay-for-Scroll-Animation-Guide.md` | ⭐ **His own written build guide.** Read §4 and §5 before touching the stills |
-| `Frame images/` (repo root) | ⛔ His six PNG masters, 19.6 MB, `.gitignore`d. **Do not delete** — re-exporting a still needs the original, never the WebP and never the video |
-| (carried) `assets/video/.src-2026-08-18/` · `.reverted-2026-08-18-pan/` · `.reverted-2026-08-18-9x16/` | The landscape master + `encode.sh`; D316's panned cuts; D317's 9:16 master and encode |
+| his `F1 FIXED.png` vs the desktop film's f0 | **0.301** |
+| his `Mobile f1.png` vs the phone film's f0 | **0.143** |
+| ⭐ the MASTER's own f0 vs the web film's f0 | **0.011–0.016** |
 
-⭐ **EVERY ONE OF THOSE FOLDERS HAS A README** saying what is in it and how to bring it back.
-⚠️ **13.5 MB of withdrawn ENCODES are tracked in git** in the two `.reverted-2026-08-18-*` folders.
-They never ship, and removing them from the index now would not shrink a clone because history
-already carries them. ⛔ They stay parked.
+His stills are different **RENDERS** of the shot — trees and veining in different places. **Colour
+can be graded; geometry cannot.** That is the morph he screenshotted, and no filter could fix it.
+D331 extracts the frame from his 86.5 MB master instead: **0.043 / 0.036 / 0.037**, nothing left to
+morph. The overlay still earns its place — the master frame is far cleaner than the same frame
+through the web encode.
 
----
-
-## 6. ⛔ DELIVERY
-
-```bash
-git clone https://github.com/ThadGC/topcatwork.git topcat && cd topcat
-cd "Topcat-Worktops-main/Website Demo" && python3 make_upload.py
-```
-
-1. Upload the **CONTENTS** of `upload/` into `public_html`. **639 files, 176 HTML pages, 80.6 MB.**
-2. ⚠️ **"SHOW HIDDEN FILES" ON** — `.htaccess` is the caching fix and most clients hide it.
-3. ⛔⛔ **FLUSH SITEGROUND'S DYNAMIC CACHE** (Site Tools → Speed → Caching). It sits in front of
-   Apache and ignores `.htaccess` entirely.
-4. View-source a stone page and check the `?v=` matches.
-
-⭐ **`main` and `origin/main` are identical** and one `git push` moves both refs.
-⛔ **NOTHING FROM D291 ONWARD IS LIVE. The film has never been on the host.**
+**To restore:** `.plates-2026-08-22/removed-code-d332.txt` holds every block verbatim — `css`,
+`markup`, `js`, `js_load` and the three one-line call sites **separately, because they are not
+inside the other blocks**. Move `plates/` back out of the dot-folder, paste, bump `?v=`.
+⚠️ Re-run `make_plates.py` first if the film has been re-cut — f0 changes with it.
+⭐ Fade width **3 frames** (was 6): with a matched still the only ghost is camera motion, and the
+film drifts 0.115/frame.
 
 ---
 
@@ -259,10 +216,10 @@ cd "Topcat-Worktops-main/Website Demo" && python3 make_upload.py
    the phone   ·   the tablet        ·   the desktop
 ```
 ⛔ **THE TABLET-ONLY BLOCK IS STILL LAST IN THE STYLESHEET** (search `THE TABLET BAND`).
-⭐ **Widen a phone rule's own query to reach the tablet, never copy it** — that is how the stills
-were given to the tablet at D322 (one `max-width:1120` guard became `max-width:720`).
-⚠️ The film runs at all three bands, so its rules sit at base scope with only `--cineH` and
-`--cineHold` per band.
+⭐ **Widen a phone rule's own query to reach the tablet, never copy it.**
+⚠️ ⛔⛔ **AND SOURCE ORDER DECIDES BETWEEN EQUAL SPECIFICITY** — `html.cine-on .cine-cue{display:none}`
+written up with the hero's block LOST to the base `display:flex` written later. Caught by reading
+the computed style, not by looking.
 
 ---
 
@@ -276,14 +233,17 @@ cd "Website Demo" && python3 build_seo_pages.py
 cd "Website Demo/stones" && python3 harvest/verify.py            # 132/132/132 ✅
 ```
 
-⛔⛔ **NEVER RUN `trade/build_trade.py`** (reverts trade to 1 Aug). ⛔ `build_images.py` /
-`patch_images.py` are one-shot.
-**The CSS gate** (brace delta 0, comment delta 1 against the file's own baseline of one) and
-**`node --check` on all three inline `<script>` blocks** after every edit to `index.html`.
-⚠️ **The JS gate must EXCLUDE `application/ld+json` blocks** or it fails on the schema, which looks
-like a syntax error in your own code.
-⭐ `make_upload.py` runs its own gates: `node --check` on **682 stripped scripts** plus balance and
-idempotence per file, and it **stops the build** rather than publish a damaged strip.
+⛔⛔ **NEVER RUN `trade/build_trade.py`.** ⛔ `build_images.py` / `patch_images.py` are one-shot.
+**The CSS gate** (brace delta 0, comment delta 0 against HEAD) and **`node --check` on all three
+inline `<script>` blocks** after every edit to `index.html`.
+⚠️ **The JS gate must EXCLUDE `application/ld+json`** or it fails on the schema.
+
+⭐⭐⭐ **AND A `<div>` BALANCE CHECK AFTER ANY STRUCTURAL CUT — THIS IS NEW AND IT IS NOT OPTIONAL.**
+D329 cut a block that ended mid-element, left the closing `</div>` behind, and it began closing
+`.hero-bg` instead — putting three grade layers outside the hero's clip. **Nothing looked wrong; the
+document just got 456px taller.** Count `<div` vs `</div>` (comments, `<script>` and `<style>`
+stripped) against `git show HEAD:` — it must be balanced AND differ from HEAD by exactly the layers
+you meant to change.
 
 ### ⭐ THE FREEZE PROBE — 1440×900, FRESH LOAD, TAB IN FRONT
 
@@ -292,64 +252,55 @@ idempotence per file, and it **stops the build** rather than publish a damaged s
 | `.gal-scroll` height | **4950** |
 | `--revPer` (on `#reviews`) | **3** |
 | `feTurbulence` count | **60** |
-| `#svcNav` children | **8** |
-| elements | **2683** |
+| elements | **2689** |
 | hero ink (`.hero-inner` padding-top) | **86.1828** |
-| `#about` height | **704** |
-| collage | **497×621** |
 | `#footer` height | **504** |
-| `.wheel-ui` width | **480** |
 | document height | **24443** |
-| broken images / overflow / console errors | **0 / none / none** |
+| `.hero-bg` children | **6** |
+| broken images / 4xx / console errors | **0 / 0 / none** |
 
-⚠️ **ELEMENTS MOVED 2680 → 2683** — the stills' layer and its two nodes. Not a regression.
-⚠️ **DOCUMENT HEIGHT IS BACK TO 24443**, the pre-D320 figure. If it reads 31881 or 28101 you are on
-a build with the hold track still in it.
-⚠️ **THE ELEMENT COUNT IS ONLY VALID ON A FRESH LOAD** — the weld stage adds ~93 nodes once built.
-⚠️ **Filter broken images on `i.src && i.complete && i.naturalWidth===0`** (`#pmShot` has no src).
-⭐ Tablet document **22303**, phone **20487**.
+⚠️ **ELEMENTS: 2689 with the overlay OFF, 2690 with it on.** ⚠️ **DOCUMENT HEIGHT 24443 — if it
+reads 24899 a structural cut has left a stray closing tag.** ⚠️ The element count is only valid on a
+fresh load. ⚠️ Filter broken images on `i.src && i.complete && i.naturalWidth===0`.
 
 ---
 
-## 9. ⚠️ THE ENVIRONMENT TRAPS — ALL LIVE, FOUR NEW THIS ROUND
+## 9. ⚠️ THE ENVIRONMENT TRAPS — ALL LIVE
 
-- ⛔⛔⛔ **NEW — macOS BLOCKS THIS PROCESS FROM `~/Downloads` AND `~/Desktop` ENTIRELY.** `Movies`,
-  `Pictures` and `Documents` are fine, which is why earlier masters worked. `cp`, `head`, the Read
-  tool and Finder scripting all return EPERM; **`stat` still works**, which makes it look like a
-  path problem. ⭐⭐ **THE ROUTE THAT WORKS: write a `.command` script into the scratchpad and
-  `open -a Terminal` it.** `open` is LaunchServices, not an Apple event, and Terminal has its own
-  disk permission. The copy landed byte-exact. ⛔ Do that rather than asking him to move a file.
-- ⛔⛔⛔ **NEW — THE FILM NEEDS ~8s TO BUFFER AFTER A NAVIGATION BEFORE A SCRUB MEASURES ANYTHING.**
-  A 2.5s wait produced a sweep where the engine looked like it was sticking on single frames; it was
-  fine. **Check `readyState===4` and a buffered range covering the film before believing a scrub.**
-- ⛔⛔ **NEW — SAMPLING A SCRUB FASTER THAN THE EASED CHASE MEASURES THE CHASE, NOT THE PAGE.** Small
-  scroll steps track closely; a big jump needs ~2.5–3.5s to settle. Non-monotonic film times in a
-  sweep are the tell.
-- ⛔⛔ **NEW — AN OFF-BY-ONE AT THE EDGE OF A SEARCH WINDOW IS INVISIBLE IN THE OUTPUT.** `holds.py`
-  started its window at `lo+1` so `d[f-1]` always existed, silently making frame 0 unreachable — and
-  it still printed a confident answer for the wrong frame. **A matcher's window is as much a
-  decision as its metric.**
-- ⛔⛔⛔ **A SCROLL ANIMATION IS DEAD IN A BACKGROUND TAB.** rAF does not run in a tab that is not in
-  front, so the scrub freezes at `currentTime` 0 with a perfectly healthy video. **Front the tab.**
-- ⛔⛔⛔ **TWO TABS DRIFT TO DIFFERENT VIEWPORTS AND EVERY vh-DERIVED NUMBER DRIFTS WITH THEM.**
-  ⭐ **Read `innerWidth`/`innerHeight` in the SAME probe as the numbers you are comparing.**
+- ⛔⛔⛔ **NEW — ANCHOR AN INSERTION ON A UNIQUE LINE.** New JS was anchored on `function measure(){`
+  and **there are four of those in this file**. It landed in the stones IIFE and the console read
+  `plate is not defined` from `tick`. **Verify the insertion is in the scope you meant.**
+- ⛔⛔ **NEW — `git check-ignore` BEFORE COMMITTING ANY NEW DOT-FOLDER OF HIS ORIGINALS.** The `TC*`
+  rule matches his film naming; his overlay stills were `F1 FIXED.png` / `Mobile f1.png` and 8.7 MB
+  of PNG was heading for a commit. Rule now `**/assets/video/.plates-*/src/`.
+- ⛔⛔ **NEW — A SEARCH OVER SCALE AND OFFSET IS SLOW.** 2500 PIL crop/resize combinations exceeded a
+  two-minute timeout. Coarsen the grid, or run it in the background and do other work.
+- ⛔⛔⛔ **macOS HAS BLOCKED THIS PROCESS FROM `~/Downloads` BEFORE** (D319) and allowed it at D328.
+  If it returns EPERM: write a `.command` into the scratchpad and `open -a Terminal` it.
+- ⛔⛔⛔ **THE FILM NEEDS ~8s TO BUFFER AFTER A NAVIGATION BEFORE A SCRUB MEASURES ANYTHING.**
+- ⛔⛔ **SAMPLING A SCRUB FASTER THAN THE EASED CHASE MEASURES THE CHASE, NOT THE PAGE.** A big jump
+  needs ~2.5–3.5s to settle; non-monotonic film times in a sweep are the tell.
+- ⛔⛔⛔ **A SCROLL ANIMATION IS DEAD IN A BACKGROUND TAB.** Front the tab.
+- ⛔⛔⛔ **TWO TABS DRIFT TO DIFFERENT VIEWPORTS.** Read `innerWidth`/`innerHeight` in the SAME probe
+  as the numbers you are comparing.
+- ⚠️ **A BAND SWAP AFTER LOAD IS A REAL REQUEST, NOT A FAULT** — the pane opens narrow, and resizing
+  to 1440 makes `fetchFilm()` fetch the desktop cut. Re-navigate at the target width before
+  believing a wrong-band count.
 - ⛔⛔ **A NARROW LOAD LOOKS EXACTLY LIKE A BROKEN PAGE.** `--stoneRaster:on` below 720px swaps the
-  live marble SVG for a cached bitmap, so `feTurbulence` reads **0** and the element count drops
-  ~570. ⭐ **Fresh tab, resize, THEN load.**
-- ⛔⛔ **AN INLINE STYLE OUTRANKS A CLASS RULE** — hand the property back (`style.opacity=''`) when a
-  class is meant to take over. ⛔⛔ **`hidden` DOES NOTHING AGAINST A CLASS-BASED `display`.**
-- ⛔ **`.gitignore` BY NAME, NOT ONLY BY FOLDER.** He names every master `TC …`; the rule catches
-  `TC*` in the video folder and in any dot-folder under it.
-- ⛔⛔ **CONSOLE ERRORS PERSIST ACROSS RELOADS.** Check `performance.getEntriesByType('resource')`
-  for `responseStatus >= 400` before believing it.
+  live marble SVG for a bitmap: `feTurbulence` reads 0 and elements drop ~570. Fresh tab, resize,
+  THEN load.
+- ⛔⛔ **AN INLINE STYLE OUTRANKS A CLASS RULE** — hand the property back (`style.opacity=''`).
 - ⛔⛔ **A CSS EDIT DOES NOT SHOW UNTIL THE BUILDERS RE-RUN** (`site.css?v=<hash>`).
-- ⛔⛔ **THE PANE'S SCREENSHOT SCALES DOWN OR GOES BLACK after `resize_window` + reload.** Fresh tab,
-  navigate, resize, shoot **without** reloading.
-- ⭐ **`scroll-behavior:smooth` eats programmatic scrolls** — use `scrollTo({top,behavior:'instant'})`,
-  and **pin the position with a short interval while you settle** or something re-scrolls you.
-- ⛔ **LAZY IMAGES NEVER FETCH AFTER resize + instant `scrollTo`** — judge by `naturalWidth`.
-- ⛔ **`.rise` REVEALS AND THE REVIEWS WALL DO NOT FIRE AFTER AN INSTANT JUMP.** Scroll for real.
-- ⛔ **THE WELD STAGE TEARS DOWN PAST THE HAND-OVER** · ⛔ **A `file://` URL WEDGES THE TAB.**
+- ⛔⛔ **THE PANE'S SCREENSHOT GOES BLACK after `resize_window` + reload.** Fresh tab, navigate,
+  resize, shoot **without** reloading. ⚠️ It also composites only the frame at the top of the
+  document — a stacked mockup returns black below the fold.
+- ⛔ **`zoom` REGION CROP IS NOT SUPPORTED in the pane** — it returns the full screenshot.
+- ⭐ **`scroll-behavior:smooth` eats programmatic scrolls** — use `behavior:'instant'` and pin the
+  position with a short interval while you settle.
+- ⛔ **`computer` LIMITS: `wait` ≤ 10s, `scroll_amount` ≤ 10.** Chain them.
+- ⛔⛔ **CONSOLE ERRORS PERSIST ACROSS RELOADS** — check `performance.getEntriesByType('resource')`
+  for `responseStatus >= 400`. ⭐ **And read the console when something does not appear** — that is
+  what found `plate is not defined` in seconds.
 - (Carried) `javascript_tool` runs before async work settles · **no numpy, PIL only; no libwebp in
   this ffmpeg (PIL does the WebP); the browser canvas is the only SVG rasteriser** · valid stone
   presets: calacatta, carrara, crema, emperador, eternal, fumo, goldveil, mist, nerogold, statuario.
@@ -362,13 +313,12 @@ a build with the hold track still in it.
 cd "Website Demo" && nohup caffeinate -ims node dev-server.js > /tmp/topcat-server.log 2>&1 &
 ```
 
-⚠️⚠️ **THE IP HAS MOVED THREE TIMES IN FIVE DAYS** (192.168.1.106 → 10.101.1.252 → **192.168.10.246**).
+⚠️⚠️ **THE IP HAS MOVED FOUR TIMES** (192.168.1.106 → 10.101.1.252 → **192.168.10.246**).
 **Re-check with `ipconfig getifaddr en0` at the start of every reply that hands him a link.** A dead
-link presents as *"most of the images aren't loading"*, because a cached page keeps rendering while
-every new lazy image fails.
-⚠️ **The server also stops overnight** — check it before handing over a link.
-⭐ **THE SERVER IS DETACHED ON PURPOSE.** ⛔ Do not `preview_stop` it. ⚠️ It DOES need a restart after
-any edit to `dev-server.js`. ⭐ **USE `http://localhost:5501` IN THE PREVIEW PANE**, on his instruction.
+link presents as *"most of the images aren't loading"*.
+⚠️ **The server also stops overnight.** ⭐ **DETACHED ON PURPOSE — do not `preview_stop` it.**
+⚠️ It DOES need a restart after any edit to `dev-server.js`.
+⭐ **USE `http://localhost:5501` IN THE PREVIEW PANE**, on his instruction.
 
 ---
 
@@ -376,17 +326,16 @@ any edit to `dev-server.js`. ⭐ **USE `http://localhost:5501` IN THE PREVIEW PA
 
 | Page | State |
 |---|---|
-| **`/`** | opens on his film, scrubbed at every band, **three titles passed by the camera**, skip control, scroll prompt, 182vh of dead scroll on the finished hero, and **two of his own stills cross-faded over the first and last frames** |
+| **`/`** | opens on his film at every band, **a second hero on the first screen (desktop)**, two story beats, skip control, 182vh of dead scroll on the finished hero, square corners through the film that round only for the hero |
 | **`/about/` + six internal** | the `.page-head` family; directors visible and bright at all bands |
 | **`/services/*.html`** | nine leaves, each on its OWN photograph; burger nav ≤1120; quote card ≥1121 |
 | **`/stones/`** | 132 pages + collection + compare; white ledes; **no quote card, deliberately** |
 | **`/materials/` `/guides/` `/worktops/` `/sitemap.html`** | the 26-page SEO layer; 22 carry the quote card |
 | **`/trade/`** | eight sections; CTA carries WhatsApp |
-| **all 176 pages** | one footer, one mobile nav, og:image + twitter:card, favicon, hours **Mon–Sun 7am–9pm**, and **no code comments in view-source** |
+| **all 176 pages** | one footer, one mobile nav, og:image + twitter:card, favicon, hours **Mon–Sun 7am–9pm**, no code comments in view-source |
 
 ⚠️ **SHARED PHOTOGRAPHS NOT TO DELETE**: `kitchen-day.jpg`, `hero-night-*`, `og-cover.jpg`,
-`team/fitting.jpg`, and everything inside the dot-folders listed in §5.
-⭐ **MEASURE WHAT THE PAGE ASKS FOR BEFORE BELIEVING A COMMENT ABOUT IT.**
+`team/fitting.jpg`, and everything inside the dot-folders under `assets/video/`.
 
 ---
 
@@ -402,106 +351,99 @@ any edit to `dev-server.js`. ⭐ **USE `http://localhost:5501` IN THE PREVIEW PA
 8. **No showroom. Never show the review count. Value, not cheap.**
 9. **Voice:** quietly confident master. British English, commas not em dashes, no exclamation
    marks, **no AI slop, no jargon**. ⚠️ Customer review quotes are verbatim and exempt.
-10. ⛔ **The logo is the client's artwork, never re-drawn, never re-coloured, never generated. Set
-    HEIGHT only.** ⚠️ Every supplied lockup is the LIGHT artwork — it needs a dark ground.
+10. ⛔ **The logo is the client's artwork, never re-drawn, re-coloured or generated. Set HEIGHT only.**
 11. ⛔⛔ **A mark is never put in a circle, ring, disc or plate.** ⚠️ A control is not a mark.
 12. ⛔ **One device at a time unless he says otherwise.**
 13. ⭐⭐ **THIS IS A DESIGN BUILD. NEVER RAISE THE MISSING FORM BACKEND AS A BLOCKER.**
-14. ⛔⛔ **2 CREDITS MAXIMUM PER GENERATED IMAGE.** ⭐ **The last twelve rounds spent nothing.**
-15. ⭐⭐⭐ **SITE SPEED IS KEY** — his own words, §2 above and `HANDOVER.md` §2s.
+14. ⛔⛔ **2 CREDITS MAXIMUM PER GENERATED IMAGE.** ⭐ **This round spent nothing.**
+15. ⭐⭐⭐ **SITE SPEED IS KEY** — his own words.
 
 ---
 
 ## 13. OPEN — DO THESE NEXT
 
-### ⭐⭐⭐ The video, which is the live scope
+### ⭐⭐⭐ The video and the first screen, which is the live scope
 
-1. ⭐⭐⭐ **HE MAY WANT THE TWO REMAINING STILLS GONE TOO.** *"I just want the first desktop video and
-   separate mobile video tied to the scroll. that's all"* is about the FILMS, and the architecture
-   already matches it — but the stills are the one part that is not "just the video". **He kept them
-   deliberately at D323, so do not remove them unprompted.** If he says the word it is four lines
-   and the files park beside the other four.
-2. ⭐⭐ **THE FILM'S PACE AND THE DEAD SCROLL.** `--cineH` 1100/900/800vh and `--cineHold`
-   0.1818/0.2/0.2125. They must move together (§3). **This is the most likely thing he tunes next.**
-3. ⭐⭐ **DOES THE FILM WANT SOUND?** The landscape master carries 24-bit PCM; the site drops it and
-   nothing on the page can play audio. Never discussed.
-4. ⭐ **THE 19 DRONE VIDEOS** (Hornchurch, Rickmansworth) — worth re-asking now the site carries film.
-5. ⭐ **THE LANDSCAPE-TABLET CROP** — a 1024-wide tablet held landscape shows the crop's middle band
-   and clips the pendant tops. Rare, and a landscape-only framing nudge is one line.
+1. ⭐⭐⭐ **THE NEW VIDEO.** §3 is the whole procedure. ⛔ Assume a re-cut until measured.
+2. ⭐⭐⭐ **MOBILE AND TABLET TEXT PLACEMENT.** He explicitly deferred it: *"we will talk about mobile
+   and tablet text placement after."* **This is owed and he has not forgotten it.**
+3. ⭐⭐ **THE HEADLINE WORDING** — he is taking the client's input. Three alternates parked in the
+   markup.
+4. ⭐⭐ **THE OVERLAY, WHEN HE WANTS IT** — §6. Bring back D331's version, not D330's.
+5. ⭐ **THE HERO PLATE FOR THE NEW ENDING.** Withdrawn at D328 because the re-cut moved the camera.
+   **It needs a new still from him**, or it stays off.
+6. ⭐⭐ **DOES THE FILM WANT SOUND?** The masters carry 24-bit PCM; the site drops it. Never discussed.
+7. ⭐ **THE 19 DRONE VIDEOS** (Hornchurch, Rickmansworth) — worth re-asking now the site carries film.
 
 ### ⭐⭐⭐ The ones that are costing money
 
-6. ⭐⭐⭐ **HOW DO FILES ACTUALLY REACH `thadeusg3.sg-host.com`?** Asked eleven times. §6 is exact and
-   clone-tested. **Everything from D291 onward is still NOT live, including the entire film.**
-7. ⭐⭐⭐ **WHOSE ARGENTO DOES HE SELL?** His reference is a dense flecked grey-white; the site shows
+8. ⭐⭐⭐ **HOW DO FILES ACTUALLY REACH `thadeusg3.sg-host.com`?** Asked twelve times. §6 of the old
+   START HERE is exact and clone-tested. **Everything from D291 onward is still NOT live.**
+9. ⭐⭐⭐ **WHOSE ARGENTO DOES HE SELL?** His reference is a dense flecked grey-white; the site shows
    the supplier's veined marble-look. ⛔ Do not paste the Google image.
-8. ⭐⭐ **THE STONE PHOTOGRAPHY AUDIT** — 24 of 132 verified; **92 Nile Stone tiles unverified**.
+10. ⭐⭐ **THE STONE PHOTOGRAPHY AUDIT** — 24 of 132 verified; **92 Nile Stone tiles unverified**.
 
 ### ⭐⭐ His call
 
-9. ⭐⭐ **THE PHONE'S BAR** — the skeleton crosses his 11-Aug *"already formed from the top"* ruling.
-   **One word puts it back: delete the two `header.bar.preform::after` lines.**
-10. ⭐⭐ **THE SITEMAP LINK'S GOLD STYLING** — `seo.css` has the rule, no footer has the hook, so it
-    renders as small print. One attribute in `build_pages.py`, 176 footers changed.
-11. ⭐⭐ **A QUOTE CARD FOR THE PHONE AND TABLET.** D300 is desktop-only because he said "for desktop
-    specifically".
-12. ⭐⭐ **Trade terms** — payment, minimum order, lead times, a dedicated contact. **His stated first
+11. ⭐⭐ **THE PHONE'S BAR** — the skeleton crosses his 11-Aug *"already formed from the top"* ruling.
+    **One word puts it back: delete the two `header.bar.preform::after` lines.**
+12. ⭐⭐ **THE SITEMAP LINK'S GOLD STYLING** — `seo.css` has the rule, no footer has the hook.
+13. ⭐⭐ **A QUOTE CARD FOR THE PHONE AND TABLET.** D300 is desktop-only because he said so.
+14. ⭐⭐ **Trade terms** — payment, minimum order, lead times, a dedicated contact. **His stated first
     priority.**
-13. ⭐⭐ **Two sentences for Nick and Rimsha** · **the credit ceiling** · **Calacatta Gold licensing**
+15. ⭐⭐ **Two sentences for Nick and Rimsha** · **the credit ceiling** · **Calacatta Gold licensing**
     · **the fireplace scope, with Nick** · **Ali Jaffer and Kav / Uxbridge**.
-14. ⭐ **Confirm the silica / HSE sentence in his own words (D202).**
-15. ⭐ **Kitchen islands is not on his service list** — the page is live, linked and dressed (D294).
-16. ⭐ **Trustpilot** — recommended against putting 4.0 beside the Google 5.0. He has not ruled.
-17. ⚠️ **RIMSHA OR REMSHA?** Still unresolved. Her name is on a public page under her photograph.
-18. ⚠️ **THE HORNCHURCH GALLERY SET** — the lead frame is clear, the other 11 were never checked
-    frame by frame. Do it before launch.
-19. ⚠️ **Two slabs lean blue and nobody has ruled**: `arabescato-grey` (−13.78),
+16. ⭐ **Confirm the silica / HSE sentence in his own words (D202).**
+17. ⭐ **Kitchen islands is not on his service list** — the page is live, linked and dressed (D294).
+18. ⭐ **Trustpilot** — recommended against putting 4.0 beside the Google 5.0. He has not ruled.
+19. ⚠️ **RIMSHA OR REMSHA?** Still unresolved. Her name is on a public page under her photograph.
+20. ⚠️ **THE HORNCHURCH GALLERY SET** — the lead frame is clear, the other 11 were never checked.
+21. ⚠️ **Two slabs lean blue and nobody has ruled**: `arabescato-grey` (−13.78),
     `calacatta-gold-shimmer` (−12.39).
-20. ⭐ **Facebook, TikTok, YouTube?** ⛔ Do not guess handles.
+22. ⭐ **Facebook, TikTok, YouTube?** ⛔ Do not guess handles.
 
 ### ⭐ Ready to build
 
-21. ⭐ **Per-stone og:image** (each stone page sharing its own slab photograph) — 132 conversions.
-22. ⚠️ **`Next Stone Slabs` is named in one place** — sanctioned by D203. Read D203 before "fixing".
-23. ⚠️ **The stale branch `tablet-round-d197-d200`** — deletable once item 6 is answered.
-24. ⭐ **Pick a production host**; brotli; check the `.htaccess` cache rules survive it. ⚠️ **The
-    video makes this urgent** — 80.6 MB, and the mp4 rules are new and untested on the host.
+23. ⭐ **Per-stone og:image** — 132 conversions.
+24. ⚠️ **`Next Stone Slabs` is named in one place** — sanctioned by D203. Read D203 before "fixing".
+25. ⚠️ **The stale branch `tablet-round-d197-d200`** — deletable once item 8 is answered.
+26. ⭐ **Pick a production host**; brotli; check the `.htaccess` cache rules survive it. ⚠️ **The
+    video makes this urgent.**
 
 **Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing,
 brackets for vanity tops / fireplaces / tables, and the £3k vs £3,850 three-slab discrepancy.
 
-**CLOSED this round:** the phone's own film; the pillarbox; the phone's story beat; his stills over
-the film; the hold track (built and removed); the 22% pace error; the tablet's crop of the stills;
-and the leftover audit.
+**CLOSED this round:** the first screen as a second hero; the skyline placement; white-and-gold and
+the `text-shadow` bug behind it; the third title; the slab copy; the skip control; the film's rounded
+corners; his two new masters and the beats they moved; and the overlay, built twice and parked.
 
 ---
 
 ## 14. ⭐ HOW THIS CLIENT WORKS
 
-⛔⛔⛔ **DO NOT ARGUE YOURSELF OUT OF SOMETHING HE ASKED FOR, AND DO NOT HAND HIM THE DILEMMA.**
-**A real constraint is a problem to solve, not a question to return.** ⚠️ This round I asked him to
-move a file out of `~/Downloads` and he replied *"this is the one you need to use. just do it."*
-**He was right — there was a route (§9) and I had not found it yet.**
+⛔⛔⛔ **HIS COMPLAINT NAMES THE SYMPTOM CORRECTLY EVERY TIME. IF YOU "FIX" IT AND HE REPEATS
+HIMSELF, YOU CHANGED THE WRONG VARIABLE — DO NOT CHANGE THE SAME ONE HARDER.** He told me the gold
+was wrong three times. Twice I adjusted the colour. The third time I read the paint order and found
+a `text-shadow` sitting on top of it. **The evidence was in his first screenshot.**
+
+⛔⛔ **DO NOT ARGUE YOURSELF OUT OF SOMETHING HE ASKED FOR, AND DO NOT HAND HIM THE DILEMMA.**
+**A real constraint is a problem to solve, not a question to return.**
 
 ⛔⛔ **DO NOT ASK HIS PERMISSION. Commit, push, report.**
 
-⭐⭐⭐ **HE REVERSES HIMSELF FREELY AND FAST, AND HE REVERSES YOU FASTER.** The stills went from six
-with a hold track, to six with a shorter one, to six with none, to two, in about four hours. **The
-way to make that cheap is to park everything and delete nothing**, with a README naming the exact
-restore path.
+⭐⭐⭐ **HE REVIEWS FROM SCREENSHOTS.** Two arrow designs failed because they only read while
+animating — frozen, they were a crossbar on a line. **Anything on screen must be legible in a
+still.**
 
-⭐⭐⭐ **HIS COMPLAINTS ARE ACCURATE BUT NOT ALWAYS COMPLETE.** *"It feels like dead scroll"* was
-true of the parks I could see AND of a 22% pace error I could not. ⭐ **Measure the thing you
-changed against the thing you did not.**
+⭐⭐⭐ **HE REVERSES HIMSELF FREELY AND FAST, AND HE REVERSES YOU FASTER.** The overlay went in, out,
+back in from new art, rebuilt from the master, and out again inside one day. **The way to make that
+cheap is to park everything and delete nothing**, with a README naming the exact restore path.
 
 ⭐⭐ **HE SENDS CORRECTIONS MID-TURN, THREE OR FOUR DEEP.** Finish the one you are on, then take the
 next in his order.
 
 ⭐⭐ **WHEN YOUR OWN WORK CAUSED THE FAULT, SAY SO IN THE FIRST LINE.** He is fine with that and not
-fine with spin. Most of this round's bugs were mine and all of them were found by MEASURING, not by
-reading the code.
-
-⭐ **HE IS USUALLY RIGHT ABOUT THE DIAGNOSIS, NOT JUST THE SYMPTOM.**
+fine with spin. Most of this round's bugs were mine and all were found by MEASURING.
 
 ⚠️ **HE SWEARS WHEN SOMETHING LOOKS WRONG, AND THE COMPLAINT IS ALWAYS REAL.**
 
@@ -513,26 +455,24 @@ reading the code.
 
 ## 15. BUDGET AND THE DOCUMENT SET
 
-⭐ **This round spent 0 credits.** Every encode, crop and match was `ffmpeg`, PIL and plain Python;
-the films and the stills are his own.
+⭐ **This round spent 0 credits.** Every encode, crop, grade match and measurement was `ffmpeg`, PIL
+and plain Python; the films and the stills are his own.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D324**. §2 the standing rules, **§2s SITE SPEED**, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
-| **`Website Demo/index.html`** | ⭐⭐ The whole landing design, inline `<style>` and three `<script>` blocks. Search `THE SCROLL FILM`, `THE PLATES`, `THE FILM'S OWN COPY`, `cine-line`, `--cineHold`, `hero-navgrade`, `THE WELD`, `SLAB_V`, `THE TABLET BAND` |
-| **`Docs/Overlay-for-Scroll-Animation-Guide.md`** | ⭐⭐ **His own written build guide** for the stills. §4 (finding the frames) and §5 (the overlay) are the parts that matter |
-| **`Website Demo/build_pages.py`** | ⭐⭐ The seven internal pages, `site.css`, `site.js`, **`footer.css` and `nav.css`**. ⚠️ **RUN IT FIRST** |
-| **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. ⚠️ Dot-prefixed folders never ship and **comments are stripped on the way out** |
-| **`Website Demo/strip_for_host.py`** | ⭐⭐ The comment scanners. ⛔ Never touches a working file |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D332**. §2 the standing rules, **§2s SITE SPEED**, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
+| **`Website Demo/index.html`** | ⭐⭐ The whole landing design. Search `THE SCROLL FILM`, `THE OPENING FRAME AS A SECOND HERO`, `THE FILM'S WHITE-AND-GOLD`, `THE CORNERS BELONG TO THE HERO`, `cine-line`, `--cineHold`, `THE WELD`, `THE TABLET BAND` |
+| **`assets/video/.src-2026-08-22/`** | ⭐⭐ His two current masters (`.gitignore`d) + `encode.sh` with the full method |
+| **`assets/video/.plates-2026-08-22/`** | ⭐⭐ The overlay, parked: `removed-code-d332.txt`, `make_plates.py`, `plates/`, his two PNGs in `src/` |
+| **`assets/video/.plates-removed-2026-08-22/`** | The D329 removal and D323's four withdrawn stills |
+| **`Website Demo/.textopts-2026-08-22/`** | ⭐ The eleven first-screen options he chose from |
+| **`Docs/Overlay-for-Scroll-Animation-Guide.md`** | ⭐ **His own written build guide** for the stills |
+| **`Website Demo/build_pages.py`** | ⭐⭐ Seven internal pages, `site.css`, `site.js`, `footer.css`, `nav.css`. ⚠️ **RUN IT FIRST** |
+| **`Website Demo/make_upload.py`** | ⭐⭐⭐ Writes a clean `../upload/`. ⚠️ Dot-folders never ship; comments stripped on the way out |
 | **`Website Demo/.htaccess`** | ⭐⭐ Cache rules, mp4/webm for a week. ⚠️ A dotfile |
-| **`assets/video/`** | ⭐⭐ Three cuts + posters, `plates/`, and five dot-folders of masters and withdrawn work |
 | **`assets/footer.css` `assets/nav.css`** | ⛔ **GENERATED.** Never edit |
 | **`services/service.css`** | ⭐⭐⭐ Dresses all 167 generated pages. ⛔ No footer rules |
-| **`services/build_services.py`** | ⭐ Nine leaves. `HERO_IMG`; `qform_html()` |
-| **`build_seo_pages.py`** | ⭐ The 26-page SEO layer and the sitemap |
-| **`stones/build_stones.py`** · **`stones/descriptions.py`** | 132 stone pages + collection + compare, carries `SLAB_V` · one line per stone |
 | ⛔ **`trade/build_trade.py`** | ⛔⛔ **SUPERSEDED — DO NOT RUN** |
 | ⛔ **`build_images.py` `patch_images.py`** | ⛔⛔ **ONE-SHOT, CANNOT RUN AGAIN** |
-| `Docs/topcat-worktops-SEO-LOG.md` | Every URL, title and target query |
-| `HANDOVER-2026-08-18-clean-out-and-film-copy-start-here.md` | ⭐ The START HERE this file replaces (D315–D318) |
+| `HANDOVER-2026-08-22-video-round-start-here.md` | ⭐ The START HERE this file replaces (D319–D324) |
 | `HANDOVER-archive-to-2026-08-06.md` | ⚠️ **Every design the client rejected, in his words.** Read before redesigning anything |
