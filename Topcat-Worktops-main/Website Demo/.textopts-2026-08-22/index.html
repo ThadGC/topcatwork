@@ -1,0 +1,324 @@
+<!doctype html>
+<!-- ═══════════════════════════════════════════════════════════════════════════════════════════
+     FIRST-SCREEN TEXT OPTIONS — 22 August 2026. DESKTOP ONLY (1440x900).
+
+     ⛔ A MOCKUP, NOT THE SITE. Dot-prefixed, so `make_upload.py` never ships it. It composites
+     the REAL opening plate (`plate-f1.webp`, the film's f0) under a faithful stop-for-stop copy
+     of `.hero-shade`, so every judgement is made against the pixels a visitor actually sees.
+
+     ⛔⛔ THE FINDING THAT DECIDED THE LAYOUT. The valley LOOKS like the empty part of the frame
+     and it is the BRIGHTEST part of it — the same trap D313 fell into twice and D316 measured its
+     way out of. Measured on f0, through the `cover` crop this 1.600 viewport actually applies:
+
+         block               median   p97    bone type, bare
+         left third          76       188    2.27:1
+         left 42%            83       203    1.95:1
+         the sky             180      211    1.81:1
+         the quarry floor    125      205    1.92:1
+
+     ⭐ There is NO placement on this frame where bone rests legibly on its own. The median says
+     76 and would call the left third comfortable; the 97th percentile says 188, because haze and
+     white marble spike it. A passing title can live with that for three seconds. A HERO RESTS,
+     so it cannot. Every option below therefore carries a treatment, and the three treatments are
+     the real decision:
+         P1  a left-edge grade      — anchored to the frame, so it cannot read as a panel
+         P2  a deeper grade at rest — no shape anywhere, the whole picture sits down a stop
+         P3  the wash               — the film's own per-block ellipse, tightened
+     Wash needed for 4.5:1 is 0.37 flat; for 7:1, 0.53. Grade needed for 4.5:1 is shade ~0.48.
+     ⭐ A–D all carry P1, so the four are compared on copy alone; P1–P3 all carry B, so the three
+     are compared on treatment alone.
+     ═══════════════════════════════════════════════════════════════════════════════════════════ -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>First-screen text options — desktop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* the site's own tokens, copied so this reads IN the brand and not near it */
+  :root{
+    --serif:"Cinzel","Cormorant Garamond",Georgia,serif;
+    --brand:"Montserrat",system-ui,sans-serif;
+    --bone:#F4F1EA;
+    --gold:#C6A664;
+    --hair:rgba(198,166,100,0.34);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#0b0b0e}
+
+  /* ── one frame = one screenshot, at the exact desktop viewport ─────────────────────────────
+     ⚠️ ONE AT A TIME, AND THAT IS A CAPTURE CONSTRAINT, NOT A DESIGN ONE. Stacked, the preview
+     pane composites only the frame at the top of the document and every shot below comes back
+     black. Held at 900px with the rest `display:none`, the page never scrolls and each frame
+     captures on its own. `?all` stacks them again for scrolling through by eye. */
+  .fr{position:relative;width:1440px;height:900px;overflow:hidden;isolation:isolate}
+  body:not(.all) .fr{display:none}
+  body:not(.all) .fr.on{display:block}
+  body.all .fr{margin-bottom:2px}
+
+  .tag{position:absolute;left:0;bottom:0;z-index:9;background:#0b0b0e;color:var(--gold);
+       font:500 12px/1 var(--brand);letter-spacing:0.2em;text-transform:uppercase;padding:9px 16px}
+
+  .bg{position:absolute;inset:0;z-index:0;
+      background:url('/assets/video/plates/plate-f1.webp') center/cover no-repeat}
+
+  /* ⭐ `.hero-shade` reproduced stop for stop. `--g` is the veil's opacity: 0.20 is the resting
+     value the film actually uses today (--cineVeilMin), and P2/P3 raise only this. */
+  .shade{position:absolute;inset:0;z-index:1;opacity:var(--g,0.20);background:
+    radial-gradient(70% 66% at 50% 42%, rgba(7,7,9,0.70) 0%, rgba(7,7,9,0.36) 62%, rgba(7,7,9,0) 100%),
+    radial-gradient(280px 220px at 96% 93%, rgba(7,7,9,0.92), transparent 72%),
+    linear-gradient(90deg,rgba(7,7,9,0.26) 0%,rgba(7,7,9,0.30) 40%,rgba(7,7,9,0.46) 100%),
+    linear-gradient(to top,rgba(7,7,9,0.9) 2%,rgba(7,7,9,0) 32%)}
+
+  /* the skeleton bar, approximated — here so the composition is judged against it, not without it */
+  .nav{position:absolute;left:0;right:0;top:0;height:78.5px;z-index:5;display:flex;align-items:center;
+       gap:38px;padding:0 clamp(18px,3.4vw,46px)}
+  .nav img{height:42px;width:auto;display:block}
+  .nav ul{display:flex;gap:30px;list-style:none;margin:0 auto;padding:0}
+  .nav li{font:400 12px/1 var(--brand);letter-spacing:0.16em;text-transform:uppercase;color:var(--bone);
+          text-shadow:0 1px 10px rgba(6,6,8,.7)}
+  .nav .cta{font:600 12px/1 var(--brand);letter-spacing:0.16em;text-transform:uppercase;color:#17150f;
+            background:var(--gold);padding:15px 26px}
+
+  /* ── the copy block ─────────────────────────────────────────────────────────────────────────
+     ⭐ ONE BLOCK IN FLOW — headline, invitation, indicator. The film's titles are absolutely
+     positioned one at a time because only one is ever up; a hero has three things stacked and
+     they must set their own spacing or every option needs its own hand-tuned offsets.
+     Left gutter is the site's own clamp(20px,7vw,132px).
+     ⚠️ WIDTHS IN PIXELS, NOT `ch`. `ch` resolves against the element's OWN font, and `.copy`
+     inherits the browser default rather than Cinzel — the first build measured 15ch as about
+     120px and broke the headline one word to a line. */
+  .copy{position:absolute;z-index:3;left:clamp(20px,7vw,132px);top:57%;transform:translateY(-50%);
+        width:clamp(320px,39vw,566px)}
+
+  h1{margin:0;font-family:var(--serif);font-weight:400;
+     font-size:clamp(34px,4.2vw,60px);line-height:1.06;letter-spacing:-0.004em;
+     color:var(--bone);text-wrap:balance;
+     /* a contact shadow so the type reads as an object in the room, as the film's titles do —
+        ⛔ never the legibility mechanism on its own, which is what D313 proved twice */
+     text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5)}
+
+  .sub{margin:26px 0 0;font:300 16px/1.66 var(--brand);letter-spacing:0.014em;
+       color:rgba(244,241,234,0.94);max-width:400px;
+       text-shadow:0 1px 16px rgba(6,6,8,0.85),0 1px 3px rgba(6,6,8,0.7)}
+
+  /* ── the scroll indicator ─────────────────────────────────────────────────────────────────
+     ⭐ HE ASKED FOR A VERY CLEAR ONE, so this is heavier than the film's current cue: the word at
+     12.5px rather than 10.5, a longer rule that holds full gold for its first third instead of
+     fading from the first pixel, and a chevron at its foot naming the direction.
+     ⛔ NOT a disc, ring or plate (§2 rule 11) — a bare rule and an open chevron. A control is not
+     a mark, but it still does not get a container. */
+  .cue{margin:32px 0 0;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+  .cue span{font:400 12.5px/1 var(--brand);letter-spacing:0.34em;text-transform:uppercase;color:var(--bone);
+            text-shadow:0 1px 16px rgba(6,6,8,0.85),0 1px 3px rgba(6,6,8,0.7)}
+  .cue i{width:2px;height:62px;border-radius:2px;display:block;position:relative;
+         background:linear-gradient(to bottom,var(--gold) 0%,var(--gold) 34%,rgba(198,166,100,0.15) 100%);
+         box-shadow:0 0 12px rgba(6,6,8,0.8)}
+  /* the chevron, drawn as two borders on a rotated square so it stays an open mark with no fill */
+  .cue i::after{content:"";position:absolute;left:50%;bottom:-3px;width:9px;height:9px;
+                margin-left:-5.5px;transform:rotate(45deg);
+                border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);
+                filter:drop-shadow(0 0 6px rgba(6,6,8,0.8))}
+  /* the foot-centred variant, for comparison only */
+  .cue.foot{position:absolute;left:0;right:0;bottom:54px;margin:0;align-items:center;z-index:4}
+
+  /* ── THE SECOND FRAME ───────────────────────────────────────────────────────────────────────
+     ⭐⭐ IT NEEDS NO TREATMENT AT ALL, AND THAT IS MEASURED. The left half of the slab shot is
+     pure black — bone on it reads 18.62:1, the ceiling for this ink. No grade, no wash, no edge:
+     the only open question on this frame is the words. ⛔ Do not give it the opening frame's
+     treatment out of symmetry; there is nothing here for a grade to fix. */
+  .bg.slab{background-image:url('/assets/video/../../.textopts-2026-08-22/slab-t18.webp')}
+
+  /* ── P1 · THE LEFT-EDGE GRADE ───────────────────────────────────────────────────────────────
+     ⭐⭐ ANCHORED TO THE FRAME EDGE, SO IT CANNOT READ AS A PANEL. The copy sits against the left
+     gutter, so a grade that is strongest at the left edge and gone by the middle of the frame is
+     ordinary film vignetting — there is no shape floating around the words and nothing to find an
+     edge on. It is the same vocabulary `.hero-shade` already uses in its own 90deg layer, aimed
+     the other way: the shade darkens to the RIGHT (0.26 → 0.46), which is the wrong side for copy
+     on the left. Stops trace an ease-out so the alpha lands on zero with no slope.
+     ⭐ MEASURED, at 0.66: headline 5.12:1, invitation 10.33:1, the cue's word 12.07:1 and its
+     gold rule 3.93:1 against the 3.0 a non-text graphic needs. ⚠️ Measure the INK, not the box —
+     the cue's flex container is the full 561px of the block and reads 2.86:1 off the marble at
+     its far end, where there is no ink at all. The word is 180px wide and clears comfortably. */
+  .edge{position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:linear-gradient(90deg,
+      rgba(6,6,9,var(--e,0.66)) 0%, rgba(6,6,9,calc(var(--e,0.66)*0.82)) 18%,
+      rgba(6,6,9,calc(var(--e,0.66)*0.52)) 34%, rgba(6,6,9,calc(var(--e,0.66)*0.22)) 48%,
+      rgba(6,6,9,calc(var(--e,0.66)*0.06)) 60%, rgba(6,6,9,0) 70%)}
+
+  /* ── P3 · THE WASH ──────────────────────────────────────────────────────────────────────────
+     ⭐ One soft ellipse behind the WHOLE block, not one per line. Per-line is right for the film,
+     where a single title is up at a time; a resting hero has three stacked elements and three
+     overlapping ellipses read as cloud, not as a wash.
+     ⛔⛔ `farthest-side`, last stop at 100%, so it reaches zero INSIDE its own box. A gradient
+     larger than its box gets clipped into a band with a straight edge — the thing he has
+     rejected twice.
+     ⚠️ The spread is TIGHTER than the first build's. Cast wide, a 0.62 peak averages far below
+     the 0.37 the measurement asks for, and the wash was doing nothing while still being there. */
+  .wash{position:relative}
+  .wash::before{content:"";position:absolute;inset:-1.5em -2.2em -1.8em -2.6em;z-index:-1;pointer-events:none;
+    background:radial-gradient(farthest-side at 40% 50%,
+      rgba(6,6,9,var(--w,0.72)), rgba(6,6,9,calc(var(--w,0.72)*0.74)) 44%,
+      rgba(6,6,9,calc(var(--w,0.72)*0.34)) 70%, rgba(6,6,9,0) 100%)}
+</style>
+</head>
+<body>
+
+<!-- ═════ 0 ═════ as it stands: the page rests here and there is nothing on it ═══════════════ -->
+<section class="fr" id="f0">
+  <div class="bg"></div><div class="shade"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="tag">0 &nbsp;·&nbsp; as it stands today</div>
+</section>
+
+<!-- ═════ A ═════ the film's own first line, promoted to the rest position ═══════════════════ -->
+<section class="fr" id="fA">
+  <div class="bg"></div><div class="shade"></div><div class="edge"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy">
+    <h1>It starts as a mountain.</h1>
+    <p class="sub">Scroll to follow it to your kitchen.</p>
+    <div class="cue"><span>Scroll</span><i></i></div>
+  </div>
+  <div class="tag">A &nbsp;·&nbsp; the film&rsquo;s own line, promoted</div>
+</section>
+
+<!-- ═════ B ═════ the proposition: names what the scroll gives you ═══════════════════════════ -->
+<section class="fr" id="fB">
+  <div class="bg"></div><div class="shade"></div><div class="edge"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy">
+    <h1>Your worktop begins in a mountain.</h1>
+    <p class="sub">Follow one slab from the quarry to the centre of your kitchen.</p>
+    <div class="cue"><span>Scroll to begin</span><i></i></div>
+  </div>
+  <div class="tag">B &nbsp;·&nbsp; the proposition</div>
+</section>
+
+<!-- ═════ C ═════ the invitation, most explicit about the mechanic ═══════════════════════════ -->
+<section class="fr" id="fC">
+  <div class="bg"></div><div class="shade"></div><div class="edge"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy">
+    <h1>Every worktop has a beginning.</h1>
+    <p class="sub">This one is still a mountain. Keep scrolling.</p>
+    <div class="cue"><span>Scroll</span><i></i></div>
+  </div>
+  <div class="tag">C &nbsp;·&nbsp; the invitation</div>
+</section>
+
+<!-- ═════ D ═════ the whole journey in the headline, the film as its proof ═══════════════════ -->
+<section class="fr" id="fD">
+  <div class="bg"></div><div class="shade"></div><div class="edge"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy">
+    <h1>Chosen at the quarry, fitted in your kitchen.</h1>
+    <p class="sub">Scroll to follow the stone all the way through.</p>
+    <div class="cue"><span>Scroll</span><i></i></div>
+  </div>
+  <div class="tag">D &nbsp;·&nbsp; the whole journey</div>
+</section>
+
+<!-- ═════ P2 ═════ TREATMENT: no shape at all, the whole picture grades down while words rest ═ -->
+<section class="fr" id="fP2">
+  <div class="bg"></div><div class="shade" style="--g:0.50"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy">
+    <h1>Your worktop begins in a mountain.</h1>
+    <p class="sub">Follow one slab from the quarry to the centre of your kitchen.</p>
+    <div class="cue"><span>Scroll to begin</span><i></i></div>
+  </div>
+  <div class="tag">P2 &nbsp;·&nbsp; treatment: whole frame grades down, no shape</div>
+</section>
+
+<!-- ═════ P3 ═════ TREATMENT: a little of each — lightest intervention that still measures ═══ -->
+<section class="fr" id="fP3">
+  <div class="bg"></div><div class="shade"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy wash">
+    <h1>Your worktop begins in a mountain.</h1>
+    <p class="sub">Follow one slab from the quarry to the centre of your kitchen.</p>
+    <div class="cue"><span>Scroll to begin</span><i></i></div>
+  </div>
+  <div class="tag">P3 &nbsp;·&nbsp; treatment: the wash behind the block</div>
+</section>
+
+<!-- ═════ F ═════ CUE: the same copy, indicator at the foot of the frame and centred ═════════ -->
+<section class="fr" id="fF">
+  <div class="bg"></div><div class="shade"></div><div class="edge"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy">
+    <h1>Your worktop begins in a mountain.</h1>
+    <p class="sub">Follow one slab from the quarry to the centre of your kitchen.</p>
+  </div>
+  <div class="cue foot"><span>Scroll to begin</span><i></i></div>
+  <div class="tag">F &nbsp;·&nbsp; cue at the foot, centred</div>
+</section>
+
+<section class="fr" id="fS1">
+  <div class="bg slab"></div><div class="shade"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy" style="top:50%">
+    <h1>Then one slab, chosen for its veining.</h1>
+  </div>
+  <div class="tag">S1 &nbsp;·&nbsp; second frame: the line as it stands</div>
+</section>
+
+<section class="fr" id="fS2">
+  <div class="bg slab"></div><div class="shade"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy" style="top:50%">
+    <h1>One slab, chosen for its veining.</h1>
+  </div>
+  <div class="tag">S2 &nbsp;·&nbsp; second frame: without the &ldquo;Then&rdquo;</div>
+</section>
+
+<section class="fr" id="fS3">
+  <div class="bg slab"></div><div class="shade"></div>
+  <div class="nav"><img src="/assets/brand/topcat-horizontal.svg" alt="Topcat">
+    <ul><li>Services</li><li>Projects</li><li>Stones</li><li>Estimate</li><li>About us</li><li>Trade</li><li>Contact</li></ul>
+    <div class="cta">Get a quote</div></div>
+  <div class="copy" style="top:50%">
+    <h1>Chosen for its veining, not its price.</h1>
+  </div>
+  <div class="tag">S3 &nbsp;·&nbsp; second frame: the choosing is the point</div>
+</section>
+
+<script>
+  /* `?all` stacks them for scrolling through by eye. Otherwise one frame at a time, switched by
+     `show('B')` or the hash — neither changes layout, so neither ever needs a reload. */
+  (function(){
+    if(location.search.indexOf('all') > -1){ document.body.classList.add('all'); return; }
+    window.show = function(id){
+      [].forEach.call(document.querySelectorAll('.fr'), function(f){
+        f.classList.toggle('on', f.id === 'f' + id);
+      });
+      return id;
+    };
+    show((location.hash || '#0').slice(1) || '0');
+    window.addEventListener('hashchange', function(){ show(location.hash.slice(1)); });
+  })();
+</script>
+</body>
+</html>
