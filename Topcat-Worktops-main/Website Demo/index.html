@@ -9018,12 +9018,12 @@
            film and change the stamp in the SAME edit, on the poster as well — the slab tiles' own
            rule, and the only thing between a re-cut and a week of the old one. -->
       <video class="hero-vid" id="heroVid" playsinline muted preload="none"
-             data-src="/assets/video/topcat-intro-1920.mp4?v=1"
-             data-poster="/assets/video/topcat-intro-poster.webp?v=1"
-             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=1"
-             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=1"
-             data-src-phone="/assets/video/topcat-intro-608.mp4?v=1"
-             data-poster-phone="/assets/video/topcat-intro-608-poster.webp?v=1"
+             data-src="/assets/video/topcat-intro-1920.mp4?v=2"
+             data-poster="/assets/video/topcat-intro-poster.webp?v=2"
+             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=2"
+             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=2"
+             data-src-phone="/assets/video/topcat-intro-608.mp4?v=2"
+             data-poster-phone="/assets/video/topcat-intro-608-poster.webp?v=2"
              width="1920" height="1080" aria-hidden="true" tabindex="-1"
              disablepictureinpicture disableremoteplayback></video>
       <!-- ⭐⭐ **THE FILM'S TWO HEAVY URLS ARE ATTACHED HERE, IN PLACE, AND THAT IS THE POINT.**
@@ -9107,17 +9107,25 @@
              thing every desktop and tablet visitor sees. -->
         <i class="plate" data-t="0"        data-src="/assets/video/plates/plate-f1.webp?v=2"
            data-src-tablet="/assets/video/plates/tablet/plate-f1.webp?v=1"></i>
-        <!-- ⛔⛔ **44.2083, NOT 44.0833 — THIS ONE IS ANCHORED WHERE THE PLAYHEAD ACTUALLY RESTS.**
-             `holds.py` picked f529 because its §4.4 criterion deliberately excludes the film's LAST
-             frame as unreachable: an ordinary seek is clamped off the end of the file. ⭐ But the
-             hero's 182vh dead scroll parks here on purpose, so `seek()` settles at `dur − half a
-             frame` = **44.2083 = f530** and sits there for as long as the copy is read.
-             ⚠️ Anchored at 44.0833 the plate reached only **0.84** on the one frame that matters most
-             on the whole page. And f530 is not a compromise — measured, his still matches it BETTER
-             than the frame the script chose: **d 0.069 against 0.074** desktop, **0.068 against
-             0.081** tablet. It is the frame the film was generated toward. -->
-        <i class="plate" data-t="44.2083"  data-src="/assets/video/plates/plate-f529.webp?v=2"
-           data-src-tablet="/assets/video/plates/tablet/plate-f529.webp?v=1"></i>
+        <!-- ⛔⛔⛔ **THE HERO PLATE IS WITHDRAWN — 22 August 2026 (D328). HIS FILM WAS RE-CUT AND HIS
+             STILL NO LONGER MATCHES ITS ENDING.** Measured the way `holds.py` measures, on zero-mean
+             unit-variance greyscale: against the OLD film this still sat at **0.069**; against the
+             new one its best frame anywhere in the last 2.5 seconds is **0.292**, and the best
+             frame is f527, not f530. Looked at side by side the camera has pushed IN and LEFT — the
+             island is much closer, the bar stools along it are gone, and the rug and sofa carry the
+             left of the frame. Same room, different shot.
+             ⛔ A plate is only worth having when it IS the frame underneath it: its whole purpose is
+             to put his clean generation over an H.264 frame at a hold. Cross-faded over a picture
+             the camera has moved on from, it would jump the camera on the ONE frame every visitor
+             rests on for 182vh. So it comes off until he sends a still for the new ending.
+             ⭐ PARKED, NOT DELETED. Both crops are still on disk at `plates/plate-f529.webp` and
+             `plates/tablet/plate-f529.webp`, and this is the line that brings it back:
+
+               <i class="plate" data-t="44.2083"  data-src="/assets/video/plates/plate-f529.webp?v=2"
+                  data-src-tablet="/assets/video/plates/tablet/plate-f529.webp?v=1"></i>
+
+             ⚠️ The OPENING plate stays: it was re-matched against the new film and still lands on
+             f0 at **0.111**, which is where it has always been. The opening shot did not change. -->
       </div>
       <div class="hero-shade"></div>
       <!-- ⭐ D313: the film's own top grade. It carries the SAME `--navScrim` stops the hero's veil
@@ -9181,9 +9189,9 @@
            at 0-15 until 24.5 and is back to 69 by t=25 as the kitchen arrives. **16.2-24.4** sits
            inside that with room at both ends. ⛔ Do not give the phone the tablet's 21.0-27.5: the
            closing 3 seconds of it land on the kitchen shot on this film. -->
-      <p class="cine-line" data-at="13.5" data-out="23.5" data-vpos="low"
-         data-at-narrow="21.0" data-out-narrow="27.5" data-vpos-narrow="top"
-         data-at-phone="16.2" data-out-phone="24.4">Your slab is <em>one of a kind.</em><br>No two slabs are the same.</p>
+      <p class="cine-line" data-at="15.0" data-out="24.5" data-vpos="low"
+         data-at-narrow="21.0" data-out-narrow="25.3" data-vpos-narrow="top"
+         data-at-phone="16.2" data-out-phone="24.0">Your slab is <em>one of a kind.</em><br>No two slabs are the same.</p>
       <!-- ⛔⛔⛔ **THE THIRD BEAT IS WITHDRAWN — 22 August 2026 (D326).** Client, on a screenshot of the
            closing kitchen shot with the words over it: *"Remove the text that comes up on this
            part."*
