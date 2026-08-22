@@ -67,3 +67,11 @@ Thumbs.db
 # ⚠️ The whole drop folder: the guide is versioned at `Topcat-Worktops-main/Docs/` instead, which
 # is where every other reference document lives. Keeping a second copy here would let the two drift.
 Frame images/
+# ⚠️ AND THE SAME RULE FOR THE OVERLAY STILLS HE SENDS DIRECTLY (D330). `F1 FIXED.png` and
+# `Mobile f1.png` are 8.7 MB of PNG master that nothing serves — the site serves the WebP crops
+# derived from them by `.plates-2026-08-22/make_plates.py`, which ARE committed.
+# ⛔⛔ THE `TC*` RULE ABOVE DOES NOT CATCH THESE. He named the films `TC …` and these he did not,
+# so a prefix rule silently let 8.7 MB toward a commit — caught by `git check-ignore` before the
+# push, which is the check to run on any new dot-folder of his originals.
+# ⛔ DO NOT DELETE THEM — re-exporting an overlay needs the original, never the WebP or the video.
+**/assets/video/.plates-*/src/

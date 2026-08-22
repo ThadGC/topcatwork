@@ -5641,6 +5641,46 @@ if(faqIndex && panel && faqBody){
   const stage=()=>{ if(!hero.classList.contains('loaded'))
     requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
 
+  /* ⭐⭐⭐ THE OPENING OVERLAY — 22 August 2026 (D330). One still, at f0, on every band.
+     ⭐⭐ **THE FADE WIDTH IS MEASURED, NOT CHOSEN, AND IT IS THE ANSWER TO "DOESN'T MORPH".** The
+     film's own drift away from f0, on the same zero-mean unit-variance metric `holds.py` uses:
+         f1 0.115 · f2 0.228 · f3 0.301 · f4 0.366 · f6 0.474 · f8 0.555 · f12 0.692
+     His desktop still already sits **0.242** from f0 (it is a fresh generation of the shot, not an
+     extract, so the fine detail differs) and his phone still sits **0.099**. ⛔ Past about six
+     frames the FILM has moved further from f0 than the still ever was, and holding the still there
+     puts a stale picture over a moving camera — the one thing D322 proved is worse than a quick
+     blend. Six frames it is: half a second of film, and at 18.49vh/s about 92vh of scroll.
+     ⭐ SMOOTHSTEP, so it leaves 1 and lands on 0 with no slope at either end. At one frame out it
+     is still 0.93 — the picture is his through the first flick of the wheel — and it is gone by
+     six with nothing to catch the eye. A linear ramp has a visible start, which is the flicker he
+     is asking not to see.
+     ⛔⛔ **THE OPACITY IS KEYED TO THE FRAME ON SCREEN, NOT TO THE ONE BEING ASKED FOR.** `want` is
+     the eased TARGET; the decoder trails it while the page is moving, and driving the dissolve from
+     the target lit the old plates three frames early — measured. `currentTime` is what the viewer
+     is actually looking at. ⚠️ It falls back to the target only before the video can answer, where
+     the overlay is at full opacity anyway.
+     ⚠️ GEOMETRY WAS VERIFIED, NOT ASSUMED: a zoom/offset search over ±10% scale and ±2.4% shift
+     returns **zoom 1.00, offset 0** for both stills, so neither needed nudging — and each was
+     cropped to its film's EXACT aspect first, or `cover` scales them a fraction differently and the
+     dissolve breathes (D323's lesson). ⭐ The desktop still was also graded onto f0 per channel
+     (it ran +3.3/+5.3/+6.4 bright); his phone still already matched to within 1.4 and was left
+     alone. */
+  const plateEl=document.getElementById('cinePlate');
+  const PLATE_FADE=6;                     // film FRAMES, measured against the film's own drift
+  const smooth=v=>{const t=clamp(v);return t*t*(3-2*t);};
+  let plateO=-1, plateUrl='';
+  /* ⛔ the same phone → narrow → base cascade the film and the story lines use */
+  const plateSrc=()=>{const d=plateEl.dataset;
+    return (mPhone.matches&&d.srcPhone)||(mNarrow.matches&&d.srcNarrow)||d.src||'';};
+  function plate(t){
+    if(!plateEl)return;
+    const url=plateSrc();
+    if(url&&url!==plateUrl){ plateUrl=url; plateEl.style.backgroundImage="url('"+url+"')"; }
+    const shown=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t;
+    const o=+(1-smooth(shown*FPS/PLATE_FADE)).toFixed(3);
+    if(o!==plateO){ plateO=o; plateEl.style.opacity=o; }
+  }
+
   function measure(){
     const cs=getComputedStyle(cine);
     const h=parseFloat(cs.getPropertyValue('--cineHold'));
@@ -5928,7 +5968,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -5945,6 +5985,7 @@ if(faqIndex && panel && faqBody){
     curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
     heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
+    plate(want);      /* his still of f0, dissolved out as the film starts to move */
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
@@ -5985,6 +6026,7 @@ if(faqIndex && panel && faqBody){
     cine.style.removeProperty('height');
     retimeStory();
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
+    plate(want);      /* ⛔ a band change swaps the overlay's crop as well as the film's */
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;
     onScroll();
@@ -6016,6 +6058,14 @@ if(faqIndex && panel && faqBody){
      crossing 1120, and the phone's cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
   if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
+  /* ⭐ THE OVERLAY HAS NO APPROACH TO TRIGGER IT — the page OPENS on its frame — so it is painted
+     once after `load`, which is after first paint and after the poster is already on screen.
+     ⛔ And it has to paint itself: at rest the rAF loop has stopped, so nothing would write the
+     opacity until the first scroll and the overlay would arrive invisible. */
+  addEventListener('load',()=>{
+    const w=()=>plate(want);
+    if(window.requestIdleCallback)requestIdleCallback(w,{timeout:1500}); else setTimeout(w,300);
+  });
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

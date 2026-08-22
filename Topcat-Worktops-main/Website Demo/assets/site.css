@@ -4561,6 +4561,28 @@
   html.cine-on .cine .hero{--curveR:calc(48px * var(--cineCurve,1))}
   html.cine-on .cine .hero::after{opacity:var(--cineCurve,1)}
 
+  /* ═════ THE OPENING OVERLAY — 22 August 2026 (D330) ══════════════════════════════════════
+     Client: *"here are the two new overlays for the desktop and for the mobile version. So this is
+     only the overlay of the very first frame, so make sure it matches up perfectly and doesn't
+     morph too much when it moves into the next frame. Make sure it fades out nicely so it's not
+     noticeable like a flicker… It must fade out perfectly to match exactly like it's part of the
+     video. But this is the very first frame, and it must be the first thing that they see when the
+     user loads in."*
+     ⭐ ONE overlay, at t=0, and THIS TIME THE PHONE HAS ONE TOO — he supplied a vertical still for
+     it, which the old mechanism never had.
+     ⛔ **UNDER THE VEIL AND THE GRADE, OVER THE VIDEO.** The overlay is picture, so everything that
+     dresses the picture must still dress it: `.hero-shade` and `.hero-navgrade` (z 1) and
+     `.cine-edge` (z 2) all sit above it. It takes z-index 0, the same as `.hero-vid`, and wins on
+     SOURCE ORDER because it is written after. ⚠️ Do not "clarify" that with a z-index of 1 — it
+     would jump the veil and the film would stop fading at the end.
+     ⚠️ NO `transition`. The opacity is written every frame from the film's own distance to f0, so a
+     CSS transition would fight the scrub and lag the dissolve behind the picture. */
+  .cine-plate{display:none}
+  html.cine-on .cine-plate{
+    display:block;position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+  }
+
   /* ═════ THE FILM'S OWN COPY — 18 August 2026 (D316) ═══════════════════════════════════════
      Three titles that sit IN the film and are passed by the camera rather than laid over it.
      ⛔ Base state is `display:none`: every rule here hangs off `cine-on`, so a browser that
