@@ -4649,30 +4649,43 @@
      mechanism exactly — an `<em>`, `font-style:normal`, weight 600, a 180deg ramp clipped to the
      glyphs — carried on three custom properties so a beat sitting on a bright frame can move the
      ramp without a second rule.
-     ⛔⛔ THE FILM'S GOLD IS THE SITE'S FAMILY RUN BRIGHT — #FBEFC4 → #F0D492 → #DCBB74 — AND IT IS
-     NOT THE HERO'S RAMP. Client, twice: *"it must be that same bright gold… it shouldn't be a dark
-     faded gold."* What he means by "the same gold" is how it LOOKS, and the hero's #C6A664 only
-     looks like metal because the night kitchen sits under a full veil beneath it. The film has no
-     such luxury: its beats run over a daylight quarry and a lit slab, and the identical ink
-     measured **2.10:1** on the first of them.
-     ⭐ ONE GOLD FOR THE WHOLE FILM, so the two beats match each other — 6.27:1 on the graded quarry
-     and about 13:1 on the slab's black. ⚠️ The hero below keeps the site's own ramp: different
-     ground, and it has never been the thing he was complaining about.
+     ⭐⭐⭐ **IT IS THE HERO'S RAMP, HEX FOR HEX — #E4CD92 → #C6A664 → #BC9A54.** Client, with the two
+     screenshots side by side: *"that has to be the same as what the words building around looks
+     like."* So it is the same, literally, with no substitution to argue about.
+     ⛔⛔ **IT ONLY BECAME POSSIBLE ONCE THE GROUND WAS DARK ENOUGH, AND I SPENT THREE ROUNDS ON THE
+     INK INSTEAD.** Gold is a mid-luminance colour: on the ORIGINAL frame position and grade the
+     hero's mid stop measured **2.10:1** and read as mud, which is what sent me chasing lighter and
+     lighter ramps. With the grade extended to 76% and the block dropped to 22vh, the ground under
+     this line measures p97 **45** and the identical ink measures **5.94:1** — 5.19:1 even at the
+     ramp's darkest stop. ⭐ **The lesson is the one D313 keeps teaching: fix what the ink sits on,
+     not the ink.**
      ⛔⛔ THE OPENING HERO IS THE EXCEPTION AND IT IS MEASURED, NOT A PREFERENCE — see D325b below:
      on the daylight quarry the site's mid stop reads **2.21:1** and cannot be graded to 3.0 without
      wrecking the photograph, so that ONE block runs the same family a stop lighter. */
   html.cine-on .cine-line em,
   html.cine-on .cine-hero .cine-hl em{
-    font-style:normal;font-weight:600;color:var(--cineGoldMid,#F0D492);
-    /* ⭐⭐ A TIGHTER, HEAVIER CONTACT SHADOW THAN THE WHITE CARRIES, AND IT IS THE POINT OF THE
-       TREATMENT, NOT A SAFETY NET. Gold reads as metal by being much lighter than what touches it,
-       so it wants its dark ground within a few pixels of the glyph rather than spread over the
-       block. ⚠️ `-webkit-text-fill-color:transparent` fills the glyph with the gradient, but a
-       text-shadow is still drawn from the glyph OUTLINE, so this paints behind the metal and is
-       covered by it — what shows is the halo just outside each letter. */
-    text-shadow:0 0 14px rgba(6,6,9,0.92),0 1px 4px rgba(6,6,9,0.88);
+    font-style:normal;font-weight:600;color:var(--cineGoldMid,#C6A664);
+    /* ⛔⛔⛔ **`text-shadow:none` IS THE WHOLE FIX, AND THE SHADOW WAS THE WHOLE BUG — D327e.**
+       Client, with two screenshots side by side: *"look at the words where it says starts here, and
+       then look at the other screenshot with the words building around. They don't look the same.
+       That has to be the same as what building around looks like."* He was right for three rounds
+       and I kept changing the COLOUR.
+       ⭐ **PAINT ORDER, NOT COLOUR.** With `background-clip:text` the element's background — the gold
+       ramp, clipped to the glyphs — is painted FIRST. A `text-shadow` is painted after any
+       background and before the glyph fill, so a dark shadow lands **on top of the metal**, not
+       behind it. The `-webkit-text-fill-color:transparent` fill then paints nothing over it. That
+       is the dark blur visible INSIDE his letterforms, and it is why every brighter ramp I tried
+       still came out muddy.
+       ⭐⭐ **AND IT IS WHY THE HERO'S GOLD HAS ALWAYS LOOKED RIGHT**: `.hero-title` declares no
+       text-shadow at all. Matching it means matching that, not chasing hexes.
+       ⚠️ `.cine-hl` and `.cine-line` both set a contact shadow for their WHITE, and an `em` inherits
+       it — so it has to be turned off explicitly here, not merely left unset.
+       ⭐ `filter:drop-shadow()` is the correct tool when separation is needed: it applies to the
+       element's rendered output, gradient included, and draws BEHIND it. Kept light. */
+    text-shadow:none;
+    filter:drop-shadow(0 2px 12px rgba(6,6,9,0.55));
     background:linear-gradient(180deg,
-      var(--cineGoldTop,#FBEFC4) 0%, var(--cineGoldMid,#F0D492) 62%, var(--cineGoldLow,#DCBB74) 100%);
+      var(--cineGoldTop,#E4CD92) 0%, var(--cineGoldMid,#C6A664) 62%, var(--cineGoldLow,#BC9A54) 100%);
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   }
 
@@ -4711,7 +4724,7 @@
        the crop turns vertical and the skyline rises. */
     html.cine-on .cine-hero{
       display:block;position:absolute;z-index:3;pointer-events:none;
-      left:clamp(20px,7vw,132px);top:14vh;width:clamp(320px,46vw,660px);
+      left:clamp(20px,7vw,132px);top:22vh;width:clamp(320px,46vw,660px);
       opacity:0;                                  /* the scrub owns it from the first tick */
       transform:translateZ(calc(var(--hz,0) * 1px));
     }
@@ -4816,33 +4829,38 @@
        and 0.74 — the first value written here — measured **2.79:1** and would have shipped under it.
        ⚠️ The figure ignores the rule's own `box-shadow`, which darkens what it sits on, so the real
        number is a little better than this. */
-    /* ⭐ THE CHANNEL: a static gold rule the chevron runs down. It no longer pulses its own alpha —
-       the movement carries the signal now, so the rule can sit at a steady, measured brightness
-       instead of dipping. ⚠️ Held at 0.9 so the whole channel stays over the 3.0 a graphic needs. */
+    /* ⭐⭐⭐ **THE ARROW, REDESIGNED — D327e.** Client: *"completely redesign the arrow that is
+       pointing down, prompting people to scroll."*
+       ⛔ **WHY THE LAST ONE FAILED, AND IT IS NOT A TASTE PROBLEM.** It was a 96px channel with the
+       chevron TRAVELLING down it, so at any frozen moment — every screenshot he sees, and a good
+       part of every second — the head sat somewhere up the shaft and the thing read as a crossbar
+       on a line, or a dagger. **An indicator has to be legible in a still, not only in motion.**
+       ⭐ SO IT IS ONE ARROW NOW: shaft, and a head fixed at its foot, always. It reads as an arrow
+       with the animation stopped, which is also what a reduced-motion visitor gets.
+       ⭐ The shaft ARRIVES rather than sits — a bright segment wipes down it and the whole arrow
+       eases down and back, so the only movement is still downward, but the shape never breaks. */
     html.cine-on .cine-hero .cine-hero-cue i{
-      width:2px;height:96px;border-radius:2px;display:block;position:relative;opacity:0.9;
+      width:2px;height:54px;border-radius:2px;display:block;position:relative;
       background:linear-gradient(to bottom,
-        var(--gold) 0%, rgba(198,166,100,0.55) 62%, rgba(198,166,100,0.12) 100%);
-      box-shadow:0 0 12px rgba(6,6,8,0.85);
-    }
-    /* the chevron: two borders on a rotated square, so it stays an open mark with no fill */
-    html.cine-on .cine-hero .cine-hero-cue i::after{
-      content:"";position:absolute;left:50%;top:0;width:15px;height:15px;margin-left:-8.5px;
-      border-right:3px solid var(--gold);border-bottom:3px solid var(--gold);
-      filter:drop-shadow(0 1px 5px rgba(6,6,8,0.9));
+        rgba(198,166,100,0.18) 0%, var(--cineGoldMid,#F0D492) 55%, var(--cineGoldMid,#F0D492) 100%);
+      filter:drop-shadow(0 2px 8px rgba(6,6,8,0.75));
       animation:cineHeroCue 2.4s var(--ease) infinite;
     }
-    /* ⭐ IT TRAVELS THE CHANNEL AND FADES OUT AT THE FOOT, then restarts at the top — a loop with no
-       visible return trip, so the only motion the eye ever sees is downward. */
+    /* the head, fixed at the foot — an open chevron, no fill and no container (§2 rule 11) */
+    html.cine-on .cine-hero .cine-hero-cue i::after{
+      content:"";position:absolute;left:50%;bottom:-1px;width:16px;height:16px;margin-left:-9px;
+      transform:rotate(45deg);
+      border-right:2px solid var(--cineGoldMid,#F0D492);
+      border-bottom:2px solid var(--cineGoldMid,#F0D492);
+    }
+    /* ⚠️ THE WHOLE ARROW MOVES, not a part of it, so the silhouette is identical at every frame */
     @keyframes cineHeroCue{
-      0%  {transform:translateY(0) rotate(45deg);opacity:0}
-      18% {transform:translateY(12px) rotate(45deg);opacity:1}
-      72% {transform:translateY(64px) rotate(45deg);opacity:1}
-      100%{transform:translateY(82px) rotate(45deg);opacity:0}
+      0%,100%{transform:translateY(0);opacity:0.72}
+      45%    {transform:translateY(11px);opacity:1}
     }
   }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
-    html.cine-on .cine-hero .cine-hero-cue i{animation:none;opacity:.92}
+    html.cine-on .cine-hero .cine-hero-cue i{animation:none;transform:translateY(6px);opacity:1}
   }
 
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
