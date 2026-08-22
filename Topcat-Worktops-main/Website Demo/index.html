@@ -4503,6 +4503,39 @@
     background:var(--navScrim),var(--navScrim)}
   html.cine-on .cine .hero-navgrade{display:block;opacity:var(--navGrade,0)}
 
+  /* ═════ THE OPENING FRAME'S LEFT-EDGE GRADE — 22 August 2026 (D325) ═══════════════════════════
+     ⛔⛔⛔ THE VALLEY LOOKS LIKE THE EMPTY PART OF THE FRAME AND IT IS THE BRIGHTEST PART OF IT.
+     This is D313's trap for the third time, and only a percentile finds it. Measured on the opening
+     plate through the `cover` crop a 1440×900 window applies:
+         left third   median  76   p97 188   ->  bone rests at 2.27:1
+         the sky      median 180   p97 211   ->  1.81:1
+         quarry floor median 125   p97 205   ->  1.92:1
+     The median would call the left third comfortable. The 97th percentile is 188, because haze and
+     white marble blocks sit in it. ⭐ A TITLE THAT PASSES THROUGH IN THREE SECONDS SURVIVES THAT;
+     A HERO RESTS, SO IT CANNOT — the page sits on this frame until the first scroll.
+     ⭐⭐ ANCHORED TO THE FRAME EDGE, WHICH IS WHY IT CANNOT READ AS A PANEL. He has twice rejected a
+     dark shape with an edge on it. This has no shape: it is strongest at the left border and gone
+     by 70% across, which is ordinary film vignetting. `.hero-shade` already carries a layer of
+     exactly this kind — its own 90deg linear — running the wrong way for copy on the left
+     (0.26 → 0.46, darkening to the RIGHT). Stops trace an ease-out so the alpha lands on zero with
+     no slope and there is no termination line to find.
+     ⭐ MEASURED at 0.66 over the veil's resting 0.20: headline 5.12:1, invitation 10.33:1, the
+     cue's word 12.07:1, its gold rule 3.93:1 against the 3.0 a non-text graphic needs.
+     ⚠️ MEASURE THE INK, NOT THE BOX — the cue's flex container is the full 566px of the block and
+     reads 2.86:1 off the marble at its far end, where there is no ink at all.
+     ⛔ It rides the hero copy's own alpha, so it can never outlive the words it is there for, and
+     the picture is unobstructed the moment the film starts moving. */
+  .cine-edge{display:none}
+  @media(min-width:1121px){
+    html.cine-on .cine .cine-edge{
+      display:block;position:absolute;inset:0;z-index:2;pointer-events:none;
+      opacity:var(--cineEdge,0);
+      background:linear-gradient(90deg,
+        rgba(6,6,9,0.66) 0%, rgba(6,6,9,0.541) 18%, rgba(6,6,9,0.343) 34%,
+        rgba(6,6,9,0.145) 48%, rgba(6,6,9,0.040) 60%, rgba(6,6,9,0) 70%);
+    }
+  }
+
   /* ═════ THE PLATES — 21 August 2026 (D320) ════════════════════════════════════════════════
      ⭐⭐ His generation stills, cross-faded over the film at the holds so the RESTING picture is
      the original and not an H.264 frame of it.
@@ -4593,6 +4626,104 @@
       rgba(6,6,9,0.62), rgba(6,6,9,0.34) 46%, rgba(6,6,9,0.10) 72%, rgba(6,6,9,0) 100%);
     opacity:var(--lg,0);
   }
+  /* ═════ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325) ═══════════════════════════
+     Client: *"the first frame technically needs to act like a second hero section. So the text
+     needs to show in that open space of the valley on the first frame, there should be a very
+     clear indicator to scroll and text that will entice people to scroll. because we cannot have a
+     bottleneck. people have to scroll and see the video… right now I'm talking about desktop
+     specifically, we will talk about mobile and tablet text placement after."*
+     ⛔⛔ DESKTOP ONLY (≥1121). The phone and the tablet keep today's opening title and today's cue
+     exactly as they are, because he said he would take those after this.
+     ⭐⭐ IT REPLACES THE DESKTOP OPENING TITLE RATHER THAN JOINING IT. `.cine-open` and the original
+     `.cine-cue` are both hidden at this band, so there is never a hero and a title saying the same
+     thing three seconds apart. The chain still reads as one sentence:
+         Your worktop begins in a mountain. -> Then one slab, chosen for its veining. ->
+         Then the centre of your kitchen. -> *Surfaces worth building around*
+     ⚠️ THE WHOLE BLOCK TRAVELS AS ONE OBJECT — the wrapper carries the `translateZ`, not the
+     headline, so the words, the invitation and the indicator stay together as the camera passes
+     them. It also starts at z 0 rather than the titles' −150: a title is arriving from a distance,
+     but a hero is already here, and −150 under the 1000 perspective renders it at 87%. */
+  .cine-hero{display:none}
+  @media(min-width:1121px){
+    html.cine-on .cine-hero{
+      display:block;position:absolute;z-index:3;pointer-events:none;
+      left:clamp(20px,7vw,132px);top:57%;width:clamp(320px,39vw,566px);
+      opacity:0;                                  /* the scrub owns it from the first tick */
+      transform:translateY(-50%) translateZ(calc(var(--hz,0) * 1px));
+    }
+    /* ⛔ the desktop opening title goes here; the ORIGINAL CUE IS HIDDEN FURTHER DOWN, beside its
+       own rules — hidden from here it lost on source order, because `html.cine-on .cine-cue` has
+       the same specificity in both places and the base `display:flex` is written later. */
+    html.cine-on .cine-open{display:none}
+
+    /* ⚠️ 57% AND NOT LOWER, AND THAT IS MEASURED. Taken up the frame the headline climbs into the
+       sky, which is the brightest band in the picture: at 44% it reads 3.15:1 against 4.90:1 here,
+       and the indicator barely moves either way. 57% is the best vertical position on this frame. */
+    html.cine-on .cine-hero .cine-hl{
+      margin:0;font-family:var(--serif);font-weight:400;
+      font-size:clamp(34px,4.2vw,60px);line-height:1.06;letter-spacing:-0.004em;
+      color:var(--bone);text-wrap:balance;
+      /* a contact shadow so the type reads as an object in the room, exactly as the titles do —
+         ⛔ never the legibility mechanism on its own, which is what D313 proved twice */
+      text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5);
+    }
+    /* ⚠️ IT NAMES NO ROOM AND NO MATERIAL, the same discipline as the hero's trust line, and it
+       deliberately does NOT narrate the film's three beats. The longer version ("from the quarry to
+       the centre of your kitchen") tells the visitor exactly what the scroll buys, which is the
+       stronger answer to the bottleneck, but it spoils all three titles before they arrive. */
+    html.cine-on .cine-hero .cine-hero-sub{
+      margin:26px 0 0;font:300 16px/1.66 var(--brand);letter-spacing:0.014em;
+      color:rgba(244,241,234,0.94);max-width:400px;
+      text-shadow:0 1px 16px rgba(6,6,8,0.85),0 1px 3px rgba(6,6,8,0.7);
+    }
+    /* ⭐ HE ASKED FOR A VERY CLEAR INDICATOR, so this is heavier than the film's own cue: the word
+       at 12.5px rather than 10.5, a rule that holds full gold for its first third instead of fading
+       from the first pixel, and a chevron naming the direction.
+       ⛔ NOT a disc, ring or plate (§2 rule 11). A control is not a mark, but it still gets no
+       container. ⛔ And not a gold line across the top of anything (rule 7) — it is vertical. */
+    html.cine-on .cine-hero .cine-hero-cue{
+      margin:32px 0 0;display:flex;flex-direction:column;gap:14px;align-items:flex-start;
+    }
+    html.cine-on .cine-hero .cine-hero-cue span{
+      font:400 12.5px/1 var(--brand);letter-spacing:0.34em;text-transform:uppercase;color:var(--bone);
+      text-shadow:0 1px 16px rgba(6,6,8,0.85),0 1px 3px rgba(6,6,8,0.7);
+    }
+    /* ⛔⛔ ITS OWN KEYFRAMES, NOT `cineCue`. The film's cue drops to **opacity 0.2** for a third of
+       its cycle, which is fine for a hairline that fades from its first pixel and wrong for the
+       thing he asked to be *"a very clear indicator to scroll"* — measured mid-cycle at 0.20 on a
+       daylight quarry. This keeps the same wipe-down motion, which is what reads as "scroll", and
+       puts a floor under the alpha so the rule is never nearly gone.
+       ⚠️ The chevron is this element's `::after`, so it breathes with the rule rather than against
+       it.
+       ⭐ THE FLOOR IS 0.86 BECAUSE THAT IS WHERE THE MEASUREMENT PUTS IT, not because it looked
+       right: over the graded picture (p97 74 under the rule) gold reads **3.79:1 at the peak and
+       3.22:1 at the floor**, against the 3.0 a non-text graphic needs. 0.80 is the exact break-even
+       and 0.74 — the first value written here — measured **2.79:1** and would have shipped under it.
+       ⚠️ The figure ignores the rule's own `box-shadow`, which darkens what it sits on, so the real
+       number is a little better than this. */
+    html.cine-on .cine-hero .cine-hero-cue i{
+      width:2px;height:62px;border-radius:2px;display:block;position:relative;
+      background:linear-gradient(to bottom,var(--gold) 0%,var(--gold) 34%,rgba(198,166,100,0.15) 100%);
+      box-shadow:0 0 12px rgba(6,6,8,0.8);
+      transform-origin:top;animation:cineHeroCue 2.6s var(--ease) infinite;
+    }
+    @keyframes cineHeroCue{
+      0%,100%{transform:scaleY(0.42);opacity:0.86}
+      45%    {transform:scaleY(1);opacity:1}
+      78%    {transform:scaleY(1);opacity:0.88}
+    }
+    /* the chevron: two borders on a rotated square, so it stays an open mark with no fill */
+    html.cine-on .cine-hero .cine-hero-cue i::after{
+      content:"";position:absolute;left:50%;bottom:-3px;width:9px;height:9px;margin-left:-5.5px;
+      transform:rotate(45deg);
+      border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);
+      filter:drop-shadow(0 0 6px rgba(6,6,8,0.8));
+    }
+  }
+  @media(min-width:1121px) and (prefers-reduced-motion:reduce){
+    html.cine-on .cine-hero .cine-hero-cue i{animation:none;opacity:.92}
+  }
+
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
      not using — the quarry's sky is at the TOP, the slab and the island both sit LOW */
   @media(max-width:1120px){
@@ -4645,6 +4776,12 @@
     html.cine-on .cine-cue i{height:34px}
   }
   @media (prefers-reduced-motion:reduce){ html.cine-on .cine-cue i{animation:none;opacity:.8} }
+  /* ⛔⛔ AND ON DESKTOP THIS CUE IS GONE ENTIRELY (D325) — `.cine-hero` carries its own, heavier one
+     inside the copy block, so two prompts never sit on the same frame. ⚠️ IT HAS TO BE WRITTEN HERE,
+     AFTER the rules above and not up with the rest of the hero's block: the selector has the same
+     specificity in both places, so source order is the only thing deciding it, and from up there
+     the base `display:flex` won. Caught by reading the computed style, not by looking. */
+  @media(min-width:1121px){ html.cine-on .cine-cue{display:none} }
 
   /* ═════ skip intro ═══════════════════════════════════════════════════════════════════════
      ⛔ NOT a gold line across the top of anything (§2 rule 10) and not a mark in a disc
@@ -8767,6 +8904,10 @@
            carries, at a strength the scrub works out from how bright the picture actually is under
            the bar — nothing at all over the dark scenes, a soft fall over the quarry. -->
       <div class="hero-navgrade" aria-hidden="true"></div>
+      <!-- ⭐ D325: the left-edge grade the opening hero's copy rests on. Desktop only, and it rides
+           that copy's own alpha so the picture is clear the moment the film moves. It sits INSIDE
+           `.hero-bg`, above the shade and the plates, so the hero's rounded clip carries it. -->
+      <div class="cine-edge" aria-hidden="true"></div>
     </div>
 
     <!-- ⭐⭐⭐ THE FILM'S OWN COPY — 18 August 2026 (D316). Client: *"this gap is where I want you
@@ -8792,7 +8933,10 @@
          ⭐ NOT `aria-hidden`: this is real copy and a screen reader should have it. It reads before
          the h1, which is the order it is written in. -->
     <div class="cine-story">
-      <p class="cine-line" data-at="1.0"  data-out="6.0"  data-vpos="top">It starts as a mountain.</p>
+      <!-- ⛔ `.cine-open` — THE PHONE'S AND THE TABLET'S OPENING TITLE, and on those two bands it is
+           unchanged. Desktop hides it and shows `.cine-hero` below instead, which says the same beat
+           at the rest position with an invitation and a proper indicator under it. -->
+      <p class="cine-line cine-open" data-at="1.0"  data-out="6.0"  data-vpos="top">It starts as a mountain.</p>
       <!-- ⛔⛔ THIS BEAT NEEDS ITS OWN TIMING PER BAND, and screenshotting it is the only way that
            showed up. On the 16:9 desktop frame the slab sits RIGHT (its lit mass measures
            x 1349..1443 of 1920) and the void is a clear left half, so 13.5-23.5 puts the words on
@@ -8812,6 +8956,23 @@
          data-at-narrow="21.0" data-out-narrow="27.5" data-vpos-narrow="top"
          data-at-phone="16.2" data-out-phone="24.4">Then one slab, chosen for its veining.</p>
       <p class="cine-line" data-at="31.5" data-out="39.0" data-vpos="low">Then the centre of your kitchen.</p>
+
+      <!-- ⭐⭐⭐ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325). Client: *"the first frame
+           technically needs to act like a second hero section. So the text needs to show in that open
+           space of the valley on the first frame, there should be a very clear indicator to scroll
+           and text that will entice people to scroll. because we cannot have a bottleneck. people
+           have to scroll and see the video."*
+           ⛔ DESKTOP ONLY. `.cine-open` above still serves the phone and the tablet, untouched.
+           ⭐ IT IS UP AT REST AND FADES BY t=6, which is the slot the desktop opening title used to
+           hold — so this is that title promoted to the rest position and given the two things it was
+           missing: a reason to scroll, and something that says so.
+           ⚠️ NOT `aria-hidden` on the words: this is real copy and a screen reader should have it. It
+           reads before the h1, which is the order it is written in. Only the indicator is decorative. -->
+      <div class="cine-hero" id="cineHero">
+        <p class="cine-hl">Your worktop begins in a mountain.</p>
+        <p class="cine-hero-sub">Scroll to follow the stone.</p>
+        <div class="cine-hero-cue" aria-hidden="true"><span>Scroll to begin</span><i></i></div>
+      </div>
     </div>
 
     <!-- ⭐ The invitation, under the first title. It goes the moment the film has moved at all, so
@@ -16095,6 +16256,51 @@ if(faqIndex && panel && faqBody){
       if(b!==L.b){ L.b=b; L.el.style.filter=b?'blur('+b+'px)':'none'; }
     }
   }
+  /* ⭐⭐⭐ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325). DESKTOP ONLY.
+     Client: *"the first frame technically needs to act like a second hero section… there should be
+     a very clear indicator to scroll and text that will entice people to scroll. because we cannot
+     have a bottleneck. people have to scroll and see the video."*
+     ⛔⛔ IT IS NOT PART OF `STORY`, AND THAT IS DELIBERATE. Every line in `STORY` fades IN because it
+     is arriving; this one is already there when the page opens, so it has an out-ramp and no
+     in-ramp, and `story()`'s `p<=0 -> 0` guard is the opposite of what it needs. Kept separate, the
+     phone's and the tablet's opening title keeps running through `story()` completely untouched,
+     which is what he asked for — he takes their placement after this.
+     ⭐ IT HOLDS THE SLOT THE DESKTOP OPENING TITLE HELD: fully up from the rest position, still
+     whole at t=4.44, gone by t=6.0. So the film gains a hero and loses nothing.
+     ⚠️ z RUNS 0 → Z_NEAR, not −150 → Z_NEAR. A title arrives from a distance; a hero is already
+     here, and −150 under the 1000 perspective would render it at 87% on the one frame every
+     visitor rests on. Same `p*p` curve as the titles, so it accelerates away identically. */
+  const heroEl=document.getElementById('cineHero');
+  const HERO_OUT=6.0, HERO_EDGE=0.66;
+  let heroOn=false, heroO=-1, heroZ=-1, heroE=-1;
+  const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
+  readHeroBand();
+  function heroCopy(t){
+    if(!heroEl)return;
+    /* ⛔ HAND BOTH PROPERTIES BACK ON THE WAY OUT. A window dragged under 1121 leaves an inline
+       opacity and an inline `--cineEdge` behind, and an inline value outranks the class rule that
+       is meant to take over — the bug the scroll cue already taught this file once. */
+    if(!heroOn){
+      if(heroO!==0){
+        heroO=0; heroZ=-1; heroE=-1;
+        heroEl.style.opacity=''; heroEl.style.removeProperty('--hz');
+        cine.style.removeProperty('--cineEdge');
+      }
+      return;
+    }
+    const p=clamp(t/HERO_OUT);
+    const a=Math.min(1,(1-p)/0.26);              /* the out-ramp only — see the note above */
+    const o=+(a*a*(3-2*a)).toFixed(2);
+    if(o!==heroO){ heroO=o; heroEl.style.opacity=o; }
+    const z=Math.round(Z_NEAR*p*p);
+    if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
+    /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed from the
+       moment the film starts moving. Two decimal places and a change test: a custom property
+       written at full precision every frame is a style recalculation for nothing. */
+    const e=+(HERO_EDGE*o).toFixed(2);
+    if(e!==heroE){ heroE=e; cine.style.setProperty('--cineEdge',e); }
+  }
+
   /* the invitation, and the escape hatch */
   const cueEl=document.getElementById('cineCue');
   const skipEl=document.getElementById('cineSkip');
@@ -16128,7 +16334,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); story(dur); plates(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); story(dur); heroCopy(dur); plates(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -16143,6 +16349,7 @@ if(faqIndex && panel && faqBody){
     ink(film);
     veil(film);
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
+    heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
     plates(want);     /* his stills, blended in as the film passes the frames they were made for */
     chrome(film);
     grade();
@@ -16183,6 +16390,7 @@ if(faqIndex && panel && faqBody){
        page height again — but a stale inline value would survive a band change, so it is cleared. */
     cine.style.removeProperty('height');
     retimeStory();
+    readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
     replate();
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1;

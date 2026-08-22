@@ -316,7 +316,7 @@
       });
       return id;
     };
-    show((location.hash || '#0').slice(1) || '0');
+    show((location.hash || '#B').slice(1) || 'B');   /* a bare reload lands on the RECOMMENDATION, not on the empty 'as it stands' frame */
     window.addEventListener('hashchange', function(){ show(location.hash.slice(1)); });
   })();
 </script>

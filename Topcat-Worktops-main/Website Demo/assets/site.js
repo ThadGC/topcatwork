@@ -5899,6 +5899,51 @@ if(faqIndex && panel && faqBody){
       if(b!==L.b){ L.b=b; L.el.style.filter=b?'blur('+b+'px)':'none'; }
     }
   }
+  /* ⭐⭐⭐ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325). DESKTOP ONLY.
+     Client: *"the first frame technically needs to act like a second hero section… there should be
+     a very clear indicator to scroll and text that will entice people to scroll. because we cannot
+     have a bottleneck. people have to scroll and see the video."*
+     ⛔⛔ IT IS NOT PART OF `STORY`, AND THAT IS DELIBERATE. Every line in `STORY` fades IN because it
+     is arriving; this one is already there when the page opens, so it has an out-ramp and no
+     in-ramp, and `story()`'s `p<=0 -> 0` guard is the opposite of what it needs. Kept separate, the
+     phone's and the tablet's opening title keeps running through `story()` completely untouched,
+     which is what he asked for — he takes their placement after this.
+     ⭐ IT HOLDS THE SLOT THE DESKTOP OPENING TITLE HELD: fully up from the rest position, still
+     whole at t=4.44, gone by t=6.0. So the film gains a hero and loses nothing.
+     ⚠️ z RUNS 0 → Z_NEAR, not −150 → Z_NEAR. A title arrives from a distance; a hero is already
+     here, and −150 under the 1000 perspective would render it at 87% on the one frame every
+     visitor rests on. Same `p*p` curve as the titles, so it accelerates away identically. */
+  const heroEl=document.getElementById('cineHero');
+  const HERO_OUT=6.0, HERO_EDGE=0.66;
+  let heroOn=false, heroO=-1, heroZ=-1, heroE=-1;
+  const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
+  readHeroBand();
+  function heroCopy(t){
+    if(!heroEl)return;
+    /* ⛔ HAND BOTH PROPERTIES BACK ON THE WAY OUT. A window dragged under 1121 leaves an inline
+       opacity and an inline `--cineEdge` behind, and an inline value outranks the class rule that
+       is meant to take over — the bug the scroll cue already taught this file once. */
+    if(!heroOn){
+      if(heroO!==0){
+        heroO=0; heroZ=-1; heroE=-1;
+        heroEl.style.opacity=''; heroEl.style.removeProperty('--hz');
+        cine.style.removeProperty('--cineEdge');
+      }
+      return;
+    }
+    const p=clamp(t/HERO_OUT);
+    const a=Math.min(1,(1-p)/0.26);              /* the out-ramp only — see the note above */
+    const o=+(a*a*(3-2*a)).toFixed(2);
+    if(o!==heroO){ heroO=o; heroEl.style.opacity=o; }
+    const z=Math.round(Z_NEAR*p*p);
+    if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
+    /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed from the
+       moment the film starts moving. Two decimal places and a change test: a custom property
+       written at full precision every frame is a style recalculation for nothing. */
+    const e=+(HERO_EDGE*o).toFixed(2);
+    if(e!==heroE){ heroE=e; cine.style.setProperty('--cineEdge',e); }
+  }
+
   /* the invitation, and the escape hatch */
   const cueEl=document.getElementById('cineCue');
   const skipEl=document.getElementById('cineSkip');
@@ -5932,7 +5977,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); story(dur); plates(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); story(dur); heroCopy(dur); plates(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -5947,6 +5992,7 @@ if(faqIndex && panel && faqBody){
     ink(film);
     veil(film);
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
+    heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
     plates(want);     /* his stills, blended in as the film passes the frames they were made for */
     chrome(film);
     grade();
@@ -5987,6 +6033,7 @@ if(faqIndex && panel && faqBody){
        page height again — but a stale inline value would survive a band change, so it is cleared. */
     cine.style.removeProperty('height');
     retimeStory();
+    readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
     replate();
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1;
