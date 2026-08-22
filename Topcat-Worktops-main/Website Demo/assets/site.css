@@ -4497,20 +4497,34 @@
      exactly this kind — its own 90deg linear — running the wrong way for copy on the left
      (0.26 → 0.46, darkening to the RIGHT). Stops trace an ease-out so the alpha lands on zero with
      no slope and there is no termination line to find.
-     ⭐ MEASURED at 0.66 over the veil's resting 0.20: headline 5.12:1, invitation 10.33:1, the
-     cue's word 12.07:1, its gold rule 3.93:1 against the 3.0 a non-text graphic needs.
+     ⛔ It rides the hero copy's own alpha, so it can never outlive the words it is there for, and
+     the picture is unobstructed the moment the film starts moving.
      ⚠️ MEASURE THE INK, NOT THE BOX — the cue's flex container is the full 566px of the block and
      reads 2.86:1 off the marble at its far end, where there is no ink at all.
-     ⛔ It rides the hero copy's own alpha, so it can never outlive the words it is there for, and
-     the picture is unobstructed the moment the film starts moving. */
+
+     ⭐⭐⭐ **D325b — IT CARRIES A CORNER NOW, BECAUSE THE COPY MOVED INTO THE SKY.** Client: *"move
+     the text higher up… the first line of text is basically above that mountain line."* The ridge
+     was measured rather than eyeballed — walking each column until its vertical gradient breaks out
+     of the sky's own noise floor puts the skyline at **y 250–280 of 900, median 30%** across the
+     left half. The copy now sits above it, and ABOVE IT IS THE BRIGHTEST GROUND ON THE FRAME.
+     ⛔ At the old 0.66 flat, the raised headline measured **3.38:1 and 3.05:1** on its first two
+     lines — over the 3.0 large text needs and no more. So a second layer was added, a soft pool in
+     the TOP-LEFT CORNER, which is still frame-anchored vignetting and still has no shape to find an
+     edge on. ⭐ Measured after: headline **4.28 / 3.81 / 5.43:1**, gold **3.92:1**, invitation
+     8.67:1, the cue's word 12.95:1. */
   .cine-edge{display:none}
   @media(min-width:1121px){
     html.cine-on .cine .cine-edge{
       display:block;position:absolute;inset:0;z-index:2;pointer-events:none;
       opacity:var(--cineEdge,0);
-      background:linear-gradient(90deg,
-        rgba(6,6,9,0.66) 0%, rgba(6,6,9,0.541) 18%, rgba(6,6,9,0.343) 34%,
-        rgba(6,6,9,0.145) 48%, rgba(6,6,9,0.040) 60%, rgba(6,6,9,0) 70%);
+      background:
+        /* the corner, for the lines that now sit in the sky */
+        radial-gradient(62% 58% at 0% 10%,
+          rgba(6,6,9,0.42) 0%, rgba(6,6,9,0.193) 52%, rgba(6,6,9,0) 100%),
+        /* the left edge, which the whole block still rests on */
+        linear-gradient(90deg,
+          rgba(6,6,9,0.74) 0%, rgba(6,6,9,0.607) 18%, rgba(6,6,9,0.385) 34%,
+          rgba(6,6,9,0.163) 48%, rgba(6,6,9,0.044) 60%, rgba(6,6,9,0) 70%);
     }
   }
 
@@ -4623,11 +4637,25 @@
      but a hero is already here, and −150 under the 1000 perspective renders it at 87%. */
   .cine-hero{display:none}
   @media(min-width:1121px){
+    /* ⭐⭐ ANCHORED BY ITS TOP, NOT ITS MIDDLE — 22 August 2026 (D325b). Client: *"move the text
+       higher up… you can see the top of the mountains in the background. The first line of text is
+       basically above that mountain line. And then you can basically move everything up."*
+       ⛔ THE SKYLINE WAS MEASURED, NOT EYEBALLED: walking each column down until its vertical
+       gradient breaks out of the sky's own noise floor puts the ridge at **y 250–280 of 900** across
+       the left half, median 30%. At `19vh` the first line runs 171→235, which clears the highest
+       point of that ridge (250) by 15px.
+       ⚠️ IT HAD TO STOP BEING CENTRED. On `top:57%` with `translateY(-50%)` the block's position
+       depended on its own height, so a longer headline pushed the first line back down through the
+       skyline. Anchored at the top, the line he pointed at stays where he put it and the block grows
+       downward into the graded area, which is the direction with room in it.
+       ⚠️ Holds to a 16:9 window. `cover` crops the SIDES until the viewport is wider than the film's
+       own 1.778, so the ridge sits at a fixed 28–31% of height for every ordinary desktop; past that
+       the crop turns vertical and the skyline rises. */
     html.cine-on .cine-hero{
       display:block;position:absolute;z-index:3;pointer-events:none;
-      left:clamp(20px,7vw,132px);top:57%;width:clamp(320px,39vw,566px);
+      left:clamp(20px,7vw,132px);top:19vh;width:clamp(320px,39vw,566px);
       opacity:0;                                  /* the scrub owns it from the first tick */
-      transform:translateY(-50%) translateZ(calc(var(--hz,0) * 1px));
+      transform:translateZ(calc(var(--hz,0) * 1px));
     }
     /* ⛔ the desktop opening title goes here; the ORIGINAL CUE IS HIDDEN FURTHER DOWN, beside its
        own rules — hidden from here it lost on source order, because `html.cine-on .cine-cue` has
@@ -4644,6 +4672,26 @@
       /* a contact shadow so the type reads as an object in the room, exactly as the titles do —
          ⛔ never the legibility mechanism on its own, which is what D313 proved twice */
       text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5);
+    }
+    /* ⭐⭐⭐ WHITE AND GOLD, THE SITE'S OWN TITLE TREATMENT — 22 Aug 2026 (D325b). Client: *"I want
+       the text to be the same as, like, in the titles of the actual site. It will be the white and
+       the gold kind of, you know, text."* Same mechanism as `.hero-title em` exactly: an `<em>`,
+       `font-style:normal`, weight 600, and a 180deg gradient clipped to the glyphs.
+       ⛔⛔⛔ **BUT NOT THE SAME THREE STOPS, AND THAT IS MEASURED, NOT A PREFERENCE.** The hero's gold
+       runs #E4CD92 → #C6A664 → #BC9A54 and it lives on a NIGHT KITCHEN under a full veil. Here the
+       ground is a daylight quarry, and the site's mid stop #C6A664 measures **2.21:1** on it — under
+       the 3.0 large text needs, and it does not get there: at edge 0.80 with a 0.52 corner, a grade
+       heavy enough to be visibly wrong on his photograph, it still only reaches **2.83:1**. Gold is
+       a mid-luminance colour and no amount of grading makes it behave like ink on daylight.
+       ⭐ **SO THE FILM RUNS THE SAME FAMILY FROM ITS LIGHT END.** The mid stop here is #E4CD92 — the
+       hero's own TOP stop — which measures **3.92:1** on the same pixels. It is the identical
+       palette, sat one stop up because the background is 150 luminance brighter.
+       ⚠️ `-webkit-text-fill-color:transparent` means the glyph is filled BY the gradient, so the
+       contact shadow behind it still reads. ⛔ Do not add a second shadow to compensate. */
+    html.cine-on .cine-hero .cine-hl em{
+      font-style:normal;font-weight:600;color:#E4CD92;
+      background:linear-gradient(180deg,#F2E3B6 0%,#E4CD92 62%,#D2B87C 100%);
+      -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
     }
     /* ⚠️ IT NAMES NO ROOM AND NO MATERIAL, the same discipline as the hero's trust line, and it
        deliberately does NOT narrate the film's three beats. The longer version ("from the quarry to

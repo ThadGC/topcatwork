@@ -5910,11 +5910,16 @@ if(faqIndex && panel && faqBody){
      which is what he asked for — he takes their placement after this.
      ⭐ IT HOLDS THE SLOT THE DESKTOP OPENING TITLE HELD: fully up from the rest position, still
      whole at t=4.44, gone by t=6.0. So the film gains a hero and loses nothing.
-     ⚠️ z RUNS 0 → Z_NEAR, not −150 → Z_NEAR. A title arrives from a distance; a hero is already
+     ⚠️ z RUNS 0 → HERO_Z, not −150 → Z_NEAR. A title arrives from a distance; a hero is already
      here, and −150 under the 1000 perspective would render it at 87% on the one frame every
-     visitor rests on. Same `p*p` curve as the titles, so it accelerates away identically. */
+     visitor rests on. Same `p*p` curve as the titles, so it accelerates away identically.
+     ⛔⛔ AND HERO_Z IS 300, NOT THE TITLES' 560, BECAUSE D325b MOVED THE BLOCK TO THE TOP OF THE
+     FRAME. `perspective-origin` is `26% 50%`, so everything above the middle travels UP as it
+     approaches — from `top:19vh` the titles' own 560 renders the block at 2.27× and takes the
+     headline clean off the top of the screen while it is still half visible. At 300 the block lifts
+     from y171 to about y116 while it is still fully up, and is gone before it reaches the bar. */
   const heroEl=document.getElementById('cineHero');
-  const HERO_OUT=6.0, HERO_EDGE=0.66;
+  const HERO_OUT=6.0, HERO_EDGE=1, HERO_Z=300;
   let heroOn=false, heroO=-1, heroZ=-1, heroE=-1;
   const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
   readHeroBand();
@@ -5935,11 +5940,14 @@ if(faqIndex && panel && faqBody){
     const a=Math.min(1,(1-p)/0.26);              /* the out-ramp only — see the note above */
     const o=+(a*a*(3-2*a)).toFixed(2);
     if(o!==heroO){ heroO=o; heroEl.style.opacity=o; }
-    const z=Math.round(Z_NEAR*p*p);
+    const z=Math.round(HERO_Z*p*p);
     if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
     /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed from the
        moment the film starts moving. Two decimal places and a change test: a custom property
-       written at full precision every frame is a style recalculation for nothing. */
+       written at full precision every frame is a style recalculation for nothing.
+       ⚠️ HERO_EDGE IS 1 SINCE D325b — the layer's two gradients carry their own strengths (0.74 at
+       the left border, 0.42 in the top-left corner) so this is purely the copy's alpha. It was 0.66
+       when the CSS was written at full strength and the multiplier did the grading. */
     const e=+(HERO_EDGE*o).toFixed(2);
     if(e!==heroE){ heroE=e; cine.style.setProperty('--cineEdge',e); }
   }
