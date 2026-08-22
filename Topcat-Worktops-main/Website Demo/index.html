@@ -4651,8 +4651,8 @@
      ⭐⭐ IT REPLACES THE DESKTOP OPENING TITLE RATHER THAN JOINING IT. `.cine-open` and the original
      `.cine-cue` are both hidden at this band, so there is never a hero and a title saying the same
      thing three seconds apart. The chain still reads as one sentence:
-         Your worktop begins in a mountain. -> Then one slab, chosen for its veining. ->
-         Then the centre of your kitchen. -> *Surfaces worth building around*
+         Your worktop begins in a mountain. -> Then one slab, chosen for its veining.
+         -> *Surfaces worth building around*        (the third beat was withdrawn at D326)
      ⚠️ THE WHOLE BLOCK TRAVELS AS ONE OBJECT — the wrapper carries the `translateZ`, not the
      headline, so the words, the invitation and the indicator stay together as the camera passes
      them. It also starts at z 0 rather than the titles' −150: a title is arriving from a distance,
@@ -4780,6 +4780,12 @@
       font-size:clamp(27px,6.6vw,44px);
     }
     html.cine-on .cine-line[data-vpos="top"]{top:13vh;--ly:0%}
+    /* ⚠️ SINCE D326 THIS POSITIONS NOTHING, AND IT STAYS ANYWAY. The only line still carrying
+       `data-vpos="low"` is the slab beat, which overrides itself to the top on both narrow bands
+       with `data-vpos-narrow="top"` below — so the rule matches an element and is then always beaten.
+       ⛔ It is NOT the dead mirror D324 removed: that one matched nothing at all. This one is the
+       restore path for the withdrawn third beat, which is `low` and has no narrow override. Delete
+       it only if that line is dropped for good. */
     html.cine-on .cine-line[data-vpos="low"]{top:auto;bottom:17vh;--ly:0%}
     /* ⭐ a narrow-band override wins over the desktop anchor for the same element.
        ⚠️ ONLY `top` EXISTS, BECAUSE ONLY ONE LINE OVERRIDES ITS POSITION ON A NARROW CROP and it
@@ -8961,10 +8967,13 @@
     <!-- ⭐⭐⭐ THE FILM'S OWN COPY — 18 August 2026 (D316). Client: *"this gap is where I want you
          to add text… it's basically going to tell the story of how going from the marble quarry to
          being a slab, to being the centre of your kitchen, and then it ends on the hero section."*
-         ⭐⭐ FOUR BEATS, AND THE FOURTH IS THE HERO ITSELF, which is why only three sit here. The
-         chain reads as one sentence across the whole scroll:
-             It starts as a mountain. -> Then one slab, chosen for its veining. ->
-             Then the centre of your kitchen. -> *Surfaces worth building around*
+         ⭐⭐ THE LAST BEAT IS THE HERO ITSELF, which is why it does not sit here. The chain reads
+         as one sentence across the whole scroll:
+             It starts as a mountain. -> Then one slab, chosen for its veining.
+             -> *Surfaces worth building around*
+         ⛔ **IT WAS FOUR BEATS UNTIL D326**, when the client asked for the closing one over the
+         kitchen shot to come off: *"Remove the text that comes up on this part."* The withdrawn line
+         is parked in full beside the two that remain, below.
          ⚠️ The hero's own words are "Surfaces worth building around", not "surfaces for every
          space" — he quoted it from memory. The story lands on what the page actually says.
          ⛔⛔ EACH `data-at`/`data-out` IS A FILM SECOND, NOT A SCROLL POSITION, and they come from
@@ -9003,7 +9012,24 @@
       <p class="cine-line" data-at="13.5" data-out="23.5" data-vpos="low"
          data-at-narrow="21.0" data-out-narrow="27.5" data-vpos-narrow="top"
          data-at-phone="16.2" data-out-phone="24.4">Then one slab, chosen for its veining.</p>
-      <p class="cine-line" data-at="31.5" data-out="39.0" data-vpos="low">Then the centre of your kitchen.</p>
+      <!-- ⛔⛔⛔ **THE THIRD BEAT IS WITHDRAWN — 22 August 2026 (D326).** Client, on a screenshot of the
+           closing kitchen shot with the words over it: *"Remove the text that comes up on this
+           part."*
+           ⭐ PARKED, NOT DELETED, and this is the whole of it — restoring the beat is putting this
+           one line back, nothing else:
+
+               <p class="cine-line" data-at="31.5" data-out="39.0" data-vpos="low">Then the centre of your kitchen.</p>
+
+           ⚠️ REMOVED AT EVERY BAND, not desktop-only, and that is a judgement worth naming. The line
+           carried no `-narrow` or `-phone` timing of its own, so it was one beat of the story rather
+           than a per-device placement; leaving it on the phone and the tablet would have given them
+           a beat the desktop no longer tells, for no reason either could see. ⭐ If he only meant the
+           desktop, the line above goes back with a `data-at-narrow`/`data-at-phone` pair.
+           ⭐ THE CHAIN STILL READS, and the closing shot now runs to the hero in silence:
+               Your worktop begins in a mountain. -> Then one slab, chosen for its veining.
+               -> *Surfaces worth building around*
+           ⚠️ The hero's ink still rises at INK_AT 0.93 (t=41.1), so nothing moved to cover the gap;
+           there is simply more dark before the headline than there was. -->
 
       <!-- ⭐⭐⭐ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325). Client: *"the first frame
            technically needs to act like a second hero section. So the text needs to show in that open

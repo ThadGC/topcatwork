@@ -4629,8 +4629,8 @@
      ⭐⭐ IT REPLACES THE DESKTOP OPENING TITLE RATHER THAN JOINING IT. `.cine-open` and the original
      `.cine-cue` are both hidden at this band, so there is never a hero and a title saying the same
      thing three seconds apart. The chain still reads as one sentence:
-         Your worktop begins in a mountain. -> Then one slab, chosen for its veining. ->
-         Then the centre of your kitchen. -> *Surfaces worth building around*
+         Your worktop begins in a mountain. -> Then one slab, chosen for its veining.
+         -> *Surfaces worth building around*        (the third beat was withdrawn at D326)
      ⚠️ THE WHOLE BLOCK TRAVELS AS ONE OBJECT — the wrapper carries the `translateZ`, not the
      headline, so the words, the invitation and the indicator stay together as the camera passes
      them. It also starts at z 0 rather than the titles' −150: a title is arriving from a distance,
@@ -4758,6 +4758,12 @@
       font-size:clamp(27px,6.6vw,44px);
     }
     html.cine-on .cine-line[data-vpos="top"]{top:13vh;--ly:0%}
+    /* ⚠️ SINCE D326 THIS POSITIONS NOTHING, AND IT STAYS ANYWAY. The only line still carrying
+       `data-vpos="low"` is the slab beat, which overrides itself to the top on both narrow bands
+       with `data-vpos-narrow="top"` below — so the rule matches an element and is then always beaten.
+       ⛔ It is NOT the dead mirror D324 removed: that one matched nothing at all. This one is the
+       restore path for the withdrawn third beat, which is `low` and has no narrow override. Delete
+       it only if that line is dropped for good. */
     html.cine-on .cine-line[data-vpos="low"]{top:auto;bottom:17vh;--ly:0%}
     /* ⭐ a narrow-band override wins over the desktop anchor for the same element.
        ⚠️ ONLY `top` EXISTS, BECAUSE ONLY ONE LINE OVERRIDES ITS POSITION ON A NARROW CROP and it
