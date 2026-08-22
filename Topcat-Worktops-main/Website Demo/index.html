@@ -4583,36 +4583,6 @@
   html.cine-on .cine .hero{--curveR:calc(48px * var(--cineCurve,1))}
   html.cine-on .cine .hero::after{opacity:var(--cineCurve,1)}
 
-  /* ═════ THE PLATES — 21 August 2026 (D320) ════════════════════════════════════════════════
-     ⭐⭐ His generation stills, cross-faded over the film at the holds so the RESTING picture is
-     the original and not an H.264 frame of it.
-     ⛔ **UNDER THE VEIL AND THE GRADE, OVER THE VIDEO.** The plate is picture, so everything that
-     dresses the picture must still dress it — `.hero-shade` (z 1) and `.hero-navgrade` (z 1) sit
-     above, `.cine-story` (z 2) above those. The plate takes z-index 0, the same as `.hero-vid`, and
-     wins on SOURCE ORDER because it comes later. ⚠️ Do not "clarify" that with a z-index of 1: it
-     would jump the veil and the film would stop fading at the end.
-     ⭐ **DESKTOP AND TABLET (D322).** Client: *"for tablet you're just gonna crop the image correctly
-     for tablet — since desktop and tablet are using the same video, crop it correctly for desktop
-     and tablet."* They DO share the film, so the tablet's plates are the same stills through the
-     same window D312 cut its film with (`864:1080:680:0`), and the scrub picks the crop by band.
-     ⛔ **THE PHONE GETS NONE OF IT** — it has had its own film since D319 and he said to leave it.
-     ⚠️ **THE QUERY IS WIDENED, NOT COPIED** (the standing rule): this one rule was `max-width:1120`
-     and is now `max-width:720`, so the tablet falls out of the hidden band rather than gaining a
-     duplicate block of its own. The scrub also refuses to attach a `src` below 721, so a phone
-     fetches none of the 0.56 MB rather than merely not painting it. */
-  .cine-plates{display:none}
-  html.cine-on .cine-plates{
-    display:block;position:absolute;inset:0;z-index:0;pointer-events:none;
-  }
-  @media(max-width:720px){ html.cine-on .cine-plates{display:none} }
-  html.cine-on .plate{
-    position:absolute;inset:0;display:block;
-    background-size:cover;background-position:center;background-repeat:no-repeat;
-    opacity:0;
-    /* ⚠️ NO transition. The opacity is written every frame from the film's distance to the hold,
-       so a CSS transition would fight the scrub and lag the cross-fade behind the picture. */
-  }
-
   /* ═════ THE FILM'S OWN COPY — 18 August 2026 (D316) ═══════════════════════════════════════
      Three titles that sit IN the film and are passed by the camera rather than laid over it.
      ⛔ Base state is `display:none`: every rule here hangs off `cine-on`, so a browser that
@@ -9053,80 +9023,6 @@
        v.poster=(p&&d.posterPhone)||(n&&d.posterNarrow)||d.poster; v.preload='auto';
        v.src=(p&&d.srcPhone)||(n&&d.srcNarrow)||d.src;})();
       </script>
-      <!-- ⭐⭐⭐ THE PLATES — 21 August 2026 (D320). Client sent six generation stills and the
-           scroll-animation guide: *"you will use this guide to overlay the images into the video at
-           the correct points with the correct image for that spot. this is for desktop."*
-           ⭐⭐ **AT A HOLD THE VIEWER IS LOOKING AT A FRAME THAT HAS BEEN THROUGH H.264.** The plate
-           cross-fades his ORIGINAL generation over it, so the resting picture is the clean image and
-           the film only has to carry the MOVING frames, where nobody can resolve fine detail anyway.
-           ⛔⛔⛔ **THE MAPPING WAS DERIVED FROM THE FOOTAGE, NOT FROM THE FILENAMES** — the guide's
-           first rule, because on the project it came from four of eight stills named the wrong shot.
-           `.plates-2026-08-21/holds.py` matches each still into the film on zero-mean unit-variance
-           greyscale and prints its confidence. Every one of the six matched, and the names happened
-           to be right this time — ⚠️ that is luck, not method. Re-run it if the film is ever re-cut.
-                still            frame   t        plate distance   next-best
-                Final F1.png     f1      0.0833   0.097            0.647
-                final f3.png     f122   10.1667   0.180            0.840
-                F4.png           f206   17.1667   0.008            0.231
-                F5.png           f277   23.0833   0.006            0.249
-                New F6.png       f472   39.3333   0.058            0.189
-                New F7 (1).png   f529   44.0833   0.064            0.365
-           ⚠️ **F1 AND F3 ARE AN ORDER OF MAGNITUDE WORSE THAN THE OTHER FOUR AND THAT IS REAL.**
-           Both sit inside camera moves, so the film frame carries motion blur his still does not;
-           f3's veining has also drifted, which is what an interpolated middle frame does. They are
-           unambiguously the right shots (next-best is 5x and 4.7x away) and they register — they
-           simply cannot be as exact as a still frame. ⛔ Do not "fix" them by moving the hold.
-           ⭐ The hold frame is `min(max(d[f], d[f-1]))`, the guide's §4.4 criterion: the engine
-           settles up to a full frame short of its target, so BOTH f and f-1 have to be good.
-           ⛔ **NEVER RE-EXTRACT A PLATE FROM THE VIDEO** — that carries exactly the compression it
-           exists to cover. These are his own files, capped at the film's 1920 and never upscaled.
-           ⚠️ **THE `src` IS ATTACHED BY THE SCRUB, NOT WRITTEN HERE**, or 0.56 MB of plate would
-           load on every desktop visit before the film did (§2s). Each is fetched when the film comes
-           within PLATE_NEAR seconds of its hold; the opening one is fetched on `load`, after first
-           paint, because the page opens on it. -->
-      <!-- ⛔⛔⛔ **TWO PLATES, NOT SIX — 21 August 2026 (D323).** Client: *"I actually don't like the
-           overlaying of the images that you did. So you're just going to keep the first starting
-           frame image, remove all the others. Keep the first one and the last one. Those are the
-           only two that you keep."*
-           ⭐⭐ **AND THESE TWO ARE THE ONLY ONES THAT WERE EVER MORE THAN A BLINK.** The page OPENS on
-           f1 and the hero RESTS on f529 for the 182vh it has held since D317, so both are looked at
-           for a long time; the four that came out were each a dissolve of 80–170px of scroll passed
-           at speed, which is exactly the "overlaying" he did not want.
-           ⭐ Nothing was deleted — `assets/video/plates/.removed-2026-08-21/` holds all four in both
-           crops with a README. Restoring one is a copy and two lines.
-           ⚠️ First load is 180 KB lighter on desktop and 93 KB on tablet as a result. -->
-      <div class="cine-plates" aria-hidden="true">
-        <!-- ⛔⛔ **0, NOT 0.0833 — AND THE ORIGINAL ANCHOR WAS A BUG IN MY OWN MATCHER.** `holds.py`
-             reported f1, but its search window started at `lo+1` so that `d[f-1]` always existed —
-             which silently made **frame 0 unreachable**. The guide's own version allows f=0 and
-             scores it alone, precisely because it cannot be undershot. Measured, his opening still
-             matches **f0 better than f1**: d **0.114 against 0.150** desktop, **0.119 against 0.165**
-             tablet. The script is fixed; this is the frame it now returns.
-             ⚠️ It matters here more than anywhere: the page OPENS on this frame and rests on it
-             until the first scroll. Anchored a frame late the plate sat at **0.92** on the first
-             thing every desktop and tablet visitor sees. -->
-        <i class="plate" data-t="0"        data-src="/assets/video/plates/plate-f1.webp?v=2"
-           data-src-tablet="/assets/video/plates/tablet/plate-f1.webp?v=1"></i>
-        <!-- ⛔⛔⛔ **THE HERO PLATE IS WITHDRAWN — 22 August 2026 (D328). HIS FILM WAS RE-CUT AND HIS
-             STILL NO LONGER MATCHES ITS ENDING.** Measured the way `holds.py` measures, on zero-mean
-             unit-variance greyscale: against the OLD film this still sat at **0.069**; against the
-             new one its best frame anywhere in the last 2.5 seconds is **0.292**, and the best
-             frame is f527, not f530. Looked at side by side the camera has pushed IN and LEFT — the
-             island is much closer, the bar stools along it are gone, and the rug and sofa carry the
-             left of the frame. Same room, different shot.
-             ⛔ A plate is only worth having when it IS the frame underneath it: its whole purpose is
-             to put his clean generation over an H.264 frame at a hold. Cross-faded over a picture
-             the camera has moved on from, it would jump the camera on the ONE frame every visitor
-             rests on for 182vh. So it comes off until he sends a still for the new ending.
-             ⭐ PARKED, NOT DELETED. Both crops are still on disk at `plates/plate-f529.webp` and
-             `plates/tablet/plate-f529.webp`, and this is the line that brings it back:
-
-               <i class="plate" data-t="44.2083"  data-src="/assets/video/plates/plate-f529.webp?v=2"
-                  data-src-tablet="/assets/video/plates/tablet/plate-f529.webp?v=1"></i>
-
-             ⚠️ The OPENING plate stays: it was re-matched against the new film and still lands on
-             f0 at **0.111**, which is where it has always been. The opening shot did not change. -->
-      </div>
       <div class="hero-shade"></div>
       <!-- ⭐ D313: the film's own top grade. It carries the SAME `--navScrim` stops the hero's veil
            carries, at a strength the scrub works out from how bright the picture actually is under
@@ -16275,43 +16171,6 @@ if(faqIndex && panel && faqBody){
   const stage=()=>{ if(!hero.classList.contains('loaded'))
     requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
 
-  /* ⭐⭐⭐ THE PLATES ARE PART OF THE FILM, NOT A STOP IN IT — 21 August 2026 (D322).
-     Client, on D320/D321: *"it almost feels like a dead scroll from the first image to the scroll.
-     The whole process should feel smooth. The image must just smoothly overlay into that section.
-     Nothing must be hooked on it, it must just look like it's a part of the video now."*
-     ⛔⛔⛔ **SO THE HOLD TRACK IS GONE AND THE SCRUB IS LINEAR AGAIN, EXACTLY AS IT WAS BEFORE D320.**
-     Parking the film to give the stills room was the wrong trade twice over — it is what he felt as
-     dead scroll, and even with the parks cut in half (D321) the film still stopped six times.
-     ⚠️⚠️ **AND THE PARKS WERE NOT THE ONLY REASON IT FELT SLOW: D320 SET THE TRAVEL PACE TO 22.6vh
-     PER FILM-SECOND ON THE ARITHMETIC `1000vh / 44.25s`, WHICH IS WRONG.** The last 18% of the
-     travel is the hero's hold and has never carried film, so the approved pace was
-     `818vh / 44.25s` = **18.49**, and the film had been running **22% slow** for two rounds.
-     ⭐ Reverting to the linear map restores the pace exactly, because it is the same map that
-     produced those numbers — and it puts the page back to `--cineH` with nothing overridden.
-     ⭐⭐ **A SMOOTHSTEPPED TRACK WOULD HAVE BEEN WRONG EVEN WITH ZERO DWELL.** Each travel segment
-     eases in and out of its holds, so with the parks removed the film would still have pulsed —
-     slowing at every hold and speeding between them. That IS "hooked on it". One linear map has no
-     joins to feel.
-     ⭐⭐⭐ **WHAT THE PLATE CAN BE IS SET BY THE FILM, AND IT WAS MEASURED PER HOLD.** How far either
-     side of its frame a still still reads as the same picture, to within 0.08 of its own distance:
-         f1 5 · f122 3 · f206 6 · f277 5 · f472 4 · f529 6 frames   (the tighter of the two bands)
-     ⛔ `f122` gets 3 because the camera is genuinely moving there — at 6 frames out its distance has
-     more than doubled. It is not a knob; widening it puts a stale picture over a moving one, which
-     is the one thing worse than a quick blend. ⚠️ The tail is deliberately 2 frames past the strict
-     limit: mismatch at the end of a ramp is masked by the low opacity it is wearing.
-     ⚠️ At 18.49vh/s a frame is 1.54vh, so these are dissolves of roughly 80–170px of scroll. Short,
-     smooth, and invisible as an event — which is what he asked for.
-     ⭐ **THE HERO'S PLATE IS THE EXCEPTION AND IT IS FREE**: the film already parks at f529 for the
-     182vh the hero has held since D317, so that one is solid for the whole rest without anything
-     being added to the page. */
-  const PLATE_W=[5,6];                    // fade half-width in FILM FRAMES, per plate, measured
-  /* ⚠️ D323 cut this from six to two, in the element's own order. The four that came out measured
-     f122 3 · f206 6 · f277 5 · f472 4 frames and their numbers are kept in the removed folder's
-     README, so restoring one is a copy and putting its width back in this array. */
-  const HOLDS=[...document.querySelectorAll('.cine-plates .plate')].map((el,i)=>({
-    el, t:+el.dataset.t, w:PLATE_W[i]||4, o:-1, src:''
-  }));
-
   function measure(){
     const cs=getComputedStyle(cine);
     const h=parseFloat(cs.getPropertyValue('--cineHold'));
@@ -16322,45 +16181,6 @@ if(faqIndex && panel && faqBody){
     if(vm>=0&&vm<=1)veilMin=vm;
     top=cine.getBoundingClientRect().top+window.scrollY;
     travel=Math.max(1,cine.offsetHeight-window.innerHeight);
-  }
-
-  /* ⭐⭐ THE PLATES RUN AT TWO BANDS AND EACH HAS ITS OWN CROP OF THE SAME STILL. Client: *"for
-     tablet you're just gonna crop the image correctly for tablet — since desktop and tablet are
-     using the same video, crop it correctly for desktop and tablet."* The tablet's film is D312's
-     `crop=864:1080:680:0` of the master, so its plates are the SAME window out of the same stills.
-     ⛔ **The phone gets none of it** — different film entirely since D319, and he said not to touch
-     it. `plateSrc` returns '' there, so nothing is ever attached and nothing is ever fetched.
-     ⚠️ The band is re-read on `sync()`, so a window dragged across 1121 swaps the crop. */
-  const plateSrc=H=>mPhone.matches?'':(mNarrow.matches?H.el.dataset.srcTablet:H.el.dataset.src)||'';
-  const PLATE_NEAR=6;                     // film-seconds of lead time before a plate is fetched
-  const ss=v=>{const t=clamp(v);return t*t*(3-2*t);};
-
-  function plates(t){
-    /* ⛔⛔ **THE OPACITY IS KEYED TO THE FRAME ON SCREEN, NOT TO THE ONE BEING ASKED FOR.** `want` is
-       the eased TARGET; the decoder trails it while the page is actually moving, and driving the
-       fade from the target lit the plate over a frame three ahead of its own — measured in a 20px
-       sweep, peak opacity landing on f209 for a hold at f206. `currentTime` is what the viewer is
-       looking at, so that is what the still has to be registered against. ⚠️ It falls back to the
-       target only before the video can answer, where the plate is at zero anyway. */
-    const shown=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t;
-    for(const H of HOLDS){
-      const src=plateSrc(H);
-      if(!src){ if(H.o!==0){H.o=0;H.el.style.opacity=0;} continue; }
-      const off=Math.abs(shown-H.t);
-      /* ⭐ deferred: 0.56 MB of plate must not land before the film does (§2s). The opening one has
-         no approach, so `sync()` wires it once the band is known. */
-      if(Math.abs(t-H.t)<PLATE_NEAR&&H.src!==src){ H.src=src; H.el.style.backgroundImage="url('"+src+"')"; }
-      const o=H.src?+(1-ss(off*FPS/H.w)).toFixed(3):0;
-      if(o!==H.o){ H.o=o; H.el.style.opacity=o; }
-    }
-  }
-  /* ⛔ a band change swaps every plate's file, so the attached URL is dropped and re-attached by
-     the next tick rather than left showing the other band's crop */
-  function replate(){
-    for(const H of HOLDS){
-      const src=plateSrc(H);
-      if(H.src&&H.src!==src){ H.src=''; H.el.style.backgroundImage=''; H.o=-1; }
-    }
   }
 
   function fail(){
@@ -16638,7 +16458,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plates(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -16655,7 +16475,6 @@ if(faqIndex && panel && faqBody){
     curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
     heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
-    plates(want);     /* his stills, blended in as the film passes the frames they were made for */
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
@@ -16696,7 +16515,6 @@ if(faqIndex && panel && faqBody){
     cine.style.removeProperty('height');
     retimeStory();
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
-    replate();
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;
     onScroll();
@@ -16728,15 +16546,6 @@ if(faqIndex && panel && faqBody){
      crossing 1120, and the phone's cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
   if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
-  /* ⭐ THE OPENING PLATE HAS NO APPROACH TO TRIGGER ITS FETCH — the page opens on that hold — so
-     it is wired after `load`, which is after first paint and after the poster has already drawn.
-     ⛔ And it has to repaint itself: at rest the rAF loop has stopped, so nothing would write the
-     opacity until the next scroll and the plate would arrive invisible. */
-  addEventListener('load',()=>{
-    if(!HOLDS.length)return;
-    const w=()=>plates(want);
-    if(window.requestIdleCallback)requestIdleCallback(w,{timeout:1500}); else setTimeout(w,300);
-  });
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

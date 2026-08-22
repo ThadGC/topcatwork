@@ -5641,43 +5641,6 @@ if(faqIndex && panel && faqBody){
   const stage=()=>{ if(!hero.classList.contains('loaded'))
     requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
 
-  /* ⭐⭐⭐ THE PLATES ARE PART OF THE FILM, NOT A STOP IN IT — 21 August 2026 (D322).
-     Client, on D320/D321: *"it almost feels like a dead scroll from the first image to the scroll.
-     The whole process should feel smooth. The image must just smoothly overlay into that section.
-     Nothing must be hooked on it, it must just look like it's a part of the video now."*
-     ⛔⛔⛔ **SO THE HOLD TRACK IS GONE AND THE SCRUB IS LINEAR AGAIN, EXACTLY AS IT WAS BEFORE D320.**
-     Parking the film to give the stills room was the wrong trade twice over — it is what he felt as
-     dead scroll, and even with the parks cut in half (D321) the film still stopped six times.
-     ⚠️⚠️ **AND THE PARKS WERE NOT THE ONLY REASON IT FELT SLOW: D320 SET THE TRAVEL PACE TO 22.6vh
-     PER FILM-SECOND ON THE ARITHMETIC `1000vh / 44.25s`, WHICH IS WRONG.** The last 18% of the
-     travel is the hero's hold and has never carried film, so the approved pace was
-     `818vh / 44.25s` = **18.49**, and the film had been running **22% slow** for two rounds.
-     ⭐ Reverting to the linear map restores the pace exactly, because it is the same map that
-     produced those numbers — and it puts the page back to `--cineH` with nothing overridden.
-     ⭐⭐ **A SMOOTHSTEPPED TRACK WOULD HAVE BEEN WRONG EVEN WITH ZERO DWELL.** Each travel segment
-     eases in and out of its holds, so with the parks removed the film would still have pulsed —
-     slowing at every hold and speeding between them. That IS "hooked on it". One linear map has no
-     joins to feel.
-     ⭐⭐⭐ **WHAT THE PLATE CAN BE IS SET BY THE FILM, AND IT WAS MEASURED PER HOLD.** How far either
-     side of its frame a still still reads as the same picture, to within 0.08 of its own distance:
-         f1 5 · f122 3 · f206 6 · f277 5 · f472 4 · f529 6 frames   (the tighter of the two bands)
-     ⛔ `f122` gets 3 because the camera is genuinely moving there — at 6 frames out its distance has
-     more than doubled. It is not a knob; widening it puts a stale picture over a moving one, which
-     is the one thing worse than a quick blend. ⚠️ The tail is deliberately 2 frames past the strict
-     limit: mismatch at the end of a ramp is masked by the low opacity it is wearing.
-     ⚠️ At 18.49vh/s a frame is 1.54vh, so these are dissolves of roughly 80–170px of scroll. Short,
-     smooth, and invisible as an event — which is what he asked for.
-     ⭐ **THE HERO'S PLATE IS THE EXCEPTION AND IT IS FREE**: the film already parks at f529 for the
-     182vh the hero has held since D317, so that one is solid for the whole rest without anything
-     being added to the page. */
-  const PLATE_W=[5,6];                    // fade half-width in FILM FRAMES, per plate, measured
-  /* ⚠️ D323 cut this from six to two, in the element's own order. The four that came out measured
-     f122 3 · f206 6 · f277 5 · f472 4 frames and their numbers are kept in the removed folder's
-     README, so restoring one is a copy and putting its width back in this array. */
-  const HOLDS=[...document.querySelectorAll('.cine-plates .plate')].map((el,i)=>({
-    el, t:+el.dataset.t, w:PLATE_W[i]||4, o:-1, src:''
-  }));
-
   function measure(){
     const cs=getComputedStyle(cine);
     const h=parseFloat(cs.getPropertyValue('--cineHold'));
@@ -5688,45 +5651,6 @@ if(faqIndex && panel && faqBody){
     if(vm>=0&&vm<=1)veilMin=vm;
     top=cine.getBoundingClientRect().top+window.scrollY;
     travel=Math.max(1,cine.offsetHeight-window.innerHeight);
-  }
-
-  /* ⭐⭐ THE PLATES RUN AT TWO BANDS AND EACH HAS ITS OWN CROP OF THE SAME STILL. Client: *"for
-     tablet you're just gonna crop the image correctly for tablet — since desktop and tablet are
-     using the same video, crop it correctly for desktop and tablet."* The tablet's film is D312's
-     `crop=864:1080:680:0` of the master, so its plates are the SAME window out of the same stills.
-     ⛔ **The phone gets none of it** — different film entirely since D319, and he said not to touch
-     it. `plateSrc` returns '' there, so nothing is ever attached and nothing is ever fetched.
-     ⚠️ The band is re-read on `sync()`, so a window dragged across 1121 swaps the crop. */
-  const plateSrc=H=>mPhone.matches?'':(mNarrow.matches?H.el.dataset.srcTablet:H.el.dataset.src)||'';
-  const PLATE_NEAR=6;                     // film-seconds of lead time before a plate is fetched
-  const ss=v=>{const t=clamp(v);return t*t*(3-2*t);};
-
-  function plates(t){
-    /* ⛔⛔ **THE OPACITY IS KEYED TO THE FRAME ON SCREEN, NOT TO THE ONE BEING ASKED FOR.** `want` is
-       the eased TARGET; the decoder trails it while the page is actually moving, and driving the
-       fade from the target lit the plate over a frame three ahead of its own — measured in a 20px
-       sweep, peak opacity landing on f209 for a hold at f206. `currentTime` is what the viewer is
-       looking at, so that is what the still has to be registered against. ⚠️ It falls back to the
-       target only before the video can answer, where the plate is at zero anyway. */
-    const shown=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t;
-    for(const H of HOLDS){
-      const src=plateSrc(H);
-      if(!src){ if(H.o!==0){H.o=0;H.el.style.opacity=0;} continue; }
-      const off=Math.abs(shown-H.t);
-      /* ⭐ deferred: 0.56 MB of plate must not land before the film does (§2s). The opening one has
-         no approach, so `sync()` wires it once the band is known. */
-      if(Math.abs(t-H.t)<PLATE_NEAR&&H.src!==src){ H.src=src; H.el.style.backgroundImage="url('"+src+"')"; }
-      const o=H.src?+(1-ss(off*FPS/H.w)).toFixed(3):0;
-      if(o!==H.o){ H.o=o; H.el.style.opacity=o; }
-    }
-  }
-  /* ⛔ a band change swaps every plate's file, so the attached URL is dropped and re-attached by
-     the next tick rather than left showing the other band's crop */
-  function replate(){
-    for(const H of HOLDS){
-      const src=plateSrc(H);
-      if(H.src&&H.src!==src){ H.src=''; H.el.style.backgroundImage=''; H.o=-1; }
-    }
   }
 
   function fail(){
@@ -6004,7 +5928,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plates(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -6021,7 +5945,6 @@ if(faqIndex && panel && faqBody){
     curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
     heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
-    plates(want);     /* his stills, blended in as the film passes the frames they were made for */
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
@@ -6062,7 +5985,6 @@ if(faqIndex && panel && faqBody){
     cine.style.removeProperty('height');
     retimeStory();
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
-    replate();
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;
     onScroll();
@@ -6094,15 +6016,6 @@ if(faqIndex && panel && faqBody){
      crossing 1120, and the phone's cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
   if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
-  /* ⭐ THE OPENING PLATE HAS NO APPROACH TO TRIGGER ITS FETCH — the page opens on that hold — so
-     it is wired after `load`, which is after first paint and after the poster has already drawn.
-     ⛔ And it has to repaint itself: at rest the rAF loop has stopped, so nothing would write the
-     opacity until the next scroll and the plate would arrive invisible. */
-  addEventListener('load',()=>{
-    if(!HOLDS.length)return;
-    const w=()=>plates(want);
-    if(window.requestIdleCallback)requestIdleCallback(w,{timeout:1500}); else setTimeout(w,300);
-  });
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();
