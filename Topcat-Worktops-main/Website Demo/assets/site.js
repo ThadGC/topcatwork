@@ -5641,32 +5641,30 @@ if(faqIndex && panel && faqBody){
   const stage=()=>{ if(!hero.classList.contains('loaded'))
     requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
 
-  /* ⭐⭐⭐ THE OPENING OVERLAY — 22 August 2026 (D330). One still, at f0, on every band.
-     ⭐⭐ **THE FADE WIDTH IS MEASURED, NOT CHOSEN, AND IT IS THE ANSWER TO "DOESN'T MORPH".** The
-     film's own drift away from f0, on the same zero-mean unit-variance metric `holds.py` uses:
-         f1 0.115 · f2 0.228 · f3 0.301 · f4 0.366 · f6 0.474 · f8 0.555 · f12 0.692
-     His desktop still already sits **0.242** from f0 (it is a fresh generation of the shot, not an
-     extract, so the fine detail differs) and his phone still sits **0.099**. ⛔ Past about six
-     frames the FILM has moved further from f0 than the still ever was, and holding the still there
-     puts a stale picture over a moving camera — the one thing D322 proved is worse than a quick
-     blend. Six frames it is: half a second of film, and at 18.49vh/s about 92vh of scroll.
-     ⭐ SMOOTHSTEP, so it leaves 1 and lands on 0 with no slope at either end. At one frame out it
-     is still 0.93 — the picture is his through the first flick of the wheel — and it is gone by
-     six with nothing to catch the eye. A linear ramp has a visible start, which is the flicker he
-     is asking not to see.
-     ⛔⛔ **THE OPACITY IS KEYED TO THE FRAME ON SCREEN, NOT TO THE ONE BEING ASKED FOR.** `want` is
-     the eased TARGET; the decoder trails it while the page is moving, and driving the dissolve from
-     the target lit the old plates three frames early — measured. `currentTime` is what the viewer
-     is actually looking at. ⚠️ It falls back to the target only before the video can answer, where
-     the overlay is at full opacity anyway.
-     ⚠️ GEOMETRY WAS VERIFIED, NOT ASSUMED: a zoom/offset search over ±10% scale and ±2.4% shift
-     returns **zoom 1.00, offset 0** for both stills, so neither needed nudging — and each was
-     cropped to its film's EXACT aspect first, or `cover` scales them a fraction differently and the
-     dissolve breathes (D323's lesson). ⭐ The desktop still was also graded onto f0 per channel
-     (it ran +3.3/+5.3/+6.4 bright); his phone still already matched to within 1.4 and was left
-     alone. */
+  /* ⭐⭐⭐ THE OPENING OVERLAY — 22 August 2026, REBUILT AT D331. One still, at f0, on every band.
+     ⛔⛔⛔ **IT IS THE MASTER'S OWN FIRST FRAME NOW, NOT HIS GENERATION STILL — AND THAT IS THE FIX
+     FOR THE MORPH, BECAUSE NO FILTER COULD BE.** Client, with mid-fade screenshots of both bands:
+     *"it morphs a lot… after it's done morphing the colors have almost changed completely and the
+     trees are moving."* Measured, his stills were **0.301** (desktop) and **0.143** (phone) from
+     the frames they fade into — they are different RENDERS of the shot, trees and veining in
+     different places. Colour can be graded; geometry cannot. The same shot lifted from his 86.5 MB
+     master measures **0.043 / 0.036 / 0.037** against the three cuts — pixel-identical but for
+     encode noise — so there is nothing left to morph. His two PNGs are parked in
+     `.plates-2026-08-22/src/`, wired back by `make_plates.py` if he ever re-renders them to match.
+     ⭐ THE OVERLAY STILL EARNS ITS PLACE: the master frame is far cleaner than the same frame
+     through the 12.7 MB web encode, and it is also the poster, so first paint is already it.
+     ⛔⛔ **THE FADE IS 3 FRAMES, DOWN FROM 6, AND THE REASON CHANGED WITH THE CONTENT.** With a
+     mismatched still the width was bounded by the mismatch; with a matched one the only ghost
+     left is CAMERA MOTION under the dissolve — a frozen f0 over a film that drifts 0.115 per
+     frame. At 3, the blend is 0.74 over one frame of motion and 0.26 over two: motion-blur scale,
+     gone by f3. At 6 it held ghost over 0.474 of drift, which is a second visible morph.
+     ⭐ Smoothstep, so it leaves 1 and lands on 0 with no slope at either end — a linear ramp has a
+     visible start, which is the flicker he asked not to see.
+     ⛔⛔ OPACITY IS KEYED TO THE FRAME ON SCREEN, NOT THE ONE BEING ASKED FOR: `want` is the eased
+     target and the decoder trails it while the page moves — driving from the target lit the old
+     plates three frames early, measured. `currentTime` is what the viewer is looking at. */
   const plateEl=document.getElementById('cinePlate');
-  const PLATE_FADE=6;                     // film FRAMES, measured against the film's own drift
+  const PLATE_FADE=3;                     // film FRAMES — see the note above: motion, not mismatch
   const smooth=v=>{const t=clamp(v);return t*t*(3-2*t);};
   let plateO=-1, plateUrl='';
   /* ⛔ the same phone → narrow → base cascade the film and the story lines use */
