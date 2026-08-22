@@ -1,0 +1,119 @@
+
+==============================================================================================
+=== css
+==============================================================================================
+  /* ═════ THE OPENING OVERLAY — 22 August 2026 (D330) ══════════════════════════════════════
+     Client: *"here are the two new overlays for the desktop and for the mobile version. So this is
+     only the overlay of the very first frame, so make sure it matches up perfectly and doesn't
+     morph too much when it moves into the next frame. Make sure it fades out nicely so it's not
+     noticeable like a flicker… It must fade out perfectly to match exactly like it's part of the
+     video. But this is the very first frame, and it must be the first thing that they see when the
+     user loads in."*
+     ⭐ ONE overlay, at t=0, and THIS TIME THE PHONE HAS ONE TOO — he supplied a vertical still for
+     it, which the old mechanism never had.
+     ⛔ **UNDER THE VEIL AND THE GRADE, OVER THE VIDEO.** The overlay is picture, so everything that
+     dresses the picture must still dress it: `.hero-shade` and `.hero-navgrade` (z 1) and
+     `.cine-edge` (z 2) all sit above it. It takes z-index 0, the same as `.hero-vid`, and wins on
+     SOURCE ORDER because it is written after. ⚠️ Do not "clarify" that with a z-index of 1 — it
+     would jump the veil and the film would stop fading at the end.
+     ⚠️ NO `transition`. The opacity is written every frame from the film's own distance to f0, so a
+     CSS transition would fight the scrub and lag the dissolve behind the picture. */
+  .cine-plate{display:none}
+  html.cine-on .cine-plate{
+    display:block;position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+  }
+
+
+
+==============================================================================================
+=== markup
+==============================================================================================
+      <!-- ⭐⭐⭐ THE OPENING OVERLAY — 22 August 2026, rebuilt at D331. The MASTER's own first frame
+           at full quality, held over the web encode at rest and dissolved as the film starts to
+           move. ⛔ NOT his generation stills any more — they were different renders of the shot
+           (0.301/0.143 from the film) and cross-fading them was the morph he screenshotted; the
+           master frame measures 0.043 and has nothing to morph. His PNGs are parked in
+           `.plates-2026-08-22/src/` with the switch documented in `make_plates.py`.
+           ⭐ **IT IS ALSO THE POSTER**, which is what makes it "the first thing they see" — first
+           paint is already this picture and nothing swaps when the overlay attaches.
+           ⛔ THE SAME phone → narrow → base CASCADE the film uses, so a band can never end up with
+           another band's crop. -->
+      <div class="cine-plate" id="cinePlate" aria-hidden="true"
+           data-src="/assets/video/plates/plate-f0.webp?v=2"
+           data-src-narrow="/assets/video/plates/tablet/plate-f0.webp?v=2"
+           data-src-phone="/assets/video/plates/plate-f0-phone.webp?v=2"></div>
+
+
+==============================================================================================
+=== js
+==============================================================================================
+  /* ⭐⭐⭐ THE OPENING OVERLAY — 22 August 2026, REBUILT AT D331. One still, at f0, on every band.
+     ⛔⛔⛔ **IT IS THE MASTER'S OWN FIRST FRAME NOW, NOT HIS GENERATION STILL — AND THAT IS THE FIX
+     FOR THE MORPH, BECAUSE NO FILTER COULD BE.** Client, with mid-fade screenshots of both bands:
+     *"it morphs a lot… after it's done morphing the colors have almost changed completely and the
+     trees are moving."* Measured, his stills were **0.301** (desktop) and **0.143** (phone) from
+     the frames they fade into — they are different RENDERS of the shot, trees and veining in
+     different places. Colour can be graded; geometry cannot. The same shot lifted from his 86.5 MB
+     master measures **0.043 / 0.036 / 0.037** against the three cuts — pixel-identical but for
+     encode noise — so there is nothing left to morph. His two PNGs are parked in
+     `.plates-2026-08-22/src/`, wired back by `make_plates.py` if he ever re-renders them to match.
+     ⭐ THE OVERLAY STILL EARNS ITS PLACE: the master frame is far cleaner than the same frame
+     through the 12.7 MB web encode, and it is also the poster, so first paint is already it.
+     ⛔⛔ **THE FADE IS 3 FRAMES, DOWN FROM 6, AND THE REASON CHANGED WITH THE CONTENT.** With a
+     mismatched still the width was bounded by the mismatch; with a matched one the only ghost
+     left is CAMERA MOTION under the dissolve — a frozen f0 over a film that drifts 0.115 per
+     frame. At 3, the blend is 0.74 over one frame of motion and 0.26 over two: motion-blur scale,
+     gone by f3. At 6 it held ghost over 0.474 of drift, which is a second visible morph.
+     ⭐ Smoothstep, so it leaves 1 and lands on 0 with no slope at either end — a linear ramp has a
+     visible start, which is the flicker he asked not to see.
+     ⛔⛔ OPACITY IS KEYED TO THE FRAME ON SCREEN, NOT THE ONE BEING ASKED FOR: `want` is the eased
+     target and the decoder trails it while the page moves — driving from the target lit the old
+     plates three frames early, measured. `currentTime` is what the viewer is looking at. */
+  const plateEl=document.getElementById('cinePlate');
+  const PLATE_FADE=3;                     // film FRAMES — see the note above: motion, not mismatch
+  const smooth=v=>{const t=clamp(v);return t*t*(3-2*t);};
+  let plateO=-1, plateUrl='';
+  /* ⛔ the same phone → narrow → base cascade the film and the story lines use */
+  const plateSrc=()=>{const d=plateEl.dataset;
+    return (mPhone.matches&&d.srcPhone)||(mNarrow.matches&&d.srcNarrow)||d.src||'';};
+  function plate(t){
+    if(!plateEl)return;
+    const url=plateSrc();
+    if(url&&url!==plateUrl){ plateUrl=url; plateEl.style.backgroundImage="url('"+url+"')"; }
+    const shown=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t;
+    const o=+(1-smooth(shown*FPS/PLATE_FADE)).toFixed(3);
+    if(o!==plateO){ plateO=o; plateEl.style.opacity=o; }
+  }
+
+
+
+==============================================================================================
+=== js_load
+==============================================================================================
+  /* ⭐ THE OVERLAY HAS NO APPROACH TO TRIGGER IT — the page OPENS on its frame — so it is painted
+     once after `load`, which is after first paint and after the poster is already on screen.
+     ⛔ And it has to paint itself: at rest the rAF loop has stopped, so nothing would write the
+     opacity until the first scroll and the overlay would arrive invisible. */
+  addEventListener('load',()=>{
+    const w=()=>plate(want);
+    if(window.requestIdleCallback)requestIdleCallback(w,{timeout:1500}); else setTimeout(w,300);
+  });
+
+
+==============================================================================================
+=== call_skip
+==============================================================================================
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
+
+==============================================================================================
+=== call_tick
+==============================================================================================
+    plate(want);      /* his still of f0, dissolved out as the film starts to move */
+
+
+==============================================================================================
+=== call_sync
+==============================================================================================
+    plate(want);      /* ⛔ a band change swaps the overlay's crop as well as the film's */
+
