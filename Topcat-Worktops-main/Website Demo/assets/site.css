@@ -4580,9 +4580,14 @@
     }
     html.cine-on .cine-line[data-vpos="top"]{top:13vh;--ly:0%}
     html.cine-on .cine-line[data-vpos="low"]{top:auto;bottom:17vh;--ly:0%}
-    /* ⭐ a narrow-band override wins over the desktop anchor for the same element */
+    /* ⭐ a narrow-band override wins over the desktop anchor for the same element.
+       ⚠️ ONLY `top` EXISTS, BECAUSE ONLY ONE LINE OVERRIDES ITS POSITION ON A NARROW CROP and it
+       overrides it to the top. The mirrored `="low"` rule was written for symmetry, matched nothing
+       for five rounds, and came out at D324. ⛔ A line whose desktop vpos is already `low` needs no
+       narrow rule at all — the base `[data-vpos="low"]` above is inside this same query and
+       already positions it. Re-add the mirror ONLY for a line that is `top` on desktop and `low`
+       on a narrow crop, which is a composition nothing has needed yet. */
     html.cine-on .cine-line[data-vpos-narrow="top"]{top:13vh;bottom:auto;--ly:0%}
-    html.cine-on .cine-line[data-vpos-narrow="low"]{top:auto;bottom:17vh;--ly:0%}
   }
 
   /* ═════ the scroll invitation ════════════════════════════════════════════════════════════ */

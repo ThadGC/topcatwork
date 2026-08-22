@@ -5964,7 +5964,8 @@ if(faqIndex && panel && faqBody){
      — a rotation or a dragged window can cross 720 or 1120 long after the in-place script has run.
      ⚠️ A swap costs a `load()` and the playhead, so it happens ONLY when the wanted file differs
      from the one already attached; `fetched` on its own stopped being enough once there were two,
-     and there are THREE since D316. */
+     and there are THREE since D319. ⚠️ D316 is the round that FIRST made it three and it was
+     reverted the same day — the three that exist now are D319's, which is a different set. */
   function fetchFilm(){
     const src=wantSrc();
     const post=wantPoster();

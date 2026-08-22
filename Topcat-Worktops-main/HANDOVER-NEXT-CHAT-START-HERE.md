@@ -43,6 +43,9 @@ reverses again, it is a copy and four lines.
 ## 1. ⭐⭐⭐ WHAT THIS ROUND DID (D315–D318)
 
 ```
+D324  THE FILM WAS AUDITED (22 Aug) — no unused identifiers, no dead film CSS, no
+      orphan assets, every reference resolves. Two small things fixed. The
+      architecture already is "his desktop film + his separate mobile film"
 D323  TWO PLATES ONLY (21 Aug) — he kept the FIRST frame and the LAST and cut the four
       between. Both were also anchored a frame off and sitting at 0.92 / 0.84 on the two
       frames that matter most; both fixed, and one was a bug in my port of the matcher
@@ -102,6 +105,12 @@ band's URL plus `video.getAttribute('src')`, never by finding your own file in t
 ---
 
 ## 3. ⭐⭐⭐ THE FILM AS IT STANDS — START THE VIDEO WORK HERE
+
+⭐⭐⭐ **HE HAS ONLY EVER SUPPLIED TWO FILMS AND THAT IS WHAT THE SITE SERVES.** His landscape
+master and his separate mobile master. ⛔ **THE TABLET'S 864 IS NOT A THIRD FILM** — it is D312's
+4:5 crop of the SAME landscape master, which is why desktop and tablet share every story beat and
+every plate frame. Said plainly because it has been misread once: *"I just want the first desktop
+video and separate mobile video tied to the scroll"* (22 Aug) describes what already ships.
 
 | band | file | notes |
 |---|---|---|
