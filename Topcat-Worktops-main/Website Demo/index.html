@@ -4542,18 +4542,25 @@
       background:
         /* the corner, for the lines that now sit in the sky */
         radial-gradient(62% 58% at 0% 10%,
-          rgba(6,6,9,0.82) 0%, rgba(6,6,9,0.377) 52%, rgba(6,6,9,0) 100%),
+          rgba(6,6,9,0.72) 0%, rgba(6,6,9,0.331) 52%, rgba(6,6,9,0) 100%),
         /* the left edge, which the whole block still rests on */
-        /* ⛔⛔ IT REACHES 76%, NOT 70%, AND THAT IS WHY THE GOLD CAN BE BRIGHT — D327c. The bigger
-           headline runs to x=763 of 1440 (53%), where the old ramp had already fallen to 0.05; the
-           tail of every line sat on ungraded haze and no ink could be made to read there. Carried
-           to 76% with real alpha in the middle, line 1 goes 4.41 -> 7.06:1 and the gold 3.51 ->
-           6.27:1. ⭐ AND HIS MARBLE IS UNTOUCHED, MEASURED: the subject starts at 62% and its 97th
-           percentile reads 181 with this ramp and 181 with no ramp at all. */
+        /* ⭐⭐ **IT FALLS AWAY FASTER THAN IT USED TO, ON PURPOSE — D327f.** Client: *"the shadow
+           feels slightly too dark on the left. I know it's darker on the left, that's okay with me,
+           it can only be maybe slightly lighter, but not much. And I don't want the gradient over
+           the actual mountain side to be too dark — still a very slight dark gradient over that
+           side, but not as much as it does now."*
+           ⭐ **TWO DIFFERENT ASKS, AND THE COPY'S EDGE IS WHAT SEPARATES THEM.** The headline ends at
+           x=600 of 1440 (42%), so everything past 42% protects nothing. The head of the ramp came
+           down a little (0.93 → 0.88, his "slightly lighter, but not much") and the TAIL came down
+           hard and early (0.38@52% → 0.20@50%, zero by 72% instead of 76%).
+           ⭐ MEASURED ON THE MOUNTAINSIDE — the middle band, x 40–69%: mean **83 → 100**, against
+           **121** with no grade at all. So about two thirds of what the grade was taking is given
+           back, and the copy keeps what it needs: gold **4.47:1**, headline 3.99:1, invitation
+           13.16:1. ⚠️ His marble was never in this: p97 **181 graded, 181 ungraded**. */
         linear-gradient(90deg,
-          rgba(6,6,9,0.93) 0%, rgba(6,6,9,0.88) 15%, rgba(6,6,9,0.76) 30%,
-          rgba(6,6,9,0.58) 42%, rgba(6,6,9,0.38) 52%, rgba(6,6,9,0.19) 60%,
-          rgba(6,6,9,0.06) 68%, rgba(6,6,9,0) 76%);
+          rgba(6,6,9,0.88) 0%, rgba(6,6,9,0.82) 15%, rgba(6,6,9,0.64) 30%,
+          rgba(6,6,9,0.42) 42%, rgba(6,6,9,0.20) 50%, rgba(6,6,9,0.08) 58%,
+          rgba(6,6,9,0.02) 66%, rgba(6,6,9,0) 72%);
     }
   }
 
@@ -4829,7 +4836,7 @@
        non-control as a button is the one thing worse than being quiet. ⛔ Not a gold line across the
        top of anything (rule 7) — the rule is vertical. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:34px 0 0;display:flex;flex-direction:column;gap:16px;align-items:flex-start;
+      margin:36px 0 0;display:inline-flex;flex-direction:column;gap:18px;align-items:center;
     }
     /* ⛔ THE WORD IS BONE, NOT GOLD, and that is deliberate after D327b. The headline's "starts
        here." is the gold on this frame; a second gold sixty pixels under it competes with the first
@@ -4851,38 +4858,61 @@
        and 0.74 — the first value written here — measured **2.79:1** and would have shipped under it.
        ⚠️ The figure ignores the rule's own `box-shadow`, which darkens what it sits on, so the real
        number is a little better than this. */
-    /* ⭐⭐⭐ **THE ARROW, REDESIGNED — D327e.** Client: *"completely redesign the arrow that is
-       pointing down, prompting people to scroll."*
-       ⛔ **WHY THE LAST ONE FAILED, AND IT IS NOT A TASTE PROBLEM.** It was a 96px channel with the
-       chevron TRAVELLING down it, so at any frozen moment — every screenshot he sees, and a good
-       part of every second — the head sat somewhere up the shaft and the thing read as a crossbar
-       on a line, or a dagger. **An indicator has to be legible in a still, not only in motion.**
-       ⭐ SO IT IS ONE ARROW NOW: shaft, and a head fixed at its foot, always. It reads as an arrow
-       with the animation stopped, which is also what a reduced-motion visitor gets.
-       ⭐ The shaft ARRIVES rather than sits — a bright segment wipes down it and the whole arrow
-       eases down and back, so the only movement is still downward, but the shape never breaks. */
+    /* ⭐⭐⭐ **THE ARROW, THIRD DESIGN — D327f.** Client: *"that arrow should be even bigger, and
+       maybe in the centre of scroll to begin, or takes up more space… a better animation of the
+       arrow, something that's still on brand but looks very cool, and everything must be super
+       clear."*
+       ⭐⭐ **IT DRAWS ITSELF DOWNWARD.** A gold hairline is written from the word down, the head
+       arrives last at its foot, it holds long enough to be read as an arrow, then it goes and does
+       it again. The motion IS the instruction — nothing on the frame moves except a line going
+       down — and it is the most on-brand gesture available here, because a drawn hairline is the
+       vocabulary the whole site already uses for its rules and its corner arc.
+       ⛔ IT IS A CLIP, NOT A TRANSFORM, WHICH IS THE PART THAT MATTERS. `clip-path` reveals the
+       shaft AND the head together as one shape, so the silhouette is never wrong: the two previous
+       designs failed because a moving PART (a chevron running down a channel) reads as a crossbar
+       the moment the animation is frozen — which is every screenshot he sees.
+       ⚠️ 72px against 54, and the cue is `inline-flex` so it shrinks to the width of its own word
+       and the arrow centres UNDER "SCROLL TO BEGIN" rather than lining up with its first letter. */
+    /* ⭐⭐⭐ **THE ARROW IS ALWAYS WHOLE; ONLY THE LIGHT MOVES.** Three layers, and the split is the
+       entire point:
+         `i`         the shaft, always there, faint gold
+         `i::after`  the head, always there, solid gold, never animated and never clipped
+         `i::before` the bright stroke, the ONLY thing that moves, drawing top to bottom
+       ⛔⛔ **THIS IS THE THIRD ARROW AND THE FIRST TWO BOTH FAILED THE SAME WAY: THEY WERE ONLY AN
+       ARROW PART OF THE TIME.** A chevron travelling down a channel is a crossbar when you freeze
+       it; a single shape revealed by a clip is half a line when you freeze it. He reviews from
+       screenshots, so a design that only reads while in motion does not read at all. Split like
+       this the silhouette is a complete arrow in EVERY frame, and the animation is pure accent.
+       ⚠️ The clip lives on `::before`, which is 2px wide and holds nothing that overflows, so it
+       needs no negative insets — the trap that ate the head when the clip was on `i` itself. */
     html.cine-on .cine-hero .cine-hero-cue i{
-      width:2px;height:54px;border-radius:2px;display:block;position:relative;
+      width:2px;height:72px;border-radius:2px;display:block;position:relative;
+      background:rgba(198,166,100,0.24);
+      filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
+    }
+    html.cine-on .cine-hero .cine-hero-cue i::before{
+      content:"";position:absolute;inset:0;border-radius:2px;
       background:linear-gradient(to bottom,
-        rgba(198,166,100,0.18) 0%, var(--cineGoldMid,#F0D492) 55%, var(--cineGoldMid,#F0D492) 100%);
-      filter:drop-shadow(0 2px 8px rgba(6,6,8,0.75));
-      animation:cineHeroCue 2.4s var(--ease) infinite;
+        rgba(198,166,100,0.35) 0%, var(--cineGoldMid,#C6A664) 45%, var(--cineGoldMid,#C6A664) 100%);
+      animation:cineHeroCue 2.7s var(--ease) infinite;
     }
-    /* the head, fixed at the foot — an open chevron, no fill and no container (§2 rule 11) */
+    /* the head, fixed at the foot and always solid — an open chevron, no fill, no container (rule 11) */
     html.cine-on .cine-hero .cine-hero-cue i::after{
-      content:"";position:absolute;left:50%;bottom:-1px;width:16px;height:16px;margin-left:-9px;
+      content:"";position:absolute;left:50%;bottom:-1px;width:19px;height:19px;margin-left:-10.5px;
       transform:rotate(45deg);
-      border-right:2px solid var(--cineGoldMid,#F0D492);
-      border-bottom:2px solid var(--cineGoldMid,#F0D492);
+      border-right:2px solid var(--cineGoldMid,#C6A664);
+      border-bottom:2px solid var(--cineGoldMid,#C6A664);
     }
-    /* ⚠️ THE WHOLE ARROW MOVES, not a part of it, so the silhouette is identical at every frame */
+    /* the stroke draws down, holds most of the cycle, then goes out at the foot and starts again */
     @keyframes cineHeroCue{
-      0%,100%{transform:translateY(0);opacity:0.72}
-      45%    {transform:translateY(11px);opacity:1}
+      0%    {clip-path:inset(0 0 100% 0);opacity:0}
+      8%    {clip-path:inset(0 0 92% 0);opacity:1}
+      42%,82%{clip-path:inset(0 0 0 0);opacity:1}
+      96%,100%{clip-path:inset(0 0 0 0);opacity:0}
     }
   }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
-    html.cine-on .cine-hero .cine-hero-cue i{animation:none;transform:translateY(6px);opacity:1}
+    html.cine-on .cine-hero .cine-hero-cue i::before{animation:none;clip-path:none;opacity:1}
   }
 
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
@@ -9209,7 +9239,7 @@
              bit more in the subtext."* Naming the kitchen used to spoil the third title; that beat
              was withdrawn, so the line is free to say what the scroll actually buys — which is the
              whole answer to the bounce rate he is worried about. -->
-        <p class="cine-hero-sub">Follow one slab from the quarry to the centre of your kitchen.</p>
+        <p class="cine-hero-sub">Follow the slab from the quarry to your kitchen.</p>
         <div class="cine-hero-cue" aria-hidden="true"><span>Scroll to begin</span><i></i></div>
       </div>
     </div>
