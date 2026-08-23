@@ -4637,8 +4637,14 @@
        the 97th percentile is 219; under the veil's 0.20 floor, **0.36 of black is what AA 4.5:1
        actually costs**. 0.62 at the centre gives 9:1 with room to spare and still reads as a wash
        rather than a panel. ⛔ The first version used 0.94 and looked like a plate. */
+    /* ⭐ **IT HOLDS ITS STRENGTH ACROSS THE WORDS NOW, AND ONLY THEN FALLS AWAY — D346.** The old
+       ramp was already down to 0.34 by 46%, so the ENDS of a two-line title sat on a third of the
+       wash the centre had. The centre stays at the 0.62 D313 settled on (0.94 was tried and looked
+       like a plate); what changed is that it stays there to 38% and reaches zero at the box edge
+       exactly as before, so there is still no line anywhere. */
     background:radial-gradient(farthest-side at 50% 50%,
-      rgba(6,6,9,0.62), rgba(6,6,9,0.34) 46%, rgba(6,6,9,0.10) 72%, rgba(6,6,9,0) 100%);
+      rgba(6,6,9,0.62) 0%, rgba(6,6,9,0.58) 38%, rgba(6,6,9,0.36) 60%,
+      rgba(6,6,9,0.14) 80%, rgba(6,6,9,0) 100%);
     opacity:var(--lg,0);
   }
   /* ═════ THE FILM'S WHITE-AND-GOLD — 22 August 2026 (D327) ════════════════════════════════════
@@ -4826,7 +4832,9 @@
        blurb names no country. Flagged to him rather than quietly narrowed. */
     html.cine-on .cine-hero .cine-hero-sub{
       margin:28px 0 0;font:300 17px/1.62 var(--brand);letter-spacing:0.014em;
-      color:rgba(244,241,234,0.96);max-width:470px;
+      /* ⛔ white, not grey — D346, and the same change the beats' subtitles took, so every subtitle
+         in the film is the one ink its title is. */
+      color:var(--bone);max-width:470px;
       /* ⚠️ **470 IS MEASURED AGAINST THE NEW LINE, NOT INHERITED — D335.** The old cap was 430,
          which the short version balanced onto two lines and the long one breaks onto THREE
          (262/264/307). Swept in 20px steps: 450 is the threshold and everything from 450 to 560
@@ -5024,7 +5032,13 @@
        D341 and it named that beat. This one has a lit object in its way and takes the room it has.
        ⭐ `top:14vh` rather than 12: at 12 the block's own approach carried it to y=73, which is
        under the nav bar. At 14 it tops out at 93 and still clears the island by ~56px. */
-    html.cine-on .cine-line[data-vpos-wide="high"]{top:14vh;font-size:clamp(34px,4.4vw,64px)}
+    /* ⭐ **16vh, LOWERED AGAIN AT D346** — *"the title that says the stone sets the tone of the room
+       can also be slightly lower."* ⚠️ **AND THIS IS THE LEVER WITH THE LEAST ROOM LEFT**, so it is
+       measured rather than nudged: the block's LOWEST point is at the START of the beat, before its
+       approach lifts it, and the island's HIGHEST point is y=363. Clearance by sample at 14vh ran
+       46–57px; 16vh spends 18 of them and holds **~28px at the tightest**. ⛔ 18vh would leave ~10px
+       and the next re-time or copy change would put the words back on the marble. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:16vh;font-size:clamp(34px,4.4vw,64px)}
   }
 
   /* ⭐⭐ **THE BEAT'S SECOND LINE IS A SUBTITLE NOW, NOT A SECOND TITLE — 23 August 2026 (D340).**
@@ -5042,10 +5056,13 @@
      His instruction was that the beat's TITLE take the first screen's size (D341); the first screen
      is a resting frame a visitor reads at leisure, while a beat is on screen for nine seconds over
      moving picture, and it has more to say in them. */
+  /* ⛔ **WHITE, NOT GREY — his words, 23 Aug (D346).** `rgba(244,241,234,0.96)` is the site's bone
+     held back 4%, which over a dark film reads as a grey line under a white one. It now takes
+     `--bone` at full, the same ink the titles use, so a title and its subtitle are one colour. */
   html.cine-on .cine-line .cine-line-sub{
     display:block;margin:24px 0 0;max-width:600px;
     font:300 19px/1.6 var(--brand);letter-spacing:0.014em;
-    color:rgba(244,241,234,0.96);text-wrap:balance;
+    color:var(--bone);text-wrap:balance;
   }
   @media(max-width:1120px){
     /* ⚠️ centred with its line on the narrow bands, and a little smaller — placement here is still

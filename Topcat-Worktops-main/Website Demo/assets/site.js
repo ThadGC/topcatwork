@@ -5625,7 +5625,12 @@ if(faqIndex && panel && faqBody){
      is made once — allocating one per frame is the version of this that shows up in a profile. */
   const GRADE_LO=30, GRADE_HI=185;      // band brightness where the grade starts and where it is full
   const GRADE_MIN=0.20;                 // a floor: free on a dark frame, and it covers a lit edge
-  const gcv=document.createElement('canvas'); gcv.width=48; gcv.height=4;
+  /* ⚠️ **8 ROWS SINCE D346, NOT 4.** The nav grade still draws its own 48x4 into the top of it and
+     reads only that, which is unchanged; `bandGrade()` draws 48x8 so a thin specular streak across
+     the words survives the downsample instead of being averaged into the dark around it. ⛔ A canvas
+     shorter than the tallest read would hand back rows of transparent black and quietly poison the
+     numbers — the read is 48x8, so the canvas is 48x8. */
+  const gcv=document.createElement('canvas'); gcv.width=48; gcv.height=8;
   const gctx=gcv.getContext('2d',{willReadFrequently:true});
   let graded=-1;
   let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false;
@@ -5877,15 +5882,27 @@ if(faqIndex && panel && faqBody){
     const sc=vid.videoWidth/dw;
     const sx=(r.left-bg.left-dx)*sc, sy=(r.top-bg.top-dy)*sc;
     const sw=Math.max(1,r.width*sc), sh=Math.max(1,r.height*sc);
-    try{ gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,4); }catch(e){ return -1; }
-    let d; try{ d=gctx.getImageData(0,0,48,4).data; }catch(e){ return -1; }
+    try{ gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,8); }catch(e){ return -1; }
+    let d; try{ d=gctx.getImageData(0,0,48,8).data; }catch(e){ return -1; }
     const cell=[];
-    for(let i=0;i<192;i++) cell.push(0.2126*d[i*4]+0.7152*d[i*4+1]+0.0722*d[i*4+2]);
+    for(let i=0;i<384;i++) cell.push(0.2126*d[i*4]+0.7152*d[i*4+1]+0.0722*d[i*4+2]);
     cell.sort((a,b)=>a-b);
-    /* the 97th percentile, exactly as the nav grade takes it: one bright block asks for the wash, a
-       stray speck does not. No floor here — over the black scenes there is nothing to cover, and a
-       wash that never fully leaves would be a smudge on a void. */
-    return clamp((cell[187]-GRADE_LO)/(GRADE_HI-GRADE_LO));
+    /* ⛔⛔⛔ **THE 97th PERCENTILE WAS HIDING THE THING THAT ACTUALLY BREAKS THE WORDS — 23 Aug 2026
+       (D346), AND IT IS D313'S TRAP INVERTED.** D313 taught that a MEDIAN lies, because the bright
+       part of a frame is a small share of it; the answer was a percentile. On the closing kitchen
+       the percentile lies too. Measured behind this beat: **p50 0.011, p97 0.076, max 0.88** — the
+       room is nearly black with **specular streaks as bright as the type running through it**, off
+       the polished floor and the window. A p97 discards the top 3%, and the top 3% IS the streak,
+       so this returned **0.24** — a wash at 0.15 effective alpha — over pixels where bone measures
+       **1.0:1 against bone**. He said it was too hard to read twice and he was right twice.
+       ⭐⭐ **SO IT TAKES THE TOP CELL OF A FINER GRID.** 48x8 rather than 48x4, so a thin streak
+       survives the downsample instead of being averaged into the dark around it, and the MAXIMUM
+       rather than a percentile, because a cell is already an average of ~40 source pixels — the
+       "stray speck" the old note guarded against cannot exist at this resolution. What reaches this
+       number is a real bright object of real size, which is exactly what has to be covered.
+       ⚠️ Still no floor: over the black scenes there is nothing to cover and a wash that never
+       leaves would be a smudge on a void. */
+    return clamp((cell[383]-GRADE_LO)/(GRADE_HI-GRADE_LO));
   }
   let firstAlpha=0;                 // the opening title's own alpha, for the scroll cue below
   function story(t){
