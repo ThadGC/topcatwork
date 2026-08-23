@@ -5840,7 +5840,19 @@ if(faqIndex && panel && faqBody){
          one-device rule (§2 rule 15). The narrow bands keep 560, untouched.
          ⚠️ It lives here rather than in `story()` because `story()` runs every rAF and this changes
          only when the band does — which is exactly what this function is for. */
-      L.zNear=(!mNarrow.matches && L.el.dataset.vposWide==='hero') ? 300 : Z_NEAR;
+      /* ⛔⛔ **ANY `data-vpos-wide` VALUE, NOT JUST "hero" — D345.** The cap keyed on the one value
+         that existed when it was written, and the moment a second anchor arrived (`"high"`, the
+         kitchen beat at 12vh) that beat silently went back to the full 560 — from a position even
+         higher up the frame, where the trap is worse. **The attribute means "anchored near the top
+         on desktop", and that is exactly the condition the cap is for**, so it keys on the
+         attribute's PRESENCE. Caught by the gate, not by looking. */
+      /* ⛔⛔ **AND THE HIGHER THE ANCHOR, THE HARDER THE PERSPECTIVE THROWS IT** — D345. The origin
+         is `26% 50%`, so the travel carries a line up and out to the LEFT and RIGHT of where it
+         started, and how far depends on how far it starts from that origin. 300 suits the slab beat
+         at 22vh; the kitchen beat starts at 14vh with lit pendants in its lane, and needed half of
+         it to stay clear of them for its whole visible life. */
+      L.zNear=(!mNarrow.matches && L.el.dataset.vposWide)
+        ? (L.el.dataset.vposWide==='high' ? 150 : 300) : Z_NEAR;
       L.o=L.z=L.b=L.g=-1;                    // force the next tick to write them all
     }
   }

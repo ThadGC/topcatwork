@@ -4974,19 +4974,59 @@
      ⚠️ The narrow bands are untouched — they take `[data-vpos-narrow="top"]` inside the query
      below, and **their placement is the conversation still owed.** */
   @media(min-width:1121px){
-    /* ⭐⭐ **AND THE FIRST SCREEN'S TYPE AS WELL AS ITS HEIGHT — 23 August 2026 (D341).** Client:
-       *"the wording where it says the slab you choose is unique has to be the same text size as the
-       first frame where it says your worktop starts here."* So this line now takes `.cine-hl`'s own
-       three values — size, leading and measure — and the two screens are the same object twice.
-       ⚠️ `width` moves with the size or the match is only half made: the base `.cine-line` measure
-       is `min(21ch,44vw)`, and `ch` is read off the line's OWN font, so a bigger face would have
-       re-wrapped the headline at a different rhythm from the one it is meant to match. */
-    html.cine-on .cine-line[data-vpos-wide="hero"]{
-      top:22vh;bottom:auto;--ly:0;
+    /* ⭐⭐ **THE FIRST SCREEN'S TYPE, AND A MEASURE WIDE ENOUGH FOR TWO LINES — D341, D345.**
+       Client (D341): *"the wording has to be the same text size as the first frame."* Client
+       (D345): *"I want that to be in two lines. You can take up more space towards the centre of
+       the screen… you can use up more space on the frames after the very first frame."*
+       ⛔⛔ **760px IS MEASURED, NOT PICKED.** At the first screen's 660 both titles break to THREE
+       lines. Swept in 40px steps, **700 is the threshold for both** and every width from 700 to 900
+       resolves to the same pair — "The slab you" / "choose is unique." (480 + 663) and "The stone
+       sets the tone" / "of the room." (692 + 696). 52vw tops out at 760, which is the threshold
+       plus room for a font fallback.
+       ⛔⛔⛔ **AND THE WIDER MEASURE IS SAFE BECAUSE THE PICTURE WAS MEASURED IN THE TEXT'S OWN BAND,
+       NOT THE WHOLE FRAME.** Across the slab beat the film's slab reads a left edge of **727 over
+       the full frame but 790–955 in the band the words occupy** (y 200–360) — the low figure is its
+       bottom corner, which is under the text. The widest line reaches 764 at rest and 809 at the
+       peak of its approach, so it clears the slab at every frame it is visible. ⚠️ Re-measure IN
+       THE BAND if this beat is ever re-timed; the whole-frame number would have vetoed a design
+       that is actually fine. */
+    html.cine-on .cine-line[data-vpos-wide]{
+      bottom:auto;--ly:0;
       font-size:clamp(38px,5vw,76px);line-height:1.06;
-      width:clamp(320px,46vw,660px);
+      width:clamp(320px,52vw,760px);
     }
+    /* the slab beat, on the first screen's own line */
+    html.cine-on .cine-line[data-vpos-wide="hero"]{top:22vh}
+    /* ⛔⛔⛔ **THE KITCHEN BEAT SITS HIGHER, AND 12vh IS THE ISLAND'S OWN MEASUREMENT — D345.**
+       Client: *"the part that says the stone sets the tone of the room is currently too hard to
+       read… you're gonna have to lift it slightly higher so it doesn't actually go over or touch
+       the slab."*
+       ⭐⭐⭐ **AND THE TWO COMPLAINTS ARE ONE FAULT.** The island's top edge runs **y 363–390**
+       through the whole beat, and the block ran to **510** — so it was lying across the lit marble.
+       Measured in the band it occupied, the picture reads **p97 175–202**; measured ABOVE the
+       island, over the wall and the windows, it reads **p97 58–97**. It was not hard to read
+       because the grade was weak. It was hard to read because it was sitting on the slab.
+       ⭐ At `top:12vh` the block runs 108 → ~315, clearing the island by ~48px, and its worst
+       background across the whole widened block is **p97 86** — about **6.2:1 for bone before the
+       wash even arrives**. ⛔ So no new gradient was added: he offered one (*"add whatever gradient
+       you need"*), and the honest answer was that the placement was the bug. The existing wash
+       still rides `bandGrade()` and now computes a much lighter value.
+       ⚠️ It travels UP as it approaches (perspective-origin 26% 50%), so it moves further from the
+       island, never toward it. */
+    /* ⛔⛔⛔ **AND IT IS SMALLER THAN THE SLAB BEAT, WHICH IS A MEASUREMENT AND NOT A WHIM.** The
+       pendant lights hang at **x 785–798** once they are lit, in the exact band this title
+       occupies. At the slab beat's 72px the sentence cannot break into two lines under **692px**
+       (swept: 660 gives three lines, 700–900 all give the same 692/696 pair), which puts its right
+       edge at 805 before the approach even starts — **on the lights** — and 828 by t=34.5.
+       ⭐ At `4.4vw` (63px at 1440) the same two lines run 613px, so the edge sits at 714 and reaches
+       750 at the far end of the approach: clear of the lights at every frame it is visible.
+       ⚠️ **ONLY THE SLAB BEAT IS PINNED TO THE FIRST SCREEN'S SIZE** — that was his instruction at
+       D341 and it named that beat. This one has a lit object in its way and takes the room it has.
+       ⭐ `top:14vh` rather than 12: at 12 the block's own approach carried it to y=73, which is
+       under the nav bar. At 14 it tops out at 93 and still clears the island by ~56px. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:14vh;font-size:clamp(34px,4.4vw,64px)}
   }
+
   /* ⭐⭐ **THE BEAT'S SECOND LINE IS A SUBTITLE NOW, NOT A SECOND TITLE — 23 August 2026 (D340).**
      Client: *"I don't wanna say your slab is completely unique, no two slabs are the same, because
      that is the exact same thing that we're just saying twice. So we need to slightly be more
@@ -5003,7 +5043,7 @@
      is a resting frame a visitor reads at leisure, while a beat is on screen for nine seconds over
      moving picture, and it has more to say in them. */
   html.cine-on .cine-line .cine-line-sub{
-    display:block;margin:24px 0 0;max-width:540px;
+    display:block;margin:24px 0 0;max-width:600px;
     font:300 19px/1.6 var(--brand);letter-spacing:0.014em;
     color:rgba(244,241,234,0.96);text-wrap:balance;
   }

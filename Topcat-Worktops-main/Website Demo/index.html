@@ -4996,19 +4996,59 @@
      ⚠️ The narrow bands are untouched — they take `[data-vpos-narrow="top"]` inside the query
      below, and **their placement is the conversation still owed.** */
   @media(min-width:1121px){
-    /* ⭐⭐ **AND THE FIRST SCREEN'S TYPE AS WELL AS ITS HEIGHT — 23 August 2026 (D341).** Client:
-       *"the wording where it says the slab you choose is unique has to be the same text size as the
-       first frame where it says your worktop starts here."* So this line now takes `.cine-hl`'s own
-       three values — size, leading and measure — and the two screens are the same object twice.
-       ⚠️ `width` moves with the size or the match is only half made: the base `.cine-line` measure
-       is `min(21ch,44vw)`, and `ch` is read off the line's OWN font, so a bigger face would have
-       re-wrapped the headline at a different rhythm from the one it is meant to match. */
-    html.cine-on .cine-line[data-vpos-wide="hero"]{
-      top:22vh;bottom:auto;--ly:0;
+    /* ⭐⭐ **THE FIRST SCREEN'S TYPE, AND A MEASURE WIDE ENOUGH FOR TWO LINES — D341, D345.**
+       Client (D341): *"the wording has to be the same text size as the first frame."* Client
+       (D345): *"I want that to be in two lines. You can take up more space towards the centre of
+       the screen… you can use up more space on the frames after the very first frame."*
+       ⛔⛔ **760px IS MEASURED, NOT PICKED.** At the first screen's 660 both titles break to THREE
+       lines. Swept in 40px steps, **700 is the threshold for both** and every width from 700 to 900
+       resolves to the same pair — "The slab you" / "choose is unique." (480 + 663) and "The stone
+       sets the tone" / "of the room." (692 + 696). 52vw tops out at 760, which is the threshold
+       plus room for a font fallback.
+       ⛔⛔⛔ **AND THE WIDER MEASURE IS SAFE BECAUSE THE PICTURE WAS MEASURED IN THE TEXT'S OWN BAND,
+       NOT THE WHOLE FRAME.** Across the slab beat the film's slab reads a left edge of **727 over
+       the full frame but 790–955 in the band the words occupy** (y 200–360) — the low figure is its
+       bottom corner, which is under the text. The widest line reaches 764 at rest and 809 at the
+       peak of its approach, so it clears the slab at every frame it is visible. ⚠️ Re-measure IN
+       THE BAND if this beat is ever re-timed; the whole-frame number would have vetoed a design
+       that is actually fine. */
+    html.cine-on .cine-line[data-vpos-wide]{
+      bottom:auto;--ly:0;
       font-size:clamp(38px,5vw,76px);line-height:1.06;
-      width:clamp(320px,46vw,660px);
+      width:clamp(320px,52vw,760px);
     }
+    /* the slab beat, on the first screen's own line */
+    html.cine-on .cine-line[data-vpos-wide="hero"]{top:22vh}
+    /* ⛔⛔⛔ **THE KITCHEN BEAT SITS HIGHER, AND 12vh IS THE ISLAND'S OWN MEASUREMENT — D345.**
+       Client: *"the part that says the stone sets the tone of the room is currently too hard to
+       read… you're gonna have to lift it slightly higher so it doesn't actually go over or touch
+       the slab."*
+       ⭐⭐⭐ **AND THE TWO COMPLAINTS ARE ONE FAULT.** The island's top edge runs **y 363–390**
+       through the whole beat, and the block ran to **510** — so it was lying across the lit marble.
+       Measured in the band it occupied, the picture reads **p97 175–202**; measured ABOVE the
+       island, over the wall and the windows, it reads **p97 58–97**. It was not hard to read
+       because the grade was weak. It was hard to read because it was sitting on the slab.
+       ⭐ At `top:12vh` the block runs 108 → ~315, clearing the island by ~48px, and its worst
+       background across the whole widened block is **p97 86** — about **6.2:1 for bone before the
+       wash even arrives**. ⛔ So no new gradient was added: he offered one (*"add whatever gradient
+       you need"*), and the honest answer was that the placement was the bug. The existing wash
+       still rides `bandGrade()` and now computes a much lighter value.
+       ⚠️ It travels UP as it approaches (perspective-origin 26% 50%), so it moves further from the
+       island, never toward it. */
+    /* ⛔⛔⛔ **AND IT IS SMALLER THAN THE SLAB BEAT, WHICH IS A MEASUREMENT AND NOT A WHIM.** The
+       pendant lights hang at **x 785–798** once they are lit, in the exact band this title
+       occupies. At the slab beat's 72px the sentence cannot break into two lines under **692px**
+       (swept: 660 gives three lines, 700–900 all give the same 692/696 pair), which puts its right
+       edge at 805 before the approach even starts — **on the lights** — and 828 by t=34.5.
+       ⭐ At `4.4vw` (63px at 1440) the same two lines run 613px, so the edge sits at 714 and reaches
+       750 at the far end of the approach: clear of the lights at every frame it is visible.
+       ⚠️ **ONLY THE SLAB BEAT IS PINNED TO THE FIRST SCREEN'S SIZE** — that was his instruction at
+       D341 and it named that beat. This one has a lit object in its way and takes the room it has.
+       ⭐ `top:14vh` rather than 12: at 12 the block's own approach carried it to y=73, which is
+       under the nav bar. At 14 it tops out at 93 and still clears the island by ~56px. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:14vh;font-size:clamp(34px,4.4vw,64px)}
   }
+
   /* ⭐⭐ **THE BEAT'S SECOND LINE IS A SUBTITLE NOW, NOT A SECOND TITLE — 23 August 2026 (D340).**
      Client: *"I don't wanna say your slab is completely unique, no two slabs are the same, because
      that is the exact same thing that we're just saying twice. So we need to slightly be more
@@ -5025,7 +5065,7 @@
      is a resting frame a visitor reads at leisure, while a beat is on screen for nine seconds over
      moving picture, and it has more to say in them. */
   html.cine-on .cine-line .cine-line-sub{
-    display:block;margin:24px 0 0;max-width:540px;
+    display:block;margin:24px 0 0;max-width:600px;
     font:300 19px/1.6 var(--brand);letter-spacing:0.014em;
     color:rgba(244,241,234,0.96);text-wrap:balance;
   }
@@ -9293,6 +9333,15 @@
            ⚠️ **"decades" IS HIS WORD AND IT IS DEFENSIBLE, "for life" WOULD NOT BE.** Stone
            worktops routinely outlast the kitchens around them; the ten year guarantee is a separate
            promise and is not what this line is claiming (rule 12).
+           ⛔ **"ONE OF A KIND PATTERNS IN STONE" IS GONE — HIS CATCH, 23 Aug (D345).** Client:
+           *"where it says one of a kind patterns in stone, maybe we say in this stone or something.
+           I don't know. Something's weird about that."* He is right: "patterns in stone" is a plural
+           against a mass noun with a vague preposition, and it reads as a phrase nobody would say
+           aloud. ⭐⭐ **AND CUTTING IT FIXED A SECOND FAULT HE HAD NOT NAMED** — the clause was a
+           third statement of the title's own claim. The title says unique; the subtitle now says
+           the two things the title does NOT: what we do to it, and how long it lasts.
+           ⭐ "Measured" rather than "templated": the same fact in the word a customer uses (rule 9),
+           and it is templating by hand, never laser (rule 2).
            ⭐ His alternates, parked: "The slab you choose is completely unique." ·
            "The veining and patterning on every slab is one of a kind." (⛔ veining) ·
            "Even two slabs cut from the same block are veined differently." (D340's, same fault) ·
@@ -9300,7 +9349,7 @@
            "One of a kind patterns on a stone that's built to last you decades." -->
       <p class="cine-line" data-at="15.0" data-out="24.5" data-vpos="low" data-vpos-wide="hero"
          data-at-narrow="21.0" data-out-narrow="25.3" data-vpos-narrow="top"
-         data-at-phone="16.2" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">One of a kind patterns in stone, cut and finished for your home, built to last for decades.</span></p>
+         data-at-phone="16.2" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">Measured, cut and finished for your home, and built to last for decades.</span></p>
       <!-- ⭐⭐⭐ **THE THIRD BEAT IS BACK, REWRITTEN — 23 August 2026 (D343). ⚠️ THIS REVERSES D326.**
            Client: *"in the second screenshot is where I think we should have another layer of text
            in that same position the other text is in. Just talking about the stone sets the feel of
@@ -9323,9 +9372,17 @@
            **1.6 seconds and are full at 30.6**, exactly as the globes finish dropping and light.
            **The text descends with the lights.** ⭐ That is the *"it should fade or come in"* he
            asked for, and it is the existing mechanism rather than a new one.
-           ⚠️ It still closes at 39.0, and the hero's ink rises at INK_AT 0.93 (t=41.1), so there are
-           two seconds of dark between the last word and the headline. ⚠️ The gap after the slab
-           beat (out at 24.5) is 4.5s, so no two beats are ever up together.
+           ⭐ **AND IT MOVED AGAIN AT D345, BOTH ENDS, ON HIS SECOND PASS**: *"it can come in
+           slightly, slightly earlier and go away slightly earlier so that there's enough space
+           between that and the final shot."* Now **28.5–37.5**. The in-ramp is 16% of a 9s window,
+           so the words are full at **29.94** — still exactly as the globes finish dropping and
+           light, which is the join D344 was built on and it survives the shift. The out-ramp is
+           26%, so they start leaving at 35.16 and are gone at 37.5, which puts **3.6 seconds of
+           dark before the hero's ink at t=41.1** against 2.1 before.
+           ⭐ **37.5 IS ALSO WHERE THE PICTURE TURNS**: the widened block's background holds p97
+           69–86 all the way to 37.5 and then jumps to **134 at t=38** as the dressed kitchen lights
+           up. Leaving at 37.5 is leaving on the last dark frame.
+           ⚠️ The gap after the slab beat (out at 24.5) is 4s, so no two beats are ever up together.
            ⚠️ **THE COPY AREA IS BRIGHT HERE AND THE WASH IS DOING THE WORK, NOT THE INK** — measured
            p97 **173–201** across the whole window at the block's own height, which is D313's trap
            and exactly what `.cine-line::before` was built for. `bandGrade()` samples it per frame.
@@ -9337,12 +9394,23 @@
                -> The stone sets the tone of the room. -> *Surfaces worth building around*
            ⛔ "room", NEVER "kitchen" (D342) — fireplaces, vanity tops and dining tables are all live.
            ⭐ Gold takes the closing phrase, the same pattern as the other two beats.
+           ⛔⛔ **THE SUBTITLE WAS REWRITTEN AT D345 — HE REJECTED THE FIRST ONE.** Client: *"the
+           subtitle under the stone sets the tone of the room, I don't like that. So rewrite it to
+           something better, or we don't have a subtitle there."* The old line — *"The colours, the
+           finishes and the light are all chosen to sit with it"* — was a LIST, and a list is the
+           flattest thing a beat can do: three nouns that only restate the title's own claim.
+           ⭐ **"Choose the stone first. The room follows."** does what the title cannot: it turns the
+           observation into an instruction, which is what a master actually says, and it is real
+           advice — the stone is the hardest thing in the room to change your mind about. It also
+           hands off to the hero's *"Surfaces worth building around"* without borrowing its words.
+           ⚠️ **IT HAS TO STAY ON ONE LINE AND THAT IS STRUCTURAL, NOT TASTE** — the block clears the
+           island by ~48px, and a second subtitle line spends 30 of them.
            ⚠️ ONE BEAT OF THE STORY, so it carries no per-band timing and every band gets it — the
            same judgement D326 made when it took the old line off every band. Verified on the phone's
            own cut: its top band reads p97 **66–98** through this window, so the beat lands dark
            there. ⭐ **Its placement on the narrow bands is still his open conversation.** -->
-      <p class="cine-line" data-at="29.0" data-out="39.0" data-vpos="low" data-vpos-wide="hero"
-         data-vpos-narrow="top">The stone sets the tone of <em>the room.</em><span class="cine-line-sub">The colours, the finishes and the light are all chosen to sit with it.</span></p>
+      <p class="cine-line" data-at="28.5" data-out="37.5" data-vpos="low" data-vpos-wide="high"
+         data-vpos-narrow="top">The stone sets the tone of <em>the room.</em><span class="cine-line-sub">Choose the stone first. The room follows.</span></p>
 
       <!-- ⭐⭐⭐ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325). Client: *"the first frame
            technically needs to act like a second hero section. So the text needs to show in that open
@@ -16658,7 +16726,19 @@ if(faqIndex && panel && faqBody){
          one-device rule (§2 rule 15). The narrow bands keep 560, untouched.
          ⚠️ It lives here rather than in `story()` because `story()` runs every rAF and this changes
          only when the band does — which is exactly what this function is for. */
-      L.zNear=(!mNarrow.matches && L.el.dataset.vposWide==='hero') ? 300 : Z_NEAR;
+      /* ⛔⛔ **ANY `data-vpos-wide` VALUE, NOT JUST "hero" — D345.** The cap keyed on the one value
+         that existed when it was written, and the moment a second anchor arrived (`"high"`, the
+         kitchen beat at 12vh) that beat silently went back to the full 560 — from a position even
+         higher up the frame, where the trap is worse. **The attribute means "anchored near the top
+         on desktop", and that is exactly the condition the cap is for**, so it keys on the
+         attribute's PRESENCE. Caught by the gate, not by looking. */
+      /* ⛔⛔ **AND THE HIGHER THE ANCHOR, THE HARDER THE PERSPECTIVE THROWS IT** — D345. The origin
+         is `26% 50%`, so the travel carries a line up and out to the LEFT and RIGHT of where it
+         started, and how far depends on how far it starts from that origin. 300 suits the slab beat
+         at 22vh; the kitchen beat starts at 14vh with lit pendants in its lane, and needed half of
+         it to stay clear of them for its whole visible life. */
+      L.zNear=(!mNarrow.matches && L.el.dataset.vposWide)
+        ? (L.el.dataset.vposWide==='high' ? 150 : 300) : Z_NEAR;
       L.o=L.z=L.b=L.g=-1;                    // force the next tick to write them all
     }
   }
