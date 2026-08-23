@@ -4920,8 +4920,12 @@
        ⚠️ **THE MASK IS THE PATH A SECOND TIME AND THE TWO MUST BE KEPT IN STEP** — same `d`, same
        2.5 stroke, same round caps. Change the path above and change it here in the same edit, or
        the light will run outside the arrow it is meant to be inside.
-       ⭐ **FASTER AND MORE OFTEN (D339)**: 2.4s against 3.6, with the pass occupying 6%-62% of it,
-       so a flash comes round every 2.4s with about a second of rest instead of 1.6.
+       ⭐ **FASTER AND MORE OFTEN, TWICE (D339, then D341 on his second ask)**: **1.8s**, from 3.6
+       via 2.4, with the pass occupying 6%-62% of it — so the light crosses at 150px/s against 113,
+       and the rest between flashes is 0.79s against 1.6 originally.
+       ⚠️ **THE DERIVED 55% SURVIVES A SPEED CHANGE AND THAT IS WHY IT IS WRITTEN IN PERCENTAGES** —
+       the light-on-point moment is 51.7% of the cycle whatever the cycle lasts. Only re-derive it
+       if the band height, the travel distance or the arrow's height changes.
        ⭐ **AND SLIGHTLY THICKER**: stroke 2.5 against 2, on his *"should we make the arrow maybe
        slightly thicker? Just maybe try that."* ⚠️ The path moved with it — the arms start at x=1.25
        so that half of a 2.5 stroke still lands the tip exactly on the box's left edge, which is
@@ -4930,7 +4934,7 @@
       display:block;position:relative;width:32px;height:96px;
       filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
       will-change:transform;
-      animation:cineHeroDip 2.4s cubic-bezier(.33,0,.16,1) infinite;
+      animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
     }
     /* the base: the silhouette that is never allowed to go anywhere */
     html.cine-on .cine-hero .cine-hero-cue i > svg{
@@ -4950,7 +4954,7 @@
       background:linear-gradient(to bottom,
         rgba(228,205,146,0) 0%, var(--cineGoldTop,#E4CD92) 48%, rgba(228,205,146,0) 100%);
       will-change:transform;
-      animation:cineHeroSheen 2.4s linear infinite;
+      animation:cineHeroSheen 1.8s linear infinite;
     }
     /* ⛔ LINEAR: light crosses a surface at one speed. The easing belongs to the DIP, which is the
        thing with mass — and on an eased sweep the light left the point at 43% while the dip was
@@ -4992,7 +4996,18 @@
      ⚠️ The narrow bands are untouched — they take `[data-vpos-narrow="top"]` inside the query
      below, and **their placement is the conversation still owed.** */
   @media(min-width:1121px){
-    html.cine-on .cine-line[data-vpos-wide="hero"]{top:22vh;bottom:auto;--ly:0}
+    /* ⭐⭐ **AND THE FIRST SCREEN'S TYPE AS WELL AS ITS HEIGHT — 23 August 2026 (D341).** Client:
+       *"the wording where it says the slab you choose is unique has to be the same text size as the
+       first frame where it says your worktop starts here."* So this line now takes `.cine-hl`'s own
+       three values — size, leading and measure — and the two screens are the same object twice.
+       ⚠️ `width` moves with the size or the match is only half made: the base `.cine-line` measure
+       is `min(21ch,44vw)`, and `ch` is read off the line's OWN font, so a bigger face would have
+       re-wrapped the headline at a different rhythm from the one it is meant to match. */
+    html.cine-on .cine-line[data-vpos-wide="hero"]{
+      top:22vh;bottom:auto;--ly:0;
+      font-size:clamp(38px,5vw,76px);line-height:1.06;
+      width:clamp(320px,46vw,660px);
+    }
   }
   /* ⭐⭐ **THE BEAT'S SECOND LINE IS A SUBTITLE NOW, NOT A SECOND TITLE — 23 August 2026 (D340).**
      Client: *"I don't wanna say your slab is completely unique, no two slabs are the same, because
@@ -9234,12 +9249,23 @@
            ⛔ **HE IS RIGHT, AND THE OLD PAIR WAS A TAUTOLOGY**: "one of a kind" and "no two slabs
            are the same" are one claim stated twice, so the second line spent four seconds of film
            adding nothing.
-           ⭐⭐ **SO THE TITLE MAKES THE CLAIM AND THE SUBTITLE EARNS IT WITH A FACT.** Researched:
-           marble veining forms underground as mineral-rich fluids and impurities crystallise
-           through limestone under heat and pressure, and the industry's own literature is explicit
-           that **vein formation differs even between slabs cut from the same block**. That is the
-           non-obvious thing a customer does not already know, it is what "the nucleus of the slab"
-           actually means, and it is the sentence a master would say.
+           ⛔⛔⛔ **AND THE FIRST SUBTITLE WAS WRONG ON THE FACTS — HIS CATCH, 23 Aug (D341).** Client:
+           *"not every block or every slab that people are gonna choose has veining. So we can't
+           just talk about veining."* He is right and it is checkable in our own catalogue:
+           `absolute-black-extra` is described as having **no visible grain**, the quartz range is
+           engineered to be consistent, and porcelain carries a printed face. A subtitle that hung
+           the whole claim on veining was false for a large part of what he actually sells — and it
+           would have been false on the page that sells it.
+           ⭐⭐ **SO THE SUBTITLE STOPPED DESCRIBING THE STONE AND STARTED PROMISING SOMETHING**, which
+           is his own instruction: *"we should probably also just add and made to last for many
+           years… this part has to be quick and easy to read and convincing. This is the most
+           important part of the whole website."* Two things it does that the title does not: it is
+           **cut for your kitchen** (true of every material, and D202's in-house fabrication), and it
+           is **made to last** — the closest thing to the ten year guarantee that can be said in a
+           beat this short. ⛔ Not "for life" and not "forever": rule 12, and the guarantee is ten
+           years, so "many years" is the promise we can keep.
+           ⚠️ **NOTHING IN THE BEAT NOW DEPENDS ON THE MATERIAL**, which is what makes it safe over a
+           film that every visitor sees whatever they end up buying.
            ⚠️ **"unique", NOT "completely unique"** — his own second option, and the better English:
            unique admits no degree, so the intensifier reads as sales rather than as certainty
            (rule 9's register). ⭐ Gold takes "unique." — the payoff, the same pattern the first
@@ -9248,10 +9274,12 @@
            is a blanket absolute; "even two slabs cut from the same block are veined differently" is
            a specific, sourced statement about natural stone.
            ⭐ His alternates, parked: "The slab you choose is completely unique." ·
-           "The veining and patterning on every slab is one of a kind." -->
+           "The veining and patterning on every slab is one of a kind." (⛔ veining — see above) ·
+           "Even two slabs cut from the same block are veined differently." (D340's, same fault) ·
+           "Built to last for many years." · "Cut for your kitchen, and built to last for years." -->
       <p class="cine-line" data-at="15.0" data-out="24.5" data-vpos="low" data-vpos-wide="hero"
          data-at-narrow="21.0" data-out-narrow="25.3" data-vpos-narrow="top"
-         data-at-phone="16.2" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">Even two slabs cut from the same block are veined differently.</span></p>
+         data-at-phone="16.2" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">Cut for your kitchen, and made to last for many years.</span></p>
       <!-- ⛔⛔⛔ **THE THIRD BEAT IS WITHDRAWN — 22 August 2026 (D326).** Client, on a screenshot of the
            closing kitchen shot with the words over it: *"Remove the text that comes up on this
            part."*

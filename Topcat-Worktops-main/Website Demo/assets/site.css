@@ -4898,8 +4898,12 @@
        ⚠️ **THE MASK IS THE PATH A SECOND TIME AND THE TWO MUST BE KEPT IN STEP** — same `d`, same
        2.5 stroke, same round caps. Change the path above and change it here in the same edit, or
        the light will run outside the arrow it is meant to be inside.
-       ⭐ **FASTER AND MORE OFTEN (D339)**: 2.4s against 3.6, with the pass occupying 6%-62% of it,
-       so a flash comes round every 2.4s with about a second of rest instead of 1.6.
+       ⭐ **FASTER AND MORE OFTEN, TWICE (D339, then D341 on his second ask)**: **1.8s**, from 3.6
+       via 2.4, with the pass occupying 6%-62% of it — so the light crosses at 150px/s against 113,
+       and the rest between flashes is 0.79s against 1.6 originally.
+       ⚠️ **THE DERIVED 55% SURVIVES A SPEED CHANGE AND THAT IS WHY IT IS WRITTEN IN PERCENTAGES** —
+       the light-on-point moment is 51.7% of the cycle whatever the cycle lasts. Only re-derive it
+       if the band height, the travel distance or the arrow's height changes.
        ⭐ **AND SLIGHTLY THICKER**: stroke 2.5 against 2, on his *"should we make the arrow maybe
        slightly thicker? Just maybe try that."* ⚠️ The path moved with it — the arms start at x=1.25
        so that half of a 2.5 stroke still lands the tip exactly on the box's left edge, which is
@@ -4908,7 +4912,7 @@
       display:block;position:relative;width:32px;height:96px;
       filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
       will-change:transform;
-      animation:cineHeroDip 2.4s cubic-bezier(.33,0,.16,1) infinite;
+      animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
     }
     /* the base: the silhouette that is never allowed to go anywhere */
     html.cine-on .cine-hero .cine-hero-cue i > svg{
@@ -4928,7 +4932,7 @@
       background:linear-gradient(to bottom,
         rgba(228,205,146,0) 0%, var(--cineGoldTop,#E4CD92) 48%, rgba(228,205,146,0) 100%);
       will-change:transform;
-      animation:cineHeroSheen 2.4s linear infinite;
+      animation:cineHeroSheen 1.8s linear infinite;
     }
     /* ⛔ LINEAR: light crosses a surface at one speed. The easing belongs to the DIP, which is the
        thing with mass — and on an eased sweep the light left the point at 43% while the dip was
@@ -4970,7 +4974,18 @@
      ⚠️ The narrow bands are untouched — they take `[data-vpos-narrow="top"]` inside the query
      below, and **their placement is the conversation still owed.** */
   @media(min-width:1121px){
-    html.cine-on .cine-line[data-vpos-wide="hero"]{top:22vh;bottom:auto;--ly:0}
+    /* ⭐⭐ **AND THE FIRST SCREEN'S TYPE AS WELL AS ITS HEIGHT — 23 August 2026 (D341).** Client:
+       *"the wording where it says the slab you choose is unique has to be the same text size as the
+       first frame where it says your worktop starts here."* So this line now takes `.cine-hl`'s own
+       three values — size, leading and measure — and the two screens are the same object twice.
+       ⚠️ `width` moves with the size or the match is only half made: the base `.cine-line` measure
+       is `min(21ch,44vw)`, and `ch` is read off the line's OWN font, so a bigger face would have
+       re-wrapped the headline at a different rhythm from the one it is meant to match. */
+    html.cine-on .cine-line[data-vpos-wide="hero"]{
+      top:22vh;bottom:auto;--ly:0;
+      font-size:clamp(38px,5vw,76px);line-height:1.06;
+      width:clamp(320px,46vw,660px);
+    }
   }
   /* ⭐⭐ **THE BEAT'S SECOND LINE IS A SUBTITLE NOW, NOT A SECOND TITLE — 23 August 2026 (D340).**
      Client: *"I don't wanna say your slab is completely unique, no two slabs are the same, because
