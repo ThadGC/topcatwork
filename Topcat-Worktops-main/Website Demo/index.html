@@ -4725,7 +4725,7 @@
      headline, so the words, the invitation and the indicator stay together as the camera passes
      them. It also starts at z 0 rather than the titles' −150: a title is arriving from a distance,
      but a hero is already here, and −150 under the 1000 perspective renders it at 87%. */
-  .cine-hero{display:none}
+  .cine-hero,.cine-trust{display:none}
   @media(min-width:1121px){
     /* ⭐⭐ ANCHORED BY ITS TOP, NOT ITS MIDDLE — 22 August 2026 (D325b). Client: *"move the text
        higher up… you can see the top of the mountains in the background. The first line of text is
@@ -4751,6 +4751,35 @@
        own rules — hidden from here it lost on source order, because `html.cine-on .cine-cue` has
        the same specificity in both places and the base `display:flex` is written later. */
     html.cine-on .cine-open{display:none}
+
+    /* ⭐⭐⭐ **THE PROOF COMES TO THE FIRST SCREEN — 23 August 2026 (D338).** Client: *"I want the
+       Google review rating thing from the actual hero section… to be on the bottom there as well
+       just to show that we have a good Google rating, but this should be on the bottom left"* and
+       *"that Google review and other thing will go away after the user starts scrolling. It'll fade
+       away with the your worktop starts here text."*
+       ⭐⭐ **IT IS THE HERO'S OWN CHIPS, NOT A SECOND DESIGN OF THEM.** `.cine-story` sits INSIDE
+       `#hero`, so `#hero .chip-google`, `#hero .g-mark`, `#hero .g-stack` and the rest already
+       reach this markup and the component is identical in both places — the one-component-two-
+       appearances trap (rule 13) never opens.
+       ⭐ Same left gutter as the headline, `clamp(20px,7vw,132px)`, so the first screen still hangs
+       off ONE edge: title, invitation, cue, arrow tip and now the proof. Bottom 35px is the SKIP
+       control's own baseline on the other side of the frame, measured, so the two read as a pair.
+       ⛔ **`aria-hidden`, AND THAT IS DELIBERATE** — the real chips are 900vh below in the finished
+       hero and a screen reader should hear "5.0 on Google" once, not twice. This copy is
+       reinforcement for the eye only.
+       ⚠️ **NO Z-TRAVEL.** The headline flies at the viewer on `--hz` because it is above the
+       perspective origin; a chip at the bottom of the frame would travel the other way and sweep
+       across his picture. It fades and does nothing else, which is what he asked for.
+       ⭐⭐ **AND IT GOES `visibility:hidden` THE MOMENT IT REACHES ZERO** (see `heroCopy`): `.chip`
+       carries `backdrop-filter:blur(8px)`, and a fully transparent backdrop-filtered layer is not
+       reliably skipped by the compositor — leaving it live would sample and blur the backdrop for
+       the remaining ~38 seconds of a scrubbing film for something nobody can see. His standing
+       rule: *"make sure the movement when the user is scrolling is extremely smooth."* */
+    html.cine-on .cine-trust{
+      display:flex;position:absolute;z-index:3;pointer-events:none;
+      left:clamp(20px,7vw,132px);bottom:35px;gap:10px;align-items:center;
+      opacity:0;                                  /* the scrub owns it, exactly as the copy is */
+    }
 
     /* ⚠️ 57% AND NOT LOWER, AND THAT IS MEASURED. Taken up the frame the headline climbs into the
        sky, which is the brightest band in the picture: at 44% it reads 3.15:1 against 4.90:1 here,
@@ -4872,56 +4901,80 @@
        and 0.74 — the first value written here — measured **2.79:1** and would have shipped under it.
        ⚠️ The figure ignores the rule's own `box-shadow`, which darkens what it sits on, so the real
        number is a little better than this. */
-    /* ⭐⭐⭐ **THE ARROW, FOURTH DESIGN — 23 August 2026 (D336). THE WHOLE ARROW TRAVELS NOW.**
-       Client: *"I want you to make the arrow a little bit bigger and make it animate differently as
-       we still haven't found the right animation for that."*
-       ⭐⭐ **EVERY DESIGN SO FAR ANIMATED A PART OF THE ARROW; THIS ONE ANIMATES THE ARROW.**
-         1  a chevron running down a channel   — frozen, a crossbar on a line
-         2  one shape revealed by a clip       — frozen, half a line
-         3  a bright stroke drawing down a static shaft (D327f) — always whole, and he still says no
-       ⭐ So the silhouette is now fixed and COMPLETE — shaft plus head, one solid gold object — and
-       the only thing that changes is where it is. It reaches down, settles, and floats back. There
-       is no state in the cycle where it is anything other than a finished arrow at full strength,
-       which is the test that killed the first two: **he reviews from screenshots.**
-       ⭐⭐ **THE TIMING IS ASYMMETRIC ON PURPOSE** — a long rest, a decisive descent, a settle, then
-       a slower float back. A symmetric bob reads as a bouncing UI widget; this reads as a gesture,
-       which is the "luxury feel" he asked for in the same breath as the copy.
-       ⛔ **OPACITY IS CONSTANT AT FULL, AND THAT IS A MEASUREMENT, NOT A PREFERENCE.** D327f fixed
-       the floor at 0.86 because gold over this graded picture (p97 74 under the shaft) reads
-       3.79:1 at full and 3.22:1 at 0.86, against the 3.0 a non-text graphic needs. Fading the
-       travel would spend that margin for nothing, and a screenshot caught at the dim end would be
-       the weakest frame he sees. Nothing fades; the contrast is the peak figure in every frame.
-       ⚠️ **`transform` ONLY, WHICH IS WHY IT COSTS NOTHING** — no layout, no paint, and `will-change`
-       keeps it on its own layer beside a scroll-driven film (his standing "extremely smooth" rule).
-       ⛔ Not a disc, ring or plate (§2 rule 11), no box, and the rule is vertical, never a bright
-       line across the top of anything (rule 7).
-       ⚠️ 88px against 72, head 23 against 19 — "a little bit bigger", not a different object. */
+    /* ⭐⭐⭐ **THE ARROW, FIFTH DESIGN — 23 August 2026 (D337). LIGHT TRAVELS THROUGH THE METAL.**
+       Client: *"what you're doing is very plain, and it's fine, but it can be better… I just wanna a
+       little bit more of a premium animation. But first, research it and see if you find something."*
+       ⭐⭐ **RESEARCHED, AND THE RESEARCH MOSTLY RULED THINGS OUT.** The published vocabulary for a
+       scroll cue is three families: a bouncing chevron, a `stroke-dashoffset` self-draw, and a
+       glow. ⛔ The first two are exactly the two that already failed here — a moving part reads as a
+       crossbar frozen, and a self-draw is half a line frozen — and **he reviews from screenshots**.
+       The third is the one worth having, and it is also the only one that is on-brand: this is a
+       gold-and-marble business, and light moving across metal is what metal DOES. The site already
+       speaks it — the dividers carry a glint that travels the line.
+       ⭐⭐⭐ **SO THE SPLIT IS: THE ARROW IS ALWAYS WHOLE AND AT FULL SILHOUETTE, AND THE ANIMATION IS
+       A HIGHLIGHT PASSING THROUGH IT.** Two copies of the same path — the base at 0.62 gold, and a
+       bright copy masked by a soft 56px window that travels from above the shaft, down the whole
+       length, and out through the point. Frozen at any instant it is a complete gold arrow with a
+       sheen somewhere on it, which is a better still than any previous design produced.
+       ⛔⛔ **D327f's BRIGHT STROKE ONLY LIT THE SHAFT — THE HEAD WAS A SEPARATE ELEMENT AND NEVER
+       ANIMATED.** That is why it read as a lit line with a dead chevron under it rather than as one
+       object catching light. One path fixes the animation and his "connect the tip" ask together.
+       ⭐ **THE DIP IS THE SECOND HALF OF THE GESTURE.** As the light reaches the point at ~59% of
+       the cycle, the whole arrow gives 3px and settles back — the light falls through and the arrow
+       answers it. A 14px bob on its own was the plain thing he is objecting to; 3px under a
+       travelling highlight reads as weight, not as a bouncing widget.
+       ⚠️ **`mask-position` IS NOT COMPOSITOR-ACCELERATED AND IT DOES NOT MATTER HERE**: the element
+       is 32x96 CSS px, so a repaint is ~3k px against a scroll-driven film, and it touches no
+       layout. The dip beside it IS `transform`, on its own layer. His "extremely smooth" rule is
+       about the scrub, and nothing here goes near it.
+       ⛔ Not a disc, ring or plate (rule 11) — a halo is light, not a container. */
     html.cine-on .cine-hero .cine-hero-cue i{
-      width:2px;height:88px;border-radius:2px;display:block;position:relative;
-      background:linear-gradient(to bottom,
-        rgba(198,166,100,0.30) 0%, var(--cineGoldMid,#C6A664) 42%, var(--cineGoldMid,#C6A664) 100%);
+      display:block;position:relative;width:32px;height:96px;
       filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
       will-change:transform;
-      animation:cineHeroCue 3.2s cubic-bezier(.33,0,.16,1) infinite;
+      animation:cineHeroDip 3.6s cubic-bezier(.33,0,.16,1) infinite;
     }
-    /* the head, fixed at the foot and always solid — an open chevron, no fill, no container (rule 11) */
-    html.cine-on .cine-hero .cine-hero-cue i::after{
-      content:"";position:absolute;left:50%;bottom:-1px;width:23px;height:23px;margin-left:-12.5px;
-      transform:rotate(45deg);
-      border-right:2px solid var(--cineGoldMid,#C6A664);
-      border-bottom:2px solid var(--cineGoldMid,#C6A664);
+    html.cine-on .cine-hero .cine-hero-cue i svg{
+      display:block;width:32px;height:96px;overflow:visible;
+      fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
     }
-    /* rest, reach down, settle, float back — see the note above for why nothing fades */
-    @keyframes cineHeroCue{
-      0%,12%   {transform:translateY(0)}
-      46%,62%  {transform:translateY(14px)}
-      92%,100% {transform:translateY(0)}
+    /* the base: the silhouette that is never allowed to go anywhere */
+    html.cine-on .cine-hero .cine-hero-cue i > svg{color:rgba(198,166,100,0.62)}
+    /* the light: the same path in the headline's own top gold, windowed and travelling */
+    html.cine-on .cine-hero .cine-hero-cue i b{
+      position:absolute;inset:0;display:block;color:var(--cineGoldTop,#E4CD92);
+      filter:drop-shadow(0 0 6px rgba(228,205,146,0.55));
+      -webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,0.92) 48%,transparent 100%);
+              mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,0.92) 48%,transparent 100%);
+      -webkit-mask-size:100% 56px;      mask-size:100% 56px;
+      -webkit-mask-repeat:no-repeat;    mask-repeat:no-repeat;
+      /* ⛔ LINEAR, AND THAT IS THE FIX FOR A REAL BUG: on `cubic-bezier(.42,0,.4,1)` the window
+         was front-loaded and the light had left the point by 43% of the cycle while the arrow's
+         answering dip was still 0.74s away, so the two read as unrelated events. Light crossing a
+         surface travels at one speed; the EASING BELONGS TO THE DIP, which is the thing with mass. */
+      animation:cineHeroSheen 3.6s linear infinite;
+    }
+    /* the window starts above the shaft, runs the whole length, and leaves through the point */
+    @keyframes cineHeroSheen{
+      0%,10%   {-webkit-mask-position:0 -56px; mask-position:0 -56px}
+      66%,100% {-webkit-mask-position:0 96px;  mask-position:0 96px}
+    }
+    /* and the arrow answers it, once the light has passed the point */
+    /* ⚠️ THE 60% IS DERIVED, NOT CHOSEN. The window is 56px and its brightest line sits at 48% of
+       its own height, so the light is ON the point when `mask-position` reads 68px — which, on a
+       linear travel from -56 to 96 across 10%–66%, happens at **55.7%**. The dip peaks 0.14s after
+       that. Re-derive it if the window, the travel or the arrow's height changes. */
+    @keyframes cineHeroDip{
+      0%,50%   {transform:translateY(0)}
+      60%      {transform:translateY(3px)}
+      78%,100% {transform:translateY(0)}
     }
   }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
-    /* ⚠️ the arrow itself is the animation now, so this stops the travel and leaves it at rest —
-       a complete arrow either way, which is the point of the fourth design */
+    /* ⚠️ no dip and no sweep — and the mask comes OFF rather than being left mid-travel, so what
+       remains is the bright arrow at full strength. A complete arrow either way is the whole point. */
     html.cine-on .cine-hero .cine-hero-cue i{animation:none;transform:none}
+    html.cine-on .cine-hero .cine-hero-cue i b{animation:none;-webkit-mask-image:none;mask-image:none}
   }
 
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
@@ -9204,7 +9257,44 @@
                sales word and rule 9 keeps them off the page; "finest" is the British form of the
                same claim and it is evocative rather than checkable. -->
         <p class="cine-hero-sub">Follow the slab from the finest mountains of Europe and Asia, through the quarry, to your kitchen.</p>
-        <div class="cine-hero-cue" aria-hidden="true"><span>Scroll to begin</span><i></i></div>
+        <!-- ⭐⭐⭐ THE ARROW IS ONE CONNECTED PATH NOW — 23 August 2026 (D337). Client: *"can we at
+             least connect the arrow tip to the point of the arrow just to make it look better?"* The
+             CSS build could not: a 2px shaft and a rotated square are two objects that OVERLAP, and
+             the shaft stopped 5.8px short of the point the arms make. Here the shaft's end IS the
+             vertex — `M16 1V95` ends where `l15 15` arrives — so it is one object with one join.
+             ⭐ **AND IT IS WHY THE ALIGNMENT ASK IS FREE**: the left arm's tip sits at x=0 of the
+             box, so the box's own left edge is the tip, and `flex-start` puts it on the block's
+             line. His ask exactly: *"the left side of the arrow's point needs to be in line with
+             the S… the arrow will move slightly further in."*
+             ⛔ DRAWN TWICE ON PURPOSE — the base is always there at full silhouette, the `<b>` copy
+             is the light that passes through it. See the CSS for why that split is the whole design. -->
+        <div class="cine-hero-cue" aria-hidden="true"><span>Scroll to begin</span><i>
+          <svg viewBox="0 0 32 96" focusable="false" aria-hidden="true"><path d="M16 1V95M1 80l15 15 15-15"/></svg>
+          <b><svg viewBox="0 0 32 96" focusable="false" aria-hidden="true"><path d="M16 1V95M1 80l15 15 15-15"/></svg></b>
+        </i></div>
+      </div>
+      <!-- ⭐⭐⭐ **THE PROOF, BOTTOM LEFT — 23 August 2026 (D338).** His two strongest chips from the
+           finished hero, on the frame that has to earn the scroll. ⛔ The Google "G" keeps its four
+           official colours: it is Google's trademark, it is here to attribute the rating to its
+           source, and recolouring it to the site's gold is both against their brand terms and the
+           thing that would stop it reading as somebody else's verdict.
+           ⛔ **NO REVIEW COUNT, EVER (§2 rule 4)** — the score and the stars, nothing else.
+           ⚠️ `aria-hidden` on the whole block: these same two chips are announced properly in the
+           finished hero below, and a screen reader should meet them once. -->
+      <div class="cine-trust" id="cineTrust" aria-hidden="true">
+        <span class="chip chip-google glow-card">
+          <svg class="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          <span class="g-stack">
+            <span class="g-word">Google reviews</span>
+            <span class="g-rating"><b class="g-score">5.0</b><span class="g-stars">★★★★★</span></span>
+          </span>
+        </span>
+        <span class="chip chip-guarantee glow-card"><b class="chip-mk">10</b> year guarantee</span>
       </div>
     </div>
 
@@ -16492,6 +16582,7 @@ if(faqIndex && panel && faqBody){
   let heroOn=false, heroO=-1, heroZ=-1, heroE=-1;
   const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
   readHeroBand();
+  const trustEl=document.getElementById('cineTrust');
   function heroCopy(t){
     if(!heroEl)return;
     /* ⛔ HAND BOTH PROPERTIES BACK ON THE WAY OUT. A window dragged under 1121 leaves an inline
@@ -16501,6 +16592,9 @@ if(faqIndex && panel && faqBody){
       if(heroO!==0){
         heroO=0; heroZ=-1; heroE=-1;
         heroEl.style.opacity=''; heroEl.style.removeProperty('--hz');
+        /* ⛔ the proof block is handed back the same way and in the same breath — an inline opacity
+           left behind on a band change outranks the class rule that is meant to take over (D336). */
+        if(trustEl){ trustEl.style.opacity=''; trustEl.style.visibility=''; }
         cine.style.removeProperty('--cineEdge');
       }
       return;
@@ -16508,7 +16602,16 @@ if(faqIndex && panel && faqBody){
     const p=clamp(t/HERO_OUT);
     const a=Math.min(1,(1-p)/0.26);              /* the out-ramp only — see the note above */
     const o=+(a*a*(3-2*a)).toFixed(2);
-    if(o!==heroO){ heroO=o; heroEl.style.opacity=o; }
+    if(o!==heroO){
+      heroO=o; heroEl.style.opacity=o;
+      /* ⭐ ONE WRITE, TWO ELEMENTS — the proof cannot drift out of step with the words it belongs
+         to, because there is no second alpha to keep in sync. His ask: *"it'll fade away with the
+         your worktop starts here text."*
+         ⭐⭐ `visibility` at the ends, not just alpha: `.chip` carries `backdrop-filter:blur(8px)`
+         and a transparent backdrop-filtered layer is not reliably skipped, so at zero it comes out
+         of the compositor's way for the rest of the film. */
+      if(trustEl){ trustEl.style.opacity=o; trustEl.style.visibility=o>0?'visible':'hidden'; }
+    }
     const z=Math.round(HERO_Z*p*p);
     if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
     /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed from the

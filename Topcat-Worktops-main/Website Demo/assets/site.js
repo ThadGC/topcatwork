@@ -5902,6 +5902,7 @@ if(faqIndex && panel && faqBody){
   let heroOn=false, heroO=-1, heroZ=-1, heroE=-1;
   const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
   readHeroBand();
+  const trustEl=document.getElementById('cineTrust');
   function heroCopy(t){
     if(!heroEl)return;
     /* ⛔ HAND BOTH PROPERTIES BACK ON THE WAY OUT. A window dragged under 1121 leaves an inline
@@ -5911,6 +5912,9 @@ if(faqIndex && panel && faqBody){
       if(heroO!==0){
         heroO=0; heroZ=-1; heroE=-1;
         heroEl.style.opacity=''; heroEl.style.removeProperty('--hz');
+        /* ⛔ the proof block is handed back the same way and in the same breath — an inline opacity
+           left behind on a band change outranks the class rule that is meant to take over (D336). */
+        if(trustEl){ trustEl.style.opacity=''; trustEl.style.visibility=''; }
         cine.style.removeProperty('--cineEdge');
       }
       return;
@@ -5918,7 +5922,16 @@ if(faqIndex && panel && faqBody){
     const p=clamp(t/HERO_OUT);
     const a=Math.min(1,(1-p)/0.26);              /* the out-ramp only — see the note above */
     const o=+(a*a*(3-2*a)).toFixed(2);
-    if(o!==heroO){ heroO=o; heroEl.style.opacity=o; }
+    if(o!==heroO){
+      heroO=o; heroEl.style.opacity=o;
+      /* ⭐ ONE WRITE, TWO ELEMENTS — the proof cannot drift out of step with the words it belongs
+         to, because there is no second alpha to keep in sync. His ask: *"it'll fade away with the
+         your worktop starts here text."*
+         ⭐⭐ `visibility` at the ends, not just alpha: `.chip` carries `backdrop-filter:blur(8px)`
+         and a transparent backdrop-filtered layer is not reliably skipped, so at zero it comes out
+         of the compositor's way for the rest of the film. */
+      if(trustEl){ trustEl.style.opacity=o; trustEl.style.visibility=o>0?'visible':'hidden'; }
+    }
     const z=Math.round(HERO_Z*p*p);
     if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
     /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed from the
