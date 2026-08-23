@@ -4831,10 +4831,12 @@
        range, `patagonia`, is a Brazilian quartzite in the trade, though no page says so and its own
        blurb names no country. Flagged to him rather than quietly narrowed. */
     html.cine-on .cine-hero .cine-hero-sub{
-      margin:28px 0 0;font:300 17px/1.62 var(--brand);letter-spacing:0.014em;
-      /* ⛔ white, not grey — D346, and the same change the beats' subtitles took, so every subtitle
-         in the film is the one ink its title is. */
-      color:var(--bone);max-width:470px;
+      margin:28px 0 0;font:400 17px/1.62 var(--brand);letter-spacing:0.014em;
+      /* ⛔ **WHITE — D347.** Named by him explicitly: *"where it says follow the slab from the finest
+         mountains, that should be white."* Same three fixes as the beats' subtitles: `#fff` rather
+         than bone, weight 400 rather than 300, and the tight contact shadow replaced below with a
+         wide soft one — on a 17px hairline that shadow's blur lands inside the strokes. */
+      color:#fff;max-width:470px;
       /* ⚠️ **470 IS MEASURED AGAINST THE NEW LINE, NOT INHERITED — D335.** The old cap was 430,
          which the short version balanced onto two lines and the long one breaks onto THREE
          (262/264/307). Swept in 20px steps: 450 is the threshold and everything from 450 to 560
@@ -4845,7 +4847,7 @@
          ⭐ Line 1 ends at x=550, inside the headline's 660 and beside the gold line's 453, so the
          block still reads as one left-hung column. */
       text-wrap:balance;
-      text-shadow:0 1px 16px rgba(6,6,8,0.85),0 1px 3px rgba(6,6,8,0.7);
+      text-shadow:0 2px 20px rgba(6,6,8,0.85);
     }
     /* ⭐⭐⭐ **"THE SCROLL TO BEGIN HAS TO BE WAY MORE CLEAR" — 22 August 2026 (D327).** Second pass
        on this control, and the brief is bounce rate: it is the only thing on the frame whose job is
@@ -5005,6 +5007,30 @@
     }
     /* the slab beat, on the first screen's own line */
     html.cine-on .cine-line[data-vpos-wide="hero"]{top:22vh}
+    /* ⭐⭐⭐ **THE SUBTITLE IS INDENTED TO THE TITLE'S STEM, NOT TO THE BOX — D347.** Client: *"the g
+       of the word get is not in line with the t of the and tone… the middle of the g and the middle
+       of the stem of the t, those go together."*
+       ⛔⛔ **THE BOXES WERE ALREADY IDENTICAL — measured, both at x 123.85 — SO THE FAULT WAS OPTICAL
+       AND NO AMOUNT OF LOOKING AT THE LAYOUT WOULD HAVE FOUND IT.** Cinzel's `T` is a crossbar with
+       a stem under its middle: its ink starts ~1px from the box but its STEM sits at **0.31 x the
+       font size**, measured identical at both title sizes (19.61/63.36 and 22.28/72). A sans `G` or
+       `O` centres at only ~8px. Left flush, the two therefore read as misaligned by ~12px, which is
+       exactly what he is seeing.
+       ⭐ So the subtitle moves right by `0.31 x the title's own size, less the sub's own first-glyph
+       centre`. It is written against the SAME clamp the title uses, so it tracks the viewport
+       instead of being a pixel value that is only right at 1440.
+       ⚠️ The 8px is the sub's first-glyph half-ink (G 6.9, O 8.0, M 9.1 at 19px) — within ~1px for
+       any capital, so a copy change cannot break it by more than a hair. */
+    /* ⚠️ THE SUBTRACTED TERM IS THAT SUBTITLE'S OWN FIRST GLYPH, measured: `M` centres at 9.08px at
+       19px, `O` at 7.97. Calibrated against the live page, both now land on the stem to within
+       0.01px. ⛔ If a subtitle's first letter changes, re-read its half-ink — a round `O` and a
+       wide `M` differ by a pixel, which is visible at this size against a 70px stem. */
+    html.cine-on .cine-line[data-vpos-wide="hero"] .cine-line-sub{
+      margin-left:calc(clamp(38px, 5vw, 76px) * 0.3095 - 9.08px);   /* "Measured…" */
+    }
+    html.cine-on .cine-line[data-vpos-wide="high"] .cine-line-sub{
+      margin-left:calc(clamp(34px, 4.8vw, 70px) * 0.3095 - 7.97px); /* "Once…" */
+    }
     /* ⛔⛔⛔ **THE KITCHEN BEAT SITS HIGHER, AND 12vh IS THE ISLAND'S OWN MEASUREMENT — D345.**
        Client: *"the part that says the stone sets the tone of the room is currently too hard to
        read… you're gonna have to lift it slightly higher so it doesn't actually go over or touch
@@ -5038,7 +5064,14 @@
        approach lifts it, and the island's HIGHEST point is y=363. Clearance by sample at 14vh ran
        46–57px; 16vh spends 18 of them and holds **~28px at the tightest**. ⛔ 18vh would leave ~10px
        and the next re-time or copy change would put the words back on the marble. */
-    html.cine-on .cine-line[data-vpos-wide="high"]{top:16vh;font-size:clamp(34px,4.4vw,64px)}
+    /* ⭐ **A LITTLE BIGGER AT D347** — *"that text is not the same size as the other text, which I
+       understand, but maybe we can make it a little bit bigger."* 4.4vw -> 4.8vw (63.4 -> 69.1 at
+       1440). ⚠️ **BOTH ITS MARGINS WERE RE-CHECKED PER MOMENT RATHER THAN WORST-AGAINST-WORST**,
+       which is what makes it fit: the block is lowest at the START of the beat, when the island is
+       at its LOWEST too (385), and the island only reaches 363 later, when the approach has already
+       lifted the words. Clearance holds at **~19px at the tightest**, and the right edge reaches
+       756 against the pendants' 788. ⛔ 5vw would put the bottom on the marble again. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:16vh;font-size:clamp(34px,4.8vw,70px)}
   }
 
   /* ⭐⭐ **THE BEAT'S SECOND LINE IS A SUBTITLE NOW, NOT A SECOND TITLE — 23 August 2026 (D340).**
@@ -5056,13 +5089,21 @@
      His instruction was that the beat's TITLE take the first screen's size (D341); the first screen
      is a resting frame a visitor reads at leisure, while a beat is on screen for nine seconds over
      moving picture, and it has more to say in them. */
-  /* ⛔ **WHITE, NOT GREY — his words, 23 Aug (D346).** `rgba(244,241,234,0.96)` is the site's bone
-     held back 4%, which over a dark film reads as a grey line under a white one. It now takes
-     `--bone` at full, the same ink the titles use, so a title and its subtitle are one colour. */
+  /* ⛔⛔⛔ **WHITE. ACTUALLY WHITE — D347, AND D346 DID NOT DO IT.** He asked for white, I moved the
+     subtitles from bone-at-96% to bone-at-100% and reported it done. **Bone is `#F4F1EA`, a warm
+     limestone tint — it is the site's off-white, and at 19px in a LIGHT weight it still reads grey.**
+     Three things were making it grey and only one of them was the alpha:
+       1. the ink was `#F4F1EA`, not white          -> `#fff`
+       2. weight 300, so the strokes are hairlines  -> 400, which is what reads as solid ink
+       3. ⛔ **THE INHERITED CONTACT SHADOW**: `.cine-line` sets `0 1px 4px rgba(6,6,8,0.5)`, a TIGHT
+          dark shadow. On a 72px serif that is a contact shadow; on a 19px hairline the blur lands
+          INSIDE the strokes and greys them from the edges in. It is overridden here with a wide
+          soft one that never touches the glyph. */
   html.cine-on .cine-line .cine-line-sub{
     display:block;margin:24px 0 0;max-width:600px;
-    font:300 19px/1.6 var(--brand);letter-spacing:0.014em;
-    color:var(--bone);text-wrap:balance;
+    font:400 19px/1.6 var(--brand);letter-spacing:0.014em;
+    color:#fff;text-wrap:balance;
+    text-shadow:0 2px 22px rgba(6,6,8,0.82);
   }
   @media(max-width:1120px){
     /* ⚠️ centred with its line on the narrow bands, and a little smaller — placement here is still
