@@ -4804,15 +4804,31 @@
     /* ⭐ D327d: these ARE the film's defaults now, so this block sets nothing of its own. The
        properties stay in the shared rule so a future beat on a bright ground can move its ramp
        without a second selector. */
-    /* ⚠️ IT NAMES NO ROOM AND NO MATERIAL, the same discipline as the hero's trust line, and it
-       deliberately does NOT narrate the film's three beats. The longer version ("from the quarry to
-       the centre of your kitchen") tells the visitor exactly what the scroll buys, which is the
-       stronger answer to the bottleneck, but it spoils all three titles before they arrive. */
+    /* ⭐⭐⭐ **IT NAMES THE JOURNEY NOW — 23 August 2026 (D335).** Client: *"we need to add some
+       more details into that subtext… follow the slab from the most premium mountains of Europe and
+       Asia to all the quarries and then to your kitchen. So we have to have this luxury feel."*
+       ⭐ Three beats in his order — mountains, quarry, kitchen — which is the film's own arc, so the
+       line now tells the visitor exactly what the scroll buys. That was always the stronger answer
+       to the bounce rate; it was held back only because it spoiled the third title, and D326
+       withdrew that title.
+       ⛔ "the centre of your kitchen" IS STILL OUT: it was the withdrawn beat's own wording (D326)
+       and bringing it back here would restore by the side door what he removed.
+       ⚠️ **"EUROPE AND ASIA" IS HIS, AND IT IS TRUE OF EVERY ORIGIN THE SITE NAMES** — Italy and
+       Spain in Europe, India in Asia, in the four blurbs that name one at all. ⚠️ One stone in the
+       range, `patagonia`, is a Brazilian quartzite in the trade, though no page says so and its own
+       blurb names no country. Flagged to him rather than quietly narrowed. */
     html.cine-on .cine-hero .cine-hero-sub{
       margin:28px 0 0;font:300 17px/1.62 var(--brand);letter-spacing:0.014em;
-      color:rgba(244,241,234,0.96);max-width:430px;
-      /* ⚠️ AT 480px THIS BROKE 454 + 68 AND LEFT "kitchen." ALONE ON THE SECOND LINE. `balance`
-         evens the two, and the narrower measure stops the first line running past the headline. */
+      color:rgba(244,241,234,0.96);max-width:470px;
+      /* ⚠️ **470 IS MEASURED AGAINST THE NEW LINE, NOT INHERITED — D335.** The old cap was 430,
+         which the short version balanced onto two lines and the long one breaks onto THREE
+         (262/264/307). Swept in 20px steps: 450 is the threshold and everything from 450 to 560
+         resolves to the same balanced pair, **449 + 388**. 470 takes the threshold plus a margin,
+         so a font fallback or a metric shift cannot tip it back to three lines.
+         ⚠️ The earlier note here — "at 480 this broke 454 + 68 and left kitchen. alone" — was about
+         the SHORT copy and no longer applies; the new line has no orphan at any width in the sweep.
+         ⭐ Line 1 ends at x=550, inside the headline's 660 and beside the gold line's 453, so the
+         block still reads as one left-hung column. */
       text-wrap:balance;
       text-shadow:0 1px 16px rgba(6,6,8,0.85),0 1px 3px rgba(6,6,8,0.7);
     }
@@ -4825,8 +4841,16 @@
        ⛔ NOT a disc, ring or plate (§2 rule 11), and no box: it is not clickable, and dressing a
        non-control as a button is the one thing worse than being quiet. ⛔ Not a gold line across the
        top of anything (rule 7) — the rule is vertical. */
+    /* ⛔⛔ **THE ARROW IS OFF-CENTRE NOW, AND THAT REVERSES D327 — 23 August 2026 (D336).**
+       Client: *"maybe let's not have the animation start in the middle of scroll to begin. It can
+       be on the side if we want."* At D327f he asked for the opposite (*"maybe in the centre of
+       scroll to begin"*), and `inline-flex` + `align-items:center` is what delivered it.
+       ⭐ `flex-start` puts the shaft on the block's OWN left edge, so the headline, the invitation,
+       the word and the arrow all hang off one line at x=101 — the same edge the grade is anchored
+       to. Nothing else moves. ⭐ To put it beside the word instead: `flex-direction:row`,
+       `align-items:center`, and drop the shaft to ~34px. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:36px 0 0;display:inline-flex;flex-direction:column;gap:18px;align-items:center;
+      margin:36px 0 0;display:inline-flex;flex-direction:column;gap:18px;align-items:flex-start;
     }
     /* ⛔ THE WORD IS BONE, NOT GOLD, and that is deliberate after D327b. The headline's "starts
        here." is the gold on this frame; a second gold sixty pixels under it competes with the first
@@ -4848,61 +4872,56 @@
        and 0.74 — the first value written here — measured **2.79:1** and would have shipped under it.
        ⚠️ The figure ignores the rule's own `box-shadow`, which darkens what it sits on, so the real
        number is a little better than this. */
-    /* ⭐⭐⭐ **THE ARROW, THIRD DESIGN — D327f.** Client: *"that arrow should be even bigger, and
-       maybe in the centre of scroll to begin, or takes up more space… a better animation of the
-       arrow, something that's still on brand but looks very cool, and everything must be super
-       clear."*
-       ⭐⭐ **IT DRAWS ITSELF DOWNWARD.** A gold hairline is written from the word down, the head
-       arrives last at its foot, it holds long enough to be read as an arrow, then it goes and does
-       it again. The motion IS the instruction — nothing on the frame moves except a line going
-       down — and it is the most on-brand gesture available here, because a drawn hairline is the
-       vocabulary the whole site already uses for its rules and its corner arc.
-       ⛔ IT IS A CLIP, NOT A TRANSFORM, WHICH IS THE PART THAT MATTERS. `clip-path` reveals the
-       shaft AND the head together as one shape, so the silhouette is never wrong: the two previous
-       designs failed because a moving PART (a chevron running down a channel) reads as a crossbar
-       the moment the animation is frozen — which is every screenshot he sees.
-       ⚠️ 72px against 54, and the cue is `inline-flex` so it shrinks to the width of its own word
-       and the arrow centres UNDER "SCROLL TO BEGIN" rather than lining up with its first letter. */
-    /* ⭐⭐⭐ **THE ARROW IS ALWAYS WHOLE; ONLY THE LIGHT MOVES.** Three layers, and the split is the
-       entire point:
-         `i`         the shaft, always there, faint gold
-         `i::after`  the head, always there, solid gold, never animated and never clipped
-         `i::before` the bright stroke, the ONLY thing that moves, drawing top to bottom
-       ⛔⛔ **THIS IS THE THIRD ARROW AND THE FIRST TWO BOTH FAILED THE SAME WAY: THEY WERE ONLY AN
-       ARROW PART OF THE TIME.** A chevron travelling down a channel is a crossbar when you freeze
-       it; a single shape revealed by a clip is half a line when you freeze it. He reviews from
-       screenshots, so a design that only reads while in motion does not read at all. Split like
-       this the silhouette is a complete arrow in EVERY frame, and the animation is pure accent.
-       ⚠️ The clip lives on `::before`, which is 2px wide and holds nothing that overflows, so it
-       needs no negative insets — the trap that ate the head when the clip was on `i` itself. */
+    /* ⭐⭐⭐ **THE ARROW, FOURTH DESIGN — 23 August 2026 (D336). THE WHOLE ARROW TRAVELS NOW.**
+       Client: *"I want you to make the arrow a little bit bigger and make it animate differently as
+       we still haven't found the right animation for that."*
+       ⭐⭐ **EVERY DESIGN SO FAR ANIMATED A PART OF THE ARROW; THIS ONE ANIMATES THE ARROW.**
+         1  a chevron running down a channel   — frozen, a crossbar on a line
+         2  one shape revealed by a clip       — frozen, half a line
+         3  a bright stroke drawing down a static shaft (D327f) — always whole, and he still says no
+       ⭐ So the silhouette is now fixed and COMPLETE — shaft plus head, one solid gold object — and
+       the only thing that changes is where it is. It reaches down, settles, and floats back. There
+       is no state in the cycle where it is anything other than a finished arrow at full strength,
+       which is the test that killed the first two: **he reviews from screenshots.**
+       ⭐⭐ **THE TIMING IS ASYMMETRIC ON PURPOSE** — a long rest, a decisive descent, a settle, then
+       a slower float back. A symmetric bob reads as a bouncing UI widget; this reads as a gesture,
+       which is the "luxury feel" he asked for in the same breath as the copy.
+       ⛔ **OPACITY IS CONSTANT AT FULL, AND THAT IS A MEASUREMENT, NOT A PREFERENCE.** D327f fixed
+       the floor at 0.86 because gold over this graded picture (p97 74 under the shaft) reads
+       3.79:1 at full and 3.22:1 at 0.86, against the 3.0 a non-text graphic needs. Fading the
+       travel would spend that margin for nothing, and a screenshot caught at the dim end would be
+       the weakest frame he sees. Nothing fades; the contrast is the peak figure in every frame.
+       ⚠️ **`transform` ONLY, WHICH IS WHY IT COSTS NOTHING** — no layout, no paint, and `will-change`
+       keeps it on its own layer beside a scroll-driven film (his standing "extremely smooth" rule).
+       ⛔ Not a disc, ring or plate (§2 rule 11), no box, and the rule is vertical, never a bright
+       line across the top of anything (rule 7).
+       ⚠️ 88px against 72, head 23 against 19 — "a little bit bigger", not a different object. */
     html.cine-on .cine-hero .cine-hero-cue i{
-      width:2px;height:72px;border-radius:2px;display:block;position:relative;
-      background:rgba(198,166,100,0.24);
-      filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
-    }
-    html.cine-on .cine-hero .cine-hero-cue i::before{
-      content:"";position:absolute;inset:0;border-radius:2px;
+      width:2px;height:88px;border-radius:2px;display:block;position:relative;
       background:linear-gradient(to bottom,
-        rgba(198,166,100,0.35) 0%, var(--cineGoldMid,#C6A664) 45%, var(--cineGoldMid,#C6A664) 100%);
-      animation:cineHeroCue 2.7s var(--ease) infinite;
+        rgba(198,166,100,0.30) 0%, var(--cineGoldMid,#C6A664) 42%, var(--cineGoldMid,#C6A664) 100%);
+      filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
+      will-change:transform;
+      animation:cineHeroCue 3.2s cubic-bezier(.33,0,.16,1) infinite;
     }
     /* the head, fixed at the foot and always solid — an open chevron, no fill, no container (rule 11) */
     html.cine-on .cine-hero .cine-hero-cue i::after{
-      content:"";position:absolute;left:50%;bottom:-1px;width:19px;height:19px;margin-left:-10.5px;
+      content:"";position:absolute;left:50%;bottom:-1px;width:23px;height:23px;margin-left:-12.5px;
       transform:rotate(45deg);
       border-right:2px solid var(--cineGoldMid,#C6A664);
       border-bottom:2px solid var(--cineGoldMid,#C6A664);
     }
-    /* the stroke draws down, holds most of the cycle, then goes out at the foot and starts again */
+    /* rest, reach down, settle, float back — see the note above for why nothing fades */
     @keyframes cineHeroCue{
-      0%    {clip-path:inset(0 0 100% 0);opacity:0}
-      8%    {clip-path:inset(0 0 92% 0);opacity:1}
-      42%,82%{clip-path:inset(0 0 0 0);opacity:1}
-      96%,100%{clip-path:inset(0 0 0 0);opacity:0}
+      0%,12%   {transform:translateY(0)}
+      46%,62%  {transform:translateY(14px)}
+      92%,100% {transform:translateY(0)}
     }
   }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
-    html.cine-on .cine-hero .cine-hero-cue i::before{animation:none;clip-path:none;opacity:1}
+    /* ⚠️ the arrow itself is the animation now, so this stops the travel and leaves it at rest —
+       a complete arrow either way, which is the point of the fourth design */
+    html.cine-on .cine-hero .cine-hero-cue i{animation:none;transform:none}
   }
 
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
@@ -9178,7 +9197,13 @@
              bit more in the subtext."* Naming the kitchen used to spoil the third title; that beat
              was withdrawn, so the line is free to say what the scroll actually buys — which is the
              whole answer to the bounce rate he is worried about. -->
-        <p class="cine-hero-sub">Follow the slab from the quarry to your kitchen.</p>
+        <!-- ⭐ HIS ALTERNATES, PARKED — he is still shaping this line:
+               "Follow the slab from the most premium mountains of Europe and Asia, through the quarry, to your kitchen."
+               "Follow the slab from the mountains of Europe and Asia, through the quarry, to your kitchen."
+             ⭐ "finest" carries his "most premium" in the site's own register — "premium" is a
+               sales word and rule 9 keeps them off the page; "finest" is the British form of the
+               same claim and it is evocative rather than checkable. -->
+        <p class="cine-hero-sub">Follow the slab from the finest mountains of Europe and Asia, through the quarry, to your kitchen.</p>
         <div class="cine-hero-cue" aria-hidden="true"><span>Scroll to begin</span><i></i></div>
       </div>
     </div>
