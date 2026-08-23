@@ -75,3 +75,9 @@ Frame images/
 # push, which is the check to run on any new dot-folder of his originals.
 # ⛔ DO NOT DELETE THEM — re-exporting an overlay needs the original, never the WebP or the video.
 **/assets/video/.plates-*/src/
+# ⚠️ AND WHEN THE STILLS ARRIVE IN THE SAME DROP AS THE MASTERS (D333, 23 Aug). `F1 FIXED SLAB.png`
+# and `F1 SLAB mobile.png` landed beside the two `TC video … final fix.mov` masters and were filed
+# with them in `.src-2026-08-23/` — where the `.plates-*/src/` rule above cannot see them and the
+# `TC*` prefix rule never matched their names. By LOCATION this time, not by name: any PNG inside
+# a `.src-*` master folder is a master still that nothing serves.
+**/assets/video/.src-*/*.png

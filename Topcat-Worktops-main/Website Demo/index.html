@@ -4583,6 +4583,26 @@
   html.cine-on .cine .hero{--curveR:calc(48px * var(--cineCurve,1))}
   html.cine-on .cine .hero::after{opacity:var(--cineCurve,1)}
 
+  /* ═════ THE OPENING OVERLAY — 22 August 2026 (D330), third build 23 August (D333) ═══════════
+     Client: *"here are the two new overlays for the desktop and for the mobile version. So this is
+     only the overlay of the very first frame, so make sure it matches up perfectly and doesn't
+     morph too much when it moves into the next frame… But this is the very first frame, and it
+     must be the first thing that they see when the user loads in."*
+     ⭐ ONE overlay, at t=0, and the phone has one too — he supplied a vertical still for it.
+     ⛔ **UNDER THE VEIL AND THE GRADE, OVER THE VIDEO.** The overlay is picture, so everything that
+     dresses the picture must still dress it: `.hero-shade` and `.hero-navgrade` (z 1) and
+     `.cine-edge` (z 2) all sit above it. It takes z-index 0, the same as `.hero-vid`, and wins on
+     SOURCE ORDER because it is written after. ⚠️ Do not "clarify" that with a z-index of 1 — it
+     would jump the veil and the film would stop fading at the end.
+     ⚠️ NO `transition`, AND SINCE D333 THAT MATTERS TWICE: the scrub writes a HARD CUT the moment
+     the displayed frame leaves f0 — his instruction, replacing the D331 fade — and any CSS
+     transition here would quietly turn the instant he asked for back into the fade he rejected. */
+  .cine-plate{display:none}
+  html.cine-on .cine-plate{
+    display:block;position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+  }
+
   /* ═════ THE FILM'S OWN COPY — 18 August 2026 (D316) ═══════════════════════════════════════
      Three titles that sit IN the film and are passed by the camera rather than laid over it.
      ⛔ Base state is `display:none`: every rule here hangs off `cine-on`, so a browser that
@@ -8988,12 +9008,12 @@
            film and change the stamp in the SAME edit, on the poster as well — the slab tiles' own
            rule, and the only thing between a re-cut and a week of the old one. -->
       <video class="hero-vid" id="heroVid" playsinline muted preload="none"
-             data-src="/assets/video/topcat-intro-1920.mp4?v=2"
-             data-poster="/assets/video/topcat-intro-poster.webp?v=3"
-             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=2"
-             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=3"
-             data-src-phone="/assets/video/topcat-intro-608.mp4?v=2"
-             data-poster-phone="/assets/video/topcat-intro-608-poster.webp?v=3"
+             data-src="/assets/video/topcat-intro-1920.mp4?v=3"
+             data-poster="/assets/video/topcat-intro-poster.webp?v=4"
+             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=3"
+             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=4"
+             data-src-phone="/assets/video/topcat-intro-608.mp4?v=3"
+             data-poster-phone="/assets/video/topcat-intro-608-poster.webp?v=4"
              width="1920" height="1080" aria-hidden="true" tabindex="-1"
              disablepictureinpicture disableremoteplayback></video>
       <!-- ⭐⭐ **THE FILM'S TWO HEAVY URLS ARE ATTACHED HERE, IN PLACE, AND THAT IS THE POINT.**
@@ -9023,6 +9043,21 @@
        v.poster=(p&&d.posterPhone)||(n&&d.posterNarrow)||d.poster; v.preload='auto';
        v.src=(p&&d.srcPhone)||(n&&d.srcNarrow)||d.src;})();
       </script>
+      <!-- ⭐⭐⭐ THE OPENING OVERLAY — third build, 23 August 2026 (D333). HIS OWN STILLS AT
+           LAST: the film's opening was re-rendered and the stills with it, and this time they are
+           the SAME render as the film's first frame — `F1 FIXED SLAB.png` measures 0.0147 against
+           the desktop master's f0, `F1 SLAB mobile.png` 0.0306 against the phone's, where D330's
+           pair sat at 0.301/0.143 and morphed. Shipped at the film's own resolution (1920/864/608)
+           so the D333 instant cut has no crisp→soft jump; still cleaner than the film's CRF-25
+           first frame, which is the point. Pipeline: `.plates-2026-08-23/make_plates.py`.
+           ⭐ **IT IS ALSO THE POSTER**, which is what makes it "the first thing they see" — first
+           paint is already this picture and nothing swaps when the overlay attaches.
+           ⛔ THE SAME phone → narrow → base CASCADE the film uses, so a band can never end up with
+           another band's crop. -->
+      <div class="cine-plate" id="cinePlate" aria-hidden="true"
+           data-src="/assets/video/plates/plate-f0.webp?v=3"
+           data-src-narrow="/assets/video/plates/tablet/plate-f0.webp?v=3"
+           data-src-phone="/assets/video/plates/plate-f0-phone.webp?v=3"></div>
       <div class="hero-shade"></div>
       <!-- ⭐ D313: the film's own top grade. It carries the SAME `--navScrim` stops the hero's veil
            carries, at a strength the scrub works out from how bright the picture actually is under
@@ -16171,6 +16206,42 @@ if(faqIndex && panel && faqBody){
   const stage=()=>{ if(!hero.classList.contains('loaded'))
     requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
 
+  /* ⭐⭐⭐ THE OPENING OVERLAY — third build, 23 August 2026 (D333). One still, at f0, every band.
+     ⭐⭐ **HIS STILLS ARE THE PLATES NOW, AND THE MEASUREMENT IS WHY THAT IS FINALLY SAFE.** The
+     film's opening was re-rendered (new footage t=0..~10.25, byte-identical after) and the stills
+     with it: `F1 FIXED SLAB.png` measures **0.0147** against the desktop master's f0 and
+     `F1 SLAB mobile.png` **0.0306** against the phone's — the SAME render, where D330's stills
+     sat at 0.301/0.143 with trees and veining in different places, which was the morph he
+     screenshotted at D331. Against the shipped encodes the plates read 0.032/0.031/0.046 —
+     encode noise, nothing to jump. History: `.plates-2026-08-22/` (D330–D332), pipeline now
+     `.plates-2026-08-23/make_plates.py`.
+     ⛔⛔⛔ **THE FADE IS GONE — AN INSTANT CUT, ON HIS INSTRUCTION (D333):** *"the overlay image
+     needs to go away instantly when the user scrolls instead of a fade because the fade causes a
+     blurriness over it."* The blur was structural, not a tuning miss: a dissolve blends a frozen
+     f0 with a film that is already elsewhere — one frame of camera motion measures rms 0.054 from
+     f0, three frames 0.106 — so ANY fade width ghosts the trees. The cut lands at half a frame,
+     the first instant the picture changes, where a jump between adjacent frames is what film
+     looks like anyway. Cutting between two copies of the SAME frame 0.03 apart is invisible.
+     ⛔⛔ THE CUT IS KEYED TO THE FRAME ON SCREEN, NOT THE ONE BEING ASKED FOR — carried from D331:
+     `want` is the eased target and the decoder trails it while the page moves, so cutting on the
+     target drops the plate while the viewer still SEES f0 and flashes the softer web-encode frame
+     for nothing. `currentTime` is what the viewer is looking at; scrolling back to the top brings
+     the plate back the same way, at the same half-frame line. */
+  const plateEl=document.getElementById('cinePlate');
+  const PLATE_CUT=0.5;                  // film FRAMES — the first instant the displayed frame moves
+  let plateO=-1, plateUrl='';
+  /* ⛔ the same phone → narrow → base cascade the film and the story lines use */
+  const plateSrc=()=>{const d=plateEl.dataset;
+    return (mPhone.matches&&d.srcPhone)||(mNarrow.matches&&d.srcNarrow)||d.src||'';};
+  function plate(t){
+    if(!plateEl)return;
+    const url=plateSrc();
+    if(url&&url!==plateUrl){ plateUrl=url; plateEl.style.backgroundImage="url('"+url+"')"; }
+    const shown=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t;
+    const o=(shown*FPS<PLATE_CUT)?1:0;
+    if(o!==plateO){ plateO=o; plateEl.style.opacity=o; }
+  }
+
   function measure(){
     const cs=getComputedStyle(cine);
     const h=parseFloat(cs.getPropertyValue('--cineHold'));
@@ -16458,7 +16529,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -16475,6 +16546,7 @@ if(faqIndex && panel && faqBody){
     curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
     heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
+    plate(want);      /* his still of f0, cut the instant the picture moves (D333) */
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
@@ -16515,6 +16587,7 @@ if(faqIndex && panel && faqBody){
     cine.style.removeProperty('height');
     retimeStory();
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
+    plate(want);      /* ⛔ a band change swaps the overlay's crop as well as the film's */
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;
     onScroll();
@@ -16546,6 +16619,14 @@ if(faqIndex && panel && faqBody){
      crossing 1120, and the phone's cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
   if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
+  /* ⭐ THE OVERLAY HAS NO APPROACH TO TRIGGER IT — the page OPENS on its frame — so it is painted
+     once after `load`, which is after first paint and after the poster is already on screen.
+     ⛔ And it has to paint itself: at rest the rAF loop has stopped, so nothing would write the
+     opacity until the first scroll and the overlay would arrive invisible. */
+  addEventListener('load',()=>{
+    const w=()=>plate(want);
+    if(window.requestIdleCallback)requestIdleCallback(w,{timeout:1500}); else setTimeout(w,300);
+  });
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();

@@ -5641,6 +5641,42 @@ if(faqIndex && panel && faqBody){
   const stage=()=>{ if(!hero.classList.contains('loaded'))
     requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('loaded'))); };
 
+  /* ⭐⭐⭐ THE OPENING OVERLAY — third build, 23 August 2026 (D333). One still, at f0, every band.
+     ⭐⭐ **HIS STILLS ARE THE PLATES NOW, AND THE MEASUREMENT IS WHY THAT IS FINALLY SAFE.** The
+     film's opening was re-rendered (new footage t=0..~10.25, byte-identical after) and the stills
+     with it: `F1 FIXED SLAB.png` measures **0.0147** against the desktop master's f0 and
+     `F1 SLAB mobile.png` **0.0306** against the phone's — the SAME render, where D330's stills
+     sat at 0.301/0.143 with trees and veining in different places, which was the morph he
+     screenshotted at D331. Against the shipped encodes the plates read 0.032/0.031/0.046 —
+     encode noise, nothing to jump. History: `.plates-2026-08-22/` (D330–D332), pipeline now
+     `.plates-2026-08-23/make_plates.py`.
+     ⛔⛔⛔ **THE FADE IS GONE — AN INSTANT CUT, ON HIS INSTRUCTION (D333):** *"the overlay image
+     needs to go away instantly when the user scrolls instead of a fade because the fade causes a
+     blurriness over it."* The blur was structural, not a tuning miss: a dissolve blends a frozen
+     f0 with a film that is already elsewhere — one frame of camera motion measures rms 0.054 from
+     f0, three frames 0.106 — so ANY fade width ghosts the trees. The cut lands at half a frame,
+     the first instant the picture changes, where a jump between adjacent frames is what film
+     looks like anyway. Cutting between two copies of the SAME frame 0.03 apart is invisible.
+     ⛔⛔ THE CUT IS KEYED TO THE FRAME ON SCREEN, NOT THE ONE BEING ASKED FOR — carried from D331:
+     `want` is the eased target and the decoder trails it while the page moves, so cutting on the
+     target drops the plate while the viewer still SEES f0 and flashes the softer web-encode frame
+     for nothing. `currentTime` is what the viewer is looking at; scrolling back to the top brings
+     the plate back the same way, at the same half-frame line. */
+  const plateEl=document.getElementById('cinePlate');
+  const PLATE_CUT=0.5;                  // film FRAMES — the first instant the displayed frame moves
+  let plateO=-1, plateUrl='';
+  /* ⛔ the same phone → narrow → base cascade the film and the story lines use */
+  const plateSrc=()=>{const d=plateEl.dataset;
+    return (mPhone.matches&&d.srcPhone)||(mNarrow.matches&&d.srcNarrow)||d.src||'';};
+  function plate(t){
+    if(!plateEl)return;
+    const url=plateSrc();
+    if(url&&url!==plateUrl){ plateUrl=url; plateEl.style.backgroundImage="url('"+url+"')"; }
+    const shown=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t;
+    const o=(shown*FPS<PLATE_CUT)?1:0;
+    if(o!==plateO){ plateO=o; plateEl.style.opacity=o; }
+  }
+
   function measure(){
     const cs=getComputedStyle(cine);
     const h=parseFloat(cs.getPropertyValue('--cineHold'));
@@ -5928,7 +5964,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -5945,6 +5981,7 @@ if(faqIndex && panel && faqBody){
     curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
     heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
+    plate(want);      /* his still of f0, cut the instant the picture moves (D333) */
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
@@ -5985,6 +6022,7 @@ if(faqIndex && panel && faqBody){
     cine.style.removeProperty('height');
     retimeStory();
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
+    plate(want);      /* ⛔ a band change swaps the overlay's crop as well as the film's */
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;
     onScroll();
@@ -6016,6 +6054,14 @@ if(faqIndex && panel && faqBody){
      crossing 1120, and the phone's cut would have stayed attached on a tablet. */
   if(mNarrow.addEventListener)mNarrow.addEventListener('change',sync);
   if(mPhone.addEventListener)mPhone.addEventListener('change',sync);
+  /* ⭐ THE OVERLAY HAS NO APPROACH TO TRIGGER IT — the page OPENS on its frame — so it is painted
+     once after `load`, which is after first paint and after the poster is already on screen.
+     ⛔ And it has to paint itself: at rest the rAF loop has stopped, so nothing would write the
+     opacity until the first scroll and the overlay would arrive invisible. */
+  addEventListener('load',()=>{
+    const w=()=>plate(want);
+    if(window.requestIdleCallback)requestIdleCallback(w,{timeout:1500}); else setTimeout(w,300);
+  });
   if(reduce.addEventListener)reduce.addEventListener('change',e=>{ if(e.matches)fail(); });
   sync();
 })();
