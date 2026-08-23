@@ -4994,15 +4994,23 @@
      17px, the same colour and tracking — so the two screens rhyme in size as well as in height.
      ⚠️ `max-width` in its own right: the line above is `min(21ch,44vw)` and `ch` is measured on a
      66px serif, so inheriting that measure would run 17px prose to 633px and make a ribbon of it. */
+  /* ⭐ **19px AND A WIDER MEASURE — 23 August 2026 (D342), because the frame was too empty.**
+     Client: *"the second layer of text has to take up more space. It should be longer. Currently
+     there's way too much empty space."* Longer copy is most of the answer and this is the rest:
+     19px in a 540px measure against 17 in 470.
+     ⚠️ **IT IS DELIBERATELY NOT THE FIRST SCREEN'S 17px ANY MORE, AND ONLY THE TITLES MATCH NOW.**
+     His instruction was that the beat's TITLE take the first screen's size (D341); the first screen
+     is a resting frame a visitor reads at leisure, while a beat is on screen for nine seconds over
+     moving picture, and it has more to say in them. */
   html.cine-on .cine-line .cine-line-sub{
-    display:block;margin:22px 0 0;max-width:470px;
-    font:300 17px/1.62 var(--brand);letter-spacing:0.014em;
+    display:block;margin:24px 0 0;max-width:540px;
+    font:300 19px/1.6 var(--brand);letter-spacing:0.014em;
     color:rgba(244,241,234,0.96);text-wrap:balance;
   }
   @media(max-width:1120px){
     /* ⚠️ centred with its line on the narrow bands, and a little smaller — placement here is still
        his open question, so this only keeps the subtitle from arriving mis-sized. */
-    html.cine-on .cine-line .cine-line-sub{margin-inline:auto;font-size:15px;margin-top:16px}
+    html.cine-on .cine-line .cine-line-sub{margin-inline:auto;font-size:16px;margin-top:18px;max-width:none}
   }
 
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is

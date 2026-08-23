@@ -5016,15 +5016,23 @@
      17px, the same colour and tracking — so the two screens rhyme in size as well as in height.
      ⚠️ `max-width` in its own right: the line above is `min(21ch,44vw)` and `ch` is measured on a
      66px serif, so inheriting that measure would run 17px prose to 633px and make a ribbon of it. */
+  /* ⭐ **19px AND A WIDER MEASURE — 23 August 2026 (D342), because the frame was too empty.**
+     Client: *"the second layer of text has to take up more space. It should be longer. Currently
+     there's way too much empty space."* Longer copy is most of the answer and this is the rest:
+     19px in a 540px measure against 17 in 470.
+     ⚠️ **IT IS DELIBERATELY NOT THE FIRST SCREEN'S 17px ANY MORE, AND ONLY THE TITLES MATCH NOW.**
+     His instruction was that the beat's TITLE take the first screen's size (D341); the first screen
+     is a resting frame a visitor reads at leisure, while a beat is on screen for nine seconds over
+     moving picture, and it has more to say in them. */
   html.cine-on .cine-line .cine-line-sub{
-    display:block;margin:22px 0 0;max-width:470px;
-    font:300 17px/1.62 var(--brand);letter-spacing:0.014em;
+    display:block;margin:24px 0 0;max-width:540px;
+    font:300 19px/1.6 var(--brand);letter-spacing:0.014em;
     color:rgba(244,241,234,0.96);text-wrap:balance;
   }
   @media(max-width:1120px){
     /* ⚠️ centred with its line on the narrow bands, and a little smaller — placement here is still
        his open question, so this only keeps the subtitle from arriving mis-sized. */
-    html.cine-on .cine-line .cine-line-sub{margin-inline:auto;font-size:15px;margin-top:16px}
+    html.cine-on .cine-line .cine-line-sub{margin-inline:auto;font-size:16px;margin-top:18px;max-width:none}
   }
 
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is
@@ -9273,31 +9281,57 @@
            ⚠️ **IT IS ALSO SAFER UNDER RULE 12 THAN WHAT IT REPLACES.** "No two slabs are the same"
            is a blanket absolute; "even two slabs cut from the same block are veined differently" is
            a specific, sourced statement about natural stone.
+           ⛔⛔⛔ **AND "CUT FOR YOUR KITCHEN" WAS WRONG TOO — HIS SECOND CATCH, 23 Aug (D342).**
+           Client: *"we can't say cut for your kitchen because they don't only offer kitchens."* He
+           is right and his own service list proves it: fireplaces, vanity tops and dining tables
+           are all live pages. **"your home" is the widest true word** and it costs the line nothing.
+           ⭐ **AND IT IS LONGER NOW, ON HIS INSTRUCTION** — *"the second layer of text has to take up
+           more space. It should be longer… there's way too much empty space."* It carries three
+           things instead of one: the pattern is its own, the piece is cut and finished for this
+           house (D202, in-house), and it lasts. ⚠️ **"patterns", NOT "veining"** — every stone has a
+           face, only some have veins, which was D341's whole lesson.
+           ⚠️ **"decades" IS HIS WORD AND IT IS DEFENSIBLE, "for life" WOULD NOT BE.** Stone
+           worktops routinely outlast the kitchens around them; the ten year guarantee is a separate
+           promise and is not what this line is claiming (rule 12).
            ⭐ His alternates, parked: "The slab you choose is completely unique." ·
-           "The veining and patterning on every slab is one of a kind." (⛔ veining — see above) ·
+           "The veining and patterning on every slab is one of a kind." (⛔ veining) ·
            "Even two slabs cut from the same block are veined differently." (D340's, same fault) ·
-           "Built to last for many years." · "Cut for your kitchen, and built to last for years." -->
+           "Cut for your kitchen, and made to last for many years." (D341's, ⛔ kitchen-only) ·
+           "One of a kind patterns on a stone that's built to last you decades." -->
       <p class="cine-line" data-at="15.0" data-out="24.5" data-vpos="low" data-vpos-wide="hero"
          data-at-narrow="21.0" data-out-narrow="25.3" data-vpos-narrow="top"
-         data-at-phone="16.2" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">Cut for your kitchen, and made to last for many years.</span></p>
-      <!-- ⛔⛔⛔ **THE THIRD BEAT IS WITHDRAWN — 22 August 2026 (D326).** Client, on a screenshot of the
-           closing kitchen shot with the words over it: *"Remove the text that comes up on this
-           part."*
-           ⭐ PARKED, NOT DELETED, and this is the whole of it — restoring the beat is putting this
-           one line back, nothing else:
-
-               <p class="cine-line" data-at="31.5" data-out="39.0" data-vpos="low">Then the centre of your kitchen.</p>
-
-           ⚠️ REMOVED AT EVERY BAND, not desktop-only, and that is a judgement worth naming. The line
-           carried no `-narrow` or `-phone` timing of its own, so it was one beat of the story rather
-           than a per-device placement; leaving it on the phone and the tablet would have given them
-           a beat the desktop no longer tells, for no reason either could see. ⭐ If he only meant the
-           desktop, the line above goes back with a `data-at-narrow`/`data-at-phone` pair.
-           ⭐ THE CHAIN STILL READS, and the closing shot now runs to the hero in silence:
-               Your worktop begins in a mountain. -> Then one slab, chosen for its veining.
-               -> *Surfaces worth building around*
-           ⚠️ The hero's ink still rises at INK_AT 0.93 (t=41.1), so nothing moved to cover the gap;
-           there is simply more dark before the headline than there was. -->
+         data-at-phone="16.2" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">One of a kind patterns in stone, cut and finished for your home, built to last for decades.</span></p>
+      <!-- ⭐⭐⭐ **THE THIRD BEAT IS BACK, REWRITTEN — 23 August 2026 (D343). ⚠️ THIS REVERSES D326.**
+           Client: *"in the second screenshot is where I think we should have another layer of text
+           in that same position the other text is in. Just talking about the stone sets the feel of
+           the room, or the colour of the room, the vibe of the room. Research the best words… and
+           then it will end with surfaces worth building around just so the story comes together."*
+           ⛔ **D326 REMOVED A BEAT FROM EXACTLY THIS WINDOW** — *"Remove the text that comes up on
+           this part"* — so this is a reversal, not a restoration, and the line it removed is NOT
+           what comes back. That one was **"Then the centre of your kitchen."**, which is dead twice
+           over: it is the wording he withdrew, and it is kitchen-only, which D342 has just ruled out.
+           ⭐⭐ **THE TIMING IS HIS CUE, MEASURED.** *"Just as the lights come down from the roof in
+           the video, the next text comes up."* The pendants descend and light between **t=29 and
+           t=31** on the shipped cut, so the beat opens at **31.5**, which is also the window the
+           withdrawn line used. It closes at 39.0, and the hero's ink still rises at INK_AT 0.93
+           (t=41.1), so there are two seconds of dark between the last word and the headline.
+           ⚠️ **THE COPY AREA IS BRIGHT HERE AND THE WASH IS DOING THE WORK, NOT THE INK** — measured
+           p97 **173–201** across the whole window at the block's own height, which is D313's trap
+           and exactly what `.cine-line::before` was built for. `bandGrade()` samples it per frame.
+           ⭐ **RESEARCHED, AND THE WORDS ARE THE TRADE'S OWN.** Designers describe a stone surface as
+           *setting the tone* of a room and *anchoring* it, with the colours and finishes chosen
+           around it. That is precisely the idea the hero's own line closes on, so the chain now
+           lands rather than stopping:
+               Your worktop starts here. -> The slab you choose is unique.
+               -> The stone sets the tone of the room. -> *Surfaces worth building around*
+           ⛔ "room", NEVER "kitchen" (D342) — fireplaces, vanity tops and dining tables are all live.
+           ⭐ Gold takes the closing phrase, the same pattern as the other two beats.
+           ⚠️ ONE BEAT OF THE STORY, so it carries no per-band timing and every band gets it — the
+           same judgement D326 made when it took the old line off every band. Verified on the phone's
+           own cut: its top band reads p97 **66–98** through this window, so the beat lands dark
+           there. ⭐ **Its placement on the narrow bands is still his open conversation.** -->
+      <p class="cine-line" data-at="31.5" data-out="39.0" data-vpos="low" data-vpos-wide="hero"
+         data-vpos-narrow="top">The stone sets the tone of <em>the room.</em><span class="cine-line-sub">The colours, the finishes and the light are all chosen to sit with it.</span></p>
 
       <!-- ⭐⭐⭐ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325). Client: *"the first frame
            technically needs to act like a second hero section. So the text needs to show in that open
@@ -9340,8 +9374,16 @@
                "Follow the slab from the mountains of Europe and Asia, through the quarry, to your kitchen."
              ⭐ "finest" carries his "most premium" in the site's own register — "premium" is a
                sales word and rule 9 keeps them off the page; "finest" is the British form of the
-               same claim and it is evocative rather than checkable. -->
-        <p class="cine-hero-sub">Follow the slab from the finest mountains of Europe and Asia, through the quarry, to your kitchen.</p>
+               same claim and it is evocative rather than checkable.
+             ⛔⛔ **"THROUGH THE QUARRY" WAS WRONG ABOUT HIS OWN FILM — HIS CATCH, 23 Aug (D342).**
+               Client: *"the video doesn't go through a quarry… we can't say through the quarry."*
+               He is right, and it is visible in the first frame: the film OPENS at the quarry face
+               and never travels through one, so "through" narrated a stage that does not exist.
+               ⭐ "out of the quarry and into your kitchen" keeps his three beats and his sequence
+               (he offered *"from twice"*), and reads better than the repetition would.
+             ⚠️ "your kitchen" STAYS HERE and is not the same fault as "cut for your kitchen" in the
+               slab beat: this line describes what the FILM does, and the film ends in a kitchen. -->
+        <p class="cine-hero-sub">Follow the slab from the finest mountains of Europe and Asia, out of the quarry and into your kitchen.</p>
         <!-- ⭐⭐⭐ THE ARROW IS ONE CONNECTED PATH NOW — 23 August 2026 (D337). Client: *"can we at
              least connect the arrow tip to the point of the arrow just to make it look better?"* The
              CSS build could not: a 2px shaft and a rotated square are two objects that OVERLAP, and
