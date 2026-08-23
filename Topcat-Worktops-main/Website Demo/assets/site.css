@@ -4857,7 +4857,7 @@
        to. Nothing else moves. ⭐ To put it beside the word instead: `flex-direction:row`,
        `align-items:center`, and drop the shaft to ~34px. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:36px 0 0;display:inline-flex;flex-direction:column;gap:18px;align-items:flex-start;
+      margin:36px 0 0;display:inline-flex;flex-direction:column;gap:26px;align-items:flex-start;
     }
     /* ⛔ THE WORD IS BONE, NOT GOLD, and that is deliberate after D327b. The headline's "starts
        here." is the gold on this frame; a second gold sixty pixels under it competes with the first
@@ -4879,80 +4879,115 @@
        and 0.74 — the first value written here — measured **2.79:1** and would have shipped under it.
        ⚠️ The figure ignores the rule's own `box-shadow`, which darkens what it sits on, so the real
        number is a little better than this. */
-    /* ⭐⭐⭐ **THE ARROW, FIFTH DESIGN — 23 August 2026 (D337). LIGHT TRAVELS THROUGH THE METAL.**
-       Client: *"what you're doing is very plain, and it's fine, but it can be better… I just wanna a
-       little bit more of a premium animation. But first, research it and see if you find something."*
-       ⭐⭐ **RESEARCHED, AND THE RESEARCH MOSTLY RULED THINGS OUT.** The published vocabulary for a
-       scroll cue is three families: a bouncing chevron, a `stroke-dashoffset` self-draw, and a
-       glow. ⛔ The first two are exactly the two that already failed here — a moving part reads as a
-       crossbar frozen, and a self-draw is half a line frozen — and **he reviews from screenshots**.
-       The third is the one worth having, and it is also the only one that is on-brand: this is a
-       gold-and-marble business, and light moving across metal is what metal DOES. The site already
-       speaks it — the dividers carry a glint that travels the line.
-       ⭐⭐⭐ **SO THE SPLIT IS: THE ARROW IS ALWAYS WHOLE AND AT FULL SILHOUETTE, AND THE ANIMATION IS
-       A HIGHLIGHT PASSING THROUGH IT.** Two copies of the same path — the base at 0.62 gold, and a
-       bright copy masked by a soft 56px window that travels from above the shaft, down the whole
-       length, and out through the point. Frozen at any instant it is a complete gold arrow with a
-       sheen somewhere on it, which is a better still than any previous design produced.
-       ⛔⛔ **D327f's BRIGHT STROKE ONLY LIT THE SHAFT — THE HEAD WAS A SEPARATE ELEMENT AND NEVER
-       ANIMATED.** That is why it read as a lit line with a dead chevron under it rather than as one
-       object catching light. One path fixes the animation and his "connect the tip" ask together.
-       ⭐ **THE DIP IS THE SECOND HALF OF THE GESTURE.** As the light reaches the point at ~59% of
-       the cycle, the whole arrow gives 3px and settles back — the light falls through and the arrow
-       answers it. A 14px bob on its own was the plain thing he is objecting to; 3px under a
-       travelling highlight reads as weight, not as a bouncing widget.
-       ⚠️ **`mask-position` IS NOT COMPOSITOR-ACCELERATED AND IT DOES NOT MATTER HERE**: the element
-       is 32x96 CSS px, so a repaint is ~3k px against a scroll-driven film, and it touches no
-       layout. The dip beside it IS `transform`, on its own layer. His "extremely smooth" rule is
-       about the scrub, and nothing here goes near it.
-       ⛔ Not a disc, ring or plate (rule 11) — a halo is light, not a container. */
+    /* ⭐⭐⭐ **THE ARROW — LIGHT TRAVELS THROUGH THE METAL (D337), REBUILT FOR SMOOTHNESS (D339).**
+       ⭐⭐ **THE DESIGN IS THE ONE HE LIKED AND IT IS UNCHANGED**: the arrow is always whole at full
+       silhouette, and the animation is a highlight passing through it, because the research put
+       every other family on the rejected pile — a bouncing chevron and a `stroke-dashoffset`
+       self-draw are the two that already failed here, both for the same reason (**he reviews from
+       screenshots**, and each is only an arrow part of the time). Light moving across metal is the
+       one that is also on-brand: this is a gold business and the dividers already carry a glint.
+       ⛔⛔⛔ **BUT IT GLITCHED, AND THE CAUSE WAS MINE — D337 STACKED A FILTER ON AN ANIMATED MASK.**
+       Client: *"I like the new arrow animation. It's just glitching for some reason."* The lit layer
+       carried `drop-shadow(0 0 6px)` AND an animated `mask-position`, so every frame the engine
+       re-rastered the masked result and recomputed a 6px blur from it, inside a `will-change`
+       layer, on a page that is also scrubbing a 1920x1080 film. My own note said mask-position
+       "does not matter here" — it does not, on its own; **it does the moment a filter sits on it.**
+       ⭐⭐⭐ **SO NOTHING PAINTS PER FRAME ANY MORE. The mask is now STATIC — the arrow's own shape —
+       and what moves inside it is a plain gradient band on `transform`.** Same picture on screen,
+       and the only per-frame work is compositing two small layers.
+       ⚠️ **THE MASK IS THE PATH A SECOND TIME AND THE TWO MUST BE KEPT IN STEP** — same `d`, same
+       2.5 stroke, same round caps. Change the path above and change it here in the same edit, or
+       the light will run outside the arrow it is meant to be inside.
+       ⭐ **FASTER AND MORE OFTEN (D339)**: 2.4s against 3.6, with the pass occupying 6%-62% of it,
+       so a flash comes round every 2.4s with about a second of rest instead of 1.6.
+       ⭐ **AND SLIGHTLY THICKER**: stroke 2.5 against 2, on his *"should we make the arrow maybe
+       slightly thicker? Just maybe try that."* ⚠️ The path moved with it — the arms start at x=1.25
+       so that half of a 2.5 stroke still lands the tip exactly on the box's left edge, which is
+       what keeps it in line with the "S" of SCROLL. */
     html.cine-on .cine-hero .cine-hero-cue i{
       display:block;position:relative;width:32px;height:96px;
       filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
       will-change:transform;
-      animation:cineHeroDip 3.6s cubic-bezier(.33,0,.16,1) infinite;
-    }
-    html.cine-on .cine-hero .cine-hero-cue i svg{
-      display:block;width:32px;height:96px;overflow:visible;
-      fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+      animation:cineHeroDip 2.4s cubic-bezier(.33,0,.16,1) infinite;
     }
     /* the base: the silhouette that is never allowed to go anywhere */
-    html.cine-on .cine-hero .cine-hero-cue i > svg{color:rgba(198,166,100,0.62)}
-    /* the light: the same path in the headline's own top gold, windowed and travelling */
+    html.cine-on .cine-hero .cine-hero-cue i > svg{
+      display:block;width:32px;height:96px;color:rgba(198,166,100,0.62);
+      fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+    }
+    /* the arrow's own shape, held still, with the light moving inside it */
     html.cine-on .cine-hero .cine-hero-cue i b{
-      position:absolute;inset:0;display:block;color:var(--cineGoldTop,#E4CD92);
-      filter:drop-shadow(0 0 6px rgba(228,205,146,0.55));
-      -webkit-mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,0.92) 48%,transparent 100%);
-              mask-image:linear-gradient(to bottom,transparent 0,rgba(0,0,0,0.92) 48%,transparent 100%);
-      -webkit-mask-size:100% 56px;      mask-size:100% 56px;
-      -webkit-mask-repeat:no-repeat;    mask-repeat:no-repeat;
-      /* ⛔ LINEAR, AND THAT IS THE FIX FOR A REAL BUG: on `cubic-bezier(.42,0,.4,1)` the window
-         was front-loaded and the light had left the point by 43% of the cycle while the arrow's
-         answering dip was still 0.74s away, so the two read as unrelated events. Light crossing a
-         surface travels at one speed; the EASING BELONGS TO THE DIP, which is the thing with mass. */
-      animation:cineHeroSheen 3.6s linear infinite;
+      position:absolute;inset:0;display:block;
+      -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");      mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      -webkit-mask-size:32px 96px;     mask-size:32px 96px;
+      -webkit-mask-repeat:no-repeat;   mask-repeat:no-repeat;
     }
-    /* the window starts above the shaft, runs the whole length, and leaves through the point */
+    /* ⛔ NO FILTER ON THIS LAYER — that is the D337 bug. It is a gradient and a transform, nothing else. */
+    html.cine-on .cine-hero .cine-hero-cue i b span{
+      position:absolute;left:0;right:0;top:0;height:56px;display:block;
+      background:linear-gradient(to bottom,
+        rgba(228,205,146,0) 0%, var(--cineGoldTop,#E4CD92) 48%, rgba(228,205,146,0) 100%);
+      will-change:transform;
+      animation:cineHeroSheen 2.4s linear infinite;
+    }
+    /* ⛔ LINEAR: light crosses a surface at one speed. The easing belongs to the DIP, which is the
+       thing with mass — and on an eased sweep the light left the point at 43% while the dip was
+       still 0.74s behind it, so the two read as unrelated events (D337, caught by measuring). */
     @keyframes cineHeroSheen{
-      0%,10%   {-webkit-mask-position:0 -56px; mask-position:0 -56px}
-      66%,100% {-webkit-mask-position:0 96px;  mask-position:0 96px}
+      0%,6%    {transform:translateY(-56px)}
+      62%,100% {transform:translateY(96px)}
     }
-    /* and the arrow answers it, once the light has passed the point */
-    /* ⚠️ THE 60% IS DERIVED, NOT CHOSEN. The window is 56px and its brightest line sits at 48% of
-       its own height, so the light is ON the point when `mask-position` reads 68px — which, on a
-       linear travel from -56 to 96 across 10%–66%, happens at **55.7%**. The dip peaks 0.14s after
-       that. Re-derive it if the window, the travel or the arrow's height changes. */
+    /* ⚠️ THE 55% IS DERIVED, NOT CHOSEN. The band is 56px and its brightest line sits at 48% of its
+       own height, so the light is ON the point when the band's top reads 68.1px — which, on a
+       linear -56 -> 96 across 6%-62%, happens at **51.7%**. The arrow answers 0.08s later.
+       ⛔ Re-derive it if the band height, the travel or the arrow's height changes. */
     @keyframes cineHeroDip{
-      0%,50%   {transform:translateY(0)}
-      60%      {transform:translateY(3px)}
-      78%,100% {transform:translateY(0)}
+      0%,46%   {transform:translateY(0)}
+      55%      {transform:translateY(3px)}
+      74%,100% {transform:translateY(0)}
     }
   }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
     /* ⚠️ no dip and no sweep — and the mask comes OFF rather than being left mid-travel, so what
        remains is the bright arrow at full strength. A complete arrow either way is the whole point. */
     html.cine-on .cine-hero .cine-hero-cue i{animation:none;transform:none}
-    html.cine-on .cine-hero .cine-hero-cue i b{animation:none;-webkit-mask-image:none;mask-image:none}
+    /* ⛔ the BAND is what stops, and it is parked over the whole arrow rather than off the end, so
+       what remains is a complete arrow at full strength instead of the dim base on its own. */
+    html.cine-on .cine-hero .cine-hero-cue i b span{animation:none;transform:translateY(20px);height:96px}
+  }
+
+  /* ⭐⭐⭐ **THE SLAB BEAT SITS WHERE THE FIRST SCREEN SITS — 23 August 2026 (D340).** Client: *"I
+     want you to move that text to the same height as what it starts with on the first screen."*
+     ⭐⭐ **`top:22vh` IS `.cine-hero`'s OWN ANCHOR**, so the two screens now start their type on the
+     same line and the film reads as one composition rather than two.
+     ⛔⛔ **AND IT IS ANCHORED BY ITS TOP, `--ly:0`, WHICH IS THE D325b LESSON APPLIED AGAIN.** The
+     base rule centres the line on `top:50%` with `--ly:-50%`, so its position depended on its own
+     height — and this beat has just grown a subtitle, which on a centred anchor would have pushed
+     the FIRST line up into the sky by half the new height. Anchored by the top, a longer block
+     grows downward into the void the beat already owns.
+     ⛔ DESKTOP ONLY, and deliberately its own attribute rather than reusing `[data-vpos="low"]`:
+     that one is the withdrawn third beat's restore path (D326) and means "bottom of the frame".
+     ⚠️ The narrow bands are untouched — they take `[data-vpos-narrow="top"]` inside the query
+     below, and **their placement is the conversation still owed.** */
+  @media(min-width:1121px){
+    html.cine-on .cine-line[data-vpos-wide="hero"]{top:22vh;bottom:auto;--ly:0}
+  }
+  /* ⭐⭐ **THE BEAT'S SECOND LINE IS A SUBTITLE NOW, NOT A SECOND TITLE — 23 August 2026 (D340).**
+     Client: *"I don't wanna say your slab is completely unique, no two slabs are the same, because
+     that is the exact same thing that we're just saying twice. So we need to slightly be more
+     descriptive."* ⭐ It takes the FIRST SCREEN's own subtitle type exactly — `var(--brand)` at 300,
+     17px, the same colour and tracking — so the two screens rhyme in size as well as in height.
+     ⚠️ `max-width` in its own right: the line above is `min(21ch,44vw)` and `ch` is measured on a
+     66px serif, so inheriting that measure would run 17px prose to 633px and make a ribbon of it. */
+  html.cine-on .cine-line .cine-line-sub{
+    display:block;margin:22px 0 0;max-width:470px;
+    font:300 17px/1.62 var(--brand);letter-spacing:0.014em;
+    color:rgba(244,241,234,0.96);text-wrap:balance;
+  }
+  @media(max-width:1120px){
+    /* ⚠️ centred with its line on the narrow bands, and a little smaller — placement here is still
+       his open question, so this only keeps the subtitle from arriving mis-sized. */
+    html.cine-on .cine-line .cine-line-sub{margin-inline:auto;font-size:15px;margin-top:16px}
   }
 
   /* the phone and the tablet: centred, and each beat takes the half of the frame the picture is

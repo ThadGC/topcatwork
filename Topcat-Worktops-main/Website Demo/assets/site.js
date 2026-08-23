@@ -5803,7 +5803,8 @@ if(faqIndex && panel && faqBody){
      ⚠️ The blur is quantised to half a pixel for the same reason — it is depth of field as the words
      cross the focal plane, and it does not need to be smooth to read as soft. */
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
-    el, at:0, out:0, o:-1, z:-1, b:-1, g:-1
+    el, at:0, out:0, o:-1, z:-1, b:-1, g:-1,
+    zNear: 560                             /* set per band by retimeStory() — see the note there */
   }));
   /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS, and since D319 the three bands are
      three different films rather than three crops of one. A line may carry `data-at-phone` /
@@ -5826,11 +5827,28 @@ if(faqIndex && panel && faqBody){
       const d=L.el.dataset;
       L.at =+band(d,'at' )||0;
       L.out=+band(d,'out')||0;
+      /* ⛔⛔⛔ **A LINE ANCHORED AT THE TOP OF THE FRAME CANNOT TRAVEL THE TITLES' FULL 560 — 23 Aug
+         2026 (D340), AND IT IS THE SECOND TIME THIS TRAP HAS BEEN SPRUNG.** `perspective-origin` is
+         `26% 50%`, so anything ABOVE the middle travels UP AND LEFT as it approaches. D325b learned
+         it on the hero and capped `HERO_Z` at 300; moving the slab beat from `top:50%` to `top:22vh`
+         put it in exactly the same place, and at 560 it was **measured leaving the frame while still
+         readable — left edge at −61px at opacity 0.58, fully off the top-left by t=24**. At 300 the
+         worst visible edge measures 30px inside the frame.
+         ⛔⛔ **AND IT IS READ PER BAND, NOT ONCE, BECAUSE THE ANCHOR IT PAIRS WITH IS DESKTOP-ONLY.**
+         `data-vpos-wide` is answered by a `min-width:1121px` rule; reading it band-blind capped the
+         PHONE's travel too, which is a change to an animation nobody asked for and outside the
+         one-device rule (§2 rule 15). The narrow bands keep 560, untouched.
+         ⚠️ It lives here rather than in `story()` because `story()` runs every rAF and this changes
+         only when the band does — which is exactly what this function is for. */
+      L.zNear=(!mNarrow.matches && L.el.dataset.vposWide==='hero') ? 300 : Z_NEAR;
       L.o=L.z=L.b=L.g=-1;                    // force the next tick to write them all
     }
   }
-  retimeStory();
+  /* ⚠️ Z_NEAR is the DEFAULT near-Z, and it is what every centred line still travels. A line
+     anchored at the hero's height carries a capped one — see `retimeStory()` and D340.
+     ⛔ Declared BEFORE `retimeStory()` runs, because that function now reads it. */
   const Z_FAR=-150, Z_NEAR=560;
+  retimeStory();
   /* ⭐⭐ ONE `drawImage` PER FRAME AT MOST, because only one line is ever on screen: the sampler runs
      for the line whose opacity is up and skips the other two. It reuses `gcv`/`gctx` — allocating a
      canvas per frame is the version of this that shows up in a profile (grade()'s own lesson).
@@ -5865,7 +5883,7 @@ if(faqIndex && panel && faqBody){
       const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
       const o=+(a*a*(3-2*a)).toFixed(2);
       if(L===STORY[0])firstAlpha=o;
-      const z=Math.round(Z_FAR+(Z_NEAR-Z_FAR)*p*p);
+      const z=Math.round(Z_FAR+((L.zNear||Z_NEAR)-Z_FAR)*p*p);
       const b=p>0.72?Math.round(((p-0.72)/0.28)*9)/2:0;     // 0 … 4.5px, in half-pixel steps
       if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
       /* the wash only matters while the words are up, and it rides their own alpha so it can never
