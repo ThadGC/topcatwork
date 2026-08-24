@@ -4203,7 +4203,9 @@
      ⚠️ The dark ground is the review card's own gradient and the rim is the chips' champagne at the
      strength `.svc .face` uses, so the button is made of parts the page already contains rather than
      being a new object with new colours. */
-  .wa-fab{
+  /* ⭐ `.call-fab` (D359) TAKES THIS WHOLE DRESS by sharing the selector — it exists only on the
+     phone (base display:none below) and sits to the WhatsApp button's left there. */
+  .wa-fab,.call-fab{
     position:fixed;right:18px;bottom:24px;z-index:38;
     width:54px;height:54px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
@@ -4215,10 +4217,12 @@
     transition:border-color .35s var(--ease),color .35s var(--ease),
                transform .35s var(--ease),box-shadow .35s var(--ease);
   }
-  .wa-fab svg{width:27px;height:27px;fill:currentColor;display:block}
-  .wa-fab:hover{border-color:var(--gold);color:var(--gold-hi,#E4CD92);
+  .wa-fab svg,.call-fab svg{width:27px;height:27px;fill:currentColor;display:block}
+  .wa-fab:hover,.call-fab:hover{border-color:var(--gold);color:var(--gold-hi,#E4CD92);
     transform:translateY(-2px);box-shadow:0 20px 42px -14px rgba(0,0,0,0.95)}
-  .wa-fab:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  .wa-fab:focus-visible,.call-fab:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  /* ⛔ phone-only: the base never shows it, the 720px block switches it on — the D120 idiom */
+  .call-fab{display:none}
   /* ⛔ THE FLOATING BUTTON IS A TOUCH-DEVICE CONTROL — 14 Aug 2026 (D207). Client: *"remove the
      WhatsApp corner floating button for desktop, but keep it on the mobile and tablet."*
      ⭐ **HE IS RIGHT ABOUT THE DEVICE, NOT JUST THE TASTE.** On a phone the link opens the
@@ -4230,7 +4234,7 @@
      keyboard user on a desktop still lands on an invisible WhatsApp link.
      ⭐ 1121px is the desktop edge, so this is one rule and the phone and tablet keep the button
      untouched. The FOOTER's WhatsApp glyph and its written number stay at every width. */
-  @media(min-width:1121px){.wa-fab{display:none}}
+  @media(min-width:1121px){.wa-fab,.call-fab{display:none}}
   /* ⛔⛔⛔ THE HERO SCROLL CUE IS DELETED, MARKUP AND RULES — 14 Aug 2026 (D234). Client: *"on the
      hero section of the desktop version, remove the down arrow that says scroll above it. So
      remove that completely."*
@@ -4696,7 +4700,9 @@
     --ly:-50%;
     /* ⭐ `--lx` IS THE KITCHEN BEAT'S SLIDE (D355) and defaults to 0, so every other line is
        untouched at every band. It is written on desktop only and handed back on a band change. */
-    transform:translateX(calc(var(--lx,0) * 1px)) translateY(var(--ly)) translateZ(calc(var(--lz,-150) * 1px));
+    /* ⭐ `--lyp` IS THE KITCHEN BEAT'S RISE ON THE PHONE (D361) and defaults to 0px, so every
+       other line at every band is untouched. Written on the phone only, handed back with --lx. */
+    transform:translateX(calc(var(--lx,0) * 1px)) translateY(calc(var(--ly) + (var(--lyp,0) * 1px))) translateZ(calc(var(--lz,-150) * 1px));
     /* ⚠️ NOT a text-shadow for legibility alone — these words cross a daylight quarry AND a black
        void, and §2's own lesson from D313 is that no fixed ink survives that. The shadow is a
        contact shadow so the type reads as an object in the room; the veil's 0.20 floor and
@@ -5117,6 +5123,101 @@
     html.cine-on .cine-hero .cine-hero-cue i b span{animation:none;transform:translateY(20px);height:96px}
   }
 
+  /* ═════ THE FIRST SCREEN COMES TO THE PHONE — 24 August 2026 (D359). PHONE ONLY (≤20). ═════
+     Client: *"either in the center or center top, you're going to add the text for the first… the
+     same as on the desktop version, that same text and subtitle, centered in the middle and easy
+     enough to read… so the focus can still be on the stones, or you can see the mountain in the
+     background."* And the exit, his words: *"almost like what it is currently… it should go
+     through the screen, like, go past the user and then fade off."*
+     ⭐⭐ IT IS THE SAME `.cine-hero` BLOCK THE DESKTOP SHOWS — one copy of the words, one markup,
+     re-dressed per band (D338's one-component argument). `.cine-open` — "It starts as a mountain."
+     — stands down on the phone exactly as it does on desktop, and STAYS for the tablet, untouched.
+     ⭐ CENTRED AT 47%, NOT 50%: the block carries the scroll cue below the words, so 47% puts the
+     TYPE's own centre a touch above true centre — the sky and the ridge stay readable above it,
+     which is his "you can see the mountain" — and the quarry's terraces hold the lower third.
+     ⭐⭐ THE EXIT IS THE NARROW BANDS' OWN GRAMMAR: no wipe and no mask — the block travels in Z
+     past the viewer on the scroll (0 → 560 on p², the same travel every narrow title runs) and
+     fades over the last 26% of its window, gone by t=6.0 — the slot the opening title has always
+     held. It is up AT REST from t=0, like the desktop: a hero is already there, it does not arrive.
+     ⚠️ The transform is translateY(-50%) + translateZ: this block anchors by its centre, so the
+     desktop's --tx/--hz translate3d pattern does not apply here — the phone writes --hz only. */
+  @media(max-width:720px){
+    html.cine-on .cine-open{display:none}
+    html.cine-on .cine-hero{
+      display:block;position:absolute;z-index:3;pointer-events:none;
+      left:0;right:0;top:47%;padding:0 clamp(20px,7vw,54px);text-align:center;
+      opacity:0;                                  /* the scrub owns it from the first tick */
+      transform:translateY(-50%) translateZ(calc(var(--hz,0) * 1px));
+    }
+    /* ⭐⭐ THE WASH IS BAKED, NOT SAMPLED — D359. The block is up at rest over one known frame:
+       measured on the phone cut's f0 behind this box, p97 = 214 (marble terraces), which the
+       grade formula clamps to a full wash — the same 0.62-centre radial the beats carry (D313's
+       gradient, his accepted mechanism). It lives INSIDE the element, so the element's own opacity
+       takes it down with the words and nothing outlives anything. The ground never darkens while
+       this block lives (t=0–6 is quarry daylight, camera pushing INTO the marble wall), so a
+       per-frame sample would recompute the same number 72 times — a constant is the honest form. */
+    html.cine-on .cine-hero::before{
+      content:"";position:absolute;inset:-1.1em -1.6em;z-index:-1;pointer-events:none;
+      background:radial-gradient(farthest-side at 50% 50%,
+        rgba(6,6,9,0.62) 0%, rgba(6,6,9,0.58) 38%, rgba(6,6,9,0.36) 60%,
+        rgba(6,6,9,0.14) 80%, rgba(6,6,9,0) 100%);
+    }
+    /* ⛔⛔ THE GOLD'S drop-shadow COMES OFF THE SLAB BEAT HERE TOO — D360. The phone now runs the
+       reveal's animated clip-path (D354's rule, restated at this band): a filter under an animated
+       mask re-rasters both per change. Deliberately NOT lifted to the base rule — the TABLET's
+       slab beat carries no clip and keeps its shadow, untouched. */
+    html.cine-on .cine-line[data-vpos-wide="hero"] em{filter:none}
+    /* the words: the desktop's own faces at the phone's own sizes — the beat titles' clamp
+       family, one step up because this is the resting hero (the beats are 6.6vw) */
+    html.cine-on .cine-hero .cine-hl{
+      margin:0;font-family:var(--serif);font-weight:400;
+      font-size:clamp(30px,8.4vw,44px);line-height:1.1;letter-spacing:-0.004em;
+      color:var(--bone);text-wrap:balance;
+      text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5);
+    }
+    /* ⚠️ #fff at 400, wide soft shadow — D347's three fixes, restated at this band */
+    html.cine-on .cine-hero .cine-hero-sub{
+      margin:18px 0 0;font:400 16px/1.6 var(--brand);letter-spacing:0.014em;
+      color:#fff;text-wrap:balance;
+      text-shadow:0 2px 22px rgba(6,6,8,0.82);
+    }
+    /* the cue: the desktop's own connected arrow (D337), centred under the words. The arrow keeps
+       its 32×96 box ON PURPOSE — every number inside it (mask-size, the 56px band, the sheen's
+       -56→96 travel, the derived 55%) is a px machine that would all have to be re-derived at a
+       second size, and proportionally it matches the desktop block. ⚠️ The keyframes are the
+       desktop block's own — @keyframes are not scoped by media queries. */
+    html.cine-on .cine-hero .cine-hero-cue{
+      margin:26px auto 0;display:inline-flex;flex-direction:column;gap:18px;align-items:center;
+    }
+    html.cine-on .cine-hero .cine-hero-cue span{
+      font:500 12px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
+      text-shadow:0 1px 16px rgba(6,6,8,0.9),0 1px 3px rgba(6,6,8,0.8);
+    }
+    html.cine-on .cine-hero .cine-hero-cue i{
+      display:block;position:relative;width:32px;height:96px;
+      filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
+      will-change:transform;
+      animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
+    }
+    html.cine-on .cine-hero .cine-hero-cue i > svg{
+      display:block;width:32px;height:96px;color:rgba(198,166,100,0.62);
+      fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+    }
+    html.cine-on .cine-hero .cine-hero-cue i b{
+      position:absolute;inset:0;display:block;
+      -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");      mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      -webkit-mask-size:32px 96px;     mask-size:32px 96px;
+      -webkit-mask-repeat:no-repeat;   mask-repeat:no-repeat;
+    }
+    html.cine-on .cine-hero .cine-hero-cue i b span{
+      position:absolute;left:0;right:0;top:0;height:56px;display:block;
+      background:linear-gradient(to bottom,
+        rgba(228,205,146,0) 0%, var(--cineGoldTop,#E4CD92) 48%, rgba(228,205,146,0) 100%);
+      will-change:transform;
+      animation:cineHeroSheen 1.8s linear infinite;
+    }
+  }
+
   /* ⭐⭐⭐ **THE SLAB BEAT SITS WHERE THE FIRST SCREEN SITS — 23 August 2026 (D340).** Client: *"I
      want you to move that text to the same height as what it starts with on the first screen."*
      ⭐⭐ **`top:22vh` IS `.cine-hero`'s OWN ANCHOR**, so the two screens now start their type on the
@@ -5182,7 +5283,9 @@
        reveal's animated clip-path on desktop, and a filter under an animated mask re-rasters both
        per change, which is D339's arrow glitch by another door. Measured before removing: this
        beat sits on the film's black void, where a near-black shadow paints nothing anyway. The
-       kitchen beat's em keeps it — that one sits on a lit room and never carries a clip. */
+       kitchen beat's em keeps it — that one sits on a lit room and never carries a clip.
+       ⭐ D360: the PHONE block above carries this same rule for the same reason — its reveal runs
+       the same animated clip. Only the tablet keeps the shadow on this beat, having no clip. */
     html.cine-on .cine-line[data-vpos-wide="hero"] em{filter:none}
     /* ⛔⛔⛔ **THE KITCHEN BEAT SITS HIGHER, AND 12vh IS THE ISLAND'S OWN MEASUREMENT — D345.**
        Client: *"the part that says the stone sets the tone of the room is currently too hard to
@@ -5328,6 +5431,9 @@
      specificity in both places, so source order is the only thing deciding it, and from up there
      the base `display:flex` won. Caught by reading the computed style, not by looking. */
   @media(min-width:1121px){ html.cine-on .cine-cue{display:none} }
+  /* ⛔ AND ON THE PHONE TOO (D359) — `.cine-hero` now carries its own heavier cue there, so two
+     prompts never sit on the same frame. The TABLET keeps this cue: it still runs `.cine-open`. */
+  @media(max-width:720px){ html.cine-on .cine-cue{display:none} }
 
   /* ═════ skip intro ═══════════════════════════════════════════════════════════════════════
      ⛔ NOT a gold line across the top of anything (§2 rule 10) and not a mark in a disc
@@ -5377,6 +5483,19 @@
      copied for it (§12): one description, both bands. */
   @media(max-width:1120px){
     html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px)}
+  }
+  /* ⭐ ON THE PHONE IT SITS ON THE FAB ROW — 24 August 2026 (D359). His nudge: *"intro button
+     slightly down if you believe it should be."* The 84px above was clearing the phone's action
+     bar, and during the film that bar CANNOT rise — its trigger is the hero's CTA row passing the
+     header, which is impossible while the film pins the hero fullscreen. So on the phone the
+     control drops to the contact pair's own baseline (fabs: 46px at bottom 18px), one quiet row of
+     controls across the foot of the frame. ⚠️ The TABLET keeps 84px: its wa-fab is untouched this
+     round and the rule above still answers it. */
+  @media(max-width:720px){
+    /* ⭐ pill sides on the phone — his instruction, same message as the trio: *"round the skip
+       button sides into a pill side shape."* Phone-scoped: the desktop keeps D327's 2px control,
+       frozen with the rest of that band. Between two round buttons the pill is the coherent shape. */
+    html.cine-on .cine-skip{bottom:calc(env(safe-area-inset-bottom,0px) + 21px);border-radius:999px;padding:13px 26px}
   }
   /* ⛔⛔⛔ **AND IT CROSSES AN EXISTING CLIENT RULING ON THE PHONE, WHICH IS FLAGGED RATHER THAN
      BURIED.** 11 Aug 2026: *"the nav bar should already be formed, so already a gold line below it
@@ -8285,13 +8404,43 @@
        four rules up: a contact shortcut floating over a full-screen menu is the classic version of
        this bug, and z-index alone would not have saved it here because the button is a sibling of
        the sheet rather than inside it. */
-    .wa-fab{right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));
-      width:50px;height:50px;
+    /* ⭐⭐ THE PAIR IS SMALLER AND QUIETER ON THE PHONE — 24 August 2026 (D359). Client: *"put a
+       phone icon next to the WhatsApp icon and make it smaller and maybe less visible, just like…
+       almost a little bit of a transparency on those buttons. almost like the skip intro."* So both
+       take the skip control's own plate — translucent dark glass with the gold rim — at 46px
+       against the tablet's solid 50, sitting as one row with the skip at the same baseline.
+       ⛔ The call goes to the 0800 098 2812 FREEPHONE and WhatsApp to the 07464 mobile — two
+       numbers, deliberate, never "tidied" into one (see the wa-fab markup note). */
+    .wa-fab,.call-fab{right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));
+      width:46px;height:46px;
+      background:rgba(8,8,11,0.58);
+      -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+      border-color:rgba(198,166,100,0.5);
+      box-shadow:0 10px 26px -12px rgba(0,0,0,0.85);
       transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
                  opacity .3s var(--ease),transform .35s var(--ease)}
-    .mbar.on ~ .wa-fab{bottom:calc(73px + env(safe-area-inset-bottom,0px))}
-    .wa-fab svg{width:25px;height:25px}
-    html.nav-open .wa-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
+    .call-fab{display:flex;right:70px}   /* 14 + 46 + 10 of air — the WhatsApp keeps the corner */
+    /* ⭐⭐ WHILE THE SKIP IS UP, THE PAIR FLANKS IT — his instruction, same message: *"put the
+       phone on the right of the skip button and the whatsapp on the left of it."* So the film's
+       foot reads [WhatsApp] [SKIP INTRO] [phone], one centred row. Done as a TRANSLATE off the
+       corner positions rather than a left/right swap, so the .35s transform transition already on
+       these buttons carries them between the two states — the corner is still their home (D180's
+       ruling: the corner behaviour after the film is his), and `skip-live` comes off the moment
+       the skip hides (film done, or skipped), or never exists if the film fails.
+       ⭐⭐ THE SPACING IS EQUAL BY CONSTRUCTION — his second pass: *"the distance from the side
+       borders must be the same distance to the skip button borders."* Each side of the skip holds
+       50vw − 87.4px (half the skip's measured 174.8px) of ground; the 46px button sits in the
+       middle of it, so edge→button air and button→skip air are the SAME number at every phone
+       width: wa left = 25vw − 66.7px, call left = 75vw + 20.7px, both written as translates off
+       the corner homes (wa: 100vw−60, call: 100vw−116). ⚠️ Re-derive the two constants if the
+       skip's text, padding or 12px face ever changes — its width is in them (174.8px rendered,
+       measured with the pill's 26px padding and Jost loaded). */
+    html.cine-on.skip-live .call-fab{transform:translateX(calc(136.7px - 25vw))}
+    html.cine-on.skip-live .wa-fab{transform:translateX(calc(-6.7px - 75vw))}
+    .mbar.on ~ .wa-fab,.mbar.on ~ .call-fab{bottom:calc(73px + env(safe-area-inset-bottom,0px))}
+    .wa-fab svg{width:23px;height:23px}
+    .call-fab svg{width:21px;height:21px}
+    html.nav-open .wa-fab,html.nav-open .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
 
   }
 
@@ -9287,6 +9436,23 @@
   </svg>
 </a>
 
+<!-- ⭐ THE CALL BUTTON JOINS IT ON THE PHONE — 24 August 2026 (D359). Client: *"next to the
+     WhatsApp button… put a phone icon next to the WhatsApp icon and make it smaller and maybe less
+     visible… just for those who want to call immediately."* (His first thought was to REPLACE the
+     WhatsApp button; his second — the pair, smaller and ghosted — is what he leant to and what
+     shipped. Replacing is one deletion if he rules the other way.)
+     ⛔ **`tel:+448000982812` — THE FREEPHONE, NOT THE WHATSAPP MOBILE.** Calls go to the 0800
+     landline everywhere on the site at his instruction; WhatsApp alone goes to the 07464 mobile.
+     ⭐ The glyph is the site's own — the sticky action bar's phone path, unchanged.
+     ⚠️ Phone-only (base display:none): the tablet keeps today's solo WhatsApp button until its
+     round opens. ⚠️ A SIBLING AFTER `.mbar`, like `.wa-fab` — the `.mbar.on ~` lift reads that
+     order; if either moves, that rule dies silently. -->
+<a class="call-fab" href="tel:+448000982812" aria-label="Call Topcat Worktops on 0800 098 2812">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/>
+  </svg>
+</a>
+
 <main>
 
     <!-- ===================== HERO =====================
@@ -9478,7 +9644,15 @@
            at t=16.0 — the top band's 97th percentile reads 233 at 15.5 and 0 at 16.0, then holds
            at 0-15 until 24.5 and is back to 69 by t=25 as the kitchen arrives. **16.2-24.4** sits
            inside that with room at both ends. ⛔ Do not give the phone the tablet's 21.0-27.5: the
-           closing 3 seconds of it land on the kitchen shot on this film. -->
+           closing 3 seconds of it land on the kitchen shot on this film.
+           ⭐⭐⭐ **D360 MOVED THE PHONE'S `data-at` TO 14.5, AND IT IS THE SLAB'S OWN NUMBER, NOT A
+           COPY TIMING** — the same promotion D354 made on desktop. On the phone cut the slab's
+           edges first touch this line's leftmost ink at t≈14.7 (left edge X crosses film x 89 at
+           the title's rows), so from 14.5 the words sit at opacity 1 behind a full clip and the
+           slab's own edges do the revealing — see THE SLAB REVEALS ITS OWN CAPTION (phone) in the
+           scrub. 16.2, the old fade-in moment, is inside the reveal's own life (it completes at
+           t=16.75), so the copy still owns the same void it always did, and `data-out` is
+           untouched. The TABLET keeps 21.0-25.3 and its fade, untouched. -->
       <!-- ⭐⭐⭐ **THE SLAB BEAT, REWRITTEN — 23 August 2026 (D340).** Client: *"I don't wanna say
            your slab is completely unique, no two slabs are the same, because that is the exact same
            thing that we're just saying twice. So we need to slightly be more descriptive… this
@@ -9545,7 +9719,7 @@
            phone keep their own attributes and their own fade, untouched. -->
       <p class="cine-line" data-at="10.3" data-out="24.5" data-vpos="low" data-vpos-wide="hero"
          data-at-narrow="21.0" data-out-narrow="25.3" data-vpos-narrow="top"
-         data-at-phone="16.2" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">Measured, cut and finished for your home, and built to last for decades.</span></p>
+         data-at-phone="14.5" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">Measured, cut and finished for your home, and built to last for decades.</span></p>
       <!-- ⭐⭐⭐ **THE THIRD BEAT IS BACK, REWRITTEN — 23 August 2026 (D343). ⚠️ THIS REVERSES D326.**
            Client: *"in the second screenshot is where I think we should have another layer of text
            in that same position the other text is in. Just talking about the stone sets the feel of
@@ -16800,6 +16974,7 @@ if(faqIndex && panel && faqBody){
 
   function fail(){
     root.classList.remove('cine-on');
+    root.classList.remove('skip-live');
     window.__cineHold=false;
     document.documentElement.style.removeProperty('--cineVeil');
     root.style.removeProperty('--navGrade'); graded=-1;
@@ -17022,6 +17197,34 @@ if(faqIndex && panel && faqBody){
     -0.3482,-0.3507,-0.3544,-0.3583,-0.3621,-0.3652,-0.3684,-0.372,-0.3746,-0.3774,
     -0.3803,-0.3845];
   const REV_F0=124, REV_PAD=3;
+  /* ═════ THE PHONE'S OWN TRACK — 24 August 2026 (D360). TWO EDGES, BECAUSE THE PICTURE HAS TWO.
+     On the 608 vertical cut the slab does not sweep aside in one line: it tilts back off the
+     frame, so its LEFT edge sweeps right across the caption's rows (f170–201, X at film y 240 +
+     slope, residual ≤0.9 film px over 31 rows a frame) while its TOP edge comes down through them
+     (f178–201, Y at film x 304 + slope, residual ≤0.8 over ~40 columns). The visible void is
+     everything left of the one OR above the other, and the two lines meet at the slab's own
+     corner — so the clip is a six-point polygon: the frame, notched by that corner. Both tables
+     are strictly monotone over the domain; past f201 the corner has left the caption's rows
+     (topmost lit pixel ≥341 film px for the rest of the beat, measured to f288) and the clip
+     comes OFF — nothing pops, because everything still covered at f201 sits below the ink.
+     ⚠️ -9999 in PREV_Y means "no top edge yet" — before f178 it is still above the frame.
+     ⚠️ RE-TRACK IF THE FILM IS EVER RE-CUT — the probe is `.textanim-2026-08-24/track_edge.py`
+     (the phone variant is documented inside it, D360). */
+  const PREV_F0=170;
+  const PREV_X=[
+    25.2,31.6,38.3,44.3,50.2,54.8,60.1,64.0,67.5,69.8,72.9,74.3,75.6,78.8,85.1,92.0,
+    99.5,109.0,119.7,130.8,143.2,156.4,169.5,182.8,194.8,207.9,221.0,232.1,241.7,255.0,264.0,273.0];
+  const PREV_SX=[
+    -0.2289,-0.2369,-0.2456,-0.2523,-0.2593,-0.2610,-0.2687,-0.2718,-0.2769,-0.2809,
+    -0.2861,-0.2905,-0.2950,-0.2995,-0.3054,-0.3093,-0.3147,-0.3201,-0.3218,-0.3264,
+    -0.3303,-0.3355,-0.3404,-0.3461,-0.3479,-0.3522,-0.3585,-0.3591,-0.3542,-0.3750,-0.3750,-0.3750];
+  const PREV_Y=[
+    -9999,-9999,-9999,-9999,-9999,-9999,-9999,-9999,-8.1,-4.1,-0.7,2.6,6.3,13.4,26.2,41.2,
+    58.6,77.9,99.0,120.8,142.7,164.5,186.2,206.9,227.0,246.0,263.9,280.7,296.6,310.8,324.1,335.9];
+  const PREV_SY=[
+    0,0,0,0,0,0,0,0,0.0542,0.0525,0.0523,0.0518,0.0511,0.0511,0.0506,0.0502,
+    0.0500,0.0499,0.0493,0.0487,0.0480,0.0473,0.0459,0.0464,0.0456,0.0459,0.0459,0.0454,
+    0.0439,0.0440,0.0432,0.0423];
   const revEl=document.querySelector('.cine-line[data-vpos-wide="hero"]');
   let revOn=false, revClip=null, shownFr=-1;
   /* the element's LAYOUT box and the cover mapping, cached together: offsets and not
@@ -17032,16 +17235,20 @@ if(faqIndex && panel && faqBody){
      paid for that against a mountain). */
   const RV={sc:0.8333,dx:-80,dy:0,left:0,top:0,w:0,h:0,ok:false};
   function measureReveal(){
-    revOn=heroOn&&!!revEl;
+    /* ⭐ D360: the reveal now runs on TWO bands — the desktop (D354) and the phone, each against
+       its own film and its own table. The tablet stays on D316's fade, untouched. */
+    revOn=(heroOn||heroPh)&&!!revEl;
+    RV.ph=heroPh&&!heroOn;
     if(!revOn){ revealTick(); return; }
+    RV.fw=RV.ph?608:1920;
     RV.left=revEl.offsetLeft; RV.top=revEl.offsetTop; RV.w=revEl.offsetWidth; RV.h=revEl.offsetHeight;
     const bb=heroBg&&heroBg.getBoundingClientRect();
     if(bb&&bb.width&&bb.height){
-      const vr=(vid.videoWidth&&vid.videoHeight)?vid.videoWidth/vid.videoHeight:16/9;
+      const vr=(vid.videoWidth&&vid.videoHeight)?vid.videoWidth/vid.videoHeight:(RV.ph?608/1080:16/9);
       let dw,dh,dx,dy;
       if(vr>bb.width/bb.height){ dh=bb.height; dw=dh*vr; dx=(bb.width-dw)/2; dy=0; }
       else { dw=bb.width; dh=dw/vr; dx=0; dy=(bb.height-dh)/2; }
-      RV.sc=dw/1920; RV.dx=bb.left+dx; RV.dy=bb.top+dy; RV.ok=true;
+      RV.sc=dw/RV.fw; RV.dx=bb.left+dx; RV.dy=bb.top+dy; RV.ok=true;
     }
     revealTick();
   }
@@ -17055,6 +17262,39 @@ if(faqIndex && panel && faqBody){
     }
     const fr=(shownFr>=0)?shownFr
       :Math.floor(((vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:0)*FPS+1e-6);
+    let c;
+    if(RV.ph){
+      /* ═════ THE PHONE (D360): the slab tilts back off the frame, so TWO edges do the revealing —
+         the left edge sweeps right across the words while the top edge comes down through them,
+         and they meet at the slab's own corner. The clip is the frame notched by that corner: six
+         points, every one on one of the two measured lines. Same clock (the painted frame), same
+         pad, same one-way table as the desktop; before f178 the top edge is still above the frame
+         (the -9999 sentinel) and the polygon is the desktop's own four-point form. Past the
+         table's end the clip comes OFF — measured: everything still covered at f201 sits below
+         the ink, so nothing pops (see the table's note). */
+      const i=Math.max(0,Math.min(PREV_X.length-1,fr-PREV_F0));
+      const done=fr-PREV_F0>=PREV_X.length-1;
+      if(done)c='';
+      else{
+        const x0=PREV_X[i]-REV_PAD, sx=PREV_SX[i];
+        const fX=e=>(e+RV.left-RV.dx)/RV.sc, fY=e=>(e+RV.top-RV.dy)/RV.sc;
+        const eX=f=>+(f*RV.sc+RV.dx-RV.left).toFixed(1), eY=f=>+(f*RV.sc+RV.dy-RV.top).toFixed(1);
+        const XL=fX(-400), XR=fX(RV.w+400), YT=fY(-200), YB=fY(RV.h+200);
+        const Xat=y=>x0+sx*(y-240);
+        if(PREV_Y[i]<-5000){
+          c='polygon('+eX(XL)+'px '+eY(YT)+'px,'+eX(Xat(YT))+'px '+eY(YT)+'px,'
+           +eX(Xat(YB))+'px '+eY(YB)+'px,'+eX(XL)+'px '+eY(YB)+'px)';
+        }else{
+          const yp=PREV_Y[i]-REV_PAD, sy=PREV_SY[i];
+          const Yat=x=>yp+sy*(x-304);
+          const cx=(x0+sx*(yp-240-304*sy))/(1-sx*sy);   /* the corner, film px */
+          const cy=yp+sy*(cx-304);
+          c='polygon('+eX(XL)+'px '+eY(YT)+'px,'+eX(XR)+'px '+eY(YT)+'px,'
+           +eX(XR)+'px '+eY(Yat(XR))+'px,'+eX(cx)+'px '+eY(cy)+'px,'
+           +eX(Xat(YB))+'px '+eY(YB)+'px,'+eX(XL)+'px '+eY(YB)+'px)';
+        }
+      }
+    }else{
     const i=Math.max(0,Math.min(REV_X.length-1,fr-REV_F0));
     const x0=REV_X[i]-REV_PAD, s=REV_S[i];
     /* the edge in the element's own pixels, read 60px above and below the box so nothing is ever
@@ -17068,7 +17308,8 @@ if(faqIndex && panel && faqBody){
        edge never formally clears it; past f205 today's composition takes over, overlap and all,
        which is what shipped before this design. */
     const done=(fr-REV_F0>=REV_X.length-1)||Math.min(xT,xB)>RV.w+30;
-    const c=done?'':'polygon(-2000px -60px,'+xT+'px -60px,'+xB+'px '+(RV.h+60)+'px,-2000px '+(RV.h+60)+'px)';
+    c=done?'':'polygon(-2000px -60px,'+xT+'px -60px,'+xB+'px '+(RV.h+60)+'px,-2000px '+(RV.h+60)+'px)';
+    }
     if(c!==revClip){ revClip=c; revEl.style.clipPath=c; }
   }
   /* ⭐ the one honest clock for "what frame is on the screen" — D351's lesson, reused for the one
@@ -17159,16 +17400,31 @@ if(faqIndex && panel && faqBody){
      set by vw clamps, so a resize is the only thing that moves it and `sync()` is the one that
      re-reads it. No font term: the box is sized, not shrink-wrapped. */
   const KW={x1:0};
-  let kitTx=null;
+  /* ⭐⭐ PHK.rise IS THE PHONE EXIT'S TRAVEL (D361), AND IT IS FENCED BY THE BAR, NOT CHOSEN.
+     The block's own top minus the bar FURNITURE's bottom (the deeper of the logo lockup and the
+     burger — the bar's BOX is 80px but its visible artwork ends at 57–62, and during the film the
+     preform hides its plate, so the box is not the honest fence) minus 6px of air, measured live
+     per resize. The first cut used a fifth of the viewport and was screenshotted crossing the
+     wordmark at 0.33 opacity — the same family of fault §2's open item 6 already flags on this
+     band (readable type reaching the frame's furniture). At 390×844 the fence gives 42px of
+     travel. The rise runs 1−(1−q)² — full speed on the first pixel, settling as it fades — so the
+     lift reads EARLY, while the words are still solid. */
+  const PHK={rise:0};
+  let kitTx=null, kitPhY=null;
   function measureKit(){
-    if(!heroOn||!kitEl){
-      /* hand the slide back on the way out — an inline `--lx` left behind under 1121 would drag
-         the tablet's beat off its mark (the D336/D348 family of bug) */
-      if(kitEl){ kitEl.style.removeProperty('--lx'); kitEl.style.removeProperty('--lg'); }
-      kitTx=null;
-      return;
+    if(!kitEl)return;
+    /* hand each band's inline property back on the way out — an inline value left behind would
+       drag another band's beat off its mark (the D336/D348 family of bug) */
+    if(!heroOn){ kitEl.style.removeProperty('--lx'); kitTx=null; }
+    if(!heroPh){ kitEl.style.removeProperty('--lyp'); kitPhY=null; }
+    if(!heroOn&&!heroPh){ kitEl.style.removeProperty('--lg'); }
+    if(heroOn) KW.x1=kitEl.offsetLeft+kitEl.offsetWidth;
+    if(heroPh){
+      const br=document.querySelector('header.bar .brand');
+      const bu=document.querySelector('header.bar button');
+      const fence=Math.max(br?br.getBoundingClientRect().bottom:0, bu?bu.getBoundingClientRect().bottom:0)||barH();
+      PHK.rise=Math.max(24,Math.round(kitEl.offsetTop-fence-6));
     }
-    KW.x1=kitEl.offsetLeft+kitEl.offsetWidth;
   }
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1,
@@ -17295,8 +17551,11 @@ if(faqIndex && panel && faqBody){
          with the travel. The wash is pinned to 0: the beat sits on measured void, and mid-reveal
          the box straddles the lit slab, where `bandGrade()` would raise a wash over letters that
          are supposed to not exist yet. */
-      if(L.el===revEl&&heroOn){
-        const a=(p<=0||p>=1)?0:Math.min(1,(L.out-t)/2.47);
+      /* ⭐ D360: THE SAME BRANCH NOW SERVES THE PHONE — same reveal, same pinned wash and Z, its
+         own clip table inside revealTick, and its own exit seconds: 2.03s is the out-ramp the
+         phone's beat has always had (26% of 16.2–24.0), kept exactly as 2.47 was kept on desktop. */
+      if(L.el===revEl&&(heroOn||heroPh)){
+        const a=(p<=0||p>=1)?0:Math.min(1,(L.out-t)/(heroOn?2.47:2.03));
         const o=+(a*a*(3-2*a)).toFixed(2);
         if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
         if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
@@ -17310,6 +17569,35 @@ if(faqIndex && panel && faqBody){
          are documented at KIT_SET above. The wash still rides `bandGrade()` — this beat sits on
          the lit kitchen (D346's specular streaks), and the shade travels inside the line's own
          stacking context, with the words. */
+      /* ⭐⭐⭐ THE KITCHEN BEAT ON THE PHONE GOES OUT UPWARD — 24 August 2026 (D361). Client: *"as
+         it lays down, the text will obviously be in the center or slightly to the left. Currently,
+         like it is, and then it will also animate out to the left of the screen. Well, actually,
+         not to the left. It goes up."* So: the placement and the fade-in are exactly what this
+         band already ran (centred, top:13vh, in over 16%) — his "currently, like it is" — and the
+         EXIT rises instead of travelling in Z: -PHK.rise × (1−(1−q)²) on the same 26% out-ramp
+         the fade uses, on the scroll clock — full speed on the first pixel, zero at the top, the
+         kitchen slide's own curve family (D355). The travel is fenced to stop 6px short of the
+         bar's bottom edge (see PHK above): far enough to read as leaving upward, and it cannot
+         cross the wordmark at ANY viewport — the first cut did, at 0.33 opacity, and was caught in
+         a screenshot before it shipped.
+         ⛔ Z IS PINNED AT 0 AND THE BLUR WITH IT: a thing that sits and then lifts away cannot
+         also be drifting at the camera; removing the Z travel is what makes the lift read. The
+         wash still rides bandGrade — this beat sits over the kitchen, not the void. */
+      if(L.el===kitEl&&heroPh){
+        const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
+        const o=+(a*a*(3-2*a)).toFixed(2);
+        let ry=0;
+        if(p>0.74&&p<1){ const q=Math.min(1,(p-0.74)/0.26); ry=Math.round(-PHK.rise*(1-(1-q)*(1-q))); }
+        if(ry!==kitPhY){ kitPhY=ry; L.el.style.setProperty('--lyp',ry); }
+        if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+        if(o>0.02){
+          const g=bandGrade(L.el);
+          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+        } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
+        if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
+        continue;
+      }
       if(L.el===kitEl&&heroOn){
         /* ⭐ SCRUBBED AGAIN (D358) — a pure function of the eased film time, computed inside this
            tick like every other beat, and the opacity gate is what makes the back-scroll clean:
@@ -17368,25 +17656,48 @@ if(faqIndex && panel && faqBody){
      the note above it stay because the travel is one line away if he ever wants it back, and
      because the number is measured (D325b) and would have to be re-derived from scratch. */
   const HERO_OUT=6.0, HERO_EDGE=1, HERO_Z=300;
-  let heroOn=false, heroO=-1, heroZ=-1, heroE=-1, heroTx=null, trustGone=null;
-  const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
+  let heroOn=false, heroPh=false, heroMode='off', heroLast='', heroO=-1, heroZ=-1, heroE=-1, heroTx=null, trustGone=null;
+  /* ⭐ D359: the block now lives on TWO bands — 'wide' wipes off by the side (D352), 'phone'
+     travels in Z past the viewer. The tablet is 'off' and keeps `.cine-open`, untouched. */
+  const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; heroPh=mPhone.matches;
+    heroMode=heroOn?'wide':(heroPh?'phone':'off'); };
   readHeroBand();
   const trustEl=document.getElementById('cineTrust');
   function heroCopy(t){
     if(!heroEl)return;
-    /* ⛔ HAND EVERY PROPERTY BACK ON THE WAY OUT. A window dragged under 1121 leaves inline values
-       behind, and an inline value outranks the class rule meant to take over — the bug the scroll
-       cue taught this file once and D348 shipped a second time. */
-    if(!heroOn){
-      if(heroO!==0){
-        heroO=0; heroZ=-1; heroE=-1; heroTx=null;
-        heroEl.style.opacity=''; heroEl.style.visibility='';
-        heroEl.style.removeProperty('--hz'); heroEl.style.removeProperty('--tx');
-        if(trustEl){
-          trustEl.style.opacity=''; trustEl.style.visibility='';
-          trustEl.style.removeProperty('--tx');
-        }
-        cine.style.removeProperty('--cineEdge');
+    /* ⛔ HAND EVERY PROPERTY BACK WHEN THE MODE CHANGES. A window dragged across 720 or 1121
+       leaves inline values behind, and an inline value outranks the class rule meant to take over
+       — the bug the scroll cue taught this file once and D348 shipped a second time. One reset
+       covers every direction: wide→phone, phone→off, off→wide. */
+    if(heroMode!==heroLast){
+      heroLast=heroMode;
+      heroO=-1; heroZ=-1; heroE=-1; heroTx=null; trustGone=null;
+      heroEl.style.opacity=''; heroEl.style.visibility='';
+      heroEl.style.removeProperty('--hz'); heroEl.style.removeProperty('--tx');
+      if(trustEl){
+        trustEl.style.opacity=''; trustEl.style.visibility='';
+        trustEl.style.removeProperty('--tx');
+      }
+      cine.style.removeProperty('--cineEdge');
+    }
+    if(heroMode==='off')return;
+    if(heroMode==='phone'){
+      /* ⭐⭐⭐ THE PHONE'S FIRST SCREEN GOES PAST THE VIEWER — 24 August 2026 (D359). Client:
+         *"almost like what it is currently… it should go through the screen, like, go past the
+         user and then fade off."* That is the narrow bands' own approved grammar (D316): a
+         translateZ under the story layer's 1000px perspective, 0 → 560 on p² — the exact travel
+         every narrow title runs — with the fade over the last 26% of the window. Up AT REST from
+         t=0 like the desktop (a hero is already there; it does not arrive), gone by t=6.0, the
+         slot the opening title has always held on this band.
+         ⛔ ON THE SCROLL CLOCK, NEVER THE PAINTED FRAME — moving type on a 12fps picture is
+         D349–D351's four-build lesson, restated here once. */
+      const p=clamp(t/HERO_OUT);
+      const a=p>=1?0:Math.min(1,(1-p)/0.26);
+      const o=+(a*a*(3-2*a)).toFixed(2);
+      const z=Math.round(Z_NEAR*p*p);
+      if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
+      if(o!==heroO){
+        heroO=o; heroEl.style.opacity=o; heroEl.style.visibility=o?'visible':'hidden';
       }
       return;
     }
@@ -17463,7 +17774,11 @@ if(faqIndex && panel && faqBody){
     if(cueEl&&!g)cueEl.style.opacity=firstAlpha;
     /* ⛔ `hidden`, not opacity: a control you cannot see must leave the tab order with it */
     const d=film>0.985;
-    if(d!==skipped){ skipped=d; if(skipEl)skipEl.hidden=d; }
+    if(d!==skipped){ skipped=d; if(skipEl)skipEl.hidden=d;
+      /* ⭐ D359: `skip-live` mirrors the control — the phone's contact pair flanks the skip while
+         it is on screen and returns to the corner (D180) the moment it goes. One writer, here. */
+      root.classList.toggle('skip-live',!d);
+    }
   }
   if(skipEl)skipEl.addEventListener('click',()=>{
     /* ⭐⭐ SKIP MEANS LAND ON THE PAGE AS THE FILM LEAVES IT, so this moves the scroll AND snaps the
