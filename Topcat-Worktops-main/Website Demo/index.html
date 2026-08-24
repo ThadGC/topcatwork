@@ -5257,31 +5257,22 @@
       -webkit-mask-size:32px 96px;     mask-size:32px 96px;
       -webkit-mask-repeat:no-repeat;   mask-repeat:no-repeat;
     }
-    /* ⭐⭐ A GLARE, NOT A SHEEN — 24 August 2026 (D365b), his third pass on this light: *"I need
-       that to be brighter, like it's a glare shining off of it pretty much. It needs to be more
-       obvious."* Two things make a glare: the stroke goes WHITE-HOT where the light crosses it
-       (a pure #fff core at the band's own 48% line — so the derived 51.7% timing stands), and the
-       light BLOOMS past the stroke — the ::after below, a soft unmasked halo riding the same
-       keyframes, spilling ~7px either side of the shaft the way a real glint flares off metal.
-       Phone only; the desktop's quiet 0.62 sheen is frozen. */
+    /* ⛔⛔⛔ **THE LIGHT LIVES IN THE STROKE AND NOWHERE ELSE — 24 August 2026 (D365c), HIS
+       CORRECTION OF D365b's BLOOM, WHICH WAS WRONG AND IS DELETED, NOT PARKED SOFTLY:** *"Why is
+       the glare outside of the arrow?… If you look at the desktop version on the nav bar… there's
+       a flash going on the line. It should look like that. It starts from the line. It doesn't
+       start from outside the line. Doesn't leave the line."* The unmasked halo read as an orb
+       floating past the arrowhead — screenshotted by him over the quarry ground. His reference is
+       exact: the nav hairline's own flash (D33) is light INSIDE a line's ink. That is what the
+       MASKED band has always been, so the fix is a deletion: the ::after is gone, and the
+       brightness his D365b asked for is carried entirely inside the mask — a ~9px pure-white
+       PLATEAU (42–54%) with gold shoulders, centred on the band's 48% hot line so the derived
+       51.7% light-on-point timing still stands. Nothing paints outside the glyph, ever. */
     html.cine-on .cine-hero .cine-hero-cue i b span{
       position:absolute;left:0;right:0;top:0;height:56px;display:block;
       background:linear-gradient(to bottom,
-        rgba(228,205,146,0) 0%, #EFD9A4 30%, #FFFFFF 48%,
-        #EFD9A4 66%, rgba(228,205,146,0) 100%);
-      will-change:transform;
-      animation:cineHeroSheen 1.8s linear infinite;
-    }
-    /* the bloom: no mask, no filter of its own — a radial and a transform, nothing else (D339's
-       rule). It lives INSIDE `i`, whose drop-shadow already re-rasters for the moving sheen — the
-       same cost class the approved desktop cue has always paid, not a new one. top:5px seats its
-       44px centre on the band's hot line (48% of 56 ≈ 27), so halo and white core travel as one
-       light. */
-    html.cine-on .cine-hero .cine-hero-cue i::after{
-      content:"";position:absolute;left:50%;top:5px;width:46px;height:44px;margin-left:-23px;
-      pointer-events:none;
-      background:radial-gradient(closest-side,
-        rgba(255,248,224,0.62) 0%, rgba(236,215,158,0.30) 48%, rgba(236,215,158,0) 100%);
+        rgba(228,205,146,0) 0%, #EFD9A4 26%, #FFFFFF 42%,
+        #FFFFFF 54%, #EFD9A4 70%, rgba(228,205,146,0) 100%);
       will-change:transform;
       animation:cineHeroSheen 1.8s linear infinite;
     }
@@ -5483,27 +5474,19 @@
        390) holds both titles to their balanced pair and the box bottoms at ~331, 10 clear. */
     html.cine-on .cine-line{font-size:clamp(29px,8.7vw,44px);font-weight:600}
     html.cine-on .cine-line[data-vpos-narrow="top"]{top:14.5vh}
-    html.cine-on .cine-line .cine-line-sub{margin-top:14px}    /* ⭐⭐⭐ **THE KITCHEN'S WASH DOES NOT MOVE. THE WORDS MOVE THROUGH IT — 24 August 2026
-       (D365). ⚠️ REPLACES D362a's flat linear, WHICH SHIPPED A SLIDING CLIFF:** that wash lived
-       INSIDE the line and rode the slide, and a linear gradient has no horizontal falloff — so
-       its box edge crossed the frame as a hard vertical border, screenshotted by the client
-       mid-entry: *"you can't see the border of the gradient… it looks very bad."* The desktop
-       never shows this because its radial dies before its own edge; the flat one cannot.
-       ⭐⭐ **SO THE WASH IS THE FRAME'S NOW — D352's own grammar, restated for a shade: the mask
-       does not move and the block moves through it.** A full-width scrim on the story layer's
-       own ::before, vh-anchored around the beat's zone (the words sit 25.6–42vh), zero at both
-       ends INSIDE the frame — no edge anywhere, nothing travels, and the sliding words pass
-       through a stationary pool of shade exactly as they pass through the gutter mask on
-       desktop. It breathes on `--kitG` (bandGrade × a 0.9s ease at each window end), written by
-       the kitchen branch; the LINE's own radial stays pinned at 0 on this band.
-       ⚠️ z-index:-1 inside `.cine-story`'s stacking context: above the film, below every line. */
-    html.cine-on .cine-story::before{
-      content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-      opacity:var(--kitG,0);
-      background:linear-gradient(180deg,
-        rgba(6,6,9,0) 12%, rgba(6,6,9,0.45) 20%, rgba(6,6,9,0.62) 25%,
-        rgba(6,6,9,0.62) 44%, rgba(6,6,9,0.34) 53%, rgba(6,6,9,0) 62%);
-    }
+    html.cine-on .cine-line .cine-line-sub{margin-top:14px}    /* ⛔⛔⛔ **THE KITCHEN'S WASH IS BACK ON THE LINE — 24 August 2026 (D367), ON HIS ORDER.**
+       The wash has now been four things in one day: the radial (his "circular gradient"
+       complaint, D362a) → a flat linear riding the slide (a visible box edge crossed the frame,
+       D365) → a static frame scrim on this layer's ::before driven by a live sampler (STROBED
+       under the scrub, D366 tried to close it at the sampler) → and after D366 he still saw it
+       *"flashing like crazy"* and ruled: *"completely revert that change and we will work on it
+       again."* So the scrim is DELETED and the beat runs the ORIGINAL radial riding `--lg` —
+       the one stable state — with D366's clearRect kept underneath (it is a root correctness
+       fix and now protects the radial too). ⚠️ FOR THE REWORK, when he reopens it: drive the
+       wash from a BAKED table of film-time — sample the seated box OFFLINE per half-second like
+       every other measurement this build trusts — so nothing reads the video live and nothing
+       can ever flash. The static-box plumbing (bandGrade's `box` arg + `KB`) is already in
+       place for exactly that. */
     /* ⭐⭐ **THE KITCHEN BEAT STARTS ON THE ENDING'S OWN LINE — 24 August 2026 (D364).** His final
        word after a mid-message revision (first "same height as your worktop starts here", then):
        *"I actually want that title… and the subtitle… the same height as the next frame. So where
@@ -17530,13 +17513,13 @@ if(faqIndex && panel && faqBody){
   /* ⚠️ D361's PHK RISE-FENCE MACHINERY IS PARKED — D364 reversed the rise to the desktop slide,
      which has nothing to cross. Its arithmetic (the bar FURNITURE's bottom, not the bar's 80px
      box, minus 6px of air) lives in the register row if the rise ever returns. */
-  const KB={ox:0,oy:0,ow:0,oh:0};
-  let kitTx=null, kitG=null;
+  const KB={ox:0,oy:0,ow:0,oh:0};   /* parked for the wash rework — see D367 */
+  let kitTx=null;
   function measureKit(){
     if(!kitEl)return;
     /* hand each band's inline property back on the way out — an inline value left behind would
        drag another band's beat off its mark (the D336/D348 family of bug) */
-    if(!heroPh){ cine.style.removeProperty('--kitG'); kitG=null; }
+    if(!heroPh){ cine.style.removeProperty('--kitG'); }
     if(!heroOn&&!heroPh){
       kitEl.style.removeProperty('--lx'); kitTx=null;
       kitEl.style.removeProperty('--lyp');
@@ -17759,15 +17742,13 @@ if(faqIndex && panel && faqBody){
         else if(t>po){ const q=clamp((t-po)/(L.out-po)); tx=+(-KW.x1*q*q).toFixed(2); }
         if(tx!==kitTx){ kitTx=tx; L.el.style.setProperty('--lx',tx); }
         if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
-        /* ⭐ D365: the wash is the FRAME's static scrim (`.cine-story::before`), not the line's —
-           a wash riding the slide showed its own box edge crossing the frame (his screenshot).
-           `--kitG` = bandGrade × a 0.9s ease at each window end, so the shade breathes in as the
-           words arrive and out as they leave, and the sliding line carries NO wash of its own. */
-        const ramp=Math.max(0,Math.min(1,(t-L.at)/0.9,(L.out-t)/0.9));
-        let w=0;
-        if(ramp>0){ const g=bandGrade(L.el,KB); if(g>=0)w=+(g*ramp).toFixed(2); }
-        if(w!==kitG){ kitG=w; cine.style.setProperty('--kitG',w); }
-        if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        /* ⚠️ D367: the ORIGINAL radial wash, restored on his order after the frame-scrim
+           attempts (D365/D366) kept flashing for him — see the ::before note in the stylesheet
+           for the whole history and the baked-table plan for the rework. */
+        if(o>0.02){
+          const g=bandGrade(L.el);
+          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+        } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
         if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
         if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
         continue;
