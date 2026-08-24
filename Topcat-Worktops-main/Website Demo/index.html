@@ -4758,20 +4758,27 @@
        ⚠️ `#fff`, not `#000`: white is opaque in BOTH alpha and luminance mask modes.
        ⚠️ ≥1121 ONLY. The phone and the tablet keep D316's travel until he takes their placement. */
     html.cine-on .cine-story{
-      --edgeFade:clamp(20px,7vw,132px);
+      /* ⭐⭐ **HALF THE GUTTER, NOT ALL OF IT — D353.** Client: *"I can see it's fading away, it
+         should almost be a little bit more solid over faded instead of, like, a gradient fade."*
+         The full gutter made the dissolve a hundred pixels long, which reads as a gradient laid over
+         the type; half of it keeps the letters SOLID until they are within about fifty pixels of the
+         edge and then takes them. ⛔ It is still expressed as the gutter, not as a number, so the
+         rest frame stays untouched at every desktop width — the ramp cannot reach past where the
+         type begins however wide the window is. */
+      --edgeFade:calc(clamp(20px,7vw,132px) * 0.5);
       -webkit-mask-image:linear-gradient(90deg,rgba(255,255,255,0) 0,
-        rgba(255,255,255,0.04) calc(var(--edgeFade) * 0.15),
-        rgba(255,255,255,0.16) calc(var(--edgeFade) * 0.30),
-        rgba(255,255,255,0.50) calc(var(--edgeFade) * 0.50),
-        rgba(255,255,255,0.84) calc(var(--edgeFade) * 0.70),
-        rgba(255,255,255,0.96) calc(var(--edgeFade) * 0.85),
+        rgba(255,255,255,0.10) calc(var(--edgeFade) * 0.18),
+        rgba(255,255,255,0.34) calc(var(--edgeFade) * 0.36),
+        rgba(255,255,255,0.66) calc(var(--edgeFade) * 0.55),
+        rgba(255,255,255,0.88) calc(var(--edgeFade) * 0.72),
+        rgba(255,255,255,0.98) calc(var(--edgeFade) * 0.88),
         #fff var(--edgeFade));
               mask-image:linear-gradient(90deg,rgba(255,255,255,0) 0,
-        rgba(255,255,255,0.04) calc(var(--edgeFade) * 0.15),
-        rgba(255,255,255,0.16) calc(var(--edgeFade) * 0.30),
-        rgba(255,255,255,0.50) calc(var(--edgeFade) * 0.50),
-        rgba(255,255,255,0.84) calc(var(--edgeFade) * 0.70),
-        rgba(255,255,255,0.96) calc(var(--edgeFade) * 0.85),
+        rgba(255,255,255,0.10) calc(var(--edgeFade) * 0.18),
+        rgba(255,255,255,0.34) calc(var(--edgeFade) * 0.36),
+        rgba(255,255,255,0.66) calc(var(--edgeFade) * 0.55),
+        rgba(255,255,255,0.88) calc(var(--edgeFade) * 0.72),
+        rgba(255,255,255,0.98) calc(var(--edgeFade) * 0.88),
         #fff var(--edgeFade));
       -webkit-mask-size:100% 100%;mask-size:100% 100%;
       -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
@@ -16831,16 +16838,32 @@ if(faqIndex && panel && faqBody){
      fast scrub presents about every sixth frame, so anything that follows the PICTURE moves in
      visible steps on type.** Nothing here follows the picture. The type does not move at all; the
      only thing in motion is the mask's own edge, on the continuous eased scroll value, at 60fps. */
-  const WIPE_AT=1.85, WIPE_OUT=6.0;
+  /* ⛔⛔ **IT STARTS ON THE FIRST PIXEL OF SCROLL — 24 August 2026 (D353).** Client: *"the text
+     should start moving to the side immediately as the user scrolls, so it matches perfectly with
+     the video, because right now I can swipe quite a while before the text starts moving… it needs
+     to immediately start moving to give the illusion that it's pretty much staying in the same
+     place, and then it swipes away."*
+     ⚠️ **WIPE_AT WAS 1.85 AND THAT WAS A MISREADING OF HIS OWN SCREENSHOT.** He marked the moment
+     the block had reached the frame's edge and called it the start of the animation; I built the
+     block STILL until then. What he meant is that it should already be on its way by that point. */
+  const WIPE_AT=0, WIPE_OUT=6.0;
   /* the first screen's box and the proof block's, in the story layer's own coordinates */
   const HW={x0:0,x1:0}, HT={x0:0,x1:0};
   const boxOf=(el,o)=>{ o.x0=el.offsetLeft; o.x1=el.offsetLeft+el.offsetWidth; };
-  /* ⭐ **EASE IN, THEN HOLD THE SPEED.** A block that starts moving at full speed from a standstill
-     is a jerk you can see; one that eases out as it leaves looks like it is hesitating at the edge.
-     So: a quadratic for the first quarter, blended into a straight line with a continuous velocity
-     (the quadratic's slope at 0.25 IS the line's), and it exits at speed. Normalised so the block
-     is exactly clear at `WIPE_OUT`. */
-  const wipeEase=p=>(p<0.25?2*p*p:p-0.125)/0.875;
+  /* ⭐⭐⭐ **IT LEAVES AT THE PICTURE'S OWN STARTING SPEED AND THEN OUTRUNS IT — D353.** This curve
+     is chosen against a measurement, not by feel: the far field's tracked travel (D349's table,
+     parked with the pin) runs **0 → 744 film px = 620 screen px over the six seconds**, starting at
+     **51 screen px a second**. `0.4p + 0.6p²` over the block's own 761px starts at **50.7 px/s** —
+     the picture's rate to within a pixel, which is what *"it matches perfectly with the video"*
+     buys — and then pulls ahead to finish **1.23x** in front of the scene. So it reads as sitting
+     with the picture for the first moment and then being taken by the side.
+     ⛔ **AND IT NEVER RUNS AT THE SCENE'S RATE FOR LONG**, which matters: the film is 12fps, so
+     anything that keeps pace with it invites the eye to compare the two and see the steps. This is
+     ahead of the scene from the first second onward and it is driven by the CONTINUOUS scroll, so
+     the block's own motion is smooth whatever the film is doing.
+     ⚠️ It starts with real velocity rather than easing in from a standstill — an ease-in is exactly
+     the *"I can swipe quite a while before the text starts moving"* he objected to. */
+  const wipeEase=p=>0.4*p+0.6*p*p;
   /* ⭐⭐ THE ONLY MEASUREMENT THIS DESIGN NEEDS: the two boxes, so the frame knows how far the block
      has to travel to be clear of the screen. Desktop-only and `display:none` below 1121, where a
      read returns a 0-wide box — hence the band test. ⛔⛔ **AND IT IS TAKEN AGAIN WHEN THE FONT

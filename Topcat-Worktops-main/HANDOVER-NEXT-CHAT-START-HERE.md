@@ -64,6 +64,7 @@ D349   ⭐⭐⭐ THE PIN — the first screen is glued to the picture and rides 
 D350   ⛔⛔ "it's shaking" — the pin was right, its CLOCK was wrong: 60fps words on a 12fps picture
 D351   ⛔⛔ still shaking, sideways — `currentTime` is NOT the frame on screen. rVFC is
 D352   ⭐⭐⭐ THE PIN IS OUT. The block slides off on the SCROLL and the gutter dissolves it
+D353   ⭐⭐ it leaves from the FIRST pixel of scroll, at the picture's own speed; tighter fade
 ```
 
 ### ⛔⛔⛔ THE TRAP THAT COST TWO ROUNDS, AND IT WILL CATCH THE NEXT PERSON
@@ -162,7 +163,7 @@ opening title and their own placement, untouched. **§13 item 2.**
 | anchor | `top:22vh` | `top:22vh` `[data-vpos-wide="hero"]` | `top:16vh` `[data-vpos-wide="high"]` |
 | title | `clamp(38px,5vw,76px)` | the same | `clamp(34px,4.8vw,70px)` |
 | measure | `clamp(320px,46vw,660px)` | `clamp(320px,52vw,760px)` | the same |
-| Z travel | ⛔ none — it SLIDES OFF on the scroll, t=1.85→6.0 (D352) | `HERO_Z` 300 | **150** |
+| Z travel | ⛔ none — it SLIDES OFF on the scroll, t=0→6.0 (D352/D353) | `HERO_Z` 300 | **150** |
 | lines | 2 | 2 | 2 |
 
 ⛔⛔⛔ **ANYTHING ANCHORED NEAR THE TOP CANNOT TRAVEL THE TITLES' FULL 560.** `perspective-origin` is
