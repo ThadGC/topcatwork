@@ -920,7 +920,9 @@
     .mbar-a svg[stroke],.mbar-a svg path[stroke]{fill:none}
     /* ⚠️ D372: at 320 wide "WHATSAPP" ran 2px past its button even at the 2.9vw font — these
        buttons are nowrap, so that is a silent clip, not a wrap (the D171 trap). Nesting narrows:
-       this 360 inside the 1120 block still means ≤360. Re-measured at 320 after: nothing clips. */
+       this 360 inside the 1120 block still means ≤360. Re-measured at 320 after: the ink fits;
+       scrollWidth still reads 1px over, but that is the word's own trailing letter-space
+       (tracked uppercase always carries one), not a glyph. */
     @media(max-width:360px){
       .mbar-a{gap:5px;padding-left:4px;padding-right:4px}
       .mbar-a svg{width:14px;height:14px}
@@ -4373,16 +4375,33 @@
      film's own travel — and therefore its scroll-per-second — identical:
 
          band      film travel   dead scroll   --cineH   --cineHold
-         desktop      900vh         200vh       1100vh     0.1818
+         desktop      900vh         150vh       1050vh     0.1387   ← D376 trimmed the hold
          tablet       720vh         180vh        900vh     0.2000
          phone        630vh         170vh        800vh     0.2125
+
+     ⚠️⚠️ **THE THREE `film travel` / `dead scroll` FIGURES ABOVE ARE NOMINAL — THEY ARE `--cineH`
+     SPLIT BY THE HOLD, AND THE REAL SCROLLABLE TRAVEL IS ONE VIEWPORT LESS** (`.cine` is
+     `--cineH` tall and its `#hero` is sticky, so the last screenful is not travel). The true
+     desktop numbers, measured at 1440×900: travel 950vh, **film 818.2vh, dead 131.8vh**. Keep
+     the table for the RELATIONSHIP between the two numbers; measure before quoting either.
+     ⭐⭐ **D376 — 24 August 2026, DESKTOP ONLY.** Client: *"the dead scroll on desktop once it
+     gets to the surfaces worth building around is just slightly too long — slightly shorten the
+     dead scroll."* ⛔⛔ **AND IT IS THE TWO-NUMBER EDIT THIS TABLE EXISTS TO PROTECT**: the hold
+     alone would have squeezed the same film into less travel and sped the whole scrub up.
+     `--cineH` drops by exactly the 50vh the hold gives back — 1100 → 1050 — so the film keeps
+     its own travel and its scroll-per-second is untouched.
+     ⛔ **AND THE HOLD IS 0.1387, NOT THE 0.1818 × 1000/950 THE NOMINAL TABLE SUGGESTS**: solved
+     against the REAL travel (950vh), `dead = 950 × 0.1387 = 131.8vh` and `film = 950 × 0.8613 =
+     818.2vh` — **identical to the 818.2vh the film had before**, so the trim is purely dead
+     scroll. Measured live after the change: film 818.2vh, dead 131.8vh, half a screen off the
+     old 181.8. ⚠️ The other two bands are NOT touched; he named the desktop.
 
      ⭐ TWO SCREENS OF HOLD ON THE FINISHED HERO, with the veil at 1, the copy up and the bar formed:
      nothing changes through it, which is the whole idea. ⚠️ It only exists under `cine-on`, so a
      browser that never runs the film gets the ordinary hero and no dead scroll — "if the video was
      played" is satisfied by where these live rather than by a test.
      ⚠️ **THIS IS THE FIRST THING HE IS LIKELY TO WANT MOVED**, and it is one number per band. */
-  html.cine-on .cine{--cineH:1100vh;--cineHold:0.1818;--cineVeilAt:38;--cineVeilMin:0.20;
+  html.cine-on .cine{--cineH:1050vh;--cineHold:0.1387;--cineVeilAt:38;--cineVeilMin:0.20;
     height:var(--cineH)}
   @media(max-width:1120px){
     html.cine-on .cine{--cineH:900vh;--cineHold:0.2}
@@ -5595,9 +5614,9 @@
      ⛔ Still not a mark in a disc (§2 rule 11) — a bordered control, which the rule exempts. */
   html.cine-on .cine-skip{
     display:inline-flex;position:absolute;z-index:6;right:clamp(18px,3.4vw,46px);bottom:clamp(20px,4vh,42px);
-    align-items:center;gap:11px;padding:13px 24px;
+    align-items:center;gap:11px;padding:13px 26px;
     background:rgba(8,8,11,0.70);-webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-    border:1px solid rgba(198,166,100,0.72);border-radius:2px;color:var(--bone);
+    border:1px solid rgba(198,166,100,0.72);border-radius:999px;color:var(--bone);
     font-family:var(--brand,inherit);font-size:12px;font-weight:500;letter-spacing:0.24em;
     text-transform:uppercase;
     box-shadow:0 6px 26px rgba(4,4,6,0.5);
@@ -5633,12 +5652,19 @@
   @media(max-width:1120px){
     html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 21px)}
   }
-  /* ⭐ pill sides on BOTH narrow bands since D368 (*"do the same thing… what we did on mobile"*)
-     — his phone instruction was *"round the skip button sides into a pill side shape"*, and the
-     tablet takes the same control by the widened query. The desktop keeps D327's 2px, frozen. */
-  @media(max-width:1120px){
-    html.cine-on .cine-skip{border-radius:999px;padding:13px 26px}
-  }
+  /* ⭐⭐⭐ THE PILL IS NOW EVERY BAND'S — 24 August 2026 (D375). His phone instruction was *"round
+     the skip button sides into a pill side shape"* (D359a), the tablet took it at D368 by the
+     widened query, and he has now called the third: *"on desktop, make the skip intro button
+     also a pill shape, like it is on tablet and mobile."*
+     ⭐⭐ **SO THE RULE LEAVES THE MEDIA QUERY ENTIRELY RATHER THAN GAINING A THIRD COPY** — the
+     query is deleted and the two declarations fold into the base `html.cine-on .cine-skip` rule
+     above (radius 999px, padding 13px 26px, replacing D327's 2px radius and 13px 24px). One
+     description, no band can disagree with another, and the ≤1120 CENTRING block above is
+     untouched — the desktop keeps its bottom-right corner, which is only the position.
+     ⛔ Still not a mark in a disc (§2 rule 11): a bordered control with a label, which the rule
+     exempts, and the chevron is unchanged. ⚠️ The narrow bands' flank arithmetic carries the
+     skip's rendered 174.8px width (D371/D359a) — the padding is IDENTICAL to what those bands
+     already had, so those constants are unaffected. Re-measured after: 174.8px at 390 and 768. */
   /* ⛔⛔⛔ **AND IT CROSSES AN EXISTING CLIENT RULING ON THE PHONE, WHICH IS FLAGGED RATHER THAN
      BURIED.** 11 Aug 2026: *"the nav bar should already be formed, so already a gold line below it
      and everything, from the top. Not after you start scrolling."* That block (`max-width:1120px`,
@@ -8564,6 +8590,20 @@
        numbers, deliberate, never "tidied" into one (see the wa-fab markup note). */
     .wa-fab,.call-fab{right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px))}
     .call-fab{display:flex;right:70px}   /* 14 + 46 + 10 of air — the WhatsApp keeps the corner */
+    /* ⭐⭐ D374 (24 Aug 2026): ON THE LANDING, THE PHONE'S PAIR EXISTS ONLY WHILE THE FILM RUNS.
+       Client: *"when the mobile version reaches surfaces worth building around, on that screen,
+       remove the WhatsApp and the phone icon at the bottom. Only when the user scrolls does the
+       sticky bottom bar come up."* So once the skip goes, BOTH fabs go with it: the trio flanks
+       the skip through the film, the corner is CLEAR on the finished hero, and the sticky bar —
+       which carries WhatsApp and Call itself since D372 — is the contact surface from the first
+       scroll onward.
+       ⚠️ Gated under `cine-on`, NOT unconditionally: the seven internal pages have no film and
+       no `cine-on`, so they keep their D359 corner pair exactly as before, and a landing where
+       the film fails (`fail()` strips `cine-on`) falls back to the same pair. ⚠️ The tablet
+       stays wa-only after its film — his *"you can leave it as is with the WhatsApp button
+       there"* — via D371's own gate in the tablet band block. */
+    html.cine-on:not(.skip-live) .wa-fab,
+    html.cine-on:not(.skip-live) .call-fab{display:none}
     /* ⭐⭐ WHILE THE SKIP IS UP, THE PAIR FLANKS IT — his instruction, same message: *"put the
        phone on the right of the skip button and the whatsapp on the left of it."* So the film's
        foot reads [WhatsApp] [SKIP INTRO] [phone], one centred row. Done as a TRANSLATE off the

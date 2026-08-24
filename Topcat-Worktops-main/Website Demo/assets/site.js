@@ -5743,8 +5743,9 @@ if(faqIndex && panel && faqBody){
      ⚠️ `CURVE_AT` is 0.90 against the copy's `INK_AT` 0.93 ON PURPOSE — the frame should have
      finished becoming the hero before the words land in it, not at the same moment.
      ⚠️ Smoothstep rather than linear, for the reason the veil already gives: a linear ramp has a
-     visible start. ⭐ `film` reaches 1 at the top of the hold and stays there, so the hero rests for
-     its whole 182vh fully rounded. */
+     visible start. ⭐ `film` reaches 1 at the top of the hold and stays there, so the hero rests
+     fully rounded for the whole dead scroll (150vh on the desktop since D376, 180 tablet, 170
+     phone — the table beside `--cineHold`). */
   const CURVE_AT=0.90;
   function curve(film){
     const k=clamp((film-CURVE_AT)/(1-CURVE_AT));
