@@ -8,8 +8,11 @@ Read this, then `HANDOVER.md` **§D** (the register, newest first — this round
 > is carried below.
 
 > ⭐⭐ **THE ACTIVE SCOPE IS THE FILM'S TEXT ANIMATION, ONE SECTION AT A TIME, ON DESKTOP.** The
-> first screen is DONE (§4). **The two beats are deliberately untouched and are waiting for him** —
-> his instruction, verbatim, in §13 item 1. ⛔ **Do not invent either of them.**
+> first screen is DONE (§4). ⭐ **D354 (later on 24 Aug): the SLAB BEAT is now DONE too — his
+> design, the reveal: the words sit still behind a clip that IS the slab's tracked edge, riding
+> the painted frame (rVFC), and the slab uncovers them at its own angle. See the D354 register
+> row.** **The KITCHEN beat is deliberately untouched and waiting for him** — his instruction,
+> verbatim, in §13 item 1. ⛔ **Do not invent it.**
 
 ---
 
@@ -410,11 +413,10 @@ link presents as *"most of the images aren't loading"*.
 
 ### ⭐⭐⭐ The film, which is the live scope
 
-1. ⭐⭐⭐ **THE TWO BEATS' ANIMATIONS — HIS, AND HE SAYS WHEN.** Verbatim: *"the animation of the text
-   where it says the slab you choose is unique will change that one to be something different only
-   when we're ready. We're doing one section at a time now. And then the same thing for the stone
-   sets the tone of the room, that will also have its own different way of animating."*
-   ⛔ **DO NOT INVENT EITHER OF THEM. WAIT FOR HIM.** ⭐ Two mechanisms are already built, measured
+1. ⭐⭐⭐ **THE KITCHEN BEAT'S ANIMATION — HIS, AND HE SAYS WHEN.** ⭐ **The slab beat's arrived and
+   was built the same day: D354, the reveal.** His standing words for the rest: *"the same thing
+   for the stone sets the tone of the room, that will also have its own different way of
+   animating."* ⛔ **DO NOT INVENT IT. WAIT FOR HIM.** ⭐ Two mechanisms are already built, measured
    and parked, and either is a paste away — see §16. **A wave that erases in place is the natural
    candidate for the CLOSING KITCHEN, whose shot is measured as completely locked off** (zero camera
    motion), so a pin has nothing to ride there.

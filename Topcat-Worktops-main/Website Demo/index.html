@@ -5112,6 +5112,12 @@
     html.cine-on .cine-line[data-vpos-wide="high"] .cine-line-sub{
       margin-left:calc(clamp(34px, 4.8vw, 70px) * 0.3095 - 7.97px); /* "Once…" */
     }
+    /* ⛔⛔ **THE GOLD'S drop-shadow COMES OFF THIS ONE BEAT — D354.** Its parent carries the
+       reveal's animated clip-path on desktop, and a filter under an animated mask re-rasters both
+       per change, which is D339's arrow glitch by another door. Measured before removing: this
+       beat sits on the film's black void, where a near-black shadow paints nothing anyway. The
+       kitchen beat's em keeps it — that one sits on a lit room and never carries a clip. */
+    html.cine-on .cine-line[data-vpos-wide="hero"] em{filter:none}
     /* ⛔⛔⛔ **THE KITCHEN BEAT SITS HIGHER, AND 12vh IS THE ISLAND'S OWN MEASUREMENT — D345.**
        Client: *"the part that says the stone sets the tone of the room is currently too hard to
        read… you're gonna have to lift it slightly higher so it doesn't actually go over or touch
@@ -9464,7 +9470,14 @@
            "Even two slabs cut from the same block are veined differently." (D340's, same fault) ·
            "Cut for your kitchen, and made to last for many years." (D341's, ⛔ kitchen-only) ·
            "One of a kind patterns on a stone that's built to last you decades." -->
-      <p class="cine-line" data-at="15.0" data-out="24.5" data-vpos="low" data-vpos-wide="hero"
+      <!-- ⭐⭐⭐ **D354: THE DESKTOP `data-at` IS 10.3 AND IT IS THE SLAB'S OWN NUMBER, NOT A COPY
+           TIMING.** On desktop this beat no longer fades in at all: it goes to opacity 1 behind a
+           full clip the moment the slab's edge first leaves the frame's left side (f125, t=10.42),
+           and the edge does the revealing from there — see THE SLAB REVEALS ITS OWN CAPTION in the
+           scrub. 15.0, the old fade-in moment, is measured as the moment the slab finishes
+           clearing the words, so the copy holds the same seconds it always did. The tablet and the
+           phone keep their own attributes and their own fade, untouched. -->
+      <p class="cine-line" data-at="10.3" data-out="24.5" data-vpos="low" data-vpos-wide="hero"
          data-at-narrow="21.0" data-out-narrow="25.3" data-vpos-narrow="top"
          data-at-phone="16.2" data-out-phone="24.0">The slab you choose is <em>unique.</em><span class="cine-line-sub">Measured, cut and finished for your home, and built to last for decades.</span></p>
       <!-- ⭐⭐⭐ **THE THIRD BEAT IS BACK, REWRITTEN — 23 August 2026 (D343). ⚠️ THIS REVERSES D326.**
@@ -16874,7 +16887,122 @@ if(faqIndex && panel && faqBody){
     if(heroEl)boxOf(heroEl,HW);
     if(trustEl)boxOf(trustEl,HT);
   }
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measurePin);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{ measurePin(); measureReveal(); });
+
+  /* ═════ THE SLAB REVEALS ITS OWN CAPTION — 24 August 2026 (D354). DESKTOP ONLY. ═════
+     Client: *"the slab fills the screen and then goes back at an angle revealing an open space
+     when the text comes up. I would like the text to pretty much already be there, and then it
+     almost gets revealed as if the slab is revealing it. It's like covering the text, and then the
+     slab reveals it as if it was always behind in that spot… so the t and the c of the word the
+     and choose will obviously already be there, and then the h and the e… it all gets revealed as
+     if it's coming out from behind the slab. The animation just plays at that angle essentially
+     and reveals at the same angle of the slab."*
+     ⭐⭐⭐ **THE WORDS NEVER MOVE AND NEVER FADE IN. THE SLAB'S OWN EDGE IS THE CURTAIN.** The
+     block sits at its approved position at opacity 1 from t=10.3, hidden behind a `clip-path`
+     whose boundary IS the slab's left edge — tracked per film frame, and the edge is a genuinely
+     straight line: max residual 2.2 film px against a least-squares fit over the 620 rows the
+     text spans, 32 rows a frame. So two numbers a frame carry it exactly — X at film y 490, and
+     the slope, which runs -0.03 to -0.38 as the slab rotates away. Letters are uncovered exactly
+     as the stone passes them, the T and the C first, partial glyphs and all, at the slab's own
+     angle; scroll back up and the slab takes them again.
+     ⛔⛔⛔ **THE CLIP RIDES THE PAINTED FRAME (rVFC), AND THAT IS CORRECT HERE FOR THE VERY
+     REASON THE PIN WAS WRONG (D349–D351).** The pin put MOVING type on a 12fps picture and the eye
+     read the film's frame rate on the type. Here the type does not move: the only thing that
+     steps is the visibility boundary, and it steps at the same instant, by the same amount, in
+     the same place as the slab's own painted edge — one event, not two clocks, so there is no
+     relative motion anywhere and nothing to judder. A boundary run on the smooth scroll clock
+     instead would detach from the painted edge — up to a whole presented step ahead under a fast
+     scrub — and put lit type ON the slab, which is the one thing the illusion cannot survive.
+     ⭐⭐ **THE TABLE IS THE MEASUREMENT, RAW AND ONE-WAY (D351's rule):** frames 124–205 of the
+     1920 cut, threshold 40 on the void side so the boundary sits at the first hint of the lit
+     fringe, then pulled REV_PAD film px shy of it so type never touches lit stone — the seam that
+     leaves is black on black. Strictly monotone over the whole domain; the backswing that starts
+     at f206 — the slab drifts about 150 film px back left by t=21 — is OUTSIDE it, and by then
+     the clip is off. At 1440x900 the reveal runs t=11.25, the T, to t≈15.1, the em's full stop —
+     so 15.0, the old fade-in moment, is measured as the moment the slab finishes clearing the
+     words, and the copy occupies the same seconds it always did.
+     ⚠️ **RE-TRACK IF THE FILM IS EVER RE-CUT** — the probe is `.textanim-2026-08-24/track_edge.py`.
+     ⛔ NO INTERPOLATION between frames, on purpose: a value read between two frames is a boundary
+     the picture is not at — D350's fault, restated for a mask. */
+  const REV_X=[
+    2.0,8.9,26.9,46.1,66.2,86.3,106.8,127.9,149.8,171.2,193.2,215.9,238.8,261.5,
+    283.5,306.1,328.6,350.8,373.1,395.0,416.9,438.2,459.5,480.7,501.7,521.9,541.8,561.5,
+    581.2,600.1,618.6,637.4,655.8,673.4,690.2,707.4,724.3,740.6,756.0,771.7,787.6,802.4,
+    816.6,831.1,845.5,859.2,872.3,885.6,898.9,911.7,923.7,936.0,948.2,959.9,971.4,982.6,
+    993.7,1004.2,1014.6,1025.1,1035.6,1045.6,1055.1,1064.6,1074.2,1083.5,1092.3,1101.2,1110.2,1118.5,
+    1126.4,1134.6,1142.6,1150.4,1158.1,1165.5,1172.9,1179.8,1186.3,1193.1,1199.7,1205.7];
+  const REV_S=[
+    0.0,-0.0294,-0.0334,-0.0351,-0.0378,-0.0408,-0.044,-0.0477,-0.0515,-0.0538,
+    -0.0594,-0.0643,-0.0672,-0.0712,-0.075,-0.0796,-0.083,-0.0874,-0.0923,-0.0952,
+    -0.1001,-0.1037,-0.1098,-0.1144,-0.1182,-0.1232,-0.1294,-0.1341,-0.1394,-0.1449,
+    -0.1505,-0.1553,-0.1599,-0.1647,-0.1713,-0.1774,-0.1834,-0.1888,-0.1949,-0.2011,
+    -0.2062,-0.2111,-0.2176,-0.2226,-0.228,-0.2341,-0.2383,-0.2434,-0.2487,-0.2527,
+    -0.2576,-0.2621,-0.2678,-0.2737,-0.2785,-0.2832,-0.2891,-0.2936,-0.2982,-0.3027,
+    -0.3074,-0.3116,-0.3169,-0.3216,-0.3257,-0.3296,-0.3335,-0.3377,-0.341,-0.3443,
+    -0.3482,-0.3507,-0.3544,-0.3583,-0.3621,-0.3652,-0.3684,-0.372,-0.3746,-0.3774,
+    -0.3803,-0.3845];
+  const REV_F0=124, REV_PAD=3;
+  const revEl=document.querySelector('.cine-line[data-vpos-wide="hero"]');
+  let revOn=false, revClip=null, shownFr=-1;
+  /* the element's LAYOUT box and the cover mapping, cached together: offsets and not
+     `getBoundingClientRect`, because `clip-path` applies in the element's own untransformed space
+     and a rect read mid-scroll would fold `--lz` into the numbers (the pin's lesson). Re-read by
+     `sync()` and again when Cinzel lands — the face is 135px wider than the fallback across this
+     headline, and a boundary computed against the fallback's box slices the wrong glyphs (D349
+     paid for that against a mountain). */
+  const RV={sc:0.8333,dx:-80,dy:0,left:0,top:0,w:0,h:0,ok:false};
+  function measureReveal(){
+    revOn=heroOn&&!!revEl;
+    if(!revOn){ revealTick(); return; }
+    RV.left=revEl.offsetLeft; RV.top=revEl.offsetTop; RV.w=revEl.offsetWidth; RV.h=revEl.offsetHeight;
+    const bb=heroBg&&heroBg.getBoundingClientRect();
+    if(bb&&bb.width&&bb.height){
+      const vr=(vid.videoWidth&&vid.videoHeight)?vid.videoWidth/vid.videoHeight:16/9;
+      let dw,dh,dx,dy;
+      if(vr>bb.width/bb.height){ dh=bb.height; dw=dh*vr; dx=(bb.width-dw)/2; dy=0; }
+      else { dw=bb.width; dh=dw/vr; dx=0; dy=(bb.height-dh)/2; }
+      RV.sc=dw/1920; RV.dx=bb.left+dx; RV.dy=bb.top+dy; RV.ok=true;
+    }
+    revealTick();
+  }
+  function revealTick(){
+    if(!revEl)return;
+    if(!revOn||!RV.ok){
+      /* hand the property back on the way out — an inline clip left behind under 1121 would slice
+         the tablet's own fade for no reason (the D336/D348 family of bug) */
+      if(revClip!==null){ revClip=null; revEl.style.clipPath=''; }
+      return;
+    }
+    const fr=(shownFr>=0)?shownFr
+      :Math.floor(((vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:0)*FPS+1e-6);
+    const i=Math.max(0,Math.min(REV_X.length-1,fr-REV_F0));
+    const x0=REV_X[i]-REV_PAD, s=REV_S[i];
+    /* the edge in the element's own pixels, read 60px above and below the box so nothing is ever
+       cut vertically — two points, because the slab's angle is part of the table */
+    const yT=RV.top-60, yB=RV.top+RV.h+60;
+    const xT=+((RV.dx+(x0+s*((yT-RV.dy)/RV.sc-490))*RV.sc)-RV.left).toFixed(1);
+    const xB=+((RV.dx+(x0+s*((yB-RV.dy)/RV.sc-490))*RV.sc)-RV.left).toFixed(1);
+    /* the picture has finished revealing — past the table's last frame, or the edge clear of the
+       box — and the clip comes OFF: the element is then exactly what it was before this round.
+       The frame gate matters on short windows, where the box runs deep into the frame and the
+       edge never formally clears it; past f205 today's composition takes over, overlap and all,
+       which is what shipped before this design. */
+    const done=(fr-REV_F0>=REV_X.length-1)||Math.min(xT,xB)>RV.w+30;
+    const c=done?'':'polygon(-2000px -60px,'+xT+'px -60px,'+xB+'px '+(RV.h+60)+'px,-2000px '+(RV.h+60)+'px)';
+    if(c!==revClip){ revClip=c; revEl.style.clipPath=c; }
+  }
+  /* ⭐ the one honest clock for "what frame is on the screen" — D351's lesson, reused for the one
+     design where following the painted frame is right. `currentTime` stays as the fallback, where
+     its 1–3 frame lead costs a sliver of type on the slab's fringe rather than a shake. */
+  const HAS_RVFC=!!(vid&&typeof vid.requestVideoFrameCallback==='function');
+  if(HAS_RVFC){
+    const onFrame=(now,meta)=>{
+      const f=Math.floor(meta.mediaTime*FPS+1e-4);
+      if(f!==shownFr){ shownFr=f; revealTick(); }
+      try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
+    };
+    try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
+  }
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1,
     zNear: 560                             /* set per band by retimeStory() — see the note there */
@@ -16981,11 +17109,34 @@ if(faqIndex && panel && faqBody){
      ⭐ So D348's branch came straight back out of this function and the beats run D316's approach
      at EVERY band, exactly as they did before that round: fade in over 16%, travel in Z, fade out
      over 26%, with the depth-of-field blur as they cross the focal plane. **Each beat gets its own
-     answer, and he says when.** */
+     answer, and he says when.**
+     ⭐⭐ **D354 (24 Aug) DELIVERED THE SLAB BEAT'S OWN ANSWER, ON HIS INSTRUCTION — the reveal
+     (see THE SLAB REVEALS ITS OWN CAPTION above), desktop only, as the branch below.** The
+     KITCHEN beat remains untouched at every band, and the slab beat remains untouched on the
+     phone and the tablet. ⛔ The kitchen's answer is still his to give — do not invent it. */
   function story(t){
     for(const L of STORY){
       if(L.out<=L.at)continue;
       const p=clamp((t-L.at)/(L.out-L.at));
+      /* ⭐⭐⭐ THE SLAB BEAT ON DESKTOP IS THE REVEAL (D354): no in-fade — the clip owns the
+         entrance — no Z travel and no blur, because the words were "always behind in that spot"
+         and a thing being uncovered cannot also be travelling. ⛔ AND NO FILTER EVER LANDS ON
+         THIS ELEMENT WHILE IT CARRIES THE CLIP — a filter under an animated mask re-rasters both
+         per change (D339, the arrow). The exit keeps its approved seconds exactly: a plain fade
+         over the same 2.47s the old out-ramp occupied, 22.03 to 24.5, the travel and the blur gone
+         with the travel. The wash is pinned to 0: the beat sits on measured void, and mid-reveal
+         the box straddles the lit slab, where `bandGrade()` would raise a wash over letters that
+         are supposed to not exist yet. */
+      if(L.el===revEl&&heroOn){
+        const a=(p<=0||p>=1)?0:Math.min(1,(L.out-t)/2.47);
+        const o=+(a*a*(3-2*a)).toFixed(2);
+        if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+        if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
+        if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
+        if(!HAS_RVFC)revealTick();
+        continue;
+      }
       const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
       const o=+(a*a*(3-2*a)).toFixed(2);
       if(L===STORY[0])firstAlpha=o;
@@ -17199,6 +17350,7 @@ if(faqIndex && panel && faqBody){
        how many screen pixels one film pixel is worth once `cover` has laid the video out. Both
        change only when the box does, and `sync()` is the function the box changes call. */
     measurePin();
+    measureReveal();  /* ⛔ the reveal's box and cover mapping move with the band too (D354) */
     plate(want);      /* ⛔ a band change swaps the overlay's crop as well as the film's */
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;
