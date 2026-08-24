@@ -63,6 +63,7 @@ D348   ⛔ the words go still and a wave eats them — REVERSED THE SAME NIGHT, 
 D349   ⭐⭐⭐ THE PIN — the first screen is glued to the picture and rides it out of shot
 D350   ⛔⛔ "it's shaking" — the pin was right, its CLOCK was wrong: 60fps words on a 12fps picture
 D351   ⛔⛔ still shaking, sideways — `currentTime` is NOT the frame on screen. rVFC is
+D352   ⭐⭐⭐ THE PIN IS OUT. The block slides off on the SCROLL and the gutter dissolves it
 ```
 
 ### ⛔⛔⛔ THE TRAP THAT COST TWO ROUNDS, AND IT WILL CATCH THE NEXT PERSON
@@ -71,11 +72,16 @@ D351   ⛔⛔ still shaking, sideways — `currentTime` is NOT the frame on scre
 the film is 12fps          a picture that steps and words that slide are not "in sync" —
 the scrub is 60fps         they oscillate against each other by a whole frame of travel
 
-anything pinned to the     ⛔ AND `currentTime` IS NOT THAT FRAME — it moves the moment you
-picture must read the         assign it, the picture waits for the decode. Measured 1-3
-frame the browser has         frames of lead under a scrub, 23px on screen.
-actually PAINTED           ⭐ `requestVideoFrameCallback` → `metadata.mediaTime`. Nothing else
-                              is ground truth. A fast scrub presents every SIXTH frame.
+⛔⛔⛔ DO NOT TIE       ⭐⭐ **D352's RULE, PAID FOR OVER FOUR ROUNDS: TYPE MOVES ON THE SCROLL
+TYPE TO THIS PICTURE      CLOCK, NEVER ON THE FILM'S.** A pin inherits 12fps, and a fast scrub
+                          presents about every SIXTH frame. A blurred photograph carries that
+                          invisibly; a 76px serif does not. Accuracy cannot fix it — D351 got
+                          the pin exact (every painted frame → exactly one text position) and
+                          he still saw it shake.
+                       ⚠️ If you ever DO pin something: `currentTime` is not the painted frame
+                          (1-3 frames of lead under a scrub). `requestVideoFrameCallback` →
+                          `metadata.mediaTime` is the only ground truth. Both are parked in
+                          `.textanim-2026-08-24/removed-pin-d349-d351.txt`.
 
 measure the text AFTER     ⛔ Cinzel is 135px wider across the headline than the fallback.
 the font lands                D349 tracked the wrong patch of mountain because of it
@@ -156,7 +162,7 @@ opening title and their own placement, untouched. **§13 item 2.**
 | anchor | `top:22vh` | `top:22vh` `[data-vpos-wide="hero"]` | `top:16vh` `[data-vpos-wide="high"]` |
 | title | `clamp(38px,5vw,76px)` | the same | `clamp(34px,4.8vw,70px)` |
 | measure | `clamp(320px,46vw,660px)` | `clamp(320px,52vw,760px)` | the same |
-| Z travel | ⛔ none — PINNED, and it GROWS 1.00→1.20 (D349/D350) | `HERO_Z` 300 | **150** |
+| Z travel | ⛔ none — it SLIDES OFF on the scroll, t=1.85→6.0 (D352) | `HERO_Z` 300 | **150** |
 | lines | 2 | 2 | 2 |
 
 ⛔⛔⛔ **ANYTHING ANCHORED NEAR THE TOP CANNOT TRAVEL THE TITLES' FULL 560.** `perspective-origin` is

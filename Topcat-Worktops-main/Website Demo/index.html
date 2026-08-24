@@ -4733,15 +4733,49 @@
      but a hero is already here, and −150 under the 1000 perspective renders it at 87%. */
   .cine-hero,.cine-trust{display:none}
   @media(min-width:1121px){
-    /* ⛔⛔⛔ **THE WAVE (D348) IS GONE — IT WAS THE WRONG REFERENCE FRAME, AND THAT WAS MINE.**
-       It held the words still IN THE FRAME and crossed them with a soft edge. He wanted them still
-       IN THE PICTURE: *"the dot is just above the tip of the mountain. It never moves away from
-       that position… all of the rest of the text will stay in its exact position and go off of the
-       screen as the video turns past it."* ⭐ **THE FRAME EDGE IS THE WAVE** — the words ride the
-       ground they stand on and the edge of the picture takes them.
-       ⭐ Parked whole, with the reason and the restore steps, in
-       `.textanim-2026-08-24/removed-wave-d348.txt` — a wave that erases in place is still a real
-       candidate for the CLOSING KITCHEN, whose shot is measured as completely locked off. */
+    /* ═════ THE EDGE FADE — 24 August 2026 (D352). DESKTOP ONLY ══════════════════════════════
+       ⭐⭐⭐ **THE SIDE OF THE SCREEN TAKES THE WORDS. THE WORDS DO NOT DISSOLVE WHERE THEY STAND.**
+       Client, correcting the first build of this within the hour: *"make sure that the swipe away or
+       the fade away of the words match exactly with the side of the user screen. The fade is never
+       visible in the center of the screen or in the center of the text or away from the side. It is
+       tied to the user scroll, and it gives the illusion that the side of the screen is wiping it
+       away instead of an actual animation."*
+       ⛔⛔ **SO THE MASK DOES NOT MOVE AT ALL — THE BLOCK MOVES THROUGH IT.** D348 and the first cut
+       of D352 both swept a soft edge ACROSS the type, which puts the fade in the middle of the
+       frame: an animation you can see happening. This is the opposite construction. The mask is
+       nailed to the left gutter and never changes; the block slides left on the scroll, and each
+       letter dissolves at the moment it crosses the screen's edge. There is no animation to see,
+       only a screen with an edge.
+       ⭐⭐⭐ **AND THE RAMP IS THE GUTTER ITSELF — `clamp(20px,7vw,132px)`, THE SAME EXPRESSION THE
+       COPY IS INSET BY.** That is what makes it free: at rest the ramp ENDS exactly where the type
+       BEGINS, so the approved first frame is untouched at every desktop width, and the two cannot
+       drift apart because they are one value. It is also why the two beats need no exception —
+       they sit at the same gutter and never move, so the fade never reaches them.
+       ⚠️ The beats' wash reaches ~0.05 by the time it enters the gutter (a `farthest-side` radial
+       ending at its own box edge, D311/D313), so there is nothing of it there to cut.
+       ⭐ Fully static: no `mask-position` to write, nothing to re-rasterise, and no filter anywhere
+       near it (D339). The only thing this design writes per frame is one translate.
+       ⚠️ `#fff`, not `#000`: white is opaque in BOTH alpha and luminance mask modes.
+       ⚠️ ≥1121 ONLY. The phone and the tablet keep D316's travel until he takes their placement. */
+    html.cine-on .cine-story{
+      --edgeFade:clamp(20px,7vw,132px);
+      -webkit-mask-image:linear-gradient(90deg,rgba(255,255,255,0) 0,
+        rgba(255,255,255,0.04) calc(var(--edgeFade) * 0.15),
+        rgba(255,255,255,0.16) calc(var(--edgeFade) * 0.30),
+        rgba(255,255,255,0.50) calc(var(--edgeFade) * 0.50),
+        rgba(255,255,255,0.84) calc(var(--edgeFade) * 0.70),
+        rgba(255,255,255,0.96) calc(var(--edgeFade) * 0.85),
+        #fff var(--edgeFade));
+              mask-image:linear-gradient(90deg,rgba(255,255,255,0) 0,
+        rgba(255,255,255,0.04) calc(var(--edgeFade) * 0.15),
+        rgba(255,255,255,0.16) calc(var(--edgeFade) * 0.30),
+        rgba(255,255,255,0.50) calc(var(--edgeFade) * 0.50),
+        rgba(255,255,255,0.84) calc(var(--edgeFade) * 0.70),
+        rgba(255,255,255,0.96) calc(var(--edgeFade) * 0.85),
+        #fff var(--edgeFade));
+      -webkit-mask-size:100% 100%;mask-size:100% 100%;
+      -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    }
     /* ⭐⭐ ANCHORED BY ITS TOP, NOT ITS MIDDLE — 22 August 2026 (D325b). Client: *"move the text
        higher up… you can see the top of the mountains in the background. The first line of text is
        basically above that mountain line. And then you can basically move everything up."*
@@ -4760,18 +4794,13 @@
       display:block;position:absolute;z-index:3;pointer-events:none;
       left:clamp(20px,7vw,132px);top:22vh;width:clamp(320px,46vw,660px);
       opacity:0;                                  /* the scrub owns it from the first tick */
-      /* ⭐⭐⭐ **THE PIN — 24 August 2026 (D349).** The block is glued to the ground it stands on and
-         rides it out of shot: *"that dot will permanently stay there and all of the rest of the
-         text will stay in its exact position and go off of the screen as the video turns past it."*
-         The scrub writes `--tx`/`--ty` from a tracked table of the film's own far field.
-         ⚠️ `translate3d` so the offset is compositor work rather than paint, and the Z stays 0 —
-         *"doesn't come forward and fade away and go through the screen."*
-         ⚠️ NOTHING CLIPS THIS BLOCK ON PURPOSE: the frame's own left edge is what takes the words,
-         and the `overflow-x:clip` on `html` is what makes that edge real.
-         ⛔ No braces in this comment, deliberately — the CSS gate counts them and a pair inside a
-         comment reads as a rule that is not there. It caught exactly that on the way in. */
-      transform:translate3d(calc(var(--tx,0) * 1px),calc(var(--ty,0) * 1px),calc(var(--hz,0) * 1px))
-                scale(var(--ts,1));
+      /* ⭐⭐⭐ **THE BLOCK SLIDES OFF TO THE SIDE, ON THE SCROLL — D352.** ⛔ This is NOT the pin: the
+         pin is parked in `.textanim-2026-08-24/removed-pin-d349-d351.txt` and it went because
+         anything tied to this PICTURE inherits its 12fps and steps visibly on type. This is tied to
+         the SCROLL, which is continuous, and it moves about **1.5x** the speed the scene does, so it
+         reads as being pulled off the side rather than as something attached to the mountain.
+         ⚠️ `translate3d` so the offset is compositor work rather than paint, and the Z stays 0. */
+      transform:translate3d(calc(var(--tx,0) * 1px),0,calc(var(--hz,0) * 1px));
     }
     /* ⛔ the desktop opening title goes here; the ORIGINAL CUE IS HIDDEN FURTHER DOWN, beside its
        own rules — hidden from here it lost on source order, because `html.cine-on .cine-cue` has
@@ -4805,10 +4834,9 @@
       display:flex;position:absolute;z-index:3;pointer-events:none;
       left:clamp(20px,7vw,132px);bottom:35px;gap:10px;align-items:center;
       opacity:0;                                  /* the scrub owns it, exactly as the copy is */
-      /* ⭐ THE SAME OFFSET AS THE WORDS, FROM THE SAME WRITE (D349) — the first screen leaves as one
-         object, which is what *"it'll fade away with the your worktop starts here text"* now means
-         when nothing on that screen fades. */
-      transform:translate3d(calc(var(--tx,0) * 1px),calc(var(--ty,0) * 1px),0);
+      /* ⭐ THE SAME OFFSET AS THE WORDS, FROM THE SAME WRITE — the first screen leaves as ONE object
+         and the same screen edge dissolves it, so there is no second animation to keep in step. */
+      transform:translate3d(calc(var(--tx,0) * 1px),0,0);
     }
 
     /* ⚠️ 57% AND NOT LOWER, AND THAT IS MEASURED. Taken up the frame the headline climbs into the
@@ -16783,143 +16811,45 @@ if(faqIndex && panel && faqBody){
      `grade()` above already carry.
      ⚠️ The blur is quantised to half a pixel for the same reason — it is depth of field as the words
      cross the focal plane, and it does not need to be smooth to read as soft. */
-  /* ⭐⭐⭐ **THE PIN — 24 August 2026 (D349). THE FIRST SCREEN'S WORDS ARE PART OF THE PICTURE.**
-     Client, with a screenshot and two points marked on it: *"I'm gonna take a piece of the end of
-     the word here and a piece of the mountain below that. You can see the dot is just above the tip
-     of the mountain. It never moves away from that position. So that dot will permanently stay
-     there and all of the rest of the text will stay in its exact position and go off of the screen
-     as the video turns past it."*
-     ⛔⛔ **D348 READ THIS THE WRONG WAY ROUND AND THAT WAS MY FAULT, NOT HIS WORDING.** "Stays
-     exactly where it is" means in the PICTURE, not in the frame. The words are glued to the ground
-     they stand on; the FRAME EDGE is the *"wave that's going over it"*, and the reason they get
-     *"cut off piece by piece"* is that they are sliding out of shot.
-     ⭐⭐⭐ **AND THE MOUNTAINS ARE NOT WHAT THE FRAME AVERAGE MEASURES. THEY MOVE THE OTHER WAY FROM
-     THE MARBLE.** The film flies forward along the quarry face, so the near wall EXPANDS to the
-     right while the far field swings left — D348's global figure (572 film px over six seconds) was
-     the average of two opposite motions and belonged to neither. Tracked separately: the wall runs
-     RIGHT, the mountains run LEFT and much faster than the average.
-     ⭐⭐ **SO THE TABLE BELOW IS THE WORDS' OWN GROUND, TRACKED AS IT LEAVES.** A 660x320 film-pixel
-     window over the sky and ridge the block sits on, matched frame to frame with a parabolic
-     sub-pixel refinement (PIL, no numpy here), the window NARROWING as it runs off the left edge so
-     the track lasts exactly as long as that ground is on screen. Residual stayed **1.0–3.1 per
-     pixel to t=5.75** and the window was down to 102 film px wide by **t=6.08**, where the ground
-     itself is gone. **Measured: 0 → -793 film px.** The last four steps (6.25–7.00) continue its
-     own increments (-52, -56, -61, growing -4.7 a step) to carry the block clear.
-     ⚠️ **FILM PIXELS AT 1920, NOT SCREEN PIXELS** — `sync()` works out the cover scale, so the pin
-     holds at any window. At 1440x900 that scale is 0.833 and the block's right edge is 1009 film px
-     from the frame's left, so **the last of it leaves at t≈6.9**. ⛔ That is the film's number and
-     not a design choice: this is a pin, so the picture decides when the words are gone.
-     ⚠️ **RE-TRACK IF THE FILM IS EVER RE-CUT.** The probe is written up in D349. */
-  /* ⛔⛔⛔ **THE TABLE IS ON THE FILM'S OWN FRAME GRID NOW, ONE ENTRY PER FRAME AT 12fps, AND THAT
-     IS THE WHOLE ANSWER TO "IT SHAKES" — 24 August 2026 (D350).** Client: *"as soon as I start
-     scrolling, the text almost looks like it's shaking. It's moving up and down and left and right
-     and very weird. It doesn't feel like it's just solidly smoothly there."*
-     ⭐⭐⭐ **THE FILM RUNS AT 12fps AND THE SCRUB RUNS AT 60.** The picture therefore JUMPS forward
-     by a whole frame's worth of camera travel — up to **26 film pixels** by the end of the first
-     screen — and holds there for five browser frames, while the words, driven by the eased scrub's
-     continuous time, slid smoothly through it. Pinned to a stepping picture, smooth motion is not
-     smooth: it is a **±13px oscillation against the mountain at 12Hz**, which is exactly what he
-     described. ⛔ Nothing was wrong with the tracking; the words were being driven off the wrong
-     clock. **They now read the frame the viewer is actually SEEING** — `vid.currentTime` floored to
-     its frame, the same idiom `plate()` has used since D331 — so the words step when the picture
-     steps and hold when it holds. Between two film frames they do not move at all, and that is what
-     makes them solid.
-     ⭐⭐ **AND THE TABLE IS THE MEASUREMENT, NOT AN EASING**: one cumulative film-pixel value per
-     film frame, from a window tracked under his own full stop. **X IS NOW THE RAW TRACK, UNSMOOTHED
-     (D351)** — checked first, because smoothing a match-move is only safe if the camera is steady:
-     the mean second difference of the raw per-frame steps is **0.35 film px**, so this camera IS
-     steady and the smoothing was neither helping nor hurting. Raw is simply the closest thing to
-     the picture, which is the only thing this table is trying to be. Both series are strictly
-     one-way — a table that goes backwards by a tenth of a pixel is a wobble the eye finds
-     instantly. Frames 74–84 continue the trend of the last increments to carry the block clear.
-     ⭐ Cross-checked against a second, independent track: full-resolution template matching against
-     **frame 0** rather than frame to frame, so nothing can accumulate. The two agree to **1.4 film
-     px at t=2 and 1.1 at t=4**; past t=5 the frame-0 template degrades (the patch itself deforms as
-     the camera flies past it) and the frame-to-frame track is the better of the two.
-     ⛔⛔⛔ **AND THE WINDOW HAS TO SIT UNDER THE GLYPH HE NAMED, WHICH COST A RE-TRACK.** D349's
-     window was centred on film x 550 because that is where I measured his full stop — **with the
-     fallback font still in place**. Cinzel is 135px wider there: the real glyph is at film x 761,
-     and the ground under THAT point moves measurably less (the field is not rigid — the near wall
-     is expanding the other way). The two tracks part company by **27 film px, 23 on screen, by
-     t=6**, which is a visible creep off his mountain. ⚠️ **MEASURE THE TEXT AFTER THE FONT LANDS.**
-     ⚠️ **RE-TRACK IF THE FILM IS EVER RE-CUT** — and if its frame RATE ever changes, this table's
-     grid changes with it. */
-  const PIN_X=[
-    0,-5.1,-10.7,-15.4,-20.6,-26.4,-32.2,-38,-43.8,-49.6,-55.2,-60.7,-66.4,-72.4,
-    -78.4,-84.4,-90.8,-98.1,-105.6,-113.1,-120.8,-128.5,-136.2,-143.6,-151.1,-158.5,-166.3,-174.1,
-    -182.1,-190.5,-198.8,-207.1,-215.4,-223.5,-231.7,-240.1,-249.5,-259.2,-268.9,-278.4,-287.9,-297.5,
-    -307.4,-317.4,-327.6,-338.3,-349.6,-361.2,-373,-384.9,-396.9,-408.8,-420.8,-433.2,-446.4,-459.7,
-    -473.7,-487.9,-502.4,-516.9,-532.1,-547.1,-563,-579.1,-595.6,-612.1,-629.8,-647.1,-665.4,-683.9,
-    -703.4,-722.7,-743.6,-764.6,-786.2,-808.5,-831.4,-854.9,-879,-903.8,-929.2,-955.2,-981.8,-1009,
-    -1036.9];
-  /* ⚠️ **X IS RAW AND Y IS SMOOTHED, AND THAT IS NOT AN INCONSISTENCY.** X moves 5 to 25 film px
-     a frame and is signal; Y moves a seventh of a pixel and is very nearly all noise, and noise on
-     that axis is the "up and down" of D350. Smoothed over eleven frames and forced one-way, it is
-     12 film px of real drift over seven seconds — leave it out and the dot creeps off his tip. */
-  const PIN_Y=[
-    0,0.1,0.3,0.4,0.5,0.6,0.8,0.9,1,1.1,1.3,1.4,1.6,1.7,
-    1.9,2.1,2.3,2.4,2.6,2.8,3,3.3,3.4,3.6,3.7,3.8,3.9,4,
-    4.1,4.1,4.2,4.2,4.3,4.4,4.5,4.6,4.7,4.8,4.9,5,5.1,5.2,
-    5.3,5.3,5.4,5.4,5.4,5.5,5.5,5.6,5.7,5.8,5.8,5.9,5.9,6,
-    6.1,6.2,6.3,6.4,6.5,6.5,6.6,6.7,6.8,7,7.1,7.4,7.5,7.7,
-    7.9,8.2,8.4,8.7,9,9.3,9.6,9.9,10.2,10.5,10.8,11.1,11.4,11.7,
-    12];
-  /* ⭐⭐⭐ **AND IT COMES TOWARDS YOU — D350.** Client: *"technically, you're moving closer to the
-     text, so that part that's still visible should get bigger up until the point that it's out of
-     frame."*
-     ⚠️ **HE IS RIGHT ABOUT THE FEEL AND THE PICTURE CANNOT GIVE IT FOR FREE, SO IT IS A DECISION,
-     AND THIS IS THE NUMBER.** The words are pinned to the FAR field, and a far field is a field at
-     infinity: the mountains hardly grow at all as the camera advances — the thing that expands in
-     this shot is the marble wall, which travels the other way. So the growth is added rather than
-     tracked. ⭐ It is added the way the geometry would add it, which is why it does not read as a
-     zoom: for anything on a plane the camera is approaching, the sideways travel and the growth are
-     the SAME 1/Z, so the scale is tied straight to the distance already travelled. It therefore
-     accelerates exactly as the pan does, and it is 1.000 at rest — the frame he has approved is
-     untouched until the first pixel of scroll.
-     ⚠️ **THE GROWTH IS ABOUT HIS OWN DOT** (`transform-origin`, set in `sync()`), so the one point
-     he checks stays nailed to its mountain no matter what the scale does. */
-  const PIN_GROW=0.20;
-  /* ⛔ NO INTERPOLATION, ON PURPOSE. The value belongs to a frame of film, and a value read between
-     two frames is a position the picture is not in — which is the whole fault D350 fixes. */
-  const pinAt=(fr,A)=>A[fr<0?0:(fr>=A.length?A.length-1:fr)];
-  /* ⭐ SCREEN PIXELS PER FILM PIXEL, worked out the way the browser lays a `cover` video out — the
-     same mapping `bandGrade()` uses to sample it. Read in `sync()`, because it changes only when
-     the box does. ⚠️ `videoWidth` is 0 until metadata arrives, so the film's own 16:9 stands in;
-     `sync()` runs again on resize and on the band change, by which time it is real. */
-  let PIN_SC=0.8333;
-  /* the first screen's box, in the story layer's own coordinates — read in `sync()`, and the only
-     thing the pin needs from layout: it tells the frame when the last of the block has left. */
-  const HW={x0:0,x1:0};
+  /* ⭐⭐⭐ **THE WIPE — 24 August 2026 (D352). THE WORDS ARE STILL AND THE SCROLL TAKES THEM.**
+     Client: *"since we can't get the text to stop shaking, I have a better idea… once the text
+     reaches this point in the screenshot, then perfectly tied to the user's scroll, will the
+     animation play of what we had before… it basically fades off from left to right… so it just
+     looks like it's going away off to the side and the side is taking it away… and the animation
+     ends on the second screenshot where you can just see the piece slightly on the side."*
+     ⭐⭐⭐ **THE TWO MOMENTS ARE HIS, READ OFF THE SCREENSHOTS HE SENT.** The first he identified by
+     the text itself: the block has slid until its own left edge meets the frame's — the "Y" of
+     YOUR is clipped, the "S" of SCROLL is gone, and that displacement is **133 film px**, which the
+     pin's own table puts at **t=1.85**. The second is the picture: the marble face fills the frame
+     with only a wedge of sky and trees left at the top corner, which is **t≈6.0** — and 6.0 is also
+     where the first screen has always ended (D325), so his mark and the approved window agree.
+     ⚠️ **LINEAR BETWEEN THEM, AND THAT IS THE POINT.** *"Perfectly tied to the user's scroll"* means
+     the edge's position is a straight function of how far he has scrolled, with no easing of its
+     own — the 130px soft band is what keeps it from reading as a hard line, not a curve.
+     ⛔⛔ **AND IT RUNS ON THE SCROLL CLOCK, NEVER ON THE FILM'S.** That is the entire reason this
+     cannot shake, and it is the lesson of D349–D351 stated as a rule: **the film is 12fps and a
+     fast scrub presents about every sixth frame, so anything that follows the PICTURE moves in
+     visible steps on type.** Nothing here follows the picture. The type does not move at all; the
+     only thing in motion is the mask's own edge, on the continuous eased scroll value, at 60fps. */
+  const WIPE_AT=1.85, WIPE_OUT=6.0;
+  /* the first screen's box and the proof block's, in the story layer's own coordinates */
+  const HW={x0:0,x1:0}, HT={x0:0,x1:0};
   const boxOf=(el,o)=>{ o.x0=el.offsetLeft; o.x1=el.offsetLeft+el.offsetWidth; };
-  /* ⭐⭐ **THE PIN'S TWO MEASUREMENTS, IN ONE PLACE**: the block's own box, and how many screen
-     pixels one film pixel is worth once `cover` has laid the video out. Both change only when the
-     box does, so `sync()` is the one that calls this.
-     ⭐⭐ **AND THE GROWTH EXPANDS FROM HIS OWN FULL STOP (D350).** `transform-origin` is the one
-     point a scale leaves alone, so putting it on the glyph he checks means the pin he named stays
-     exact whatever the scale does, and everything else grows around it.
-     ⚠️ **LAYOUT OFFSETS, NOT `getBoundingClientRect()`** — the block may already be carrying a
-     transform when this runs (a resize mid-scroll), and a measured rect would fold that transform
-     into the origin, after which the origin would travel with it.
-     ⚠️ 0.78 of the line box is the baseline for this face at this size; the full stop sits on it. A
-     few pixels either way only moves where the growth radiates from, not the pin.
-     ⛔⛔ **AND IT IS TAKEN AGAIN WHEN THE FONT LANDS.** Cinzel is 135px wider across this line than
-     the fallback, so a measurement taken before it arrives puts the origin — and, in D349, the
-     whole tracked window — in the wrong place. That mistake cost a re-track; it costs one line
-     here. */
+  /* ⭐ **EASE IN, THEN HOLD THE SPEED.** A block that starts moving at full speed from a standstill
+     is a jerk you can see; one that eases out as it leaves looks like it is hesitating at the edge.
+     So: a quadratic for the first quarter, blended into a straight line with a continuous velocity
+     (the quadratic's slope at 0.25 IS the line's), and it exits at speed. Normalised so the block
+     is exactly clear at `WIPE_OUT`. */
+  const wipeEase=p=>(p<0.25?2*p*p:p-0.125)/0.875;
+  /* ⭐⭐ THE ONLY MEASUREMENT THIS DESIGN NEEDS: the two boxes, so the frame knows how far the block
+     has to travel to be clear of the screen. Desktop-only and `display:none` below 1121, where a
+     read returns a 0-wide box — hence the band test. ⛔⛔ **AND IT IS TAKEN AGAIN WHEN THE FONT
+     LANDS**: Cinzel is 135px wider across the headline than the fallback, and D349 tracked the wrong
+     patch of mountain for a whole round because of exactly that. It costs one line here. */
   function measurePin(){
     if(!heroOn)return;
     if(heroEl)boxOf(heroEl,HW);
-    const em=heroEl&&heroEl.querySelector('.cine-hl em');
-    if(em&&em.offsetWidth){
-      heroEl.style.transformOrigin=
-        (em.offsetLeft+em.offsetWidth).toFixed(1)+'px '+(em.offsetTop+em.offsetHeight*0.78).toFixed(1)+'px';
-    }
-    const bb=heroBg&&heroBg.getBoundingClientRect();
-    if(bb&&bb.width&&bb.height){
-      const vr=(vid.videoWidth&&vid.videoHeight)?vid.videoWidth/vid.videoHeight:16/9;
-      const dw=(vr>bb.width/bb.height)?bb.height*vr:bb.width;
-      PIN_SC=dw/1920;                    /* the table is in the 1920 cut's own pixels */
-    }
+    if(trustEl)boxOf(trustEl,HT);
   }
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measurePin);
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
@@ -17068,113 +16998,81 @@ if(faqIndex && panel && faqBody){
      approaches — from `top:19vh` the titles' own 560 renders the block at 2.27× and takes the
      headline clean off the top of the screen while it is still half visible. At 300 the block lifts
      from y171 to about y116 while it is still fully up, and is gone before it reaches the bar. */
-  /* ⭐⭐⭐ **THE ONE CLOCK THE PIN IS ALLOWED TO READ — D351.** Set by the video itself, from the
-     metadata of the frame it has just put on the screen, and nothing else writes it.
-     ⚠️ The callback re-registers itself, so there is always exactly one outstanding and it costs
-     nothing while the film is still — it fires only when a NEW frame is presented.
-     ⛔ It repaints the words in the same rendering step as the frame that moved, rather than waiting
-     for the next scroll tick: a pin that arrives a browser frame late is a pin that is visibly late
-     at the moment the picture jumps six frames at once. */
-  let shownFr=-1;
   const heroEl=document.getElementById('cineHero');
   /* ⚠️ **HERO_Z IS PARKED, NOT LIVE — D348.** The block no longer travels at all; the constant and
      the note above it stay because the travel is one line away if he ever wants it back, and
      because the number is measured (D325b) and would have to be re-derived from scratch. */
   const HERO_OUT=6.0, HERO_EDGE=1, HERO_Z=300;
-  let heroOn=false, heroO=-1, heroZ=-1, heroE=-1, heroTx=null, heroTy=null;
+  let heroOn=false, heroO=-1, heroZ=-1, heroE=-1, heroTx=null, trustGone=null;
   const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
   readHeroBand();
   const trustEl=document.getElementById('cineTrust');
   function heroCopy(t){
     if(!heroEl)return;
-    /* ⛔ HAND EVERY PROPERTY BACK ON THE WAY OUT. A window dragged under 1121 leaves an inline
-       opacity, an inline transform and an inline `--cineEdge` behind, and an inline value outranks
-       the class rule that is meant to take over — the bug the scroll cue already taught this file
-       once, and the bug D348 shipped a second time by writing a property at a band that had no rule
-       to answer it. */
+    /* ⛔ HAND EVERY PROPERTY BACK ON THE WAY OUT. A window dragged under 1121 leaves inline values
+       behind, and an inline value outranks the class rule meant to take over — the bug the scroll
+       cue taught this file once and D348 shipped a second time. */
     if(!heroOn){
       if(heroO!==0){
         heroO=0; heroZ=-1; heroE=-1; heroTx=null;
         heroEl.style.opacity=''; heroEl.style.visibility='';
-        heroEl.style.removeProperty('--hz');
-        heroEl.style.removeProperty('--tx'); heroEl.style.removeProperty('--ty');
-        heroEl.style.removeProperty('--ts'); heroEl.style.transformOrigin='';
-        /* ⛔ the proof block is handed back the same way and in the same breath — an inline opacity
-           left behind on a band change outranks the class rule that is meant to take over (D336). */
+        heroEl.style.removeProperty('--hz'); heroEl.style.removeProperty('--tx');
         if(trustEl){
           trustEl.style.opacity=''; trustEl.style.visibility='';
-          trustEl.style.removeProperty('--tx'); trustEl.style.removeProperty('--ty');
+          trustEl.style.removeProperty('--tx');
         }
         cine.style.removeProperty('--cineEdge');
       }
       return;
     }
-    /* ⭐⭐⭐ **THE WORDS ARE PART OF THE PICTURE — 24 August 2026 (D349).** They do not fade, they do
-       not travel in Z and they do not hold still in the frame: they are pinned to the ground they
-       stand on and they ride it out of shot. `PIN_X`/`PIN_Y` are that ground, tracked — see the
-       table above for how, and for why the frame's own average was the wrong number.
-       ⭐ **ONE TRANSFORM, TWO ELEMENTS.** The proof chips carry the identical offset, so the whole
-       first screen leaves as one object and his *"it'll fade away with the your worktop starts here
-       text"* (D338) is kept without a second alpha to drift.
-       ⚠️ `translate3d` AND NOT `left`: a transform is compositor work, a `left` is layout, and this
-       runs on every frame of a scrubbing 1920x1080 film. */
-    /* ⛔⛔⛔ **THE FRAME THE BROWSER HAS ACTUALLY PAINTED — 24 August 2026 (D351). `currentTime` IS
-       NOT THAT FRAME.** D350 read `currentTime` and floored it, which is right in principle and
-       wrong in practice: assigning `currentTime` moves it AT ONCE, while the picture only changes
-       when the seek finishes decoding. Measured in the page during a live scrub, the value the
-       words were reading ran **1 to 3 frames ahead of the frame on screen** at random moments — and
-       three frames is 28 film px, **23 on screen**, appearing and vanishing. That is the sideways
-       shake, and it is the same fault as D350 one layer down: the clock, not the pin.
-       ⭐⭐ `requestVideoFrameCallback` reports `mediaTime` FOR THE FRAME BEING PRESENTED, so
-       `shownFr` below is ground truth rather than an inference. ⚠️ It also revealed that a fast
-       scrub presents **every sixth frame**, not every frame — the picture itself jumps, and the
-       words now jump with it, which is what "solid" actually means here.
-       ⚠️ The `currentTime` route stays as the fallback for a browser without the callback. */
-    const fr=(shownFr>=0)?shownFr
-      :Math.floor(((vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t)*FPS+1e-6);
-    const px=pinAt(fr,PIN_X), py=pinAt(fr,PIN_Y);
-    /* ⛔ SUB-PIXEL, NOT ROUNDED. At the start the block moves about a quarter of a pixel per browser
-       frame; rounded to whole pixels that is a step every fourth frame, a stutter of its own on top
-       of the 12fps one. A transform takes fractions — the change test below is what keeps the write
-       cheap, not the rounding. */
-    const tx=+(px*PIN_SC).toFixed(2);
-    const ty=+(py*PIN_SC).toFixed(2);
-    const sc=+(1+PIN_GROW*(px/PIN_X[PIN_X.length-1])).toFixed(4);
-    /* ⭐⭐ **THE BLOCK IS "GONE" WHEN ITS RIGHT EDGE PASSES THE FRAME'S LEFT ONE, AND THE PICTURE
-       DECIDES WHEN THAT IS.** At 1440x900 it lands at t≈6.9. ⛔ Then the alpha goes out — not to
-       hide anything, the frame edge has already done that, but so a block nobody can see is not
-       composited for the remaining 37 seconds, and so `.chip`'s `backdrop-filter` stops sampling
-       the film. His standing rule: *"make sure the movement when the user is scrolling is extremely
-       smooth."* */
-    const o=(HW.x1+tx)>0?1:0;
-    if(tx!==heroTx||ty!==heroTy){
-      heroTx=tx; heroTy=ty;
-      heroEl.style.setProperty('--tx',tx); heroEl.style.setProperty('--ty',ty);
-      heroEl.style.setProperty('--ts',sc);
-      /* ⚠️ **THE PROOF CHIPS TRAVEL BUT DO NOT GROW, AND THAT IS DELIBERATE.** They are a control,
-         not something standing in the quarry, and the growth is about a point two hundred pixels
-         above them — sharing it would push them down out of the frame rather than towards the
-         viewer. They keep the identical offset, so they still leave with the words. */
-      if(trustEl){ trustEl.style.setProperty('--tx',tx); trustEl.style.setProperty('--ty',ty); }
+    /* ⭐⭐⭐ **THE FIRST SCREEN LEAVES BY THE SIDE, ON HIS SCROLL — 24 August 2026 (D352).** Client:
+       *"once the text reaches this point… perfectly tied to the user's scroll… it fades off screen
+       at that perfect speed, so it just looks like it's going away off to the side and the side is
+       taking it away"*, and then: *"the fade is never visible in the center of the screen or in the
+       center of the text or away from the side… it gives the illusion that the side of the screen
+       is wiping it away instead of an actual animation."*
+       ⭐⭐ **NOTHING FADES AND NOTHING SWEEPS. ONE TRANSLATE, AND A MASK NAILED TO THE GUTTER.** The
+       block holds its approved position until `WIPE_AT`, then travels left until its right edge
+       reaches the screen's, dissolving in the gutter as it goes.
+       ⛔⛔ **`t` IS THE CONTINUOUS SCROLL CLOCK AND NEVER THE VIDEO'S PAINTED FRAME, AND THAT IS THE
+       WHOLE REASON THIS CANNOT SHAKE.** D349–D351 tied the words to the PICTURE, which is 12fps and
+       presents about every sixth frame under a scrub — invisible on a blurred photograph, plainly
+       visible on a 76px serif. Nothing here follows the picture.
+       ⚠️ **AND IT MOVES FASTER THAN THE SCENE ON PURPOSE**: 761px in the window against the far
+       field's ~512, about 1.5x, so the eye reads it as being pulled off the side rather than as
+       something attached to the mountain that is failing to keep up. */
+    const p=clamp((t-WIPE_AT)/(WIPE_OUT-WIPE_AT));
+    const tx=+(-HW.x1*wipeEase(p)).toFixed(2);
+    /* ⭐ THE ALPHA IS A SWITCH, NOT A RAMP: the screen's edge does the exit, and the block only goes
+       transparent afterwards so that something nobody can see is not composited over the remaining
+       38 seconds of film — and so `.chip`'s `backdrop-filter` stops sampling it. */
+    const o=p>=1?0:1;
+    if(tx!==heroTx){
+      heroTx=tx;
+      heroEl.style.setProperty('--tx',tx);
+      if(trustEl)trustEl.style.setProperty('--tx',tx);
     }
     if(o!==heroO){
       heroO=o; heroEl.style.opacity=o; heroEl.style.visibility=o?'visible':'hidden';
       if(trustEl){ trustEl.style.opacity=o; trustEl.style.visibility=o?'visible':'hidden'; }
     }
-    /* ⛔ Z IS PINNED AT 0 — the block does not come forward any more (*"doesn't come forward and
-       fade away and go through the screen"*), so the property it travelled on is written once. */
+    /* ⭐⭐ **AND THE PROOF CHIPS GO OUT WHEN THEIR OWN RIGHT EDGE PASSES THE SCREEN'S.** They are
+       taken by the same gutter as the words — no second alpha, no drift — but `.chip` carries
+       `backdrop-filter:blur(8px)` and a masked-to-nothing backdrop-filtered layer is not reliably
+       skipped by the compositor, so it is switched off the moment it is past the edge. */
+    if(o&&trustEl&&HT.x1>HT.x0){
+      const gone=(HT.x1+tx)<=0;
+      if(gone!==trustGone){ trustGone=gone; trustEl.style.visibility=gone?'hidden':'visible'; }
+    }
+    /* ⛔ Z IS PINNED AT 0 — the block does not come forward (*"doesn't come forward and fade away
+       and go through the screen"*), so the property it once travelled on is written once. */
     if(heroZ!==0){ heroZ=0; heroEl.style.setProperty('--hz',0); }
-    /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed from the
-       moment the film starts moving. Two decimal places and a change test: a custom property
-       written at full precision every frame is a style recalculation for nothing.
-       ⚠️ HERO_EDGE IS 1 SINCE D325b — the layer's two gradients carry their own strengths (0.74 at
-       the left border, 0.42 in the top-left corner) so this is purely the copy's alpha.
-       ⭐⭐ **IT NOW MEASURES HOW MUCH OF THE BLOCK IS STILL IN SHOT (D349)** rather than an alpha
-       that no longer moves. The grade is anchored to the LEFT of the frame and the words slide INTO
-       it, so it has to hold its strength while they are still there and be gone when they are. */
-    const w=HW.x1-HW.x0;
-    const vis=w>0?clamp((HW.x1+tx)/w):0;
-    const e=+(HERO_EDGE*vis*vis*(3-2*vis)).toFixed(2);
+    /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed the moment
+       they have gone. ⚠️ HERO_EDGE IS 1 SINCE D325b — the layer's two gradients carry their own
+       strengths (0.74 at the left border, 0.42 in the top-left corner) so this is purely the copy's
+       alpha. ⭐ It retreats as the block leaves rather than riding an alpha that never moves. */
+    const vis=HW.x1>0?clamp((HW.x1+tx)/HW.x1):0;
+    const e=+(HERO_EDGE*vis).toFixed(2);
     if(e!==heroE){ heroE=e; cine.style.setProperty('--cineEdge',e); }
   }
 
@@ -17235,21 +17133,6 @@ if(faqIndex && panel && faqBody){
   }
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
 
-  /* ⭐⭐⭐ **THE VIDEO DRIVES THE WORDS — 24 August 2026 (D351).** Registered once the element can
-     answer, and it re-registers itself for the life of the page. Everything the pin needs is in
-     `metadata.mediaTime`: the presentation time of the frame that is on the screen NOW.
-     ⚠️ `heroCopy(want)` is safe to call from here — `want` is only its fallback clock, and every
-     write inside it is behind a change test, so a callback that changes nothing costs nothing.
-     ⛔ AND THE GRADE GOES WITH IT: `heroCopy` owns `--cineEdge` too, so repainting the words from
-     here keeps the grade on the same frame as the words it is protecting. */
-  if(vid&&typeof vid.requestVideoFrameCallback==='function'){
-    const onFrame=(now,meta)=>{
-      const f=Math.floor(meta.mediaTime*FPS+1e-4);
-      if(f!==shownFr){ shownFr=f; if(heroOn)heroCopy(want); }
-      try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
-    };
-    try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
-  }
 
   function onScroll(){
     if(!live)return;
