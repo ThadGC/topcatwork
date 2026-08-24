@@ -62,6 +62,7 @@ D347   ⛔⛔ the subtitles were still not white; the sub aligns to the title's 
 D348   ⛔ the words go still and a wave eats them — REVERSED THE SAME NIGHT, wrong reference frame
 D349   ⭐⭐⭐ THE PIN — the first screen is glued to the picture and rides it out of shot
 D350   ⛔⛔ "it's shaking" — the pin was right, its CLOCK was wrong: 60fps words on a 12fps picture
+D351   ⛔⛔ still shaking, sideways — `currentTime` is NOT the frame on screen. rVFC is
 ```
 
 ### ⛔⛔⛔ THE TRAP THAT COST TWO ROUNDS, AND IT WILL CATCH THE NEXT PERSON
@@ -70,9 +71,11 @@ D350   ⛔⛔ "it's shaking" — the pin was right, its CLOCK was wrong: 60fps w
 the film is 12fps          a picture that steps and words that slide are not "in sync" —
 the scrub is 60fps         they oscillate against each other by a whole frame of travel
 
-anything pinned to the     ⭐ read `vid.currentTime` FLOORED TO ITS FRAME, never the eased
-picture reads the frame       target. `plate()` has done this since D331
-the viewer is SEEING
+anything pinned to the     ⛔ AND `currentTime` IS NOT THAT FRAME — it moves the moment you
+picture must read the         assign it, the picture waits for the decode. Measured 1-3
+frame the browser has         frames of lead under a scrub, 23px on screen.
+actually PAINTED           ⭐ `requestVideoFrameCallback` → `metadata.mediaTime`. Nothing else
+                              is ground truth. A fast scrub presents every SIXTH frame.
 
 measure the text AFTER     ⛔ Cinzel is 135px wider across the headline than the fallback.
 the font lands                D349 tracked the wrong patch of mountain because of it

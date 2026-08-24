@@ -16825,11 +16825,17 @@ if(faqIndex && panel && faqBody){
      steps and hold when it holds. Between two film frames they do not move at all, and that is what
      makes them solid.
      ⭐⭐ **AND THE TABLE IS THE MEASUREMENT, NOT AN EASING**: one cumulative film-pixel value per
-     film frame, from a window tracked under his own full stop, its per-frame increments smoothed
-     over five frames to take out the tracker's own noise. **Deviation from the raw track: 0.89 film
-     px on X, 0.51 on Y**, and both series are monotonic — a table that goes backwards by a tenth of
-     a pixel is a wobble the eye finds instantly. Frames 74–84 continue the trend of the last
-     increments to carry the block clear.
+     film frame, from a window tracked under his own full stop. **X IS NOW THE RAW TRACK, UNSMOOTHED
+     (D351)** — checked first, because smoothing a match-move is only safe if the camera is steady:
+     the mean second difference of the raw per-frame steps is **0.35 film px**, so this camera IS
+     steady and the smoothing was neither helping nor hurting. Raw is simply the closest thing to
+     the picture, which is the only thing this table is trying to be. Both series are strictly
+     one-way — a table that goes backwards by a tenth of a pixel is a wobble the eye finds
+     instantly. Frames 74–84 continue the trend of the last increments to carry the block clear.
+     ⭐ Cross-checked against a second, independent track: full-resolution template matching against
+     **frame 0** rather than frame to frame, so nothing can accumulate. The two agree to **1.4 film
+     px at t=2 and 1.1 at t=4**; past t=5 the frame-0 template degrades (the patch itself deforms as
+     the camera flies past it) and the frame-to-frame track is the better of the two.
      ⛔⛔⛔ **AND THE WINDOW HAS TO SIT UNDER THE GLYPH HE NAMED, WHICH COST A RE-TRACK.** D349's
      window was centred on film x 550 because that is where I measured his full stop — **with the
      fallback font still in place**. Cinzel is 135px wider there: the real glyph is at film x 761,
@@ -16839,17 +16845,17 @@ if(faqIndex && panel && faqBody){
      ⚠️ **RE-TRACK IF THE FILM IS EVER RE-CUT** — and if its frame RATE ever changes, this table's
      grid changes with it. */
   const PIN_X=[
-    0,-5.1,-10.3,-15.6,-21,-26.4,-32.1,-37.9,-43.7,-49.4,-55,-60.8,-66.5,-72.4,
-    -78.4,-84.8,-91.4,-98.3,-105.6,-113.2,-120.8,-128.4,-136,-143.5,-151.1,-158.7,-166.4,-174.2,
-    -182.3,-190.5,-198.7,-207,-215.2,-223.5,-232,-240.7,-249.8,-259.2,-268.7,-278.3,-287.9,-297.7,
-    -307.5,-317.6,-328,-338.8,-349.9,-361.3,-373.1,-384.9,-396.8,-408.9,-421.2,-433.7,-446.7,-460.1,
-    -473.9,-488.1,-502.5,-517.2,-532.2,-547.6,-563.3,-579.3,-595.9,-612.7,-629.9,-647.6,-665.8,-684.4,
-    -703.7,-723.6,-743.8,-764.2,-785,-806.2,-827.9,-850,-872.6,-895.5,-918.9,-942.7,-967,-991.7,
-    -1016.7];
-  /* ⚠️ THE DRIFT IS SMALL AND IT IS STILL PART OF THE PIN: 12 film px down over seven seconds, a
-     centimetre on screen. Left out, the dot creeps off his mountain tip. Smoothed over eleven
-     frames, because at a seventh of a pixel a frame the raw signal is mostly noise — and noise on
-     this axis IS the "moving up and down" he named. */
+    0,-5.1,-10.7,-15.4,-20.6,-26.4,-32.2,-38,-43.8,-49.6,-55.2,-60.7,-66.4,-72.4,
+    -78.4,-84.4,-90.8,-98.1,-105.6,-113.1,-120.8,-128.5,-136.2,-143.6,-151.1,-158.5,-166.3,-174.1,
+    -182.1,-190.5,-198.8,-207.1,-215.4,-223.5,-231.7,-240.1,-249.5,-259.2,-268.9,-278.4,-287.9,-297.5,
+    -307.4,-317.4,-327.6,-338.3,-349.6,-361.2,-373,-384.9,-396.9,-408.8,-420.8,-433.2,-446.4,-459.7,
+    -473.7,-487.9,-502.4,-516.9,-532.1,-547.1,-563,-579.1,-595.6,-612.1,-629.8,-647.1,-665.4,-683.9,
+    -703.4,-722.7,-743.6,-764.6,-786.2,-808.5,-831.4,-854.9,-879,-903.8,-929.2,-955.2,-981.8,-1009,
+    -1036.9];
+  /* ⚠️ **X IS RAW AND Y IS SMOOTHED, AND THAT IS NOT AN INCONSISTENCY.** X moves 5 to 25 film px
+     a frame and is signal; Y moves a seventh of a pixel and is very nearly all noise, and noise on
+     that axis is the "up and down" of D350. Smoothed over eleven frames and forced one-way, it is
+     12 film px of real drift over seven seconds — leave it out and the dot creeps off his tip. */
   const PIN_Y=[
     0,0.1,0.3,0.4,0.5,0.6,0.8,0.9,1,1.1,1.3,1.4,1.6,1.7,
     1.9,2.1,2.3,2.4,2.6,2.8,3,3.3,3.4,3.6,3.7,3.8,3.9,4,
@@ -17062,6 +17068,14 @@ if(faqIndex && panel && faqBody){
      approaches — from `top:19vh` the titles' own 560 renders the block at 2.27× and takes the
      headline clean off the top of the screen while it is still half visible. At 300 the block lifts
      from y171 to about y116 while it is still fully up, and is gone before it reaches the bar. */
+  /* ⭐⭐⭐ **THE ONE CLOCK THE PIN IS ALLOWED TO READ — D351.** Set by the video itself, from the
+     metadata of the frame it has just put on the screen, and nothing else writes it.
+     ⚠️ The callback re-registers itself, so there is always exactly one outstanding and it costs
+     nothing while the film is still — it fires only when a NEW frame is presented.
+     ⛔ It repaints the words in the same rendering step as the frame that moved, rather than waiting
+     for the next scroll tick: a pin that arrives a browser frame late is a pin that is visibly late
+     at the moment the picture jumps six frames at once. */
+  let shownFr=-1;
   const heroEl=document.getElementById('cineHero');
   /* ⚠️ **HERO_Z IS PARKED, NOT LIVE — D348.** The block no longer travels at all; the constant and
      the note above it stay because the travel is one line away if he ever wants it back, and
@@ -17104,12 +17118,20 @@ if(faqIndex && panel && faqBody){
        text"* (D338) is kept without a second alpha to drift.
        ⚠️ `translate3d` AND NOT `left`: a transform is compositor work, a `left` is layout, and this
        runs on every frame of a scrubbing 1920x1080 film. */
-    /* ⛔⛔ **THE FRAME THE VIEWER IS SEEING, NOT THE SCRUB'S OWN TIME (D350).** `plate()` has read it
-       this way since D331 for the same reason: the eased target is where the film is GOING, and a
-       pin has to agree with what is actually on the screen. Flooring to the frame is what stops the
-       words sliding through a picture that is stepping at 12fps. */
-    const shown=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t;
-    const fr=Math.floor(shown*FPS+1e-6);
+    /* ⛔⛔⛔ **THE FRAME THE BROWSER HAS ACTUALLY PAINTED — 24 August 2026 (D351). `currentTime` IS
+       NOT THAT FRAME.** D350 read `currentTime` and floored it, which is right in principle and
+       wrong in practice: assigning `currentTime` moves it AT ONCE, while the picture only changes
+       when the seek finishes decoding. Measured in the page during a live scrub, the value the
+       words were reading ran **1 to 3 frames ahead of the frame on screen** at random moments — and
+       three frames is 28 film px, **23 on screen**, appearing and vanishing. That is the sideways
+       shake, and it is the same fault as D350 one layer down: the clock, not the pin.
+       ⭐⭐ `requestVideoFrameCallback` reports `mediaTime` FOR THE FRAME BEING PRESENTED, so
+       `shownFr` below is ground truth rather than an inference. ⚠️ It also revealed that a fast
+       scrub presents **every sixth frame**, not every frame — the picture itself jumps, and the
+       words now jump with it, which is what "solid" actually means here.
+       ⚠️ The `currentTime` route stays as the fallback for a browser without the callback. */
+    const fr=(shownFr>=0)?shownFr
+      :Math.floor(((vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:t)*FPS+1e-6);
     const px=pinAt(fr,PIN_X), py=pinAt(fr,PIN_Y);
     /* ⛔ SUB-PIXEL, NOT ROUNDED. At the start the block moves about a quarter of a pixel per browser
        frame; rounded to whole pixels that is a step every fourth frame, a stutter of its own on top
@@ -17212,6 +17234,22 @@ if(faqIndex && panel && faqBody){
     if(eased!==target)raf=requestAnimationFrame(tick);
   }
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
+
+  /* ⭐⭐⭐ **THE VIDEO DRIVES THE WORDS — 24 August 2026 (D351).** Registered once the element can
+     answer, and it re-registers itself for the life of the page. Everything the pin needs is in
+     `metadata.mediaTime`: the presentation time of the frame that is on the screen NOW.
+     ⚠️ `heroCopy(want)` is safe to call from here — `want` is only its fallback clock, and every
+     write inside it is behind a change test, so a callback that changes nothing costs nothing.
+     ⛔ AND THE GRADE GOES WITH IT: `heroCopy` owns `--cineEdge` too, so repainting the words from
+     here keeps the grade on the same frame as the words it is protecting. */
+  if(vid&&typeof vid.requestVideoFrameCallback==='function'){
+    const onFrame=(now,meta)=>{
+      const f=Math.floor(meta.mediaTime*FPS+1e-4);
+      if(f!==shownFr){ shownFr=f; if(heroOn)heroCopy(want); }
+      try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
+    };
+    try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
+  }
 
   function onScroll(){
     if(!live)return;
