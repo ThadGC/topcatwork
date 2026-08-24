@@ -17018,11 +17018,14 @@ if(faqIndex && panel && faqBody){
      words carry their own wash in with them: `.cine-line::before` lives inside the line's stacking
      context and rides the same transform, so the shade arrives and leaves WITH the words rather
      than hanging on an empty room.
-     ⭐⭐ **THE ENTRY SETS AND THE EXIT IS ITS MIRROR, LITERALLY.** In: 28.5 → 31.0, position
+     ⭐⭐ **THE ENTRY SETS AND THE EXIT MIRRORS ITS SHAPE.** In: 28.5 → 31.7, position
      `-KW.x1 * (1-q)²` — full speed on the first pixel of the window (D353's rule: an ease-in from
-     rest is a dead zone) decelerating to zero velocity at rest, which is what "sets" means. Out:
-     35.0 → 37.5, `-KW.x1 * q²` — the identical curve time-reversed, his instruction taken
-     literally. Between the two it does not move at all.
+     rest is a dead zone) decelerating to zero velocity at rest, which is what "sets" means.
+     ⚠️ **3.2s SINCE D355a** — client: *"make that text come in slightly slower"* — from 2.5s,
+     which cuts the peak speed by a fifth (653 → 510 px a film-second at 1382). Out: 35.0 → 37.5,
+     `-KW.x1 * q²` — the same curve time-reversed at the ORIGINAL 2.5s pace: his retime named the
+     way IN only, so the way out keeps the speed he has already seen. One number if he wants the
+     two matched again. Between the two it does not move at all.
      ⭐ **THE SLIDE IS THE SAFE AXIS, MEASURED (D345's fences):** the block's vertical position
      never changes, so the island (14–21px below) and the bar (65px above) keep their clearances
      through the whole life of the beat; and while sliding, the block sits LEFT of its rest, so its
@@ -17036,7 +17039,7 @@ if(faqIndex && panel && faqBody){
      also be travelling in Z, and this beat starts at 16vh where the perspective trap lives
      (D325b/D340/D345); a pure translateX under the parent perspective has no Z component and
      cannot spring it. */
-  const KIT_SET=31.0, KIT_OUT=35.0;
+  const KIT_SET=31.7, KIT_OUT=35.0;
   const kitEl=document.querySelector('.cine-line[data-vpos-wide="high"]');
   const KW={x1:0};
   let kitTx=null;
