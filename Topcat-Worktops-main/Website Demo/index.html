@@ -4445,14 +4445,18 @@
      CSS transition then runs on its own clock, exactly like the kitchen beat does since D357.
      ⚠️ The 180ms delay is kept — it is the first line's own `--hd`, so the ending still lands a
      beat after the frame has finished becoming the hero (`CURVE_AT` 0.90 vs `INK_AT` 0.93).
-     ⛔⛔ **DESKTOP ONLY, AND THAT IS §2 RULE 15, NOT CAUTION.** The film runs at every band since
-     D312, so the base rules above are what the phone and the tablet still answer to — editing them
-     would change two bands he has not opened, and their text placement is the round still owed
-     since D325. ⭐ It ports in one line when he calls that round.
+     ⛔⛔ **DESKTOP AND PHONE SINCE D363 (24 Aug) — HE CALLED THE PHONE'S ROUND AND ASKED FOR
+     EXACTLY THIS PORT**: *"the same animation that we did on desktop for the surfaces worth
+     building around part, make that come in the same way as it does on desktop as well. But
+     obviously in the mobile shape or version of it."* The one-line port this note promised: the
+     media query below gained the phone's own band. Same 0.84, same 1.05s, same 180ms — the
+     mobile composition is what `.hero-inner` already is at that width, so "the mobile version of
+     it" costs nothing further. ⛔ The TABLET (721–1120) is deliberately NOT in the query and
+     keeps the staged per-element entrance until its round opens (§2 rule 15).
      ⚠️ SOURCE ORDER, NOT SPECIFICITY, ON THE TWO CHILD RULES: they carry the same weight as the
      base rules they override and win by sitting after them (§8). They must stay after them, and
      before the tablet band's own block. */
-  @media(min-width:1121px){
+  @media(min-width:1121px),(max-width:720px){
     html.cine-on .cine .hero-inner{
       transition:opacity 1.05s var(--ease) 180ms,transform 1.05s var(--ease) 180ms}
     html.cine-on .cine .hero:not(.loaded) .hero-inner{opacity:0;transform:scale(0.84)}
@@ -5184,12 +5188,16 @@
     html.cine-on .cine .cine-edge{
       display:block;position:absolute;inset:0;z-index:2;pointer-events:none;
       opacity:var(--cineEdge,0);
+      /* ⭐ A STEP STRONGER SINCE D359c — client: *"make the gradient a little bit stronger where
+         the text is, so it's just slightly easier to read."* Both layers up ~0.07 at their heads,
+         the tails unchanged, so the darkening deepens where the words are and still reaches zero
+         at the same lines. */
       background:
         radial-gradient(120% 85% at 0% 30%,
-          rgba(6,6,9,0.50) 0%, rgba(6,6,9,0.22) 55%, rgba(6,6,9,0) 85%),
+          rgba(6,6,9,0.57) 0%, rgba(6,6,9,0.27) 55%, rgba(6,6,9,0) 85%),
         linear-gradient(180deg,
-          rgba(6,6,9,0.66) 0%, rgba(6,6,9,0.60) 26%, rgba(6,6,9,0.38) 45%,
-          rgba(6,6,9,0.16) 60%, rgba(6,6,9,0.04) 70%, rgba(6,6,9,0) 78%);
+          rgba(6,6,9,0.74) 0%, rgba(6,6,9,0.68) 26%, rgba(6,6,9,0.46) 45%,
+          rgba(6,6,9,0.20) 60%, rgba(6,6,9,0.06) 70%, rgba(6,6,9,0) 78%);
     }
     /* ⭐⭐ **HERO SCALE, NOT BEAT SCALE — his "way too small and thin".** 11vw lands 43px at 390 —
        the finished hero's own phone presence — and the thinness was mostly the ground: Cinzel 400
@@ -5208,14 +5216,16 @@
       color:#fff;max-width:30ch;text-wrap:balance;
       text-shadow:0 2px 22px rgba(6,6,8,0.82);
     }
-    /* the cue: the desktop's own connected arrow (D337), hung on the block's own left line exactly
-       as the desktop hangs it — tip under the "Y". The arrow keeps its 32×96 box ON PURPOSE —
-       every number inside it (mask-size, the 56px band, the sheen's -56→96 travel, the derived
-       55%) is a px machine that would all have to be re-derived at a second size. Its keyframes
-       now live at BASE scope (see them below the desktop block) — that move is what made it play
-       here at all. */
+    /* the cue: the desktop's own connected arrow (D337). The arrow keeps its 32×96 box ON
+       PURPOSE — every number inside it (mask-size, the 56px band, the sheen's -56→96 travel, the
+       derived 55%) is a px machine that would all have to be re-derived at a second size. Its
+       keyframes live at BASE scope (below the desktop block) — that move is what made it play
+       here at all.
+       ⭐ CENTRED UNDER THE WORD SINCE D359c — his *"move the arrow to the middle of the word
+       scroll"*. ⚠️ The DESKTOP's is deliberately the opposite (D336, on the block's left line) —
+       his two calls, one per band. One word puts this back: flex-start. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:28px 0 0;display:inline-flex;flex-direction:column;gap:20px;align-items:flex-start;
+      margin:28px 0 0;display:inline-flex;flex-direction:column;gap:20px;align-items:center;
     }
     html.cine-on .cine-hero .cine-hero-cue span{
       font:500 13px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
@@ -5227,8 +5237,12 @@
       will-change:transform;
       animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
     }
+    /* ⭐ SOLID SINCE D359c — client: *"the arrow is too see-through. I think the arrow should be
+       a solid color, and then that flash must just go over it, and it should work the same way."*
+       The base silhouette takes the site's gold at FULL strength; the sheen sweeps over it
+       unchanged. ⚠️ Phone only — the desktop keeps its measured 0.62, frozen. */
     html.cine-on .cine-hero .cine-hero-cue i > svg{
-      display:block;width:32px;height:96px;color:rgba(198,166,100,0.62);
+      display:block;width:32px;height:96px;color:var(--gold,#C6A664);
       fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
     }
     html.cine-on .cine-hero .cine-hero-cue i b{
@@ -5442,7 +5456,20 @@
        390) holds both titles to their balanced pair and the box bottoms at ~331, 10 clear. */
     html.cine-on .cine-line{font-size:clamp(29px,8.7vw,44px);font-weight:600}
     html.cine-on .cine-line[data-vpos-narrow="top"]{top:14.5vh}
-    html.cine-on .cine-line .cine-line-sub{margin-top:14px}
+    html.cine-on .cine-line .cine-line-sub{margin-top:14px}    /* ⭐⭐ **THE KITCHEN'S WASH LOSES ITS CIRCLE — 24 August 2026 (D362a).** Client: *"the
+       gradient just seems weird because it feels like there's a circular gradient. So if you can
+       make that gradient better…"* He is seeing the radial's HORIZONTAL falloff — an ellipse over
+       a full-width centred line shows its own round shoulders. This keeps the radial's vertical
+       profile (zero at the top edge, ~0.6 across the words, zero at the bottom — no line
+       anywhere, D311/D313's rule) and flattens it to FULL WIDTH: the sides run past the frame
+       edge, so what remains reads as the room's own darkening, not a drawn shape. Same `--lg`
+       drive from `bandGrade`, nothing else moves. ⚠️ Kitchen beat only ([data-vpos-wide="high"]):
+       the slab beat's wash is pinned 0 under its clip (D354/D360) and the tablet keeps the radial. */
+    html.cine-on .cine-line[data-vpos-wide="high"]::before{
+      background:linear-gradient(180deg,
+        rgba(6,6,9,0) 0%, rgba(6,6,9,0.40) 22%, rgba(6,6,9,0.60) 42%,
+        rgba(6,6,9,0.60) 62%, rgba(6,6,9,0.38) 82%, rgba(6,6,9,0) 100%);
+    }
   }
 
 
