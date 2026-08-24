@@ -5223,12 +5223,13 @@
        derived 55%) is a px machine that would all have to be re-derived at a second size. Its
        keyframes live at BASE scope (below the desktop block) — that move is what made it play
        here at all.
-       ⭐ UNDER THE R OF "SCROLL" SINCE D365 — his correction of D359c's centring: *"I didn't mean
-       put the scroll to begin arrow right in the middle of the whole scroll to begin line. I
-       meant just in the middle of the word scroll… maybe just under the letter r."* Measured on
-       the rendered face at rest: "SCROLL" is 76.6px, its R's ink spans 25.1–34.6, centre 29.9 —
-       so the 32px arrow takes margin-left 14 (29.9 − 16). ⚠️ Re-measure if the word, its 13px
-       face or the 0.3em tracking ever changes. The DESKTOP keeps D336's left-line tip. */
+       ⭐ ON THE S's OWN LINE SINCE D365a — his second pass, reversing the R-centring he asked for
+       an hour earlier (D365, itself correcting D359c's mid-line centring): *"I think it's better
+       that we line the left side of the arrow with the side of the s again."* So it is the
+       DESKTOP's own construction (D337/D336): the left arm's tip sits at x=0 of the 32px box, so
+       the box's left edge IS the tip and flex-start puts it on the word's S. No margin, nothing
+       measured, nothing to drift. ⚠️ The R-centring's numbers (R ink centre 29.9 → margin-left
+       14) are parked here if he calls for it a third time. */
     html.cine-on .cine-hero .cine-hero-cue{
       margin:28px 0 0;display:inline-flex;flex-direction:column;gap:20px;align-items:flex-start;
     }
@@ -5237,7 +5238,7 @@
       text-shadow:0 1px 16px rgba(6,6,8,0.9),0 1px 3px rgba(6,6,8,0.8);
     }
     html.cine-on .cine-hero .cine-hero-cue i{
-      display:block;position:relative;width:32px;height:96px;margin-left:14px;
+      display:block;position:relative;width:32px;height:96px;
       filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
       will-change:transform;
       animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
@@ -5256,10 +5257,14 @@
       -webkit-mask-size:32px 96px;     mask-size:32px 96px;
       -webkit-mask-repeat:no-repeat;   mask-repeat:no-repeat;
     }
+    /* ⭐ SHINIER SINCE D365a — client: *"make that flash shinier and brighter."* A near-white
+       hot core at the band's own 48% line, gold shoulders either side — the brightest line stays
+       at 48%, so the derived 51.7% light-on-point timing is untouched. Phone only. */
     html.cine-on .cine-hero .cine-hero-cue i b span{
       position:absolute;left:0;right:0;top:0;height:56px;display:block;
       background:linear-gradient(to bottom,
-        rgba(228,205,146,0) 0%, var(--cineGoldTop,#E4CD92) 48%, rgba(228,205,146,0) 100%);
+        rgba(228,205,146,0) 0%, var(--cineGoldTop,#E4CD92) 32%, #FFF6DC 48%,
+        var(--cineGoldTop,#E4CD92) 64%, rgba(228,205,146,0) 100%);
       will-change:transform;
       animation:cineHeroSheen 1.8s linear infinite;
     }
