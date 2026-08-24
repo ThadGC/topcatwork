@@ -291,6 +291,12 @@ three inline `<script>` blocks** after every edit to `index.html`. ⚠️ The JS
 `application/ld+json`. ⭐⭐ **AND A `<div>` BALANCE CHECK AFTER ANY STRUCTURAL CUT** (259/257 is the
 correct, long-standing figure — it is not an error).
 
+⛔⛔⛔ **NEW (D357) — `node --check` IS A SYNTAX GATE, NOT A RUNTIME ONE.** An edit that deleted
+two `const` declarations passed it cleanly and threw `ReferenceError` on every frame in the browser.
+**Read the console after ANY JS edit** — arm `window.addEventListener('error',…)` and drive the
+page, because the pane's console buffer also keeps STALE errors from earlier loads and will show
+you a bug you have already fixed.
+
 ⛔⛔ **NEW — A BRACE INSIDE A COMMENT COUNTS.** A comment containing `html{overflow-x:clip}` pushed
 the CSS count up by one while the delta stayed 0; the count only made sense again after the braces
 came out of the prose. **Write CSS in comments without braces**, and compare the COUNT, not just
