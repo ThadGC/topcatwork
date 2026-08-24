@@ -9238,7 +9238,24 @@
        revealed by the slab's own edge (the scrub's TREV table). ⚠️ 22vh is also measured against
        the sweep: the box's right edge stays inside the edge's f205 reach at every tablet
        viewport, so the reveal always completes — no pop at the table's end. */
-    html.cine-on .cine-line[data-vpos-narrow="top"]{top:22vh}
+    /* ⭐⭐ **17vh SINCE D370, AND THE LIFT IS A MEASUREMENT.** Client: *"move the title and the
+       subtitle for the slab you choose is unique section slightly higher up… I just don't want
+       the bottom part of the word decades and the full stop to touch the slab."* Tracked on the
+       864 cut, in the SUBTITLE'S OWN COLUMNS (film x 117–389, its last line's ink) across the
+       whole beat: at 22vh the last line cleared the rising slab by only **35.5 film px at
+       t=22.2** — the full stop sitting on the marble's edge, which is what he saw — and it went
+       genuinely NEGATIVE from t=23.7 while the beat was still fading at 0.26 opacity.
+       ⚠️ **17vh WAS TRIED FIRST AND STILL TOUCHED (−17.3 at 0.31 opacity), BECAUSE LIFTING THE
+       BOX ALSO RE-WRAPS THE LINE**: the last line ended 18 film px further right, and the slab's
+       edge is a DIAGONAL that rides higher the further right you read it — so part of the lift
+       was spent walking into the stone. **15vh is the number that clears it: worst case +4.3
+       film px across the ENTIRE beat, and 51 film px of daylight at full opacity.** ⛔ Narrowing
+       the measure instead was measured and rejected — the sub would have to end near film x 300
+       to clear on its own, which is a 233px line at 17px, four lines deep, dropping the box's
+       bottom back down again. ⚠️ The reveal is unaffected: at 15vh the sweep still hides the box
+       completely at f157 (edge x 46 against the box's left 84) and clears its right edge by f205
+       (edge x 651 against 407). */
+    html.cine-on .cine-line[data-vpos-narrow="top"]{top:15vh}
     /* ⭐⭐ THE KITCHEN LIFTS CLEAR OF THE ISLAND — D369. The island's lit top measures film y 437
        on the 864 cut → 393px screen at 900×1000; a 20vh anchor with the TWO-line title (the
        62vw measure below is what buys the second line back) and the one-line sub bottoms at
@@ -9247,7 +9264,31 @@
        windows (≥1.35 aspect) the vertical crop pushes the island up under any anchor — there
        the radial wash carries legibility, as this band always has. */
     html.cine-on .cine-line[data-vpos-wide="high"]{top:20vh;width:clamp(360px,62vw,640px)}
+    /* ⚠️ 17px IS THE SLAB BEAT'S AND IT STAYS — he called that frame *"pretty much perfect"*, and
+       the bigger face was measured to grow its box AND push its last line 75 film px further
+       right, into the diagonal where the slab rides higher. The 20px belongs to the kitchen beat
+       alone (below), which is the one he asked to make easier to read. */
     html.cine-on .cine-line .cine-line-sub{margin:16px 0 0;font-size:17px;max-width:none}
+    /* ⭐⭐ **THE KITCHEN BEAT IS EASIER TO READ — D370.** Client: *"that subtitle is a little bit
+       hard to read. So do something that makes the title and the subtitle a bit easier to read."*
+       Measured behind this box on the 864 cut, t=29→37: the title band runs p97 **73 → 114** and
+       the sub band **88 → 115, with maxima at 245–255** — D346's trap exactly, specular highlights
+       as bright as the ink. Three answers, all static (⛔ nothing new samples the video — D366/
+       D367's flashing came from live sampling and must never return): the title takes 5.9vw, the
+       subtitle 20px, and **the wash holds its strength further down the box**, because the old
+       radial had decayed to ~0.2 by the subtitle's own rows (D346's lesson, which fixed the same
+       fault for two-line titles). The centre moves to 46% and the plateau runs to 46% before
+       falling — still `farthest-side` with the last stop at 100%, so it reaches zero inside its
+       own box and there is no edge anywhere (D311/D313). ⚠️ Kitchen beat only; the slab beat's
+       wash stays pinned under its clip and the phone keeps its own. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{font-size:clamp(40px,5.9vw,56px)}
+    html.cine-on .cine-line[data-vpos-wide="high"] .cine-line-sub{font-size:20px}
+    html.cine-on .cine-line[data-vpos-wide="high"]::before{
+      inset:-1.15em -2.4em -1.75em;
+      background:radial-gradient(farthest-side at 50% 46%,
+        rgba(6,6,9,0.68) 0%, rgba(6,6,9,0.64) 46%, rgba(6,6,9,0.42) 66%,
+        rgba(6,6,9,0.17) 84%, rgba(6,6,9,0) 100%);
+    }
     /* ═════ THE FIRST FRAME, CENTRED AT SCALE — D369 ═════ */
     html.cine-on .cine-hero{
       left:0;right:0;padding:0 clamp(40px,8vw,120px);text-align:center;
@@ -9279,6 +9320,35 @@
     html.cine-on .cine-skip{bottom:calc(env(safe-area-inset-bottom,0px) + 27px)}
     html.cine-on.skip-live .wa-fab{transform:translateX(calc(-2.7px - 75vw))}
     html.cine-on.skip-live .call-fab{transform:translateX(calc(140.7px - 25vw))}
+
+    /* ═════ THE ENDING FILLS THE FRAME — 24 August 2026 (D370) ═════
+       Client: *"on the final part where it's the surfaces worth building around — the subtitle,
+       the buttons, and the other little things at the bottom as well, make some things bigger or
+       space them out a little bit more so it takes up a little bit more of the screen. especially
+       that the title moves a bit higher."*
+       ⭐⭐ **THERE WAS ROOM AND IT WAS MEASURED FIRST.** At 768×1024 the composition ended at
+       y 793 with **231px of empty frame under it** (the floor's own padding is 61), so the block
+       could grow ~75px AND rise ~38 without ever crowding the fold. The title climbs by cutting
+       `.hero-inner`'s top padding (⚠️ set DIRECTLY here rather than through `--heroPadB`, which
+       D259 ties to the FLOOR — moving that variable would move the bottom edge too), and every
+       piece below it grows or breathes: the subtitle to 19px on a wider measure, the two stacked
+       buttons taller with a real gap, the four chips bigger with more air between them.
+       ⛔ TABLET-ONLY, and the desktop's frozen hero (D90) is untouched — different band. */
+    /* ⚠️ **`#hero` ON EVERY ONE OF THESE, AND IT IS NOT DECORATION.** The hero's own padding,
+       sub size and both grid gaps are already set by `#hero …` rules earlier in this sheet (an
+       id beats a class however late the class is written) — the first cut of this block used
+       plain class selectors and the buttons and chips grew while the padding, the sub and the
+       gaps silently did not. Matching the id makes source order decide, which is what §5's
+       "source order decides between equal specificity" is for. */
+    #hero .hero-inner{padding-top:clamp(72px,10vh,104px)}
+    #hero .hero-sub{font-size:19px;max-width:560px;margin-bottom:42px}
+    #hero .hero-ctas{gap:18px;margin-bottom:42px}
+    #hero .hero-ctas .btn-gold,#hero .hero-ctas .btn-ghost{
+      font-size:14px;padding:19px 22px;letter-spacing:0.16em;
+    }
+    #hero .hero-chips{gap:18px}
+    #hero .hero-chips .chip{font-size:13px;padding:13px 16px}
+  
   }
 
 </style>
