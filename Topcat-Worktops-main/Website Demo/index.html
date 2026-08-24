@@ -5257,14 +5257,31 @@
       -webkit-mask-size:32px 96px;     mask-size:32px 96px;
       -webkit-mask-repeat:no-repeat;   mask-repeat:no-repeat;
     }
-    /* ⭐ SHINIER SINCE D365a — client: *"make that flash shinier and brighter."* A near-white
-       hot core at the band's own 48% line, gold shoulders either side — the brightest line stays
-       at 48%, so the derived 51.7% light-on-point timing is untouched. Phone only. */
+    /* ⭐⭐ A GLARE, NOT A SHEEN — 24 August 2026 (D365b), his third pass on this light: *"I need
+       that to be brighter, like it's a glare shining off of it pretty much. It needs to be more
+       obvious."* Two things make a glare: the stroke goes WHITE-HOT where the light crosses it
+       (a pure #fff core at the band's own 48% line — so the derived 51.7% timing stands), and the
+       light BLOOMS past the stroke — the ::after below, a soft unmasked halo riding the same
+       keyframes, spilling ~7px either side of the shaft the way a real glint flares off metal.
+       Phone only; the desktop's quiet 0.62 sheen is frozen. */
     html.cine-on .cine-hero .cine-hero-cue i b span{
       position:absolute;left:0;right:0;top:0;height:56px;display:block;
       background:linear-gradient(to bottom,
-        rgba(228,205,146,0) 0%, var(--cineGoldTop,#E4CD92) 32%, #FFF6DC 48%,
-        var(--cineGoldTop,#E4CD92) 64%, rgba(228,205,146,0) 100%);
+        rgba(228,205,146,0) 0%, #EFD9A4 30%, #FFFFFF 48%,
+        #EFD9A4 66%, rgba(228,205,146,0) 100%);
+      will-change:transform;
+      animation:cineHeroSheen 1.8s linear infinite;
+    }
+    /* the bloom: no mask, no filter of its own — a radial and a transform, nothing else (D339's
+       rule). It lives INSIDE `i`, whose drop-shadow already re-rasters for the moving sheen — the
+       same cost class the approved desktop cue has always paid, not a new one. top:5px seats its
+       44px centre on the band's hot line (48% of 56 ≈ 27), so halo and white core travel as one
+       light. */
+    html.cine-on .cine-hero .cine-hero-cue i::after{
+      content:"";position:absolute;left:50%;top:5px;width:46px;height:44px;margin-left:-23px;
+      pointer-events:none;
+      background:radial-gradient(closest-side,
+        rgba(255,248,224,0.62) 0%, rgba(236,215,158,0.30) 48%, rgba(236,215,158,0) 100%);
       will-change:transform;
       animation:cineHeroSheen 1.8s linear infinite;
     }
@@ -17513,6 +17530,7 @@ if(faqIndex && panel && faqBody){
   /* ⚠️ D361's PHK RISE-FENCE MACHINERY IS PARKED — D364 reversed the rise to the desktop slide,
      which has nothing to cross. Its arithmetic (the bar FURNITURE's bottom, not the bar's 80px
      box, minus 6px of air) lives in the register row if the rise ever returns. */
+  const KB={ox:0,oy:0,ow:0,oh:0};
   let kitTx=null, kitG=null;
   function measureKit(){
     if(!kitEl)return;
@@ -17528,6 +17546,9 @@ if(faqIndex && panel && faqBody){
        left-anchored block's 761 at 1440; on the phone the line is full-width, so the slide is
        the whole frame — 390 at 390 — and a resize is still the only thing that moves it. */
     if(heroOn||heroPh) KW.x1=kitEl.offsetLeft+kitEl.offsetWidth;
+    /* ⭐ D366: the seated box, in story-layer offsets — the static zone the frame scrim covers,
+       and the only honest place to read its strength from (see bandGrade's note) */
+    KB.ox=kitEl.offsetLeft; KB.oy=kitEl.offsetTop; KB.ow=kitEl.offsetWidth; KB.oh=kitEl.offsetHeight;
   }
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1,
@@ -17593,10 +17614,23 @@ if(faqIndex && panel && faqBody){
      canvas per frame is the version of this that shows up in a profile (grade()'s own lesson).
      ⛔ IT READS THE VIDEO, NOT THE SCREEN: a `cover` video is cropped by CSS, so the source rectangle
      has to be worked out the way the browser lays it out, or the sample is of the wrong pixels. */
-  function bandGrade(el){
+  /* ⛔⛔⛔ **THE CANVAS IS CLEARED BEFORE EVERY SAMPLE DRAW — 24 August 2026 (D366), AND THE
+     FLICKER IT KILLS WAS REAL.** `drawImage` CLIPS a source rectangle that reaches outside the
+     video, so it paints only part of the 48×8 grid — and the rest of the grid keeps the PREVIOUS
+     draw's pixels. A box that is partly off-frame (every sliding beat, mid-entry) therefore
+     samples a mix of live and STALE cells, and the max-cell statistic oscillates bright/dark per
+     frame — the client: *"the gradient is constantly flashing… almost giving me epilepsy."* One
+     clearRect makes an off-frame region read as what it is (nothing) instead of as last frame's
+     kitchen. ⭐ The optional `box` argument samples a STATIC layout box (story-layer offsets)
+     instead of the element's live transformed rect — the phone's frame scrim covers the words'
+     SEATED zone, so its strength must be read from that zone, not from wherever the slide
+     currently holds the words (the second half of the same strobe). */
+  function bandGrade(el,box){
     if(!vid.videoWidth||vid.readyState<2)return -1;
     const bg=heroBg.getBoundingClientRect(); if(!bg.height)return -1;
-    const r=el.getBoundingClientRect(); if(!r.height)return -1;
+    const r=box?{left:bg.left+box.ox,top:bg.top+box.oy,width:box.ow,height:box.oh}
+               :el.getBoundingClientRect();
+    if(!r.height)return -1;
     const vr=vid.videoWidth/vid.videoHeight, br=bg.width/bg.height;
     let dw,dh,dx,dy;
     if(vr>br){ dh=bg.height; dw=dh*vr; dx=(bg.width-dw)/2; dy=0; }
@@ -17604,7 +17638,7 @@ if(faqIndex && panel && faqBody){
     const sc=vid.videoWidth/dw;
     const sx=(r.left-bg.left-dx)*sc, sy=(r.top-bg.top-dy)*sc;
     const sw=Math.max(1,r.width*sc), sh=Math.max(1,r.height*sc);
-    try{ gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,8); }catch(e){ return -1; }
+    try{ gctx.clearRect(0,0,48,8); gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,8); }catch(e){ return -1; }
     let d; try{ d=gctx.getImageData(0,0,48,8).data; }catch(e){ return -1; }
     const cell=[];
     for(let i=0;i<384;i++) cell.push(0.2126*d[i*4]+0.7152*d[i*4+1]+0.0722*d[i*4+2]);
@@ -17731,7 +17765,7 @@ if(faqIndex && panel && faqBody){
            words arrive and out as they leave, and the sliding line carries NO wash of its own. */
         const ramp=Math.max(0,Math.min(1,(t-L.at)/0.9,(L.out-t)/0.9));
         let w=0;
-        if(ramp>0){ const g=bandGrade(L.el); if(g>=0)w=+(g*ramp).toFixed(2); }
+        if(ramp>0){ const g=bandGrade(L.el,KB); if(g>=0)w=+(g*ramp).toFixed(2); }
         if(w!==kitG){ kitG=w; cine.style.setProperty('--kitG',w); }
         if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
         if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
