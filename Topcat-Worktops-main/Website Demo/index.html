@@ -4733,6 +4733,66 @@
      but a hero is already here, and −150 under the 1000 perspective renders it at 87%. */
   .cine-hero,.cine-trust{display:none}
   @media(min-width:1121px){
+    /* ═════ THE WAVE — 23 August 2026 (D348). DESKTOP ONLY ═══════════════════════════════════
+       ⭐⭐⭐ **THE WORDS DO NOT MOVE ANY MORE. THE CAMERA TAKES THEM.** Client: *"as the camera
+       starts moving and turning, the text stays there and gets cut off piece by piece as it turns…
+       imagine the words are staying completely still in frame, and then essentially the side where
+       there's no longer any video, it just moves past that. So for instance, like a wave that's
+       going over it… there won't be any animation of the text moving with the video. It pretty much
+       just stays still. Doesn't come forward and fade away and go through the screen."*
+       ⭐⭐ **IT IS ONE MASK ON THE WHOLE STORY LAYER, NOT ONE PER BEAT**, so the wave is a single
+       edge crossing the FRAME: it takes the headline, the invitation, the arrow, the proof chips,
+       each beat and each beat's own wash in one pass, and nothing can drift out of step with
+       anything else. Only one beat is ever up, so one edge is all the film needs.
+       ⭐⭐⭐ **THE DIRECTION IS MEASURED, NOT CHOSEN.** Per-frame global translation of the shipped
+       1920 cut (16x480 strips, SAD): the picture runs LEFT the whole first screen and accelerates —
+       4 film px per frame at t=0, 20 by t=6, **572 px in total**. The valley the words sit in is
+       what leaves. So the edge comes from the left and sweeps right, which is his *"the side where
+       there's no longer any video"* exactly.
+       ⛔⛔ **THE MASK IMAGE IS STATIC AND ONLY ITS POSITION MOVES — D339's LESSON, WHICH COST A
+       ROUND.** Writing the ramp into the gradient stops re-rasterises a 1440x900 mask every frame;
+       `mask-position` on a fixed image does not. ⛔ **AND NOTHING MASKED MAY CARRY A `filter`** —
+       that is the exact pair that glitched the arrow, which is why `story()` no longer writes the
+       depth-of-field blur at this band.
+       ⭐⭐ **130 AND SMOOTHSTEPPED, AND BOTH WERE CHOSEN BY LOOKING.** Shot against 260 and 100 on
+       the SAME frozen frame (t=3.11, the edge at x=144): 260 is not a wave at all, it is a long
+       soft fade and the leading letters trail away over a third of the block; 100 cuts cleanly but
+       reads as a hard edge; **130 is a cut with a feather on it**, which is the *"like a wave that's
+       going over it"* he asked for. The seven stops are a smoothstep rather than a straight ramp —
+       a linear ramp spends its whole width half-lit, and the S puts the transition in the MIDDLE of
+       the band so there is an edge to see, with the tails feathered so there is no line.
+       ⚠️ **IT CANNOT CLIP THE BEATS' WASH, AND THAT WAS MEASURED RATHER THAN ASSUMED.** An earlier
+       note here claimed the band had to clear `.cine-line::before`'s **-2.4em (168px)** overhang.
+       It does not: that wash is a `farthest-side` radial that reaches **zero at its own box edge**
+       (D311/D313), so at the band's leading edge its own alpha is ≤0.05 before `--lg` scales it.
+       There is nothing there to cut.
+       ⚠️ `#fff`, not `#000`: white is opaque in BOTH alpha and luminance mask modes, so a browser
+       reading this as luminance shows the film's copy rather than erasing all of it.
+       ⭐ **THE NUMBER LIVES HERE AND THE SCRUB READS IT** (`sync()`), so the geometry and the
+       picture cannot drift apart the way the arrow's two copies of one path can.
+       ⚠️ ≥1121 ONLY. The phone and the tablet keep D316's travel until he takes their placement. */
+    html.cine-on .cine-story{
+      --waveBand:130px;
+      -webkit-mask-image:linear-gradient(90deg,rgba(255,255,255,0) 0,
+        rgba(255,255,255,0.04) calc(var(--waveBand) * 0.15),
+        rgba(255,255,255,0.16) calc(var(--waveBand) * 0.30),
+        rgba(255,255,255,0.50) calc(var(--waveBand) * 0.50),
+        rgba(255,255,255,0.84) calc(var(--waveBand) * 0.70),
+        rgba(255,255,255,0.96) calc(var(--waveBand) * 0.85),
+        #fff var(--waveBand));
+              mask-image:linear-gradient(90deg,rgba(255,255,255,0) 0,
+        rgba(255,255,255,0.04) calc(var(--waveBand) * 0.15),
+        rgba(255,255,255,0.16) calc(var(--waveBand) * 0.30),
+        rgba(255,255,255,0.50) calc(var(--waveBand) * 0.50),
+        rgba(255,255,255,0.84) calc(var(--waveBand) * 0.70),
+        rgba(255,255,255,0.96) calc(var(--waveBand) * 0.85),
+        #fff var(--waveBand));
+      -webkit-mask-size:calc(100% + var(--waveBand)) 100%;
+              mask-size:calc(100% + var(--waveBand)) 100%;
+      -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+      -webkit-mask-position:calc(var(--wave,-130) * 1px) 0;
+              mask-position:calc(var(--wave,-130) * 1px) 0;
+    }
     /* ⭐⭐ ANCHORED BY ITS TOP, NOT ITS MIDDLE — 22 August 2026 (D325b). Client: *"move the text
        higher up… you can see the top of the mountains in the background. The first line of text is
        basically above that mountain line. And then you can basically move everything up."*
@@ -16759,8 +16819,61 @@ if(faqIndex && panel && faqBody){
      `grade()` above already carry.
      ⚠️ The blur is quantised to half a pixel for the same reason — it is depth of field as the words
      cross the focal plane, and it does not need to be smooth to read as soft. */
+  /* ⭐⭐⭐ THE WAVE — 23 August 2026 (D348). DESKTOP ONLY. His instruction, in full, is quoted over
+     the CSS. The mechanism in one line: **the words never move and never fade; a single soft edge
+     crosses the frame and takes them piece by piece**, and on the first screen that edge is the
+     film's own pan.
+     ⭐⭐ `PAN` IS MEASURED, NOT EASED BY TASTE. Per-frame global translation of the shipped 1920 cut
+     (16x480 luminance strips, SAD over ±96 px), integrated and normalised over t=0…6: the picture
+     runs left the whole time and ACCELERATES — 4 film px per frame at the start, 20 by the end, 572
+     in total. These thirteen numbers are that curve at half-second steps, so the edge slows when
+     the camera slows and drives when it drives. ⚠️ **Re-measure them if the film is ever re-cut**
+     (`.src-2026-08-23/`, and the probe is in D348).
+     ⚠️ **IT RUNS AT 1.6× THE PAN AND THAT IS DELIBERATE.** At 1:1 with the picture the last word
+     would leave at **t≈7.4** (the block's right edge is 913 film px from the frame's, and the pan
+     reaches that only then), which overruns the t=6 exit he has already approved. The PROFILE is
+     the camera's; the rate is scaled so it lands where his timing says. */
+  const PAN=[0,0.042,0.084,0.126,0.168,0.224,0.308,0.392,0.476,0.566,0.692,0.832,1];
+  function panEase(f){
+    const x=clamp(f)*12, i=Math.min(11,Math.floor(x));
+    return PAN[i]+(PAN[i+1]-PAN[i])*(x-i);
+  }
+  /* ⛔ THE BAND IS THE STYLESHEET'S, READ IN `sync()` — the mask's own width and the position this
+     file computes from it are one number, so they cannot be changed apart. The literal here is only
+     what stands before the first read. See the CSS for why it is 130. */
+  let WAVE_BAND=130;
+  /* ⭐ THE BEATS HOLD, THEN THE WAVE CROSSES THEM. The first screen's edge is the camera's, because
+     the camera moves; on the two beats the shot is all but locked — measured 136 px of drift on the
+     slab and **zero** on the closing kitchen — so there is no pan to ride and the sweep is a
+     designed gesture, given the same accelerating profile so the film still reads as one voice. */
+  const BEAT_HOLD=0.55;
+  const storyEl=hero.querySelector('.cine-story');
+  /* the hero block's box and the proof block's box, in the story layer's own coordinates */
+  const HW={x0:0,x1:0}, HT={x0:0,x1:0};
+  let waveWant=-WAVE_BAND, waveHas=null, trustGone=null;
+  const boxOf=(el,o)=>{ o.x0=el.offsetLeft; o.x1=el.offsetLeft+el.offsetWidth; };
+  /* f=0 leaves the ramp's leading edge exactly on the block's left edge, so the block is whole;
+     f=1 puts the image's left edge past its right edge, so the block is gone. */
+  const waveAt=(x0,x1,f)=>x0-WAVE_BAND+f*((x1-x0)+WAVE_BAND);
+  /* ⚠️ ONE WRITE PER TICK AT MOST, and rounded: a custom property re-set at full precision every
+     frame is a style recalculation for nothing — the lesson `veil()`, `grade()` and `story()` all
+     carry already. ⛔ Written by `tick()` AFTER both `story()` and `heroCopy()` have had their say,
+     because they share the one edge. */
+  function setWave(v){
+    const w=Math.round(v);
+    if(w!==waveHas){ waveHas=w; storyEl.style.setProperty('--wave',w); }
+  }
+  /* ⛔ HAND IT BACK ON THE WAY OUT OF THE BAND — an inline custom property survives a dragged
+     window, and at ≤1120 there is no mask rule left to answer it. */
+  function clearWave(){ if(waveHas!==null){ waveHas=null; storyEl.style.removeProperty('--wave'); } }
+  /* ⛔⛔ **ONE OWNER, AND IT IS THE ONE THAT KNOWS THE BAND.** The first build cleared the property
+     inside `heroCopy()`'s band-out branch and then wrote it again from the frame two lines later,
+     so a phone carried a `--wave` for a mask that only exists at ≥1121. Caught by reading the
+     element at 390px, not by looking at the screen — nothing was visibly wrong. */
+  function paintWave(){ if(heroOn)setWave(waveWant); else clearWave(); }
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1,
+    wx0:0, wx1:0,                          /* its own box, re-read on the tick it comes up */
     zNear: 560                             /* set per band by retimeStory() — see the note there */
   }));
   /* ⭐⭐ THE BEATS ARE PER BAND BECAUSE THE COMPOSITION IS, and since D319 the three bands are
@@ -16858,14 +16971,38 @@ if(faqIndex && panel && faqBody){
   }
   let firstAlpha=0;                 // the opening title's own alpha, for the scroll cue below
   function story(t){
+    /* ⛔ THE EDGE IS RESET EVERY TICK AND THEN CLAIMED, never left where the last frame put it: a
+       beat that has finished must hand the frame back whole, or the next one arrives pre-eaten. */
+    waveWant=-WAVE_BAND;
     for(const L of STORY){
       if(L.out<=L.at)continue;
       const p=clamp((t-L.at)/(L.out-L.at));
-      const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
+      /* ⭐⭐⭐ THE WAVE REPLACES BOTH THE TRAVEL AND THE OUT-FADE — 23 Aug 2026 (D348), DESKTOP ONLY.
+         Client: *"there won't be any animation of the text moving with the video. It pretty much
+         just stays still. Doesn't come forward and fade away and go through the screen."*
+         ⭐ THE IN-RAMP STAYS: it is the 16% arrival D344 measured his cue against (*"it should fade
+         or come in"*), and a fade does not move the words. What goes is the Z travel, the
+         depth-of-field blur that went with it, and the 26% out-fade — the edge does the exit now.
+         ⛔ AND THE BLUR HAS TO GO RATHER THAN MERELY BEING UNUSED: a `filter` on a masked element
+         is precisely the pair that glitched the arrow at D339. */
+      const wide=heroOn;
+      const wasUp=L.o>0;
+      const a=(p<=0||p>=1)?0:(wide?Math.min(1,p/0.16):Math.min(1,p/0.16,(1-p)/0.26));
       const o=+(a*a*(3-2*a)).toFixed(2);
       if(L===STORY[0])firstAlpha=o;
-      const z=Math.round(Z_FAR+((L.zNear||Z_NEAR)-Z_FAR)*p*p);
-      const b=p>0.72?Math.round(((p-0.72)/0.28)*9)/2:0;     // 0 … 4.5px, in half-pixel steps
+      const z=wide?0:Math.round(Z_FAR+((L.zNear||Z_NEAR)-Z_FAR)*p*p);
+      const b=wide?0:(p>0.72?Math.round(((p-0.72)/0.28)*9)/2:0);   // 0 … 4.5px, in half-pixel steps
+      /* ⚠️ THE BOX IS RE-READ ON THE TICK THE BEAT COMES UP, not cached at load: `.cine-line` is
+         `min(21ch,44vw)` wide and `ch` is a FONT metric, so a width read before Cinzel arrives is a
+         fallback's width. Once per beat, never per frame. */
+      if(wide&&o>0){
+        if(!wasUp||L.wx1<=L.wx0){ L.wx0=L.el.offsetLeft; L.wx1=L.wx0+L.el.offsetWidth; }
+        /* ⛔ A LINE WITH NO BOX MAY NOT CLAIM THE EDGE. `.cine-open` is `display:none` at this band
+           and still runs through here (it drives `firstAlpha` for the narrow cue), so it measures
+           0x0 — and an unguarded claim would sweep a wave across the frame for a line nobody can
+           see, on the same window as the first screen's own. */
+        if(L.wx1>L.wx0)waveWant=waveAt(L.wx0,L.wx1,panEase(clamp((p-BEAT_HOLD)/(1-BEAT_HOLD))));
+      }
       if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
       /* the wash only matters while the words are up, and it rides their own alpha so it can never
          outlive them (the bug the scroll cue taught) */
@@ -16897,6 +17034,9 @@ if(faqIndex && panel && faqBody){
      headline clean off the top of the screen while it is still half visible. At 300 the block lifts
      from y171 to about y116 while it is still fully up, and is gone before it reaches the bar. */
   const heroEl=document.getElementById('cineHero');
+  /* ⚠️ **HERO_Z IS PARKED, NOT LIVE — D348.** The block no longer travels at all; the constant and
+     the note above it stay because the travel is one line away if he ever wants it back, and
+     because the number is measured (D325b) and would have to be re-derived from scratch. */
   const HERO_OUT=6.0, HERO_EDGE=1, HERO_Z=300;
   let heroOn=false, heroO=-1, heroZ=-1, heroE=-1;
   const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
@@ -16909,8 +17049,9 @@ if(faqIndex && panel && faqBody){
        is meant to take over — the bug the scroll cue already taught this file once. */
     if(!heroOn){
       if(heroO!==0){
-        heroO=0; heroZ=-1; heroE=-1;
+        heroO=0; heroZ=-1; heroE=-1; trustGone=null;
         heroEl.style.opacity=''; heroEl.style.removeProperty('--hz');
+        heroEl.style.visibility='';
         /* ⛔ the proof block is handed back the same way and in the same breath — an inline opacity
            left behind on a band change outranks the class rule that is meant to take over (D336). */
         if(trustEl){ trustEl.style.opacity=''; trustEl.style.visibility=''; }
@@ -16919,27 +17060,50 @@ if(faqIndex && panel && faqBody){
       return;
     }
     const p=clamp(t/HERO_OUT);
-    const a=Math.min(1,(1-p)/0.26);              /* the out-ramp only — see the note above */
-    const o=+(a*a*(3-2*a)).toFixed(2);
+    /* ⭐⭐⭐ **IT DOES NOT FADE AND IT DOES NOT TRAVEL ANY MORE — 23 August 2026 (D348).** Client:
+       *"I want the text to pretty much stay exactly where it is, and then it doesn't follow with
+       the video… the text stays completely still, and then the camera moves, and the text will go
+       away piece by piece as the camera moves away piece by piece."*
+       ⭐⭐ SO THE ALPHA IS A SWITCH, NOT A RAMP: full while the first screen is alive, nothing
+       after t=6. The exit is the WAVE, and `f` below is the film's own measured pan — the words are
+       painted on the valley and the valley is what leaves the frame. `visibility` follows it so a
+       block nobody can see is not composited over the remaining 38 seconds of film. */
+    const f=panEase(p);
+    const o=p>=1?0:1;
     if(o!==heroO){
-      heroO=o; heroEl.style.opacity=o;
+      heroO=o; heroEl.style.opacity=o; heroEl.style.visibility=o?'visible':'hidden';
       /* ⭐ ONE WRITE, TWO ELEMENTS — the proof cannot drift out of step with the words it belongs
          to, because there is no second alpha to keep in sync. His ask: *"it'll fade away with the
-         your worktop starts here text."*
-         ⭐⭐ `visibility` at the ends, not just alpha: `.chip` carries `backdrop-filter:blur(8px)`
-         and a transparent backdrop-filtered layer is not reliably skipped, so at zero it comes out
-         of the compositor's way for the rest of the film. */
-      if(trustEl){ trustEl.style.opacity=o; trustEl.style.visibility=o>0?'visible':'hidden'; }
+         your worktop starts here text."* */
+      if(trustEl)trustEl.style.opacity=o;
     }
-    const z=Math.round(HERO_Z*p*p);
-    if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
+    if(o){
+      waveWant=waveAt(HW.x0,HW.x1,f);
+      /* ⭐⭐ **THE PROOF CHIPS ARE TAKEN BY THE SAME EDGE, AND THEN TURNED OFF BEHIND IT.** They are
+         inside `.cine-story`, so the mask erases them exactly as it erases the words — no second
+         alpha, no drift, one wave crossing the frame. But `.chip` carries `backdrop-filter:blur(8px)`
+         and a masked-to-nothing backdrop-filtered layer is not reliably skipped by the compositor,
+         so the moment the edge is past their right side they go `visibility:hidden` and stop
+         sampling the film. His standing rule: *"make sure the movement when the user is scrolling is
+         extremely smooth."* */
+      const gone=trustEl&&HT.x1>HT.x0&&waveWant>HT.x1;
+      if(trustEl&&gone!==trustGone){ trustGone=gone; trustEl.style.visibility=gone?'hidden':'visible'; }
+    }else if(trustEl&&trustGone!==true){ trustGone=true; trustEl.style.visibility='hidden'; }
+    /* ⛔ Z IS PINNED AT 0 AT THIS BAND — the block is still, so the property it travelled on is
+       written once and never again. The narrow bands never reach this function. */
+    if(heroZ!==0){ heroZ=0; heroEl.style.setProperty('--hz',0); }
     /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed from the
        moment the film starts moving. Two decimal places and a change test: a custom property
        written at full precision every frame is a style recalculation for nothing.
        ⚠️ HERO_EDGE IS 1 SINCE D325b — the layer's two gradients carry their own strengths (0.74 at
        the left border, 0.42 in the top-left corner) so this is purely the copy's alpha. It was 0.66
        when the CSS was written at full strength and the multiplier did the grading. */
-    const e=+(HERO_EDGE*o).toFixed(2);
+    /* ⭐⭐ **AND IT RETREATS WITH THE EDGE, NOT WITH AN ALPHA — D348.** The copy no longer fades, so
+       riding `o` would hold the grade at full strength across his picture for the whole first
+       screen and then drop it in one step. It rides the wave instead: the grade is anchored at the
+       LEFT of the frame and the wave eats from the left, so what it is protecting shrinks exactly
+       as fast as `f` grows. Same promise as before — unobstructed from the moment the film moves. */
+    const e=+(HERO_EDGE*(1-f)).toFixed(2);
     if(e!==heroE){ heroE=e; cine.style.setProperty('--cineEdge',e); }
   }
 
@@ -16976,7 +17140,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); paintWave(); plate(dur); chrome(1); grade();
   });
 
   function tick(){
@@ -16993,6 +17157,9 @@ if(faqIndex && panel && faqBody){
     curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
     heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
+    /* ⛔ AFTER BOTH, NEVER INSIDE EITHER (D348): they share ONE edge across the whole story layer,
+       so the beat and the first screen each state what they want and the frame writes it once. */
+    paintWave();
     plate(want);      /* his still of f0, cut the instant the picture moves (D333) */
     chrome(film);
     grade();
@@ -17034,6 +17201,15 @@ if(faqIndex && panel && faqBody){
     cine.style.removeProperty('height');
     retimeStory();
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
+    /* ⭐ THE WAVE'S TWO FIXED BOXES, RE-READ HERE AND NOWHERE ELSE (D348). Both are desktop-only and
+       `display:none` below 1121, where a read would return a 0-wide box — hence the band test. Both
+       are sized in `vw`/`clamp` rather than `ch`, so unlike the beats they cannot move when a font
+       arrives, and once per resize is enough. */
+    if(heroOn){
+      const bw=parseFloat(getComputedStyle(storyEl).getPropertyValue('--waveBand'));
+      if(bw>0)WAVE_BAND=bw;
+      if(heroEl)boxOf(heroEl,HW); if(trustEl)boxOf(trustEl,HT);
+    }
     plate(want);      /* ⛔ a band change swaps the overlay's crop as well as the film's */
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;
