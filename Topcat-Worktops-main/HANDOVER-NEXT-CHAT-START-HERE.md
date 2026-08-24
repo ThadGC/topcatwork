@@ -7,12 +7,14 @@ Read this, then `HANDOVER.md` **§D** (the register, newest first — this round
 > `HANDOVER-2026-08-23-film-round-start-here.md` (D333–D347). Everything that still matters
 > is carried below.
 
-> ⭐⭐ **THE ACTIVE SCOPE IS THE FILM'S TEXT ANIMATION, ONE SECTION AT A TIME, ON DESKTOP.** The
-> first screen is DONE (§4). ⭐ **D354 (later on 24 Aug): the SLAB BEAT is now DONE too — his
-> design, the reveal: the words sit still behind a clip that IS the slab's tracked edge, riding
-> the painted frame (rVFC), and the slab uncovers them at its own angle. See the D354 register
-> row.** **The KITCHEN beat is deliberately untouched and waiting for him** — his instruction,
-> verbatim, in §13 item 1. ⛔ **Do not invent it.**
+> ⭐⭐ **THE ACTIVE SCOPE IS THE FILM'S TEXT ANIMATION, ONE SECTION AT A TIME, ON DESKTOP —
+> AND ALL THREE SECTIONS ARE NOW DONE, EACH TO HIS OWN DESIGN.** The first screen slides off on
+> the scroll through the gutter fade (§4, D352–D353). ⭐ **D354: the SLAB BEAT** — the words sit
+> still behind a clip that IS the slab's tracked edge, riding the painted frame (rVFC), and the
+> slab uncovers them at its own angle. ⭐ **D355: the KITCHEN BEAT** — in from the left on the
+> scroll, sets, and leaves in reverse, the first screen's grammar pointed inward. See both
+> register rows. ⭐⭐ **The likely next scope is mobile/tablet text placement (§14 item 2), owed
+> since D325 — but he opens it, not you.**
 
 ---
 
@@ -413,13 +415,11 @@ link presents as *"most of the images aren't loading"*.
 
 ### ⭐⭐⭐ The film, which is the live scope
 
-1. ⭐⭐⭐ **THE KITCHEN BEAT'S ANIMATION — HIS, AND HE SAYS WHEN.** ⭐ **The slab beat's arrived and
-   was built the same day: D354, the reveal.** His standing words for the rest: *"the same thing
-   for the stone sets the tone of the room, that will also have its own different way of
-   animating."* ⛔ **DO NOT INVENT IT. WAIT FOR HIM.** ⭐ Two mechanisms are already built, measured
-   and parked, and either is a paste away — see §16. **A wave that erases in place is the natural
-   candidate for the CLOSING KITCHEN, whose shot is measured as completely locked off** (zero camera
-   motion), so a pin has nothing to ride there.
+1. ⭐ **BOTH BEATS ARE DONE — D354 (the slab reveal) and D355 (the kitchen slide), each his own
+   design, delivered the same day he gave them.** The parked wave and pin (§16) stay parked — he
+   reverses freely, and either is still a paste away. ⚠️ **D355's entry/exit seconds (2.5s each
+   around a 4s hold) are the build's one judgment call — he has been told the numbers and may
+   retime by eye.**
 2. ⭐⭐⭐ **MOBILE AND TABLET TEXT PLACEMENT. STILL BADLY OWED.** Deferred since D325 (*"we will talk
    about mobile and tablet text placement after"*), and the desktop has now moved a very long way
    from them. ⚠️ **Measured and NOT fixed, because it is out of scope: on the phone the slab beat

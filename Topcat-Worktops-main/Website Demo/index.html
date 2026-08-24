@@ -4630,7 +4630,9 @@
     color:var(--bone);text-wrap:balance;
     opacity:0;                                    /* the scrub owns opacity from the first tick */
     --ly:-50%;
-    transform:translateY(var(--ly)) translateZ(calc(var(--lz,-150) * 1px));
+    /* ⭐ `--lx` IS THE KITCHEN BEAT'S SLIDE (D355) and defaults to 0, so every other line is
+       untouched at every band. It is written on desktop only and handed back on a band change. */
+    transform:translateX(calc(var(--lx,0) * 1px)) translateY(var(--ly)) translateZ(calc(var(--lz,-150) * 1px));
     /* ⚠️ NOT a text-shadow for legibility alone — these words cross a daylight quarry AND a black
        void, and §2's own lesson from D313 is that no fixed ink survives that. The shadow is a
        contact shadow so the type reads as an object in the room; the veil's 0.20 floor and
@@ -17003,6 +17005,51 @@ if(faqIndex && panel && faqBody){
     };
     try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
   }
+
+  /* ═════ THE KITCHEN BEAT ARRIVES BY THE SIDE IT WILL LEAVE BY — 24 August 2026 (D355).
+     DESKTOP ONLY. ═════
+     Client: *"I wanted to animate in — no fade or anything, just coming in from the left side and
+     setting. So as the user scrolls, it comes in from the left and then sets into its position.
+     And then for the animation for that text to go away, I wanted it to go back out to the left in
+     reverse. The same way that it came, just reverse that."*
+     ⭐⭐⭐ **NOTHING FADES AND NOTHING FOLLOWS THE PICTURE.** One translate on the continuous eased
+     SCROLL clock — the first screen's grammar (D352) pointed inward — over a shot whose camera is
+     measured as locked off, so there is no scene speed to match and nothing to step against. The
+     words carry their own wash in with them: `.cine-line::before` lives inside the line's stacking
+     context and rides the same transform, so the shade arrives and leaves WITH the words rather
+     than hanging on an empty room.
+     ⭐⭐ **THE ENTRY SETS AND THE EXIT IS ITS MIRROR, LITERALLY.** In: 28.5 → 31.0, position
+     `-KW.x1 * (1-q)²` — full speed on the first pixel of the window (D353's rule: an ease-in from
+     rest is a dead zone) decelerating to zero velocity at rest, which is what "sets" means. Out:
+     35.0 → 37.5, `-KW.x1 * q²` — the identical curve time-reversed, his instruction taken
+     literally. Between the two it does not move at all.
+     ⭐ **THE SLIDE IS THE SAFE AXIS, MEASURED (D345's fences):** the block's vertical position
+     never changes, so the island (14–21px below) and the bar (65px above) keep their clearances
+     through the whole life of the beat; and while sliding, the block sits LEFT of its rest, so its
+     right ink edge (776 at 1440) can only ever be further from the pendants at 785–798.
+     ⚠️ `KW.x1` is the box's own right edge in the story layer — `offsetLeft + offsetWidth`, both
+     set by vw clamps, so a resize is the only thing that moves it and `sync()` is the one that
+     re-reads it. No font term: the box is sized, not shrink-wrapped.
+     ⛔ Off-left costs nothing: `html` carries `overflow-x:clip` (see the note at the top of the
+     stylesheet), the same rule every parked composition already relies on.
+     ⛔ Z STAYS AT 0 AND THE DEPTH BLUR IS GONE WITH IT — a thing that slides in and sits cannot
+     also be travelling in Z, and this beat starts at 16vh where the perspective trap lives
+     (D325b/D340/D345); a pure translateX under the parent perspective has no Z component and
+     cannot spring it. */
+  const KIT_SET=31.0, KIT_OUT=35.0;
+  const kitEl=document.querySelector('.cine-line[data-vpos-wide="high"]');
+  const KW={x1:0};
+  let kitTx=null;
+  function measureKit(){
+    if(!heroOn||!kitEl){
+      /* hand the slide back on the way out — an inline `--lx` left behind under 1121 would drag
+         the tablet's beat off its mark (the D336/D348 family of bug) */
+      if(kitEl){ kitEl.style.removeProperty('--lx'); }
+      kitTx=null;
+      return;
+    }
+    KW.x1=kitEl.offsetLeft+kitEl.offsetWidth;
+  }
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1,
     zNear: 560                             /* set per band by retimeStory() — see the note there */
@@ -17110,10 +17157,11 @@ if(faqIndex && panel && faqBody){
      at EVERY band, exactly as they did before that round: fade in over 16%, travel in Z, fade out
      over 26%, with the depth-of-field blur as they cross the focal plane. **Each beat gets its own
      answer, and he says when.**
-     ⭐⭐ **D354 (24 Aug) DELIVERED THE SLAB BEAT'S OWN ANSWER, ON HIS INSTRUCTION — the reveal
-     (see THE SLAB REVEALS ITS OWN CAPTION above), desktop only, as the branch below.** The
-     KITCHEN beat remains untouched at every band, and the slab beat remains untouched on the
-     phone and the tablet. ⛔ The kitchen's answer is still his to give — do not invent it. */
+     ⭐⭐ **D354 AND D355 (24 Aug) DELIVERED BOTH BEATS' OWN ANSWERS, ON HIS INSTRUCTION — the
+     slab beat's reveal (THE SLAB REVEALS ITS OWN CAPTION) and the kitchen beat's slide (THE
+     KITCHEN BEAT ARRIVES BY THE SIDE IT WILL LEAVE BY), desktop only, as the two branches
+     below.** ⛔ Both beats remain untouched on the phone and the tablet — that round is still
+     his to open. */
   function story(t){
     for(const L of STORY){
       if(L.out<=L.at)continue;
@@ -17135,6 +17183,26 @@ if(faqIndex && panel && faqBody){
         if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
         if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
         if(!HAS_RVFC)revealTick();
+        continue;
+      }
+      /* ⭐⭐⭐ THE KITCHEN BEAT ON DESKTOP SLIDES IN FROM THE LEFT AND SETS, AND LEAVES IN REVERSE
+         (D355) — no fade, no Z, no blur, on the continuous scroll clock. The curve and the fences
+         are documented at KIT_SET above. The wash still rides `bandGrade()` — this beat sits on
+         the lit kitchen (D346's specular streaks), and the shade travels inside the line's own
+         stacking context, with the words. */
+      if(L.el===kitEl&&heroOn){
+        const o=(p<=0||p>=1)?0:1;
+        let tx=0;
+        if(t<KIT_SET){ const q=clamp((t-L.at)/(KIT_SET-L.at)); tx=+(-KW.x1*(1-q)*(1-q)).toFixed(2); }
+        else if(t>KIT_OUT){ const q=clamp((t-KIT_OUT)/(L.out-KIT_OUT)); tx=+(-KW.x1*q*q).toFixed(2); }
+        if(tx!==kitTx){ kitTx=tx; L.el.style.setProperty('--lx',tx); }
+        if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+        if(o>0.02){
+          const g=bandGrade(L.el);
+          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+        } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
+        if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
         continue;
       }
       const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
@@ -17351,6 +17419,7 @@ if(faqIndex && panel && faqBody){
        change only when the box does, and `sync()` is the function the box changes call. */
     measurePin();
     measureReveal();  /* ⛔ the reveal's box and cover mapping move with the band too (D354) */
+    measureKit();     /* ⛔ and the kitchen slide's travel distance with them (D355) */
     plate(want);      /* ⛔ a band change swaps the overlay's crop as well as the film's */
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;
