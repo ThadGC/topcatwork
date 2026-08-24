@@ -5223,18 +5223,21 @@
        derived 55%) is a px machine that would all have to be re-derived at a second size. Its
        keyframes live at BASE scope (below the desktop block) — that move is what made it play
        here at all.
-       ⭐ CENTRED UNDER THE WORD SINCE D359c — his *"move the arrow to the middle of the word
-       scroll"*. ⚠️ The DESKTOP's is deliberately the opposite (D336, on the block's left line) —
-       his two calls, one per band. One word puts this back: flex-start. */
+       ⭐ UNDER THE R OF "SCROLL" SINCE D365 — his correction of D359c's centring: *"I didn't mean
+       put the scroll to begin arrow right in the middle of the whole scroll to begin line. I
+       meant just in the middle of the word scroll… maybe just under the letter r."* Measured on
+       the rendered face at rest: "SCROLL" is 76.6px, its R's ink spans 25.1–34.6, centre 29.9 —
+       so the 32px arrow takes margin-left 14 (29.9 − 16). ⚠️ Re-measure if the word, its 13px
+       face or the 0.3em tracking ever changes. The DESKTOP keeps D336's left-line tip. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:28px 0 0;display:inline-flex;flex-direction:column;gap:20px;align-items:center;
+      margin:28px 0 0;display:inline-flex;flex-direction:column;gap:20px;align-items:flex-start;
     }
     html.cine-on .cine-hero .cine-hero-cue span{
       font:500 13px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
       text-shadow:0 1px 16px rgba(6,6,8,0.9),0 1px 3px rgba(6,6,8,0.8);
     }
     html.cine-on .cine-hero .cine-hero-cue i{
-      display:block;position:relative;width:32px;height:96px;
+      display:block;position:relative;width:32px;height:96px;margin-left:14px;
       filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
       will-change:transform;
       animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
@@ -5458,19 +5461,26 @@
        390) holds both titles to their balanced pair and the box bottoms at ~331, 10 clear. */
     html.cine-on .cine-line{font-size:clamp(29px,8.7vw,44px);font-weight:600}
     html.cine-on .cine-line[data-vpos-narrow="top"]{top:14.5vh}
-    html.cine-on .cine-line .cine-line-sub{margin-top:14px}    /* ⭐⭐ **THE KITCHEN'S WASH LOSES ITS CIRCLE — 24 August 2026 (D362a).** Client: *"the
-       gradient just seems weird because it feels like there's a circular gradient. So if you can
-       make that gradient better…"* He is seeing the radial's HORIZONTAL falloff — an ellipse over
-       a full-width centred line shows its own round shoulders. This keeps the radial's vertical
-       profile (zero at the top edge, ~0.6 across the words, zero at the bottom — no line
-       anywhere, D311/D313's rule) and flattens it to FULL WIDTH: the sides run past the frame
-       edge, so what remains reads as the room's own darkening, not a drawn shape. Same `--lg`
-       drive from `bandGrade`, nothing else moves. ⚠️ Kitchen beat only ([data-vpos-wide="high"]):
-       the slab beat's wash is pinned 0 under its clip (D354/D360) and the tablet keeps the radial. */
-    html.cine-on .cine-line[data-vpos-wide="high"]::before{
+    html.cine-on .cine-line .cine-line-sub{margin-top:14px}    /* ⭐⭐⭐ **THE KITCHEN'S WASH DOES NOT MOVE. THE WORDS MOVE THROUGH IT — 24 August 2026
+       (D365). ⚠️ REPLACES D362a's flat linear, WHICH SHIPPED A SLIDING CLIFF:** that wash lived
+       INSIDE the line and rode the slide, and a linear gradient has no horizontal falloff — so
+       its box edge crossed the frame as a hard vertical border, screenshotted by the client
+       mid-entry: *"you can't see the border of the gradient… it looks very bad."* The desktop
+       never shows this because its radial dies before its own edge; the flat one cannot.
+       ⭐⭐ **SO THE WASH IS THE FRAME'S NOW — D352's own grammar, restated for a shade: the mask
+       does not move and the block moves through it.** A full-width scrim on the story layer's
+       own ::before, vh-anchored around the beat's zone (the words sit 25.6–42vh), zero at both
+       ends INSIDE the frame — no edge anywhere, nothing travels, and the sliding words pass
+       through a stationary pool of shade exactly as they pass through the gutter mask on
+       desktop. It breathes on `--kitG` (bandGrade × a 0.9s ease at each window end), written by
+       the kitchen branch; the LINE's own radial stays pinned at 0 on this band.
+       ⚠️ z-index:-1 inside `.cine-story`'s stacking context: above the film, below every line. */
+    html.cine-on .cine-story::before{
+      content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+      opacity:var(--kitG,0);
       background:linear-gradient(180deg,
-        rgba(6,6,9,0) 0%, rgba(6,6,9,0.40) 22%, rgba(6,6,9,0.60) 42%,
-        rgba(6,6,9,0.60) 62%, rgba(6,6,9,0.38) 82%, rgba(6,6,9,0) 100%);
+        rgba(6,6,9,0) 12%, rgba(6,6,9,0.45) 20%, rgba(6,6,9,0.62) 25%,
+        rgba(6,6,9,0.62) 44%, rgba(6,6,9,0.34) 53%, rgba(6,6,9,0) 62%);
     }
     /* ⭐⭐ **THE KITCHEN BEAT STARTS ON THE ENDING'S OWN LINE — 24 August 2026 (D364).** His final
        word after a mid-message revision (first "same height as your worktop starts here", then):
@@ -17498,11 +17508,12 @@ if(faqIndex && panel && faqBody){
   /* ⚠️ D361's PHK RISE-FENCE MACHINERY IS PARKED — D364 reversed the rise to the desktop slide,
      which has nothing to cross. Its arithmetic (the bar FURNITURE's bottom, not the bar's 80px
      box, minus 6px of air) lives in the register row if the rise ever returns. */
-  let kitTx=null;
+  let kitTx=null, kitG=null;
   function measureKit(){
     if(!kitEl)return;
     /* hand each band's inline property back on the way out — an inline value left behind would
        drag another band's beat off its mark (the D336/D348 family of bug) */
+    if(!heroPh){ cine.style.removeProperty('--kitG'); kitG=null; }
     if(!heroOn&&!heroPh){
       kitEl.style.removeProperty('--lx'); kitTx=null;
       kitEl.style.removeProperty('--lyp');
@@ -17709,10 +17720,15 @@ if(faqIndex && panel && faqBody){
         else if(t>po){ const q=clamp((t-po)/(L.out-po)); tx=+(-KW.x1*q*q).toFixed(2); }
         if(tx!==kitTx){ kitTx=tx; L.el.style.setProperty('--lx',tx); }
         if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
-        if(o>0.02){
-          const g=bandGrade(L.el);
-          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
-        } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        /* ⭐ D365: the wash is the FRAME's static scrim (`.cine-story::before`), not the line's —
+           a wash riding the slide showed its own box edge crossing the frame (his screenshot).
+           `--kitG` = bandGrade × a 0.9s ease at each window end, so the shade breathes in as the
+           words arrive and out as they leave, and the sliding line carries NO wash of its own. */
+        const ramp=Math.max(0,Math.min(1,(t-L.at)/0.9,(L.out-t)/0.9));
+        let w=0;
+        if(ramp>0){ const g=bandGrade(L.el); if(g>=0)w=+(g*ramp).toFixed(2); }
+        if(w!==kitG){ kitG=w; cine.style.setProperty('--kitG',w); }
+        if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
         if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
         if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
         continue;
