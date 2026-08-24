@@ -5139,6 +5139,13 @@
     55%      {transform:translateY(3px)}
     74%,100% {transform:translateY(0)}
   }
+  /* ⭐ D369: the TABLET's arrow runs at 1.25× (40×120, band 70), so its sheen needs its own px
+     travel — every percentage (the 48% hot line, the derived 51.7%) survives a uniform scale, so
+     only these two numbers change. */
+  @keyframes cineHeroSheenT{
+    0%,6%    {transform:translateY(-70px)}
+    62%,100% {transform:translateY(120px)}
+  }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
     /* ⚠️ no dip and no sweep — and the mask comes OFF rather than being left mid-travel, so what
        remains is the bright arrow at full strength. A complete arrow either way is the whole point. */
@@ -5611,15 +5618,14 @@
      control is centred instead, clear of the float and clear of the phone's action bar.
      ⚠️ THE PHONE RULE'S OWN QUERY IS WIDENED TO REACH THE TABLET rather than a second block being
      copied for it (§12): one description, both bands. */
-  /* ⭐⭐ THE PHONE CENTRES THE SKIP ON THE FAB ROW (D359/D359a); ⭐ THE TABLET PUTS IT BACK IN
-     THE CORNER — 24 August 2026 (D368), his instruction: *"put the skip intro in the bottom
-     corner and the WhatsApp button next to it, and don't put the phone button there. I was wrong
-     with what I said before."* So this centring rule narrowed from 1120 to 720: the tablet now
-     answers to the BASE corner position (right clamp(18px,3.4vw,46px), bottom clamp(20px,4vh,42px)
-     — the desktop's own), and its WhatsApp button parks beside it while the skip lives (the
-     skip-live flank, in THE TABLET BAND block at the end of this sheet). The phone keeps its
-     approved trio untouched. */
-  @media(max-width:720px){
+  /* ⭐⭐ BOTH NARROW BANDS CENTRE THE SKIP ON THE FAB ROW — D359/D359a built the phone's trio;
+     D368 briefly sent the tablet's skip to the corner on his instruction; ⭐ D369 REVERSED THAT
+     WITHIN THE HOUR, HIS OWN CALL: *"let me know if you actually think that we should center
+     everything… and we add the phone button again if you think so… I rate that's what we should
+     do."* So the centring is ≤1120 again and the tablet runs the phone's trio at its own scale
+     (the tablet band block carries its bottom and its flank constants). Both corner rulings are
+     in the register — D368 and D369 — so neither is re-proposed cold. */
+  @media(max-width:1120px){
     html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 21px)}
   }
   /* ⭐ pill sides on BOTH narrow bands since D368 (*"do the same thing… what we did on mobile"*)
@@ -9213,48 +9219,66 @@
        so the tablet simply wears the phone's own bare chevron — 26x44, no disc, no border, gold at
        0.42 — with nothing here restating it. One dress, one position, two bands. */
   
-    /* ═════ THE FILM'S TEXT ON THE TABLET — 24 August 2026 (D368). HIS ROUND-OPENING BRIEF:
-       *"take the idea that we created for mobile… add that to the tablet version. But on the
-       tablet version, we're gonna have to align most of the stuff to the left… the same
-       animation that happens with the desktop version of how it reveals the text behind the
-       slab should do the same thing on tablet… figure out the perfect way to do this. The
-       perfect mix for tablet based on the desktop and mobile versions."*
-       ⭐⭐ WHAT LIVES HERE IS ONLY WHAT IS GENUINELY TABLET'S OWN: the left-hung beat geometry
-       (the phone centres, the desktop is another band), the two anchors, and the WhatsApp
-       button's beside-the-skip flank. Everything shared with the phone reached here by WIDENED
-       QUERIES (the hero column, the grade, the pill, the ghost dress, the cue hide) — §12's
-       rule, not copies. The reveal's tablet table (f157–205 of the 864 cut, residuals ≤1.1)
-       and the slide's 2.2s ramps live in the scrub beside the other bands'. */
-    /* the beats: left-hung at the desktop's own gutter and anchor family, Cinzel 600 (the
-       mobile round's bold, D362), sized between the phone's 34 and the desktop's 70 */
+    /* ═════ THE FILM'S TEXT ON THE TABLET — D368, RECOMPOSED AT D369 ON HIS SECOND PASS:
+       *"this is not really optimized for tablet… the title has to be quite a lot bigger… the
+       subtitle can also go longer… scroll to begin, everything can be bigger, and the arrow can
+       be more obvious… we make everything center. I rate that's what we should do… and we add
+       the phone button again."* And the kitchen: *"longer in two lines instead of three, and it
+       must be higher up so it's not touching the actual slab. Even the subtitle must not touch
+       the slab."* The slab beat: *"pretty much perfect"* — untouched.
+       ⭐⭐ SO THE FIRST FRAME IS CENTRED AT SCALE (the phone's composition grown, not the
+       desktop's column), the trio returns with the call button, and the beats stay LEFT-hung
+       (his original tablet ruling — only the FIRST frame was re-centred). */
+    /* the beats: left-hung at the desktop's own gutter, Cinzel 600 (D362's bold) */
     html.cine-on .cine-line{
       left:clamp(20px,7vw,54px);right:auto;width:clamp(320px,52vw,560px);padding:0;
       text-align:left;font-size:clamp(38px,5.6vw,54px);font-weight:600;
     }
-    /* ⭐ the slab beat sits where the first screen sits — D340's desktop pattern, at this band's
-       own 22vh (the hero column's anchor), revealed by the slab's own edge (the scrub's TREV
-       table). ⚠️ 22vh is also measured against the sweep: at every tablet viewport the box's
-       right edge stays inside the edge's f205 reach (556+ film px), so the reveal always
-       completes — no pop at the table's end. */
+    /* ⭐ the slab beat sits where the first screen sits — D340's desktop pattern, at 22vh,
+       revealed by the slab's own edge (the scrub's TREV table). ⚠️ 22vh is also measured against
+       the sweep: the box's right edge stays inside the edge's f205 reach at every tablet
+       viewport, so the reveal always completes — no pop at the table's end. */
     html.cine-on .cine-line[data-vpos-narrow="top"]{top:22vh}
-    /* ⭐ the kitchen beat starts on the ending's own line — the phone's D364 coupling at this
-       band's own number: the finished hero's title top measures 276.9px = 27.69vh at 900×1000.
-       ⚠️ Re-measure if the hero's paddings ever move. */
-    html.cine-on .cine-line[data-vpos-wide="high"]{top:27.7vh}
-    html.cine-on .cine-line .cine-line-sub{margin:16px 0 0;font-size:17px;max-width:34ch}
-    /* ⭐⭐ THE WHATSAPP BUTTON PARKS BESIDE THE SKIP WHILE IT LIVES — his instruction: *"put the
-       skip intro in the bottom corner and the WhatsApp button next to it, and don't put the
-       phone button there. I was wrong with what I said before."* The skip holds the corner
-       (base position, pill), and this flank slides the ghosted 46px WhatsApp to its left with
-       10px of air, centres aligned (the pill is 40 tall, the button 46 → −3px), as a TRANSLATE
-       off its D173 corner home so the .35s transform transition carries it home the moment
-       `skip-live` drops — the phone trio's own mechanism. ⚠️ The 185px carries the skip's
-       rendered width (174.8) — re-derive with the skip's constants if its face ever changes.
-       ⛔ No call button on this band: his ruling, this message. */
-    html.cine-on.skip-live .wa-fab{
-      transform:translate(calc(18px - clamp(18px,3.4vw,46px) - 185px),
-                          calc(27px - clamp(20px,4vh,42px)));
+    /* ⭐⭐ THE KITCHEN LIFTS CLEAR OF THE ISLAND — D369. The island's lit top measures film y 437
+       on the 864 cut → 393px screen at 900×1000; a 20vh anchor with the TWO-line title (the
+       62vw measure below is what buys the second line back) and the one-line sub bottoms at
+       ~349 — 44px clear. ⚠️ This retires D368's ending-line coupling (27.7vh) on HIS
+       instruction; the phone keeps its own (25.6vh), untouched. ⚠️ On extreme WIDE-SHORT tablet
+       windows (≥1.35 aspect) the vertical crop pushes the island up under any anchor — there
+       the radial wash carries legibility, as this band always has. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:20vh;width:clamp(360px,62vw,640px)}
+    html.cine-on .cine-line .cine-line-sub{margin:16px 0 0;font-size:17px;max-width:none}
+    /* ═════ THE FIRST FRAME, CENTRED AT SCALE — D369 ═════ */
+    html.cine-on .cine-hero{
+      left:0;right:0;padding:0 clamp(40px,8vw,120px);text-align:center;
     }
+    html.cine-on .cine-hero .cine-hl{font-size:clamp(54px,7.6vw,76px);line-height:1.06}
+    html.cine-on .cine-hero .cine-hero-sub{
+      font-size:19px;max-width:52ch;margin:24px auto 0;
+    }
+    html.cine-on .cine-hero .cine-hero-cue{margin:30px auto 0;align-items:center}
+    html.cine-on .cine-hero .cine-hero-cue span{font-size:15px}
+    /* the arrow at 1.25× — same machine, every internal number scaled together, its own sheen
+       keyframes (cineHeroSheenT) because the travel is in px. The mask redraws at 40×120. */
+    html.cine-on .cine-hero .cine-hero-cue i{width:40px;height:120px}
+    html.cine-on .cine-hero .cine-hero-cue i > svg{width:40px;height:120px}
+    html.cine-on .cine-hero .cine-hero-cue i b{
+      -webkit-mask-size:40px 120px;mask-size:40px 120px;
+    }
+    html.cine-on .cine-hero .cine-hero-cue i b span{
+      height:70px;
+      animation-name:cineHeroSheenT;
+    }
+    /* ⭐ the trio, the phone's own construction at tablet homes (D369): call button BACK — his
+       *"we add the phone button again… I rate that's what we should do"* — flanking the centred
+       pill skip with EQUAL AIR by the same arithmetic: each side of the skip holds 50vw − 87.4px;
+       the 46px button sits in the middle of it. Homes: wa right 18, call right 74 (18+46+10);
+       flank targets: wa left = 25vw − 66.7, call left = 75vw + 20.7. ⚠️ Constants carry the
+       skip's rendered 174.8px — re-derive if its face changes. */
+    .call-fab{display:flex;right:74px}
+    html.cine-on .cine-skip{bottom:calc(env(safe-area-inset-bottom,0px) + 27px)}
+    html.cine-on.skip-live .wa-fab{transform:translateX(calc(-2.7px - 75vw))}
+    html.cine-on.skip-live .call-fab{transform:translateX(calc(140.7px - 25vw))}
   }
 
 </style>
