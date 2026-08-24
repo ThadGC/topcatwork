@@ -5100,19 +5100,25 @@
     /* ⛔ LINEAR: light crosses a surface at one speed. The easing belongs to the DIP, which is the
        thing with mass — and on an eased sweep the light left the point at 43% while the dip was
        still 0.74s behind it, so the two read as unrelated events (D337, caught by measuring). */
-    @keyframes cineHeroSheen{
-      0%,6%    {transform:translateY(-56px)}
-      62%,100% {transform:translateY(96px)}
-    }
-    /* ⚠️ THE 55% IS DERIVED, NOT CHOSEN. The band is 56px and its brightest line sits at 48% of its
-       own height, so the light is ON the point when the band's top reads 68.1px — which, on a
-       linear -56 -> 96 across 6%-62%, happens at **51.7%**. The arrow answers 0.08s later.
-       ⛔ Re-derive it if the band height, the travel or the arrow's height changes. */
-    @keyframes cineHeroDip{
-      0%,46%   {transform:translateY(0)}
-      55%      {transform:translateY(3px)}
-      74%,100% {transform:translateY(0)}
-    }
+  }
+  /* ⛔⛔⛔ **THE ARROW'S KEYFRAMES LIVE AT BASE SCOPE — 24 August 2026 (D359b), AND THE MOVE IS A
+     BUG FIX.** They were written inside the ≥1121 block on the assumption @keyframes are global;
+     they are NOT — an @keyframes inside a non-matching @media never registers — so the phone's
+     arrow stood dead, caught by the client on his first look: *"the scroll to begin arrow is not
+     playing its animation."* At base scope they are inert until an animation names them, which
+     only the two cine-hero cue rules do. */
+  @keyframes cineHeroSheen{
+    0%,6%    {transform:translateY(-56px)}
+    62%,100% {transform:translateY(96px)}
+  }
+  /* ⚠️ THE 55% IS DERIVED, NOT CHOSEN. The band is 56px and its brightest line sits at 48% of its
+     own height, so the light is ON the point when the band's top reads 68.1px — which, on a
+     linear -56 -> 96 across 6%-62%, happens at **51.7%**. The arrow answers 0.08s later.
+     ⛔ Re-derive it if the band height, the travel or the arrow's height changes. */
+  @keyframes cineHeroDip{
+    0%,46%   {transform:translateY(0)}
+    55%      {transform:translateY(3px)}
+    74%,100% {transform:translateY(0)}
   }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
     /* ⚠️ no dip and no sweep — and the mask comes OFF rather than being left mid-travel, so what
@@ -5143,54 +5149,76 @@
      desktop's --tx/--hz translate3d pattern does not apply here — the phone writes --hz only. */
   @media(max-width:720px){
     html.cine-on .cine-open{display:none}
+    /* ⭐⭐⭐ **SECOND BUILD — 24 August 2026 (D359b), ON HIS VERDICT:** *"the first opening frame…
+       is not looking good at all. The way that the gradient and shadow is being used is completely
+       wrong. The title is way too small and thin and not easy to be read… you can have things on
+       the left… if you need to add a gradient over the whole thing, go for it… make sure it's easy
+       to read, make sure it's going to be converting, and that people scroll."*
+       ⭐⭐ **SO IT IS THE DESKTOP'S OWN COMPOSITION, TURNED PORTRAIT: A LEFT-HUNG COLUMN OVER THE
+       SKY, ON A FRAME-ANCHORED GRADE.** The centred block sat ON the marble and asked an ellipse
+       to fight 214-p97 stone (his "completely wrong", and it was); the left half of this frame is
+       sky, ridge and pines — the picture's own empty side, the one he pointed at. The words hang
+       off the gutter there at 22vh, the desktop's own anchor, and the stones keep the right of
+       the frame — "the focus can still be on the stones". */
     html.cine-on .cine-hero{
       display:block;position:absolute;z-index:3;pointer-events:none;
-      left:0;right:0;top:47%;padding:0 clamp(20px,7vw,54px);text-align:center;
+      left:0;right:clamp(16px,6vw,40px);top:22vh;padding-left:clamp(20px,7vw,54px);
+      text-align:left;
       opacity:0;                                  /* the scrub owns it from the first tick */
-      transform:translateY(-50%) translateZ(calc(var(--hz,0) * 1px));
-    }
-    /* ⭐⭐ THE WASH IS BAKED, NOT SAMPLED — D359. The block is up at rest over one known frame:
-       measured on the phone cut's f0 behind this box, p97 = 214 (marble terraces), which the
-       grade formula clamps to a full wash — the same 0.62-centre radial the beats carry (D313's
-       gradient, his accepted mechanism). It lives INSIDE the element, so the element's own opacity
-       takes it down with the words and nothing outlives anything. The ground never darkens while
-       this block lives (t=0–6 is quarry daylight, camera pushing INTO the marble wall), so a
-       per-frame sample would recompute the same number 72 times — a constant is the honest form. */
-    html.cine-on .cine-hero::before{
-      content:"";position:absolute;inset:-1.1em -1.6em;z-index:-1;pointer-events:none;
-      background:radial-gradient(farthest-side at 50% 50%,
-        rgba(6,6,9,0.62) 0%, rgba(6,6,9,0.58) 38%, rgba(6,6,9,0.36) 60%,
-        rgba(6,6,9,0.14) 80%, rgba(6,6,9,0) 100%);
+      transform:translateZ(calc(var(--hz,0) * 1px));
     }
     /* ⛔⛔ THE GOLD'S drop-shadow COMES OFF THE SLAB BEAT HERE TOO — D360. The phone now runs the
        reveal's animated clip-path (D354's rule, restated at this band): a filter under an animated
        mask re-rasters both per change. Deliberately NOT lifted to the base rule — the TABLET's
        slab beat carries no clip and keeps its shadow, untouched. */
     html.cine-on .cine-line[data-vpos-wide="hero"] em{filter:none}
-    /* the words: the desktop's own faces at the phone's own sizes — the beat titles' clamp
-       family, one step up because this is the resting hero (the beats are 6.6vw) */
+    /* ⭐⭐⭐ **THE GRADE IS THE FRAME'S, NOT THE TEXT'S — D359b.** His words opened the door ("a
+       gradient over the whole thing") and the desktop already owns the mechanism: `.cine-edge`,
+       frame-anchored vignetting riding the copy's own alpha (`--cineEdge`), so the picture is
+       unobstructed the moment the words go. The phone's version is a top scrim reaching zero by
+       78% — sky and upper terraces are what it spends, and sky detail costs nothing — plus a soft
+       pool off the left border under the column's lower half. ⛔ No shape, no edge (rule 11's
+       family): both layers are anchored to the frame and land on zero inside it.
+       ⭐ MEASURED: under it the title's rows read p97 ≈ 57 where they read 214 bare — bone ~11:1,
+       the gold ramp's mid stop ~4.8:1 — which is why the ellipse wash is GONE, not retuned. */
+    html.cine-on .cine .cine-edge{
+      display:block;position:absolute;inset:0;z-index:2;pointer-events:none;
+      opacity:var(--cineEdge,0);
+      background:
+        radial-gradient(120% 85% at 0% 30%,
+          rgba(6,6,9,0.50) 0%, rgba(6,6,9,0.22) 55%, rgba(6,6,9,0) 85%),
+        linear-gradient(180deg,
+          rgba(6,6,9,0.66) 0%, rgba(6,6,9,0.60) 26%, rgba(6,6,9,0.38) 45%,
+          rgba(6,6,9,0.16) 60%, rgba(6,6,9,0.04) 70%, rgba(6,6,9,0) 78%);
+    }
+    /* ⭐⭐ **HERO SCALE, NOT BEAT SCALE — his "way too small and thin".** 11vw lands 43px at 390 —
+       the finished hero's own phone presence — and the thinness was mostly the ground: Cinzel 400
+       over graded ~57 reads as solid ink where it read as wire over bare 214. Two balanced lines:
+       "Your worktop" / "starts here." */
     html.cine-on .cine-hero .cine-hl{
       margin:0;font-family:var(--serif);font-weight:400;
-      font-size:clamp(30px,8.4vw,44px);line-height:1.1;letter-spacing:-0.004em;
+      font-size:clamp(40px,11vw,54px);line-height:1.08;letter-spacing:-0.004em;
       color:var(--bone);text-wrap:balance;
       text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5);
     }
-    /* ⚠️ #fff at 400, wide soft shadow — D347's three fixes, restated at this band */
+    /* ⚠️ #fff at 400, wide soft shadow — D347's three fixes, restated at this band. 30ch keeps the
+       rag inside the graded half; 17px is the desktop sub's own size. */
     html.cine-on .cine-hero .cine-hero-sub{
-      margin:18px 0 0;font:400 16px/1.6 var(--brand);letter-spacing:0.014em;
-      color:#fff;text-wrap:balance;
+      margin:20px 0 0;font:400 17px/1.6 var(--brand);letter-spacing:0.014em;
+      color:#fff;max-width:30ch;text-wrap:balance;
       text-shadow:0 2px 22px rgba(6,6,8,0.82);
     }
-    /* the cue: the desktop's own connected arrow (D337), centred under the words. The arrow keeps
-       its 32×96 box ON PURPOSE — every number inside it (mask-size, the 56px band, the sheen's
-       -56→96 travel, the derived 55%) is a px machine that would all have to be re-derived at a
-       second size, and proportionally it matches the desktop block. ⚠️ The keyframes are the
-       desktop block's own — @keyframes are not scoped by media queries. */
+    /* the cue: the desktop's own connected arrow (D337), hung on the block's own left line exactly
+       as the desktop hangs it — tip under the "Y". The arrow keeps its 32×96 box ON PURPOSE —
+       every number inside it (mask-size, the 56px band, the sheen's -56→96 travel, the derived
+       55%) is a px machine that would all have to be re-derived at a second size. Its keyframes
+       now live at BASE scope (see them below the desktop block) — that move is what made it play
+       here at all. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:26px auto 0;display:inline-flex;flex-direction:column;gap:18px;align-items:center;
+      margin:28px 0 0;display:inline-flex;flex-direction:column;gap:20px;align-items:flex-start;
     }
     html.cine-on .cine-hero .cine-hero-cue span{
-      font:500 12px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
+      font:500 13px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
       text-shadow:0 1px 16px rgba(6,6,8,0.9),0 1px 3px rgba(6,6,8,0.8);
     }
     html.cine-on .cine-hero .cine-hero-cue i{
@@ -5391,6 +5419,32 @@
        on a narrow crop, which is a composition nothing has needed yet. */
     html.cine-on .cine-line[data-vpos-narrow="top"]{top:13vh;bottom:auto;--ly:0%}
   }
+  /* ⭐⭐ **THE BEATS GO BOLD AND COME DOWN ON THE PHONE — 24 August 2026 (D362).** Client, watching
+     the frames: *"where it says the slab you choose is unique, that text is also very… you know,
+     it's not bold. It's also slightly too high up. You can move it slightly down. Just make sure
+     that the title is bigger than the subtitle… and then when it gets to the stone sets the tone
+     of the room, that's also too high up. And it's not that easy to read. It's not bold enough."*
+     ⭐ 9.2vw lands 36px at 390 against the subtitle's 16 — the title owns the beat — and Cinzel
+     600 is his "bold" said in the site's own face (the em was already 600, so white and gold now
+     carry one weight and the gold does the pointing).
+     ⛔⛔⛔ **14.5vh IS THE FENCE, NOT A TASTE — THE FILM ITSELF CAPS "slightly down".** After the
+     reveal the floating slab CRUISES with its top edge at film y≈341 for six seconds (measured
+     topmost-lit per frame, f206–f280, minimum 341), so the slab beat's ink bottom must stay above
+     that lane or the words sit on passing marble — D313's proven failure. At 390×844 this block
+     bottoms at ~332 film px with 3px spare (verified live); at 14.5vh the box also stays clear of
+     the kitchen's pendant globes (title bottom ~255 film against their 275). ⛔ Do not push lower
+     without re-measuring the lane — the number to beat is 341.
+     ⚠️ MUST SIT AFTER THE max-width:1120px BLOCK ABOVE — same specificity, source order decides,
+     and the tablet keeps 13vh and its own faces by never matching this query at all. */
+  @media(max-width:720px){
+    /* ⚠️ 8.7vw, NOT 9.2 — Cinzel 600 is wider than 400 and at 9.2vw both titles broke to THREE
+       lines, which pushed the slab beat's box to film y 384 — 43px INTO the lane. 8.7vw (33.9 at
+       390) holds both titles to their balanced pair and the box bottoms at ~331, 10 clear. */
+    html.cine-on .cine-line{font-size:clamp(29px,8.7vw,44px);font-weight:600}
+    html.cine-on .cine-line[data-vpos-narrow="top"]{top:14.5vh}
+    html.cine-on .cine-line .cine-line-sub{margin-top:14px}
+  }
+
 
   /* ═════ the scroll invitation ════════════════════════════════════════════════════════════ */
   html.cine-on .cine-cue{
@@ -17558,7 +17612,17 @@ if(faqIndex && panel && faqBody){
         const a=(p<=0||p>=1)?0:Math.min(1,(L.out-t)/(heroOn?2.47:2.03));
         const o=+(a*a*(3-2*a)).toFixed(2);
         if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
-        if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        /* ⚠️ PHONE ONLY, AFTER THE CLIP IS OFF (D362): the wash may ride bandGrade again. On any
+           ordinary phone the post-reveal ground is void, the grade reads ~0 and nothing changes;
+           on a sub-360 handset the taller box reaches the floating slab's lane, and this is what
+           keeps those words off bare marble. While the clip is LIVE the wash stays pinned 0 —
+           mid-reveal the box straddles the lit slab (D354's reason, unchanged), and the desktop
+           keeps its documented pin in full. */
+        if(heroPh&&revClip===''&&o>0.02){
+          const g=bandGrade(L.el);
+          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+        }
+        else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
         if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
         if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
         if(!HAS_RVFC)revealTick();
@@ -17694,10 +17758,18 @@ if(faqIndex && panel && faqBody){
       const p=clamp(t/HERO_OUT);
       const a=p>=1?0:Math.min(1,(1-p)/0.26);
       const o=+(a*a*(3-2*a)).toFixed(2);
-      const z=Math.round(Z_NEAR*p*p);
+      /* ⛔⛔ 380, NOT THE TITLES' 560 — D340's trap, measured at THIS anchor. The block hangs at
+         22vh, above the 26% 50% origin, so the travel throws it UP: at 560 the headline crosses
+         the bar's furniture at ~0.8 opacity; at 380 it reaches the furniture line only past
+         p=0.95, where the fade has already taken it below ~0.1. The same arithmetic that capped
+         the desktop hero at 300 (D325b), redone for this box. */
+      const z=Math.round(380*p*p);
       if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
       if(o!==heroO){
         heroO=o; heroEl.style.opacity=o; heroEl.style.visibility=o?'visible':'hidden';
+        /* ⭐ the grade is the frame's and rides the copy's own alpha, exactly as the desktop's
+           cine-edge does — the picture is unobstructed the moment the words have gone */
+        cine.style.setProperty('--cineEdge',o);
       }
       return;
     }
