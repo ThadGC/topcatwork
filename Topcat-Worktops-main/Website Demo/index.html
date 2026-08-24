@@ -9613,11 +9613,21 @@
            same judgement D326 made when it took the old line off every band. Verified on the phone's
            own cut: its top band reads p97 **66–98** through this window, so the beat lands dark
            there. ⭐ **Its placement on the narrow bands is still his open conversation.** -->
-      <!-- ⭐ **D358: THE DESKTOP `data-at` IS 27.6, WAS 28.5** — *"I wanted it to come in
-           earlier"* — and the floor is measured, not chosen: the kitchen shot cuts in at t=25.5
-           and the text band is established ground from ~26.8 (mean ~32, p97 65). The tablet and
-           the phone keep their own attributes, untouched. -->
-      <p class="cine-line" data-at="27.6" data-out="37.5" data-vpos="low" data-vpos-wide="high"
+      <!-- ⭐⭐ **D358a: THE DESKTOP WINDOW IS 27.0–38.5** — *"it comes in and then goes out very
+           quickly, it doesn't stay for long enough… come in slightly earlier and leave slightly
+           later"* — and both edges are measured, not chosen. The floor: the kitchen shot cuts in
+           at t=25.5 and the text band is established ground from ~26.8 (mean ~32, p97 65), so
+           27.0 gives it a beat to settle before the first letters cross the frame edge. The
+           ceiling: the corners start rounding at t=39.8 (CURVE_AT 0.90) and the hero's ink rises
+           at 41.1 (INK_AT 0.93), so a fade finishing at 38.5 still leaves 1.3s of empty closing
+           shot before the frame begins becoming the hero.
+           ⛔⛔ **THE `-narrow` PAIR EXISTS TO PIN THE PHONE AND THE TABLET AT 28.5–37.5, THE
+           TIMING THEY HAVE ALWAYS HAD.** This beat carried no per-band timing, so the base was
+           every band's number — and D358's desktop retime (28.5 → 27.6) silently reached them for
+           about an hour, against §2 rule 15. The cascade (phone → narrow → base) means this one
+           pair covers both narrow bands. ⛔ Do not remove it "because the values match the old
+           base": it is what keeps the desktop's timing desktop's. -->
+      <p class="cine-line" data-at="27.0" data-out="38.5" data-at-narrow="28.5" data-out-narrow="37.5" data-vpos="low" data-vpos-wide="high"
          data-vpos-narrow="top">The stone sets the tone of <em>the room.</em><span class="cine-line-sub">Once you choose your stone, the rest follows.</span></p>
 
       <!-- ⭐⭐⭐ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325). Client: *"the first frame
@@ -17130,15 +17140,20 @@ if(faqIndex && panel && faqBody){
      words hold part-way in — that is what "tied to the scroll" means, and it is the property he
      weighed against the wall clock's faults and chose. D357's tween is in the register if he ever
      wants it back; its jank fix (wash throttling) would have to come with it.
-     ⭐⭐ **THE IN-POINT IS 27.6, WAS 28.5 — "I wanted it to come in earlier" — AND THE PICTURE
-     SETS THE FLOOR**: the kitchen shot cuts in at **t=25.5** (the text band's mean jumps 0 → 11)
-     and the band is stable, established kitchen from **~26.8** (mean ~32, p97 65–67 — comfortable
-     ground for bone). 27.6 gives the shot a beat to establish before the first letters cross the
-     frame edge, and the ramp now SETS at 30.8. The out is unchanged: 34.3 → 37.5.
+     ⭐⭐ **THE WINDOW IS 27.0 → 38.5 SINCE D358a** — client: *"it comes in and then goes out very
+     quickly, it doesn't stay for long enough… come in slightly earlier and leave slightly later"*
+     — so the still HOLD is **5.1s (30.2 → 35.3), up from 3.5**, with both ramps unchanged at 3.2s.
+     **Both edges are measured**: the kitchen shot cuts in at **t=25.5** and the text band is
+     established ground from **~26.8** (mean ~32, p97 65–67), so 27.0 gives it a beat to settle;
+     the corners round at 39.8 and the hero's ink rises at 41.1, so a fade finishing at 38.5
+     leaves 1.3s of empty closing shot before the frame becomes the hero.
+     ⛔⛔ **AND D358a PINNED THE PHONE AND TABLET AT 28.5–37.5 WITH A `-narrow` PAIR ON THE LINE**
+     — this beat had no per-band timing, so D358's base retime had silently reached them for about
+     an hour (rule 15). The pin is the fix AND the guard for every future desktop retime.
      ⭐ THE CURVES ARE D355's, APPROVED TWICE: in on `1-(1-q)²` — full speed on the first pixel of
      the window (D353: an ease-in from rest is a dead zone), zero velocity at rest, 3.2s (D355a) —
      and out on `q²`, its exact time-reverse, 3.2s (D355b). */
-  const KIT_SET=30.8, KIT_OUT=34.3;
+  const KIT_SET=30.2, KIT_OUT=35.3;
   const kitEl=document.querySelector('.cine-line[data-vpos-wide="high"]');
   /* ⚠️ `KW.x1` is the box's own right edge in the story layer — `offsetLeft + offsetWidth`, both
      set by vw clamps, so a resize is the only thing that moves it and `sync()` is the one that
