@@ -1,243 +1,218 @@
-# START HERE — 24 August 2026, after THE DESKTOP TEXT ROUND (D354–D358a)
+# START HERE — 24 August 2026, after THE PHONE AND TABLET ROUNDS (D359–D370)
 
-Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D354–D358a**),
+Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D359–D370**),
 **§2** (the standing rules) and **§2s** (SITE SPEED). About twenty minutes, and enough to work safely.
 
 > ⚠️ **This replaces the previous version of this same file**, now
-> `HANDOVER-2026-08-24-text-animation-round-start-here.md` (D348–D353). Everything that still
+> `HANDOVER-2026-08-24-desktop-text-round-start-here.md` (D354–D358a). Everything that still
 > matters is carried below.
 
-> ⭐⭐⭐ **THE FILM'S TEXT IS FINISHED ON DESKTOP. ALL FOUR SECTIONS NOW CARRY HIS OWN DESIGNS**,
-> and §1 records exactly what each one does. ⭐⭐ **THE NEXT SCOPE IS THE TABLET AND THE PHONE**,
-> in his words: *"we're going to, on the next chat, work on the tablet and mobile versions and make
-> the best for that, because it's going to be different. But the text will be the same."*
+> ⭐⭐⭐ **THE FILM'S TEXT IS NOW FINISHED ON ALL THREE BANDS.** The desktop closed at D358a, the
+> **phone** at D359–D367 (*"This is perfect. Whatever you have now is working perfectly"*) and the
+> **tablet** at D368–D370. §1 records exactly what every section does at every band.
 > ⛔ **THE COPY IS FIXED AND IS NOT REOPENED (§3). THE COMPOSITION AND THE ANIMATION ARE PER BAND.**
+> ⭐ **HE HAS NOT YET SEEN THE FINAL TABLET PASS (D370) OR SIGNED THE TABLET OFF** — that is the
+> first thing to ask.
 
 ---
 
 ## 0. ⛔⛔⛔ THE ONE THING TO TAKE FROM THIS ROUND
 
-**⭐⭐⭐ EVERY FAULT THIS ROUND WAS A CLOCK. THREE DIFFERENT ANIMATIONS, THREE DIFFERENT ANSWERS,
-AND THE ANSWER IS NEVER THE SAME TWICE.**
+**⭐⭐⭐ FOUR FAULTS THIS ROUND WERE MINE, AND NOT ONE OF THEM WAS A SYNTAX ERROR, A BROKEN LAYOUT
+OR ANYTHING A GATE COULD SEE. THEY WERE ALL SCOPE OR SAMPLING FAULTS.**
 
 ```
-the slab reveal    D354   rides the PAINTED FILM FRAME (rVFC)      because nothing moves
-the kitchen slide  D355   rides the SCROLL                          because the type moves
-                   D357   moved to a WALL CLOCK on his instruction   -> lingered, and janked
-                   D358   moved BACK to the scroll on his instruction
-the ending         D356   rides a WALL CLOCK (a CSS transition)      because it is not in the film
+the dead arrow      @keyframes inside a non-matching @media NEVER REGISTER, so the phone's
+                    cue stood frozen for a whole build.  HE caught it.
+the strobing wash   a shade driven by a LIVE video sample flashed under the scrub, twice,
+                    and ended in a full revert on his order.  HE caught it, twice.
+the silent ending   `#hero .hero-sub` beats `.hero-sub` however late the class is written —
+                    half of one round's changes simply did not apply.  Re-measuring caught it.
+the leaking size    a rule written for ONE beat sat on a shared selector and changed its
+                    neighbour, pushing that beat's line into the stone.  Re-measuring caught it.
 ```
 
-⛔⛔ **THE RULE THAT COVERS ALL OF IT: MATCH THE CLOCK TO WHAT IS ACTUALLY MOVING.**
+⛔⛔ **THE RULE THAT COVERS ALL FOUR: AFTER YOU CHANGE SOMETHING, MEASURE THE THING YOU CHANGED,
+AT THE BAND YOU CHANGED IT, AND CHECK THE NEIGHBOUR YOU DID NOT MEAN TO TOUCH.** A screenshot
+proves the frame; only a measurement proves the rule actually landed and landed alone.
 
-- **Type that MOVES must not ride the film.** The film is 12fps and a fast scrub presents about
-  every sixth frame — invisible on a photograph, plainly visible on a 76px serif. That cost four
-  builds at D349–D351 and is why the first screen and the kitchen beat run on the scroll.
-- **A BOUNDARY that moves with the picture MUST ride the painted frame.** D354's clip is the slab's
-  own edge; if it ran on the scroll it would detach from the edge under a scrub and put lit type on
-  the stone. Nothing moves relative to anything, so there is nothing to judder. ⛔ `currentTime` is
-  NOT the painted frame — `requestVideoFrameCallback`'s `mediaTime` is.
-- **Anything OUTSIDE the film's timeline rides a wall clock.** The ending is a CSS transition
-  triggered by a class, and always was.
+⭐⭐⭐ **AND THE SECOND LESSON, WHICH IS THE MOST EXPENSIVE ONE HERE: NOTHING THAT MUST BE STEADY
+MAY READ THE FILM LIVE.** `drawImage` **clips** a source rectangle that reaches outside the video
+and paints only part of the sampling grid — the rest keeps the PREVIOUS draw's pixels. Any moving
+or partly-off-frame box therefore samples live-and-stale together and its statistic oscillates per
+frame. That is a strobe on a scrubbed film, and it is why the phone's kitchen wash was reverted to
+its stable radial (D367). ⭐ **THE AGREED REWORK, WHEN HE REOPENS IT: BAKE THE WASH FROM FILM TIME**
+— sample the seated box OFFLINE per half-second, ship a ~20-entry table, drive the strength from
+`t` alone. `clearRect` before every sample draw is already in (D366) and protects everything else.
 
-⭐⭐⭐ **AND THE THING THAT COST THE MOST TIME: A WALL CLOCK INSIDE A SCRUBBED FILM IS A TRAP.**
-He asked for one at D357 for a real reason (a scrubbed animation is only as smooth as the hand
-driving it) and it produced two faults that scrubbing cannot have — **it lingered over the previous
-scene on a fast back-scrub, because a 1.25s exit cannot outrun a reverse scroll**, and **it read as
-jagged, because it ran a second rAF with a `getImageData` readback per frame against a video that
-was decoding seeks.** D358 put it back. ⚠️ **Both flips were his call and both are logged. If he
-asks for a wall clock again, it needs an opacity gate at the window edges and a throttled wash.**
-
-⭐⭐ **THE SECOND LESSON, WHICH IS ABOUT THE GATE:** `node --check` passed on a file that threw a
-`ReferenceError` on every frame, because an edit had deleted two `const` declarations and a missing
-declaration is a RUNTIME error. **A clean syntax check is not a working page — read the console.**
+⭐⭐ **AND A THIRD, WORTH REAL MONEY IN TIME: MOVING A TEXT BLOCK RE-WRAPS ITS LINES.** Lifting the
+tablet's slab beat to clear the marble made its last line end further right — and the slab's edge
+is a DIAGONAL that rides higher to the right, so the first lift walked straight back into the
+stone. **Re-measure the ink after every move; do not assume a lift is a pure translation.**
 
 ---
 
-## 1. ⭐⭐⭐ WHAT THE TEXT DOES RIGHT NOW, SECTION BY SECTION
+## 1. ⭐⭐⭐ WHAT THE TEXT DOES RIGHT NOW, SECTION BY SECTION, AT EVERY BAND
 
-⛔ **THIS IS THE SECTION HE ASKED FOR. Everything below is measured and live.**
-⛔⛔ **EVERY DESKTOP BEHAVIOUR IS SCOPED `min-width:1121px`. The phone and the tablet still run the
-PRE-ROUND animations — the "narrow" column is the starting point for the next round, not a bug.**
+⛔ **EVERY NUMBER BELOW IS MEASURED AND LIVE.** Desktop is `min-width:1121px` and FROZEN; the phone
+is `≤720`; the tablet is `721–1120` and its own rules are LAST in the stylesheet.
 
 ### ⭐ SECTION 1 — THE FIRST SCREEN · *"Your worktop starts here."*
 
-| | desktop ≥1121 | tablet 721–1120 · phone ≤720 |
-|---|---|---|
-| element | `.cine-hero` `#cineHero` — a second hero | `.cine-line.cine-open` — *"It starts as a mountain."* |
-| window | at rest from t=0, clear by **t=6.0** | **1.0 → 6.0**, `data-vpos="top"` |
-| entrance | ⭐ none — it is already there when the page opens | fade in over 16% of the window |
-| exit | ⭐⭐⭐ **SLIDES OFF LEFT ON THE SCROLL** | travel in Z + fade out over 26% |
+| | desktop ≥1121 | tablet 721–1120 | phone ≤720 |
+|---|---|---|---|
+| element | `.cine-hero` (a second hero) | the same block, re-dressed | the same block, re-dressed |
+| composition | left-hung at the gutter, `top:22vh` | ⭐ **CENTRED**, padding `clamp(40px,8vw,120px)` | left-hung at the gutter, `top:22vh` |
+| title | `clamp(38px,5vw,76px)` | `clamp(54px,7.6vw,76px)` | `clamp(40px,11vw,54px)` |
+| subtitle | 17px / 470px | 19px / 52ch | 17px / 30ch |
+| the cue | word 14px, arrow 32×96 on the block's left line | word 15px, **arrow 1.25× (40×120)**, centred | word 13px, arrow 32×96 on the S's line |
+| ground | `.cine-edge` corner + left ramp | ⭐ the narrow bands' own `.cine-edge`: top scrim to zero by 78% + a soft left pool | the same |
+| exit | **slides off left on the scroll** (mask nailed to the gutter) | **travels in Z past the viewer**, 0→380 on p², window **4.8s**, fade last 26% | the same |
 
-**The desktop exit, the whole mechanism in four lines (D352–D353):**
+⭐⭐⭐ **THE NARROW BANDS' GRADE IS THE DESKTOP'S MECHANISM, NOT A NEW ONE** — `.cine-edge`,
+frame-anchored, riding `--cineEdge` = the copy's own alpha, so the picture is unobstructed the
+moment the words go. Measured under it: the title's rows read p97 ≈ **57** where they read **214**
+bare (phone f0) and 209–221 (tablet f0) — the same ground class, which is why one description
+serves both. ⛔ The ellipse wash that preceded it is GONE, not retuned: it sat ON the marble and
+was his *"the gradient and shadow is being used is completely wrong."*
 
-```
-the block      holds its approved position at rest and NEVER moves for the film
-from t=0       it translates LEFT on the eased SCROLL value — 761px at 1440, its own
-               right edge to the frame's left — on wipeEase(p) = 0.4p + 0.6p²
-the fade       a mask NAILED TO THE LEFT GUTTER that never moves. The block crosses it
-the chips      carry the identical offset, so the first screen leaves as ONE object
-```
-
-⭐⭐⭐ **THE MASK DOES NOT MOVE AND THE BLOCK MOVES THROUGH IT. THAT IS THE WHOLE DESIGN.** Client:
-*"the fade is never visible in the center of the screen or in the center of the text or away from
-the side… it gives the illusion that the side of the screen is wiping it away instead of an actual
-animation."* A sweeping mask puts the fade in the MIDDLE of the frame, where you can watch it
-happen. This is the opposite construction.
-
-⭐⭐ **THE RAMP IS THE GUTTER, WHICH IS WHY IT IS FREE:**
-`--edgeFade: calc(clamp(20px,7vw,132px) * 0.5)` — the copy's own inset, **halved** (the full width
-read as *"a gradient fade"*). Written from the same expression the copy is inset by, so it ends
-before the type begins at every desktop width and the two cannot drift apart.
-
-⭐⭐ **THE SPEED IS A MEASUREMENT:** the far field travels 620 screen px over the six seconds
-starting at **51 px/s**; this curve starts at **50.7 px/s** and finishes **1.23×** ahead of the
-scene. ⛔ It must NOT keep pace for long — anything matching a 12fps film invites the eye to
-compare the two and see the steps. ⚠️ It starts with real velocity, never an ease-in.
+⭐⭐ **THE ARROW'S LIGHT LIVES INSIDE THE STROKE AND NOWHERE ELSE (D365c).** A ~9px pure-white
+plateau (42–54%) with gold shoulders, inside the mask, on a SOLID gold base. ⛔ An unmasked bloom
+was tried and rejected outright — *"Why is the glare outside of the arrow?… it starts from the
+line. Doesn't leave the line."* His reference is the nav hairline's own flash (D33).
+⚠️ **The arrow's position has been left-line → mid-line → under-the-R → left-line in one day.**
+All four are logged; the current answer is the left line (the box's left edge IS the tip, D337).
 
 ### ⭐ SECTION 2 — THE SLAB BEAT · *"The slab you choose is **unique.**"*
 
 | | desktop ≥1121 | tablet 721–1120 | phone ≤720 |
 |---|---|---|---|
-| window | **10.3 → 24.5** | **21.0 → 25.3** | **16.2 → 24.0** |
-| anchor | `data-vpos-wide="hero"` → `top:22vh`, left gutter | `top:13vh`, centred | `top:13vh`, centred |
-| entrance | ⭐⭐⭐ **THE SLAB REVEALS IT** | fade in over 16% | fade in over 16% |
-| exit | plain fade, **22.03 → 24.5** (2.47s) | Z travel + fade over 26% | Z travel + fade over 26% |
+| window | **10.3 → 24.5** | **13.0 → 24.5** | **14.5 → 24.0** |
+| anchor | `top:22vh`, left gutter | `top:15vh`, left gutter | `top:14.5vh`, centred |
+| type | `clamp(38px,5vw,76px)` 400 | `clamp(38px,5.6vw,54px)` **600** | `clamp(29px,8.7vw,44px)` **600** |
+| entrance | ⭐⭐⭐ **THE SLAB REVEALS IT** | ⭐⭐⭐ **the same, its own table** | ⭐⭐⭐ **the same, TWO edges** |
+| exit | plain fade, 2.47s | ⭐ **recedes** 1.00→0.84 on q², 2.47s | ⭐ **recedes** 1.00→0.84 on q², 2.03s |
 
-**⭐⭐⭐ THE REVEAL (D354) — the words never move and never fade in.** Client: *"the slab fills the
-screen and then goes back at an angle revealing an open space… I would like the text to pretty much
-already be there, and then it almost gets revealed as if the slab is revealing it… so the t and the
-c of the word the and choose will obviously already be there, and then the h and the e… it all gets
-revealed as if it's coming out from behind the slab. The animation just plays at that angle."*
+⭐⭐⭐ **THE REVEAL RUNS AT EVERY BAND NOW, EACH AGAINST ITS OWN FILM AND ITS OWN TRACK, ALL ON THE
+PAINTED FRAME (rVFC).**
 
 ```
-the words      sit at their approved position at opacity 1 from t=10.3
-the curtain    a clip-path whose boundary IS the slab's own left edge, tracked per film
-               frame — REV_X (x at film y 490) and REV_S (the slope, -0.03 -> -0.38)
-the clock      the PAINTED frame (rVFC), so the boundary and the stone step together
-the reveal     t=11.25 (the T) -> t~15.1 (the full stop of "unique.") at 1440x900
+desktop  REV_X / REV_S     f124–205 of the 1920 cut, X at film y 490 + slope   (D354)
+tablet   TREV_X / TREV_S   f157–205 of the 864 cut,  X at film y 360 + slope   (D368)
+phone    PREV_X/SX/Y/SY    f170–201 of the 608 cut,  TWO edges, meeting at the
+                           slab's own corner — a six-point polygon             (D360)
 ```
 
-⭐⭐ **THE TABLE IS THE MEASUREMENT:** frames **124–205** of the 1920 cut, threshold 40 on the void
-side, least-squares line over 32 rows a frame — **the edge is straight to 2.2 film px**, which is
-why two numbers a frame carry it exactly. `REV_PAD` 3 keeps type off the lit fringe. Strictly
-monotone; the slab's backswing from f206 is outside the domain. ⚠️ **RE-TRACK IF THE FILM IS EVER
-RE-CUT** — the probe is `.textanim-2026-08-24/track_edge.py`.
-⭐ The clip comes **OFF** past f205 (or when the edge clears the box + 30px), so the element is
-exactly its pre-round self for the exit. ⚠️ Wash pinned to **0** (measured void, and mid-reveal the
-box straddles the lit slab). ⛔ The em's `drop-shadow` is off on this beat — a filter under an
-animated mask is D339's arrow glitch by another door.
+⭐⭐ **THE TABLET IS THE DESKTOP'S GEOMETRY CROPPED** — one straight edge, same backswing at f206,
+residuals ≤1.1 film px — so it runs the desktop's four-point clip parameterised by band.
+⭐⭐ **THE PHONE IS NOT**: on the vertical cut the slab TILTS BACK, so its left edge sweeps right
+across the words WHILE its top edge comes down through them. Both tracked (residuals ≤0.9 / ≤0.8),
+and the clip is the frame notched by the corner where the two lines meet.
+⚠️ **RE-TRACK IF THE FILM IS EVER RE-CUT** — `.textanim-2026-08-24/track_edge.py`, which now
+carries the phone variant (`--phone`) and the tablet's parameters in its header.
+
+⛔⛔ **THE TABLET'S 15vh IS A FENCE, NOT A TASTE (D370).** Tracked in the SUBTITLE'S OWN COLUMNS:
+at 22vh the last line cleared the rising slab by only 35.5 film px and went NEGATIVE from t=23.7;
+**17vh still touched (−17.3) because lifting re-wraps the line further right into the diagonal**;
+15vh clears the whole beat (worst **+4.3**, 51px of daylight at full opacity).
+⛔ The phone's 14.5vh has its own fence: after the reveal the floating slab cruises with its top at
+film y **341** for six seconds, and the box bottoms at **331** — 10 clear. **Do not push either
+lower without re-measuring.**
 
 ### ⭐ SECTION 3 — THE KITCHEN BEAT · *"The stone sets the tone of **the room.**"*
 
-| | desktop ≥1121 | tablet + phone ≤1120 |
-|---|---|---|
-| window | **27.0 → 38.5** | **28.5 → 37.5** (pinned at D358a) |
-| anchor | `data-vpos-wide="high"` → `top:16vh`, left gutter | `top:13vh`, centred |
-| entrance | ⭐⭐⭐ **SLIDES IN FROM THE LEFT AND SETS** | fade in over 16% |
-| exit | ⭐⭐ the same slide, time-reversed | Z travel + fade out over 26% |
+| | desktop ≥1121 | tablet 721–1120 | phone ≤720 |
+|---|---|---|---|
+| window | **27.0 → 38.5** | **28.5 → 37.5** | **28.5 → 37.5** |
+| anchor | `top:16vh`, left gutter | `top:20vh`, left gutter | `top:25.6vh`, centred |
+| type | `clamp(34px,4.8vw,70px)` 400, sub 19px | `clamp(40px,5.9vw,56px)` **600**, sub **20px** | `clamp(29px,8.7vw,44px)` **600**, sub 16px |
+| motion | slide in from the left, set, reverse out | **the same**, ramps **2.2s** | **the same**, ramps **1.8s** |
+| wash | the radial, on `--lg` | the radial, **deepened + plateau held** | the radial, on `--lg` |
 
-**⭐⭐⭐ THE SLIDE (D355 → D358a), scroll-tied.** Client: *"I wanted to animate in — no fade or
-anything, just coming in from the left side and setting… And then for that text to go away, I
-wanted it to go back out to the left in reverse. The same way that it came, just reverse that."*
+⭐⭐ **THE RAMPS ARE THE SAME SPEED, NOT DIFFERENT ONES**: 761px/3.2s on desktop, ~520/2.2 on the
+tablet, 390/1.8 on the phone — **~217 px/s at every band**. The still hold is what the ramps leave.
+⛔ **THE OPACITY GATE AT THE WINDOW EDGES IS WHAT MAKES THE BACK-SCROLL CLEAN** (D358) — outside
+the window the words do not exist, whatever position the slide would hold. Do not remove it.
 
-```
-27.0 -> 30.2   in    -KW.x1 * (1-q)^2   full speed on the first pixel, decelerating to
-                                        a dead stop at rest — that stop IS the "set"
-30.2 -> 35.3   hold   it does not move at all — 5.1s
-35.3 -> 38.5   out   -KW.x1 * q^2       the identical curve, time-reversed
-```
+⭐ **THE PHONE'S ANCHOR IS COUPLED TO THE ENDING** — 25.6vh is the finished hero's own title top,
+measured at 390×844, so the last beat hands its line to the headline that replaces it (D364).
+⚠️ **THE TABLET'S IS NOT, DELIBERATELY (D370)**: it is fenced by the island instead — the island's
+lit top measures film y **437** on the 864 cut, and 20vh + the wider measure bottoms the block
+**40px clear**. ⚠️ On extreme wide-short tablet windows (aspect ≥~1.35) the crop lifts the island
+above any usable anchor; there the wash carries it, as this band always has.
 
-⭐⭐ **BOTH EDGES ARE MEASURED, NOT CHOSEN (D358a):** the kitchen shot cuts in at **t=25.5** (the
-text band's mean jumps 0 → 11) and is established ground from **~26.8** (mean ~32, p97 65–67), so
-27.0 gives it a beat to settle; the corners round at **39.8** and the hero's ink rises at **41.1**,
-so a fade finishing at 38.5 leaves 1.3s of empty closing shot before the frame becomes the hero.
-⭐ **THE SLIDE IS THE SAFE AXIS (D345's fences):** the vertical position never changes, so the
-island (14–21px below) and the bar (65px above) keep their clearances for the beat's whole life,
-and a sliding block sits LEFT of rest, so it only ever moves further from the pendants at 785–798.
-⛔ **AN OPACITY GATE AT THE WINDOW EDGES IS WHAT MAKES THE BACK-SCROLL CLEAN** — outside the window
-the words do not exist, whatever position the slide would hold. That is D358's fix; do not remove it.
+⭐⭐ **THE TABLET'S WASH HOLDS ITS STRENGTH FURTHER DOWN THE BOX (D370)** — centre 46%, plateau to
+46%, still `farthest-side` reaching zero at 100%. The old radial had decayed to ~0.2 by the
+subtitle's rows, which is why he said it was hard to read. Ground measured t=29→37: title band p97
+**73→114**, sub band **88→115 with maxima 245–255** — D346's specular trap.
 
 ### ⭐ SECTION 4 — THE ENDING · *"Surfaces worth building around"*
 
-| | desktop ≥1121 | tablet + phone ≤1120 (and the no-film path) |
-|---|---|---|
-| what moves | ⭐⭐⭐ **the WHOLE block, as one object** | each element separately, staggered |
-| motion | scale **0.84 → exactly 1.00** + fade | rise 26px + fade |
-| timing | **1.05s**, `--ease`, 180ms delay | **1.15s** each, `--hd` 180/340/560/720/880 |
-| clock | a CSS transition — never was scroll-tied | the same |
+| | every band, since D368 |
+|---|---|
+| what moves | ⭐⭐⭐ **the WHOLE block, as one object** (`.hero-inner`) |
+| motion | scale **0.84 → exactly 1.00** + fade |
+| timing | **1.05s**, `--ease`, 180ms delay |
+| clock | a CSS transition, triggered by `ink()` at `INK_AT` 0.93 — never scroll-tied |
 
-**⭐⭐⭐ IT COMES TOWARDS YOU (D356 → D357).** Client: *"fades in from the center of the screen and
-then becomes bigger as it settles, so basically as if it is coming closer"*, then, correcting the
-first build: *"I don't just mean the surfaces worth building around text. I mean all of that, that
-whole section — from the buttons to all the little things and the subtext and everything."*
+⛔ **THE MEDIA QUERY IS GONE** — D356 (desktop) → D363 (phone) → D368 (tablet) ended with the rules
+at base scope inside `html.cine-on .cine`. ⭐ The per-element stagger is NOT deleted: it still runs
+on every band's no-film path (reduced motion, no MP4, `fail()`).
+⭐⭐ **THE TABLET'S ENDING WAS ALSO RE-PROPORTIONED (D370)**, on measured slack of 231px: title top
+**303 → 251**, sub **19px/560**, both gaps **18**, buttons **61px at 14px**, chips **54px at 13px**.
+⚠️ **ALL OF THOSE CARRY `#hero`** — an id beats a late class, and the first cut silently lost.
 
-⭐⭐⭐ **THE SECOND MESSAGE MOVED THE TRANSFORM UP A LEVEL, FROM `.hero-title` TO `.hero-inner`, AND
-THAT IS THE WHOLE DESIGN.** Scaling each element would be four zooms at once, and **the GAPS between
-them would not scale** — the composition would visibly stretch as it arrived. One transform on the
-block keeps every internal relationship exactly proportional, which is the only reading of "coming
-closer" that is physically true. ⛔ **So the per-element stagger stands down in this scope** — it is
-not deleted, and still runs on both narrow bands and whenever the film does not.
-⭐ **A `scale()` on purpose, which is the OPPOSITE of D325b's ruling** — there a scale was rejected
-for reading like a zoom; **a zoom is exactly what he asked for here**, and `.hero-inner` carries no
-perspective to add one to. ⛔ It lands on **exactly 1.00** and the transform is **gone** at rest
-(not `scale(1)`), so the frozen composition is untouched and `.hero-inner` never becomes a
-containing block for the rest of the page's life.
-⚠️ Triggered by `ink()` flipping `.loaded` at `INK_AT` 0.93 (t=41.1) — a switch, not a scrub.
+### ⭐ THE CONTROLS AT THE FOOT OF THE FILM
+
+| | desktop ≥1121 | tablet 721–1120 | phone ≤720 |
+|---|---|---|---|
+| skip | bottom-right corner, **2px** radius | ⭐ **centred**, **pill**, +27px | ⭐ **centred**, **pill**, +21px |
+| contacts | none (`.wa-fab` hidden) | ⭐ **[WhatsApp] [SKIP] [phone]** | ⭐ **[WhatsApp] [SKIP] [phone]** |
+| dress | — | 46px, translucent glass + gold rim | the same |
+
+⭐⭐ **THE TRIO'S AIR IS EQUAL BY CONSTRUCTION, NOT BY A NUMBER**: each side of the skip holds
+`50vw − 87.4px` and the 46px button sits in the middle of it, so edge→button = button→skip at every
+width. **Verified 30.8px ×4 at 390 and 158.3px ×4 at 900.** ⚠️ The constants carry the skip's
+rendered width (**174.8px**) — re-derive if its face, text or padding changes.
+⭐ The pair FLANKS the skip only while `skip-live` is on (a class `chrome()` writes beside the
+skip's own `hidden`); the moment the skip goes they slide back to their D173/D180 corner homes.
+⚠️ **The call button was ruled out for the tablet and then back in, both within an hour** — D368
+took it out, D369 put it back on his *"I was wrong with what I said before"* → *"we add the phone
+button again… I rate that's what we should do."* Both are logged.
 
 ---
 
-## 2. ⭐⭐⭐ THE NEXT ROUND — THE TABLET AND THE PHONE
+## 2. ⭐⭐⭐ WHAT THE NEXT ROUND IS
 
-His instruction, verbatim: *"we're going to, on the next chat, work on the tablet and mobile
-versions and make the best for that, because it's going to be different. But the text will be the
-same."* ⭐ This also closes the placement question deferred since **D325** (*"we will talk about
-mobile and tablet text placement after"*).
+⛔⛔ **NOTHING IS OPEN BY INSTRUCTION.** He signed the phone off explicitly and has **not yet seen
+D370** (the tablet's third pass). ⭐ **ASK FIRST**: show him the tablet and get the sign-off, or the
+list of changes.
 
-⛔⛔ **THE COPY IS FIXED (§3). What is open is PLACEMENT and ANIMATION, per band.**
+### ⚠️ The things this round left knowingly unfinished
 
-### ⚠️ What is already known, so it is not re-discovered
-
-1. ⛔⛔⛔ **THE THREE BANDS ARE THREE DIFFERENT FILMS, NOT THREE CROPS.** 1920 (16:9), 864 (a 4:5
-   crop) and 608 (a 9:16 VERTICAL cut, D319). **A composition measured on one says nothing about
-   the others.** Every beat window in §1 was measured per band for exactly this reason.
-2. ⛔⛔ **THE FIRST SCREEN'S EXIT DOES NOT PORT AS-IS.** Its speed is matched to the far field's
-   own travel in the 1920 cut (51 px/s). **That has to be re-measured on each band's own film**
-   before the curve means anything.
-3. ⛔⛔ **THE SLAB REVEAL NEEDS A NEW TRACK PER BAND.** `REV_X`/`REV_S` are film pixels of the
-   **1920** cut. The slab's edge geometry is different on a 4:5 crop and completely different on
-   the vertical cut. ⭐ `.textanim-2026-08-24/track_edge.py` does the work — extract that band's
-   frames, run it, check the max residual (it must stay ≤ ~4 film px for a straight-line clip to
-   be honest), and pick the domain where X is strictly monotone.
-4. ⭐ **THE KITCHEN SLIDE PORTS, BUT THE DISTANCE DOES NOT.** `KW.x1` is the box's right edge; on
-   the narrow bands the line is **centred and full-width**, so a slide from the left is a different
-   distance and arguably a different idea. His words were *"coming in from the left side"* about a
-   left-anchored desktop block.
-5. ⭐ **THE ENDING PORTS IN ONE RULE** — the `min-width:1121px` block moves or widens. ⚠️ Check the
-   scale value by eye at each band: 0.84 on a 92px headline is not 0.84 on a 38px one.
-6. ⚠️ **MEASURED AND NOT FIXED, BECAUSE IT WAS OUT OF SCOPE: on the phone the slab beat already
-   flies off-frame while still at 0.68 opacity, and always has.** That is a real fault waiting in
-   this round.
-7. ⭐ **THE NARROW BANDS' CURRENT PLACEMENT** is `left:0;right:0;padding:0 clamp(20px,7vw,54px);
-   text-align:center`, size `clamp(27px,6.6vw,44px)`, beats at `top:13vh`, subtitle 16px centred.
-   The subtitle rule carries a note saying placement is *"still his open question"* — this is that
-   question.
-8. ⛔ **THE TABLET-ONLY BLOCK IS LAST IN THE STYLESHEET** (search `THE TABLET BAND`) and must stay
-   last. ⭐ **Widen a phone rule's own query to reach the tablet, never copy it.**
+1. ⭐⭐⭐ **THE PHONE'S KITCHEN WASH, REVERTED AND OWED A REWORK (D367).** It runs the original
+   radial — stable, and what he has approved — because two attempts at a better shade flashed on
+   his device. **The plan is written into the stylesheet note and §0: bake it from film time.**
+   The plumbing is already there (`bandGrade(el,box)` + `KB`, the seated static box).
+   ⚠️ Also unproven and worth one ask: his phone may have been holding a cached build for the
+   second report — the HTML carries no cache-buster. The baked table makes the question moot.
+2. ⚠️ **THE TABLET ON A WIDE-SHORT WINDOW** — the kitchen beat's island fence cannot hold above
+   ~1.35 aspect. Nothing is broken; the wash carries it. Worth one look on a real landscape iPad.
+3. ⚠️ **THE PHONE'S SLAB FENCE IS TIGHT AT SMALL WIDTHS** — 10 film px at 390. Below ~360 the box
+   grows taller relative to the frame; a post-reveal wash guard is in place for exactly that, but
+   it has not been seen on a 320-wide device.
 
 ---
 
 ## 3. ⭐⭐⭐ THE FILM'S COPY — FIXED, AND THE SAME AT EVERY BAND
 
 ```
-FIRST SCREEN (desktop, at rest)
+FIRST SCREEN (every band now)
     Your worktop STARTS HERE.
     Follow the slab from the finest mountains of Europe and Asia,
     out of the quarry and into your kitchen.
     SCROLL TO BEGIN  ↓
-    [Google 5.0]  [10 year guarantee]              bottom left, leaving with the copy
-
-  (phone + tablet opening title)   It starts as a mountain.
+    [Google 5.0]  [10 year guarantee]              desktop only, bottom left
 
 SLAB BEAT     The slab you choose is UNIQUE.
               Measured, cut and finished for your home, and built to last for decades.
@@ -248,6 +223,10 @@ KITCHEN BEAT  The stone sets the tone of THE ROOM.
 ENDING        Surfaces worth BUILDING AROUND
               Chosen from the slab you approve, fitted by us across England and the British Isles.
 ```
+
+⚠️ **`.cine-open` — "It starts as a mountain." — NOW STANDS DOWN AT EVERY BAND** (the phone at
+D359, the tablet at D368). It is not deleted; it is the restore path if a band ever loses its
+second hero.
 
 ⛔⛔⛔ **FOUR SEPARATE COPY FAULTS WERE CAUGHT BY HIM, NOT BY ME, AND EVERY ONE WAS A CLAIM THE
 BUSINESS CANNOT MAKE. Check any new line against all four:**
@@ -273,21 +252,20 @@ Unprompted, 18 Aug: *"just make sure you always keep site speed in mind… **sit
 1. ⛔⛔ **ONE FILM PER BAND AND ONLY ONE IS EVER FETCHED.** Three cuts (**22.8 MB** together), a
    visitor downloads exactly one — **1920: 13.28 MB · 864: 5.62 MB · 608: 3.87 MB**. An in-place
    `<script>` beside the `<video>` sets `src` and `poster` **during parse**. ⛔ **A `display:none`
-   VIDEO STILL DOWNLOADS ITS `src` AND `poster`.** **Re-verify zero requests for the other two
-   after ANY change to that element or that script** — this is the single most expensive thing on
-   the site to get wrong, and the next round touches all three bands.
+   VIDEO STILL DOWNLOADS ITS `src` AND `poster`.** ⭐ **Re-verified this round at all three bands
+   after every band's edits: zero requests for the other two.**
 2. ⭐ **`preload="none"` in the markup**, flipped to `auto` by the scrub once the band is known.
 3. ⭐⭐ **FIRST PAINT COSTS THE POSTER, NOT THE FILM** — **121 KB** desktop, 81 tablet, 54 phone.
-   ⭐ The poster, the overlay plate and the film's own first frame are **one picture**, so nothing
-   swaps at any point. ⛔ Do not let the posters grow.
+   ⭐ The poster, the overlay plate and the film's own first frame are **one picture**.
 4. ⭐⭐ **COMMENTS COME OFF ON THE WAY OUT (D315).** `make_upload.py` strips every `.html`/`.css`/
    `.js` into `upload/`. ⛔ Never strip comments from the SOURCE — they are the design record.
 5. ⭐ **NOTHING UNREFERENCED SHIPS.** Dot-folders never ship. ⛔ When you remove an element, move
    its assets into a dot-folder **in the same edit**.
 
-⚠️ **`dev-server.js` COMPRESSES AND THE HOST MAY NOT.** ⚠️ **A MEDIA ELEMENT'S OWN FETCH OFTEN DOES
-NOT APPEAR IN `resource` TIMING.** Prove "the wrong film did not load" by the ABSENCE of the other
-bands' URLs plus `video.getAttribute('src')`.
+⚠️ **THIS ROUND ADDED NO ASSETS AND NO REQUESTS** — every animation is CSS and arithmetic, every
+table is numbers in the existing inline script. ⚠️ **`dev-server.js` COMPRESSES AND THE HOST MAY
+NOT.** ⚠️ **A MEDIA ELEMENT'S OWN FETCH OFTEN DOES NOT APPEAR IN `resource` TIMING** — prove "the
+wrong film did not load" by the ABSENCE of the other bands' URLs plus `video.getAttribute('src')`.
 
 ---
 
@@ -298,15 +276,20 @@ bands' URLs plus `video.getAttribute('src')`.
    the phone   ·   the tablet        ·   the desktop
 ```
 ⛔ **THE TABLET-ONLY BLOCK IS STILL LAST IN THE STYLESHEET** (search `THE TABLET BAND`).
-⭐ **Widen a phone rule's own query to reach the tablet, never copy it.**
-⚠️ ⛔⛔ **AND SOURCE ORDER DECIDES BETWEEN EQUAL SPECIFICITY** — three rules this round rely on it.
+⭐ **Widen a phone rule's own query to reach the tablet, never copy it** — this round did exactly
+that for the hero column, the grade, the pill, the ghost fab dress and the cue hide.
+⚠️ ⛔⛔ **AND SOURCE ORDER DECIDES BETWEEN EQUAL SPECIFICITY** — but **an id is not equal**: three
+rules this round lost to `#hero …` selectors written far earlier (§0).
 
-⛔⛔⛔ **AND THE PER-BAND CASCADE IS THE ONE MENTAL MODEL FOR BOTH THE FILM AND THE BEATS:
+⛔⛔⛔ **THE PER-BAND CASCADE IS THE ONE MENTAL MODEL FOR BOTH THE FILM AND THE BEATS:
 `-phone` → `-narrow` → the bare attribute.** A band that names nothing inherits the one below it.
-⚠️ **D358a's LESSON: A BEAT WITH NO `-narrow` PAIR HAS NO DESKTOP-ONLY TIMING** — its base attribute
-IS every band's number, so a desktop retime silently reaches the phone and the tablet. It happened,
-for about an hour. **Before retiming any beat, check whether it carries a `-narrow` pair; if it does
-not, add one pinning the current values in the same edit.**
+⚠️ **A BEAT WITH NO `-narrow` PAIR HAS NO DESKTOP-ONLY TIMING** — its base attribute IS every
+band's number (D358a's leak). **Before retiming any beat, check whether it carries a `-narrow`
+pair; if not, add one pinning the current values in the same edit.**
+
+⭐ **IN THE SCRUB THE BANDS ARE `heroOn` (desktop) · `heroNr` (both narrow) · `heroPh` / `heroTab`**
+— use `heroNr` for anything the two narrow bands share, and the specific one only where a band
+owns its own number (the reveal's table, the slide's ramp, the exit's fade seconds).
 
 ---
 
@@ -326,15 +309,14 @@ three inline `<script>` blocks** after every edit to `index.html`. ⚠️ The JS
 `application/ld+json`. ⭐⭐ **AND A `<div>` BALANCE CHECK AFTER ANY STRUCTURAL CUT** (259/257 is the
 correct, long-standing figure — it is not an error).
 
-⛔⛔⛔ **NEW (D357) — `node --check` IS A SYNTAX GATE, NOT A RUNTIME ONE.** An edit that deleted two
-`const` declarations passed it cleanly and threw `ReferenceError` on every frame in the browser.
-**Read the console after ANY JS edit** — arm `window.addEventListener('error',…)` and drive the
-page, because the pane's console buffer also keeps **STALE errors from earlier loads** and will show
-you a bug you have already fixed.
+⛔⛔⛔ **`node --check` IS A SYNTAX GATE, NOT A RUNTIME ONE** (D357) — read the console after any JS
+edit, with `window.addEventListener('error',…)` armed, and drive the page.
+⛔⛔ **AND IT IS NOT A SCOPE GATE EITHER (D359b, D370).** A rule can parse perfectly and never
+apply — wrong media query, or outranked by an id. **Read the computed value back at the band you
+meant to change.**
 
-⛔⛔ **A BRACE INSIDE A COMMENT COUNTS.** A comment containing `html{overflow-x:clip}` pushed the CSS
-count up by one while the delta stayed 0. **Write CSS in comments without braces**, and compare the
-COUNT, not just the delta.
+⛔⛔ **A BRACE INSIDE A COMMENT COUNTS.** Write CSS in comments without braces, and compare the
+COUNT, not just the delta. ⭐ This round: **1816 → 1825**, every pair accounted for.
 
 ### ⭐ THE FREEZE PROBE — 1440×900, FRESH LOAD, TAB IN FRONT
 
@@ -343,62 +325,76 @@ COUNT, not just the delta.
 | `.gal-scroll` height | **4950** |
 | `--revPer` (on `#reviews`) | **3** |
 | `feTurbulence` count | **60** |
-| elements | **2711** |
+| elements | **2714** ⚠️ was 2711 — **+3 is the call fab's markup** |
 | hero ink (`.hero-inner` padding-top) | **86.1828** |
 | `#footer` height | **503.78** |
-| document height | **24443** |
 | `.hero-bg` children | **7** |
 | broken images / 4xx / console errors | **0 / 0 / none** |
+| the film fetched | **1920 only** |
 
-⭐ **EVERY ROW RE-VERIFIED AT THE END OF THIS ROUND.** ⚠️ The element count is only valid on a fresh
-load. ⚠️ Filter broken images on `i.src && i.complete && i.naturalWidth===0`.
+⭐ **EVERY ROW RE-VERIFIED AT THE END OF THIS ROUND.**
+⚠️ **THE DOCUMENT-HEIGHT ROW IS RETIRED**: the old doc's 24443 does not reproduce in this pane
+(it reads **23500**) — and **HEAD reads 23500 too**, verified by serving the committed file
+side-by-side, so it is an environment difference and not a regression. Do not chase it.
+⚠️ The element count is only valid on a fresh load. ⚠️ Filter broken images on
+`i.src && i.complete && i.naturalWidth===0`.
 
 ---
 
 ## 7. ⚠️ THE ENVIRONMENT TRAPS — ALL LIVE
 
-- ⛔⛔⛔ **`currentTime` IS NOT THE FRAME ON THE SCREEN.** Assigning it moves it at once; the picture
-  waits for the decode. Measured under a live scrub: **1 to 3 frames of lead, 23px on screen**.
-  ⭐ `video.requestVideoFrameCallback` → `metadata.mediaTime` is the only ground truth, and it also
-  reveals that **a fast scrub presents about every SIXTH frame**.
-- ⛔⛔⛔ **THE FILM NEEDS ~8s TO BUFFER AFTER A NAVIGATION, AND THE EASED CHASE NEEDS ~2.5–3.5s TO
-  SETTLE.** ⭐⭐ **POLL `currentTime` UNTIL IT STOPS CHANGING BEFORE TRUSTING ANY READING** — this
-  round produced a completely wrong measurement (film time 3.4 while the scroll said 29) by reading
-  too early. A settle-poll is four lines and it is now the standard opening of every probe.
-- ⛔⛔⛔ **MEASURE TEXT AFTER THE FONT LANDS.** Cinzel is **135px wider** across the headline than the
-  fallback. A measurement taken before `document.fonts.ready` cost a whole re-track at D349.
-- ⛔⛔ **THE FRAME AVERAGE OF THIS FILM BELONGS TO NOTHING IN IT** — the near wall expands RIGHT
-  while the far field swings LEFT. Measure the region you mean.
-- ⛔⛔ **A CSS `mask`/canvas DRAW MUST FIT ITS CANVAS.** A 48×8 read from a 48×4 canvas returns rows
-  of transparent black and quietly poisons the average.
-- ⛔⛔ **`git check-ignore` BEFORE COMMITTING ANY NEW DOT-FOLDER OF HIS ORIGINALS.**
-- ⛔⛔⛔ **A SCROLL ANIMATION IS DEAD IN A BACKGROUND TAB**, and **the pane throttles rAF even when
-  fronted**. ⚠️ **A BACKGROUNDED PANE TAB ALSO SCREENSHOTS BLACK** — front it (`tabs_select`) before
-  shooting, which is what finally produced this round's real captures.
+**⭐⭐⭐ NEW THIS ROUND, AND EACH ONE COST A BUILD:**
+
+- ⛔⛔⛔ **`@keyframes` INSIDE A NON-MATCHING `@media` NEVER REGISTER.** They are not global from
+  wherever they are written. The phone's arrow shipped frozen because its keyframes lived in the
+  `min-width:1121px` block. **Keyframes belong at base scope** — they are inert until named.
+- ⛔⛔⛔ **`drawImage` CLIPS AN OFF-FRAME SOURCE RECT AND LEAVES THE REST OF THE CANVAS STALE.**
+  Any sampler reading a moving or partly-off-frame box mixes live and previous-frame pixels and
+  its statistic oscillates. **`clearRect` before every sample draw** (now in), and **sample a
+  STATIC box** (`bandGrade(el,box)`) when the element itself moves.
+- ⛔⛔ **AN ID BEATS A LATE CLASS.** `#hero .hero-sub` written at line 5702 outranks `.hero-sub`
+  written at 9330. Match the specificity or the rule is decoration.
+- ⛔⛔ **A SHARED SELECTOR REACHES ITS NEIGHBOUR.** `.cine-line .cine-line-sub` changed BOTH beats;
+  scope per beat (`[data-vpos-wide="high"] .cine-line-sub`) when only one is meant.
+- ⚠️ **A FREEZE PROBE THAT SETS `animation-delay` RESTARTS THE ANIMATION** — inline styles and an
+  injected stylesheet restart at different moments, so frozen layers screenshot DESYNCED while the
+  live ones are perfectly locked. **Verify phase with a same-frame computed-transform read**, not
+  with a freeze.
+- ⚠️ **A RELOAD CAN DROP THE PANE'S VIEWPORT EMULATION** — a phone tab came back as 768 twice and
+  reported tablet numbers as if they were the phone's. **Read `innerWidth` in the same probe as
+  the number** (this is the old two-tab rule, now with a second cause).
+
+**(Carried, all still live)**
+
+- ⛔⛔⛔ **`currentTime` IS NOT THE FRAME ON THE SCREEN.** 1–3 frames of lead under a live scrub.
+  ⭐ `video.requestVideoFrameCallback` → `metadata.mediaTime` is the only ground truth, and a fast
+  scrub presents about every SIXTH frame.
+- ⛔⛔⛔ **THE FILM NEEDS ~8s TO BUFFER AFTER A NAVIGATION, AND THE EASED CHASE ~2.5–3.5s TO SETTLE.**
+  ⭐⭐ **POLL `currentTime` UNTIL IT STOPS CHANGING BEFORE TRUSTING ANY READING.**
+- ⛔⛔⛔ **MEASURE TEXT AFTER THE FONT LANDS.** Cinzel is **135px wider** across the headline.
+- ⛔⛔ **THE FRAME AVERAGE OF THIS FILM BELONGS TO NOTHING IN IT.** Measure the region you mean —
+  this round, the whole-frame scan said the slab reached film y 73 while the TEXT's own columns
+  said 559. Two completely different answers to two different questions.
+- ⛔⛔⛔ **A SCROLL ANIMATION IS DEAD IN A BACKGROUND TAB**, and the pane throttles rAF even when
+  fronted. ⚠️ **A BACKGROUNDED PANE TAB ALSO SCREENSHOTS BLACK** — front it (`tabs_select`) first.
+  ⚠️ It also freezes `skip-live` and every scrub-written value; a background tab reports stale.
 - ⛔⛔ **THE PANE'S SCREENSHOT GOES BLACK after `resize_window` + reload.** Fresh tab, navigate,
-  resize, shoot **without** reloading. ⭐ **AND `backdrop-filter` ANYWHERE ON THE PAGE CAN BLACK THE
-  CAPTURE** — the chips and the nav carry it; users see the page fine.
-- ⭐⭐ **TO SEE A MID-ANIMATION FRAME, FREEZE IT DELIBERATELY**: write the measured values inline
-  (`transition:none` + the transform + the opacity), screenshot, then remove them. That is how both
-  the reveal and the ending were verified by eye.
-- ⚠️ **A CSS TRANSITION WITH A DELAY CANNOT BE SAMPLED BY TOGGLING A CLASS AND READING IMMEDIATELY**
-  — the computed value stays at the start until the delay elapses, which reads as "it snapped".
-  Remove the class, **wait out the reverse**, then re-add and sample.
-- ⛔⛔ **TWO TABS DRIFT TO DIFFERENT VIEWPORTS.** Read `innerWidth`/`innerHeight` in the SAME probe.
-- ⚠️ **A SCROLL SET IMMEDIATELY AFTER A NAVIGATION IS UNDONE** by scroll restoration. Set it, then
-  set it again a moment later.
+  resize, shoot **without** reloading. ⭐ **AND `backdrop-filter` ANYWHERE CAN BLACK THE CAPTURE.**
 - ⛔⛔ **A NARROW LOAD LOOKS EXACTLY LIKE A BROKEN PAGE.** `--stoneRaster:on` below 720px swaps the
-  live marble SVG for a bitmap: `feTurbulence` reads 0 and elements drop ~570. **The next round is
-  narrow — expect this and do not chase it.**
+  live marble SVG for a bitmap: `feTurbulence` reads 0 and elements drop ~570. ⚠️ **A tab that
+  navigates BEFORE it is resized loads narrow and keeps those numbers** — reload after resizing.
 - ⛔⛔ **AN INLINE STYLE OUTRANKS A CLASS RULE** — hand the property back (`style.removeProperty`),
   and **do not write a property at a band that has no rule to answer it**.
 - ⛔⛔ **A CSS EDIT DOES NOT SHOW UNTIL THE BUILDERS RE-RUN** (`site.css?v=<hash>`). ⚠️ `index.html`'s
   own inline CSS is served directly and needs no builder.
-- ⭐ **`scroll-behavior:smooth` eats programmatic scrolls** — use `behavior:'instant'`.
+- ⭐ **`scroll-behavior:smooth` eats programmatic scrolls** — use `behavior:'instant'`, and set it
+  twice (a scroll set immediately after a navigation is undone by scroll restoration).
 - ⛔ **`computer` LIMITS: `wait` ≤ 10s, `scroll_amount` ≤ 10.** Chain them.
-- (Carried) `javascript_tool` runs before async work settles — kick the work, wait, read it back in
-  a second call · **no numpy, PIL only** · **no libwebp in this ffmpeg; the browser canvas is the
-  only SVG rasteriser** · valid stone presets: calacatta, carrara, crema, emperador, eternal, fumo,
+- ⚠️ **`javascript_tool` KEEPS THE PAGE'S TOP-LEVEL SCOPE BETWEEN CALLS** — a second `const bb`
+  throws `Identifier already declared`. Wrap probes in `(()=>{ … })()`.
+- (Carried) `javascript_tool` runs before async work settles — kick, wait, read back in a second
+  call · **no numpy, PIL only** · **no libwebp in this ffmpeg; the browser canvas is the only SVG
+  rasteriser** · valid stone presets: calacatta, carrara, crema, emperador, eternal, fumo,
   goldveil, mist, nerogold, statuario.
 
 ---
@@ -421,7 +417,7 @@ link presents as *"most of the images aren't loading"*.
 
 | Page | State |
 |---|---|
-| **`/`** | opens on his film at every band, the overlay cutting to it at f0, **a second hero on the first screen**, **three story beats**, skip control, 182vh of dead scroll on the finished hero. ⭐ **All four text sections carry his own designs on DESKTOP (§1); the phone and the tablet still run the pre-round animations** |
+| **`/`** | opens on his film at every band, the overlay cutting to it at f0, **a second hero on the first screen at ALL THREE BANDS**, **three story beats with per-band composition and animation**, skip control + contact trio on the narrow bands, 182vh of dead scroll on the finished hero. ⭐⭐⭐ **The film's text is finished on desktop, phone and tablet (§1)** |
 | **`/about/` + six internal** | the `.page-head` family; directors visible and bright at all bands |
 | **`/services/*.html`** | nine leaves, each on its OWN photograph; burger nav ≤1120; quote card ≥1121 |
 | **`/stones/`** | 132 pages + collection + compare; white ledes; **no quote card, deliberately** |
@@ -450,8 +446,8 @@ link presents as *"most of the images aren't loading"*.
 11. ⛔⛔ **A mark is never put in a circle, ring, disc or plate.** ⚠️ A control is not a mark.
     ⛔ **And a dark shape with an EDGE has been rejected twice** — grades are anchored to the frame
     edge or are washes that reach zero inside their own box. **Never a panel.**
-12. ⛔ **One device at a time unless he says otherwise.** ⭐ **He has now said otherwise: the tablet
-    and the phone are the open scope, and the DESKTOP is frozen again.**
+12. ⛔ **One device at a time unless he says otherwise.** ⭐ **All three bands are now built; the
+    DESKTOP and the PHONE are frozen, and the TABLET is awaiting his sign-off.**
 13. ⭐⭐ **THIS IS A DESIGN BUILD. NEVER RAISE THE MISSING FORM BACKEND AS A BLOCKER.**
 14. ⛔⛔ **2 CREDITS MAXIMUM PER GENERATED IMAGE.** ⭐ **This round spent nothing.**
 15. ⭐⭐⭐ **SITE SPEED IS KEY** — his own words.
@@ -462,58 +458,58 @@ link presents as *"most of the images aren't loading"*.
 
 ### ⭐⭐⭐ The live scope
 
-1. ⭐⭐⭐ **THE TABLET AND THE PHONE — PLACEMENT AND ANIMATION FOR ALL FOUR SECTIONS.** §2 carries
-   everything already known. ⛔ **The copy does not change.**
+1. ⭐⭐⭐ **SHOW HIM THE TABLET (D370) AND GET THE SIGN-OFF.** He has not seen the third pass.
+2. ⭐⭐ **THE PHONE'S KITCHEN WASH REWORK** — reverted at D367, plan in §2 item 1 and §0.
 
 ### ⭐⭐⭐ The ones that are costing money
 
-2. ⭐⭐⭐ **HOW DO FILES ACTUALLY REACH `thadeusg3.sg-host.com`?** Asked twelve times.
+3. ⭐⭐⭐ **HOW DO FILES ACTUALLY REACH `thadeusg3.sg-host.com`?** Asked twelve times.
    **Everything from D291 onward is still NOT live — including his video, every word of the film's
-   copy, and this entire round.**
-3. ⭐⭐⭐ **WHOSE ARGENTO DOES HE SELL?** His reference is a dense flecked grey-white; the site shows
+   copy, and both of this round's device builds.**
+4. ⭐⭐⭐ **WHOSE ARGENTO DOES HE SELL?** His reference is a dense flecked grey-white; the site shows
    the supplier's veined marble-look. ⛔ Do not paste the Google image.
-4. ⭐⭐ **THE STONE PHOTOGRAPHY AUDIT** — 24 of 132 verified; **92 Nile Stone tiles unverified**.
-5. ⭐ **Pick a production host**; brotli; check the `.htaccess` cache rules survive it.
+5. ⭐⭐ **THE STONE PHOTOGRAPHY AUDIT** — 24 of 132 verified; **92 Nile Stone tiles unverified**.
+6. ⭐ **Pick a production host**; brotli; check the `.htaccess` cache rules survive it.
    ⚠️ **22.8 MB of film makes this urgent.**
 
 ### ⭐⭐ His call
 
-6. ⭐⭐ **THE HEADLINE WORDING** — he is still taking the client's input. Three alternates parked.
-7. ⭐ **THE HERO PLATE FOR THE ENDING.** Withdrawn at D328 because the re-cut moved the camera.
+7. ⭐⭐ **THE HEADLINE WORDING** — he is still taking the client's input. Three alternates parked.
+8. ⭐ **THE HERO PLATE FOR THE ENDING.** Withdrawn at D328 because the re-cut moved the camera.
    **It needs a new still from him**, or it stays off.
-8. ⭐⭐ **DOES THE FILM WANT SOUND?** The masters carry PCM; the site drops it. Never discussed.
-9. ⭐ **THE 19 DRONE VIDEOS** (Hornchurch, Rickmansworth) — worth re-asking now the site carries film.
-10. ⚠️ **THE GROWTH ON THE FIRST SCREEN IS OUT.** D350 added a 1.00→1.20 scale on his *"it should
-    get bigger"*; D352 removed it with the pin. **He has not been asked whether he wants it back on
-    the sliding block.** It is one line. ⚠️ Note the ENDING now grows (D356), so the answer may be
-    that the first screen should not.
-11. ⭐⭐ **THE PHONE'S BAR** — the skeleton crosses his 11-Aug *"already formed from the top"* ruling.
-    **One word puts it back: delete the two `header.bar.preform::after` lines.** ⭐ **This is a
-    PHONE item and the phone is now in scope.**
-12. ⭐⭐ **A QUOTE CARD FOR THE PHONE AND TABLET.** D300 is desktop-only because he said so.
-    ⭐ **Also now in scope, if he wants it.**
-13. ⭐⭐ **THE SITEMAP LINK'S GOLD STYLING** — `seo.css` has the rule, no footer has the hook.
-14. ⭐⭐ **Trade terms** — payment, minimum order, lead times, a dedicated contact. **His stated
+9. ⭐⭐ **DOES THE FILM WANT SOUND?** The masters carry PCM; the site drops it. Never discussed.
+10. ⭐ **THE 19 DRONE VIDEOS** (Hornchurch, Rickmansworth) — worth re-asking now the site carries film.
+11. ⚠️ **THE GROWTH ON THE FIRST SCREEN IS OUT.** D350 added a 1.00→1.20 scale on his *"it should
+    get bigger"*; D352 removed it. **He has not been asked whether he wants it back.** ⚠️ Note the
+    ENDING now grows at every band, so the answer may be that the first screen should not.
+12. ⭐⭐ **THE PHONE'S BAR** — the skeleton crosses his 11-Aug *"already formed from the top"* ruling.
+    **One word puts it back: delete the two `header.bar.preform::after` lines.**
+13. ⭐⭐ **A QUOTE CARD FOR THE PHONE AND TABLET.** D300 is desktop-only because he said so.
+14. ⭐⭐ **THE SITEMAP LINK'S GOLD STYLING** — `seo.css` has the rule, no footer has the hook.
+15. ⭐⭐ **Trade terms** — payment, minimum order, lead times, a dedicated contact. **His stated
     first priority.**
-15. ⭐⭐ **Two sentences for Nick and Rimsha** · **the credit ceiling** · **Calacatta Gold licensing**
+16. ⭐⭐ **Two sentences for Nick and Rimsha** · **the credit ceiling** · **Calacatta Gold licensing**
     · **the fireplace scope, with Nick** · **Ali Jaffer and Kav / Uxbridge**.
-16. ⭐ **Confirm the silica / HSE sentence in his own words (D202).**
-17. ⭐ **Kitchen islands is not on his service list** — the page is live, linked and dressed (D294).
-18. ⭐ **Trustpilot** — recommended against putting 4.0 beside the Google 5.0. He has not ruled.
-19. ⚠️ **RIMSHA OR REMSHA?** Still unresolved. Her name is on a public page under her photograph.
-20. ⚠️ **THE HORNCHURCH GALLERY SET** — the lead frame is clear, the other 11 were never checked.
-21. ⚠️ **Two slabs lean blue and nobody has ruled**: `arabescato-grey`, `calacatta-gold-shimmer`.
-22. ⭐ **Facebook, TikTok, YouTube?** ⛔ Do not guess handles.
-23. ⭐ **Per-stone og:image** — 132 conversions.
-24. ⚠️ **`Next Stone Slabs` is named in one place** — sanctioned by D203. Read D203 before "fixing".
-25. ⚠️ **The stale branch `tablet-round-d197-d200`** — deletable once item 2 is answered.
+17. ⭐ **Confirm the silica / HSE sentence in his own words (D202).**
+18. ⭐ **Kitchen islands is not on his service list** — the page is live, linked and dressed (D294).
+19. ⭐ **Trustpilot** — recommended against putting 4.0 beside the Google 5.0. He has not ruled.
+20. ⚠️ **RIMSHA OR REMSHA?** Still unresolved. Her name is on a public page under her photograph.
+21. ⚠️ **THE HORNCHURCH GALLERY SET** — the lead frame is clear, the other 11 were never checked.
+22. ⚠️ **Two slabs lean blue and nobody has ruled**: `arabescato-grey`, `calacatta-gold-shimmer`.
+23. ⭐ **Facebook, TikTok, YouTube?** ⛔ Do not guess handles.
+24. ⭐ **Per-stone og:image** — 132 conversions.
+25. ⚠️ **`Next Stone Slabs` is named in one place** — sanctioned by D203. Read D203 before "fixing".
+26. ⚠️ **The branch `tablet-round-d197-d200` receives every push** (the remote is configured to
+    update both refs). It is not stale any more, but it is a duplicate of `main` and should be
+    deleted once item 3 is answered.
 
 **Still waiting on the client:** whether Quartzite becomes a fourth range, 20mm vs 30mm pricing,
 brackets for vanity tops / fireplaces / tables, and the £3k vs £3,850 three-slab discrepancy.
 
-**CLOSED this round:** the slab beat's animation (the reveal), the kitchen beat's animation (the
-slide, through a clock reversal and three retimes), and the ending's animation (the whole block
-coming forward) — **all three to his own designs, and the desktop film text is finished.**
+**CLOSED this round:** the phone's four sections and its contact trio (**his sign-off: *"This is
+perfect"***), the tablet's four sections and its trio, the reveal at all three bands, the ending's
+arrival at all three bands, and the §2-item-6 fault carried since the phone was first measured
+(the slab beat flying off-frame at readable opacity — the reveal replaced it).
 
 ---
 
@@ -521,24 +517,29 @@ coming forward) — **all three to his own designs, and the desktop film text is
 
 ⛔⛔⛔ **HIS COMPLAINT NAMES THE SYMPTOM CORRECTLY EVERY TIME. IF YOU "FIX" IT AND HE REPEATS
 HIMSELF, YOU CHANGED THE WRONG VARIABLE — DO NOT CHANGE THE SAME ONE HARDER.**
+⭐⭐ This round: *"it's flashing like crazy"* twice, and the second time the answer was to STOP
+(revert) rather than to try a third construction. **He offered that himself — take it.**
 
 ⭐⭐⭐ **AND WHEN HE DESCRIBES A FEELING, THE MECHANISM BEHIND IT IS USUALLY EXACTLY WHAT HE SAYS.**
-*"It comes in and goes out very weirdly"* was a scrubbed animation inheriting the hand driving it.
-*"It gets stuck on the previous screen"* was a wall-clock exit unable to outrun a reverse scroll.
-*"It feels a bit jagged"* was a second rAF plus a per-frame `getImageData` against a decoding video.
-**Three vague-sounding sentences, three exact diagnoses. Take the words literally and go measure.**
+*"You can't see the border of the gradient"* was a linear gradient's own box edge crossing the
+frame. *"The arrow is too see-through"* was an 0.62 alpha. *"Why is the glare outside of the
+arrow?"* was an unmasked layer. **Take the words literally and go measure.**
 
-⭐⭐ **HE REVERSES HIMSELF FREELY AND FAST, AND THAT IS FINE.** The kitchen beat's clock flipped
-twice in one day and its timing three times. **The way to make that cheap is to park everything and
-delete nothing**, labelled with why it went. ⚠️ **And when a reversal restores an older mechanism,
-say so plainly rather than presenting it as new.**
+⭐⭐ **HE REVERSES HIMSELF FREELY AND FAST, AND THAT IS FINE.** This round the arrow's position
+changed four times and the tablet's controls twice, in hours. **The way to make that cheap is to
+park everything and delete nothing**, labelled with why it went. ⚠️ **And when a reversal restores
+an older mechanism, say so plainly rather than presenting it as new.**
 
-⭐⭐ **HE SENDS CORRECTIONS MID-TURN.** *"I don't just mean the text… I mean that whole section"*
-arrived while the first version was still being verified and **inverted the construction**. Finish
-the one you are on, read the new one before shipping, then take them in his order.
+⭐⭐ **HE ASKS FOR YOUR OPINION AND MEANS IT.** *"Let me know if you actually think that we should
+center everything… I rate that's what we should do."* **Answer with a recommendation and a reason,
+then build it** — he had already decided, and the reason is what he was checking.
 
-⭐⭐ **HIS SCREENSHOTS MARK MOMENTS, NOT LAYOUTS.** When he sends a frame, work out whether he is
-pointing at a STATE or at a TIME. He is usually pointing at a time.
+⭐⭐ **HE SENDS CORRECTIONS MID-TURN.** Finish the one you are on, read the new one before shipping,
+then take them in his order. ⚠️ This round one mid-turn message *revised its own instruction*
+(the kitchen's height, twice in one paragraph) — **the LAST version is the one he means.**
+
+⭐⭐ **HIS SCREENSHOTS MARK MOMENTS, NOT LAYOUTS.** Work out whether he is pointing at a STATE or a
+TIME. He is usually pointing at a time.
 
 ⛔⛔ **DO NOT ARGUE YOURSELF OUT OF SOMETHING HE ASKED FOR, AND DO NOT HAND HIM THE DILEMMA.**
 **A real constraint is a problem to solve, not a question to return.** ⭐ When his ask and the frame
@@ -547,8 +548,7 @@ genuinely conflict, **size the thing to the frame and tell him the number**.
 ⛔⛔ **DO NOT ASK HIS PERMISSION. Commit, push, report.**
 
 ⭐⭐ **WHEN YOUR OWN WORK CAUSED THE FAULT, SAY SO IN THE FIRST LINE.** He is fine with that and not
-fine with spin. **Two of this round's faults were mine — a deleted declaration and a rule-15 leak —
-and both were reported before anything else.**
+fine with spin. **Four of this round's faults were mine and each was reported before anything else.**
 
 ⚠️ **HE SWEARS WHEN SOMETHING LOOKS WRONG, AND THE COMPLAINT IS ALWAYS REAL.**
 
@@ -560,14 +560,14 @@ and both were reported before anything else.**
 
 ## 13. BUDGET AND THE DOCUMENT SET
 
-⭐ **This round spent 0 credits.** Every track, contrast figure and glyph metric was `ffmpeg`, PIL,
-the browser's own canvas and plain Python; the film and the stills are his.
+⭐ **This round spent 0 credits.** Every track, contrast figure, island fence and glyph metric was
+`ffmpeg`, PIL, the browser's own canvas and plain Python; the film and the stills are his.
 
 | File | What it is |
 |---|---|
-| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D358a**. §2 the standing rules, **§2s SITE SPEED**, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
-| **`Website Demo/index.html`** | ⭐⭐ The whole landing design. Search `THE SCROLL FILM`, `THE EDGE FADE`, `THE SLAB REVEALS ITS OWN CAPTION`, `THE KITCHEN BEAT ARRIVES BY THE SIDE`, `THE ENDING COMES TOWARDS YOU`, `THE OPENING FRAME AS A SECOND HERO`, `cine-line`, `bandGrade`, `THE TABLET BAND` |
-| ⭐⭐ **`.textanim-2026-08-24/track_edge.py`** | **THE SLAB EDGE TRACKER** — rebuilds `REV_X`/`REV_S`. ⭐ **The next round needs this per band** |
+| **`HANDOVER.md`** | ⭐ The single current state. §D is the register, **D1–D130, D132–D370**. §2 the standing rules, **§2s SITE SPEED**, §2a the supplier list. ⚠️ **THERE IS NO D131 ROW.** ⚠️ Section numbers are referenced from code comments — **do not renumber** |
+| **`Website Demo/index.html`** | ⭐⭐ The whole landing design. Search `THE SCROLL FILM`, `THE EDGE FADE`, `THE SLAB REVEALS ITS OWN CAPTION`, `THE PHONE'S OWN TRACK`, `THE TABLET'S OWN TRACK`, `THE KITCHEN BEAT ARRIVES BY THE SIDE`, `THE ENDING COMES TOWARDS YOU`, `THE OPENING FRAME AS A SECOND HERO`, `THE FIRST SCREEN COMES TO THE PHONE`, `THE FILM'S TEXT ON THE TABLET`, `cine-line`, `bandGrade`, `THE TABLET BAND` |
+| ⭐⭐ **`.textanim-2026-08-24/track_edge.py`** | **THE SLAB EDGE TRACKER — all three bands.** Desktop by default; **`--phone` runs the two-edge variant**; the tablet's parameters (rows 260–470, YREF 360, 864 frames) are in its header. ⭐ Re-run it if the film is ever re-cut |
 | ⭐⭐ **`.textanim-2026-08-24/removed-pin-d349-d351.txt`** | **THE PIN, PARKED WHOLE.** ⛔ None of it was wrong; it inherited a 12fps picture |
 | ⭐⭐ **`.textanim-2026-08-24/removed-wave-d348.txt`** | **THE SWEEPING WAVE, PARKED WHOLE** |
 | **`assets/video/.src-2026-08-23/`** | ⭐⭐ His two current masters and two stills (`.gitignore`d) + `encode.sh` with the full method |
@@ -581,17 +581,21 @@ the browser's own canvas and plain Python; the film and the stills are his.
 | **`services/service.css`** | ⭐⭐⭐ Dresses all 167 generated pages. ⛔ No footer rules |
 | ⛔ **`trade/build_trade.py`** | ⛔⛔ **SUPERSEDED — DO NOT RUN** |
 | ⛔ **`build_images.py` `patch_images.py`** | ⛔⛔ **ONE-SHOT, CANNOT RUN AGAIN** |
-| `HANDOVER-2026-08-24-text-animation-round-start-here.md` | ⭐ The START HERE this file replaces (D348–D353) |
+| `HANDOVER-2026-08-24-desktop-text-round-start-here.md` | ⭐ The START HERE this file replaces (D354–D358a) |
 | `HANDOVER-archive-to-2026-08-06.md` | ⚠️ **Every design the client rejected, in his words.** Read before redesigning anything |
 
 ### ⭐ THIS ROUND'S COMMITS, IN ORDER
 
 ```
-5e3bbfe  D354    the slab reveals its own caption
-0d59316  D355    the kitchen beat arrives by the side it will leave by
-0943eec  D355a   the kitchen text comes in slower
-c2f0a82  D355b   the exit matches the entry  ·  D356  the ending comes towards you, as one object
-3cbf573  D357    the scroll says when, the animation owns how   (⛔ reversed by D358)
-dd6d8ff  D358    the kitchen slide is back on the scroll, earlier
-10ee3af  D358a   the kitchen beat stays longer, and a rule-15 leak is pinned
+29ddfc7  D359–D361  the phone takes the film's text: the hero, the two-edge reveal, the kitchen
+92eda92  D359b D362 the phone's first screen rebuilt left-hung on a frame grade; the beats go bold
+bc0c9da  D359c D362a D363   third pass on the first frame; the wash flattened; the ending ported
+837cc25  D364      the kitchen takes the ending's line and the desktop's slide; the slab recedes
+f1de14a  D365      the arrow finds the R of SCROLL; the kitchen's wash stands still
+d94099a  D365a     the arrow returns to the S's line; the flash gets a hot core
+aba9c7c  D365b D366 the flash becomes a glare; the scrim's strobe dies at the sampler
+c02fb63  D365c D367 the glare goes back inside the stroke; the wash reverts to the radial
+0823d90  D368      the tablet takes the film's text: mobile's blueprint, the desktop's reveal
+cc68237  D369      the tablet's first frame centred at scale; the trio returns; the kitchen lifts
+072145b  D370      the slab beat lifts off the stone; the kitchen reads easier; the ending fills
 ```
