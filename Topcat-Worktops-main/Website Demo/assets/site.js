@@ -5526,9 +5526,10 @@ if(faqIndex && panel && faqBody){
   window.addEventListener('scroll',on,{passive:true});
 })();
 
-/* ---------- ⭐ the phone's sticky action bar: rises once the hero's CTAs have gone by ----------
-   Client: "as you scroll past the two CTAs in the hero section, then the sticky bottom nav will
-   pop up with the email and phone and get an estimate."
+/* ---------- ⭐ the sticky action bar: rises once the hero's CTAs have gone by ----------
+   Client, 11 Aug: "as you scroll past the two CTAs in the hero section, then the sticky bottom
+   nav will pop up with the email and phone and get an estimate." (D372 made the middle action
+   WhatsApp and widened the bar to the tablet; the trigger is unchanged.)
    ⭐ THE TRIGGER IS THE CTA ROW ITSELF, NOT A SCROLL NUMBER. `scrollY > 600` would be a second
    description of where the hero's buttons are, and it would be wrong the moment the title wraps
    to another line on another handset — the same class of bug as a media query disagreeing with
@@ -5536,9 +5537,9 @@ if(faqIndex && panel && faqBody){
    ⚠️ The threshold is the FIXED HEADER's bottom edge, not the viewport's top: the header is 76px
    of opaque glass over the page, so a row that has passed y=0 is already hidden behind it and
    the bar should be up by then.
-   ⚠️ Nothing here tests the width. `.mbar` is `display:none` above 720px, so `offsetParent` is
-   null and the class does nothing — the stylesheet stays the only thing that decides what a
-   phone is. */
+   ⚠️ Nothing here tests the width. `.mbar` is `display:none` above 1120px, so `offsetParent`
+   is null and the class does nothing — the stylesheet stays the only thing that decides which
+   bands have a bar. */
 (function(){
   const mbar=document.getElementById('mobileBar');
   const ctas=document.querySelector('.hero-ctas');
@@ -5696,6 +5697,7 @@ if(faqIndex && panel && faqBody){
 
   function fail(){
     root.classList.remove('cine-on');
+    root.classList.remove('skip-live');
     window.__cineHold=false;
     document.documentElement.style.removeProperty('--cineVeil');
     root.style.removeProperty('--navGrade'); graded=-1;
@@ -5807,6 +5809,369 @@ if(faqIndex && panel && faqBody){
      `grade()` above already carry.
      ⚠️ The blur is quantised to half a pixel for the same reason — it is depth of field as the words
      cross the focal plane, and it does not need to be smooth to read as soft. */
+  /* ⭐⭐⭐ **THE WIPE — 24 August 2026 (D352). THE WORDS ARE STILL AND THE SCROLL TAKES THEM.**
+     Client: *"since we can't get the text to stop shaking, I have a better idea… once the text
+     reaches this point in the screenshot, then perfectly tied to the user's scroll, will the
+     animation play of what we had before… it basically fades off from left to right… so it just
+     looks like it's going away off to the side and the side is taking it away… and the animation
+     ends on the second screenshot where you can just see the piece slightly on the side."*
+     ⭐⭐⭐ **THE TWO MOMENTS ARE HIS, READ OFF THE SCREENSHOTS HE SENT.** The first he identified by
+     the text itself: the block has slid until its own left edge meets the frame's — the "Y" of
+     YOUR is clipped, the "S" of SCROLL is gone, and that displacement is **133 film px**, which the
+     pin's own table puts at **t=1.85**. The second is the picture: the marble face fills the frame
+     with only a wedge of sky and trees left at the top corner, which is **t≈6.0** — and 6.0 is also
+     where the first screen has always ended (D325), so his mark and the approved window agree.
+     ⚠️ **LINEAR BETWEEN THEM, AND THAT IS THE POINT.** *"Perfectly tied to the user's scroll"* means
+     the edge's position is a straight function of how far he has scrolled, with no easing of its
+     own — the 130px soft band is what keeps it from reading as a hard line, not a curve.
+     ⛔⛔ **AND IT RUNS ON THE SCROLL CLOCK, NEVER ON THE FILM'S.** That is the entire reason this
+     cannot shake, and it is the lesson of D349–D351 stated as a rule: **the film is 12fps and a
+     fast scrub presents about every sixth frame, so anything that follows the PICTURE moves in
+     visible steps on type.** Nothing here follows the picture. The type does not move at all; the
+     only thing in motion is the mask's own edge, on the continuous eased scroll value, at 60fps. */
+  /* ⛔⛔ **IT STARTS ON THE FIRST PIXEL OF SCROLL — 24 August 2026 (D353).** Client: *"the text
+     should start moving to the side immediately as the user scrolls, so it matches perfectly with
+     the video, because right now I can swipe quite a while before the text starts moving… it needs
+     to immediately start moving to give the illusion that it's pretty much staying in the same
+     place, and then it swipes away."*
+     ⚠️ **WIPE_AT WAS 1.85 AND THAT WAS A MISREADING OF HIS OWN SCREENSHOT.** He marked the moment
+     the block had reached the frame's edge and called it the start of the animation; I built the
+     block STILL until then. What he meant is that it should already be on its way by that point. */
+  const WIPE_AT=0, WIPE_OUT=6.0;
+  /* the first screen's box and the proof block's, in the story layer's own coordinates */
+  const HW={x0:0,x1:0}, HT={x0:0,x1:0};
+  const boxOf=(el,o)=>{ o.x0=el.offsetLeft; o.x1=el.offsetLeft+el.offsetWidth; };
+  /* ⭐⭐⭐ **IT LEAVES AT THE PICTURE'S OWN STARTING SPEED AND THEN OUTRUNS IT — D353.** This curve
+     is chosen against a measurement, not by feel: the far field's tracked travel (D349's table,
+     parked with the pin) runs **0 → 744 film px = 620 screen px over the six seconds**, starting at
+     **51 screen px a second**. `0.4p + 0.6p²` over the block's own 761px starts at **50.7 px/s** —
+     the picture's rate to within a pixel, which is what *"it matches perfectly with the video"*
+     buys — and then pulls ahead to finish **1.23x** in front of the scene. So it reads as sitting
+     with the picture for the first moment and then being taken by the side.
+     ⛔ **AND IT NEVER RUNS AT THE SCENE'S RATE FOR LONG**, which matters: the film is 12fps, so
+     anything that keeps pace with it invites the eye to compare the two and see the steps. This is
+     ahead of the scene from the first second onward and it is driven by the CONTINUOUS scroll, so
+     the block's own motion is smooth whatever the film is doing.
+     ⚠️ It starts with real velocity rather than easing in from a standstill — an ease-in is exactly
+     the *"I can swipe quite a while before the text starts moving"* he objected to. */
+  const wipeEase=p=>0.4*p+0.6*p*p;
+  /* ⭐⭐ THE ONLY MEASUREMENT THIS DESIGN NEEDS: the two boxes, so the frame knows how far the block
+     has to travel to be clear of the screen. Desktop-only and `display:none` below 1121, where a
+     read returns a 0-wide box — hence the band test. ⛔⛔ **AND IT IS TAKEN AGAIN WHEN THE FONT
+     LANDS**: Cinzel is 135px wider across the headline than the fallback, and D349 tracked the wrong
+     patch of mountain for a whole round because of exactly that. It costs one line here. */
+  function measurePin(){
+    if(!heroOn)return;
+    if(heroEl)boxOf(heroEl,HW);
+    if(trustEl)boxOf(trustEl,HT);
+  }
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{ measurePin(); measureReveal(); });
+
+  /* ═════ THE SLAB REVEALS ITS OWN CAPTION — 24 August 2026 (D354). DESKTOP ONLY. ═════
+     Client: *"the slab fills the screen and then goes back at an angle revealing an open space
+     when the text comes up. I would like the text to pretty much already be there, and then it
+     almost gets revealed as if the slab is revealing it. It's like covering the text, and then the
+     slab reveals it as if it was always behind in that spot… so the t and the c of the word the
+     and choose will obviously already be there, and then the h and the e… it all gets revealed as
+     if it's coming out from behind the slab. The animation just plays at that angle essentially
+     and reveals at the same angle of the slab."*
+     ⭐⭐⭐ **THE WORDS NEVER MOVE AND NEVER FADE IN. THE SLAB'S OWN EDGE IS THE CURTAIN.** The
+     block sits at its approved position at opacity 1 from t=10.3, hidden behind a `clip-path`
+     whose boundary IS the slab's left edge — tracked per film frame, and the edge is a genuinely
+     straight line: max residual 2.2 film px against a least-squares fit over the 620 rows the
+     text spans, 32 rows a frame. So two numbers a frame carry it exactly — X at film y 490, and
+     the slope, which runs -0.03 to -0.38 as the slab rotates away. Letters are uncovered exactly
+     as the stone passes them, the T and the C first, partial glyphs and all, at the slab's own
+     angle; scroll back up and the slab takes them again.
+     ⛔⛔⛔ **THE CLIP RIDES THE PAINTED FRAME (rVFC), AND THAT IS CORRECT HERE FOR THE VERY
+     REASON THE PIN WAS WRONG (D349–D351).** The pin put MOVING type on a 12fps picture and the eye
+     read the film's frame rate on the type. Here the type does not move: the only thing that
+     steps is the visibility boundary, and it steps at the same instant, by the same amount, in
+     the same place as the slab's own painted edge — one event, not two clocks, so there is no
+     relative motion anywhere and nothing to judder. A boundary run on the smooth scroll clock
+     instead would detach from the painted edge — up to a whole presented step ahead under a fast
+     scrub — and put lit type ON the slab, which is the one thing the illusion cannot survive.
+     ⭐⭐ **THE TABLE IS THE MEASUREMENT, RAW AND ONE-WAY (D351's rule):** frames 124–205 of the
+     1920 cut, threshold 40 on the void side so the boundary sits at the first hint of the lit
+     fringe, then pulled REV_PAD film px shy of it so type never touches lit stone — the seam that
+     leaves is black on black. Strictly monotone over the whole domain; the backswing that starts
+     at f206 — the slab drifts about 150 film px back left by t=21 — is OUTSIDE it, and by then
+     the clip is off. At 1440x900 the reveal runs t=11.25, the T, to t≈15.1, the em's full stop —
+     so 15.0, the old fade-in moment, is measured as the moment the slab finishes clearing the
+     words, and the copy occupies the same seconds it always did.
+     ⚠️ **RE-TRACK IF THE FILM IS EVER RE-CUT** — the probe is `.textanim-2026-08-24/track_edge.py`.
+     ⛔ NO INTERPOLATION between frames, on purpose: a value read between two frames is a boundary
+     the picture is not at — D350's fault, restated for a mask. */
+  const REV_X=[
+    2.0,8.9,26.9,46.1,66.2,86.3,106.8,127.9,149.8,171.2,193.2,215.9,238.8,261.5,
+    283.5,306.1,328.6,350.8,373.1,395.0,416.9,438.2,459.5,480.7,501.7,521.9,541.8,561.5,
+    581.2,600.1,618.6,637.4,655.8,673.4,690.2,707.4,724.3,740.6,756.0,771.7,787.6,802.4,
+    816.6,831.1,845.5,859.2,872.3,885.6,898.9,911.7,923.7,936.0,948.2,959.9,971.4,982.6,
+    993.7,1004.2,1014.6,1025.1,1035.6,1045.6,1055.1,1064.6,1074.2,1083.5,1092.3,1101.2,1110.2,1118.5,
+    1126.4,1134.6,1142.6,1150.4,1158.1,1165.5,1172.9,1179.8,1186.3,1193.1,1199.7,1205.7];
+  const REV_S=[
+    0.0,-0.0294,-0.0334,-0.0351,-0.0378,-0.0408,-0.044,-0.0477,-0.0515,-0.0538,
+    -0.0594,-0.0643,-0.0672,-0.0712,-0.075,-0.0796,-0.083,-0.0874,-0.0923,-0.0952,
+    -0.1001,-0.1037,-0.1098,-0.1144,-0.1182,-0.1232,-0.1294,-0.1341,-0.1394,-0.1449,
+    -0.1505,-0.1553,-0.1599,-0.1647,-0.1713,-0.1774,-0.1834,-0.1888,-0.1949,-0.2011,
+    -0.2062,-0.2111,-0.2176,-0.2226,-0.228,-0.2341,-0.2383,-0.2434,-0.2487,-0.2527,
+    -0.2576,-0.2621,-0.2678,-0.2737,-0.2785,-0.2832,-0.2891,-0.2936,-0.2982,-0.3027,
+    -0.3074,-0.3116,-0.3169,-0.3216,-0.3257,-0.3296,-0.3335,-0.3377,-0.341,-0.3443,
+    -0.3482,-0.3507,-0.3544,-0.3583,-0.3621,-0.3652,-0.3684,-0.372,-0.3746,-0.3774,
+    -0.3803,-0.3845];
+  const REV_F0=124, REV_PAD=3;
+  /* ═════ THE PHONE'S OWN TRACK — 24 August 2026 (D360). TWO EDGES, BECAUSE THE PICTURE HAS TWO.
+     On the 608 vertical cut the slab does not sweep aside in one line: it tilts back off the
+     frame, so its LEFT edge sweeps right across the caption's rows (f170–201, X at film y 240 +
+     slope, residual ≤0.9 film px over 31 rows a frame) while its TOP edge comes down through them
+     (f178–201, Y at film x 304 + slope, residual ≤0.8 over ~40 columns). The visible void is
+     everything left of the one OR above the other, and the two lines meet at the slab's own
+     corner — so the clip is a six-point polygon: the frame, notched by that corner. Both tables
+     are strictly monotone over the domain; past f201 the corner has left the caption's rows
+     (topmost lit pixel ≥341 film px for the rest of the beat, measured to f288) and the clip
+     comes OFF — nothing pops, because everything still covered at f201 sits below the ink.
+     ⚠️ -9999 in PREV_Y means "no top edge yet" — before f178 it is still above the frame.
+     ⚠️ RE-TRACK IF THE FILM IS EVER RE-CUT — the probe is `.textanim-2026-08-24/track_edge.py`
+     (the phone variant is documented inside it, D360). */
+  const PREV_F0=170;
+  const PREV_X=[
+    25.2,31.6,38.3,44.3,50.2,54.8,60.1,64.0,67.5,69.8,72.9,74.3,75.6,78.8,85.1,92.0,
+    99.5,109.0,119.7,130.8,143.2,156.4,169.5,182.8,194.8,207.9,221.0,232.1,241.7,255.0,264.0,273.0];
+  const PREV_SX=[
+    -0.2289,-0.2369,-0.2456,-0.2523,-0.2593,-0.2610,-0.2687,-0.2718,-0.2769,-0.2809,
+    -0.2861,-0.2905,-0.2950,-0.2995,-0.3054,-0.3093,-0.3147,-0.3201,-0.3218,-0.3264,
+    -0.3303,-0.3355,-0.3404,-0.3461,-0.3479,-0.3522,-0.3585,-0.3591,-0.3542,-0.3750,-0.3750,-0.3750];
+  const PREV_Y=[
+    -9999,-9999,-9999,-9999,-9999,-9999,-9999,-9999,-8.1,-4.1,-0.7,2.6,6.3,13.4,26.2,41.2,
+    58.6,77.9,99.0,120.8,142.7,164.5,186.2,206.9,227.0,246.0,263.9,280.7,296.6,310.8,324.1,335.9];
+  const PREV_SY=[
+    0,0,0,0,0,0,0,0,0.0542,0.0525,0.0523,0.0518,0.0511,0.0511,0.0506,0.0502,
+    0.0500,0.0499,0.0493,0.0487,0.0480,0.0473,0.0459,0.0464,0.0456,0.0459,0.0459,0.0454,
+    0.0439,0.0440,0.0432,0.0423];
+  /* ═════ THE TABLET'S OWN TRACK — 24 August 2026 (D368). The 864 cut is the desktop film
+     CROPPED, and its slab sweep is the desktop's own geometry: ONE left edge, strictly monotone,
+     crossing the frame f157–f205 (X at film y 360 + slope, residual ≤1.1 film px over 27 rows a
+     frame) with the same backswing at f206 the 1920 cut has. So the tablet runs the DESKTOP's
+     four-point clip with its own numbers — his instruction verbatim: *"the same animation that
+     happens with the desktop version of how it reveals the text behind the slab should do the
+     same thing on tablet."* ⚠️ RE-TRACK IF THE FILM IS EVER RE-CUT — track_edge.py, rows 260–470,
+     YREF 360, on the 864 frames. */
+  const TREV_F0=157, TREV_YREF=360;
+  const TREV_X=[
+    15.0,32.6,50.4,68.2,85.1,101.3,117.9,134.4,149.9,164.9,180.1,195.3,209.8,223.3,237.4,251.3,
+    264.5,277.1,290.1,303.0,315.3,327.5,339.4,351.3,362.5,373.5,384.6,395.5,406.1,416.3,426.5,
+    436.6,446.3,455.7,465.1,474.4,483.2,491.5,500.1,508.6,516.8,524.9,533.0,540.5,547.9,554.8,
+    561.7,569.0,575.7];
+  const TREV_S=[
+    -0.1582,-0.1672,-0.1730,-0.1799,-0.1858,-0.1912,-0.1976,-0.2044,-0.2094,-0.2151,-0.2210,
+    -0.2238,-0.2296,-0.2324,-0.2362,-0.2428,-0.2434,-0.2525,-0.2527,-0.2609,-0.2687,-0.2751,
+    -0.2785,-0.2817,-0.2853,-0.2930,-0.2950,-0.2991,-0.3045,-0.3121,-0.3131,-0.3201,-0.3243,
+    -0.3307,-0.3331,-0.3369,-0.3400,-0.3456,-0.3517,-0.3553,-0.3571,-0.3591,-0.3618,-0.3652,
+    -0.3683,-0.3694,-0.3742,-0.3806,-0.3812];
+  const revEl=document.querySelector('.cine-line[data-vpos-wide="hero"]');
+  let revOn=false, revClip=null, revSc=null, shownFr=-1;
+  /* the element's LAYOUT box and the cover mapping, cached together: offsets and not
+     `getBoundingClientRect`, because `clip-path` applies in the element's own untransformed space
+     and a rect read mid-scroll would fold `--lz` into the numbers (the pin's lesson). Re-read by
+     `sync()` and again when Cinzel lands — the face is 135px wider than the fallback across this
+     headline, and a boundary computed against the fallback's box slices the wrong glyphs (D349
+     paid for that against a mountain). */
+  const RV={sc:0.8333,dx:-80,dy:0,left:0,top:0,w:0,h:0,ok:false};
+  function measureReveal(){
+    /* ⭐ D368: the reveal runs on EVERY band — the desktop (D354), the phone (D360, two edges),
+       and the tablet (D368, the desktop's own four-point clip against the 864 crop's table). */
+    revOn=(heroOn||heroNr)&&!!revEl;
+    RV.ph=heroPh&&!heroOn;
+    RV.tb=heroTab;
+    if(!revOn){ revealTick(); return; }
+    RV.fw=RV.ph?608:(RV.tb?864:1920);
+    RV.left=revEl.offsetLeft; RV.top=revEl.offsetTop; RV.w=revEl.offsetWidth; RV.h=revEl.offsetHeight;
+    const bb=heroBg&&heroBg.getBoundingClientRect();
+    if(bb&&bb.width&&bb.height){
+      const vr=(vid.videoWidth&&vid.videoHeight)?vid.videoWidth/vid.videoHeight:(RV.fw/1080);
+      let dw,dh,dx,dy;
+      if(vr>bb.width/bb.height){ dh=bb.height; dw=dh*vr; dx=(bb.width-dw)/2; dy=0; }
+      else { dw=bb.width; dh=dw/vr; dx=0; dy=(bb.height-dh)/2; }
+      RV.sc=dw/RV.fw; RV.dx=bb.left+dx; RV.dy=bb.top+dy; RV.ok=true;
+    }
+    revealTick();
+  }
+  function revealTick(){
+    if(!revEl)return;
+    if(!revOn||!RV.ok){
+      /* hand the properties back on the way out — an inline clip or scale left behind would slice
+         or shrink the tablet's own fade for no reason (the D336/D348 family of bug) */
+      if(revClip!==null){ revClip=null; revEl.style.clipPath=''; }
+      if(revSc!==null){ revSc=null; revEl.style.removeProperty('--lsc'); }
+      return;
+    }
+    const fr=(shownFr>=0)?shownFr
+      :Math.floor(((vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:0)*FPS+1e-6);
+    let c;
+    if(RV.ph){
+      /* ═════ THE PHONE (D360): the slab tilts back off the frame, so TWO edges do the revealing —
+         the left edge sweeps right across the words while the top edge comes down through them,
+         and they meet at the slab's own corner. The clip is the frame notched by that corner: six
+         points, every one on one of the two measured lines. Same clock (the painted frame), same
+         pad, same one-way table as the desktop; before f178 the top edge is still above the frame
+         (the -9999 sentinel) and the polygon is the desktop's own four-point form. Past the
+         table's end the clip comes OFF — measured: everything still covered at f201 sits below
+         the ink, so nothing pops (see the table's note). */
+      const i=Math.max(0,Math.min(PREV_X.length-1,fr-PREV_F0));
+      const done=fr-PREV_F0>=PREV_X.length-1;
+      if(done)c='';
+      else{
+        const x0=PREV_X[i]-REV_PAD, sx=PREV_SX[i];
+        const fX=e=>(e+RV.left-RV.dx)/RV.sc, fY=e=>(e+RV.top-RV.dy)/RV.sc;
+        const eX=f=>+(f*RV.sc+RV.dx-RV.left).toFixed(1), eY=f=>+(f*RV.sc+RV.dy-RV.top).toFixed(1);
+        const XL=fX(-400), XR=fX(RV.w+400), YT=fY(-200), YB=fY(RV.h+200);
+        const Xat=y=>x0+sx*(y-240);
+        if(PREV_Y[i]<-5000){
+          c='polygon('+eX(XL)+'px '+eY(YT)+'px,'+eX(Xat(YT))+'px '+eY(YT)+'px,'
+           +eX(Xat(YB))+'px '+eY(YB)+'px,'+eX(XL)+'px '+eY(YB)+'px)';
+        }else{
+          const yp=PREV_Y[i]-REV_PAD, sy=PREV_SY[i];
+          const Yat=x=>yp+sy*(x-304);
+          const cx=(x0+sx*(yp-240-304*sy))/(1-sx*sy);   /* the corner, film px */
+          const cy=yp+sy*(cx-304);
+          c='polygon('+eX(XL)+'px '+eY(YT)+'px,'+eX(XR)+'px '+eY(YT)+'px,'
+           +eX(XR)+'px '+eY(Yat(XR))+'px,'+eX(cx)+'px '+eY(cy)+'px,'
+           +eX(Xat(YB))+'px '+eY(YB)+'px,'+eX(XL)+'px '+eY(YB)+'px)';
+        }
+      }
+    }else{
+    /* ⭐ D368: one four-point path, two bands — the desktop's own tables at ≥1121, the tablet's
+       (TREV, the 864 crop) between 721 and 1120. Same clip, same clocks, same gates. */
+    const GX=RV.tb?TREV_X:REV_X, GS=RV.tb?TREV_S:REV_S,
+          GF0=RV.tb?TREV_F0:REV_F0, GYR=RV.tb?TREV_YREF:490;
+    const i=Math.max(0,Math.min(GX.length-1,fr-GF0));
+    const x0=GX[i]-REV_PAD, s=GS[i];
+    /* the edge in the element's own pixels, read 60px above and below the box so nothing is ever
+       cut vertically — two points, because the slab's angle is part of the table */
+    const yT=RV.top-60, yB=RV.top+RV.h+60;
+    const xT=+((RV.dx+(x0+s*((yT-RV.dy)/RV.sc-GYR))*RV.sc)-RV.left).toFixed(1);
+    const xB=+((RV.dx+(x0+s*((yB-RV.dy)/RV.sc-GYR))*RV.sc)-RV.left).toFixed(1);
+    /* the picture has finished revealing — past the table's last frame, or the edge clear of the
+       box — and the clip comes OFF: the element is then exactly what it was before this round.
+       The frame gate matters on short windows, where the box runs deep into the frame and the
+       edge never formally clears it; past the last tracked frame today's composition takes over,
+       which is what shipped before this design. */
+    const done=(fr-GF0>=GX.length-1)||Math.min(xT,xB)>RV.w+30;
+    c=done?'':'polygon(-2000px -60px,'+xT+'px -60px,'+xB+'px '+(RV.h+60)+'px,-2000px '+(RV.h+60)+'px)';
+    }
+    if(c!==revClip){ revClip=c; revEl.style.clipPath=c; }
+  }
+  /* ⭐ the one honest clock for "what frame is on the screen" — D351's lesson, reused for the one
+     design where following the painted frame is right. `currentTime` stays as the fallback, where
+     its 1–3 frame lead costs a sliver of type on the slab's fringe rather than a shake. */
+  const HAS_RVFC=!!(vid&&typeof vid.requestVideoFrameCallback==='function');
+  if(HAS_RVFC){
+    const onFrame=(now,meta)=>{
+      const f=Math.floor(meta.mediaTime*FPS+1e-4);
+      if(f!==shownFr){ shownFr=f; revealTick(); }
+      try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
+    };
+    try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
+  }
+
+  /* ═════ THE KITCHEN BEAT ARRIVES BY THE SIDE IT WILL LEAVE BY — 24 August 2026 (D355).
+     DESKTOP ONLY. ═════
+     Client: *"I wanted to animate in — no fade or anything, just coming in from the left side and
+     setting. So as the user scrolls, it comes in from the left and then sets into its position.
+     And then for the animation for that text to go away, I wanted it to go back out to the left in
+     reverse. The same way that it came, just reverse that."*
+     ⭐⭐⭐ **NOTHING FADES AND NOTHING FOLLOWS THE PICTURE.** One translate on the continuous eased
+     SCROLL clock — the first screen's grammar (D352) pointed inward — over a shot whose camera is
+     measured as locked off, so there is no scene speed to match and nothing to step against. The
+     words carry their own wash in with them: `.cine-line::before` lives inside the line's stacking
+     context and rides the same transform, so the shade arrives and leaves WITH the words rather
+     than hanging on an empty room.
+     ⚠️ **THE CLOCK HAS FLIPPED TWICE — READ D357 AND D358 BEFORE TOUCHING IT.** Scrubbed at
+     D355 (in 28.5 → 31.7 after D355a's *"slightly slower"*, out 34.3 → 37.5 after D355b's
+     *"match the exit"*) → wall-clock at D357 (*"just animate in and out at a good time instead of
+     being tied to the scroll"*) → **scrubbed again at D358** (*"probably has to be tied to the
+     scroll because it's currently broken"* — the wall clock lingered over the slab scene on a
+     fast back-scrub, and its second rAF + per-frame `getImageData` read as jagged). The curves
+     survived every flip unchanged; the D358 block below is the live mechanism and carries the
+     history in full.
+     ⭐ **THE SLIDE IS THE SAFE AXIS, MEASURED (D345's fences):** the block's vertical position
+     never changes, so the island (14–21px below) and the bar (65px above) keep their clearances
+     through the whole life of the beat; and while sliding, the block sits LEFT of its rest, so its
+     right ink edge (776 at 1440) can only ever be further from the pendants at 785–798.
+     ⚠️ `KW.x1` is the box's own right edge in the story layer — `offsetLeft + offsetWidth`, both
+     set by vw clamps, so a resize is the only thing that moves it and `sync()` is the one that
+     re-reads it. No font term: the box is sized, not shrink-wrapped.
+     ⛔ Off-left costs nothing: `html` carries `overflow-x:clip` (see the note at the top of the
+     stylesheet), the same rule every parked composition already relies on.
+     ⛔ Z STAYS AT 0 AND THE DEPTH BLUR IS GONE WITH IT — a thing that slides in and sits cannot
+     also be travelling in Z, and this beat starts at 16vh where the perspective trap lives
+     (D325b/D340/D345); a pure translateX under the parent perspective has no Z component and
+     cannot spring it. */
+  /* ⛔⛔⛔ **D357 IS REVERSED — THE SLIDE IS BACK ON THE SCROLL — 24 August 2026 (D358).**
+     Client: *"if I go back in the animation, it gets stuck on the previous screen… the animation
+     goes back over the previous scene and goes over the text that says the slab you choose is
+     unique. So that shouldn't happen. And then the animation probably has to be tied to the
+     scroll because it's currently broken. But I wanted it to come in earlier, and it has to move
+     in very smoothly because currently it feels a bit jagged."*
+     ⭐⭐⭐ **BOTH COMPLAINTS WERE THE WALL CLOCK'S OWN PROPERTIES, MEASURED:**
+     — **The lingering**: a 1.25s exit tween cannot outrun a fast reverse scrub. He is back on the
+       slab scene while the kitchen words are still mid-flight over it, and the eased playhead's
+       own ~2.5s settle DELAYS the out-trigger on top of that. A scrubbed position is a function
+       of film time and simply cannot exist outside its window.
+     — **The jagged**: the tween ran a SECOND rAF against the film's own loop while every frame
+       called `bandGrade()` — a `getImageData` readback per tween frame, against a video that is
+       decoding seeks. The scrubbed slide computes inside `story()`'s existing tick and pays
+       nothing extra, which is how every beat has run since D313 without complaint.
+     ⭐⭐ **SO THIS IS D355a/b's APPROVED MECHANISM RESTORED, WITH THE EARLIER IN-POINT HE ASKED
+     FOR** — position a pure function of the EASED film time (the playhead the whole film runs on,
+     already smoothed by its 0.12 chase), reversal inherent, and an opacity gate at the window's
+     edges so the words cannot exist over any other scene even for a frame.
+     ⚠️ **WHAT SCRUBBING GIVES BACK, STATED SO NOBODY RE-DISCOVERS IT**: stop mid-entry and the
+     words hold part-way in — that is what "tied to the scroll" means, and it is the property he
+     weighed against the wall clock's faults and chose. D357's tween is in the register if he ever
+     wants it back; its jank fix (wash throttling) would have to come with it.
+     ⭐⭐ **THE WINDOW IS 27.0 → 38.5 SINCE D358a** — client: *"it comes in and then goes out very
+     quickly, it doesn't stay for long enough… come in slightly earlier and leave slightly later"*
+     — so the still HOLD is **5.1s (30.2 → 35.3), up from 3.5**, with both ramps unchanged at 3.2s.
+     **Both edges are measured**: the kitchen shot cuts in at **t=25.5** and the text band is
+     established ground from **~26.8** (mean ~32, p97 65–67), so 27.0 gives it a beat to settle;
+     the corners round at 39.8 and the hero's ink rises at 41.1, so a fade finishing at 38.5
+     leaves 1.3s of empty closing shot before the frame becomes the hero.
+     ⛔⛔ **AND D358a PINNED THE PHONE AND TABLET AT 28.5–37.5 WITH A `-narrow` PAIR ON THE LINE**
+     — this beat had no per-band timing, so D358's base retime had silently reached them for about
+     an hour (rule 15). The pin is the fix AND the guard for every future desktop retime.
+     ⭐ THE CURVES ARE D355's, APPROVED TWICE: in on `1-(1-q)²` — full speed on the first pixel of
+     the window (D353: an ease-in from rest is a dead zone), zero velocity at rest, 3.2s (D355a) —
+     and out on `q²`, its exact time-reverse, 3.2s (D355b). */
+  const KIT_SET=30.2, KIT_OUT=35.3;
+  const kitEl=document.querySelector('.cine-line[data-vpos-wide="high"]');
+  /* ⚠️ `KW.x1` is the box's own right edge in the story layer — `offsetLeft + offsetWidth`, both
+     set by vw clamps, so a resize is the only thing that moves it and `sync()` is the one that
+     re-reads it. No font term: the box is sized, not shrink-wrapped. */
+  const KW={x1:0};
+  /* ⚠️ D361's PHK RISE-FENCE MACHINERY IS PARKED — D364 reversed the rise to the desktop slide,
+     which has nothing to cross. Its arithmetic (the bar FURNITURE's bottom, not the bar's 80px
+     box, minus 6px of air) lives in the register row if the rise ever returns. */
+  const KB={ox:0,oy:0,ow:0,oh:0};   /* parked for the wash rework — see D367 */
+  let kitTx=null;
+  function measureKit(){
+    if(!kitEl)return;
+    /* hand each band's inline property back on the way out — an inline value left behind would
+       drag another band's beat off its mark (the D336/D348 family of bug) */
+    if(!heroNr){ cine.style.removeProperty('--kitG'); }
+    if(!heroOn&&!heroNr){
+      kitEl.style.removeProperty('--lx'); kitTx=null;
+      kitEl.style.removeProperty('--lyp');
+      kitEl.style.removeProperty('--lg');
+    }
+    /* ⭐ ONE FORMULA, TWO BANDS (D364): the box's own right edge. On desktop that is the
+       left-anchored block's 761 at 1440; on the phone the line is full-width, so the slide is
+       the whole frame — 390 at 390 — and a resize is still the only thing that moves it. */
+    if(heroOn||heroNr) KW.x1=kitEl.offsetLeft+kitEl.offsetWidth;
+    /* ⭐ D366: the seated box, in story-layer offsets — the static zone the frame scrim covers,
+       and the only honest place to read its strength from (see bandGrade's note) */
+    KB.ox=kitEl.offsetLeft; KB.oy=kitEl.offsetTop; KB.ow=kitEl.offsetWidth; KB.oh=kitEl.offsetHeight;
+  }
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1,
     zNear: 560                             /* set per band by retimeStory() — see the note there */
@@ -5871,10 +6236,23 @@ if(faqIndex && panel && faqBody){
      canvas per frame is the version of this that shows up in a profile (grade()'s own lesson).
      ⛔ IT READS THE VIDEO, NOT THE SCREEN: a `cover` video is cropped by CSS, so the source rectangle
      has to be worked out the way the browser lays it out, or the sample is of the wrong pixels. */
-  function bandGrade(el){
+  /* ⛔⛔⛔ **THE CANVAS IS CLEARED BEFORE EVERY SAMPLE DRAW — 24 August 2026 (D366), AND THE
+     FLICKER IT KILLS WAS REAL.** `drawImage` CLIPS a source rectangle that reaches outside the
+     video, so it paints only part of the 48×8 grid — and the rest of the grid keeps the PREVIOUS
+     draw's pixels. A box that is partly off-frame (every sliding beat, mid-entry) therefore
+     samples a mix of live and STALE cells, and the max-cell statistic oscillates bright/dark per
+     frame — the client: *"the gradient is constantly flashing… almost giving me epilepsy."* One
+     clearRect makes an off-frame region read as what it is (nothing) instead of as last frame's
+     kitchen. ⭐ The optional `box` argument samples a STATIC layout box (story-layer offsets)
+     instead of the element's live transformed rect — the phone's frame scrim covers the words'
+     SEATED zone, so its strength must be read from that zone, not from wherever the slide
+     currently holds the words (the second half of the same strobe). */
+  function bandGrade(el,box){
     if(!vid.videoWidth||vid.readyState<2)return -1;
     const bg=heroBg.getBoundingClientRect(); if(!bg.height)return -1;
-    const r=el.getBoundingClientRect(); if(!r.height)return -1;
+    const r=box?{left:bg.left+box.ox,top:bg.top+box.oy,width:box.ow,height:box.oh}
+               :el.getBoundingClientRect();
+    if(!r.height)return -1;
     const vr=vid.videoWidth/vid.videoHeight, br=bg.width/bg.height;
     let dw,dh,dx,dy;
     if(vr>br){ dh=bg.height; dw=dh*vr; dx=(bg.width-dw)/2; dy=0; }
@@ -5882,7 +6260,7 @@ if(faqIndex && panel && faqBody){
     const sc=vid.videoWidth/dw;
     const sx=(r.left-bg.left-dx)*sc, sy=(r.top-bg.top-dy)*sc;
     const sw=Math.max(1,r.width*sc), sh=Math.max(1,r.height*sc);
-    try{ gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,8); }catch(e){ return -1; }
+    try{ gctx.clearRect(0,0,48,8); gctx.drawImage(vid,sx,sy,sw,sh,0,0,48,8); }catch(e){ return -1; }
     let d; try{ d=gctx.getImageData(0,0,48,8).data; }catch(e){ return -1; }
     const cell=[];
     for(let i=0;i<384;i++) cell.push(0.2126*d[i*4]+0.7152*d[i*4+1]+0.0722*d[i*4+2]);
@@ -5905,10 +6283,139 @@ if(faqIndex && panel && faqBody){
     return clamp((cell[383]-GRADE_LO)/(GRADE_HI-GRADE_LO));
   }
   let firstAlpha=0;                 // the opening title's own alpha, for the scroll cue below
+  /* ⛔⛔ **THE TWO BEATS ARE UNTOUCHED AGAIN — 24 August 2026 (D349), ON HIS INSTRUCTION.** Client:
+     *"the animation of the text where it says the slab you choose is unique will change that one to
+     be something different only when we're ready. We're doing one section at a time now. And then
+     the same thing for the stone sets the tone of the room, that will also have its own different
+     way of animating. So we're only doing the first part now."*
+     ⭐ So D348's branch came straight back out of this function and the beats run D316's approach
+     at EVERY band, exactly as they did before that round: fade in over 16%, travel in Z, fade out
+     over 26%, with the depth-of-field blur as they cross the focal plane. **Each beat gets its own
+     answer, and he says when.**
+     ⭐⭐ **D354 AND D355 (24 Aug) DELIVERED BOTH BEATS' OWN ANSWERS, ON HIS INSTRUCTION — the
+     slab beat's reveal (THE SLAB REVEALS ITS OWN CAPTION) and the kitchen beat's slide (THE
+     KITCHEN BEAT ARRIVES BY THE SIDE IT WILL LEAVE BY), desktop only, as the two branches
+     below.** ⛔ Both beats remain untouched on the phone and the tablet — that round is still
+     his to open. */
   function story(t){
     for(const L of STORY){
       if(L.out<=L.at)continue;
       const p=clamp((t-L.at)/(L.out-L.at));
+      /* ⭐⭐⭐ THE SLAB BEAT ON DESKTOP IS THE REVEAL (D354): no in-fade — the clip owns the
+         entrance — no Z travel and no blur, because the words were "always behind in that spot"
+         and a thing being uncovered cannot also be travelling. ⛔ AND NO FILTER EVER LANDS ON
+         THIS ELEMENT WHILE IT CARRIES THE CLIP — a filter under an animated mask re-rasters both
+         per change (D339, the arrow). The exit keeps its approved seconds exactly: a plain fade
+         over the same 2.47s the old out-ramp occupied, 22.03 to 24.5, the travel and the blur gone
+         with the travel. The wash is pinned to 0: the beat sits on measured void, and mid-reveal
+         the box straddles the lit slab, where `bandGrade()` would raise a wash over letters that
+         are supposed to not exist yet. */
+      /* ⭐ D360: THE SAME BRANCH NOW SERVES THE PHONE — same reveal, same pinned wash and Z, its
+         own clip table inside revealTick, and its own exit seconds: 2.03s is the out-ramp the
+         phone's beat has always had (26% of 16.2–24.0), kept exactly as 2.47 was kept on desktop. */
+      if(L.el===revEl&&(heroOn||heroNr)){
+        /* ⭐ D368: the fade's seconds are each band's own approved out-ramp — the desktop's 2.47
+           carried to the tablet (its window now mirrors the desktop's 13.0–24.5), the phone's
+           2.03 kept. The recede (D364) runs on BOTH narrow bands. */
+        const FAD=heroPh?2.03:2.47;
+        const a=(p<=0||p>=1)?0:Math.min(1,(L.out-t)/FAD);
+        const o=+(a*a*(3-2*a)).toFixed(2);
+        if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+        /* ⭐⭐ THE PHONE'S EXIT RECEDES — 24 August 2026 (D364). Client: *"I want it to basically
+           be the opposite of what the surfaces worth building around does… instead of coming from
+           the back forward, it goes from the forward backwards and fades out backwards, almost
+           like it gets smaller and just disappears backwards. The way that it animates in already
+           is perfect."* So over the same 2.03s the fade has always had, the line scales 1.00 →
+           0.84 — the ending's own number, run the other way — on q², gathering speed as it goes,
+           scroll-tied like everything in this tick. scale(), not translateZ: the ending zooms
+           about its own centre with no perspective, and its opposite must mirror that — a
+           negative Z under the story's 26%-origin perspective would drag the block down-left as
+           it shrank. The clip is long OFF by now (reveal done t=16.75, exit from 21.97), so no
+           filter-under-mask family risk. ⛔ Desktop untouched: its exit is D354's plain fade. */
+        if(heroNr){
+          const q=clamp((t-(L.out-FAD))/FAD);
+          const sc=+(1-0.16*q*q).toFixed(3);
+          if(sc!==revSc){ revSc=sc;
+            if(sc===1)L.el.style.removeProperty('--lsc');
+            else L.el.style.setProperty('--lsc',sc);
+          }
+        }
+        /* ⚠️ PHONE ONLY, AFTER THE CLIP IS OFF (D362): the wash may ride bandGrade again. On any
+           ordinary phone the post-reveal ground is void, the grade reads ~0 and nothing changes;
+           on a sub-360 handset the taller box reaches the floating slab's lane, and this is what
+           keeps those words off bare marble. While the clip is LIVE the wash stays pinned 0 —
+           mid-reveal the box straddles the lit slab (D354's reason, unchanged), and the desktop
+           keeps its documented pin in full. */
+        if(heroNr&&revClip===''&&o>0.02){
+          const g=bandGrade(L.el);
+          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+        }
+        else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
+        if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
+        if(!HAS_RVFC)revealTick();
+        continue;
+      }
+      /* ⭐⭐⭐ THE KITCHEN BEAT ON DESKTOP SLIDES IN FROM THE LEFT AND SETS, AND LEAVES IN REVERSE
+         (D355) — no fade, no Z, no blur, on the continuous scroll clock. The curve and the fences
+         are documented at KIT_SET above. The wash still rides `bandGrade()` — this beat sits on
+         the lit kitchen (D346's specular streaks), and the shade travels inside the line's own
+         stacking context, with the words. */
+      /* ⭐⭐⭐ THE KITCHEN BEAT ON THE PHONE RUNS THE DESKTOP'S OWN SLIDE — 24 August 2026 (D364).
+         ⚠️ THIS REVERSES D361's RISE, ON HIS INSTRUCTION: *"for the part of the stone sets the
+         tone of the room, I want that to animate in from the left side, like it does on the
+         desktop version. and then I wanted to animate out the same way."* So it is D355/D358's
+         approved mechanism at this band: position a pure function of the eased film time, in on
+         1−(1−q)² (full speed on the first pixel, dead stop at rest — the stop IS the "set"), out
+         on q² time-reversed, and the opacity GATE at the window's edges keeps every back-scroll
+         clean (D358). The wash rides bandGrade and travels inside the line's own stacking
+         context, with the words — exactly as on desktop.
+         ⭐ THE RAMPS ARE 1.8s AGAINST THE DESKTOP'S 3.2 AND THAT IS THE SAME SPEED, NOT A FASTER
+         ONE: this box slides its full width, 390px at 390w, against the desktop block's 761 —
+         ~217 px/s either way — and the window (28.5–37.5) keeps a 5.4s still hold, the length
+         D358a fought for. ⛔ Z PINNED 0, NO BLUR: a thing that slides and sits cannot also drift
+         at the camera. D361's fence arithmetic is parked with `--lyp` — a slide has nothing to
+         cross. */
+      if(L.el===kitEl&&heroNr){
+        const o=(p<=0||p>=1)?0:1;
+        /* ⭐ D368: the tablet slides at the DESKTOP's own speed — 2.2s over its ~520px box is the
+           761/3.2 rate — while the phone keeps its 1.8s over 390 (D364's same-px/s arithmetic). */
+        const RMP=heroPh?1.8:2.2;
+        const ps=L.at+RMP, po=L.out-RMP;
+        let tx=0;
+        if(t<ps){ const q=clamp((t-L.at)/(ps-L.at)); tx=+(-KW.x1*(1-q)*(1-q)).toFixed(2); }
+        else if(t>po){ const q=clamp((t-po)/(L.out-po)); tx=+(-KW.x1*q*q).toFixed(2); }
+        if(tx!==kitTx){ kitTx=tx; L.el.style.setProperty('--lx',tx); }
+        if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+        /* ⚠️ D367: the ORIGINAL radial wash, restored on his order after the frame-scrim
+           attempts (D365/D366) kept flashing for him — see the ::before note in the stylesheet
+           for the whole history and the baked-table plan for the rework. */
+        if(o>0.02){
+          const g=bandGrade(L.el);
+          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+        } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
+        if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
+        continue;
+      }
+      if(L.el===kitEl&&heroOn){
+        /* ⭐ SCRUBBED AGAIN (D358) — a pure function of the eased film time, computed inside this
+           tick like every other beat, and the opacity gate is what makes the back-scroll clean:
+           outside 27.6–37.5 the words do not exist, whatever position the slide would hold. */
+        const o=(p<=0||p>=1)?0:1;
+        let tx=0;
+        if(t<KIT_SET){ const q=clamp((t-L.at)/(KIT_SET-L.at)); tx=+(-KW.x1*(1-q)*(1-q)).toFixed(2); }
+        else if(t>KIT_OUT){ const q=clamp((t-KIT_OUT)/(L.out-KIT_OUT)); tx=+(-KW.x1*q*q).toFixed(2); }
+        if(tx!==kitTx){ kitTx=tx; L.el.style.setProperty('--lx',tx); }
+        if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+        if(o>0.02){
+          const g=bandGrade(L.el);
+          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+        } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
+        if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
+        if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
+        continue;
+      }
       const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
       const o=+(a*a*(3-2*a)).toFixed(2);
       if(L===STORY[0])firstAlpha=o;
@@ -5945,49 +6452,118 @@ if(faqIndex && panel && faqBody){
      headline clean off the top of the screen while it is still half visible. At 300 the block lifts
      from y171 to about y116 while it is still fully up, and is gone before it reaches the bar. */
   const heroEl=document.getElementById('cineHero');
+  /* ⚠️ **HERO_Z IS PARKED, NOT LIVE — D348.** The block no longer travels at all; the constant and
+     the note above it stay because the travel is one line away if he ever wants it back, and
+     because the number is measured (D325b) and would have to be re-derived from scratch. */
   const HERO_OUT=6.0, HERO_EDGE=1, HERO_Z=300;
-  let heroOn=false, heroO=-1, heroZ=-1, heroE=-1;
-  const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; };
+  let heroOn=false, heroPh=false, heroTab=false, heroNr=false, heroMode='off', heroLast='', heroO=-1, heroZ=-1, heroE=-1, heroTx=null, trustGone=null;
+  /* ⭐ D368: the block lives on EVERY band now — 'wide' wipes off by the side (D352); 'nr' (the
+     phone AND the tablet since the tablet round opened) travels in Z past the viewer (D359b's
+     4.8s pass). heroPh/heroTab stay distinct where a band owns its own numbers: the reveal's
+     table and geometry, the slide's ramp, the exit fade's seconds. */
+  const readHeroBand=()=>{ heroOn=matchMedia('(min-width:1121px)').matches; heroPh=mPhone.matches;
+    heroNr=!heroOn&&mNarrow.matches; heroTab=heroNr&&!heroPh;
+    heroMode=heroOn?'wide':(heroNr?'nr':'off'); };
   readHeroBand();
   const trustEl=document.getElementById('cineTrust');
   function heroCopy(t){
     if(!heroEl)return;
-    /* ⛔ HAND BOTH PROPERTIES BACK ON THE WAY OUT. A window dragged under 1121 leaves an inline
-       opacity and an inline `--cineEdge` behind, and an inline value outranks the class rule that
-       is meant to take over — the bug the scroll cue already taught this file once. */
-    if(!heroOn){
-      if(heroO!==0){
-        heroO=0; heroZ=-1; heroE=-1;
-        heroEl.style.opacity=''; heroEl.style.removeProperty('--hz');
-        /* ⛔ the proof block is handed back the same way and in the same breath — an inline opacity
-           left behind on a band change outranks the class rule that is meant to take over (D336). */
-        if(trustEl){ trustEl.style.opacity=''; trustEl.style.visibility=''; }
-        cine.style.removeProperty('--cineEdge');
+    /* ⛔ HAND EVERY PROPERTY BACK WHEN THE MODE CHANGES. A window dragged across 720 or 1121
+       leaves inline values behind, and an inline value outranks the class rule meant to take over
+       — the bug the scroll cue taught this file once and D348 shipped a second time. One reset
+       covers every direction: wide→phone, phone→off, off→wide. */
+    if(heroMode!==heroLast){
+      heroLast=heroMode;
+      heroO=-1; heroZ=-1; heroE=-1; heroTx=null; trustGone=null;
+      heroEl.style.opacity=''; heroEl.style.visibility='';
+      heroEl.style.removeProperty('--hz'); heroEl.style.removeProperty('--tx');
+      if(trustEl){
+        trustEl.style.opacity=''; trustEl.style.visibility='';
+        trustEl.style.removeProperty('--tx');
+      }
+      cine.style.removeProperty('--cineEdge');
+    }
+    if(heroMode==='off')return;
+    if(heroMode==='nr'){
+      /* ⭐⭐⭐ THE PHONE'S FIRST SCREEN GOES PAST THE VIEWER — 24 August 2026 (D359). Client:
+         *"almost like what it is currently… it should go through the screen, like, go past the
+         user and then fade off."* That is the narrow bands' own approved grammar (D316): a
+         translateZ under the story layer's 1000px perspective, 0 → 560 on p² — the exact travel
+         every narrow title runs — with the fade over the last 26% of the window. Up AT REST from
+         t=0 like the desktop (a hero is already there; it does not arrive), gone by t=6.0, the
+         slot the opening title has always held on this band.
+         ⛔ ON THE SCROLL CLOCK, NEVER THE PAINTED FRAME — moving type on a 12fps picture is
+         D349–D351's four-build lesson, restated here once. */
+      /* ⭐ 4.8, NOT THE DESKTOP'S 6.0 — D364: *"I want that to happen a little bit faster. So
+         they go through it slightly faster."* A fifth off the window; the whole pass (travel,
+         fade, the 380 cap's arithmetic) is a function of p, so the shape and the furniture
+         clearance are untouched — it simply completes by t=4.8. */
+      const p=clamp(t/4.8);
+      const a=p>=1?0:Math.min(1,(1-p)/0.26);
+      const o=+(a*a*(3-2*a)).toFixed(2);
+      /* ⛔⛔ 380, NOT THE TITLES' 560 — D340's trap, measured at THIS anchor. The block hangs at
+         22vh, above the 26% 50% origin, so the travel throws it UP: at 560 the headline crosses
+         the bar's furniture at ~0.8 opacity; at 380 it reaches the furniture line only past
+         p=0.95, where the fade has already taken it below ~0.1. The same arithmetic that capped
+         the desktop hero at 300 (D325b), redone for this box. */
+      const z=Math.round(380*p*p);
+      if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
+      if(o!==heroO){
+        heroO=o; heroEl.style.opacity=o; heroEl.style.visibility=o?'visible':'hidden';
+        /* ⭐ the grade is the frame's and rides the copy's own alpha, exactly as the desktop's
+           cine-edge does — the picture is unobstructed the moment the words have gone */
+        cine.style.setProperty('--cineEdge',o);
       }
       return;
     }
-    const p=clamp(t/HERO_OUT);
-    const a=Math.min(1,(1-p)/0.26);              /* the out-ramp only — see the note above */
-    const o=+(a*a*(3-2*a)).toFixed(2);
-    if(o!==heroO){
-      heroO=o; heroEl.style.opacity=o;
-      /* ⭐ ONE WRITE, TWO ELEMENTS — the proof cannot drift out of step with the words it belongs
-         to, because there is no second alpha to keep in sync. His ask: *"it'll fade away with the
-         your worktop starts here text."*
-         ⭐⭐ `visibility` at the ends, not just alpha: `.chip` carries `backdrop-filter:blur(8px)`
-         and a transparent backdrop-filtered layer is not reliably skipped, so at zero it comes out
-         of the compositor's way for the rest of the film. */
-      if(trustEl){ trustEl.style.opacity=o; trustEl.style.visibility=o>0?'visible':'hidden'; }
+    /* ⭐⭐⭐ **THE FIRST SCREEN LEAVES BY THE SIDE, ON HIS SCROLL — 24 August 2026 (D352).** Client:
+       *"once the text reaches this point… perfectly tied to the user's scroll… it fades off screen
+       at that perfect speed, so it just looks like it's going away off to the side and the side is
+       taking it away"*, and then: *"the fade is never visible in the center of the screen or in the
+       center of the text or away from the side… it gives the illusion that the side of the screen
+       is wiping it away instead of an actual animation."*
+       ⭐⭐ **NOTHING FADES AND NOTHING SWEEPS. ONE TRANSLATE, AND A MASK NAILED TO THE GUTTER.** The
+       block holds its approved position until `WIPE_AT`, then travels left until its right edge
+       reaches the screen's, dissolving in the gutter as it goes.
+       ⛔⛔ **`t` IS THE CONTINUOUS SCROLL CLOCK AND NEVER THE VIDEO'S PAINTED FRAME, AND THAT IS THE
+       WHOLE REASON THIS CANNOT SHAKE.** D349–D351 tied the words to the PICTURE, which is 12fps and
+       presents about every sixth frame under a scrub — invisible on a blurred photograph, plainly
+       visible on a 76px serif. Nothing here follows the picture.
+       ⚠️ **AND IT MOVES FASTER THAN THE SCENE ON PURPOSE**: 761px in the window against the far
+       field's ~512, about 1.5x, so the eye reads it as being pulled off the side rather than as
+       something attached to the mountain that is failing to keep up. */
+    const p=clamp((t-WIPE_AT)/(WIPE_OUT-WIPE_AT));
+    const tx=+(-HW.x1*wipeEase(p)).toFixed(2);
+    /* ⭐ THE ALPHA IS A SWITCH, NOT A RAMP: the screen's edge does the exit, and the block only goes
+       transparent afterwards so that something nobody can see is not composited over the remaining
+       38 seconds of film — and so `.chip`'s `backdrop-filter` stops sampling it. */
+    const o=p>=1?0:1;
+    if(tx!==heroTx){
+      heroTx=tx;
+      heroEl.style.setProperty('--tx',tx);
+      if(trustEl)trustEl.style.setProperty('--tx',tx);
     }
-    const z=Math.round(HERO_Z*p*p);
-    if(z!==heroZ){ heroZ=z; heroEl.style.setProperty('--hz',z); }
-    /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed from the
-       moment the film starts moving. Two decimal places and a change test: a custom property
-       written at full precision every frame is a style recalculation for nothing.
-       ⚠️ HERO_EDGE IS 1 SINCE D325b — the layer's two gradients carry their own strengths (0.74 at
-       the left border, 0.42 in the top-left corner) so this is purely the copy's alpha. It was 0.66
-       when the CSS was written at full strength and the multiplier did the grading. */
-    const e=+(HERO_EDGE*o).toFixed(2);
+    if(o!==heroO){
+      heroO=o; heroEl.style.opacity=o; heroEl.style.visibility=o?'visible':'hidden';
+      if(trustEl){ trustEl.style.opacity=o; trustEl.style.visibility=o?'visible':'hidden'; }
+    }
+    /* ⭐⭐ **AND THE PROOF CHIPS GO OUT WHEN THEIR OWN RIGHT EDGE PASSES THE SCREEN'S.** They are
+       taken by the same gutter as the words — no second alpha, no drift — but `.chip` carries
+       `backdrop-filter:blur(8px)` and a masked-to-nothing backdrop-filtered layer is not reliably
+       skipped by the compositor, so it is switched off the moment it is past the edge. */
+    if(o&&trustEl&&HT.x1>HT.x0){
+      const gone=(HT.x1+tx)<=0;
+      if(gone!==trustGone){ trustGone=gone; trustEl.style.visibility=gone?'hidden':'visible'; }
+    }
+    /* ⛔ Z IS PINNED AT 0 — the block does not come forward (*"doesn't come forward and fade away
+       and go through the screen"*), so the property it once travelled on is written once. */
+    if(heroZ!==0){ heroZ=0; heroEl.style.setProperty('--hz',0); }
+    /* ⭐ THE GRADE RIDES THE WORDS AND CANNOT OUTLIVE THEM, so his picture is unobstructed the moment
+       they have gone. ⚠️ HERO_EDGE IS 1 SINCE D325b — the layer's two gradients carry their own
+       strengths (0.74 at the left border, 0.42 in the top-left corner) so this is purely the copy's
+       alpha. ⭐ It retreats as the block leaves rather than riding an alpha that never moves. */
+    const vis=HW.x1>0?clamp((HW.x1+tx)/HW.x1):0;
+    const e=+(HERO_EDGE*vis).toFixed(2);
     if(e!==heroE){ heroE=e; cine.style.setProperty('--cineEdge',e); }
   }
 
@@ -6013,7 +6589,11 @@ if(faqIndex && panel && faqBody){
     if(cueEl&&!g)cueEl.style.opacity=firstAlpha;
     /* ⛔ `hidden`, not opacity: a control you cannot see must leave the tab order with it */
     const d=film>0.985;
-    if(d!==skipped){ skipped=d; if(skipEl)skipEl.hidden=d; }
+    if(d!==skipped){ skipped=d; if(skipEl)skipEl.hidden=d;
+      /* ⭐ D359: `skip-live` mirrors the control — the phone's contact pair flanks the skip while
+         it is on screen and returns to the corner (D180) the moment it goes. One writer, here. */
+      root.classList.toggle('skip-live',!d);
+    }
   }
   if(skipEl)skipEl.addEventListener('click',()=>{
     /* ⭐⭐ SKIP MEANS LAND ON THE PAGE AS THE FILM LEAVES IT, so this moves the scroll AND snaps the
@@ -6040,13 +6620,14 @@ if(faqIndex && panel && faqBody){
     veil(film);
     curve(film);   /* the hero's rounded corners, square until the film is nearly done */
     story(want);      /* film SECONDS — the lines are timed to the picture, not to the scroll */
-    heroCopy(want);   /* the opening hero, desktop only — up at rest, gone by t=6 */
+    heroCopy(want);   /* the opening hero, desktop only — pinned to the picture, gone by t≈6.9 */
     plate(want);      /* his still of f0, cut the instant the picture moves (D333) */
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
   }
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
+
 
   function onScroll(){
     if(!live)return;
@@ -6082,6 +6663,16 @@ if(faqIndex && panel && faqBody){
     cine.style.removeProperty('height');
     retimeStory();
     readHeroBand();   /* ⚠️ a dragged window crosses 1121 too — re-read with the rest */
+    /* ⭐ THE WAVE'S TWO FIXED BOXES, RE-READ HERE AND NOWHERE ELSE (D348). Both are desktop-only and
+       `display:none` below 1121, where a read would return a 0-wide box — hence the band test. Both
+       are sized in `vw`/`clamp` rather than `ch`, so unlike the beats they cannot move when a font
+       arrives, and once per resize is enough. */
+    /* ⭐⭐ THE PIN'S TWO MEASUREMENTS, TAKEN HERE AND NOWHERE ELSE (D349): the block's own box, and
+       how many screen pixels one film pixel is worth once `cover` has laid the video out. Both
+       change only when the box does, and `sync()` is the function the box changes call. */
+    measurePin();
+    measureReveal();  /* ⛔ the reveal's box and cover mapping move with the band too (D354) */
+    measureKit();     /* ⛔ and the kitchen slide's travel distance with them (D355) */
     plate(want);      /* ⛔ a band change swaps the overlay's crop as well as the film's */
     fetchFilm();
     measure(); eased=-1; inked=null; veiled=-1; curved=-1;

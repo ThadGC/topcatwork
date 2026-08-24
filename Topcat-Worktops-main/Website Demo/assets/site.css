@@ -858,13 +858,19 @@
   .mobile-nav .mn-alt:hover{border-color:var(--gold);color:var(--gold)}
 
   /* ============================================================================
-     ⭐ THE STICKY ACTION BAR — PHONE ONLY, 11 Aug 2026.
-     ⛔ EVERY RULE THAT MAKES IT VISIBLE LIVES INSIDE `@media(max-width:720px)`. Above that it is
+     ⭐ THE STICKY ACTION BAR — PHONE 11 Aug 2026; WIDENED TO THE TABLET 24 Aug 2026 (D372).
+     Client: *"for tablet, it's going to be the same. When the sticky bottom bar comes up, it'll
+     say get a quote, WhatsApp and call."* The QUERY is widened rather than the rules copied
+     (§5's rule), so both narrow bands run one description; the tablet's own sizing lives in
+     THE TABLET BAND block at the foot of the stylesheet.
+     ⛔ EVERY RULE THAT MAKES IT VISIBLE LIVES INSIDE `@media(max-width:1120px)`. Above that it is
      `display:none` and contributes nothing to layout, paint or scroll extent, so the frozen
-     desktop and the untouched tablet band are byte-identical (§2 rule 15, D91).
+     desktop is byte-identical (§2 rule 15, D91). ⚠️ `body{padding-bottom:66px}` and the
+     touch-action blanket travel with it — the bar needs its footer clearance wherever it can
+     rise, and every ≤1120 device is a touch device.
      ============================================================================ */
   .mbar{display:none}
-  @media(max-width:720px){
+  @media(max-width:1120px){
     /* z-index 39 is deliberate and sits BETWEEN two things: under `.mobile-nav` (40) so the
        full-screen menu covers it rather than leaving three stray links over the sheet, and far
        under the estimator modal (z 200) and the project overlay (z 120), which own the screen
@@ -896,11 +902,14 @@
     html.nav-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
     .mbar-a{
       flex:1 1 0;min-width:0;
-      display:inline-flex;align-items:center;justify-content:center;gap:7px;
+      /* ⚠️ D372: gap 7→6 and tracking 0.16→0.14em — "WHATSAPP" is three glyphs longer than
+         "EMAIL" and at 320px wide the old numbers ran the word into the button's border. The
+         whole row re-measured at 320/360/390 after the change; nothing clips. */
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
       padding:11px 6px;border-radius:2px;text-decoration:none;
       border:1px solid var(--hair);background:rgba(244,241,234,0.045);color:var(--bone);
       font-family:var(--brand);font-weight:600;font-size:min(10.5px,2.9vw);
-      letter-spacing:0.16em;text-transform:uppercase;white-space:nowrap;
+      letter-spacing:0.14em;text-transform:uppercase;white-space:nowrap;
       /* ⛔ iOS ZOOMS ON A DOUBLE TAP, and two quick taps on a bar like this is normal behaviour,
          not a mistake (client: "if I tap the buttons too quickly it automatically zooms in my
          phone"). `manipulation` drops the double-tap gesture on the element and keeps every
@@ -909,6 +918,13 @@
     }
     .mbar-a svg{flex:none;width:15px;height:15px;fill:currentColor}
     .mbar-a svg[stroke],.mbar-a svg path[stroke]{fill:none}
+    /* ⚠️ D372: at 320 wide "WHATSAPP" ran 2px past its button even at the 2.9vw font — these
+       buttons are nowrap, so that is a silent clip, not a wrap (the D171 trap). Nesting narrows:
+       this 360 inside the 1120 block still means ≤360. Re-measured at 320 after: nothing clips. */
+    @media(max-width:360px){
+      .mbar-a{gap:5px;padding-left:4px;padding-right:4px}
+      .mbar-a svg{width:14px;height:14px}
+    }
     /* the quote button is the one filled element, exactly as in the header and the overlay —
        and it takes the extra width, because it is the action the page is asking for.
        ⛔ FLAT, NOT MILLED (D181) — the client named this button and the header's together. The
@@ -4181,7 +4197,9 @@
      ⚠️ The dark ground is the review card's own gradient and the rim is the chips' champagne at the
      strength `.svc .face` uses, so the button is made of parts the page already contains rather than
      being a new object with new colours. */
-  .wa-fab{
+  /* ⭐ `.call-fab` (D359) TAKES THIS WHOLE DRESS by sharing the selector — it exists only on the
+     phone (base display:none below) and sits to the WhatsApp button's left there. */
+  .wa-fab,.call-fab{
     position:fixed;right:18px;bottom:24px;z-index:38;
     width:54px;height:54px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
@@ -4193,10 +4211,12 @@
     transition:border-color .35s var(--ease),color .35s var(--ease),
                transform .35s var(--ease),box-shadow .35s var(--ease);
   }
-  .wa-fab svg{width:27px;height:27px;fill:currentColor;display:block}
-  .wa-fab:hover{border-color:var(--gold);color:var(--gold-hi,#E4CD92);
+  .wa-fab svg,.call-fab svg{width:27px;height:27px;fill:currentColor;display:block}
+  .wa-fab:hover,.call-fab:hover{border-color:var(--gold);color:var(--gold-hi,#E4CD92);
     transform:translateY(-2px);box-shadow:0 20px 42px -14px rgba(0,0,0,0.95)}
-  .wa-fab:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  .wa-fab:focus-visible,.call-fab:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  /* ⛔ phone-only: the base never shows it, the 720px block switches it on — the D120 idiom */
+  .call-fab{display:none}
   /* ⛔ THE FLOATING BUTTON IS A TOUCH-DEVICE CONTROL — 14 Aug 2026 (D207). Client: *"remove the
      WhatsApp corner floating button for desktop, but keep it on the mobile and tablet."*
      ⭐ **HE IS RIGHT ABOUT THE DEVICE, NOT JUST THE TASTE.** On a phone the link opens the
@@ -4208,7 +4228,32 @@
      keyboard user on a desktop still lands on an invisible WhatsApp link.
      ⭐ 1121px is the desktop edge, so this is one rule and the phone and tablet keep the button
      untouched. The FOOTER's WhatsApp glyph and its written number stay at every width. */
-  @media(min-width:1121px){.wa-fab{display:none}}
+  @media(min-width:1121px){.wa-fab,.call-fab{display:none}}
+  /* ⭐ D368: the ghost dress, one description for both narrow bands (§12's widened-query rule).
+     `.call-fab` remains phone-only through its base display:none — sharing the selector here is
+     inert on the tablet. */
+  @media(max-width:1120px){
+    .wa-fab,.call-fab{
+      width:46px;height:46px;
+      background:rgba(8,8,11,0.58);
+      -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+      border-color:rgba(198,166,100,0.5);
+      box-shadow:0 10px 26px -12px rgba(0,0,0,0.85);
+      transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
+                 opacity .3s var(--ease),transform .35s var(--ease)}
+    .wa-fab svg{width:23px;height:23px}
+    /* the call glyph at the same optical size as the WhatsApp mark — the phone band's own 21px
+       rule (later in the sheet) still wins below 720 */
+    .call-fab svg{width:23px;height:23px}
+    /* ⭐⭐ D372: THE PAIR STANDS DOWN WHILE THE STICKY BAR IS UP — both narrow bands. Client:
+       *"when the sticky bottom bar pops up… the WhatsApp icon above and the phone icon above
+       will go away."* ⛔⛔ THIS REVERSES D180's RIDE-THE-BAR LIFT (the fabs used to step up to
+       73px and sit above the bar), and the reversal is safe for the one reason D180 wasn't:
+       the bar itself now carries the WhatsApp link (D372), so nothing reachable is lost when
+       the corner clears. Same sibling-combinator state read as the old lift — `.mbar` must stay
+       an EARLIER SIBLING of both fabs or this dies silently (D180's own trap, still live). */
+    .mbar.on ~ .wa-fab,.mbar.on ~ .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
+  }
   /* ⛔⛔⛔ THE HERO SCROLL CUE IS DELETED, MARKUP AND RULES — 14 Aug 2026 (D234). Client: *"on the
      hero section of the desktop version, remove the down arrow that says scroll above it. So
      remove that completely."*
@@ -4370,6 +4415,73 @@
   html.cine-on .cine .hero-title{
     transition:opacity 1.15s var(--ease) 180ms,transform 1.15s var(--ease) 180ms}
   html.cine-on .cine .hero:not(.loaded) .hero-title{opacity:0;transform:translateY(26px)}
+  /* ⭐⭐⭐ **THE ENDING COMES TOWARDS YOU, AND IT COMES AS ONE OBJECT — 24 August 2026 (D356).
+     DESKTOP ONLY (≥1121).**
+     Client: *"the final landing page text where it says surfaces worth building around — I want
+     that animation to change to something that fades in from the center of the screen and then
+     becomes bigger as it settles, so basically as if it is coming closer. This animation needs to
+     be a decent speed."* And, correcting the first build within the hour: *"I don't just mean the
+     surfaces worth building around text. I mean all of that, that whole section from the
+     screenshot — from the buttons to all the little things and the subtext and everything."*
+     ⭐⭐⭐ **SO THE SCALE MOVED UP TO `.hero-inner`, AND THAT IS THE WHOLE DESIGN.** The first cut
+     scaled the headline alone. Scaling each element instead would be four zooms at once, and the
+     GAPS between them would not scale with them — the composition would visibly stretch as it
+     arrived. One transform on the block that contains all of it keeps every internal relationship
+     exactly proportional, which is the only reading of "coming closer" that is physically true:
+     a camera push-in moves the whole frame, not the words inside it.
+     ⛔⛔ **AND IT IS WHY THE PER-ELEMENT STAGGER STANDS DOWN INSIDE THE FILM'S ENDING.** The four
+     `--hd` delays (title 180, sub 560, buttons 720, chips 880) are a sequence of separate
+     arrivals; he has asked for one arrival of one object. The children are therefore pinned at
+     their rest values in this scope and the block owns the motion. ⚠️ **THE APPROVED STAGGER IS
+     NOT DELETED — it still runs everywhere else**, including this same hero when the film does not
+     run (reduced motion, no MP4, `fail()`), and on the phone and the tablet. One rule reverses it.
+     ⭐⭐ **A `scale()` ON PURPOSE, WHICH IS THE OPPOSITE OF D325b's RULING — BECAUSE HE IS ASKING
+     FOR THE THING THAT RULING AVOIDED.** There, a `scale` was rejected for the film's titles
+     because it "grows type on a flat plane and reads as a zoom" where a `translateZ` under a
+     perspective grows it the way a lens would. **A zoom is precisely what "as if it is coming
+     closer" describes here**, and `.hero-inner` carries no perspective — adding one to a
+     composition the client froze at D90, with measured internal spacing (D259, D303), to buy a
+     subtler curve would be a real layout risk taken for nothing.
+     ⭐⭐ **0.84 → 1.00, AND IT LANDS ON EXACTLY 1.00, SO THE APPROVED REST FRAME IS UNTOUCHED** —
+     the same discipline as the gutter fade (D352), the reveal's clip (D354) and the kitchen slide
+     (D355): the animation owns the approach and owns nothing at rest. ⛔ **AND THE TRANSFORM IS
+     GONE AT REST, NOT SET TO `scale(1)`** — a live transform on `.hero-inner` would make it the
+     containing block for any absolutely positioned descendant for the rest of the page's life.
+     ⭐⭐ **THE ORIGIN IS ITS OWN CENTRE, AND HERE THAT IS THE CENTRE OF THE SCREEN.** `.hero-inner`
+     is `margin:0 auto` in a full-viewport hero and its contents are centred, so the default
+     `transform-origin` puts the growth exactly where he asked for it, with nothing to hand-tune
+     and nothing to re-measure when the viewport changes.
+     ⭐ **1.05s, ON THE SITE'S OWN `--ease`** (`cubic-bezier(0.16,1,0.3,1)`) — a strong ease-out
+     that spends most of the distance early and decelerates into rest, which is what "settles"
+     means. ⚠️ **1.05s SINCE D357** — client: *"I want that to animate in slightly slower, but also
+     not too slow"* — from the 0.8s of D356, which was itself down from the 1.15s staged entrance.
+     **So it now sits between the two: slower than the version he saw, still short of the original.**
+     Measured at 0.8s: 0.918 at 261ms, 0.971 at 377ms, 0.992 at 519ms, 1.000 by 980ms — the same
+     shape, now spread over 1.05s.
+     ⭐⭐ **AND IT WAS ALREADY OFF THE SCROLL, WHICH IS WORTH KNOWING BEFORE ANYONE "FIXES" IT.**
+     Client, in the same message: *"but also not necessarily be tied to the scroll."* It never has
+     been: `ink()` flips `.loaded` as a one-way switch when the film passes `INK_AT` (0.93) and the
+     CSS transition then runs on its own clock, exactly like the kitchen beat does since D357.
+     ⚠️ The 180ms delay is kept — it is the first line's own `--hd`, so the ending still lands a
+     beat after the frame has finished becoming the hero (`CURVE_AT` 0.90 vs `INK_AT` 0.93).
+     ⛔⛔ **EVERY BAND SINCE D368 (24 Aug).** D363 brought the phone (*"the same animation that we
+     did on desktop for the surfaces worth building around part… in the mobile shape or version
+     of it"*), and the tablet round's opening brought the last band, so the media query is gone
+     and the rules below are the film's ending everywhere. Same 0.84, same 1.05s, same 180ms at
+     every width; the per-element stagger still serves every band's NO-FILM path (reduced motion,
+     no MP4, fail()), untouched.
+     ⚠️ SOURCE ORDER, NOT SPECIFICITY, ON THE TWO CHILD RULES: they carry the same weight as the
+     base rules they override and win by sitting after them (§8). They must stay after them, and
+     before the tablet band's own block. */
+  /* ⭐ D368: the tablet joined and the query became every band — so it is gone. The per-element
+     stagger still serves the no-film paths (reduced motion, no MP4, fail()) through the
+     `.cine`-scoped selectors below, untouched. */
+  html.cine-on .cine .hero-inner{
+    transition:opacity 1.05s var(--ease) 180ms,transform 1.05s var(--ease) 180ms}
+  html.cine-on .cine .hero:not(.loaded) .hero-inner{opacity:0;transform:scale(0.84)}
+  /* the block owns the arrival now, so the children hold their rest values throughout */
+  html.cine-on .cine .hero:not(.loaded) .hero-title,
+  html.cine-on .cine .hero:not(.loaded) .hero-el{opacity:1;transform:none;transition:none}
 
   /* ⭐⭐⭐ **THE VEIL COMES OFF THE FILM AND BACK ON FOR THE HERO — 18 August 2026 (D311).**
      Client, on the first build: *"you still have the dark gradient over the whole animation. So we
@@ -4608,7 +4720,13 @@
     color:var(--bone);text-wrap:balance;
     opacity:0;                                    /* the scrub owns opacity from the first tick */
     --ly:-50%;
-    transform:translateY(var(--ly)) translateZ(calc(var(--lz,-150) * 1px));
+    /* ⭐ `--lx` IS THE KITCHEN BEAT'S SLIDE (D355) and defaults to 0, so every other line is
+       untouched at every band. It is written on desktop only and handed back on a band change. */
+    /* ⭐ `--lyp` (a pixel Y term) is PARKED since D364 — it carried D361's rise for a day and the
+       rise was reversed to the desktop slide; the term stays, inert at 0, one write away.
+       ⭐ `--lsc` IS THE SLAB BEAT'S RECEDE ON THE PHONE (D364) and defaults to 1, so every other
+       line at every band is untouched. Scale sits LAST so it shrinks the line in place. */
+    transform:translateX(calc(var(--lx,0) * 1px)) translateY(calc(var(--ly) + (var(--lyp,0) * 1px))) translateZ(calc(var(--lz,-150) * 1px)) scale(var(--lsc,1));
     /* ⚠️ NOT a text-shadow for legibility alone — these words cross a daylight quarry AND a black
        void, and §2's own lesson from D313 is that no fixed ink survives that. The shadow is a
        contact shadow so the type reads as an object in the room; the veil's 0.20 floor and
@@ -4711,6 +4829,56 @@
      but a hero is already here, and −150 under the 1000 perspective renders it at 87%. */
   .cine-hero,.cine-trust{display:none}
   @media(min-width:1121px){
+    /* ═════ THE EDGE FADE — 24 August 2026 (D352). DESKTOP ONLY ══════════════════════════════
+       ⭐⭐⭐ **THE SIDE OF THE SCREEN TAKES THE WORDS. THE WORDS DO NOT DISSOLVE WHERE THEY STAND.**
+       Client, correcting the first build of this within the hour: *"make sure that the swipe away or
+       the fade away of the words match exactly with the side of the user screen. The fade is never
+       visible in the center of the screen or in the center of the text or away from the side. It is
+       tied to the user scroll, and it gives the illusion that the side of the screen is wiping it
+       away instead of an actual animation."*
+       ⛔⛔ **SO THE MASK DOES NOT MOVE AT ALL — THE BLOCK MOVES THROUGH IT.** D348 and the first cut
+       of D352 both swept a soft edge ACROSS the type, which puts the fade in the middle of the
+       frame: an animation you can see happening. This is the opposite construction. The mask is
+       nailed to the left gutter and never changes; the block slides left on the scroll, and each
+       letter dissolves at the moment it crosses the screen's edge. There is no animation to see,
+       only a screen with an edge.
+       ⭐⭐⭐ **AND THE RAMP IS THE GUTTER ITSELF — `clamp(20px,7vw,132px)`, THE SAME EXPRESSION THE
+       COPY IS INSET BY.** That is what makes it free: at rest the ramp ENDS exactly where the type
+       BEGINS, so the approved first frame is untouched at every desktop width, and the two cannot
+       drift apart because they are one value. It is also why the two beats need no exception —
+       they sit at the same gutter and never move, so the fade never reaches them.
+       ⚠️ The beats' wash reaches ~0.05 by the time it enters the gutter (a `farthest-side` radial
+       ending at its own box edge, D311/D313), so there is nothing of it there to cut.
+       ⭐ Fully static: no `mask-position` to write, nothing to re-rasterise, and no filter anywhere
+       near it (D339). The only thing this design writes per frame is one translate.
+       ⚠️ `#fff`, not `#000`: white is opaque in BOTH alpha and luminance mask modes.
+       ⚠️ ≥1121 ONLY. The phone and the tablet keep D316's travel until he takes their placement. */
+    html.cine-on .cine-story{
+      /* ⭐⭐ **HALF THE GUTTER, NOT ALL OF IT — D353.** Client: *"I can see it's fading away, it
+         should almost be a little bit more solid over faded instead of, like, a gradient fade."*
+         The full gutter made the dissolve a hundred pixels long, which reads as a gradient laid over
+         the type; half of it keeps the letters SOLID until they are within about fifty pixels of the
+         edge and then takes them. ⛔ It is still expressed as the gutter, not as a number, so the
+         rest frame stays untouched at every desktop width — the ramp cannot reach past where the
+         type begins however wide the window is. */
+      --edgeFade:calc(clamp(20px,7vw,132px) * 0.5);
+      -webkit-mask-image:linear-gradient(90deg,rgba(255,255,255,0) 0,
+        rgba(255,255,255,0.10) calc(var(--edgeFade) * 0.18),
+        rgba(255,255,255,0.34) calc(var(--edgeFade) * 0.36),
+        rgba(255,255,255,0.66) calc(var(--edgeFade) * 0.55),
+        rgba(255,255,255,0.88) calc(var(--edgeFade) * 0.72),
+        rgba(255,255,255,0.98) calc(var(--edgeFade) * 0.88),
+        #fff var(--edgeFade));
+              mask-image:linear-gradient(90deg,rgba(255,255,255,0) 0,
+        rgba(255,255,255,0.10) calc(var(--edgeFade) * 0.18),
+        rgba(255,255,255,0.34) calc(var(--edgeFade) * 0.36),
+        rgba(255,255,255,0.66) calc(var(--edgeFade) * 0.55),
+        rgba(255,255,255,0.88) calc(var(--edgeFade) * 0.72),
+        rgba(255,255,255,0.98) calc(var(--edgeFade) * 0.88),
+        #fff var(--edgeFade));
+      -webkit-mask-size:100% 100%;mask-size:100% 100%;
+      -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    }
     /* ⭐⭐ ANCHORED BY ITS TOP, NOT ITS MIDDLE — 22 August 2026 (D325b). Client: *"move the text
        higher up… you can see the top of the mountains in the background. The first line of text is
        basically above that mountain line. And then you can basically move everything up."*
@@ -4729,7 +4897,13 @@
       display:block;position:absolute;z-index:3;pointer-events:none;
       left:clamp(20px,7vw,132px);top:22vh;width:clamp(320px,46vw,660px);
       opacity:0;                                  /* the scrub owns it from the first tick */
-      transform:translateZ(calc(var(--hz,0) * 1px));
+      /* ⭐⭐⭐ **THE BLOCK SLIDES OFF TO THE SIDE, ON THE SCROLL — D352.** ⛔ This is NOT the pin: the
+         pin is parked in `.textanim-2026-08-24/removed-pin-d349-d351.txt` and it went because
+         anything tied to this PICTURE inherits its 12fps and steps visibly on type. This is tied to
+         the SCROLL, which is continuous, and it moves about **1.5x** the speed the scene does, so it
+         reads as being pulled off the side rather than as something attached to the mountain.
+         ⚠️ `translate3d` so the offset is compositor work rather than paint, and the Z stays 0. */
+      transform:translate3d(calc(var(--tx,0) * 1px),0,calc(var(--hz,0) * 1px));
     }
     /* ⛔ the desktop opening title goes here; the ORIGINAL CUE IS HIDDEN FURTHER DOWN, beside its
        own rules — hidden from here it lost on source order, because `html.cine-on .cine-cue` has
@@ -4763,6 +4937,9 @@
       display:flex;position:absolute;z-index:3;pointer-events:none;
       left:clamp(20px,7vw,132px);bottom:35px;gap:10px;align-items:center;
       opacity:0;                                  /* the scrub owns it, exactly as the copy is */
+      /* ⭐ THE SAME OFFSET AS THE WORDS, FROM THE SAME WRITE — the first screen leaves as ONE object
+         and the same screen edge dissolves it, so there is no second animation to keep in step. */
+      transform:translate3d(calc(var(--tx,0) * 1px),0,0);
     }
 
     /* ⚠️ 57% AND NOT LOWER, AND THAT IS MEASURED. Taken up the frame the headline climbs into the
@@ -4947,19 +5124,32 @@
     /* ⛔ LINEAR: light crosses a surface at one speed. The easing belongs to the DIP, which is the
        thing with mass — and on an eased sweep the light left the point at 43% while the dip was
        still 0.74s behind it, so the two read as unrelated events (D337, caught by measuring). */
-    @keyframes cineHeroSheen{
-      0%,6%    {transform:translateY(-56px)}
-      62%,100% {transform:translateY(96px)}
-    }
-    /* ⚠️ THE 55% IS DERIVED, NOT CHOSEN. The band is 56px and its brightest line sits at 48% of its
-       own height, so the light is ON the point when the band's top reads 68.1px — which, on a
-       linear -56 -> 96 across 6%-62%, happens at **51.7%**. The arrow answers 0.08s later.
-       ⛔ Re-derive it if the band height, the travel or the arrow's height changes. */
-    @keyframes cineHeroDip{
-      0%,46%   {transform:translateY(0)}
-      55%      {transform:translateY(3px)}
-      74%,100% {transform:translateY(0)}
-    }
+  }
+  /* ⛔⛔⛔ **THE ARROW'S KEYFRAMES LIVE AT BASE SCOPE — 24 August 2026 (D359b), AND THE MOVE IS A
+     BUG FIX.** They were written inside the ≥1121 block on the assumption @keyframes are global;
+     they are NOT — an @keyframes inside a non-matching @media never registers — so the phone's
+     arrow stood dead, caught by the client on his first look: *"the scroll to begin arrow is not
+     playing its animation."* At base scope they are inert until an animation names them, which
+     only the two cine-hero cue rules do. */
+  @keyframes cineHeroSheen{
+    0%,6%    {transform:translateY(-56px)}
+    62%,100% {transform:translateY(96px)}
+  }
+  /* ⚠️ THE 55% IS DERIVED, NOT CHOSEN. The band is 56px and its brightest line sits at 48% of its
+     own height, so the light is ON the point when the band's top reads 68.1px — which, on a
+     linear -56 -> 96 across 6%-62%, happens at **51.7%**. The arrow answers 0.08s later.
+     ⛔ Re-derive it if the band height, the travel or the arrow's height changes. */
+  @keyframes cineHeroDip{
+    0%,46%   {transform:translateY(0)}
+    55%      {transform:translateY(3px)}
+    74%,100% {transform:translateY(0)}
+  }
+  /* ⭐ D369: the TABLET's arrow runs at 1.25× (40×120, band 70), so its sheen needs its own px
+     travel — every percentage (the 48% hot line, the derived 51.7%) survives a uniform scale, so
+     only these two numbers change. */
+  @keyframes cineHeroSheenT{
+    0%,6%    {transform:translateY(-70px)}
+    62%,100% {transform:translateY(120px)}
   }
   @media(min-width:1121px) and (prefers-reduced-motion:reduce){
     /* ⚠️ no dip and no sweep — and the mask comes OFF rather than being left mid-travel, so what
@@ -4968,6 +5158,157 @@
     /* ⛔ the BAND is what stops, and it is parked over the whole arrow rather than off the end, so
        what remains is a complete arrow at full strength instead of the dim base on its own. */
     html.cine-on .cine-hero .cine-hero-cue i b span{animation:none;transform:translateY(20px);height:96px}
+  }
+
+  /* ═════ THE FIRST SCREEN COMES TO THE PHONE — 24 August 2026 (D359). PHONE ONLY (≤20). ═════
+     Client: *"either in the center or center top, you're going to add the text for the first… the
+     same as on the desktop version, that same text and subtitle, centered in the middle and easy
+     enough to read… so the focus can still be on the stones, or you can see the mountain in the
+     background."* And the exit, his words: *"almost like what it is currently… it should go
+     through the screen, like, go past the user and then fade off."*
+     ⭐⭐ IT IS THE SAME `.cine-hero` BLOCK THE DESKTOP SHOWS — one copy of the words, one markup,
+     re-dressed per band (D338's one-component argument). `.cine-open` — "It starts as a mountain."
+     — stands down on the phone exactly as it does on desktop, and STAYS for the tablet, untouched.
+     ⭐ CENTRED AT 47%, NOT 50%: the block carries the scroll cue below the words, so 47% puts the
+     TYPE's own centre a touch above true centre — the sky and the ridge stay readable above it,
+     which is his "you can see the mountain" — and the quarry's terraces hold the lower third.
+     ⭐⭐ THE EXIT IS THE NARROW BANDS' OWN GRAMMAR: no wipe and no mask — the block travels in Z
+     past the viewer on the scroll (0 → 560 on p², the same travel every narrow title runs) and
+     fades over the last 26% of its window, gone by t=6.0 — the slot the opening title has always
+     held. It is up AT REST from t=0, like the desktop: a hero is already there, it does not arrive.
+     ⚠️ The transform is translateY(-50%) + translateZ: this block anchors by its centre, so the
+     desktop's --tx/--hz translate3d pattern does not apply here — the phone writes --hz only. */
+  /* ⭐⭐⭐ **THE WHOLE BLOCK BELOW REACHES THE TABLET SINCE D368 — HIS TABLET-ROUND OPENING:**
+     *"take the idea that we created for mobile in terms of where we placed the text and the
+     animations and how it works, and go ahead and add that to the tablet version. But on the
+     tablet version, we're gonna have to align most of the stuff to the left."* The mobile first
+     screen is ALREADY the left-hung column over the sky (D359b), its ground on the 864 cut
+     measures the same class as the phone's (p97 209–221 behind the column against 214), and the
+     clamps already resolve sensibly at tablet widths (title caps at 54px, the gutter at its own
+     54) — so the port is the query, widened per §12's rule, not a copy. */
+  @media(max-width:1120px){
+    html.cine-on .cine-open{display:none}
+    /* ⭐⭐⭐ **SECOND BUILD — 24 August 2026 (D359b), ON HIS VERDICT:** *"the first opening frame…
+       is not looking good at all. The way that the gradient and shadow is being used is completely
+       wrong. The title is way too small and thin and not easy to be read… you can have things on
+       the left… if you need to add a gradient over the whole thing, go for it… make sure it's easy
+       to read, make sure it's going to be converting, and that people scroll."*
+       ⭐⭐ **SO IT IS THE DESKTOP'S OWN COMPOSITION, TURNED PORTRAIT: A LEFT-HUNG COLUMN OVER THE
+       SKY, ON A FRAME-ANCHORED GRADE.** The centred block sat ON the marble and asked an ellipse
+       to fight 214-p97 stone (his "completely wrong", and it was); the left half of this frame is
+       sky, ridge and pines — the picture's own empty side, the one he pointed at. The words hang
+       off the gutter there at 22vh, the desktop's own anchor, and the stones keep the right of
+       the frame — "the focus can still be on the stones". */
+    html.cine-on .cine-hero{
+      display:block;position:absolute;z-index:3;pointer-events:none;
+      left:0;right:clamp(16px,6vw,40px);top:22vh;padding-left:clamp(20px,7vw,54px);
+      text-align:left;
+      opacity:0;                                  /* the scrub owns it from the first tick */
+      transform:translateZ(calc(var(--hz,0) * 1px));
+    }
+    /* ⛔⛔ THE GOLD'S drop-shadow COMES OFF THE SLAB BEAT HERE TOO — D360. The phone now runs the
+       reveal's animated clip-path (D354's rule, restated at this band): a filter under an animated
+       mask re-rasters both per change. Deliberately NOT lifted to the base rule — the TABLET's
+       slab beat carries no clip and keeps its shadow, untouched. */
+    html.cine-on .cine-line[data-vpos-wide="hero"] em{filter:none}
+    /* ⭐⭐⭐ **THE GRADE IS THE FRAME'S, NOT THE TEXT'S — D359b.** His words opened the door ("a
+       gradient over the whole thing") and the desktop already owns the mechanism: `.cine-edge`,
+       frame-anchored vignetting riding the copy's own alpha (`--cineEdge`), so the picture is
+       unobstructed the moment the words go. The phone's version is a top scrim reaching zero by
+       78% — sky and upper terraces are what it spends, and sky detail costs nothing — plus a soft
+       pool off the left border under the column's lower half. ⛔ No shape, no edge (rule 11's
+       family): both layers are anchored to the frame and land on zero inside it.
+       ⭐ MEASURED: under it the title's rows read p97 ≈ 57 where they read 214 bare — bone ~11:1,
+       the gold ramp's mid stop ~4.8:1 — which is why the ellipse wash is GONE, not retuned. */
+    html.cine-on .cine .cine-edge{
+      display:block;position:absolute;inset:0;z-index:2;pointer-events:none;
+      opacity:var(--cineEdge,0);
+      /* ⭐ A STEP STRONGER SINCE D359c — client: *"make the gradient a little bit stronger where
+         the text is, so it's just slightly easier to read."* Both layers up ~0.07 at their heads,
+         the tails unchanged, so the darkening deepens where the words are and still reaches zero
+         at the same lines. */
+      background:
+        radial-gradient(120% 85% at 0% 30%,
+          rgba(6,6,9,0.57) 0%, rgba(6,6,9,0.27) 55%, rgba(6,6,9,0) 85%),
+        linear-gradient(180deg,
+          rgba(6,6,9,0.74) 0%, rgba(6,6,9,0.68) 26%, rgba(6,6,9,0.46) 45%,
+          rgba(6,6,9,0.20) 60%, rgba(6,6,9,0.06) 70%, rgba(6,6,9,0) 78%);
+    }
+    /* ⭐⭐ **HERO SCALE, NOT BEAT SCALE — his "way too small and thin".** 11vw lands 43px at 390 —
+       the finished hero's own phone presence — and the thinness was mostly the ground: Cinzel 400
+       over graded ~57 reads as solid ink where it read as wire over bare 214. Two balanced lines:
+       "Your worktop" / "starts here." */
+    html.cine-on .cine-hero .cine-hl{
+      margin:0;font-family:var(--serif);font-weight:400;
+      font-size:clamp(40px,11vw,54px);line-height:1.08;letter-spacing:-0.004em;
+      color:var(--bone);text-wrap:balance;
+      text-shadow:0 2px 30px rgba(6,6,8,0.66),0 1px 4px rgba(6,6,8,0.5);
+    }
+    /* ⚠️ #fff at 400, wide soft shadow — D347's three fixes, restated at this band. 30ch keeps the
+       rag inside the graded half; 17px is the desktop sub's own size. */
+    html.cine-on .cine-hero .cine-hero-sub{
+      margin:20px 0 0;font:400 17px/1.6 var(--brand);letter-spacing:0.014em;
+      color:#fff;max-width:30ch;text-wrap:balance;
+      text-shadow:0 2px 22px rgba(6,6,8,0.82);
+    }
+    /* the cue: the desktop's own connected arrow (D337). The arrow keeps its 32×96 box ON
+       PURPOSE — every number inside it (mask-size, the 56px band, the sheen's -56→96 travel, the
+       derived 55%) is a px machine that would all have to be re-derived at a second size. Its
+       keyframes live at BASE scope (below the desktop block) — that move is what made it play
+       here at all.
+       ⭐ ON THE S's OWN LINE SINCE D365a — his second pass, reversing the R-centring he asked for
+       an hour earlier (D365, itself correcting D359c's mid-line centring): *"I think it's better
+       that we line the left side of the arrow with the side of the s again."* So it is the
+       DESKTOP's own construction (D337/D336): the left arm's tip sits at x=0 of the 32px box, so
+       the box's left edge IS the tip and flex-start puts it on the word's S. No margin, nothing
+       measured, nothing to drift. ⚠️ The R-centring's numbers (R ink centre 29.9 → margin-left
+       14) are parked here if he calls for it a third time. */
+    html.cine-on .cine-hero .cine-hero-cue{
+      margin:28px 0 0;display:inline-flex;flex-direction:column;gap:20px;align-items:flex-start;
+    }
+    html.cine-on .cine-hero .cine-hero-cue span{
+      font:500 13px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
+      text-shadow:0 1px 16px rgba(6,6,8,0.9),0 1px 3px rgba(6,6,8,0.8);
+    }
+    html.cine-on .cine-hero .cine-hero-cue i{
+      display:block;position:relative;width:32px;height:96px;
+      filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
+      will-change:transform;
+      animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
+    }
+    /* ⭐ SOLID SINCE D359c — client: *"the arrow is too see-through. I think the arrow should be
+       a solid color, and then that flash must just go over it, and it should work the same way."*
+       The base silhouette takes the site's gold at FULL strength; the sheen sweeps over it
+       unchanged. ⚠️ Phone only — the desktop keeps its measured 0.62, frozen. */
+    html.cine-on .cine-hero .cine-hero-cue i > svg{
+      display:block;width:32px;height:96px;color:var(--gold,#C6A664);
+      fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+    }
+    html.cine-on .cine-hero .cine-hero-cue i b{
+      position:absolute;inset:0;display:block;
+      -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");      mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      -webkit-mask-size:32px 96px;     mask-size:32px 96px;
+      -webkit-mask-repeat:no-repeat;   mask-repeat:no-repeat;
+    }
+    /* ⛔⛔⛔ **THE LIGHT LIVES IN THE STROKE AND NOWHERE ELSE — 24 August 2026 (D365c), HIS
+       CORRECTION OF D365b's BLOOM, WHICH WAS WRONG AND IS DELETED, NOT PARKED SOFTLY:** *"Why is
+       the glare outside of the arrow?… If you look at the desktop version on the nav bar… there's
+       a flash going on the line. It should look like that. It starts from the line. It doesn't
+       start from outside the line. Doesn't leave the line."* The unmasked halo read as an orb
+       floating past the arrowhead — screenshotted by him over the quarry ground. His reference is
+       exact: the nav hairline's own flash (D33) is light INSIDE a line's ink. That is what the
+       MASKED band has always been, so the fix is a deletion: the ::after is gone, and the
+       brightness his D365b asked for is carried entirely inside the mask — a ~9px pure-white
+       PLATEAU (42–54%) with gold shoulders, centred on the band's 48% hot line so the derived
+       51.7% light-on-point timing still stands. Nothing paints outside the glyph, ever. */
+    html.cine-on .cine-hero .cine-hero-cue i b span{
+      position:absolute;left:0;right:0;top:0;height:56px;display:block;
+      background:linear-gradient(to bottom,
+        rgba(228,205,146,0) 0%, #EFD9A4 26%, #FFFFFF 42%,
+        #FFFFFF 54%, #EFD9A4 70%, rgba(228,205,146,0) 100%);
+      will-change:transform;
+      animation:cineHeroSheen 1.8s linear infinite;
+    }
   }
 
   /* ⭐⭐⭐ **THE SLAB BEAT SITS WHERE THE FIRST SCREEN SITS — 23 August 2026 (D340).** Client: *"I
@@ -5031,6 +5372,14 @@
     html.cine-on .cine-line[data-vpos-wide="high"] .cine-line-sub{
       margin-left:calc(clamp(34px, 4.8vw, 70px) * 0.3095 - 7.97px); /* "Once…" */
     }
+    /* ⛔⛔ **THE GOLD'S drop-shadow COMES OFF THIS ONE BEAT — D354.** Its parent carries the
+       reveal's animated clip-path on desktop, and a filter under an animated mask re-rasters both
+       per change, which is D339's arrow glitch by another door. Measured before removing: this
+       beat sits on the film's black void, where a near-black shadow paints nothing anyway. The
+       kitchen beat's em keeps it — that one sits on a lit room and never carries a clip.
+       ⭐ D360: the PHONE block above carries this same rule for the same reason — its reveal runs
+       the same animated clip. Only the tablet keeps the shadow on this beat, having no clip. */
+    html.cine-on .cine-line[data-vpos-wide="hero"] em{filter:none}
     /* ⛔⛔⛔ **THE KITCHEN BEAT SITS HIGHER, AND 12vh IS THE ISLAND'S OWN MEASUREMENT — D345.**
        Client: *"the part that says the stone sets the tone of the room is currently too hard to
        read… you're gonna have to lift it slightly higher so it doesn't actually go over or touch
@@ -5135,6 +5484,55 @@
        on a narrow crop, which is a composition nothing has needed yet. */
     html.cine-on .cine-line[data-vpos-narrow="top"]{top:13vh;bottom:auto;--ly:0%}
   }
+  /* ⭐⭐ **THE BEATS GO BOLD AND COME DOWN ON THE PHONE — 24 August 2026 (D362).** Client, watching
+     the frames: *"where it says the slab you choose is unique, that text is also very… you know,
+     it's not bold. It's also slightly too high up. You can move it slightly down. Just make sure
+     that the title is bigger than the subtitle… and then when it gets to the stone sets the tone
+     of the room, that's also too high up. And it's not that easy to read. It's not bold enough."*
+     ⭐ 9.2vw lands 36px at 390 against the subtitle's 16 — the title owns the beat — and Cinzel
+     600 is his "bold" said in the site's own face (the em was already 600, so white and gold now
+     carry one weight and the gold does the pointing).
+     ⛔⛔⛔ **14.5vh IS THE FENCE, NOT A TASTE — THE FILM ITSELF CAPS "slightly down".** After the
+     reveal the floating slab CRUISES with its top edge at film y≈341 for six seconds (measured
+     topmost-lit per frame, f206–f280, minimum 341), so the slab beat's ink bottom must stay above
+     that lane or the words sit on passing marble — D313's proven failure. At 390×844 this block
+     bottoms at ~332 film px with 3px spare (verified live); at 14.5vh the box also stays clear of
+     the kitchen's pendant globes (title bottom ~255 film against their 275). ⛔ Do not push lower
+     without re-measuring the lane — the number to beat is 341.
+     ⚠️ MUST SIT AFTER THE max-width:1120px BLOCK ABOVE — same specificity, source order decides,
+     and the tablet keeps 13vh and its own faces by never matching this query at all. */
+  @media(max-width:720px){
+    /* ⚠️ 8.7vw, NOT 9.2 — Cinzel 600 is wider than 400 and at 9.2vw both titles broke to THREE
+       lines, which pushed the slab beat's box to film y 384 — 43px INTO the lane. 8.7vw (33.9 at
+       390) holds both titles to their balanced pair and the box bottoms at ~331, 10 clear. */
+    html.cine-on .cine-line{font-size:clamp(29px,8.7vw,44px);font-weight:600}
+    html.cine-on .cine-line[data-vpos-narrow="top"]{top:14.5vh}
+    html.cine-on .cine-line .cine-line-sub{margin-top:14px}    /* ⛔⛔⛔ **THE KITCHEN'S WASH IS BACK ON THE LINE — 24 August 2026 (D367), ON HIS ORDER.**
+       The wash has now been four things in one day: the radial (his "circular gradient"
+       complaint, D362a) → a flat linear riding the slide (a visible box edge crossed the frame,
+       D365) → a static frame scrim on this layer's ::before driven by a live sampler (STROBED
+       under the scrub, D366 tried to close it at the sampler) → and after D366 he still saw it
+       *"flashing like crazy"* and ruled: *"completely revert that change and we will work on it
+       again."* So the scrim is DELETED and the beat runs the ORIGINAL radial riding `--lg` —
+       the one stable state — with D366's clearRect kept underneath (it is a root correctness
+       fix and now protects the radial too). ⚠️ FOR THE REWORK, when he reopens it: drive the
+       wash from a BAKED table of film-time — sample the seated box OFFLINE per half-second like
+       every other measurement this build trusts — so nothing reads the video live and nothing
+       can ever flash. The static-box plumbing (bandGrade's `box` arg + `KB`) is already in
+       place for exactly that. */
+    /* ⭐⭐ **THE KITCHEN BEAT STARTS ON THE ENDING'S OWN LINE — 24 August 2026 (D364).** His final
+       word after a mid-message revision (first "same height as your worktop starts here", then):
+       *"I actually want that title… and the subtitle… the same height as the next frame. So where
+       it says the stone sets the will be in line with where the next frame of surfaces worth
+       building around comes in."* The finished hero's `.hero-title` box top measures **216px =
+       25.6vh at 390×844** (film ended, `.loaded`, transform gone), so the last beat hands its line
+       straight to the headline that replaces it. ⚠️ Re-measure if the phone hero's paddings ever
+       move. ⚠️ AFTER the `[data-vpos-narrow]` rule above — equal specificity, source order — and
+       the SLAB beat stays at 14.5vh: its height is fenced by the film (the lane, above) and he
+       called it good. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:25.6vh}
+  }
+
 
   /* ═════ the scroll invitation ════════════════════════════════════════════════════════════ */
   html.cine-on .cine-cue{
@@ -5175,6 +5573,9 @@
      specificity in both places, so source order is the only thing deciding it, and from up there
      the base `display:flex` won. Caught by reading the computed style, not by looking. */
   @media(min-width:1121px){ html.cine-on .cine-cue{display:none} }
+  /* ⛔ AND ON EVERY BAND SINCE D368 — `.cine-hero` carries its own heavier cue on all three now,
+     so two prompts never sit on the same frame. (`.cine-open` stands down everywhere with it.) */
+  @media(max-width:1120px){ html.cine-on .cine-cue{display:none} }
 
   /* ═════ skip intro ═══════════════════════════════════════════════════════════════════════
      ⛔ NOT a gold line across the top of anything (§2 rule 10) and not a mark in a disc
@@ -5222,8 +5623,21 @@
      control is centred instead, clear of the float and clear of the phone's action bar.
      ⚠️ THE PHONE RULE'S OWN QUERY IS WIDENED TO REACH THE TABLET rather than a second block being
      copied for it (§12): one description, both bands. */
+  /* ⭐⭐ BOTH NARROW BANDS CENTRE THE SKIP ON THE FAB ROW — D359/D359a built the phone's trio;
+     D368 briefly sent the tablet's skip to the corner on his instruction; ⭐ D369 REVERSED THAT
+     WITHIN THE HOUR, HIS OWN CALL: *"let me know if you actually think that we should center
+     everything… and we add the phone button again if you think so… I rate that's what we should
+     do."* So the centring is ≤1120 again and the tablet runs the phone's trio at its own scale
+     (the tablet band block carries its bottom and its flank constants). Both corner rulings are
+     in the register — D368 and D369 — so neither is re-proposed cold. */
   @media(max-width:1120px){
-    html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px)}
+    html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 21px)}
+  }
+  /* ⭐ pill sides on BOTH narrow bands since D368 (*"do the same thing… what we did on mobile"*)
+     — his phone instruction was *"round the skip button sides into a pill side shape"*, and the
+     tablet takes the same control by the widened query. The desktop keeps D327's 2px, frozen. */
+  @media(max-width:1120px){
+    html.cine-on .cine-skip{border-radius:999px;padding:13px 26px}
   }
   /* ⛔⛔⛔ **AND IT CROSSES AN EXISTING CLIENT RULING ON THE PHONE, WHICH IS FLAGGED RATHER THAN
      BURIED.** 11 Aug 2026: *"the nav bar should already be formed, so already a gold line below it
@@ -8128,17 +8542,50 @@
        in that order for this to work; if either moves, this rule dies silently.
        ⭐ `bottom` is transitioned over the same .5s the bar uses, so the two move together as one
        gesture rather than the button jumping after the bar has arrived.
+       ⛔⛔ **D372 (24 Aug 2026) SUPERSEDES THE RIDE ITSELF, NOT THE MECHANISM.** The bar's middle
+       button became the WhatsApp link, so while the bar is up the pair now HIDES rather than
+       stepping above it — his *"when the sticky bottom bar pops up… the WhatsApp icon above and
+       the phone icon above will go away."* The same `.mbar.on ~` sibling read does the hiding
+       (rule in the ≤1120 dress block), so everything above about sibling order still applies.
        ⭐ **AND IT STANDS DOWN WITH EVERYTHING ELSE WHEN THE MENU OPENS**, exactly as `.mbar` does
        four rules up: a contact shortcut floating over a full-screen menu is the classic version of
        this bug, and z-index alone would not have saved it here because the button is a sibling of
        the sheet rather than inside it. */
-    .wa-fab{right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));
-      width:50px;height:50px;
-      transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
-                 opacity .3s var(--ease),transform .35s var(--ease)}
-    .mbar.on ~ .wa-fab{bottom:calc(73px + env(safe-area-inset-bottom,0px))}
-    .wa-fab svg{width:25px;height:25px}
-    html.nav-open .wa-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
+    /* ⭐⭐ THE PAIR IS SMALLER AND QUIETER ON THE PHONE — 24 August 2026 (D359). Client: *"put a
+       phone icon next to the WhatsApp icon and make it smaller and maybe less visible, just like…
+       almost a little bit of a transparency on those buttons. almost like the skip intro."* So both
+       take the skip control's own plate — translucent dark glass with the gold rim — at 46px,
+       sitting as one row with the skip at the same baseline.
+       ⭐ **THE DRESS ITSELF LIVES IN ITS OWN ≤1120 RULE SINCE D368** (just above this block): the
+       tablet takes the same ghost treatment on its WhatsApp button — his *"do the same thing…
+       what we did on mobile"* — while the POSITIONS stay per band: the phone's row here, the
+       tablet's corner home + skip-live flank in THE TABLET BAND block.
+       ⛔ The call goes to the 0800 098 2812 FREEPHONE and WhatsApp to the 07464 mobile — two
+       numbers, deliberate, never "tidied" into one (see the wa-fab markup note). */
+    .wa-fab,.call-fab{right:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+    .call-fab{display:flex;right:70px}   /* 14 + 46 + 10 of air — the WhatsApp keeps the corner */
+    /* ⭐⭐ WHILE THE SKIP IS UP, THE PAIR FLANKS IT — his instruction, same message: *"put the
+       phone on the right of the skip button and the whatsapp on the left of it."* So the film's
+       foot reads [WhatsApp] [SKIP INTRO] [phone], one centred row. Done as a TRANSLATE off the
+       corner positions rather than a left/right swap, so the .35s transform transition already on
+       these buttons carries them between the two states — the corner is still their home (D180's
+       ruling: the corner behaviour after the film is his), and `skip-live` comes off the moment
+       the skip hides (film done, or skipped), or never exists if the film fails.
+       ⭐⭐ THE SPACING IS EQUAL BY CONSTRUCTION — his second pass: *"the distance from the side
+       borders must be the same distance to the skip button borders."* Each side of the skip holds
+       50vw − 87.4px (half the skip's measured 174.8px) of ground; the 46px button sits in the
+       middle of it, so edge→button air and button→skip air are the SAME number at every phone
+       width: wa left = 25vw − 66.7px, call left = 75vw + 20.7px, both written as translates off
+       the corner homes (wa: 100vw−60, call: 100vw−116). ⚠️ Re-derive the two constants if the
+       skip's text, padding or 12px face ever changes — its width is in them (174.8px rendered,
+       measured with the pill's 26px padding and Jost loaded). */
+    html.cine-on.skip-live .call-fab{transform:translateX(calc(136.7px - 25vw))}
+    html.cine-on.skip-live .wa-fab{transform:translateX(calc(-6.7px - 75vw))}
+    /* ⛔ D372: the `.mbar.on ~` 73px lift that used to live here is GONE, not moved — while the
+       bar is up the pair now HIDES instead of riding it (rule in the ≤1120 dress block above),
+       because the bar's middle button became the WhatsApp link itself. */
+    .call-fab svg{width:21px;height:21px}
+    html.nav-open .wa-fab,html.nav-open .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
 
   }
 
@@ -8783,5 +9230,183 @@
        every override this band was carrying is deleted. `.rev-solo` is a CLASS, not a media query,
        so the tablet simply wears the phone's own bare chevron — 26x44, no disc, no border, gold at
        0.42 — with nothing here restating it. One dress, one position, two bands. */
+  
+    /* ═════ THE FILM'S TEXT ON THE TABLET — D368, RECOMPOSED AT D369 ON HIS SECOND PASS:
+       *"this is not really optimized for tablet… the title has to be quite a lot bigger… the
+       subtitle can also go longer… scroll to begin, everything can be bigger, and the arrow can
+       be more obvious… we make everything center. I rate that's what we should do… and we add
+       the phone button again."* And the kitchen: *"longer in two lines instead of three, and it
+       must be higher up so it's not touching the actual slab. Even the subtitle must not touch
+       the slab."* The slab beat: *"pretty much perfect"* — untouched.
+       ⭐⭐ SO THE FIRST FRAME IS CENTRED AT SCALE (the phone's composition grown, not the
+       desktop's column), the trio returns with the call button, and the beats stay LEFT-hung
+       (his original tablet ruling — only the FIRST frame was re-centred). */
+    /* the beats: left-hung at the desktop's own gutter, Cinzel 600 (D362's bold) */
+    html.cine-on .cine-line{
+      left:clamp(20px,7vw,54px);right:auto;width:clamp(320px,52vw,560px);padding:0;
+      text-align:left;font-size:clamp(38px,5.6vw,54px);font-weight:600;
+    }
+    /* ⭐ the slab beat sits where the first screen sits — D340's desktop pattern, at 22vh,
+       revealed by the slab's own edge (the scrub's TREV table). ⚠️ 22vh is also measured against
+       the sweep: the box's right edge stays inside the edge's f205 reach at every tablet
+       viewport, so the reveal always completes — no pop at the table's end. */
+    /* ⭐⭐ **17vh SINCE D370, AND THE LIFT IS A MEASUREMENT.** Client: *"move the title and the
+       subtitle for the slab you choose is unique section slightly higher up… I just don't want
+       the bottom part of the word decades and the full stop to touch the slab."* Tracked on the
+       864 cut, in the SUBTITLE'S OWN COLUMNS (film x 117–389, its last line's ink) across the
+       whole beat: at 22vh the last line cleared the rising slab by only **35.5 film px at
+       t=22.2** — the full stop sitting on the marble's edge, which is what he saw — and it went
+       genuinely NEGATIVE from t=23.7 while the beat was still fading at 0.26 opacity.
+       ⚠️ **17vh WAS TRIED FIRST AND STILL TOUCHED (−17.3 at 0.31 opacity), BECAUSE LIFTING THE
+       BOX ALSO RE-WRAPS THE LINE**: the last line ended 18 film px further right, and the slab's
+       edge is a DIAGONAL that rides higher the further right you read it — so part of the lift
+       was spent walking into the stone. **15vh is the number that clears it: worst case +4.3
+       film px across the ENTIRE beat, and 51 film px of daylight at full opacity.** ⛔ Narrowing
+       the measure instead was measured and rejected — the sub would have to end near film x 300
+       to clear on its own, which is a 233px line at 17px, four lines deep, dropping the box's
+       bottom back down again. ⚠️ The reveal is unaffected: at 15vh the sweep still hides the box
+       completely at f157 (edge x 46 against the box's left 84) and clears its right edge by f205
+       (edge x 651 against 407). */
+    html.cine-on .cine-line[data-vpos-narrow="top"]{top:15vh}
+    /* ⭐⭐ THE KITCHEN LIFTS CLEAR OF THE ISLAND — D369. The island's lit top measures film y 437
+       on the 864 cut → 393px screen at 900×1000; a 20vh anchor with the TWO-line title (the
+       62vw measure below is what buys the second line back) and the one-line sub bottoms at
+       ~349 — 44px clear. ⚠️ This retires D368's ending-line coupling (27.7vh) on HIS
+       instruction; the phone keeps its own (25.6vh), untouched. ⚠️ On extreme WIDE-SHORT tablet
+       windows (≥1.35 aspect) the vertical crop pushes the island up under any anchor — there
+       the radial wash carries legibility, as this band always has. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:20vh;width:clamp(360px,62vw,640px)}
+    /* ⚠️ 17px IS THE SLAB BEAT'S AND IT STAYS — he called that frame *"pretty much perfect"*, and
+       the bigger face was measured to grow its box AND push its last line 75 film px further
+       right, into the diagonal where the slab rides higher. The 20px belongs to the kitchen beat
+       alone (below), which is the one he asked to make easier to read. */
+    html.cine-on .cine-line .cine-line-sub{margin:16px 0 0;font-size:17px;max-width:none}
+    /* ⭐⭐ **THE KITCHEN BEAT IS EASIER TO READ — D370.** Client: *"that subtitle is a little bit
+       hard to read. So do something that makes the title and the subtitle a bit easier to read."*
+       Measured behind this box on the 864 cut, t=29→37: the title band runs p97 **73 → 114** and
+       the sub band **88 → 115, with maxima at 245–255** — D346's trap exactly, specular highlights
+       as bright as the ink. Three answers, all static (⛔ nothing new samples the video — D366/
+       D367's flashing came from live sampling and must never return): the title takes 5.9vw, the
+       subtitle 20px, and **the wash holds its strength further down the box**, because the old
+       radial had decayed to ~0.2 by the subtitle's own rows (D346's lesson, which fixed the same
+       fault for two-line titles). The centre moves to 46% and the plateau runs to 46% before
+       falling — still `farthest-side` with the last stop at 100%, so it reaches zero inside its
+       own box and there is no edge anywhere (D311/D313). ⚠️ Kitchen beat only; the slab beat's
+       wash stays pinned under its clip and the phone keeps its own. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{font-size:clamp(40px,5.9vw,56px)}
+    html.cine-on .cine-line[data-vpos-wide="high"] .cine-line-sub{font-size:20px}
+    html.cine-on .cine-line[data-vpos-wide="high"]::before{
+      inset:-1.15em -2.4em -1.75em;
+      background:radial-gradient(farthest-side at 50% 46%,
+        rgba(6,6,9,0.68) 0%, rgba(6,6,9,0.64) 46%, rgba(6,6,9,0.42) 66%,
+        rgba(6,6,9,0.17) 84%, rgba(6,6,9,0) 100%);
+    }
+    /* ═════ THE FIRST FRAME, CENTRED AT SCALE — D369 ═════ */
+    html.cine-on .cine-hero{
+      left:0;right:0;padding:0 clamp(40px,8vw,120px);text-align:center;
+    }
+    html.cine-on .cine-hero .cine-hl{font-size:clamp(54px,7.6vw,76px);line-height:1.06}
+    html.cine-on .cine-hero .cine-hero-sub{
+      font-size:19px;max-width:52ch;margin:24px auto 0;
+    }
+    html.cine-on .cine-hero .cine-hero-cue{margin:30px auto 0;align-items:center}
+    html.cine-on .cine-hero .cine-hero-cue span{font-size:15px}
+    /* the arrow at 1.25× — same machine, every internal number scaled together, its own sheen
+       keyframes (cineHeroSheenT) because the travel is in px. The mask redraws at 40×120. */
+    html.cine-on .cine-hero .cine-hero-cue i{width:40px;height:120px}
+    html.cine-on .cine-hero .cine-hero-cue i > svg{width:40px;height:120px}
+    html.cine-on .cine-hero .cine-hero-cue i b{
+      -webkit-mask-size:40px 120px;mask-size:40px 120px;
+    }
+    html.cine-on .cine-hero .cine-hero-cue i b span{
+      height:70px;
+      animation-name:cineHeroSheenT;
+    }
+    /* ⭐⭐ THE TRIO, REBUILT AS A CLUSTER — 24 August 2026 (D371), replacing D369's equal-air
+       spread. Client, twice in one message pair: *"I think those should be closer together…
+       the WhatsApp should be on the right side, and the phone should be on the left side"* →
+       *"the phone button should be on the left and the WhatsApp button on the right."* So the
+       film's foot now reads [phone] [SKIP INTRO] [WhatsApp] — ⚠️ the MIRROR of the phone band's
+       own order, which stays as he ruled it at D359 — and each button sits a fixed 28px off the
+       pill's edge instead of centred in the half-width (at 900 wide that air had grown to 158px
+       a side, which is what he was looking at). His reasoning for the phone-on-the-left, kept
+       in his words: *"I'm not sure if people even have sim cards or can make calls from tablet,
+       but just in case they can, that's why we have the phone there."*
+       ⭐⭐ D371 ALSO GATES THE CALL BUTTON TO THE FILM: *"once it reaches the surfaces worth
+       building around screen, there is no more phone and WhatsApp button. Maybe just the
+       WhatsApp button."* So on this band the call fab EXISTS only while `skip-live` is up —
+       when the skip goes it vanishes with it, the WhatsApp button slides back to its corner
+       home alone, and D372's bar-rise then clears that too. (This trims D369's "add the phone
+       button again", which put it in the corner pair as well — third move for this button, all
+       logged.) ⛔ No `right` override here any more: the call fab launches off the base
+       right:18 home, and both flank targets are translates so the .35s transform transition
+       still carries the WhatsApp button between its two states.
+       Arithmetic: skip edges at 50vw ∓ 87.4px (its rendered 174.8px face), gap 28, buttons 46:
+       call left = 50vw − 161.4 off a home left of 100vw − 64 → tx = −97.4px − 50vw;
+       wa left = 50vw + 115.4 off the same home → tx = 179.4px − 50vw.
+       ⚠️ Constants carry the skip's rendered 174.8px — re-derive if its face changes. */
+    html.cine-on.skip-live .call-fab{display:flex}
+    html.cine-on .cine-skip{bottom:calc(env(safe-area-inset-bottom,0px) + 27px)}
+    html.cine-on.skip-live .wa-fab{transform:translateX(calc(179.4px - 50vw))}
+    html.cine-on.skip-live .call-fab{transform:translateX(calc(-97.4px - 50vw))}
+
+    /* ═════ THE ENDING FILLS THE FRAME — 24 August 2026 (D370) ═════
+       Client: *"on the final part where it's the surfaces worth building around — the subtitle,
+       the buttons, and the other little things at the bottom as well, make some things bigger or
+       space them out a little bit more so it takes up a little bit more of the screen. especially
+       that the title moves a bit higher."*
+       ⭐⭐ **THERE WAS ROOM AND IT WAS MEASURED FIRST.** At 768×1024 the composition ended at
+       y 793 with **231px of empty frame under it** (the floor's own padding is 61), so the block
+       could grow ~75px AND rise ~38 without ever crowding the fold. The title climbs by cutting
+       `.hero-inner`'s top padding (⚠️ set DIRECTLY here rather than through `--heroPadB`, which
+       D259 ties to the FLOOR — moving that variable would move the bottom edge too), and every
+       piece below it grows or breathes: the subtitle to 19px on a wider measure, the two stacked
+       buttons taller with a real gap, the four chips bigger with more air between them.
+       ⛔ TABLET-ONLY, and the desktop's frozen hero (D90) is untouched — different band. */
+    /* ⚠️ **`#hero` ON EVERY ONE OF THESE, AND IT IS NOT DECORATION.** The hero's own padding,
+       sub size and both grid gaps are already set by `#hero …` rules earlier in this sheet (an
+       id beats a class however late the class is written) — the first cut of this block used
+       plain class selectors and the buttons and chips grew while the padding, the sub and the
+       gaps silently did not. Matching the id makes source order decide, which is what §5's
+       "source order decides between equal specificity" is for. */
+    /* ═════ D373 RE-CUTS D370'S NUMBERS ON HIS REVIEW OF IT — 24 August 2026 ═════
+       Client: *"space out the tablet version's hero section. So move the title further up and…
+       space things a little bit better so that it takes up a little bit more space on the
+       screen, and that the title sits a bit higher up."* And the chips: *"the buttons of the
+       Google, the ten year, seventy two hour aftercare and free home visit are too big. They
+       must line up: the side of the Google and the seventy two hour should line up with the Q
+       of the word Quartz in the subtitle, and the ten year guarantee and free home visit side
+       must match up with the d from the word and."*
+       ⭐⭐ THE CHIP ALIGNMENT IS THE SUBTITLE'S OWN INK, MEASURED WITH THE FONT LOADED: the
+       `.hs-phone` line "Quartz, granite and marble worktops, chosen with you and" renders
+       550.3px wide at its fixed 19px (Q at x 108.9, the d of "and" at 659.1 in a 768 frame).
+       Both the sub and the chip grid are centred in the same column, so `width:550px` alone
+       lands the grid's left edge on the Q and its right edge on the d at EVERY tablet width —
+       no per-width constants. ⚠️ That 550 is a MEASUREMENT of the 19px line: re-measure it if
+       the subtitle's text, size or font ever changes (§0's rule — moving type re-wraps ink).
+       ⭐ The title climbs ~30px and the block ends ~11px lower (768×1024, measured live:
+       title top 251→221.5, chips bottom 814→825, span 563→604): the top padding gives up ~18px and every margin
+       below the title becomes a vh clamp, so a 1024-tall portrait breathes while the 768-tall
+       landscape — this band's tightest window (D297) — moves by only a few px on the floors.
+       Measured there after the change: title cap ~21px below the bar's glass, no crowding. */
+    #hero .hero-inner{padding-top:clamp(76px,8.2vh,96px)}
+    #hero .hero-title{margin-bottom:clamp(24px,4.2vh,52px)}
+    #hero .hero-sub{font-size:19px;max-width:560px;margin-bottom:clamp(42px,5.8vh,62px)}
+    #hero .hero-ctas{gap:18px;margin-bottom:clamp(42px,5.8vh,62px)}
+    #hero .hero-ctas .btn-gold,#hero .hero-ctas .btn-ghost{
+      font-size:14px;padding:19px 22px;letter-spacing:0.16em;
+    }
+    #hero .hero-chips{gap:18px;width:550px}
+    #hero .hero-chips .chip{font-size:13px;padding:12px 15px}
+
+    /* ⭐ D372: the sticky bar's own tablet cut — the phone dress stretched three 10.5px buttons
+       across up to 1120px of bar, which reads as slabs, not actions. The row centres as a
+       cluster instead: the quote button keeps its 1.35 share of a bounded 700px, the type gets
+       one step of air back, and the bar's glass and hairline stay exactly the phone's. */
+    .mbar{justify-content:center;gap:10px;padding-top:11px;
+      padding-bottom:calc(11px + env(safe-area-inset-bottom,0px))}
+    .mbar-a{flex:0 1 209px;font-size:11px;padding:13px 10px}
+    .mbar-cta{flex:0 1 282px}
+
   }
 

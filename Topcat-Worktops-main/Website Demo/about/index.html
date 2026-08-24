@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=d4e97f0018">
+<link rel="stylesheet" href="/assets/site.css?v=7e37bd0500">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -221,14 +221,20 @@
     </div>
   </div>
 </nav>
-<!-- ⭐ THE STICKY ACTION BAR — PHONE ONLY, 11 Aug 2026.
-     Client: "mobile should have a nav bar and a sticky bottom nav bar… the top nav bar will be
-     visible from the start on mobile, then as you scroll past the two CTAs in the hero section
-     the sticky bottom nav pops up with the email and phone and get an estimate."
-     ⛔ It is `display:none` above 720px and never rendered there, so desktop and tablet are
+<!-- ⭐ THE STICKY ACTION BAR — BOTH NARROW BANDS SINCE 24 Aug 2026 (D372); phone-only from 11 Aug.
+     Client, 11 Aug: "mobile should have a nav bar and a sticky bottom nav bar… the top nav bar
+     will be visible from the start on mobile, then as you scroll past the two CTAs in the hero
+     section the sticky bottom nav pops up with the email and phone and get an estimate."
+     ⭐⭐ D372 CHANGES TWO THINGS AT ONCE, BOTH HIS: the bar now reaches the TABLET (*"for tablet,
+     it's going to be the same. When the sticky bottom bar comes up, it'll say get a quote,
+     WhatsApp and call"*), and the middle action is WHATSAPP, NOT EMAIL (*"we're gonna change the
+     word email there to WhatsApp"*). The glyph is the site's own two-path WhatsApp mark (the
+     mn-pair's), and the link is the 07464 mobile — ⛔ WhatsApp goes to the mobile, calls stay on
+     the 0800 freephone, two numbers, deliberate (see the wa-fab markup note).
+     ⛔ It is `display:none` above 1120px and never rendered there, so the frozen desktop is
      untouched (§2 rule 15). ⚠️ It is the same three actions the page already carries — the
-     hero's call button, the contact block's address, and the quote CTA — parked where a thumb
-     can reach them once the hero has gone by. No new promise, no new number.
+     hero's call button, the floating WhatsApp button's own link, and the quote CTA — parked
+     where a thumb can reach them once the hero has gone by. No new promise, no new number.
      ⚠️ `visibility:hidden` while parked, not just a transform: a translated bar is still in the
      accessibility tree and still tabbable, which would put three links at the top of the tab
      order that nobody can see.
@@ -237,9 +243,12 @@
      dress, so the filled gold one simply travels to the left with it. -->
 <div class="mbar" id="mobileBar">
   <a class="mbar-a mbar-cta" href="#cta">Get a quote</a>
-  <a class="mbar-a" href="mailto:info@topcatworktops.co.uk">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.4 6.2h17.2v11.6H3.4Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m3.9 6.8 8.1 5.6 8.1-5.6" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
-    <span>Email</span>
+  <!-- ⭐ D372: WhatsApp replaces Email as the bar's middle action — his call, and it is also why
+       the floating corner buttons can stand down while the bar is up: the bar now carries the
+       same WhatsApp link itself. The email address still lives in the contact block and footer. -->
+  <a class="mbar-a" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.688-1.48-1.538-1.653-1.835-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0m0 21.784h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.437-9.884 9.888-9.884a9.82 9.82 0 0 1 6.988 2.896 9.825 9.825 0 0 1 2.892 6.995c-.002 5.45-4.437 9.886-9.885 9.886"/></svg>
+    <span>WhatsApp</span>
   </a>
   <a class="mbar-a" href="tel:+448000982812">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/></svg>
@@ -276,6 +285,25 @@
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
     <path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0zm-.001 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884z"/>
+  </svg>
+</a>
+
+<!-- ⭐ THE CALL BUTTON JOINS IT ON THE PHONE — 24 August 2026 (D359). Client: *"next to the
+     WhatsApp button… put a phone icon next to the WhatsApp icon and make it smaller and maybe less
+     visible… just for those who want to call immediately."* (His first thought was to REPLACE the
+     WhatsApp button; his second — the pair, smaller and ghosted — is what he leant to and what
+     shipped. Replacing is one deletion if he rules the other way.)
+     ⛔ **`tel:+448000982812` — THE FREEPHONE, NOT THE WHATSAPP MOBILE.** Calls go to the 0800
+     landline everywhere on the site at his instruction; WhatsApp alone goes to the 07464 mobile.
+     ⭐ The glyph is the site's own — the sticky action bar's phone path, unchanged.
+     ⚠️ Base display:none; the phone band shows it always (corner pair), and since D371 the
+     TABLET shows it only while the film's skip is up — after the film that band keeps the solo
+     WhatsApp button, his *"no more phone and WhatsApp button. Maybe just the WhatsApp button."*
+     ⚠️ A SIBLING AFTER `.mbar`, like `.wa-fab` — the `.mbar.on ~` stand-down (D372) reads that
+     order; if either moves, that rule dies silently. -->
+<a class="call-fab" href="tel:+448000982812" aria-label="Call Topcat Worktops on 0800 098 2812">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/>
   </svg>
 </a>
 
@@ -1017,6 +1045,6 @@
 
 </main>
 
-<script src="/assets/site.js?v=cc5b026b24" defer></script>
+<script src="/assets/site.js?v=759cb779b2" defer></script>
 </body>
 </html>

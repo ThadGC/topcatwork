@@ -880,13 +880,19 @@
   .mobile-nav .mn-alt:hover{border-color:var(--gold);color:var(--gold)}
 
   /* ============================================================================
-     ⭐ THE STICKY ACTION BAR — PHONE ONLY, 11 Aug 2026.
-     ⛔ EVERY RULE THAT MAKES IT VISIBLE LIVES INSIDE `@media(max-width:720px)`. Above that it is
+     ⭐ THE STICKY ACTION BAR — PHONE 11 Aug 2026; WIDENED TO THE TABLET 24 Aug 2026 (D372).
+     Client: *"for tablet, it's going to be the same. When the sticky bottom bar comes up, it'll
+     say get a quote, WhatsApp and call."* The QUERY is widened rather than the rules copied
+     (§5's rule), so both narrow bands run one description; the tablet's own sizing lives in
+     THE TABLET BAND block at the foot of the stylesheet.
+     ⛔ EVERY RULE THAT MAKES IT VISIBLE LIVES INSIDE `@media(max-width:1120px)`. Above that it is
      `display:none` and contributes nothing to layout, paint or scroll extent, so the frozen
-     desktop and the untouched tablet band are byte-identical (§2 rule 15, D91).
+     desktop is byte-identical (§2 rule 15, D91). ⚠️ `body{padding-bottom:66px}` and the
+     touch-action blanket travel with it — the bar needs its footer clearance wherever it can
+     rise, and every ≤1120 device is a touch device.
      ============================================================================ */
   .mbar{display:none}
-  @media(max-width:720px){
+  @media(max-width:1120px){
     /* z-index 39 is deliberate and sits BETWEEN two things: under `.mobile-nav` (40) so the
        full-screen menu covers it rather than leaving three stray links over the sheet, and far
        under the estimator modal (z 200) and the project overlay (z 120), which own the screen
@@ -918,11 +924,14 @@
     html.nav-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
     .mbar-a{
       flex:1 1 0;min-width:0;
-      display:inline-flex;align-items:center;justify-content:center;gap:7px;
+      /* ⚠️ D372: gap 7→6 and tracking 0.16→0.14em — "WHATSAPP" is three glyphs longer than
+         "EMAIL" and at 320px wide the old numbers ran the word into the button's border. The
+         whole row re-measured at 320/360/390 after the change; nothing clips. */
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
       padding:11px 6px;border-radius:2px;text-decoration:none;
       border:1px solid var(--hair);background:rgba(244,241,234,0.045);color:var(--bone);
       font-family:var(--brand);font-weight:600;font-size:min(10.5px,2.9vw);
-      letter-spacing:0.16em;text-transform:uppercase;white-space:nowrap;
+      letter-spacing:0.14em;text-transform:uppercase;white-space:nowrap;
       /* ⛔ iOS ZOOMS ON A DOUBLE TAP, and two quick taps on a bar like this is normal behaviour,
          not a mistake (client: "if I tap the buttons too quickly it automatically zooms in my
          phone"). `manipulation` drops the double-tap gesture on the element and keeps every
@@ -931,6 +940,15 @@
     }
     .mbar-a svg{flex:none;width:15px;height:15px;fill:currentColor}
     .mbar-a svg[stroke],.mbar-a svg path[stroke]{fill:none}
+    /* ⚠️ D372: at 320 wide "WHATSAPP" ran 2px past its button even at the 2.9vw font — these
+       buttons are nowrap, so that is a silent clip, not a wrap (the D171 trap). Nesting narrows:
+       this 360 inside the 1120 block still means ≤360. Re-measured at 320 after: the ink fits;
+       scrollWidth still reads 1px over, but that is the word's own trailing letter-space
+       (tracked uppercase always carries one), not a glyph. */
+    @media(max-width:360px){
+      .mbar-a{gap:5px;padding-left:4px;padding-right:4px}
+      .mbar-a svg{width:14px;height:14px}
+    }
     /* the quote button is the one filled element, exactly as in the header and the overlay —
        and it takes the extra width, because it is the action the page is asking for.
        ⛔ FLAT, NOT MILLED (D181) — the client named this button and the header's together. The
@@ -4248,6 +4266,17 @@
       transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
                  opacity .3s var(--ease),transform .35s var(--ease)}
     .wa-fab svg{width:23px;height:23px}
+    /* the call glyph at the same optical size as the WhatsApp mark — the phone band's own 21px
+       rule (later in the sheet) still wins below 720 */
+    .call-fab svg{width:23px;height:23px}
+    /* ⭐⭐ D372: THE PAIR STANDS DOWN WHILE THE STICKY BAR IS UP — both narrow bands. Client:
+       *"when the sticky bottom bar pops up… the WhatsApp icon above and the phone icon above
+       will go away."* ⛔⛔ THIS REVERSES D180's RIDE-THE-BAR LIFT (the fabs used to step up to
+       73px and sit above the bar), and the reversal is safe for the one reason D180 wasn't:
+       the bar itself now carries the WhatsApp link (D372), so nothing reachable is lost when
+       the corner clears. Same sibling-combinator state read as the old lift — `.mbar` must stay
+       an EARLIER SIBLING of both fabs or this dies silently (D180's own trap, still live). */
+    .mbar.on ~ .wa-fab,.mbar.on ~ .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
   }
   /* ⛔⛔⛔ THE HERO SCROLL CUE IS DELETED, MARKUP AND RULES — 14 Aug 2026 (D234). Client: *"on the
      hero section of the desktop version, remove the down arrow that says scroll above it. So
@@ -8537,6 +8566,11 @@
        in that order for this to work; if either moves, this rule dies silently.
        ⭐ `bottom` is transitioned over the same .5s the bar uses, so the two move together as one
        gesture rather than the button jumping after the bar has arrived.
+       ⛔⛔ **D372 (24 Aug 2026) SUPERSEDES THE RIDE ITSELF, NOT THE MECHANISM.** The bar's middle
+       button became the WhatsApp link, so while the bar is up the pair now HIDES rather than
+       stepping above it — his *"when the sticky bottom bar pops up… the WhatsApp icon above and
+       the phone icon above will go away."* The same `.mbar.on ~` sibling read does the hiding
+       (rule in the ≤1120 dress block), so everything above about sibling order still applies.
        ⭐ **AND IT STANDS DOWN WITH EVERYTHING ELSE WHEN THE MENU OPENS**, exactly as `.mbar` does
        four rules up: a contact shortcut floating over a full-screen menu is the classic version of
        this bug, and z-index alone would not have saved it here because the button is a sibling of
@@ -8571,7 +8605,9 @@
        measured with the pill's 26px padding and Jost loaded). */
     html.cine-on.skip-live .call-fab{transform:translateX(calc(136.7px - 25vw))}
     html.cine-on.skip-live .wa-fab{transform:translateX(calc(-6.7px - 75vw))}
-    .mbar.on ~ .wa-fab,.mbar.on ~ .call-fab{bottom:calc(73px + env(safe-area-inset-bottom,0px))}
+    /* ⛔ D372: the `.mbar.on ~` 73px lift that used to live here is GONE, not moved — while the
+       bar is up the pair now HIDES instead of riding it (rule in the ≤1120 dress block above),
+       because the bar's middle button became the WhatsApp link itself. */
     .call-fab svg{width:21px;height:21px}
     html.nav-open .wa-fab,html.nav-open .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
 
@@ -9310,16 +9346,33 @@
       height:70px;
       animation-name:cineHeroSheenT;
     }
-    /* ⭐ the trio, the phone's own construction at tablet homes (D369): call button BACK — his
-       *"we add the phone button again… I rate that's what we should do"* — flanking the centred
-       pill skip with EQUAL AIR by the same arithmetic: each side of the skip holds 50vw − 87.4px;
-       the 46px button sits in the middle of it. Homes: wa right 18, call right 74 (18+46+10);
-       flank targets: wa left = 25vw − 66.7, call left = 75vw + 20.7. ⚠️ Constants carry the
-       skip's rendered 174.8px — re-derive if its face changes. */
-    .call-fab{display:flex;right:74px}
+    /* ⭐⭐ THE TRIO, REBUILT AS A CLUSTER — 24 August 2026 (D371), replacing D369's equal-air
+       spread. Client, twice in one message pair: *"I think those should be closer together…
+       the WhatsApp should be on the right side, and the phone should be on the left side"* →
+       *"the phone button should be on the left and the WhatsApp button on the right."* So the
+       film's foot now reads [phone] [SKIP INTRO] [WhatsApp] — ⚠️ the MIRROR of the phone band's
+       own order, which stays as he ruled it at D359 — and each button sits a fixed 28px off the
+       pill's edge instead of centred in the half-width (at 900 wide that air had grown to 158px
+       a side, which is what he was looking at). His reasoning for the phone-on-the-left, kept
+       in his words: *"I'm not sure if people even have sim cards or can make calls from tablet,
+       but just in case they can, that's why we have the phone there."*
+       ⭐⭐ D371 ALSO GATES THE CALL BUTTON TO THE FILM: *"once it reaches the surfaces worth
+       building around screen, there is no more phone and WhatsApp button. Maybe just the
+       WhatsApp button."* So on this band the call fab EXISTS only while `skip-live` is up —
+       when the skip goes it vanishes with it, the WhatsApp button slides back to its corner
+       home alone, and D372's bar-rise then clears that too. (This trims D369's "add the phone
+       button again", which put it in the corner pair as well — third move for this button, all
+       logged.) ⛔ No `right` override here any more: the call fab launches off the base
+       right:18 home, and both flank targets are translates so the .35s transform transition
+       still carries the WhatsApp button between its two states.
+       Arithmetic: skip edges at 50vw ∓ 87.4px (its rendered 174.8px face), gap 28, buttons 46:
+       call left = 50vw − 161.4 off a home left of 100vw − 64 → tx = −97.4px − 50vw;
+       wa left = 50vw + 115.4 off the same home → tx = 179.4px − 50vw.
+       ⚠️ Constants carry the skip's rendered 174.8px — re-derive if its face changes. */
+    html.cine-on.skip-live .call-fab{display:flex}
     html.cine-on .cine-skip{bottom:calc(env(safe-area-inset-bottom,0px) + 27px)}
-    html.cine-on.skip-live .wa-fab{transform:translateX(calc(-2.7px - 75vw))}
-    html.cine-on.skip-live .call-fab{transform:translateX(calc(140.7px - 25vw))}
+    html.cine-on.skip-live .wa-fab{transform:translateX(calc(179.4px - 50vw))}
+    html.cine-on.skip-live .call-fab{transform:translateX(calc(-97.4px - 50vw))}
 
     /* ═════ THE ENDING FILLS THE FRAME — 24 August 2026 (D370) ═════
        Client: *"on the final part where it's the surfaces worth building around — the subtitle,
@@ -9340,15 +9393,45 @@
        plain class selectors and the buttons and chips grew while the padding, the sub and the
        gaps silently did not. Matching the id makes source order decide, which is what §5's
        "source order decides between equal specificity" is for. */
-    #hero .hero-inner{padding-top:clamp(72px,10vh,104px)}
-    #hero .hero-sub{font-size:19px;max-width:560px;margin-bottom:42px}
-    #hero .hero-ctas{gap:18px;margin-bottom:42px}
+    /* ═════ D373 RE-CUTS D370'S NUMBERS ON HIS REVIEW OF IT — 24 August 2026 ═════
+       Client: *"space out the tablet version's hero section. So move the title further up and…
+       space things a little bit better so that it takes up a little bit more space on the
+       screen, and that the title sits a bit higher up."* And the chips: *"the buttons of the
+       Google, the ten year, seventy two hour aftercare and free home visit are too big. They
+       must line up: the side of the Google and the seventy two hour should line up with the Q
+       of the word Quartz in the subtitle, and the ten year guarantee and free home visit side
+       must match up with the d from the word and."*
+       ⭐⭐ THE CHIP ALIGNMENT IS THE SUBTITLE'S OWN INK, MEASURED WITH THE FONT LOADED: the
+       `.hs-phone` line "Quartz, granite and marble worktops, chosen with you and" renders
+       550.3px wide at its fixed 19px (Q at x 108.9, the d of "and" at 659.1 in a 768 frame).
+       Both the sub and the chip grid are centred in the same column, so `width:550px` alone
+       lands the grid's left edge on the Q and its right edge on the d at EVERY tablet width —
+       no per-width constants. ⚠️ That 550 is a MEASUREMENT of the 19px line: re-measure it if
+       the subtitle's text, size or font ever changes (§0's rule — moving type re-wraps ink).
+       ⭐ The title climbs ~30px and the block ends ~11px lower (768×1024, measured live:
+       title top 251→221.5, chips bottom 814→825, span 563→604): the top padding gives up ~18px and every margin
+       below the title becomes a vh clamp, so a 1024-tall portrait breathes while the 768-tall
+       landscape — this band's tightest window (D297) — moves by only a few px on the floors.
+       Measured there after the change: title cap ~21px below the bar's glass, no crowding. */
+    #hero .hero-inner{padding-top:clamp(76px,8.2vh,96px)}
+    #hero .hero-title{margin-bottom:clamp(24px,4.2vh,52px)}
+    #hero .hero-sub{font-size:19px;max-width:560px;margin-bottom:clamp(42px,5.8vh,62px)}
+    #hero .hero-ctas{gap:18px;margin-bottom:clamp(42px,5.8vh,62px)}
     #hero .hero-ctas .btn-gold,#hero .hero-ctas .btn-ghost{
       font-size:14px;padding:19px 22px;letter-spacing:0.16em;
     }
-    #hero .hero-chips{gap:18px}
-    #hero .hero-chips .chip{font-size:13px;padding:13px 16px}
-  
+    #hero .hero-chips{gap:18px;width:550px}
+    #hero .hero-chips .chip{font-size:13px;padding:12px 15px}
+
+    /* ⭐ D372: the sticky bar's own tablet cut — the phone dress stretched three 10.5px buttons
+       across up to 1120px of bar, which reads as slabs, not actions. The row centres as a
+       cluster instead: the quote button keeps its 1.35 share of a bounded 700px, the type gets
+       one step of air back, and the bar's glass and hairline stay exactly the phone's. */
+    .mbar{justify-content:center;gap:10px;padding-top:11px;
+      padding-bottom:calc(11px + env(safe-area-inset-bottom,0px))}
+    .mbar-a{flex:0 1 209px;font-size:11px;padding:13px 10px}
+    .mbar-cta{flex:0 1 282px}
+
   }
 
 </style>
@@ -9642,14 +9725,20 @@
   </div>
 </nav>
 
-<!-- ⭐ THE STICKY ACTION BAR — PHONE ONLY, 11 Aug 2026.
-     Client: "mobile should have a nav bar and a sticky bottom nav bar… the top nav bar will be
-     visible from the start on mobile, then as you scroll past the two CTAs in the hero section
-     the sticky bottom nav pops up with the email and phone and get an estimate."
-     ⛔ It is `display:none` above 720px and never rendered there, so desktop and tablet are
+<!-- ⭐ THE STICKY ACTION BAR — BOTH NARROW BANDS SINCE 24 Aug 2026 (D372); phone-only from 11 Aug.
+     Client, 11 Aug: "mobile should have a nav bar and a sticky bottom nav bar… the top nav bar
+     will be visible from the start on mobile, then as you scroll past the two CTAs in the hero
+     section the sticky bottom nav pops up with the email and phone and get an estimate."
+     ⭐⭐ D372 CHANGES TWO THINGS AT ONCE, BOTH HIS: the bar now reaches the TABLET (*"for tablet,
+     it's going to be the same. When the sticky bottom bar comes up, it'll say get a quote,
+     WhatsApp and call"*), and the middle action is WHATSAPP, NOT EMAIL (*"we're gonna change the
+     word email there to WhatsApp"*). The glyph is the site's own two-path WhatsApp mark (the
+     mn-pair's), and the link is the 07464 mobile — ⛔ WhatsApp goes to the mobile, calls stay on
+     the 0800 freephone, two numbers, deliberate (see the wa-fab markup note).
+     ⛔ It is `display:none` above 1120px and never rendered there, so the frozen desktop is
      untouched (§2 rule 15). ⚠️ It is the same three actions the page already carries — the
-     hero's call button, the contact block's address, and the quote CTA — parked where a thumb
-     can reach them once the hero has gone by. No new promise, no new number.
+     hero's call button, the floating WhatsApp button's own link, and the quote CTA — parked
+     where a thumb can reach them once the hero has gone by. No new promise, no new number.
      ⚠️ `visibility:hidden` while parked, not just a transform: a translated bar is still in the
      accessibility tree and still tabbable, which would put three links at the top of the tab
      order that nobody can see.
@@ -9658,9 +9747,12 @@
      dress, so the filled gold one simply travels to the left with it. -->
 <div class="mbar" id="mobileBar">
   <a class="mbar-a mbar-cta" href="#cta">Get a quote</a>
-  <a class="mbar-a" href="mailto:info@topcatworktops.co.uk">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.4 6.2h17.2v11.6H3.4Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m3.9 6.8 8.1 5.6 8.1-5.6" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
-    <span>Email</span>
+  <!-- ⭐ D372: WhatsApp replaces Email as the bar's middle action — his call, and it is also why
+       the floating corner buttons can stand down while the bar is up: the bar now carries the
+       same WhatsApp link itself. The email address still lives in the contact block and footer. -->
+  <a class="mbar-a" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.688-1.48-1.538-1.653-1.835-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0m0 21.784h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.437-9.884 9.888-9.884a9.82 9.82 0 0 1 6.988 2.896 9.825 9.825 0 0 1 2.892 6.995c-.002 5.45-4.437 9.886-9.885 9.886"/></svg>
+    <span>WhatsApp</span>
   </a>
   <a class="mbar-a" href="tel:+448000982812">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/></svg>
@@ -9708,8 +9800,10 @@
      ⛔ **`tel:+448000982812` — THE FREEPHONE, NOT THE WHATSAPP MOBILE.** Calls go to the 0800
      landline everywhere on the site at his instruction; WhatsApp alone goes to the 07464 mobile.
      ⭐ The glyph is the site's own — the sticky action bar's phone path, unchanged.
-     ⚠️ Phone-only (base display:none): the tablet keeps today's solo WhatsApp button until its
-     round opens. ⚠️ A SIBLING AFTER `.mbar`, like `.wa-fab` — the `.mbar.on ~` lift reads that
+     ⚠️ Base display:none; the phone band shows it always (corner pair), and since D371 the
+     TABLET shows it only while the film's skip is up — after the film that band keeps the solo
+     WhatsApp button, his *"no more phone and WhatsApp button. Maybe just the WhatsApp button."*
+     ⚠️ A SIBLING AFTER `.mbar`, like `.wa-fab` — the `.mbar.on ~` stand-down (D372) reads that
      order; if either moves, that rule dies silently. -->
 <a class="call-fab" href="tel:+448000982812" aria-label="Call Topcat Worktops on 0800 098 2812">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -17070,9 +17164,10 @@ if(faqIndex && panel && faqBody){
   window.addEventListener('scroll',on,{passive:true});
 })();
 
-/* ---------- ⭐ the phone's sticky action bar: rises once the hero's CTAs have gone by ----------
-   Client: "as you scroll past the two CTAs in the hero section, then the sticky bottom nav will
-   pop up with the email and phone and get an estimate."
+/* ---------- ⭐ the sticky action bar: rises once the hero's CTAs have gone by ----------
+   Client, 11 Aug: "as you scroll past the two CTAs in the hero section, then the sticky bottom
+   nav will pop up with the email and phone and get an estimate." (D372 made the middle action
+   WhatsApp and widened the bar to the tablet; the trigger is unchanged.)
    ⭐ THE TRIGGER IS THE CTA ROW ITSELF, NOT A SCROLL NUMBER. `scrollY > 600` would be a second
    description of where the hero's buttons are, and it would be wrong the moment the title wraps
    to another line on another handset — the same class of bug as a media query disagreeing with
@@ -17080,9 +17175,9 @@ if(faqIndex && panel && faqBody){
    ⚠️ The threshold is the FIXED HEADER's bottom edge, not the viewport's top: the header is 76px
    of opaque glass over the page, so a row that has passed y=0 is already hidden behind it and
    the bar should be up by then.
-   ⚠️ Nothing here tests the width. `.mbar` is `display:none` above 720px, so `offsetParent` is
-   null and the class does nothing — the stylesheet stays the only thing that decides what a
-   phone is. */
+   ⚠️ Nothing here tests the width. `.mbar` is `display:none` above 1120px, so `offsetParent`
+   is null and the class does nothing — the stylesheet stays the only thing that decides which
+   bands have a bar. */
 (function(){
   const mbar=document.getElementById('mobileBar');
   const ctas=document.querySelector('.hero-ctas');

@@ -102,11 +102,11 @@
   }
   .mobile-nav .mn-alt svg{flex:none;width:16px;height:16px;fill:currentColor}
   .mobile-nav .mn-alt:hover{border-color:var(--gold);color:var(--gold)}
-  @media(max-width:720px){
+  @media(max-width:1120px){
     
     html.nav-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}}
   html.proj-open .mobile-nav{z-index:121}
   html.proj-open .nav-burger{z-index:123}
 
   @media(max-width:720px){
-    html.nav-open .wa-fab{opacity:0;pointer-events:none;transform:translateY(8px)}}
+    html.nav-open .wa-fab,html.nav-open .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}}
