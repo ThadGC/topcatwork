@@ -4392,6 +4392,63 @@
   html.cine-on .cine .hero-title{
     transition:opacity 1.15s var(--ease) 180ms,transform 1.15s var(--ease) 180ms}
   html.cine-on .cine .hero:not(.loaded) .hero-title{opacity:0;transform:translateY(26px)}
+  /* ⭐⭐⭐ **THE ENDING COMES TOWARDS YOU, AND IT COMES AS ONE OBJECT — 24 August 2026 (D356).
+     DESKTOP ONLY (≥1121).**
+     Client: *"the final landing page text where it says surfaces worth building around — I want
+     that animation to change to something that fades in from the center of the screen and then
+     becomes bigger as it settles, so basically as if it is coming closer. This animation needs to
+     be a decent speed."* And, correcting the first build within the hour: *"I don't just mean the
+     surfaces worth building around text. I mean all of that, that whole section from the
+     screenshot — from the buttons to all the little things and the subtext and everything."*
+     ⭐⭐⭐ **SO THE SCALE MOVED UP TO `.hero-inner`, AND THAT IS THE WHOLE DESIGN.** The first cut
+     scaled the headline alone. Scaling each element instead would be four zooms at once, and the
+     GAPS between them would not scale with them — the composition would visibly stretch as it
+     arrived. One transform on the block that contains all of it keeps every internal relationship
+     exactly proportional, which is the only reading of "coming closer" that is physically true:
+     a camera push-in moves the whole frame, not the words inside it.
+     ⛔⛔ **AND IT IS WHY THE PER-ELEMENT STAGGER STANDS DOWN INSIDE THE FILM'S ENDING.** The four
+     `--hd` delays (title 180, sub 560, buttons 720, chips 880) are a sequence of separate
+     arrivals; he has asked for one arrival of one object. The children are therefore pinned at
+     their rest values in this scope and the block owns the motion. ⚠️ **THE APPROVED STAGGER IS
+     NOT DELETED — it still runs everywhere else**, including this same hero when the film does not
+     run (reduced motion, no MP4, `fail()`), and on the phone and the tablet. One rule reverses it.
+     ⭐⭐ **A `scale()` ON PURPOSE, WHICH IS THE OPPOSITE OF D325b's RULING — BECAUSE HE IS ASKING
+     FOR THE THING THAT RULING AVOIDED.** There, a `scale` was rejected for the film's titles
+     because it "grows type on a flat plane and reads as a zoom" where a `translateZ` under a
+     perspective grows it the way a lens would. **A zoom is precisely what "as if it is coming
+     closer" describes here**, and `.hero-inner` carries no perspective — adding one to a
+     composition the client froze at D90, with measured internal spacing (D259, D303), to buy a
+     subtler curve would be a real layout risk taken for nothing.
+     ⭐⭐ **0.84 → 1.00, AND IT LANDS ON EXACTLY 1.00, SO THE APPROVED REST FRAME IS UNTOUCHED** —
+     the same discipline as the gutter fade (D352), the reveal's clip (D354) and the kitchen slide
+     (D355): the animation owns the approach and owns nothing at rest. ⛔ **AND THE TRANSFORM IS
+     GONE AT REST, NOT SET TO `scale(1)`** — a live transform on `.hero-inner` would make it the
+     containing block for any absolutely positioned descendant for the rest of the page's life.
+     ⭐⭐ **THE ORIGIN IS ITS OWN CENTRE, AND HERE THAT IS THE CENTRE OF THE SCREEN.** `.hero-inner`
+     is `margin:0 auto` in a full-viewport hero and its contents are centred, so the default
+     `transform-origin` puts the growth exactly where he asked for it, with nothing to hand-tune
+     and nothing to re-measure when the viewport changes.
+     ⭐ **0.8s IS THE "DECENT SPEED", DOWN FROM 1.15s**, on the site's own `--ease`
+     (`cubic-bezier(0.16,1,0.3,1)`) — a strong ease-out that spends most of the distance early and
+     decelerates into rest, which is what "settles" means. **Measured on the live transition: held
+     for the 180ms stagger, 0.918 at 261ms, 0.971 at 377ms, 0.992 at 519ms, exactly 1.000 by
+     980ms.** ⚠️ The 180ms delay is kept — it is the first line's own `--hd`, so the ending still
+     lands a beat after the frame has finished becoming the hero (`CURVE_AT` 0.90 vs `INK_AT` 0.93).
+     ⛔⛔ **DESKTOP ONLY, AND THAT IS §2 RULE 15, NOT CAUTION.** The film runs at every band since
+     D312, so the base rules above are what the phone and the tablet still answer to — editing them
+     would change two bands he has not opened, and their text placement is the round still owed
+     since D325. ⭐ It ports in one line when he calls that round.
+     ⚠️ SOURCE ORDER, NOT SPECIFICITY, ON THE TWO CHILD RULES: they carry the same weight as the
+     base rules they override and win by sitting after them (§8). They must stay after them, and
+     before the tablet band's own block. */
+  @media(min-width:1121px){
+    html.cine-on .cine .hero-inner{
+      transition:opacity .8s var(--ease) 180ms,transform .8s var(--ease) 180ms}
+    html.cine-on .cine .hero:not(.loaded) .hero-inner{opacity:0;transform:scale(0.84)}
+    /* the block owns the arrival now, so the children hold their rest values throughout */
+    html.cine-on .cine .hero:not(.loaded) .hero-title,
+    html.cine-on .cine .hero:not(.loaded) .hero-el{opacity:1;transform:none;transition:none}
+  }
 
   /* ⭐⭐⭐ **THE VEIL COMES OFF THE FILM AND BACK ON FOR THE HERO — 18 August 2026 (D311).**
      Client, on the first build: *"you still have the dark gradient over the whole animation. So we
@@ -17022,10 +17079,12 @@ if(faqIndex && panel && faqBody){
      `-KW.x1 * (1-q)²` — full speed on the first pixel of the window (D353's rule: an ease-in from
      rest is a dead zone) decelerating to zero velocity at rest, which is what "sets" means.
      ⚠️ **3.2s SINCE D355a** — client: *"make that text come in slightly slower"* — from 2.5s,
-     which cuts the peak speed by a fifth (653 → 510 px a film-second at 1382). Out: 35.0 → 37.5,
-     `-KW.x1 * q²` — the same curve time-reversed at the ORIGINAL 2.5s pace: his retime named the
-     way IN only, so the way out keeps the speed he has already seen. One number if he wants the
-     two matched again. Between the two it does not move at all.
+     which cuts the peak speed by a fifth (653 → 510 px a film-second at 1382). Out: 34.3 → 37.5,
+     `-KW.x1 * q²` — the identical curve time-reversed, and **3.2s to match since D355b** (client:
+     *"match the exit as well to the entry"*), so the two are mirror-equal in shape AND in
+     duration: it leaves at exactly the speed it arrived, played backwards. ⚠️ **THE HOLD IS THE
+     REMAINDER, 2.6s** — the beat's own 28.5–37.5 window is unchanged, so widening both ramps
+     spends the still time rather than the copy's seconds. Between the two it does not move at all.
      ⭐ **THE SLIDE IS THE SAFE AXIS, MEASURED (D345's fences):** the block's vertical position
      never changes, so the island (14–21px below) and the bar (65px above) keep their clearances
      through the whole life of the beat; and while sliding, the block sits LEFT of its rest, so its
@@ -17039,7 +17098,7 @@ if(faqIndex && panel && faqBody){
      also be travelling in Z, and this beat starts at 16vh where the perspective trap lives
      (D325b/D340/D345); a pure translateX under the parent perspective has no Z component and
      cannot spring it. */
-  const KIT_SET=31.7, KIT_OUT=35.0;
+  const KIT_SET=31.7, KIT_OUT=34.3;
   const kitEl=document.querySelector('.cine-line[data-vpos-wide="high"]');
   const KW={x1:0};
   let kitTx=null;

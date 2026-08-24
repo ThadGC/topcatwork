@@ -13,8 +13,12 @@ Read this, then `HANDOVER.md` **§D** (the register, newest first — this round
 > still behind a clip that IS the slab's tracked edge, riding the painted frame (rVFC), and the
 > slab uncovers them at its own angle. ⭐ **D355: the KITCHEN BEAT** — in from the left on the
 > scroll, sets, and leaves in reverse, the first screen's grammar pointed inward. See both
-> register rows. ⭐⭐ **The likely next scope is mobile/tablet text placement (§14 item 2), owed
-> since D325 — but he opens it, not you.**
+> register rows. ⭐ **D356: the ENDING** — the whole hero block (headline, subtext, buttons and
+> chips together) fades in from the centre and grows into place as ONE object, as if coming
+> closer. ⭐⭐ **The likely next scope is mobile/tablet text placement (§14 item 2), owed since
+> D325 — but he opens it, not you.** ⚠️ **Everything in D352–D356 is DESKTOP ONLY (≥1121) and the
+> phone and tablet still run the pre-round animations** — that is rule 15, and each ports in
+> roughly one rule when he calls the round.
 
 ---
 
