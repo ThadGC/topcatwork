@@ -9613,7 +9613,11 @@
            same judgement D326 made when it took the old line off every band. Verified on the phone's
            own cut: its top band reads p97 **66–98** through this window, so the beat lands dark
            there. ⭐ **Its placement on the narrow bands is still his open conversation.** -->
-      <p class="cine-line" data-at="28.5" data-out="37.5" data-vpos="low" data-vpos-wide="high"
+      <!-- ⭐ **D358: THE DESKTOP `data-at` IS 27.6, WAS 28.5** — *"I wanted it to come in
+           earlier"* — and the floor is measured, not chosen: the kitchen shot cuts in at t=25.5
+           and the text band is established ground from ~26.8 (mean ~32, p97 65). The tablet and
+           the phone keep their own attributes, untouched. -->
+      <p class="cine-line" data-at="27.6" data-out="37.5" data-vpos="low" data-vpos-wide="high"
          data-vpos-narrow="top">The stone sets the tone of <em>the room.</em><span class="cine-line-sub">Once you choose your stone, the rest follows.</span></p>
 
       <!-- ⭐⭐⭐ THE OPENING FRAME AS A SECOND HERO — 22 August 2026 (D325). Client: *"the first frame
@@ -17082,12 +17086,14 @@ if(faqIndex && panel && faqBody){
      words carry their own wash in with them: `.cine-line::before` lives inside the line's stacking
      context and rides the same transform, so the shade arrives and leaves WITH the words rather
      than hanging on an empty room.
-     ⚠️ **THE SCRUBBED VERSION OF THIS IS GONE — SEE D357 BELOW, WHICH IS THE LIVE MECHANISM.**
-     It ran the slide as a function of film time: in over 28.5 → 31.7 (2.5s at D355, widened to
-     3.2s at D355a on *"make that text come in slightly slower"*), out over 34.3 → 37.5 (matched to
-     3.2s at D355b on *"match the exit as well to the entry"*). **The curves survived that change
-     and are still exactly these two**; only their clock did. ⛔ Do not re-tie them to the scroll:
-     D357 records why, in his own words.
+     ⚠️ **THE CLOCK HAS FLIPPED TWICE — READ D357 AND D358 BEFORE TOUCHING IT.** Scrubbed at
+     D355 (in 28.5 → 31.7 after D355a's *"slightly slower"*, out 34.3 → 37.5 after D355b's
+     *"match the exit"*) → wall-clock at D357 (*"just animate in and out at a good time instead of
+     being tied to the scroll"*) → **scrubbed again at D358** (*"probably has to be tied to the
+     scroll because it's currently broken"* — the wall clock lingered over the slab scene on a
+     fast back-scrub, and its second rAF + per-frame `getImageData` read as jagged). The curves
+     survived every flip unchanged; the D358 block below is the live mechanism and carries the
+     history in full.
      ⭐ **THE SLIDE IS THE SAFE AXIS, MEASURED (D345's fences):** the block's vertical position
      never changes, so the island (14–21px below) and the bar (65px above) keep their clearances
      through the whole life of the beat; and while sliding, the block sits LEFT of its rest, so its
@@ -17101,82 +17107,50 @@ if(faqIndex && panel && faqBody){
      also be travelling in Z, and this beat starts at 16vh where the perspective trap lives
      (D325b/D340/D345); a pure translateX under the parent perspective has no Z component and
      cannot spring it. */
-  /* ⛔⛔⛔ **AND IT RUNS ON ITS OWN CLOCK NOW, NOT THE SCROLL'S — 24 August 2026 (D357).**
-     Client: *"I don't know if I want that to be tied to the scroll, because sometimes people will
-     be mid scroll and then it comes in and goes out very weirdly. So I would like for that to just
-     animate in and out at a good time instead of being tied to the scroll necessarily."*
-     ⭐⭐⭐ **HE IS DESCRIBING A REAL PROPERTY OF A SCRUBBED ANIMATION, NOT A BUG IN THIS ONE.** A
-     scrubbed slide has no motion of its own: it can only ever be as smooth as the hand driving it,
-     so a trackpad flick throws the words across the frame, a slow drag crawls them, and stopping
-     mid-window strands them halfway. **The position was correct at every instant and it still
-     looked wrong**, which is the same lesson as D349–D351 arriving from the other side: there,
-     type inherited the FILM's 12fps; here, it inherits the SCROLL's irregularity.
-     ⭐⭐ **SO THE SCROLL NOW ONLY SAYS WHEN, AND THE ANIMATION OWNS HOW.** Two triggers in film
-     time — `L.at` (28.5) to come in, `KIT_GO` (35.0) to leave — and between them a wall-clock
-     tween that always runs to completion at its own pace. It cannot be stranded halfway, and a
-     fast scrub can no longer outrun it. ⛔ **THE TRIGGERS ARE STILL FILM TIME, AND THAT IS
-     DELIBERATE**: the beat belongs to the kitchen shot, so WHEN it happens must stay tied to the
-     picture — it is only the MOTION that has come off the scroll.
-     ⭐⭐ **THE TWO CURVES ARE THE ONES HE APPROVED AT D355/D355b, UNCHANGED IN SHAPE** — an
-     ease-out that arrives at speed and settles to a dead stop on the way in, and its exact
-     time-reverse on the way out, so it still leaves the way it came. Only the clock changed.
-     ⭐ **IT TWEENS FROM WHEREVER IT IS**, so a reversal mid-flight is continuous rather than a
-     jump — scrub back out of the window while it is still arriving and it simply turns around.
-     ⛔⛔ **IT NEEDS ITS OWN rAF AND CANNOT BORROW THE FILM'S.** The film's loop stops the moment
-     the eased playhead catches the scroll (`tick()` returns without re-arming), which is exactly
-     when a wall-clock animation still has most of its work to do — borrowing it would freeze the
-     slide the instant the user stopped scrolling, which is the very fault this replaces.
-     ⚠️ **AND THE WASH HAS TO RIDE ALONG WITH IT**, for the same reason: `bandGrade()` samples the
-     picture behind the words' CURRENT box, and during a tween with no scrolling `story()` is not
-     running at all. One writer owns `--lg` for this line (`kitLg`), shared by both callers, so the
-     two can never fight over it. */
-  const KIT_GO=35.0;      /* film time at which it is told to leave */
-  const KIT_MS=1250;      /* the slide's own duration, wall clock, the same both ways */
+  /* ⛔⛔⛔ **D357 IS REVERSED — THE SLIDE IS BACK ON THE SCROLL — 24 August 2026 (D358).**
+     Client: *"if I go back in the animation, it gets stuck on the previous screen… the animation
+     goes back over the previous scene and goes over the text that says the slab you choose is
+     unique. So that shouldn't happen. And then the animation probably has to be tied to the
+     scroll because it's currently broken. But I wanted it to come in earlier, and it has to move
+     in very smoothly because currently it feels a bit jagged."*
+     ⭐⭐⭐ **BOTH COMPLAINTS WERE THE WALL CLOCK'S OWN PROPERTIES, MEASURED:**
+     — **The lingering**: a 1.25s exit tween cannot outrun a fast reverse scrub. He is back on the
+       slab scene while the kitchen words are still mid-flight over it, and the eased playhead's
+       own ~2.5s settle DELAYS the out-trigger on top of that. A scrubbed position is a function
+       of film time and simply cannot exist outside its window.
+     — **The jagged**: the tween ran a SECOND rAF against the film's own loop while every frame
+       called `bandGrade()` — a `getImageData` readback per tween frame, against a video that is
+       decoding seeks. The scrubbed slide computes inside `story()`'s existing tick and pays
+       nothing extra, which is how every beat has run since D313 without complaint.
+     ⭐⭐ **SO THIS IS D355a/b's APPROVED MECHANISM RESTORED, WITH THE EARLIER IN-POINT HE ASKED
+     FOR** — position a pure function of the EASED film time (the playhead the whole film runs on,
+     already smoothed by its 0.12 chase), reversal inherent, and an opacity gate at the window's
+     edges so the words cannot exist over any other scene even for a frame.
+     ⚠️ **WHAT SCRUBBING GIVES BACK, STATED SO NOBODY RE-DISCOVERS IT**: stop mid-entry and the
+     words hold part-way in — that is what "tied to the scroll" means, and it is the property he
+     weighed against the wall clock's faults and chose. D357's tween is in the register if he ever
+     wants it back; its jank fix (wash throttling) would have to come with it.
+     ⭐⭐ **THE IN-POINT IS 27.6, WAS 28.5 — "I wanted it to come in earlier" — AND THE PICTURE
+     SETS THE FLOOR**: the kitchen shot cuts in at **t=25.5** (the text band's mean jumps 0 → 11)
+     and the band is stable, established kitchen from **~26.8** (mean ~32, p97 65–67 — comfortable
+     ground for bone). 27.6 gives the shot a beat to establish before the first letters cross the
+     frame edge, and the ramp now SETS at 30.8. The out is unchanged: 34.3 → 37.5.
+     ⭐ THE CURVES ARE D355's, APPROVED TWICE: in on `1-(1-q)²` — full speed on the first pixel of
+     the window (D353: an ease-in from rest is a dead zone), zero velocity at rest, 3.2s (D355a) —
+     and out on `q²`, its exact time-reverse, 3.2s (D355b). */
+  const KIT_SET=30.8, KIT_OUT=34.3;
   const kitEl=document.querySelector('.cine-line[data-vpos-wide="high"]');
   /* ⚠️ `KW.x1` is the box's own right edge in the story layer — `offsetLeft + offsetWidth`, both
      set by vw clamps, so a resize is the only thing that moves it and `sync()` is the one that
      re-reads it. No font term: the box is sized, not shrink-wrapped. */
   const KW={x1:0};
-  let kitShown=null, kitRaf=null, kitT0=0, kitFrom=0, kitTo=0, kitPx=null, kitLg=-1;
-  function kitWrite(px){
-    if(px===kitPx)return;
-    kitPx=px;
-    if(kitEl)kitEl.style.setProperty('--lx',px);
-  }
-  /* the wash, with ONE piece of state so the tween and `story()` cannot disagree about it */
-  function kitWash(on){
-    if(!kitEl)return;
-    if(on>0.02){
-      const g=bandGrade(kitEl);
-      if(g>=0){ const w=+(g*on).toFixed(2); if(w!==kitLg){ kitLg=w; kitEl.style.setProperty('--lg',w); } }
-    } else if(kitLg!==0){ kitLg=0; kitEl.style.setProperty('--lg',0); }
-  }
-  function kitTween(){
-    kitRaf=null;
-    if(!kitEl||!heroOn)return;
-    const k=clamp((performance.now()-kitT0)/KIT_MS);
-    /* ⭐ arriving: `1-(1-k)²`, full speed at the off, decelerating to zero at rest — D353's rule
-       that an ease-in from a standstill reads as a dead zone. Leaving: `k²`, its exact reverse. */
-    const e=(kitTo===0)?(1-(1-k)*(1-k)):(k*k);
-    kitWrite(+(kitFrom+(kitTo-kitFrom)*e).toFixed(2));
-    kitWash(1);
-    if(k<1)kitRaf=requestAnimationFrame(kitTween);
-  }
-  function kitShow(show){
-    if(show===kitShown)return;
-    kitShown=show;
-    kitFrom=(kitPx===null)?-KW.x1:kitPx;   /* from wherever it actually is, never from a nominal */
-    kitTo=show?0:-KW.x1;
-    kitT0=performance.now();
-    if(kitRaf===null)kitRaf=requestAnimationFrame(kitTween);
-  }
+  let kitTx=null;
   function measureKit(){
-    if(kitRaf!==null){ cancelAnimationFrame(kitRaf); kitRaf=null; }
-    kitShown=null; kitPx=null; kitLg=-1;
     if(!heroOn||!kitEl){
       /* hand the slide back on the way out — an inline `--lx` left behind under 1121 would drag
          the tablet's beat off its mark (the D336/D348 family of bug) */
       if(kitEl){ kitEl.style.removeProperty('--lx'); kitEl.style.removeProperty('--lg'); }
+      kitTx=null;
       return;
     }
     KW.x1=kitEl.offsetLeft+kitEl.offsetWidth;
@@ -17318,17 +17292,23 @@ if(faqIndex && panel && faqBody){
       }
       /* ⭐⭐⭐ THE KITCHEN BEAT ON DESKTOP SLIDES IN FROM THE LEFT AND SETS, AND LEAVES IN REVERSE
          (D355) — no fade, no Z, no blur, on the continuous scroll clock. The curve and the fences
-         are documented at KIT_GO above. The wash still rides `bandGrade()` — this beat sits on
+         are documented at KIT_SET above. The wash still rides `bandGrade()` — this beat sits on
          the lit kitchen (D346's specular streaks), and the shade travels inside the line's own
          stacking context, with the words. */
       if(L.el===kitEl&&heroOn){
-        /* ⭐ THE SCROLL ONLY SAYS WHEN (D357) — `kitShow()` owns the motion from here, on its own
-           clock. ⚠️ It stays VISIBLE while the tween is still running, so a fast scrub past the
-           end cannot cut the exit off halfway. */
-        kitShow(t>=L.at&&t<KIT_GO);
-        const o=((t>=L.at&&t<L.out)||kitRaf!==null)?1:0;
+        /* ⭐ SCRUBBED AGAIN (D358) — a pure function of the eased film time, computed inside this
+           tick like every other beat, and the opacity gate is what makes the back-scroll clean:
+           outside 27.6–37.5 the words do not exist, whatever position the slide would hold. */
+        const o=(p<=0||p>=1)?0:1;
+        let tx=0;
+        if(t<KIT_SET){ const q=clamp((t-L.at)/(KIT_SET-L.at)); tx=+(-KW.x1*(1-q)*(1-q)).toFixed(2); }
+        else if(t>KIT_OUT){ const q=clamp((t-KIT_OUT)/(L.out-KIT_OUT)); tx=+(-KW.x1*q*q).toFixed(2); }
+        if(tx!==kitTx){ kitTx=tx; L.el.style.setProperty('--lx',tx); }
         if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
-        kitWash(o);
+        if(o>0.02){
+          const g=bandGrade(L.el);
+          if(g>=0){ const w=+(g*o).toFixed(2); if(w!==L.g){ L.g=w; L.el.style.setProperty('--lg',w); } }
+        } else if(L.g!==0){ L.g=0; L.el.style.setProperty('--lg',0); }
         if(L.z!==0){ L.z=0; L.el.style.setProperty('--lz',0); }
         if(L.b!==0){ L.b=0; L.el.style.filter='none'; }
         continue;
