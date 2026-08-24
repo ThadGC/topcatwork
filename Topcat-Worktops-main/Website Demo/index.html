@@ -923,12 +923,29 @@
     /* the menu owns the screen while it is open — the bar stands down rather than fighting it */
     html.nav-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
     .mbar-a{
-      flex:1 1 0;min-width:0;
+      /* ⭐⭐⭐ **THE BASIS IS `auto`, NOT `0`, AND THAT IS THE WHOLE OF D377.** Client: *"the
+         WhatsApp icon, and the p at the end of WhatsApp, is too close to the border of the
+         button. Space out the buttons perfectly so each one has enough space."*
+         ⛔⛔ **`flex:1 1 0` SIZES EVERY BUTTON BY ITS RATIO AND IGNORES WHAT IS INSIDE IT**, so
+         the three labels — 11, 8 and 4 characters — were poured into two identical widths. The
+         longest word got the least room. Measured at 390 before: **"Get a quote" 23.81px of air
+         a side, "WhatsApp" 4.73px, "Call" 25.62px** — the middle button had a fifth of its
+         neighbours' breathing room, which is exactly what he is looking at.
+         ⭐ With `basis:auto` each button STARTS at its own content width and the leftover is
+         shared by the grow factors, so a longer label buys width instead of losing it. Because
+         both ghost buttons grow by the same 1, they end up with the SAME internal air whatever
+         their labels say. Measured at 390 after: 19.4 / 15.9 / 15.9. ⚠️ It also means the row
+         can no longer clip a label at any width — the basis is the content — so D372's ≤360
+         rule below is now a comfort tune rather than a rescue.
+         ⛔ `min-width:0` is gone with the 0-basis it existed for: it let a button shrink BELOW
+         its content, which is the mechanism that produced the clipping in the first place. */
+      flex:1 1 auto;
       /* ⚠️ D372: gap 7→6 and tracking 0.16→0.14em — "WHATSAPP" is three glyphs longer than
-         "EMAIL" and at 320px wide the old numbers ran the word into the button's border. The
-         whole row re-measured at 320/360/390 after the change; nothing clips. */
+         "EMAIL". ⭐ D377 raises the horizontal padding 6 → 10 as the FLOOR under the centred
+         content: with grow active the visible air is `padding + share/2`, so this mostly matters
+         on the narrowest screens, where the share runs out first. */
       display:inline-flex;align-items:center;justify-content:center;gap:6px;
-      padding:11px 6px;border-radius:2px;text-decoration:none;
+      padding:11px 10px;border-radius:2px;text-decoration:none;
       border:1px solid var(--hair);background:rgba(244,241,234,0.045);color:var(--bone);
       font-family:var(--brand);font-weight:600;font-size:min(10.5px,2.9vw);
       letter-spacing:0.14em;text-transform:uppercase;white-space:nowrap;
@@ -940,20 +957,34 @@
     }
     .mbar-a svg{flex:none;width:15px;height:15px;fill:currentColor}
     .mbar-a svg[stroke],.mbar-a svg path[stroke]{fill:none}
-    /* ⚠️ D372: at 320 wide "WHATSAPP" ran 2px past its button even at the 2.9vw font — these
-       buttons are nowrap, so that is a silent clip, not a wrap (the D171 trap). Nesting narrows:
-       this 360 inside the 1120 block still means ≤360. Re-measured at 320 after: the ink fits;
-       scrollWidth still reads 1px over, but that is the word's own trailing letter-space
-       (tracked uppercase always carries one), not a glyph. */
+    /* ⚠️ D372/D377: the smallest handsets buy their room back from the gap and the glyph rather
+       than from the label. ⭐ Since D377 gave these buttons a content basis this can no longer
+       clip anything — it just keeps the row from spending its whole surplus on one word at 320.
+       Nesting narrows: this 360 inside the 1120 block still means ≤360. Measured at 320 after:
+       air 11.2 / 9.4 / 9.4, nothing over its box. */
     @media(max-width:360px){
-      .mbar-a{gap:5px;padding-left:4px;padding-right:4px}
+      .mbar-a{gap:5px;padding-left:7px;padding-right:7px}
       .mbar-a svg{width:14px;height:14px}
     }
     /* the quote button is the one filled element, exactly as in the header and the overlay —
        and it takes the extra width, because it is the action the page is asking for.
        ⛔ FLAT, NOT MILLED (D181) — the client named this button and the header's together. The
        vertical metal ramp and the top-light/bottom-shade bevel are both gone; see `.bar-cta`. */
-    .mbar-cta{flex:1.35 1 0;color:var(--ink);border-color:rgba(140,107,52,0.9);
+    /* ⚠️⚠️ D377: **1.35 → 1.7, AND THE REASON IS A MEASUREMENT THAT CONTRADICTED THE FIRST CUT.**
+       With a content basis the ratio now applies to the SURPLUS rather than to the whole width,
+       and at 1.35 that was no longer enough to keep the quote button the widest: measured at
+       390, gold **129.6 against WhatsApp's 131.1** — the ghost button had overtaken it, because
+       "WHATSAPP" plus its glyph is simply a wider object than "GET A QUOTE". ⛔ That crosses the
+       11 Aug ruling this rule was written for (*"the quote button… takes the extra width,
+       because it is the action the page is asking for"*), and it was UNSTABLE as well as wrong:
+       the two swapped places around ~400px, so the hierarchy depended on the handset.
+       ⭐ 1.7 puts it back with margin at every width the row has surplus — measured 390: gold
+       131.9, WhatsApp 129.9 — while the ghost buttons keep 15.7px of air a side, still more
+       than three times the 4.73px he was looking at. ⛔ Going further was rejected: the air is
+       what this change exists to protect. ⚠️ Below ~330 the basis wins over the share and
+       WhatsApp is the wider box again; nothing can fix that without shrinking the word, and at
+       that size the row is uniformly tight anyway. */
+    .mbar-cta{flex:1.7 1 auto;color:var(--ink);border-color:rgba(140,107,52,0.9);
       background:var(--gold)}
     .mbar-a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
     /* the bar floats over the page, so the last thing on it has to clear the bar's own height —
