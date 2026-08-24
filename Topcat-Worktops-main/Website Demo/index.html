@@ -4704,9 +4704,11 @@
     --ly:-50%;
     /* ⭐ `--lx` IS THE KITCHEN BEAT'S SLIDE (D355) and defaults to 0, so every other line is
        untouched at every band. It is written on desktop only and handed back on a band change. */
-    /* ⭐ `--lyp` IS THE KITCHEN BEAT'S RISE ON THE PHONE (D361) and defaults to 0px, so every
-       other line at every band is untouched. Written on the phone only, handed back with --lx. */
-    transform:translateX(calc(var(--lx,0) * 1px)) translateY(calc(var(--ly) + (var(--lyp,0) * 1px))) translateZ(calc(var(--lz,-150) * 1px));
+    /* ⭐ `--lyp` (a pixel Y term) is PARKED since D364 — it carried D361's rise for a day and the
+       rise was reversed to the desktop slide; the term stays, inert at 0, one write away.
+       ⭐ `--lsc` IS THE SLAB BEAT'S RECEDE ON THE PHONE (D364) and defaults to 1, so every other
+       line at every band is untouched. Scale sits LAST so it shrinks the line in place. */
+    transform:translateX(calc(var(--lx,0) * 1px)) translateY(calc(var(--ly) + (var(--lyp,0) * 1px))) translateZ(calc(var(--lz,-150) * 1px)) scale(var(--lsc,1));
     /* ⚠️ NOT a text-shadow for legibility alone — these words cross a daylight quarry AND a black
        void, and §2's own lesson from D313 is that no fixed ink survives that. The shadow is a
        contact shadow so the type reads as an object in the room; the veil's 0.20 floor and
@@ -5470,6 +5472,17 @@
         rgba(6,6,9,0) 0%, rgba(6,6,9,0.40) 22%, rgba(6,6,9,0.60) 42%,
         rgba(6,6,9,0.60) 62%, rgba(6,6,9,0.38) 82%, rgba(6,6,9,0) 100%);
     }
+    /* ⭐⭐ **THE KITCHEN BEAT STARTS ON THE ENDING'S OWN LINE — 24 August 2026 (D364).** His final
+       word after a mid-message revision (first "same height as your worktop starts here", then):
+       *"I actually want that title… and the subtitle… the same height as the next frame. So where
+       it says the stone sets the will be in line with where the next frame of surfaces worth
+       building around comes in."* The finished hero's `.hero-title` box top measures **216px =
+       25.6vh at 390×844** (film ended, `.loaded`, transform gone), so the last beat hands its line
+       straight to the headline that replaces it. ⚠️ Re-measure if the phone hero's paddings ever
+       move. ⚠️ AFTER the `[data-vpos-narrow]` rule above — equal specificity, source order — and
+       the SLAB beat stays at 14.5vh: its height is fenced by the film (the lane, above) and he
+       called it good. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:25.6vh}
   }
 
 
@@ -17307,7 +17320,7 @@ if(faqIndex && panel && faqBody){
     0.0500,0.0499,0.0493,0.0487,0.0480,0.0473,0.0459,0.0464,0.0456,0.0459,0.0459,0.0454,
     0.0439,0.0440,0.0432,0.0423];
   const revEl=document.querySelector('.cine-line[data-vpos-wide="hero"]');
-  let revOn=false, revClip=null, shownFr=-1;
+  let revOn=false, revClip=null, revSc=null, shownFr=-1;
   /* the element's LAYOUT box and the cover mapping, cached together: offsets and not
      `getBoundingClientRect`, because `clip-path` applies in the element's own untransformed space
      and a rect read mid-scroll would fold `--lz` into the numbers (the pin's lesson). Re-read by
@@ -17336,9 +17349,10 @@ if(faqIndex && panel && faqBody){
   function revealTick(){
     if(!revEl)return;
     if(!revOn||!RV.ok){
-      /* hand the property back on the way out — an inline clip left behind under 1121 would slice
-         the tablet's own fade for no reason (the D336/D348 family of bug) */
+      /* hand the properties back on the way out — an inline clip or scale left behind would slice
+         or shrink the tablet's own fade for no reason (the D336/D348 family of bug) */
       if(revClip!==null){ revClip=null; revEl.style.clipPath=''; }
+      if(revSc!==null){ revSc=null; revEl.style.removeProperty('--lsc'); }
       return;
     }
     const fr=(shownFr>=0)?shownFr
@@ -17481,31 +17495,23 @@ if(faqIndex && panel && faqBody){
      set by vw clamps, so a resize is the only thing that moves it and `sync()` is the one that
      re-reads it. No font term: the box is sized, not shrink-wrapped. */
   const KW={x1:0};
-  /* ⭐⭐ PHK.rise IS THE PHONE EXIT'S TRAVEL (D361), AND IT IS FENCED BY THE BAR, NOT CHOSEN.
-     The block's own top minus the bar FURNITURE's bottom (the deeper of the logo lockup and the
-     burger — the bar's BOX is 80px but its visible artwork ends at 57–62, and during the film the
-     preform hides its plate, so the box is not the honest fence) minus 6px of air, measured live
-     per resize. The first cut used a fifth of the viewport and was screenshotted crossing the
-     wordmark at 0.33 opacity — the same family of fault §2's open item 6 already flags on this
-     band (readable type reaching the frame's furniture). At 390×844 the fence gives 42px of
-     travel. The rise runs 1−(1−q)² — full speed on the first pixel, settling as it fades — so the
-     lift reads EARLY, while the words are still solid. */
-  const PHK={rise:0};
-  let kitTx=null, kitPhY=null;
+  /* ⚠️ D361's PHK RISE-FENCE MACHINERY IS PARKED — D364 reversed the rise to the desktop slide,
+     which has nothing to cross. Its arithmetic (the bar FURNITURE's bottom, not the bar's 80px
+     box, minus 6px of air) lives in the register row if the rise ever returns. */
+  let kitTx=null;
   function measureKit(){
     if(!kitEl)return;
     /* hand each band's inline property back on the way out — an inline value left behind would
        drag another band's beat off its mark (the D336/D348 family of bug) */
-    if(!heroOn){ kitEl.style.removeProperty('--lx'); kitTx=null; }
-    if(!heroPh){ kitEl.style.removeProperty('--lyp'); kitPhY=null; }
-    if(!heroOn&&!heroPh){ kitEl.style.removeProperty('--lg'); }
-    if(heroOn) KW.x1=kitEl.offsetLeft+kitEl.offsetWidth;
-    if(heroPh){
-      const br=document.querySelector('header.bar .brand');
-      const bu=document.querySelector('header.bar button');
-      const fence=Math.max(br?br.getBoundingClientRect().bottom:0, bu?bu.getBoundingClientRect().bottom:0)||barH();
-      PHK.rise=Math.max(24,Math.round(kitEl.offsetTop-fence-6));
+    if(!heroOn&&!heroPh){
+      kitEl.style.removeProperty('--lx'); kitTx=null;
+      kitEl.style.removeProperty('--lyp');
+      kitEl.style.removeProperty('--lg');
     }
+    /* ⭐ ONE FORMULA, TWO BANDS (D364): the box's own right edge. On desktop that is the
+       left-anchored block's 761 at 1440; on the phone the line is full-width, so the slide is
+       the whole frame — 390 at 390 — and a resize is still the only thing that moves it. */
+    if(heroOn||heroPh) KW.x1=kitEl.offsetLeft+kitEl.offsetWidth;
   }
   const STORY=[...document.querySelectorAll('.cine-line')].map(el=>({
     el, at:0, out:0, o:-1, z:-1, b:-1, g:-1,
@@ -17636,9 +17642,29 @@ if(faqIndex && panel && faqBody){
          own clip table inside revealTick, and its own exit seconds: 2.03s is the out-ramp the
          phone's beat has always had (26% of 16.2–24.0), kept exactly as 2.47 was kept on desktop. */
       if(L.el===revEl&&(heroOn||heroPh)){
-        const a=(p<=0||p>=1)?0:Math.min(1,(L.out-t)/(heroOn?2.47:2.03));
+        const FAD=heroOn?2.47:2.03;
+        const a=(p<=0||p>=1)?0:Math.min(1,(L.out-t)/FAD);
         const o=+(a*a*(3-2*a)).toFixed(2);
         if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
+        /* ⭐⭐ THE PHONE'S EXIT RECEDES — 24 August 2026 (D364). Client: *"I want it to basically
+           be the opposite of what the surfaces worth building around does… instead of coming from
+           the back forward, it goes from the forward backwards and fades out backwards, almost
+           like it gets smaller and just disappears backwards. The way that it animates in already
+           is perfect."* So over the same 2.03s the fade has always had, the line scales 1.00 →
+           0.84 — the ending's own number, run the other way — on q², gathering speed as it goes,
+           scroll-tied like everything in this tick. scale(), not translateZ: the ending zooms
+           about its own centre with no perspective, and its opposite must mirror that — a
+           negative Z under the story's 26%-origin perspective would drag the block down-left as
+           it shrank. The clip is long OFF by now (reveal done t=16.75, exit from 21.97), so no
+           filter-under-mask family risk. ⛔ Desktop untouched: its exit is D354's plain fade. */
+        if(heroPh){
+          const q=clamp((t-(L.out-FAD))/FAD);
+          const sc=+(1-0.16*q*q).toFixed(3);
+          if(sc!==revSc){ revSc=sc;
+            if(sc===1)L.el.style.removeProperty('--lsc');
+            else L.el.style.setProperty('--lsc',sc);
+          }
+        }
         /* ⚠️ PHONE ONLY, AFTER THE CLIP IS OFF (D362): the wash may ride bandGrade again. On any
            ordinary phone the post-reveal ground is void, the grade reads ~0 and nothing changes;
            on a sub-360 handset the taller box reaches the floating slab's lane, and this is what
@@ -17660,26 +17686,28 @@ if(faqIndex && panel && faqBody){
          are documented at KIT_SET above. The wash still rides `bandGrade()` — this beat sits on
          the lit kitchen (D346's specular streaks), and the shade travels inside the line's own
          stacking context, with the words. */
-      /* ⭐⭐⭐ THE KITCHEN BEAT ON THE PHONE GOES OUT UPWARD — 24 August 2026 (D361). Client: *"as
-         it lays down, the text will obviously be in the center or slightly to the left. Currently,
-         like it is, and then it will also animate out to the left of the screen. Well, actually,
-         not to the left. It goes up."* So: the placement and the fade-in are exactly what this
-         band already ran (centred, top:13vh, in over 16%) — his "currently, like it is" — and the
-         EXIT rises instead of travelling in Z: -PHK.rise × (1−(1−q)²) on the same 26% out-ramp
-         the fade uses, on the scroll clock — full speed on the first pixel, zero at the top, the
-         kitchen slide's own curve family (D355). The travel is fenced to stop 6px short of the
-         bar's bottom edge (see PHK above): far enough to read as leaving upward, and it cannot
-         cross the wordmark at ANY viewport — the first cut did, at 0.33 opacity, and was caught in
-         a screenshot before it shipped.
-         ⛔ Z IS PINNED AT 0 AND THE BLUR WITH IT: a thing that sits and then lifts away cannot
-         also be drifting at the camera; removing the Z travel is what makes the lift read. The
-         wash still rides bandGrade — this beat sits over the kitchen, not the void. */
+      /* ⭐⭐⭐ THE KITCHEN BEAT ON THE PHONE RUNS THE DESKTOP'S OWN SLIDE — 24 August 2026 (D364).
+         ⚠️ THIS REVERSES D361's RISE, ON HIS INSTRUCTION: *"for the part of the stone sets the
+         tone of the room, I want that to animate in from the left side, like it does on the
+         desktop version. and then I wanted to animate out the same way."* So it is D355/D358's
+         approved mechanism at this band: position a pure function of the eased film time, in on
+         1−(1−q)² (full speed on the first pixel, dead stop at rest — the stop IS the "set"), out
+         on q² time-reversed, and the opacity GATE at the window's edges keeps every back-scroll
+         clean (D358). The wash rides bandGrade and travels inside the line's own stacking
+         context, with the words — exactly as on desktop.
+         ⭐ THE RAMPS ARE 1.8s AGAINST THE DESKTOP'S 3.2 AND THAT IS THE SAME SPEED, NOT A FASTER
+         ONE: this box slides its full width, 390px at 390w, against the desktop block's 761 —
+         ~217 px/s either way — and the window (28.5–37.5) keeps a 5.4s still hold, the length
+         D358a fought for. ⛔ Z PINNED 0, NO BLUR: a thing that slides and sits cannot also drift
+         at the camera. D361's fence arithmetic is parked with `--lyp` — a slide has nothing to
+         cross. */
       if(L.el===kitEl&&heroPh){
-        const a=(p<=0||p>=1)?0:Math.min(1,p/0.16,(1-p)/0.26);
-        const o=+(a*a*(3-2*a)).toFixed(2);
-        let ry=0;
-        if(p>0.74&&p<1){ const q=Math.min(1,(p-0.74)/0.26); ry=Math.round(-PHK.rise*(1-(1-q)*(1-q))); }
-        if(ry!==kitPhY){ kitPhY=ry; L.el.style.setProperty('--lyp',ry); }
+        const o=(p<=0||p>=1)?0:1;
+        const ps=L.at+1.8, po=L.out-1.8;
+        let tx=0;
+        if(t<ps){ const q=clamp((t-L.at)/(ps-L.at)); tx=+(-KW.x1*(1-q)*(1-q)).toFixed(2); }
+        else if(t>po){ const q=clamp((t-po)/(L.out-po)); tx=+(-KW.x1*q*q).toFixed(2); }
+        if(tx!==kitTx){ kitTx=tx; L.el.style.setProperty('--lx',tx); }
         if(o!==L.o){ L.o=o; L.el.style.opacity=o; }
         if(o>0.02){
           const g=bandGrade(L.el);
@@ -17782,7 +17810,11 @@ if(faqIndex && panel && faqBody){
          slot the opening title has always held on this band.
          ⛔ ON THE SCROLL CLOCK, NEVER THE PAINTED FRAME — moving type on a 12fps picture is
          D349–D351's four-build lesson, restated here once. */
-      const p=clamp(t/HERO_OUT);
+      /* ⭐ 4.8, NOT THE DESKTOP'S 6.0 — D364: *"I want that to happen a little bit faster. So
+         they go through it slightly faster."* A fifth off the window; the whole pass (travel,
+         fade, the 380 cap's arithmetic) is a function of p, so the shape and the furniture
+         clearance are untouched — it simply completes by t=4.8. */
+      const p=clamp(t/4.8);
       const a=p>=1?0:Math.min(1,(1-p)/0.26);
       const o=+(a*a*(3-2*a)).toFixed(2);
       /* ⛔⛔ 380, NOT THE TITLES' 560 — D340's trap, measured at THIS anchor. The block hangs at
