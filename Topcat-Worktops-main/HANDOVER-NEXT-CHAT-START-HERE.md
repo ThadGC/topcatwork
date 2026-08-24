@@ -61,6 +61,21 @@ D346   ⛔⛔ the wash was reading a percentile that hid the streaks breaking th
 D347   ⛔⛔ the subtitles were still not white; the sub aligns to the title's STEM
 D348   ⛔ the words go still and a wave eats them — REVERSED THE SAME NIGHT, wrong reference frame
 D349   ⭐⭐⭐ THE PIN — the first screen is glued to the picture and rides it out of shot
+D350   ⛔⛔ "it's shaking" — the pin was right, its CLOCK was wrong: 60fps words on a 12fps picture
+```
+
+### ⛔⛔⛔ THE TRAP THAT COST TWO ROUNDS, AND IT WILL CATCH THE NEXT PERSON
+
+```
+the film is 12fps          a picture that steps and words that slide are not "in sync" —
+the scrub is 60fps         they oscillate against each other by a whole frame of travel
+
+anything pinned to the     ⭐ read `vid.currentTime` FLOORED TO ITS FRAME, never the eased
+picture reads the frame       target. `plate()` has done this since D331
+the viewer is SEEING
+
+measure the text AFTER     ⛔ Cinzel is 135px wider across the headline than the fallback.
+the font lands                D349 tracked the wrong patch of mountain because of it
 ```
 
 ---
@@ -138,7 +153,7 @@ opening title and their own placement, untouched. **§13 item 2.**
 | anchor | `top:22vh` | `top:22vh` `[data-vpos-wide="hero"]` | `top:16vh` `[data-vpos-wide="high"]` |
 | title | `clamp(38px,5vw,76px)` | the same | `clamp(34px,4.8vw,70px)` |
 | measure | `clamp(320px,46vw,660px)` | `clamp(320px,52vw,760px)` | the same |
-| Z travel | ⛔ none — it is PINNED (D349) | `HERO_Z` 300 | **150** |
+| Z travel | ⛔ none — PINNED, and it GROWS 1.00→1.20 (D349/D350) | `HERO_Z` 300 | **150** |
 | lines | 2 | 2 | 2 |
 
 ⛔⛔⛔ **ANYTHING ANCHORED NEAR THE TOP CANNOT TRAVEL THE TITLES' FULL 560.** `perspective-origin` is
