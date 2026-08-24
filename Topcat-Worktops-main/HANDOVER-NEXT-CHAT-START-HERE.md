@@ -59,7 +59,8 @@ D344   it comes in with the lights, not after them — he sent the exact frame
 D345   both beats to two lines; the kitchen beat lifted off the island
 D346   ⛔⛔ the wash was reading a percentile that hid the streaks breaking the words
 D347   ⛔⛔ the subtitles were still not white; the sub aligns to the title's STEM
-D348   ⭐⭐⭐ THE TEXT ANIMATION — the words go STILL and a wave eats them, on the camera's own pan
+D348   ⛔ the words go still and a wave eats them — REVERSED THE SAME NIGHT, wrong reference frame
+D349   ⭐⭐⭐ THE PIN — the first screen is glued to the picture and rides it out of shot
 ```
 
 ---
@@ -137,7 +138,7 @@ opening title and their own placement, untouched. **§13 item 2.**
 | anchor | `top:22vh` | `top:22vh` `[data-vpos-wide="hero"]` | `top:16vh` `[data-vpos-wide="high"]` |
 | title | `clamp(38px,5vw,76px)` | the same | `clamp(34px,4.8vw,70px)` |
 | measure | `clamp(320px,46vw,660px)` | `clamp(320px,52vw,760px)` | the same |
-| Z travel | ⛔ none (D348) | ⛔ none | ⛔ none |
+| Z travel | ⛔ none — it is PINNED (D349) | `HERO_Z` 300 | **150** |
 | lines | 2 | 2 | 2 |
 
 ⛔⛔⛔ **ANYTHING ANCHORED NEAR THE TOP CANNOT TRAVEL THE TITLES' FULL 560.** `perspective-origin` is
@@ -406,20 +407,22 @@ link presents as *"most of the images aren't loading"*.
 
 ### ⭐⭐⭐ The film, which is the live scope
 
-1. ⭐⭐⭐ ~~**THE TEXT ANIMATION.**~~ **ANSWERED AND BUILT — D348.** The words are STILL now; a single
-   soft edge crosses the frame on the film's own measured pan and takes them piece by piece. The
-   in-ramp fade stays (D344's cue rides it); the Z travel, the depth-of-field blur and the out-fade
-   are gone at ≥1121. ⚠️ **What is NOT settled is whether he wants the ARRIVAL to be a wave too** —
-   it is a fade today because that is what he approved at D344, and the reverse is one branch.
+1. ⭐⭐⭐ **THE TEXT ANIMATION — ONE SECTION AT A TIME, AND THE FIRST ONE IS DONE (D349).** The first
+   screen is now PINNED to the picture: it does not fade, does not travel in Z, and rides the ground
+   it stands on out of frame. **The two beats are back on D316 exactly and are WAITING FOR HIM** —
+   his words: *"that will also have its own different way of animating… we're only doing the first
+   part now."* ⛔ **DO NOT INVENT EITHER OF THEM.** ⭐ D348's wave, parked in
+   `.textanim-2026-08-24/`, is a real candidate for the CLOSING KITCHEN — its shot is measured as
+   completely locked off, so a pin has nothing to ride there.
 2. ⭐⭐⭐ **MOBILE AND TABLET TEXT PLACEMENT. THIS IS NOW BADLY OWED.** Deferred since D325 (*"we will
    talk about mobile and tablet text placement after"*), and **the desktop has moved a long way from
    them this round** — two-line titles, a lifted kitchen beat, stem-aligned subtitles, a third beat.
    ⚠️ **Measured and NOT fixed, because it is out of scope: on the phone the slab beat already flies
    off-frame while still at 0.68 opacity, and always has.**
-   ⛔⛔ **AND D348 HAS WIDENED THE GAP AGAIN**: desktop no longer travels at all, so the two narrow
-   bands are now the only place the words still fly at the viewer — and the phone's off-frame fault
-   is a fault the desktop no longer has. **The wave is band-scoped, so bringing it down is a media
-   query and a box measurement, not a rebuild.**
+   ⛔⛔ **AND D349 HAS WIDENED THE GAP**: the desktop's first screen is pinned to the picture, while
+   both narrow bands still fly their opening title at the viewer. ⚠️ **A PIN DOES NOT PORT — IT IS
+   RE-MEASURED PER FILM.** The phone runs a different cut and the tablet a different crop, so each
+   needs its own tracked table (the probe is in D349).
 3. ⭐⭐ **THE HEADLINE WORDING** — he is still taking the client's input. Three alternates parked.
 4. ⭐ **THE HERO PLATE FOR THE ENDING.** Withdrawn at D328 because the re-cut moved the camera.
    **It needs a new still from him**, or it stays off.
