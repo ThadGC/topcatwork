@@ -91,9 +91,6 @@ NAV_LINKS = [
     ("/about/", "About us"), ("/trade/", "Trade"), ("/contact/", "Contact"),
 ]
 
-# one of the four shared images in /assets (the process photos are inlined base64 in
-# index.html, not files, so they are not available to a generated page)
-HERO_IMG = "/assets/kitchen-day.jpg"
 
 LEDE = ("Stone worktops supplied and fitted for kitchen designers, builders, building "
         "contractors, developers and architects. We can deal with your customer directly, "
@@ -287,6 +284,146 @@ def jsonld():
             + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "</script>")
 
 
+def _sig(path):
+    """⛔ D289: `service.css` dresses this page and carried NO version here, so a re-upload
+    came back looking unchanged. The other builders hash it; this one never did."""
+    import hashlib, pathlib as _p
+    try:
+        return "?v=" + hashlib.sha1(_p.Path(path).read_bytes()).hexdigest()[:10]
+    except OSError:
+        return ""
+
+
+SVC_SIG = _sig(pathlib.Path(__file__).resolve().parent.parent / "services" / "service.css")
+# ⛔⛔ AND THE TWO SHEETS THIS PAGE NEVER LOADED AT ALL (D451). Every other generated page links
+# `footer.css` and `nav.css`; the trade page linked only `service.css`, so its footer rendered as
+# a bare list of underlined links — a third way it did not look like the other inner pages.
+# ⭐⭐ AND SINCE D443 THIS IS NOT COSMETIC: the self-hosted `@font-face` rules ride in `nav.css`,
+# so without it the trade page declared ZERO faces and fell back to Georgia on a cold load. It
+# only looked right while testing because the fonts were already cached from another page.
+FOOT_SIG = _sig(pathlib.Path(__file__).resolve().parent.parent / "assets" / "footer.css")
+NAV_SIG = _sig(pathlib.Path(__file__).resolve().parent.parent / "assets" / "nav.css")
+
+
+# ⭐⭐⭐ THE ENQUIRY CARD, WHICH THIS PAGE NEVER HAD (D453). Client: *"it must still have the
+# contact form like in the other inner pages of services."*
+# ⛔ Every service page carries `.qform` in a `.lead-aside` beside the reading column (D300's
+# `.lead-grid`); the trade page had NO form at all — a page whose entire purpose is opening a
+# trade account, with nothing on it to open one with but a phone number.
+# ⭐ Lifted from `build_services.py` rather than retyped, so the markup, the field names and the
+# done-state stay identical to the other 31 and `tcform.js` keeps owning all of them.
+# ⚠️ IT PRESELECTS "Commercial" — the closest option to trade in the shared list, so a builder
+# does not have to answer a question the page already knows.
+# ⛔⛔ AND `tcform.js` MUST BE ON THE PAGE. Without it a submit does nothing, and the inline
+# handler it replaced used to show the thank-you on an EMPTY form. One owner for every form.
+
+QFORM_OPTIONS = [
+    "Kitchen worktops", "Kitchen islands", "Splashbacks", "Bathrooms and vanity tops",
+    "Outdoor kitchens", "Fireplaces", "Dining tables", "Commercial", "Something else",
+]
+
+
+def qform_html(preselect=""):
+    opts = "".join(
+        '<option%s>%s</option>' % (" selected" if o == preselect else "", e(o))
+        for o in QFORM_OPTIONS)
+    return f"""<aside class="lead-aside">
+  <form class="qform" id="qform" novalidate>
+    <div class="qf-fields">
+      <h3>Get in touch with <em>Topcat</em></h3>
+      <p class="qf-sub">Tell us what you need and we will come back to you.</p>
+      <label class="sr-only" for="qfName">Your name</label>
+      <input id="qfName" name="name" type="text" placeholder="Your name" autocomplete="name">
+      <label class="sr-only" for="qfEmail">Email address</label>
+      <input id="qfEmail" name="email" type="email" placeholder="Email address" autocomplete="email">
+      <label class="sr-only" for="qfPhone">Phone number</label>
+      <input id="qfPhone" name="phone" type="tel" placeholder="Phone number" autocomplete="tel">
+      <label class="sr-only" for="qfService">What do you need</label>
+      <select id="qfService" name="service">{opts}</select>
+      <button type="submit">Send my enquiry</button>
+      <p class="qf-note">We reply within one working day.</p>
+    </div>
+    <p class="qf-done">Thank you, we have your details and will come back to you within one working day. If it is urgent, call {PHONE_DISPLAY}.</p>
+  </form>
+</aside>"""
+
+
+QFORM_JS = '<script src="/assets/tcform.js?v=3" defer></script>'
+
+
+HERO_CSS = """<style>
+  /* ⭐⭐⭐ THE TRADE HERO TAKES THE INNER PAGES' OWN PHOTOGRAPH (D452). Client: *"its still using
+     the wrong background image there as well of the hero."*
+     ⛔ It was `/assets/kitchen-day.jpg` — the site's GENERIC fallback, on 14 pages including the
+     landing page, the five materials pages and the county pages. Nothing about it says trade, and
+     it is the only JPG hero left on the site at 390 KB when two WebP cuts of the same frame exist.
+     ⭐⭐ THE OTHER INNER PAGES ALL SHOW `--pageHeadImg`, the pagehead set, through `.page-head` —
+     about, contact, estimate, projects and services. That is the picture he means by "the same
+     design as the other inner pages", so the trade hero takes the same three cuts on the same
+     three non-overlapping bands. ⚠️ NON-OVERLAPPING IS THE POINT: exactly one `url()` ever
+     resolves, so a visitor fetches ONE file — 69 KB desktop, 42 KB tablet, 78 KB phone, against
+     the 390 KB JPG it replaces on every band at once.
+     ⚠️ The phone cut is his PORTRAIT render, not the landscape one cropped: that band's box is
+     very nearly square, and a landscape file cut to it would be a sliver of ceiling. */
+  .svc-hero-bg{background-image:url('/assets/site/pagehead-wide-1672.webp')}
+  @media(min-width:721px) and (max-width:1120px){
+    .svc-hero-bg{background-image:url('/assets/site/pagehead-wide-1150.webp')}
+  }
+  @media(max-width:720px){
+    .svc-hero-bg{background-image:url('/assets/site/pagehead-tall-900.webp')}
+  }
+</style>"""
+
+
+# ⭐⭐⭐ THE TRADE PAGE JOINS THE OTHER INTERNAL PAGES (D451). Client: *"the trade page
+# doesn't look like the same design as the other inner pages. fix it."*
+# ⛔⛔ HE IS RIGHT AND IT WAS TWO DECISIONS BEHIND, because this page has its own builder and the
+# other three were migrated without it. It still carried the PRE-D263 hero: left-aligned copy, an
+# eyebrow, and a `.trust` line of three grey spans naming the rating, the guarantee and the eight
+# counties. ⚠️ `.trust` IS NOT EVEN STYLED ANY MORE — D263 deleted the rule when it replaced that
+# line with the four bubbles, so the row was rendering unstyled, which is why it read as a
+# different design rather than merely an older one.
+# ⭐ These three are COPIES of `build_services.py`'s, and the D263 note there already says the
+# markup has to be changed in step across the builders that own a hero.
+
+TC_DEFS = ('<svg class="tc-defs" aria-hidden="true" focusable="false" width="0" height="0"><defs>'
+           '<linearGradient id="tcGold" x1="0" y1="0" x2="0" y2="1">'
+           '<stop offset="0" stop-color="#E9D5A0"/><stop offset=".55" stop-color="#C6A664"/>'
+           '<stop offset="1" stop-color="#96723A"/></linearGradient></defs></svg>')
+
+HERO_CHIPS = """<div class="hero-chips">
+        <span class="chip chip-google">
+          <svg class="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span class="g-stack" aria-hidden="true">
+            <span class="g-word">Google reviews</span>
+            <span class="g-rating"><b class="g-score">5.0</b><span class="g-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span>
+          </span>
+          <span class="chip-legacy">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 on Google</span>
+        </span>
+        <span class="chip chip-guarantee"><b class="chip-mk">10</b> year guarantee</span>
+        <span class="chip chip-reason"><b class="chip-mk">72</b> hour aftercare</span>
+        <span class="chip chip-reason"><span class="chip-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.4 10.6 12 3.8l8.6 6.8M5.9 9.2V20h12.2V9.2M9.9 20v-5.6h4.2V20" stroke="url(#tcGold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Free home visit</span>
+      </div>"""
+
+
+def gold_last(text):
+    """⭐⭐ THE LAST WORD OF A PAGE TITLE IS GOLD, THE REST IS WHITE — 14 Aug 2026 (D229).
+    Client: *"the first word is gonna be white, and then second word is gonna be gold. And if
+    it's just one word, it's gonna be a white word."* ⭐ It is the landing page's own hero
+    pattern ("Surfaces for every SPACE"), brought to the internal pages, and it is written as
+    LAST word rather than SECOND so a three-word title lands somewhere sensible instead of
+    leaving a gold word stranded in the middle.
+    ⛔ ONE WORD STAYS WHITE. `rsplit` returns a single part, so nothing is wrapped."""
+    parts = text.rsplit(" ", 1)
+    if len(parts) == 1:
+        return e(text)
+    return f'{e(parts[0])} <span class="h1-gold">{e(parts[1])}</span>'
+
+
+
+H1 = "A worktop partner that behaves like your team"
+
+
 def page():
     intro = "".join(f"<p>{e(p)}</p>" for p in INTRO)
     feats = "".join(f'<div class="feat"><h3>{e(t)}</h3><p>{e(p)}</p></div>' for t, p in FEATS)
@@ -313,43 +450,56 @@ def page():
 <meta property="og:url" content="{URL}">
 <meta property="og:site_name" content="Topcat Worktops">
 <meta name="twitter:card" content="summary_large_image">
+<!-- ⚠️ D453: the share card, which this page also lacked. `summary_large_image` was declared
+     with no image to show, so a link to the trade page shared as a bare title. Same cover the
+     other generated pages use. -->
+<meta property="og:image" content="https://www.topcatworktops.co.uk/assets/site/og-cover.jpg">
+<meta name="twitter:image" content="https://www.topcatworktops.co.uk/assets/site/og-cover.jpg">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 
 
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/cinzel-latin-var.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/montserrat-latin-var.woff2" crossorigin>
-<link rel="stylesheet" href="/services/service.css">
+<link rel="stylesheet" href="/services/service.css{SVC_SIG}">
+<link rel="stylesheet" href="/assets/footer.css{FOOT_SIG}">
+<link rel="stylesheet" href="/assets/nav.css{NAV_SIG}">
+{HERO_CSS}
 {jsonld()}
 </head>
 <body>
 {nav_html()}
 
-<nav class="crumb" aria-label="Breadcrumb">
-  <a class="crumb-back" href="/index.html#hero" aria-label="Back to Home" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-  <ol>
-    <li><a href="/index.html#hero">Home</a></li>
-    <li aria-current="page">Trade</li>
-  </ol>
-</nav>
+{TC_DEFS}
 
 <main>
   <section class="svc-hero">
-    <div class="svc-hero-bg" style="background-image:url('{HERO_IMG}')"></div>
+    <div class="svc-hero-bg"></div>
+    <!-- ⭐ D229: the trail sits ON the photograph, not in a black strip above it. It was a
+         sibling of the hero on this page, which is the exact bar he asked to have removed. -->
+    <nav class="crumb" aria-label="Breadcrumb">
+    <a class="crumb-back" href="/index.html#hero" aria-label="Back to Home" onclick="if(history.length>1&&document.referrer&&new URL(document.referrer,location).origin===location.origin){{history.back();return false}}"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="backGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6A664"/><stop offset=".5" stop-color="#E4CD92"/><stop offset="1" stop-color="#C6A664"/></linearGradient></defs><path d="M15 18l-6-6 6-6" stroke="url(#backGold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <ol>
+      <li><a href="/index.html#hero">Home</a></li>
+      <li aria-current="page">Trade</li>
+    </ol>
+</nav>
     <div class="wrap svc-hero-inner">
-      <span class="eyebrow">For the trade</span>
-      <h1>A worktop partner that behaves like your team</h1>
+      <h1>{gold_last(H1)}</h1>
       <p class="lede">{e(LEDE)}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/contact/">Open a trade account</a>
-        <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+        <a class="btn-gold" href="/contact/"><span class="cta-long">Open a trade account</span><span class="cta-short">Trade account</span></a>
+        <a class="btn-ghost" href="tel:{PHONE_TEL}"><span class="cta-long">Call {PHONE_DISPLAY}</span><span class="cta-short">Give us a call</span></a>
       </div>
-      <div class="trust">
-        <span><b>&#9733;&#9733;&#9733;&#9733;&#9733;</b> 5.0 on Google</span>
-        <span><b>10</b> year guarantee</span>
-        <span>Templating across {e(AREA)}</span>
-      </div>
+      <!-- ⭐⭐ D263's four bubbles, replacing the trust line. ⚠️ The county list goes with it and
+           that is deliberate, not a loss: eight named counties in a hero reads as a limit rather
+           than a promise, and the coverage is still named in the sections below and the schema. -->
+      {HERO_CHIPS}
     </div>
   </section>
 
+  <!-- ⭐ D300's lead grid, the same one the service pages use: the reading column and the
+       quote card share a grid, and below 1121px the aside stops being an aside. -->
+  <div class="lead-grid">
+   <div class="lead-main">
   <section class="block"><div class="wrap prose rise">
     {intro}
   </div></section>
@@ -376,6 +526,10 @@ def page():
     <p class="sub">We fit across {e(AREA)}, with nationwide templating on request. That includes {e(TOWNS)}.</p>
   </div></section>
 
+   </div>
+   {qform_html("Commercial")}
+  </div>
+
   <section class="block faq" id="faq"><div class="wrap rise">
     <h2>Trade questions</h2>
     {faqs}
@@ -392,6 +546,7 @@ def page():
 </main>
 
 {footer_html()}
+{QFORM_JS}
 {REVEAL_JS}
 </body>
 </html>"""
