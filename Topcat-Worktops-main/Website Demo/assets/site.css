@@ -654,6 +654,22 @@
     border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
     z-index:2;pointer-events:none;
   }
+  /* ⭐⭐⭐ **THE FIRST SECTION SITS UP UNDER THE HEAD — 24 Aug 2026.** Client, with a screenshot of
+     /estimate/: *"make sure to optimize the spacing of things like this so there's not such a big
+     gap between the hero section and the title below."*
+     ⛔⛔ **THE GAP WAS A SEAM CLEARING A DIVIDER THAT IS NOT THERE.** Every one of these first
+     sections is a LANDING-PAGE section lifted verbatim by `build_pages.py`, and it brings the
+     landing page's own seam margin with it — `#estimator` carries D266's *"a divider seam with no
+     line drawn in it"* (`2 × clamp(26px,6vh,74px) + 2px` = **110px at 900 tall**) on top of the
+     section's own 41.4px of padding. On the landing page there is a section above it for that seam
+     to separate from. On an internal page there is the head's own curved edge, so the seam is
+     separating the page from nothing. **Measured 151px head-edge to title; 56px now.**
+     ⚠️ **`!important` IS DELIBERATE AND IS THE ONLY THING THAT WORKS HERE.** Those seams are set by
+     ID (`#estimator`, and its neighbours on the other six), and no selector built from `.page-head`
+     can out-specify an id. ⛔ Do not "clean this up" into a class rule — it will silently stop
+     applying, which is §6's own warning: a rule can parse perfectly and never apply.
+     ⭐ It cannot reach the landing page: no `.page-head` element exists there, so it never matches. */
+  .page-head + section{margin-top:clamp(8px,1.6vh,24px) !important}
   .page-head-in{position:relative;z-index:1;max-width:860px;margin:0 auto}
   .page-head .eyebrow{margin-bottom:14px}
   /* ⚠️ `--serif` and `--gold-soft`, the same two the `.section-title` uses — an internal page's
