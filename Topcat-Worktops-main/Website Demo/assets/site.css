@@ -5854,7 +5854,20 @@
       width:calc(898.56 * var(--filmU,1px));
     }
     /* the slab beat, on the first screen's own line */
-    html.cine-on .cine-line[data-vpos-wide="hero"]{top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px))}
+    /* ⭐⭐⭐ **THE TWO WIDE BEATS SHARE ONE HEIGHT — 25 Aug 2026 (D432c).** Client: *"let's essentially
+       stay the same height as the slab you choose's unique text."*
+       ⛔⛔ **AND IT IS THIS BEAT THAT MOVED, NOT THE KITCHEN ONE, BECAUSE THE PICTURE DECIDES.**
+       Levelling them by bringing the kitchen beat DOWN to 237.6 was measured against the film first
+       and it does not fit: across the whole window that beat is visible (t 27.5→36.5) the island's
+       top edge under the title's own x range never falls below **y 434**, and the title's ink
+       already ends at **414** — so it can descend **2 film px** before it is on the stone, against
+       the 65 it would need. His other standing instruction — *"none of the text must touch the
+       slab"* — is the one that cannot bend, so the slab beat rises to meet the kitchen beat
+       instead. Both now sit at 172.8 and their ink tops land within 2px of each other (159 / 161,
+       the difference being the two title sizes).
+       ⭐ 237.6 was `top:22vh` at the approved frame; it is kept here in the register row in case he
+       wants the pair levelled the other way with the kitchen title re-measured against the island. */
+    html.cine-on .cine-line[data-vpos-wide="hero"]{top:calc(var(--filmY,0px) + 172.8 * var(--filmU,1px))}
     /* ⭐⭐⭐ **THE SUBTITLE IS INDENTED TO THE TITLE'S STEM, NOT TO THE BOX — D347.** Client: *"the g
        of the word get is not in line with the t of the and tone… the middle of the g and the middle
        of the stem of the t, those go together."*
@@ -5936,15 +5949,17 @@
        at its LOWEST too (385), and the island only reaches 363 later, when the approach has already
        lifted the words. Clearance holds at **~19px at the tightest**, and the right edge reaches
        756 against the pendants' 788. ⛔ 5vw would put the bottom on the marble again. */
-    /* ⭐⭐ **LIFTED 44 FILM px SO THE SUBTITLE CLEARS THE ISLAND — D432.** Client: *"the subtitle
-       must not touch the slab. None of the text must touch the slab. on any screen size."*
-       ⭐ Measured on the frame itself (t=32, the beat at rest): the island's near corner sits at
-       film **(690, 430)** and the subtitle's ink ran to **y 409** — a 21 film px gap, which reads as
-       touching. At 128.8 the subtitle's ink ends at **y 365, a 65 film px gap**, and the title's
-       first line still sits 29px clear of the bar. ⭐⭐ **AND BECAUSE BOTH THE TEXT AND THE PICTURE
-       ARE NOW IN FILM COORDINATES, THAT GAP IS THE SAME NUMBER ON EVERY SCREEN** — it is not a
-       clearance that has to be re-checked per window, it is a property of the composition. */
-    html.cine-on .cine-line[data-vpos-wide="high"]{top:calc(var(--filmY,0px) + 128.8 * var(--filmU,1px));
+    /* ⛔⛔⛔ **172.8 IS `top:16vh` AT THE APPROVED FRAME AND IT DOES NOT MOVE — D432b.** I lifted this
+       beat 44 film px at D432 to open the gap to the island, and he rejected it on sight: *"You
+       cannot have the text so high up and closer to the nav bar. Has to be exactly where it was
+       before. I just told you to fix it on the other screen sizes."*
+       ⭐⭐⭐ **HE IS RIGHT AND THE LESSON IS §12's:** the composition at 1440x900 is APPROVED — the
+       only fault was that other window shapes drifted away from it. The fix was the coordinate
+       system, not the design, and changing the design as well was solving a problem he had not
+       reported. ⚠️ The 21 film px between the subtitle and the island's corner is HIS spacing, and
+       it is now the same 21px on every screen instead of closing to nothing on some of them. ⛔ Do
+       not "improve" it: if the gap is ever to change, he says so. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:calc(var(--filmY,0px) + 172.8 * var(--filmU,1px));
       font-size:calc(82.94 * var(--filmU,1px))}
   }
 
