@@ -1101,6 +1101,15 @@
      room to spare — so the section keeps its tall-screen spacing and overruns the fold. Floors
      here are therefore small enough that the vh term is still the one doing the work on a
      ~640px-tall laptop window, which is the tightest case this design targets. */
+  /* ⭐⭐⭐ **NO WORD ON THIS SITE CAN EVER SPILL OUT OF ITS BOX — 24 Aug 2026.** Client: *"everything
+     must be completely responsive and resize perfectly based on the screen that someone is using
+     on every single device... buttons that are a certain size with a certain text won't have the
+     text go over the button."*
+     ⭐ `break-word` only acts when a single word GENUINELY cannot fit on a line of its own, so it
+     changes nothing anywhere today and catches every future long word, stone name or email address
+     at every width. ⚠️ It cannot help a `white-space:nowrap` element — nowrap does not wrap, it
+     overflows (the D171 trap) — which is why the buttons below are handled separately. */
+  body{overflow-wrap:break-word}
   .section{padding:clamp(30px,4.6vh,84px) clamp(20px,5vw,64px)}
   /* Every section head is centred. The title and sub carry their own max-widths, so text-align
      alone would only centre the text INSIDE those narrow boxes while the boxes stayed flush
@@ -1229,7 +1238,13 @@
   /* BACK */
   .face.back .stone{opacity:0.20;transform:scale(1.04)}
   .face.back .veil{position:absolute;inset:0;z-index:1;background:linear-gradient(160deg,rgba(12,12,16,0.86),rgba(8,8,10,0.9))}
+  /* ⚠️ **THE 24px FLOOR WAS TOO BIG FOR THE CARD IT LANDS ON.** At 320 the services grid is two
+     up on 135px columns, so the card is 122px wide — 24px a side leaves 74px of measure, and
+     "Weatherproof" alone is wider than that. Measured overflow: 15px. The floor drops to 13px
+     below 400, which is where the two-up grid gets genuinely tight; `body`'s `break-word` is the
+     backstop behind it. */
   .back-text{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,1.8vw,32px);overflow-y:auto;overscroll-behavior:contain}
+  @media(max-width:400px){ .back-text,.front-text{padding:13px} }
   .back-text .idx{font-size:11px;letter-spacing:0.28em;color:var(--gold);margin-bottom:16px}
   .back-text h3{margin-bottom:14px}
   .back-text p{color:var(--body);font-size:14.5px;font-weight:300;line-height:1.68}
@@ -3855,6 +3870,23 @@
     box-shadow:0 18px 40px -18px rgba(198,166,100,0.55)}
   .btn-gold:hover::after{transform:translateX(130%)}
   .btn-ghost{background:transparent;color:var(--bone);border:1px solid var(--hair)}
+  /* ⛔⛔⛔ **A NOWRAP LABEL IN AN `overflow:hidden` BUTTON IS CUT OFF, NOT SHRUNK — 24 Aug 2026.**
+     The site-wide sweep (13 pages × 13 widths, 320 → 1920) found exactly one button that failed,
+     and it failed the way he described: `/trade/`'s *"Browse the stone catalogue"* measures
+     **285px of label** at 12.5px on 2.5px of tracking, and at 320 its column is **280px** — so it
+     did not fit at ANY padding, and `overflow:hidden` quietly ate the last three letters.
+     ⭐⭐ **SO THE NARROW BAND LETS THE BOX FIT THE CONTENT INSTEAD OF FORCING THE CONTENT INTO THE
+     BOX** — D377's lesson in another costume. Every short label ("Get a quote" ≈ 130px, "Request a
+     call" ≈ 160px) still sits on one line at 320 because there is room; only a label that truly
+     cannot fit takes a second line, which reads as designed where a clipped word never does.
+     ⚠️ The desktop and tablet keep `nowrap` — they have the width, and there a wrap would be a
+     ragged CTA rather than a rescue. */
+  @media(max-width:720px){
+    .btn-gold,.btn-ghost{
+      padding-left:clamp(18px,5.2vw,34px);padding-right:clamp(18px,5.2vw,34px);
+      white-space:normal;text-align:center;line-height:1.32;max-width:100%;
+    }
+  }
   .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
   .btn-gold:focus-visible,.btn-ghost:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 

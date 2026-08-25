@@ -34,6 +34,12 @@
   --marbleBG:url('/assets/stone-floor.webp');
   --floorVeil:0.70; --floorVeilRGB:2,2,4; --floorGlowA:0.06; --floorGlowB:0.04;
 }
+/* ⭐⭐ **THE SAME GLOBAL GUARD THE LANDING PAGE CARRIES — 24 Aug 2026.** No word on this site can
+   spill out of its box at any width. `break-word` only acts when a single word genuinely cannot
+   fit a line of its own, so it changes nothing today and catches every future long stone name,
+   email address or compound word. ⚠️ It cannot rescue a `white-space:nowrap` element. */
+body{overflow-wrap:break-word}
+
 *{box-sizing:border-box;margin:0;padding:0}
 /* ⚠️ ANCHORS HAVE TO CLEAR THE FIXED BAR (D263) — a jump to `#compare` or a FAQ id used to land
    flush with the top of the window, which is now 78.5px of glass. */
