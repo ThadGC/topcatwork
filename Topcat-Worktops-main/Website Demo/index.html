@@ -898,13 +898,25 @@
      above has the same shape and the same blind spot; it is left alone because both narrow bands
      are frozen and their sections set their own paddings (D259 says so), but do not copy it. */
   @media(min-width:1121px){
-    :root{--barH:calc(68*var(--uipx))}
-    /* ⭐ **THE CONTENTS SIT 4px LOWER IN THE BAR — D433.** Client, of the transparent state over the
-       film: *"the logo is too close to the top. So move that slightly down. Move everything slightly
-       down in the nav bar. Slightly."* ⭐ The total is unchanged at 22, so `--barH` and every
-       padding that reads it are untouched; `align-items:center` then carries the whole row —
-       logo, links and the quote button — down by half the difference, 4px at the approved frame. */
-    header.bar{padding-top:calc(15*var(--uipx));padding-bottom:calc(7*var(--uipx))}
+    /* ⭐⭐⭐ **76 IS HIS TOP GAP, MIRRORED — D433c.** Client, on the 68px bar with D433's 15/7
+       padding: *"the top gap is perfect. add that same size below."* ⭐ **THAT SENTENCE SETS THE
+       NUMBER EXACTLY, IT IS NOT A TASTE CALL.** In that state the content box was 46px starting at
+       15, and `align-items:center` put the 34px logo at **y 21** — so the gap he approved is 21,
+       and mirroring it is 21 + 34 + 21 = **76**, with the padding symmetric so `center` produces
+       that on its own. ⚠️ Verify against the LOGO, not the bar's tallest child: the quote button is
+       42.3px and takes 16.85 either side, which is a different number and not the one he named. */
+    :root{--barH:calc(76*var(--uipx))}
+    /* ⛔⛔ **SYMMETRIC AGAIN — D433b REVERSES D433's SHOVE.** He asked for the logo to sit lower in
+       the TRANSPARENT state over the film, and I bought that with 15/7 padding. It works in the
+       transparent state and is wrong the moment the glass pours in: `align-items:center` centres
+       the row in the PADDING box, so an asymmetric padding puts the row off centre in the bar —
+       *"the nav bar is too thin and isn't centre."*
+       ⭐ **THE HEIGHT IS THE RIGHT INSTRUMENT, NOT THE PADDING.** A taller bar gives the logo its
+       air at the top in the transparent state AND keeps the row centred once the bar forms, which
+       is the same air measured from both edges. 68 → **74**, with the padding back to 11/11: the
+       quote button's 42.3px sits in a 52px content box, and the 34px logo has 20px above and below
+       it. ⛔ Do not buy vertical position with asymmetric padding on a fixed-height bar. */
+    header.bar{padding-top:calc(11*var(--uipx));padding-bottom:calc(11*var(--uipx))}
   }
 
   .mobile-nav{

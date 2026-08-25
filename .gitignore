@@ -27,11 +27,19 @@ Thumbs.db
 # ─── Agent session state ─────────────────────────────────────────────────────
 .claude/
 
-# ─── The upload folder ───────────────────────────────────────────────────────
-# `Website Demo/make_upload.py` writes a clean copy of the site here for the
-# developer to drag onto the host (D289). It is 77 MB of files that already
-# exist one directory up — a build artefact, not source.
-**/upload/
+# ─── The upload folder — COMMITTED SINCE 25 Aug 2026 (D434), REVERSING D289 ───
+# It used to be ignored as a build artefact: `Website Demo/make_upload.py` writes it and every
+# file in it already exists one directory up.
+# ⛔⛔ THE CLIENT REVERSED THAT AND HIS REASON IS BETTER: *"Why is the upload not in the repo? The
+# dev should be able to just take it as is and upload it."* The developer's job is to drag a
+# folder onto the host, not to install python and run a build first — and a build step between
+# "what was tested" and "what ships" is a place for the two to differ.
+# ⚠️ THE COST, STATED: 103 MB and 643 files, and the builders re-stamp every HTML file with new
+# `?v=` hashes on each run, so a round that touches the site re-commits most of them. Largest
+# single file is the 24 MB desktop film — GitHub warns at 50 MB and blocks at 100, so there is
+# room, and the repo was already 1.2 GB.
+# ⛔ `make_upload.py` MUST STILL BE RUN before the final push of a round, or the folder in git is
+# last round's site. It refuses a stale build, which is the guard that makes this safe.
 
 # ─── The scroll film's 86 MB master ──────────────────────────────────────────
 # D310. `assets/video/topcat-intro-1920.mp4` is the 11.7 MB file the site
