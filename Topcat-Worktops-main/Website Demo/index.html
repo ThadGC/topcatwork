@@ -21,7 +21,7 @@
 <link rel="preload" as="image" fetchpriority="high" href="/assets/site/hero-night-2000.webp" imagesrcset="/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w" imagesizes="(max-width:720px) 1000px, 1739px">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     /* ---- Brand Identity v2 palette (Topcat-Brand-Identity-v2) ---- */
@@ -6577,6 +6577,15 @@
     background:rgba(198,166,100,0.045);cursor:pointer;
     transition:border-color .3s var(--ease),background .3s var(--ease)}
   .tc-up-drop:hover{border-color:var(--gold);background:rgba(198,166,100,0.09)}
+  /* the add-another row: a control, not a mark — a bordered pill in the site's own dress */
+  .tc-up-morerow{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:4px 2px 0;list-style:none}
+  .tc-up-add{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--hair);
+    border-radius:100px;background:transparent;color:var(--bone);cursor:pointer;
+    font-size:12px;letter-spacing:0.05em;padding:7px 14px;transition:all .3s var(--ease)}
+  .tc-up-add span{font-size:14px;line-height:1;color:var(--gold)}
+  .tc-up-add:hover{border-color:var(--gold);color:var(--gold)}
+  .tc-up-cap{color:var(--faint);font-size:11px;letter-spacing:0.05em}
   .tc-up-drop:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   .tc-up-drop.over{border-color:var(--gold);background:rgba(198,166,100,0.15)}
   .tc-up-drop svg{flex:none;width:21px;height:21px;stroke:var(--gold);fill:none;stroke-width:1.5;
@@ -11069,7 +11078,7 @@
         <div class="proj-media" id="projMedia"></div>
         <div class="proj-cta">
           <p>Planning something like this?</p>
-          <a href="#" class="proj-cta-btn">Get a quote</a>
+          <a href="/contact/" class="proj-cta-btn">Get a quote</a>
         </div>
       </div>
     </div>
@@ -19057,6 +19066,8 @@ function mountUpload(root){
   });
   link.addEventListener('input',()=>TC_UP.setLink(link.value));
   root.querySelector('.tc-up-list').addEventListener('click',e=>{
+    const add=e.target.closest('.tc-up-add');
+    if(add){ input.click(); return; }
     const x=e.target.closest('.tc-up-x'); if(!x)return;
     const i=+x.dataset.i;
     TC_UP.remove(i);
@@ -19076,8 +19087,17 @@ function renderUploads(){
       '<span>'+TC_UP.fmt(it.file.size)+'</span></span>'+
       '<button type="button" class="tc-up-x" data-i="'+i+'" aria-label="Remove '+esc(it.file.name)+'">&times;</button></li>';
   }).join('');
+  /* ⭐ 25 Aug (client): once something is attached, the invitation to add the NEXT file must
+     be explicit — the drop zone above still works, but after a first file it reads as "done"
+     rather than "more". A last row carries the ask; at the cap it states the cap instead. */
+  const more=TC_UP.files.length
+    ? '<li class="tc-up-morerow">'+(TC_UP.files.length>=TC_UP.MAX
+        ? '<span class="tc-up-cap">'+TC_UP.MAX+' of '+TC_UP.MAX+' files attached</span>'
+        : '<button type="button" class="tc-up-add"><span aria-hidden="true">+</span> Add another file</button>'
+          +'<span class="tc-up-cap">'+TC_UP.files.length+' of '+TC_UP.MAX+'</span>')+'</li>'
+    : '';
   document.querySelectorAll('.tc-up').forEach(root=>{
-    const ul=root.querySelector('.tc-up-list'); if(ul)ul.innerHTML=rows;
+    const ul=root.querySelector('.tc-up-list'); if(ul)ul.innerHTML=rows+more;
     const li=root.querySelector('.tc-up-link');
     /* the compact one keeps the link field out of the way until there is something to attach to */
     if(li&&root.classList.contains('compact'))li.classList.toggle('show',!!(TC_UP.files.length||TC_UP.link));
@@ -20812,6 +20832,6 @@ document.querySelectorAll('.rise').forEach(el=>io.observe(el));
      the reply and the single `ENDPOINT` constant that makes all 38 forms live. ⚠️ `defer`, and it
      is the only external JS this page loads besides its own: ~4 KB, cached once for 176 pages.
      ⛔ Every page family loads THIS file — never a second copy of the logic. -->
-<script src="/assets/tcform.js?v=2" defer></script>
+<script src="/assets/tcform.js?v=3" defer></script>
 </body>
 </html>

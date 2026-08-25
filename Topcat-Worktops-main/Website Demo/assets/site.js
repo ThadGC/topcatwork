@@ -6973,6 +6973,8 @@ function mountUpload(root){
   });
   link.addEventListener('input',()=>TC_UP.setLink(link.value));
   root.querySelector('.tc-up-list').addEventListener('click',e=>{
+    const add=e.target.closest('.tc-up-add');
+    if(add){ input.click(); return; }
     const x=e.target.closest('.tc-up-x'); if(!x)return;
     const i=+x.dataset.i;
     TC_UP.remove(i);
@@ -6992,8 +6994,17 @@ function renderUploads(){
       '<span>'+TC_UP.fmt(it.file.size)+'</span></span>'+
       '<button type="button" class="tc-up-x" data-i="'+i+'" aria-label="Remove '+esc(it.file.name)+'">&times;</button></li>';
   }).join('');
+  /* ⭐ 25 Aug (client): once something is attached, the invitation to add the NEXT file must
+     be explicit — the drop zone above still works, but after a first file it reads as "done"
+     rather than "more". A last row carries the ask; at the cap it states the cap instead. */
+  const more=TC_UP.files.length
+    ? '<li class="tc-up-morerow">'+(TC_UP.files.length>=TC_UP.MAX
+        ? '<span class="tc-up-cap">'+TC_UP.MAX+' of '+TC_UP.MAX+' files attached</span>'
+        : '<button type="button" class="tc-up-add"><span aria-hidden="true">+</span> Add another file</button>'
+          +'<span class="tc-up-cap">'+TC_UP.files.length+' of '+TC_UP.MAX+'</span>')+'</li>'
+    : '';
   document.querySelectorAll('.tc-up').forEach(root=>{
-    const ul=root.querySelector('.tc-up-list'); if(ul)ul.innerHTML=rows;
+    const ul=root.querySelector('.tc-up-list'); if(ul)ul.innerHTML=rows+more;
     const li=root.querySelector('.tc-up-link');
     /* the compact one keeps the link field out of the way until there is something to attach to */
     if(li&&root.classList.contains('compact'))li.classList.toggle('show',!!(TC_UP.files.length||TC_UP.link));

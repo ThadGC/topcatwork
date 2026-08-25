@@ -741,7 +741,7 @@ HEAD = """<!DOCTYPE html>
 <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css?v={cssv}">
 <script type="application/ld+json">
 {{
@@ -808,7 +808,7 @@ def build_page(parts, page):
     # (contact, about, projects, trade) and it is the same file the landing page and all 31
     # SEO/service pages load, so it is one description and one cache entry for the whole site.
     # ⛔ Never inline a second copy of the validation into a page family.
-    body.append('<script src="/assets/tcform.js?v=2" defer></script>\n')
+    body.append('<script src="/assets/tcform.js?v=3" defer></script>\n')
     body.append('<script src="/assets/site.js?v=%s" defer></script>\n</body>\n</html>\n' % page["_jsv"])
     return "\n".join(body)
 

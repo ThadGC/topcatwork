@@ -1,7 +1,17 @@
-# START HERE — 25 August 2026, after THE FORMS-AND-SPEED ROUND (D406–D412)
+# START HERE — 25 August 2026, after THE FORMS-AND-SPEED ROUND (D406–D414)
 
 Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D406–D412**),
 **§2** (the standing rules) and **§2s** (SITE SPEED). About twenty minutes, and enough to work safely.
+
+> ⭐⭐⭐ **SAME-DAY SECOND PASS (D413–D414), on his review:** the email is **v2** — the two
+> columns visibly divided, the header names WHICH FORM and WHICH DEVICE (the site's own three
+> bands), and three computed sections: *visit at a glance* (visits, time on site), *pages they
+> viewed* (with dwell), *step by step*. `tcform.js` is **?v=3** (`form_name`/`device`/`screen`/
+> `page_title` + a `Left` pagehide marker). The uploader shows **"+ Add another file"** after a
+> first attach. Two dead font weights pruned from every page, the projects "Get a quote" was
+> `href="#"` on 2 pages and is /contact/ now — **zero `href="#"` remain shipped**.
+> ⭐⭐ **THE LAUNCH VERDICT GIVEN: ready, pending the two host-side facts** — the dev's upload
+> (then one real submit into info@'s inbox) and the flicker answer (D405).
 
 > ⚠️ **This replaces the previous version of this same file**, now
 > `HANDOVER-2026-08-25-inner-pages-round-start-here.md` (D391–D405). Everything that still
@@ -238,7 +248,7 @@ cd "Website Demo" && python3 make_upload.py                      # the shipping 
 ```
 
 ⛔⛔ **NEVER RUN `trade/build_trade.py`.** ⛔ `build_images.py` / `patch_images.py` are one-shot.
-**The CSS gate** (brace delta 0, count vs HEAD — `index.html` is at **3347** since this round) and
+**The CSS gate** (brace delta 0, count vs HEAD — `index.html` is at **3353** since D413) and
 **`node --check` on all three inline `<script>` blocks** after every edit to `index.html` (exclude
 `ld+json` and `src=`). ⭐ **div balance: 260/258 since D410** (the max-note div; the +2 delta is
 correct and long-standing).
@@ -334,7 +344,7 @@ still true. The load-bearing lines:
 |---|---|
 | **`HANDOVER.md`** | §D the register **D1–D130, D132–D412** (⚠️ no D131). §2 rules, §2s speed, §2a suppliers. ⛔ Do not renumber sections |
 | **`Website Demo/send.php`** | ⭐⭐⭐ NEW — the form endpoint and the branded email. §1 |
-| **`Website Demo/assets/tcform.js`** | ⭐⭐⭐ every form + THE JOURNEY (`tc_journey`, `tc_estimate`, `window.__tcq`) — now `?v=2` |
+| **`Website Demo/assets/tcform.js`** | ⭐⭐⭐ every form + THE JOURNEY (`tc_journey`, `tc_estimate`, `window.__tcq`) + `form_name`/`device`/`screen` and the `Left` dwell marker — now `?v=3` |
 | **`Website Demo/index.html`** | the landing + the shared stylesheet. This round: D406's reviews floor, D409's hrefs, D410's note, the estimator's `jot()` hooks, the poster preload |
 | **`Website Demo/dev-server.js`** | + the POST /send.php mock (dev only, never ships) |
 | **`Website Demo/build_seo_pages.py`** | + the two /privacy/ paragraphs (D408). `?v=2` |

@@ -6555,6 +6555,15 @@
     background:rgba(198,166,100,0.045);cursor:pointer;
     transition:border-color .3s var(--ease),background .3s var(--ease)}
   .tc-up-drop:hover{border-color:var(--gold);background:rgba(198,166,100,0.09)}
+  /* the add-another row: a control, not a mark — a bordered pill in the site's own dress */
+  .tc-up-morerow{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:4px 2px 0;list-style:none}
+  .tc-up-add{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--hair);
+    border-radius:100px;background:transparent;color:var(--bone);cursor:pointer;
+    font-size:12px;letter-spacing:0.05em;padding:7px 14px;transition:all .3s var(--ease)}
+  .tc-up-add span{font-size:14px;line-height:1;color:var(--gold)}
+  .tc-up-add:hover{border-color:var(--gold);color:var(--gold)}
+  .tc-up-cap{color:var(--faint);font-size:11px;letter-spacing:0.05em}
   .tc-up-drop:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   .tc-up-drop.over{border-color:var(--gold);background:rgba(198,166,100,0.15)}
   .tc-up-drop svg{flex:none;width:21px;height:21px;stroke:var(--gold);fill:none;stroke-width:1.5;

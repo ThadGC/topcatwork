@@ -75,6 +75,21 @@
   var J_MAX = 120;                          // events kept; oldest fall off
   var J_TTL = 30 * 24 * 3600 * 1000;        // a month-old trail is somebody else's visit
 
+  /* ⭐ 25 Aug (client): "we must be able to say if it was sent from mobile or desktop or
+     tablet" — the three bands are THE SITE'S OWN (≤720 / ≤1120 / desktop), so the email speaks
+     the same language as the stylesheet. The screen size rides along for the odd in-between. */
+  function band() {
+    var w = window.innerWidth;
+    return w <= 720 ? 'phone' : w <= 1120 ? 'tablet' : 'desktop';
+  }
+  /* ⭐ and "we must clearly say which form they submitted" — the form knows what it is */
+  function formKind(f) {
+    if (f.id === 'ctaForm') return 'Enquiry card';
+    if (f.id === 'tradeForm') return 'Trade account form';
+    if (f.classList.contains('qform')) return 'Quick enquiry form';
+    return 'Form';
+  }
+
   function jload() {
     try {
       var j = JSON.parse(localStorage.getItem(J_KEY) || 'null');
@@ -122,6 +137,11 @@
       jpush({ t: 'ev', k: 'Clicked', v: tx,
               s: sec ? (sec.id || sec.tagName.toLowerCase()) : '', p: location.pathname });
     }, true);
+    /* the Left marker closes the last page's dwell — without it "time on site" ends at the last
+       click rather than at leaving. pagehide fires on close, navigate AND bfcache-park. */
+    addEventListener('pagehide', function () {
+      jpush({ t: 'ev', k: 'Left', v: location.pathname });
+    });
   }
 
   function q(f, n) { return f.querySelector('[name="' + n + '"]'); }
@@ -202,6 +222,10 @@
   function payload(f) {
     var fd = new FormData(f);
     fd.append('page', location.pathname);
+    fd.append('page_title', String(document.title || '').split('|')[0].trim().slice(0, 80));
+    fd.append('form_name', formKind(f));
+    fd.append('device', band());
+    fd.append('screen', window.innerWidth + '\u00d7' + window.innerHeight);
     /* ⭐ the whole visit rides with the enquiry — the email's "WHAT THEY DID ON THE SITE" block */
     try {
       var j = jload();

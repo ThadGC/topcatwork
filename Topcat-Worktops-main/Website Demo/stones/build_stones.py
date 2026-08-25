@@ -534,7 +534,7 @@ def head(title, desc, url, extra=""):
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/services/service.css{SVC_SIG}">
 <link rel="stylesheet" href="/assets/footer.css{FOOT_SIG}">
 <link rel="stylesheet" href="/assets/nav.css{NAV_SIG}">

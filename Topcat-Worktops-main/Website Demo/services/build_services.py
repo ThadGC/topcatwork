@@ -734,7 +734,7 @@ def qform_html(preselect=""):
 # ⭐ `assets/tcform.js` owns every form on the site now: the same validation, the same error state
 # and the same reply everywhere, and `.qf-done` only ever shows after a real, successful POST.
 # ⛔ Do not put a second submit handler back on this family.
-QFORM_JS = '<script src="/assets/tcform.js?v=2" defer></script>'
+QFORM_JS = '<script src="/assets/tcform.js?v=3" defer></script>'
 
 
 def page(s):
@@ -770,7 +770,7 @@ def page(s):
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="service.css{SVC_SIG}">
 <link rel="stylesheet" href="/assets/footer.css{FOOT_SIG}">
 <link rel="stylesheet" href="/assets/nav.css{NAV_SIG}">
