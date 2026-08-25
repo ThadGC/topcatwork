@@ -853,6 +853,30 @@
      ⭐ The hero reads this variable only on the desktop (the band blocks set their own paddings),
      so this exists to keep the number TRUE, not because anything downstream needs it here. */
   @media(max-width:1120px){header.bar{--barH:80px}}
+  /* ⭐⭐⭐ **AND THE DESKTOP BAR IS THINNER — 25 Aug 2026 (D424).** Client: *"the Navbar on
+     desktop is way too tall, like it's too thick. You have to make it thinner. It can go quite a
+     bit thinner. Not too thin."* ⭐ **THE HEIGHT IS SET BY ITS TALLEST CHILD, NOT BY TASTE:** the
+     quote button measures 42.3px at `--uipx:1`, the nav row 36 and the logo 34, so 62 with 9px of
+     padding leaves the button 44px of content box — 1.7px of clearance, and nothing else in the
+     bar comes close. 78.5 → **62**, a fifth off, which is "quite a bit" without crowding the button
+     it has to hold. ⛔ Below 62 the button starts setting the height instead of the bar and the
+     logo loses its air, which is the "too thin" he warned against.
+     ⭐⭐ **IT RIDES `--uipx` LIKE THE REST OF THE DESKTOP CHROME (D418).** The bar's CONTENTS were
+     anchored to the 1440x900 frame and its HEIGHT was not, so on a smaller window the chrome shrank
+     inside a bar that did not — which is the thickness he is looking at. Now both follow the one
+     anchor. ⚠️ Desktop only: the ≤1120 bands keep 80px, set above, because the burger's 44px
+     control sets the height there (D259). ⚠️ Declared in all three stylesheets — index.html,
+     site.css and service.css — the two-stylesheet rule, plus the generated pages' own sheet. */
+  /* ⛔⛔ **DECLARED ON `:root`, NOT ON `header.bar` — AND THAT DISTINCTION COST A MEASUREMENT.**
+     A custom property is inherited from where it is declared, so `header.bar{--barH:...}` is
+     visible to the BAR AND NOTHING ELSE: `#services` kept reading the base 78.5 and spent 92.58px
+     of a 640px window on top padding while the bar it was clearing stood at 44. ⚠️ The ≤1120 rule
+     above has the same shape and the same blind spot; it is left alone because both narrow bands
+     are frozen and their sections set their own paddings (D259 says so), but do not copy it. */
+  @media(min-width:1121px){
+    :root{--barH:calc(62*var(--uipx))}
+    header.bar{padding-top:calc(9*var(--uipx));padding-bottom:calc(9*var(--uipx))}
+  }
 
   .mobile-nav{
     /* UNDER the fixed header (z50): the burger lives inside the header's stacking context, so
@@ -2215,34 +2239,56 @@
 
   /* ---------- DESKTOP: copy left, the service helix right ---------- */
   @media(min-width:1121px){
+    /* ⭐⭐⭐ **THE SECTION FITS THE SCREEN — 25 Aug 2026 (D427).** Client: *"make this section
+       smaller so that it fits completely in the screen on my Chrome browser… the gap between the
+       top and the bottom, everything works perfectly no matter what screen size it is on."*
+       ⛔⛔ **THE PADDING FLOOR WAS THE FAULT, AND THIS FILE ALREADY WARNED ABOUT IT** (see the
+       "FLOOR of every vertical clamp" note at the top): `clamp(74px,9vh,104px)` stops responding
+       below an 822px window — precisely the screen with no room to spare — so a 700px laptop
+       window spent 74px on air it did not have and the CTA pair fell off the bottom. Measured
+       before: 1512x700 → the section stood 746px tall inside a 700px frame, 1280x720 → 784 inside 720.
+       ⭐ **THE TOP PADDING IS NOW WHAT IT IS ACTUALLY FOR: CLEARING THE FIXED BAR.** `--barH` plus
+       a vh gap, so it tracks the bar (thinner since D424) instead of restating an old arithmetic. */
     #services{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-      padding-top:clamp(74px,9vh,104px);padding-bottom:clamp(20px,3vh,48px)}
+      padding-top:calc(var(--barH) + clamp(6px,2.2vh,30px));padding-bottom:clamp(14px,2.6vh,48px)}
     #services .services-grid{display:none}
+    /* ⭐⭐⭐ **AND ONE SCALE UNDERNEATH IT ALL, AS THE GUARANTEE — D427.** The clamps above get the
+       section close on every window; this is what makes *"fits completely… no matter what screen
+       size"* literally true. `--svcFit` is 1 whenever the composition already fits and drops only
+       as far as it must, floor 0.74. ⛔ **ONE TRANSFORM ON THE WHOLE WRAP, NEVER ON THE PARTS** —
+       the first screen taught this at D418c: scaling members individually desynchronises them and
+       he sees it immediately. ⚠️ A transform does not change layout, so `setSvcFit()` also gives
+       the saved height back as a negative `margin-bottom`, or the section would still stand at its
+       unscaled height and nothing would have been fixed. */
     .svc-wrap{display:flex;align-items:stretch;gap:clamp(28px,3.5vw,64px);
-      width:100%;max-width:1320px;margin:0 auto;flex:1 1 auto;min-height:0}
+      width:100%;max-width:1320px;margin:0 auto;flex:1 1 auto;min-height:0;
+      transform:scale(var(--svcFit,1));transform-origin:top center}
     /* left column runs the full height of the frame: title HIGH at the top, then the intro and
        the service buttons, with the CTA pair anchored to the bottom edge — the column reads as
        a composed page rather than a floating centred block */
     #services .svc-intro.svc-intro{flex:0 0 40%;max-width:40%;margin:0;text-align:left;
       display:flex;flex-direction:column;justify-content:flex-start;
-      padding-top:clamp(6px,2.5vh,30px)}
+      padding-top:clamp(2px,2.5vh,30px)}
     #services .svc-intro .section-title,#services .svc-intro .section-sub{margin-left:0;margin-right:0;text-align:left}
     /* a touch larger than the shared scale — this title is the section's hero moment */
-    #services .svc-intro .section-title{font-size:clamp(31px,min(3.6vw,6.2vh),56px)}
+    #services .svc-intro .section-title{font-size:clamp(28px,min(3.6vw,6.2vh),56px)}
     #services .svc-intro .section-sub{max-width:46ch}
     /* The service list — REWORKED (client: the bordered rectangles read as boring boxes).
        No boxes now: each row is a brand DIAMOND bullet + the name over a fine hairline, the
        serif pointer at the far right. Hover lights the hairline and diamond; the active row's
        diamond fills solid champagne and the whole line goes gold. Same ledger-of-lines
        language as the ornate frame and the seal, so it sits in the design instead of on it. */
-    .svc-nav{display:flex;flex-direction:column;gap:clamp(3px,0.7vh,7px);
-      margin-top:clamp(14px,2.4vh,30px);width:100%;max-width:330px}
+    /* ⚠️ EVERY FLOOR IN THIS COLUMN IS DELIBERATELY BELOW ITS OLD ONE (D427) — the vh term has to
+       be the one still doing the work on a 640px-tall window, or the list alone spends 292px of a
+       screen that has 616px to give. */
+    .svc-nav{display:flex;flex-direction:column;gap:clamp(2px,0.7vh,7px);
+      margin-top:clamp(9px,2.4vh,30px);width:100%;max-width:330px}
     .svc-nav button{
       position:relative;display:flex;align-items:center;gap:13px;width:100%;
-      font-family:var(--brand);font-size:clamp(10.5px,1.5vh,12px);letter-spacing:0.18em;text-transform:uppercase;
+      font-family:var(--brand);font-size:clamp(9.6px,1.5vh,12px);letter-spacing:0.18em;text-transform:uppercase;
       color:var(--muted);background:transparent;text-align:left;
       border:0;border-bottom:1px solid var(--hair-soft);border-radius:0;
-      padding:clamp(8px,1.3vh,13px) 3px;cursor:pointer;
+      padding:clamp(5.5px,1.3vh,13px) 3px;cursor:pointer;
       transition:border-color .35s var(--ease),color .35s var(--ease),
         letter-spacing .35s var(--ease),padding-left .35s var(--ease);
     }
@@ -2262,7 +2308,7 @@
     /* right under the service list, NOT parked at the column's bottom edge (client's call —
        margin-top:auto used to push the pair a whole empty column-height away from the rows
        it belongs to) */
-    .svc-intro-ctas{display:flex;gap:12px;margin-top:0;padding-top:clamp(16px,2.6vh,30px)}
+    .svc-intro-ctas{display:flex;gap:12px;margin-top:0;padding-top:clamp(11px,2.6vh,30px)}
     .svc-intro-ctas a{white-space:nowrap}
 
     /* right column: the spiral. The stage is the 3D room; an imagined pole runs vertically
@@ -5432,12 +5478,23 @@
        range, `patagonia`, is a Brazilian quartzite in the trade, though no page says so and its own
        blurb names no country. Flagged to him rather than quietly narrowed. */
     html.cine-on .cine-hero .cine-hero-sub{
-      margin:calc(28*var(--uipx)) 0 0;font-weight:400;font-size:calc(17*var(--uipx));line-height:1.62;font-family:var(--brand);letter-spacing:0.014em;
+      /* ⭐⭐⭐ **FLAT px, NOT `--uipx` — 25 Aug 2026 (D423). THIS LINE WAS SHRINKING TWICE.**
+         Client: *"the subtext or the subtitle in that is easier to read. That subtitle is way too
+         small now. It might need to be the same size as the scroll to begin text."* ⭐ *"now"* is
+         the word: at D418c the whole block took `scale(var(--heroScale))`, and this was the ONLY
+         member of the first-screen composition still sized in `--uipx` — so it took the anchor
+         AND the scale, 17 → 15.68 → 14.45 on a 1512x830 window, while the title (72px) and the cue
+         (14px) took the scale alone. ⛔ **A SIZE THAT CARRIES ITS OWN SCALE FIGHTS `--heroScale`**
+         — the same trap the title's `5vw` set at D418b, restated for the lede. One scale, flat
+         sizes underneath it. ⭐ 19px against the cue's 14px uppercase at 0.3em: measured cap
+         heights 13.6 vs 10.2 and x-height 9.7, which is his *"same size as the scroll to begin"*
+         for a lowercase sentence against letterspaced caps. */
+      margin:28px 0 0;font-weight:400;font-size:19px;line-height:1.62;font-family:var(--brand);letter-spacing:0.014em;
       /* ⛔ **WHITE — D347.** Named by him explicitly: *"where it says follow the slab from the finest
          mountains, that should be white."* Same three fixes as the beats' subtitles: `#fff` rather
          than bone, weight 400 rather than 300, and the tight contact shadow replaced below with a
          wide soft one — on a 17px hairline that shadow's blur lands inside the strokes. */
-      color:#fff;max-width:470px;
+      color:#fff;max-width:525px;
       /* ⚠️ **470 IS MEASURED AGAINST THE NEW LINE, NOT INHERITED — D335.** The old cap was 430,
          which the short version balanced onto two lines and the long one breaks onto THREE
          (262/264/307). Swept in 20px steps: 450 is the threshold and everything from 450 to 560
@@ -6062,7 +6119,24 @@
        "lower" he saw. It takes the discs' OWN height and their OWN offset, so the three centres
        agree to the pixel. ⛔ Matching `bottom` alone does not align them; the heights must match
        too, and this is the rule that governs at both narrow bands. */
-    html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);
+    /* ⛔⛔⛔ **AND IT IS `fixed` ON THESE BANDS SINCE D429 — ON A REAL PHONE IT WAS OFF THE SCREEN.**
+       Client: *"the skip intro button isn't there? This is on mobile."*
+       ⭐⭐⭐ **THE MECHANISM, AND IT CANNOT BE SEEN IN ANY DESKTOP EMULATION.** The pill is
+       `absolute` inside a `100vh` sticky hero, and on a phone `100vh` is the LARGE viewport — the
+       height the page gets with the address bar HIDDEN. While the bar is showing, the bottom
+       60–90px of that box is simply not on screen, and an element pinned 18px off its floor sits
+       inside that strip. **The two discs beside it are `position:fixed`, which tracks the VISUAL
+       viewport, so they stayed visible and the pill did not** — which is exactly the picture he
+       described. ⚠️ Every emulator reports `100vh === innerHeight`, so it is correct here and
+       missing there.
+       ⭐ **`fixed` ALSO MAKES D422's ALIGNMENT STRUCTURAL RATHER THAN ARITHMETIC:** all three
+       controls now hang off the same viewport floor with the same `bottom` and the same 46px
+       height, so they cannot drift apart again whatever the address bar is doing.
+       ⚠️ SAFE HERE, AND THAT WAS CHECKED RATHER THAN ASSUMED: `fixed` is relative to the nearest
+       ancestor carrying a transform, filter, perspective, will-change or contain — walked the
+       chain (#hero sticky, .cine relative, main, body) and there is none. ⛔ If a transform is ever
+       put on `#hero` or `.cine`, this pill silently returns to where it is today. */
+    html.cine-on .cine-skip{position:fixed;right:auto;left:50%;transform:translateX(-50%);
       bottom:calc(env(safe-area-inset-bottom,0px) + 18px);
       height:46px;padding-top:0;padding-bottom:0;box-sizing:border-box}
   }
@@ -7958,7 +8032,23 @@
      the copy — and it carried a "do not delete" against it. That reason went with the team row
      on 9 Aug. The measure rule is the part that was always about the copy, so it stays. */
   @media(max-height:840px){
-    #about .section-sub{max-width:none;line-height:1.62}
+    /* ⛔⛔⛔ **`.weld-about` IS ON THIS SELECTOR SINCE D428, AND ITS ABSENCE WAS A VISIBLE BUG.**
+       Client, with two screenshots of the same section: *"the about us section text glitches from
+       one text shape position to this text shape position when you scroll longer… That cannot
+       happen."*
+       ⭐⭐⭐ **THE MECHANISM, AND IT ONLY BITES ON A SHORT WINDOW.** This rule takes the lede's
+       `max-width:47ch` off below 840px tall so the copy fills its column. The weld carries a
+       CLONE of this section and `cloneAbout()` strips every id from it — so `#about .section-sub`
+       never reached the clone, which kept 47ch (~470px) while the real section underneath was
+       545px. At the hand-over the two swap and every paragraph re-wraps. **On a window taller than
+       840px this rule never applies and neither copy is affected, which is why it is his machine
+       and not this one.**
+       ⚠️ **THIS IS THE THIRD TIME AN ID-SCOPED RULE HAS FAILED THE CLONE** — D299's colour bug
+       (the copy turned white only when the weld finished) and D301's pair are the other two, both
+       recorded a few hundred lines above. ⛔ **ANYTHING THE WELD CARRIES MUST BE STYLED BY CLASS.**
+       Before adding an `#about` rule, ask whether the clone needs it; if it does, name
+       `.weld-about` beside it in the SAME rule rather than writing a second one. */
+    #about .section-sub,.weld-about .section-sub{max-width:none;line-height:1.62}
   }
   /* ⛔ THE max-height:660px RULE THAT HID THE STAND-IN GLYPH WENT WITH THE GLYPH (D278). It
      dropped `.acp-mark` on a short window before sacrificing any type; there is a photograph

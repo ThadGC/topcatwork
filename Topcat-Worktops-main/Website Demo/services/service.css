@@ -155,6 +155,16 @@ header.bar::after{
 header.bar.scrolled::before{opacity:1}
 header.bar.scrolled::after{opacity:1;transform:scaleX(1)}
 @media(max-width:720px){header.bar{--navCurveR:18px;--navCurveOut:5px}}
+/* ⭐⭐⭐ **THE DESKTOP BAR IS THINNER ON THE GENERATED PAGES TOO — D424.** Client: *"the Navbar on
+   desktop is way too tall… make it thinner."* The 176 pages carry the same bar, so they carry the
+   same number. ⛔ **ON `:root`, NOT ON `header.bar`** — a custom property is inherited from where
+   it is declared, and `padding-top:var(--barH)` on every hero here reads it from the root. Scoped
+   to the bar it would have thinned the bar and left every page's top padding at the old 78.5.
+   ⚠️ Desktop only: below 1121 the burger's own 44px control sets the height (D259). */
+@media(min-width:1121px){
+  :root{--barH:calc(62*var(--uipx))}
+  header.bar{padding-top:calc(9*var(--uipx));padding-bottom:calc(9*var(--uipx))}
+}
 /* ⭐ THE REAL LOGO — client's artwork, supplied 10 Aug 2026, in /assets/brand/. This sheet is
    loaded by EVERY generated page (services, stones, trade, materials, guides, towns, sitemap),
    so these four lines dress all 154 of them. It replaces a hand-rebuilt mark beside a type-set

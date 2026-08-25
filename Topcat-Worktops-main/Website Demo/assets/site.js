@@ -887,6 +887,47 @@ buildCards(document.getElementById('svcGridServices'), SERVICES, {nameOnly:true,
   }
   setHeroScale();
   addEventListener('resize', setHeroScale, {passive:true});
+
+  /* ⭐⭐⭐ THE SERVICES SECTION FITS ITS FRAME — D427. Same shape as `setHeroScale` above and for
+     the same client instruction, one section further down.
+     ⛔⛔ **THE NATURAL HEIGHT CANNOT BE READ WHILE THE WRAP IS STRETCHED.** `.svc-wrap` is
+     `flex:1 1 auto` inside a `min-height:100vh` column, so it is ALREADY as tall as the section —
+     `scrollHeight` would hand back the available height, `avail/nat` would be 1, and the fix would
+     silently do nothing on exactly the short windows it exists for. The flex is pinned to
+     `0 0 auto` for the read and restored in the same frame.
+     ⚠️ MEASURED AFTER THE FONTS LAND: Cinzel is wider than the fallback and the title's line count
+     is part of this number (the D349 lesson, and `measurePin` below does the same).
+     ⚠️ Desktop only — the ≤1120 bands stack this section and scroll it, and are not in scope. */
+  const svcSec=document.getElementById('services');
+  const svcWrap=svcSec&&svcSec.querySelector('.svc-wrap');
+  function setSvcFit(){
+    if(!svcWrap)return;
+    if(innerWidth<1121){
+      document.documentElement.style.setProperty('--svcFit','1');
+      svcWrap.style.marginBottom=''; return;
+    }
+    document.documentElement.style.setProperty('--svcFit','1');
+    svcWrap.style.marginBottom='0px';
+    svcWrap.style.flex='0 0 auto';
+    const nat=svcWrap.getBoundingClientRect().height;
+    svcWrap.style.flex='';
+    if(!nat)return;
+    const cs=getComputedStyle(svcSec);
+    const avail=innerHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+    const k=Math.max(0.74,Math.min(1,avail/nat));
+    document.documentElement.style.setProperty('--svcFit',String(Math.round(k*1000)/1000));
+    /* ⛔⛔ **AND THE WRAP STOPS BEING SHRINKABLE THE MOMENT IT IS SCALED.** It is `flex:1 1 auto`,
+       so once the negative margin makes the parent's free space negative the parent SHRINKS the
+       wrap — the columns inside keep their own height, overflow the shortened row, and the CTA
+       pair hangs 12px below the section exactly as before. Pinned to its natural height while the
+       scale is doing the work, released the moment it is not, so a tall window keeps the stretch
+       the helix is built on. */
+    if(k<1){ svcWrap.style.flex='0 0 auto'; svcWrap.style.marginBottom=((k-1)*nat).toFixed(1)+'px'; }
+    else { svcWrap.style.flex=''; svcWrap.style.marginBottom='0px'; }
+  }
+  setSvcFit();
+  addEventListener('resize', setSvcFit, {passive:true});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(setSvcFit);
   sync();
   addEventListener('resize',sync,{passive:true});
 })();
@@ -5641,14 +5682,31 @@ if(faqIndex && panel && faqBody){
      is the film's own rate, not an invention; the cuts are also keyframe-dense now (-g 4, was 8)
      so a slow scrub's seeks resolve in ≤3 P-frames instead of ≤7. All three bands moved together
      — the scroll maths depends on the three sharing one rate. */
-  const FPS=24, DUR=44.25;                // the file's own rate and length, and the fallback
-  const EASE=0.15;                        // how hard the playhead chases the scroll (D421: shorter tail)
+  /* ⭐⭐⭐ **60fps SINCE D425 — THE FILE HAS THE FRAMES NOW, SO THE SCRUB CAN BE CONTINUOUS.**
+     Client: *"make the video fucking smooth no matter how slow the user is scrolling. There must
+     be no jumping between frames."* ⛔⛔ **THE ENGINE COULD NOT DO THIS ALONE AND THREE ROUNDS OF
+     TUNING IT PROVED THAT.** The desktop film travels ~6790px of scroll across its frames; at 24fps
+     that is **6.4px of scroll per frame**, and a slow trackpad scroll delivers 1–3px per animation
+     frame — so the picture could only change every 2nd–6th frame, and every change was a whole
+     41ms of camera motion. No chase, ease or threshold can invent a picture between two frames
+     that do not exist. ⭐ The masters are 24fps (his own words, and ffprobe agrees), so the
+     in-between frames are MADE: motion-compensated interpolation to 60fps, 2655 frames, **2.56px
+     of scroll per frame and a 16.7ms step**. See `.src-2026-08-23/encode60.sh` for the matrix and
+     why it cost +12% rather than +150%.
+     ⚠️ `SRCFPS` is the rate the slab-reveal tables were TRACKED at and it stays 24 — see
+     `revealTick()`, which now reads them on a fractional index. */
+  const FPS=60, DUR=44.25;                // the file's own rate and length, and the fallback
+  const SRCFPS=24;                        // the master's rate: the reveal tables' own grid
+  const EASE=0.15;                        // the chase's pull, expressed per 1/60s (see tick())
   const INK_AT=0.93;                      // where in the FILM the copy starts to rise
-  /* ⭐⭐ D421 — ONE FRAME, NOT HALF. Client: "if I swipe quickly and it starts slowing down…
-     it's still glitching towards the end." The decay tail asked for dozens of seeks smaller than a
-     single frame; each costs a decode and the queue thrashes. Below one frame there is nothing new
-     to show. ⚠️ Still named HALF: every call site reads it as "the smallest seek worth making". */
-  const HALF=1.0/FPS;
+  /* ⛔⛔⛔ **D421's ONE-FRAME DEAD ZONE IS GONE, AND SO IS THE `currentTime` COMPARISON.** Both were
+     heuristics for "is this seek worth making", and both produced exactly the uneven cadence he
+     kept reporting: `currentTime` leads the painted frame by 1–3 frames (§7), so comparing against
+     it accepted some sub-frame moves and rejected others, and the picture arrived in 1,0,1,0,0,1
+     patterns. ⭐ **THE SEEK IS ON THE FRAME GRID NOW** — `seek()` asks for a frame INDEX and only
+     moves when that index changes, so every decode paints something new and nothing is ever asked
+     for twice. One frame of film, expressed in the eased playhead's own units: */
+  const frameE=()=>(1-hold)/(dur*FPS);
   /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
      is playing. All three are the same 44.25s at the same 12fps, so the scroll maths never changes.
      ⭐⭐ D319: THREE cuts again, and `band()` is the one cascade the whole film reads — the source,
@@ -5682,7 +5740,7 @@ if(faqIndex && panel && faqBody){
      ⛔ `node --check` cannot see this: it is a runtime error in syntactically perfect code, which is
      exactly what §7 warns about. Declare film state here, with the rest of it. */
   let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false,
-      locked=false, settleT=null;
+      locked=false, settleT=null, seekFr=-1, lastT=0, vpW=0, vpH=0;
   let veiled=-1;
   const clamp=v=>v<0?0:v>1?1:v;
   const heroBg=hero.querySelector('.hero-bg');
@@ -5740,7 +5798,24 @@ if(faqIndex && panel && faqBody){
     const vm=parseFloat(cs.getPropertyValue('--cineVeilMin'));
     if(vm>=0&&vm<=1)veilMin=vm;
     top=cine.getBoundingClientRect().top+window.scrollY;
-    travel=Math.max(1,cine.offsetHeight-window.innerHeight);
+    /* ⛔⛔⛔ **THE VIEWPORT HEIGHT IS HELD STILL — 25 Aug 2026 (D426). THIS IS THE PHONE JITTER.**
+       Client: *"the whole screen and everything is just jumping around and is glitching, and you
+       cannot swipe past anything… everything is, like, shaking up and down violently."*
+       ⭐⭐⭐ **THE MECHANISM: `window.innerHeight` IS NOT CONSTANT ON A PHONE.** The runway is sized
+       in `vh`, which every mobile browser resolves against the LARGE viewport and never changes —
+       but `innerHeight` tracks the VISUAL viewport and shrinks and grows continuously while the
+       address bar collapses and returns, which is on every single swipe. `travel` is the divisor
+       of the whole scrub, so it was changing under the finger: the same scrollY meant a different
+       frame from one animation frame to the next, in BOTH directions as the bar animated, and the
+       film shook against a scroll that was perfectly smooth. ⭐ It also fires `resize`, which
+       re-entered this function, which is why it never settled.
+       ⭐ **SO THE DIVISOR TAKES A HEIGHT THAT ONLY MOVES WHEN THE WINDOW REALLY DOES:** a width
+       change, or a height change too large to be browser chrome (>140px — a rotation, a desktop
+       drag). ⚠️ The ~60-90px the bar is worth is absorbed by the dead scroll at the end of the
+       film (`--cineHold`, 0.2125 of the phone's runway = over a screen of slack), so nothing is
+       cut short. ⛔ Do not "simplify" this back to `innerHeight`. */
+    if(!vpH||innerWidth!==vpW||Math.abs(innerHeight-vpH)>140){ vpW=innerWidth; vpH=innerHeight; }
+    travel=Math.max(1,cine.offsetHeight-vpH);
   }
 
   function fail(){
@@ -5756,12 +5831,20 @@ if(faqIndex && panel && faqBody){
   }
   vid.addEventListener('error',fail);
 
-  /* the seek queue: one in flight, one waiting, and the waiting one is always the newest */
+  /* the seek queue: one in flight, one waiting, and the waiting one is always the newest
+     ⭐⭐ **AND THE TARGET IS A FRAME, NOT A TIME (D425).** `want` is continuous; the film is not.
+     Rounding to the frame grid and seeking to its MIDPOINT `(f+0.5)/FPS` lands unambiguously
+     inside frame `f` — a seek to the boundary is a coin flip between two frames on some builds and
+     that alone reads as a stutter. ⛔ Comparing `vid.currentTime` is what this replaces: it leads
+     the painted frame, so it could not answer "is this frame already on screen". `seekFr` can. */
   function seek(){
     if(vid.seeking){pending=true;return;}
     pending=false;
-    const t=Math.min(want,Math.max(0,dur-HALF));
-    if(Math.abs(vid.currentTime-t)>HALF){ try{vid.currentTime=t;}catch(e){} }
+    const last=Math.max(0,Math.round(dur*FPS)-1);
+    const f=Math.max(0,Math.min(last,Math.floor(want*FPS)));
+    if(f===seekFr)return;
+    seekFr=f;
+    try{vid.currentTime=(f+0.5)/FPS;}catch(e){}
   }
   vid.addEventListener('seeked',()=>{ if(pending)seek(); });
 
@@ -6054,8 +6137,20 @@ if(faqIndex && panel && faqBody){
       if(revSc!==null){ revSc=null; revEl.style.removeProperty('--lsc'); }
       return;
     }
+    /* ⭐⭐⭐ **A FRACTIONAL INDEX SINCE D425, AND THAT REVERSES THIS DESIGN'S OWN "NO INTERPOLATION"
+       RULE FOR A REASON.** The tables were tracked frame by frame on the 24fps master, and at 24fps
+       reading between two rows WOULD have been wrong: the picture snapped to whole frames, so a
+       boundary at 124.5 was a boundary the slab was not at (D350's fault). ⭐ **The film is 60fps
+       now and three of every five frames ARE between two tracked rows** — the slab's edge in an
+       interpolated frame genuinely sits between the two measured positions, so the interpolated
+       row is the only one that matches the picture. Reading the nearest tracked row instead would
+       hold the mask still for two frames and then jump it, which is the shake this design exists
+       to avoid. ⚠️ `fr` is in SOURCE frames (24) whatever the file's rate is — the tables' grid. */
     const fr=(shownFr>=0)?shownFr
-      :Math.floor(((vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:0)*FPS+1e-6);
+      :((vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:0)*SRCFPS;
+    /* clamped linear read of a tracked table at a fractional row */
+    const at=(a,u)=>{ const n=a.length-1; if(u<=0)return a[0]; if(u>=n)return a[n];
+      const i=Math.floor(u), t=u-i; return a[i]+(a[i+1]-a[i])*t; };
     let c;
     if(RV.ph){
       /* ═════ THE PHONE (D360): the slab tilts back off the frame, so TWO edges do the revealing —
@@ -6066,20 +6161,20 @@ if(faqIndex && panel && faqBody){
          (the -9999 sentinel) and the polygon is the desktop's own four-point form. Past the
          table's end the clip comes OFF — measured: everything still covered at f201 sits below
          the ink, so nothing pops (see the table's note). */
-      const i=Math.max(0,Math.min(PREV_X.length-1,fr-PREV_F0));
-      const done=fr-PREV_F0>=PREV_X.length-1;
+      const i=fr-PREV_F0;
+      const done=i>=PREV_X.length-1;
       if(done)c='';
       else{
-        const x0=PREV_X[i]-REV_PAD, sx=PREV_SX[i];
+        const x0=at(PREV_X,i)-REV_PAD, sx=at(PREV_SX,i);
         const fX=e=>(e+RV.left-RV.dx)/RV.sc, fY=e=>(e+RV.top-RV.dy)/RV.sc;
         const eX=f=>+(f*RV.sc+RV.dx-RV.left).toFixed(1), eY=f=>+(f*RV.sc+RV.dy-RV.top).toFixed(1);
         const XL=fX(-400), XR=fX(RV.w+400), YT=fY(-200), YB=fY(RV.h+200);
         const Xat=y=>x0+sx*(y-240);
-        if(PREV_Y[i]<-5000){
+        if(at(PREV_Y,i)<-5000){
           c='polygon('+eX(XL)+'px '+eY(YT)+'px,'+eX(Xat(YT))+'px '+eY(YT)+'px,'
            +eX(Xat(YB))+'px '+eY(YB)+'px,'+eX(XL)+'px '+eY(YB)+'px)';
         }else{
-          const yp=PREV_Y[i]-REV_PAD, sy=PREV_SY[i];
+          const yp=at(PREV_Y,i)-REV_PAD, sy=at(PREV_SY,i);
           const Yat=x=>yp+sy*(x-304);
           const cx=(x0+sx*(yp-240-304*sy))/(1-sx*sy);   /* the corner, film px */
           const cy=yp+sy*(cx-304);
@@ -6093,8 +6188,8 @@ if(faqIndex && panel && faqBody){
        (TREV, the 864 crop) between 721 and 1120. Same clip, same clocks, same gates. */
     const GX=RV.tb?TREV_X:REV_X, GS=RV.tb?TREV_S:REV_S,
           GF0=RV.tb?TREV_F0:REV_F0, GYR=RV.tb?TREV_YREF:490;
-    const i=Math.max(0,Math.min(GX.length-1,fr-GF0));
-    const x0=GX[i]-REV_PAD, s=GS[i];
+    const i=fr-GF0;
+    const x0=at(GX,i)-REV_PAD, s=at(GS,i);
     /* the edge in the element's own pixels, read 60px above and below the box so nothing is ever
        cut vertically — two points, because the slab's angle is part of the table */
     const yT=RV.top-60, yB=RV.top+RV.h+60;
@@ -6105,7 +6200,7 @@ if(faqIndex && panel && faqBody){
        The frame gate matters on short windows, where the box runs deep into the frame and the
        edge never formally clears it; past the last tracked frame today's composition takes over,
        which is what shipped before this design. */
-    const done=(fr-GF0>=GX.length-1)||Math.min(xT,xB)>RV.w+30;
+    const done=(i>=GX.length-1)||Math.min(xT,xB)>RV.w+30;
     c=done?'':'polygon(-2000px -60px,'+xT+'px -60px,'+xB+'px '+(RV.h+60)+'px,-2000px '+(RV.h+60)+'px)';
     }
     if(c!==revClip){ revClip=c; revEl.style.clipPath=c; }
@@ -6116,7 +6211,9 @@ if(faqIndex && panel && faqBody){
   const HAS_RVFC=!!(vid&&typeof vid.requestVideoFrameCallback==='function');
   if(HAS_RVFC){
     const onFrame=(now,meta)=>{
-      const f=Math.floor(meta.mediaTime*FPS+1e-4);
+      /* ⚠️ SOURCE frames and NOT rounded (D425): the reveal tables are read on this value and
+         they are now interpolated, so the fraction is the whole point. */
+      const f=meta.mediaTime*SRCFPS;
       if(f!==shownFr){ shownFr=f; revealTick(); }
       try{ vid.requestVideoFrameCallback(onFrame); }catch(e){}
     };
@@ -6701,12 +6798,41 @@ if(faqIndex && panel && faqBody){
     skipToEnd();
   });
 
-  function tick(){
+  /* ⭐⭐⭐ **THE CHASE — REBUILT AT D425, AND THE TWO CHANGES ANSWER TWO SEPARATE COMPLAINTS.**
+
+     ⭐⭐ **1. IT IS NORMALISED BY dt, SO A 120Hz DISPLAY BEHAVES LIKE A 60Hz ONE.** `eased+=d*EASE`
+     per animation frame is a different curve on every refresh rate: on a ProMotion MacBook the
+     chase converged in half the wall-clock time while asking for TWICE as many sub-frame seeks,
+     and the old one-frame dead zone then rejected most of them — which is precisely the uneven
+     tail he reported and this harness (60Hz) could not reproduce. ⛔ **THIS IS WHY THREE ROUNDS OF
+     MEASUREMENT CAME BACK CLEAN WHILE HE KEPT SEEING IT.** `1-(1-EASE)^(dt/16.7)` is the same
+     curve in real time at any refresh rate.
+
+     ⭐⭐⭐ **2. IT NEVER CLOSES SLOWER THAN THE FILM'S OWN RATE.** An exponential chase approaches
+     its target and never arrives: the last stretch of a trackpad fling was covered in steps that
+     halved every 110ms, so the picture ticked one frame, waited, ticked, waited longer — *"as it
+     gets slower, it starts jumping between the frames."* The floor is **one film frame per 1/FPS
+     of real time**, so once the exponential drops below 1x the film simply PLAYS to a stop at its
+     own speed. ⭐ And it does something better at the other end: under a slow scroll the remaining
+     distance is under the floor, so `step` clamps to the whole distance and the playhead sits
+     EXACTLY on the scroll — no lag, no easing artefact, the picture moves when the finger moves. */
+  function tick(now){
     raf=null;
+    const t=now||performance.now();
+    if(!lastT)lastT=t-1000/60;
+    let dt=t-lastT; lastT=t;
+    if(dt>100)dt=100;                    /* a long frame, or a tab that was away */
+    if(dt<1)dt=1;
     if(eased<0)eased=target;
-    const d=target-eased;
-    eased+=d*EASE;
-    if(Math.abs(d)<0.0002)eased=target;
+    const d=target-eased, ad=Math.abs(d), FE=frameE();
+    if(ad<=FE*0.02){ eased=target; }
+    else{
+      let step=ad*(1-Math.pow(1-EASE,dt/(1000/60)));
+      const floor=FE*(dt/(1000/FPS));
+      if(step<floor)step=floor;
+      if(step>ad)step=ad;
+      eased+=(d<0?-1:1)*step;
+    }
     const film=clamp(eased/(1-hold));     // the hold at the end belongs to the hero, not the film
     want=film*dur;
     seek();
@@ -6725,7 +6851,10 @@ if(faqIndex && panel && faqBody){
        still mid-chase and `armSettle` would decline. This is the call that catches it. */
     else armSettle();
   }
-  const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
+  /* ⚠️ `lastT` IS CLEARED HERE, NOT IN `tick`. The loop stops itself when it catches up, so the
+     next kick can be a minute later — and a dt of 60,000ms would close the whole chase in one
+     frame. Cleared on the way in, the first tick uses a nominal 1/60s. */
+  const kick=()=>{ if(raf===null){ lastT=0; raf=requestAnimationFrame(tick); } };
 
 
   /* ⭐⭐⭐ **THE ONE-WAY LOCK — 25 August 2026.** See `html.cine-on.cine-done .cine` in the
@@ -6811,7 +6940,10 @@ if(faqIndex && panel && faqBody){
     fetched=true;
     if(post)vid.poster=post;
     vid.preload='auto';
-    if(have!==src){ vid.src=src; want=-1; try{ vid.load(); }catch(e){} }
+    /* ⚠️ `seekFr` GOES WITH THE SOURCE (D425). It remembers which frame the decoder is showing;
+       a new file makes that memory a lie, and the first seek after a band change would be skipped
+       as "already there". */
+    if(have!==src){ vid.src=src; want=-1; seekFr=-1; try{ vid.load(); }catch(e){} }
   }
 
   /* ⭐⭐ ONE FUNCTION OWNS THE STATE, and it is idempotent so resize may call it freely.
