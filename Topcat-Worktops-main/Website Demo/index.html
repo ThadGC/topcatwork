@@ -880,9 +880,11 @@
      bit thinner. Not too thin."* ⭐ **THE HEIGHT IS SET BY ITS TALLEST CHILD, NOT BY TASTE:** the
      quote button measures 42.3px at `--uipx:1`, the nav row 36 and the logo 34, so 62 with 9px of
      padding leaves the button 44px of content box — 1.7px of clearance, and nothing else in the
-     bar comes close. 78.5 → **62**, a fifth off, which is "quite a bit" without crowding the button
-     it has to hold. ⛔ Below 62 the button starts setting the height instead of the bar and the
-     logo loses its air, which is the "too thin" he warned against.
+     bar comes close. 78.5 → 62 → **68**: 62 shipped first and he called it *"now too thin… just make
+     it slightly bigger"*, naming the SCROLLED bar (the one with its glass poured in, where the
+     height reads as a band rather than as air over a photograph). 68 is a 13% cut on the original
+     against 62's 21%. ⛔ Below 62 the quote button starts setting the height instead of the bar and
+     the logo loses its air, which is the "too thin" he warned against.
      ⭐⭐ **IT RIDES `--uipx` LIKE THE REST OF THE DESKTOP CHROME (D418).** The bar's CONTENTS were
      anchored to the 1440x900 frame and its HEIGHT was not, so on a smaller window the chrome shrank
      inside a bar that did not — which is the thickness he is looking at. Now both follow the one
@@ -896,8 +898,8 @@
      above has the same shape and the same blind spot; it is left alone because both narrow bands
      are frozen and their sections set their own paddings (D259 says so), but do not copy it. */
   @media(min-width:1121px){
-    :root{--barH:calc(62*var(--uipx))}
-    header.bar{padding-top:calc(9*var(--uipx));padding-bottom:calc(9*var(--uipx))}
+    :root{--barH:calc(68*var(--uipx))}
+    header.bar{padding-top:calc(11*var(--uipx));padding-bottom:calc(11*var(--uipx))}
   }
 
   .mobile-nav{
@@ -5861,13 +5863,20 @@
        unitless `--ly` invalid. The three `[data-vpos]` rules below already say `0%` and were fine.
        ⭐ `0px` and not `0%` on purpose: a percentage here resolves against the line's own height,
        and this rule's whole point is that the line is anchored by its top. */
+    /* ⭐⭐⭐ D432 — every number here is a measurement off the 1920x1080 frame, taken at the approved
+       1440x900 window and divided by that window's cover scale (0.83333). At 1440x900 they compute
+       back to exactly what shipped: 86.4 → 72px, 898.56 → 748.8px, 200.16 → 100.8px left, 22.8 → 19px
+       subtitle. ⚠️ **`--filmX` IS NOT `(vw − filmW)/2` — `.hero-bg` BLEEDS**: it measures **1468px
+       inside a 1440px window**, so the film's left edge sits at −66 and not −80, and the left anchor
+       was derived from the MEASURED box rather than from the window. Re-derive if that bleed moves. */
     html.cine-on .cine-line[data-vpos-wide]{
       bottom:auto;--ly:0px;
-      font-size:clamp(38px,5vw,76px);line-height:1.06;
-      width:clamp(320px,52vw,760px);
+      left:calc(var(--filmX,0px) + 200.16 * var(--filmU,1px));
+      font-size:calc(86.4 * var(--filmU,1px));line-height:1.06;
+      width:calc(898.56 * var(--filmU,1px));
     }
     /* the slab beat, on the first screen's own line */
-    html.cine-on .cine-line[data-vpos-wide="hero"]{top:22vh}
+    html.cine-on .cine-line[data-vpos-wide="hero"]{top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px))}
     /* ⭐⭐⭐ **THE SUBTITLE IS INDENTED TO THE TITLE'S STEM, NOT TO THE BOX — D347.** Client: *"the g
        of the word get is not in line with the t of the and tone… the middle of the g and the middle
        of the stem of the t, those go together."*
@@ -5886,11 +5895,20 @@
        19px, `O` at 7.97. Calibrated against the live page, both now land on the stem to within
        0.01px. ⛔ If a subtitle's first letter changes, re-read its half-ink — a round `O` and a
        wide `M` differ by a pixel, which is visible at this size against a 70px stem. */
+    /* ⭐ D432: the stem alignment survives the move to film coordinates because BOTH terms scale
+       together — the title's 0.3095 stem offset and the subtitle's own first-glyph half-ink, which
+       was 9.08px/7.97px at the approved 19px and is 10.90/9.56 film px. At 1440x900 these compute
+       to 13.20px and 13.42px, the two numbers that were calibrated against the live page. */
+    html.cine-on .cine-line[data-vpos-wide] .cine-line-sub{
+      font-size:calc(22.8 * var(--filmU,1px));
+      margin-top:calc(28.8 * var(--filmU,1px));
+      max-width:calc(720 * var(--filmU,1px));
+    }
     html.cine-on .cine-line[data-vpos-wide="hero"] .cine-line-sub{
-      margin-left:calc(clamp(38px, 5vw, 76px) * 0.3095 - 9.08px);   /* "Measured…" */
+      margin-left:calc(15.845 * var(--filmU,1px));   /* "Measured…" */
     }
     html.cine-on .cine-line[data-vpos-wide="high"] .cine-line-sub{
-      margin-left:calc(clamp(34px, 4.8vw, 70px) * 0.3095 - 7.97px); /* "Once…" */
+      margin-left:calc(16.106 * var(--filmU,1px));   /* "Once…" */
     }
     /* ⛔⛔ **THE GOLD'S drop-shadow COMES OFF THIS ONE BEAT — D354.** Its parent carries the
        reveal's animated clip-path on desktop, and a filter under an animated mask re-rasters both
@@ -5940,7 +5958,16 @@
        at its LOWEST too (385), and the island only reaches 363 later, when the approach has already
        lifted the words. Clearance holds at **~19px at the tightest**, and the right edge reaches
        756 against the pendants' 788. ⛔ 5vw would put the bottom on the marble again. */
-    html.cine-on .cine-line[data-vpos-wide="high"]{top:16vh;font-size:clamp(34px,4.8vw,70px)}
+    /* ⭐⭐ **LIFTED 44 FILM px SO THE SUBTITLE CLEARS THE ISLAND — D432.** Client: *"the subtitle
+       must not touch the slab. None of the text must touch the slab. on any screen size."*
+       ⭐ Measured on the frame itself (t=32, the beat at rest): the island's near corner sits at
+       film **(690, 430)** and the subtitle's ink ran to **y 409** — a 21 film px gap, which reads as
+       touching. At 128.8 the subtitle's ink ends at **y 365, a 65 film px gap**, and the title's
+       first line still sits 29px clear of the bar. ⭐⭐ **AND BECAUSE BOTH THE TEXT AND THE PICTURE
+       ARE NOW IN FILM COORDINATES, THAT GAP IS THE SAME NUMBER ON EVERY SCREEN** — it is not a
+       clearance that has to be re-checked per window, it is a property of the composition. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:calc(var(--filmY,0px) + 128.8 * var(--filmU,1px));
+      font-size:calc(82.94 * var(--filmU,1px))}
   }
 
   /* ⭐⭐ **THE BEAT'S SECOND LINE IS A SUBTITLE NOW, NOT A SECOND TITLE — 23 August 2026 (D340).**
@@ -18105,7 +18132,37 @@ if(faqIndex && panel && faqBody){
     if(o!==plateO){ plateO=o; plateEl.style.opacity=o; }
   }
 
+  /* ⭐⭐⭐⭐ **THE STORY LAYER IS ANCHORED TO THE PICTURE, NOT TO THE WINDOW — 25 Aug 2026 (D432).**
+     Client: *"the subtitle must not touch the slab. None of the text must touch the slab. on any
+     screen size… the way that it looks in the preview here is what it looks like on every screen."*
+     ⭐⭐⭐ **WHY NOTHING KEYED TO THE VIEWPORT CAN PROMISE THAT.** The film is `object-fit:cover`, so
+     it scales by **max**(W/1920, H/1080) and is centred; the story lines were sized in `vw` and
+     positioned in `vw`/`vh`. Two different functions of the window — so the gap between a word and
+     the slab's edge was a different number on every window shape, and on his it had closed. ⛔ No
+     font size, clamp or media query can fix that, because the thing the text must clear is moving
+     to a different rule than the text is.
+     ⭐⭐ **SO THE TEXT MOVES IN THE FILM'S COORDINATES.** `--filmU` is ONE FILM PIXEL expressed in
+     CSS px, `--filmX`/`--filmY` are where the film's top-left corner lands in the viewport. Every
+     desktop story value below is written as a measurement taken off the 1920x1080 frame and
+     multiplied by `--filmU`, so the composition is rigidly locked to the picture: **if a line
+     clears the slab at the approved frame it clears it at every window size, by construction.**
+     ⭐ `--filmU` is a LENGTH, not a number (D430's lesson: a unitless term in a `calc()` sum is
+     invalid and fails silently), so every use is `calc(N * var(--filmU))` and reads as "N film px".
+     ⚠️ The box is read from `.hero-bg` and the size from the VIDEO, so this agrees exactly with
+     `grade()` and `revealMeasure()`, which do the same cover arithmetic — one description of where
+     the picture is. ⚠️ Falls back to the band's own cut size before metadata lands. */
+  function setFilmFrame(){
+    const bg=heroBg&&heroBg.getBoundingClientRect(); if(!bg||!bg.width||!bg.height)return;
+    const fw=vid.videoWidth||(mPhone.matches?608:(mNarrow.matches?864:1920)), fh=vid.videoHeight||1080;
+    const sc=Math.max(bg.width/fw,bg.height/fh);
+    root.style.setProperty('--filmU',(Math.round(sc*100000)/100000)+'px');
+    root.style.setProperty('--filmX',(Math.round((bg.width-fw*sc)/2*100)/100)+'px');
+    root.style.setProperty('--filmY',(Math.round((bg.height-fh*sc)/2*100)/100)+'px');
+  }
+  vid.addEventListener('loadedmetadata',setFilmFrame);
+
   function measure(){
+    setFilmFrame();
     const cs=getComputedStyle(cine);
     const h=parseFloat(cs.getPropertyValue('--cineHold'));
     if(h>0&&h<0.9)hold=h;

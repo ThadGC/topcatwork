@@ -5802,7 +5802,37 @@ if(faqIndex && panel && faqBody){
     if(o!==plateO){ plateO=o; plateEl.style.opacity=o; }
   }
 
+  /* ⭐⭐⭐⭐ **THE STORY LAYER IS ANCHORED TO THE PICTURE, NOT TO THE WINDOW — 25 Aug 2026 (D432).**
+     Client: *"the subtitle must not touch the slab. None of the text must touch the slab. on any
+     screen size… the way that it looks in the preview here is what it looks like on every screen."*
+     ⭐⭐⭐ **WHY NOTHING KEYED TO THE VIEWPORT CAN PROMISE THAT.** The film is `object-fit:cover`, so
+     it scales by **max**(W/1920, H/1080) and is centred; the story lines were sized in `vw` and
+     positioned in `vw`/`vh`. Two different functions of the window — so the gap between a word and
+     the slab's edge was a different number on every window shape, and on his it had closed. ⛔ No
+     font size, clamp or media query can fix that, because the thing the text must clear is moving
+     to a different rule than the text is.
+     ⭐⭐ **SO THE TEXT MOVES IN THE FILM'S COORDINATES.** `--filmU` is ONE FILM PIXEL expressed in
+     CSS px, `--filmX`/`--filmY` are where the film's top-left corner lands in the viewport. Every
+     desktop story value below is written as a measurement taken off the 1920x1080 frame and
+     multiplied by `--filmU`, so the composition is rigidly locked to the picture: **if a line
+     clears the slab at the approved frame it clears it at every window size, by construction.**
+     ⭐ `--filmU` is a LENGTH, not a number (D430's lesson: a unitless term in a `calc()` sum is
+     invalid and fails silently), so every use is `calc(N * var(--filmU))` and reads as "N film px".
+     ⚠️ The box is read from `.hero-bg` and the size from the VIDEO, so this agrees exactly with
+     `grade()` and `revealMeasure()`, which do the same cover arithmetic — one description of where
+     the picture is. ⚠️ Falls back to the band's own cut size before metadata lands. */
+  function setFilmFrame(){
+    const bg=heroBg&&heroBg.getBoundingClientRect(); if(!bg||!bg.width||!bg.height)return;
+    const fw=vid.videoWidth||(mPhone.matches?608:(mNarrow.matches?864:1920)), fh=vid.videoHeight||1080;
+    const sc=Math.max(bg.width/fw,bg.height/fh);
+    root.style.setProperty('--filmU',(Math.round(sc*100000)/100000)+'px');
+    root.style.setProperty('--filmX',(Math.round((bg.width-fw*sc)/2*100)/100)+'px');
+    root.style.setProperty('--filmY',(Math.round((bg.height-fh*sc)/2*100)/100)+'px');
+  }
+  vid.addEventListener('loadedmetadata',setFilmFrame);
+
   function measure(){
+    setFilmFrame();
     const cs=getComputedStyle(cine);
     const h=parseFloat(cs.getPropertyValue('--cineHold'));
     if(h>0&&h<0.9)hold=h;

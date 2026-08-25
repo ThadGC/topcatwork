@@ -162,8 +162,8 @@ header.bar.scrolled::after{opacity:1;transform:scaleX(1)}
    to the bar it would have thinned the bar and left every page's top padding at the old 78.5.
    ⚠️ Desktop only: below 1121 the burger's own 44px control sets the height (D259). */
 @media(min-width:1121px){
-  :root{--barH:calc(62*var(--uipx))}
-  header.bar{padding-top:calc(9*var(--uipx));padding-bottom:calc(9*var(--uipx))}
+  :root{--barH:calc(68*var(--uipx))}
+  header.bar{padding-top:calc(11*var(--uipx));padding-bottom:calc(11*var(--uipx))}
 }
 /* ⭐ THE REAL LOGO — client's artwork, supplied 10 Aug 2026, in /assets/brand/. This sheet is
    loaded by EVERY generated page (services, stones, trade, materials, guides, towns, sitemap),
