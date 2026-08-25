@@ -5655,7 +5655,15 @@ if(faqIndex && panel && faqBody){
   const gcv=document.createElement('canvas'); gcv.width=48; gcv.height=8;
   const gctx=gcv.getContext('2d',{willReadFrequently:true});
   let graded=-1;
-  let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false;
+  /* ⚠️⚠️ `locked` AND `settleT` LIVE UP HERE WITH THE REST OF THE FILM'S STATE, AND THAT PLACEMENT
+     IS LOAD-BEARING. They were first declared next to `lockFilm()` further down, which crashed the
+     whole film on any `#hero` arrival: `skipToEnd()` is called SYNCHRONOUSLY during this IIFE (the
+     logo path), it calls `armSettle()`, and `armSettle` reads `locked` — a `let` that had not been
+     reached yet, so it threw a temporal-dead-zone ReferenceError and every line after it never ran.
+     ⛔ `node --check` cannot see this: it is a runtime error in syntactically perfect code, which is
+     exactly what §7 warns about. Declare film state here, with the rest of it. */
+  let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false,
+      locked=false, settleT=null;
   let veiled=-1;
   const clamp=v=>v<0?0:v>1?1:v;
   const heroBg=hero.querySelector('.hero-bg');
@@ -6631,6 +6639,13 @@ if(faqIndex && panel && faqBody){
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
     seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
+    /* ⭐ SKIPPING ARRIVES AT THE SAME PLACE, SO IT LOCKS THE SAME WAY. This path writes the final
+       state directly — no scroll event, no chase — so neither of the other two arming points would
+       ever see it. ⚠️ It also covers the LOGO, which is this same function (D389). */
+    armSettle();
+    /* ⚠️ Already locked and the logo was clicked: there is no lock left to fire, so the hash has
+       to be dropped here or it survives into the next refresh. */
+    if(locked)dropHeroHash();
   }
   if(skipEl)skipEl.addEventListener('click',skipToEnd);
 
@@ -6685,14 +6700,82 @@ if(faqIndex && panel && faqBody){
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
+    /* ⭐ THE CHASE ITSELF HAS TO ARM THE LOCK, not just the scroll. `onScroll` stops firing the
+       moment the finger lifts, but the eased playhead keeps travelling for another 2.5-3.5s (§7)
+       — so on a flick that lands on the ending, the last scroll event happens while the film is
+       still mid-chase and `armSettle` would decline. This is the call that catches it. */
+    else armSettle();
   }
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
 
 
+  /* ⭐⭐⭐ **THE ONE-WAY LOCK — 25 August 2026.** See `html.cine-on.cine-done .cine` in the
+     stylesheet for the client's words and for why collapsing the runway is the answer rather than
+     clamping the scroll.
+
+     ⭐⭐ **WHEN: FILM COMPLETE, CHASE SETTLED, AND THE SCROLL AT REST.** All three, because his
+     wording is *"once it settles in"* and because the collapse moves `scrollY`. Firing it under a
+     live fling would fight the momentum the browser is still applying; firing it at rest is
+     invisible. `film` reaches 1 at `eased === 1-hold`, which is the top of the dead scroll, so the
+     hero is already finished and filling the screen when the timer starts.
+
+     ⭐⭐⭐ **WHY THE SCROLL MATHS IS A SUBTRACTION AND NOT A `scrollTo(0)`.** Collapsing `.cine`
+     removes exactly `travel` px (`offsetHeight - innerHeight`) from the document ABOVE everything
+     that follows, so every element below shifts up by that much. Subtracting the same `travel`
+     from `scrollY` holds the viewer exactly where they were:
+         locked while still on the hero   → scrollY goes to 0, and the hero was sticky and filling
+                                            the viewport anyway, so nothing moves on screen
+         locked further down the page     → position preserved to the pixel, no visible jump
+     ⛔ A flat `scrollTo(0)` would be right only in the first case and would throw anyone who had
+     already scrolled into the gallery back to the top.
+
+     ⛔⛔ **AND THE `#hero` HASH HAS TO GO, OR "REFRESH" WOULD NOT SHOW THE FILM.** The logo sets
+     `#hero` (D381/D389) and the load path answers it with `skipToEnd()` — so reloading with that
+     hash still in the address bar would skip the film again and his rule *"they have to refresh to
+     see the video again"* would be false exactly for the people who arrived by logo.
+     `replaceState` clears it without adding a history entry.
+
+     ⚠️ **THE RESIZE EVENT AT THE END IS NOT OPTIONAL.** The gallery runway, the pin and the reveal
+     offsets are all measured from layout; the document just got ~9 screens shorter and they have to
+     re-measure or they animate against stale numbers. ⚠️ It is dispatched AFTER the scroll is set,
+     so they measure the position that actually survives. */
+  function lockFilm(){
+    if(locked)return;
+    locked=true;
+    measure();
+    const drop=travel;
+    root.classList.add('cine-done');
+    window.scrollTo({top:Math.max(0,Math.round(window.scrollY-drop)),behavior:'instant'});
+    dropHeroHash();
+    dispatchEvent(new Event('resize'));
+  }
+  /* ⭐⭐ **THE INVARIANT IS "LOCKED PAGES DO NOT CARRY `#hero`", AND IT NEEDS TWO CALL SITES.**
+     ⚠️ Clearing it inside `lockFilm()` alone left a hole, found by driving it: clicking the logo
+     while ALREADY on a locked landing page is a same-document hash change, not a load, so the brand
+     handler writes `#hero` and `lockFilm()` early-returns on `locked` without ever reaching the
+     clear. The address bar kept the hash and the next refresh would have skipped the film — his
+     rule *"they have to refresh to see the video again"* broken for exactly the person who had
+     just clicked the logo. ⛔ Do not move this back inside `lockFilm()`. */
+  function dropHeroHash(){
+    if((location.hash||'').toLowerCase()!=='#hero')return;
+    try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+  }
+  /* ⚠️ Restarted on every scroll, so it only fires once the finger has genuinely stopped. */
+  function armSettle(){
+    if(locked)return;
+    if(clamp(eased/(1-hold))<1)return;      /* the film is not finished yet */
+    if(settleT)clearTimeout(settleT);
+    settleT=setTimeout(()=>{ if(!locked&&clamp(eased/(1-hold))>=1)lockFilm(); },220);
+  }
+
   function onScroll(){
+    /* ⛔ Once locked the runway is one viewport tall and there is nothing left to scrub. Reading
+       the scroll here would drive the film backwards off a position that no longer means anything. */
+    if(locked)return;
     if(!live)return;
     target=clamp((window.scrollY-top)/travel);
     kick();
+    armSettle();
   }
 
   /* ⭐ the fetch is asked for HERE and nowhere else, and it is also where the cuts change over

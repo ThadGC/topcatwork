@@ -4525,18 +4525,57 @@
      `.call-fab` remains phone-only through its base display:none — sharing the selector here is
      inert on the tablet. */
   @media(max-width:1120px){
+    /* ⛔⛔⛔ **THE GROUND IS THE SKIP CONTROL'S, TO THE DIGIT — 25 August 2026, HIS CORRECTION.**
+       He first reported the flicker (*"this gradient thing inside this block... is flickering, and
+       it's creating this effect"*), and the first fix here replaced the translucent ground with a
+       near-opaque one so there was nothing left to re-sample. He looked at it and ruled against it
+       the same minute: *"I see you've changed the gradients behind the WhatsApp button and the
+       phone button. It should still be the same gradient as behind the skip intro button."*
+       ⭐ **SO IT IS LITERALLY THE SKIP'S OWN PAIR OF VALUES** — `rgba(8,8,11,0.70)` and `blur(9px)`
+       — read off `html.cine-on .cine-skip` rather than re-invented, because the three controls
+       stand in one row at the foot of the film and any difference between them shows.
+       ⚠️⚠️ **THE FLICKER'S PRIME SUSPECT IS STILL `backdrop-filter` OVER THE MOVING FILM**, and the
+       reason these two shimmer where the skip pill does not is most likely that they are
+       `position:fixed` — a separate compositing root from the video — while the pill is
+       `position:absolute` inside the sticky hero and moves WITH its own backdrop. `isolation` gives
+       them a stacking context of their own, which is the cheap remedy for that class of fault and
+       costs nothing visually.
+       ⛔⛔ **THIS COULD NOT BE VERIFIED IN THE HARNESS AND THAT IS RECORDED HONESTLY:** the preview
+       pane's screenshot goes black on any page carrying `backdrop-filter` (§7), so the one property
+       under investigation is the one that cannot be photographed here. **If it still flickers on
+       his device, the next step is the `position:fixed` theory above, not another colour.** */
     .wa-fab,.call-fab{
       width:46px;height:46px;
-      background:rgba(8,8,11,0.58);
+      background:rgba(8,8,11,0.70);
       -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+      isolation:isolate;
       border-color:rgba(198,166,100,0.5);
       box-shadow:0 10px 26px -12px rgba(0,0,0,0.85);
       transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
                  opacity .3s var(--ease),transform .35s var(--ease)}
-    .wa-fab svg{width:23px;height:23px}
-    /* the call glyph at the same optical size as the WhatsApp mark — the phone band's own 21px
-       rule (later in the sheet) still wins below 720 */
-    .call-fab svg{width:23px;height:23px}
+    /* ⭐⭐⭐ **BOTH GLYPHS ARE 23px AND THEY NOW MEAN THE SAME THING — 25 August 2026.** Client:
+       *"the little phone icon inside the circle is too small. So fix it across the board."*
+       ⛔⛔ **THE BOX WAS NEVER THE PROBLEM, THE ARTWORK WAS.** Measured with `getBBox()`: the
+       WhatsApp mark fills its 24×24 viewBox completely (24 × 23.89), while the phone handset
+       filled only **59.2%** of the same box (14.21 × 14.21, sitting at x 4.29 / y 3.5). So a phone
+       set to 21px painted **12.4px of ink** against WhatsApp's 23px — barely half — and every
+       size rule on the site inherited that lie.
+       ⭐ **FIXED AT THE GLYPH, WHICH IS WHY IT IS FIXED "ACROSS THE BOARD".** The path carries a
+       transform that scales its ink up inside the viewBox (see the markup), so one number fixes the
+       corner button, the sticky bar's Call and the mobile menu's phone pair at once, without
+       touching a single one of their size rules.
+       ⭐⭐⭐ **AND THE FIRST ATTEMPT OVERSHOT — HE CAUGHT IT ON SIGHT:** *"the phone icon is now too
+       big. It should be the same height as the WhatsApp button or similar size."* Filling the box
+       completely put 21.1px of ink against WhatsApp's 23px — **measurably SMALLER, and he was still
+       right.** The WhatsApp mark is an OUTLINED bubble that is mostly negative space; the handset
+       is a SOLID shape. Two glyphs of equal bounding box do not read as equal weight, and the solid
+       one always reads larger. ⛔ **This is the case for trusting his eye over the bounding box.**
+       ⭐ Scaled to **80% of the WhatsApp ink** — 18.4px at the corner, 12.0 in the bar, 12.8 in the
+       menu — which is the optical match rather than the arithmetic one. ⚠️ For reference the glyph
+       shipped at **12.4px** before any of this, which is the "too small" he started from.
+       ⛔ The old `.call-fab svg{width:21px}` in the phone band is GONE with it: it was a
+       compensation for a glyph that measured smaller, and it made the real fault harder to see. */
+    .wa-fab svg,.call-fab svg{width:23px;height:23px}
     /* ⭐⭐ D372: THE PAIR STANDS DOWN WHILE THE STICKY BAR IS UP — both narrow bands. Client:
        *"when the sticky bottom bar pops up… the WhatsApp icon above and the phone icon above
        will go away."* ⛔⛔ THIS REVERSES D180's RIDE-THE-BAR LIFT (the fabs used to step up to
@@ -4698,6 +4737,31 @@
     html.cine-on .cine > #hero{min-height:100vh}
   }
   @media(max-width:720px){html.cine-on .cine{--cineH:800vh;--cineHold:0.2125}}
+
+  /* ⭐⭐⭐ THE FILM IS A ONE-WAY JOURNEY — 25 August 2026. Client: *"usually when some people on
+     mobile try to refresh a page, they pull down hard to make it reload. Currently... if they pull
+     down, it's gonna play back through the video... After the video is done playing and the
+     surfaces worth building around finally settles in, then that is now the home page. They
+     shouldn't be able to go back through the video by swiping back. They have to refresh to see
+     the video again."*
+
+     ⭐⭐⭐ **THE REAL PROBLEM HE FOUND IS THAT PULL-TO-REFRESH WAS UNREACHABLE.** A phone fires its
+     native refresh gesture only at `scrollTop === 0`, and scroll 0 on this page is the film's FIRST
+     FRAME, nine screens above the finished hero. So a visitor sitting on the hero who pulled down
+     to reload did not reload — they rewound the film. There was no way to refresh this page from
+     the place people actually stand on it.
+
+     ⛔⛔ **WHICH IS WHY THE ANSWER IS TO COLLAPSE THE RUNWAY, NOT TO CLAMP THE SCROLL.** Pinning a
+     floor under `scrollY` would stop the rewind and make the gesture permanently impossible, since
+     the page would never reach 0 again. Collapsing `.cine` to a single viewport makes the finished
+     hero genuinely the top of the document: scrolling up runs out at the hero, pull-to-refresh
+     fires natively because scrollTop really is 0, and the reload starts the film from the top.
+     **His three sentences are one mechanism.**
+
+     ⚠️ `cine-on.cine-done` rather than `cine-done` alone, so it outranks all three band rules above
+     by specificity and does not depend on sitting after them. ⛔ The hero keeps every other thing
+     `cine-on` dresses — this changes the RUNWAY'S HEIGHT and nothing else. */
+  html.cine-on.cine-done .cine{--cineH:100vh}
   html.cine-on .cine > #hero{position:sticky;top:0}
   /* ⭐ BETWEEN THE PHOTOGRAPH AND `.hero-shade`, which is the reason nothing about the copy's
      contrast has to be re-measured: D238's veil dresses the film and the still identically. */
@@ -8925,7 +8989,6 @@
     /* ⛔ D372: the `.mbar.on ~` 73px lift that used to live here is GONE, not moved — while the
        bar is up the pair now HIDES instead of riding it (rule in the ≤1120 dress block above),
        because the bar's middle button became the WhatsApp link itself. */
-    .call-fab svg{width:21px;height:21px}
     html.nav-open .wa-fab,html.nav-open .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
 
   }
@@ -10061,7 +10124,7 @@
         <span>WhatsApp</span>
       </a>
       <a class="mn-alt" href="tel:+448000982812">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path transform="translate(-3.3965,-2.3291) scale(1.35116)" d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/></svg>
         <span>Call us</span>
       </a>
     </div>
@@ -10098,7 +10161,7 @@
     <span>WhatsApp</span>
   </a>
   <a class="mbar-a" href="tel:+448000982812">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path transform="translate(-3.3965,-2.3291) scale(1.35116)" d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/></svg>
     <span>Call</span>
   </a>
 </div>
@@ -10150,7 +10213,7 @@
      order; if either moves, that rule dies silently. -->
 <a class="call-fab" href="tel:+448000982812" aria-label="Call Topcat Worktops on 0800 098 2812">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/>
+    <path transform="translate(-3.3965,-2.3291) scale(1.35116)" d="M6.3 3.5h2.4l1.7 4-2 1.3a11 11 0 0 0 4.8 4.8l1.3-2 4 1.7v2.4a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.3 5.7a2 2 0 0 1 2-2.2Z"/>
   </svg>
 </a>
 
@@ -17647,7 +17710,15 @@ if(faqIndex && panel && faqBody){
   const gcv=document.createElement('canvas'); gcv.width=48; gcv.height=8;
   const gctx=gcv.getContext('2d',{willReadFrequently:true});
   let graded=-1;
-  let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false;
+  /* ⚠️⚠️ `locked` AND `settleT` LIVE UP HERE WITH THE REST OF THE FILM'S STATE, AND THAT PLACEMENT
+     IS LOAD-BEARING. They were first declared next to `lockFilm()` further down, which crashed the
+     whole film on any `#hero` arrival: `skipToEnd()` is called SYNCHRONOUSLY during this IIFE (the
+     logo path), it calls `armSettle()`, and `armSettle` reads `locked` — a `let` that had not been
+     reached yet, so it threw a temporal-dead-zone ReferenceError and every line after it never ran.
+     ⛔ `node --check` cannot see this: it is a runtime error in syntactically perfect code, which is
+     exactly what §7 warns about. Declare film state here, with the rest of it. */
+  let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false,
+      locked=false, settleT=null;
   let veiled=-1;
   const clamp=v=>v<0?0:v>1?1:v;
   const heroBg=hero.querySelector('.hero-bg');
@@ -18623,6 +18694,13 @@ if(faqIndex && panel && faqBody){
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
     seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
+    /* ⭐ SKIPPING ARRIVES AT THE SAME PLACE, SO IT LOCKS THE SAME WAY. This path writes the final
+       state directly — no scroll event, no chase — so neither of the other two arming points would
+       ever see it. ⚠️ It also covers the LOGO, which is this same function (D389). */
+    armSettle();
+    /* ⚠️ Already locked and the logo was clicked: there is no lock left to fire, so the hash has
+       to be dropped here or it survives into the next refresh. */
+    if(locked)dropHeroHash();
   }
   if(skipEl)skipEl.addEventListener('click',skipToEnd);
 
@@ -18677,14 +18755,82 @@ if(faqIndex && panel && faqBody){
     chrome(film);
     grade();
     if(eased!==target)raf=requestAnimationFrame(tick);
+    /* ⭐ THE CHASE ITSELF HAS TO ARM THE LOCK, not just the scroll. `onScroll` stops firing the
+       moment the finger lifts, but the eased playhead keeps travelling for another 2.5-3.5s (§7)
+       — so on a flick that lands on the ending, the last scroll event happens while the film is
+       still mid-chase and `armSettle` would decline. This is the call that catches it. */
+    else armSettle();
   }
   const kick=()=>{ if(raf===null)raf=requestAnimationFrame(tick); };
 
 
+  /* ⭐⭐⭐ **THE ONE-WAY LOCK — 25 August 2026.** See `html.cine-on.cine-done .cine` in the
+     stylesheet for the client's words and for why collapsing the runway is the answer rather than
+     clamping the scroll.
+
+     ⭐⭐ **WHEN: FILM COMPLETE, CHASE SETTLED, AND THE SCROLL AT REST.** All three, because his
+     wording is *"once it settles in"* and because the collapse moves `scrollY`. Firing it under a
+     live fling would fight the momentum the browser is still applying; firing it at rest is
+     invisible. `film` reaches 1 at `eased === 1-hold`, which is the top of the dead scroll, so the
+     hero is already finished and filling the screen when the timer starts.
+
+     ⭐⭐⭐ **WHY THE SCROLL MATHS IS A SUBTRACTION AND NOT A `scrollTo(0)`.** Collapsing `.cine`
+     removes exactly `travel` px (`offsetHeight - innerHeight`) from the document ABOVE everything
+     that follows, so every element below shifts up by that much. Subtracting the same `travel`
+     from `scrollY` holds the viewer exactly where they were:
+         locked while still on the hero   → scrollY goes to 0, and the hero was sticky and filling
+                                            the viewport anyway, so nothing moves on screen
+         locked further down the page     → position preserved to the pixel, no visible jump
+     ⛔ A flat `scrollTo(0)` would be right only in the first case and would throw anyone who had
+     already scrolled into the gallery back to the top.
+
+     ⛔⛔ **AND THE `#hero` HASH HAS TO GO, OR "REFRESH" WOULD NOT SHOW THE FILM.** The logo sets
+     `#hero` (D381/D389) and the load path answers it with `skipToEnd()` — so reloading with that
+     hash still in the address bar would skip the film again and his rule *"they have to refresh to
+     see the video again"* would be false exactly for the people who arrived by logo.
+     `replaceState` clears it without adding a history entry.
+
+     ⚠️ **THE RESIZE EVENT AT THE END IS NOT OPTIONAL.** The gallery runway, the pin and the reveal
+     offsets are all measured from layout; the document just got ~9 screens shorter and they have to
+     re-measure or they animate against stale numbers. ⚠️ It is dispatched AFTER the scroll is set,
+     so they measure the position that actually survives. */
+  function lockFilm(){
+    if(locked)return;
+    locked=true;
+    measure();
+    const drop=travel;
+    root.classList.add('cine-done');
+    window.scrollTo({top:Math.max(0,Math.round(window.scrollY-drop)),behavior:'instant'});
+    dropHeroHash();
+    dispatchEvent(new Event('resize'));
+  }
+  /* ⭐⭐ **THE INVARIANT IS "LOCKED PAGES DO NOT CARRY `#hero`", AND IT NEEDS TWO CALL SITES.**
+     ⚠️ Clearing it inside `lockFilm()` alone left a hole, found by driving it: clicking the logo
+     while ALREADY on a locked landing page is a same-document hash change, not a load, so the brand
+     handler writes `#hero` and `lockFilm()` early-returns on `locked` without ever reaching the
+     clear. The address bar kept the hash and the next refresh would have skipped the film — his
+     rule *"they have to refresh to see the video again"* broken for exactly the person who had
+     just clicked the logo. ⛔ Do not move this back inside `lockFilm()`. */
+  function dropHeroHash(){
+    if((location.hash||'').toLowerCase()!=='#hero')return;
+    try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+  }
+  /* ⚠️ Restarted on every scroll, so it only fires once the finger has genuinely stopped. */
+  function armSettle(){
+    if(locked)return;
+    if(clamp(eased/(1-hold))<1)return;      /* the film is not finished yet */
+    if(settleT)clearTimeout(settleT);
+    settleT=setTimeout(()=>{ if(!locked&&clamp(eased/(1-hold))>=1)lockFilm(); },220);
+  }
+
   function onScroll(){
+    /* ⛔ Once locked the runway is one viewport tall and there is nothing left to scrub. Reading
+       the scroll here would drive the film backwards off a position that no longer means anything. */
+    if(locked)return;
     if(!live)return;
     target=clamp((window.scrollY-top)/travel);
     kick();
+    armSettle();
   }
 
   /* ⭐ the fetch is asked for HERE and nowhere else, and it is also where the cuts change over

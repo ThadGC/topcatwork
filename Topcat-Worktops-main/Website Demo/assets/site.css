@@ -4503,18 +4503,57 @@
      `.call-fab` remains phone-only through its base display:none — sharing the selector here is
      inert on the tablet. */
   @media(max-width:1120px){
+    /* ⛔⛔⛔ **THE GROUND IS THE SKIP CONTROL'S, TO THE DIGIT — 25 August 2026, HIS CORRECTION.**
+       He first reported the flicker (*"this gradient thing inside this block... is flickering, and
+       it's creating this effect"*), and the first fix here replaced the translucent ground with a
+       near-opaque one so there was nothing left to re-sample. He looked at it and ruled against it
+       the same minute: *"I see you've changed the gradients behind the WhatsApp button and the
+       phone button. It should still be the same gradient as behind the skip intro button."*
+       ⭐ **SO IT IS LITERALLY THE SKIP'S OWN PAIR OF VALUES** — `rgba(8,8,11,0.70)` and `blur(9px)`
+       — read off `html.cine-on .cine-skip` rather than re-invented, because the three controls
+       stand in one row at the foot of the film and any difference between them shows.
+       ⚠️⚠️ **THE FLICKER'S PRIME SUSPECT IS STILL `backdrop-filter` OVER THE MOVING FILM**, and the
+       reason these two shimmer where the skip pill does not is most likely that they are
+       `position:fixed` — a separate compositing root from the video — while the pill is
+       `position:absolute` inside the sticky hero and moves WITH its own backdrop. `isolation` gives
+       them a stacking context of their own, which is the cheap remedy for that class of fault and
+       costs nothing visually.
+       ⛔⛔ **THIS COULD NOT BE VERIFIED IN THE HARNESS AND THAT IS RECORDED HONESTLY:** the preview
+       pane's screenshot goes black on any page carrying `backdrop-filter` (§7), so the one property
+       under investigation is the one that cannot be photographed here. **If it still flickers on
+       his device, the next step is the `position:fixed` theory above, not another colour.** */
     .wa-fab,.call-fab{
       width:46px;height:46px;
-      background:rgba(8,8,11,0.58);
+      background:rgba(8,8,11,0.70);
       -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+      isolation:isolate;
       border-color:rgba(198,166,100,0.5);
       box-shadow:0 10px 26px -12px rgba(0,0,0,0.85);
       transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
                  opacity .3s var(--ease),transform .35s var(--ease)}
-    .wa-fab svg{width:23px;height:23px}
-    /* the call glyph at the same optical size as the WhatsApp mark — the phone band's own 21px
-       rule (later in the sheet) still wins below 720 */
-    .call-fab svg{width:23px;height:23px}
+    /* ⭐⭐⭐ **BOTH GLYPHS ARE 23px AND THEY NOW MEAN THE SAME THING — 25 August 2026.** Client:
+       *"the little phone icon inside the circle is too small. So fix it across the board."*
+       ⛔⛔ **THE BOX WAS NEVER THE PROBLEM, THE ARTWORK WAS.** Measured with `getBBox()`: the
+       WhatsApp mark fills its 24×24 viewBox completely (24 × 23.89), while the phone handset
+       filled only **59.2%** of the same box (14.21 × 14.21, sitting at x 4.29 / y 3.5). So a phone
+       set to 21px painted **12.4px of ink** against WhatsApp's 23px — barely half — and every
+       size rule on the site inherited that lie.
+       ⭐ **FIXED AT THE GLYPH, WHICH IS WHY IT IS FIXED "ACROSS THE BOARD".** The path carries a
+       transform that scales its ink up inside the viewBox (see the markup), so one number fixes the
+       corner button, the sticky bar's Call and the mobile menu's phone pair at once, without
+       touching a single one of their size rules.
+       ⭐⭐⭐ **AND THE FIRST ATTEMPT OVERSHOT — HE CAUGHT IT ON SIGHT:** *"the phone icon is now too
+       big. It should be the same height as the WhatsApp button or similar size."* Filling the box
+       completely put 21.1px of ink against WhatsApp's 23px — **measurably SMALLER, and he was still
+       right.** The WhatsApp mark is an OUTLINED bubble that is mostly negative space; the handset
+       is a SOLID shape. Two glyphs of equal bounding box do not read as equal weight, and the solid
+       one always reads larger. ⛔ **This is the case for trusting his eye over the bounding box.**
+       ⭐ Scaled to **80% of the WhatsApp ink** — 18.4px at the corner, 12.0 in the bar, 12.8 in the
+       menu — which is the optical match rather than the arithmetic one. ⚠️ For reference the glyph
+       shipped at **12.4px** before any of this, which is the "too small" he started from.
+       ⛔ The old `.call-fab svg{width:21px}` in the phone band is GONE with it: it was a
+       compensation for a glyph that measured smaller, and it made the real fault harder to see. */
+    .wa-fab svg,.call-fab svg{width:23px;height:23px}
     /* ⭐⭐ D372: THE PAIR STANDS DOWN WHILE THE STICKY BAR IS UP — both narrow bands. Client:
        *"when the sticky bottom bar pops up… the WhatsApp icon above and the phone icon above
        will go away."* ⛔⛔ THIS REVERSES D180's RIDE-THE-BAR LIFT (the fabs used to step up to
@@ -4676,6 +4715,31 @@
     html.cine-on .cine > #hero{min-height:100vh}
   }
   @media(max-width:720px){html.cine-on .cine{--cineH:800vh;--cineHold:0.2125}}
+
+  /* ⭐⭐⭐ THE FILM IS A ONE-WAY JOURNEY — 25 August 2026. Client: *"usually when some people on
+     mobile try to refresh a page, they pull down hard to make it reload. Currently... if they pull
+     down, it's gonna play back through the video... After the video is done playing and the
+     surfaces worth building around finally settles in, then that is now the home page. They
+     shouldn't be able to go back through the video by swiping back. They have to refresh to see
+     the video again."*
+
+     ⭐⭐⭐ **THE REAL PROBLEM HE FOUND IS THAT PULL-TO-REFRESH WAS UNREACHABLE.** A phone fires its
+     native refresh gesture only at `scrollTop === 0`, and scroll 0 on this page is the film's FIRST
+     FRAME, nine screens above the finished hero. So a visitor sitting on the hero who pulled down
+     to reload did not reload — they rewound the film. There was no way to refresh this page from
+     the place people actually stand on it.
+
+     ⛔⛔ **WHICH IS WHY THE ANSWER IS TO COLLAPSE THE RUNWAY, NOT TO CLAMP THE SCROLL.** Pinning a
+     floor under `scrollY` would stop the rewind and make the gesture permanently impossible, since
+     the page would never reach 0 again. Collapsing `.cine` to a single viewport makes the finished
+     hero genuinely the top of the document: scrolling up runs out at the hero, pull-to-refresh
+     fires natively because scrollTop really is 0, and the reload starts the film from the top.
+     **His three sentences are one mechanism.**
+
+     ⚠️ `cine-on.cine-done` rather than `cine-done` alone, so it outranks all three band rules above
+     by specificity and does not depend on sitting after them. ⛔ The hero keeps every other thing
+     `cine-on` dresses — this changes the RUNWAY'S HEIGHT and nothing else. */
+  html.cine-on.cine-done .cine{--cineH:100vh}
   html.cine-on .cine > #hero{position:sticky;top:0}
   /* ⭐ BETWEEN THE PHOTOGRAPH AND `.hero-shade`, which is the reason nothing about the copy's
      contrast has to be re-measured: D238's veil dresses the film and the still identically. */
@@ -8903,7 +8967,6 @@
     /* ⛔ D372: the `.mbar.on ~` 73px lift that used to live here is GONE, not moved — while the
        bar is up the pair now HIDES instead of riding it (rule in the ≤1120 dress block above),
        because the bar's middle button became the WhatsApp link itself. */
-    .call-fab svg{width:21px;height:21px}
     html.nav-open .wa-fab,html.nav-open .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
 
   }
