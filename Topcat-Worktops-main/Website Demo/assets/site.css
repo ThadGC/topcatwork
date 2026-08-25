@@ -1076,6 +1076,14 @@
       transition:transform .5s var(--ease),opacity .35s var(--ease),visibility 0s}
     /* the menu owns the screen while it is open — the bar stands down rather than fighting it */
     html.nav-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
+    /* ⭐⭐ THE BAR GOES DOWN WHEN THE KEYBOARD COMES UP (D440) — see the twin of this rule in
+       site.css for the full reasoning. `position:fixed;bottom:0` pins to the LAYOUT viewport,
+       which iOS does not shrink for the keyboard, so the bar lands across the copy.
+       ⛔⛔ THIS IS THE SECOND COPY ON PURPOSE — THE LANDING PAGE DOES NOT LOAD site.css. Its
+       `.mbar` block is inlined above, so a rule added only to site.css misses `/` entirely.
+       Change one, change both; `html.kb-open` is set by `assets/tcform.js`, which IS on every page. */
+    html.kb-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
+    html.kb-open .wa-fab,html.kb-open .call-fab{opacity:0;pointer-events:none}
     .mbar-a{
       /* ⭐⭐⭐ **THE BASIS IS `auto`, NOT `0`, AND THAT IS THE WHOLE OF D377.** Client: *"the
          WhatsApp icon, and the p at the end of WhatsApp, is too close to the border of the

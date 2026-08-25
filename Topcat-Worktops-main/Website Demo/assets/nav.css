@@ -127,6 +127,8 @@
       transition:transform .5s var(--ease),opacity .35s var(--ease),visibility 0s}
     
     html.nav-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
+    
+    html.kb-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
     .mbar-a{
       
       flex:1 1 auto;

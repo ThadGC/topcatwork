@@ -1098,6 +1098,14 @@
       transition:transform .5s var(--ease),opacity .35s var(--ease),visibility 0s}
     /* the menu owns the screen while it is open — the bar stands down rather than fighting it */
     html.nav-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
+    /* ⭐⭐ THE BAR GOES DOWN WHEN THE KEYBOARD COMES UP (D440) — see the twin of this rule in
+       site.css for the full reasoning. `position:fixed;bottom:0` pins to the LAYOUT viewport,
+       which iOS does not shrink for the keyboard, so the bar lands across the copy.
+       ⛔⛔ THIS IS THE SECOND COPY ON PURPOSE — THE LANDING PAGE DOES NOT LOAD site.css. Its
+       `.mbar` block is inlined above, so a rule added only to site.css misses `/` entirely.
+       Change one, change both; `html.kb-open` is set by `assets/tcform.js`, which IS on every page. */
+    html.kb-open .mbar{transform:translateY(105%);opacity:0;pointer-events:none}
+    html.kb-open .wa-fab,html.kb-open .call-fab{opacity:0;pointer-events:none}
     .mbar-a{
       /* ⭐⭐⭐ **THE BASIS IS `auto`, NOT `0`, AND THAT IS THE WHOLE OF D377.** Client: *"the
          WhatsApp icon, and the p at the end of WhatsApp, is too close to the border of the
@@ -18325,8 +18333,53 @@ if(faqIndex && panel && faqBody){
     dispatchEvent(new Event('scroll'));
     if(raf)cancelAnimationFrame(raf);
     raf=null;
+    /* ⚠️ D441: whichever route got us here, the watchdog has done its job — a live timer would
+       only fire fail() a second time into a page that has already taken the static hero. */
+    if(typeof filmWatch!=='undefined'&&filmWatch!==null){ clearTimeout(filmWatch); filmWatch=null; }
   }
   vid.addEventListener('error',fail);
+  /* ⭐⭐⭐⭐ THE FILM THAT NEVER ARRIVES (D441) — a frozen poster while the story marched on.
+     Client, filming his iPhone: *"You can clearly see the video isn't even playing for mobile, and
+     it's constantly jittering and shaking up and down… is it maybe that you're just not playing the
+     mobile video?"*
+     ⭐⭐ IT IS THE RIGHT FILM AND THE RIGHT CODE — verified in the iOS Simulator on this same URL,
+     where the phone cut scrubs correctly. What his phone had that the Simulator did not is a real
+     network: `topcat-intro-608.mp4` is 7.7 MB, and he was recording DURING A PHONE CALL (the green
+     pill is in his own status bar), which on a non-VoLTE connection starves data outright.
+     ⛔⛔ AND THERE WAS NO GATE FOR THAT. `fail()` was wired to `error` only — but a film that is
+     merely SLOW never errors, it just never comes. So `cine-on` stayed up, the scroll kept driving
+     the story lines on schedule, and the picture underneath stayed on frame 0. **That combination —
+     text advancing over a still — is what reads as broken**, and it is worse than having no film.
+     ⭐ THE WATCHDOG USES THE DEGRADATION PATH THAT ALREADY EXISTS. `fail()` is the tested reduced-
+     motion/decode-error route: it drops `cine-on`, releases the 800vh scroll and leaves the normal
+     static hero. Reusing it means a starved connection lands somewhere already designed, not in a
+     new state nobody has seen.
+     ⚠️ IT ARMS ONLY WHEN THE FILM IS ACTUALLY WANTED — at the first scroll into the sequence, not
+     at page load. A visitor who never scrolls must never trip it, and a slow first paint on a fast
+     line must not either.
+     ⚠️ THE TEST IS BUFFERED SECONDS, NOT readyState. iOS reports readyState 4 off a couple of
+     buffered seconds, then stalls the moment the scrub seeks past them — which is precisely the
+     frozen-poster case. `SPAN_MIN` is the run of film that has to be there before we trust it. */
+  var FILM_WAIT=7000, SPAN_MIN=6, filmWatch=null, filmOK=false;
+  function bufferedSpan(){
+    try{ var b=vid.buffered,m=0;
+         for(var i=0;i<b.length;i++)m=Math.max(m,b.end(i)-b.start(i));
+         return m; }catch(e){ return 0; }
+  }
+  function filmReady(){ return vid.readyState>=3&&bufferedSpan()>=SPAN_MIN; }
+  function armFilmWatch(){
+    if(filmOK||filmWatch!==null)return;
+    if(filmReady()){ filmOK=true; return; }
+    filmWatch=setTimeout(function(){
+      filmWatch=null;
+      if(filmReady()){ filmOK=true; return; }
+      /* ⛔ Still not enough film to scrub after the wait — take the static hero rather than leave
+         him watching a still with the copy moving over it. */
+      fail();
+    },FILM_WAIT);
+  }
+  vid.addEventListener('progress',function(){ if(!filmOK&&filmReady()){ filmOK=true;
+    if(filmWatch!==null){ clearTimeout(filmWatch); filmWatch=null; } } });
 
   /* the seek queue: one in flight, one waiting, and the waiting one is always the newest
      ⭐⭐ **AND THE TARGET IS A FRAME, NOT A TIME (D425).** `want` is continuous; the film is not.
@@ -19469,6 +19522,9 @@ if(faqIndex && panel && faqBody){
     if(locked)return;
     if(!live)return;
     target=clamp((window.scrollY-top)/travel);
+    /* ⭐ D441: the film is WANTED from the first real movement into the runway — arm the starved-
+       connection watchdog here and nowhere else, so a visitor who never scrolls never trips it. */
+    if(target>0.002)armFilmWatch();
     kick();
     armSettle();
   }

@@ -2917,8 +2917,27 @@ if(faqIndex && panel && faqBody){
     dispatchEvent(new Event('scroll'));
     if(raf)cancelAnimationFrame(raf);
     raf=null;
+    if(typeof filmWatch!=='undefined'&&filmWatch!==null){ clearTimeout(filmWatch); filmWatch=null; }
   }
   vid.addEventListener('error',fail);
+  var FILM_WAIT=7000, SPAN_MIN=6, filmWatch=null, filmOK=false;
+  function bufferedSpan(){
+    try{ var b=vid.buffered,m=0;
+         for(var i=0;i<b.length;i++)m=Math.max(m,b.end(i)-b.start(i));
+         return m; }catch(e){ return 0; }
+  }
+  function filmReady(){ return vid.readyState>=3&&bufferedSpan()>=SPAN_MIN; }
+  function armFilmWatch(){
+    if(filmOK||filmWatch!==null)return;
+    if(filmReady()){ filmOK=true; return; }
+    filmWatch=setTimeout(function(){
+      filmWatch=null;
+      if(filmReady()){ filmOK=true; return; }
+      fail();
+    },FILM_WAIT);
+  }
+  vid.addEventListener('progress',function(){ if(!filmOK&&filmReady()){ filmOK=true;
+    if(filmWatch!==null){ clearTimeout(filmWatch); filmWatch=null; } } });
   const SEEK_STALL=140;
   function decoderKick(){
     if(kicked)return; kicked=true;
@@ -3397,6 +3416,7 @@ if(faqIndex && panel && faqBody){
     if(locked)return;
     if(!live)return;
     target=clamp((window.scrollY-top)/travel);
+    if(target>0.002)armFilmWatch();
     kick();
     armSettle();
   }

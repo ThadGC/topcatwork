@@ -313,3 +313,36 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
+
+/* ⭐⭐ THE KEYBOARD WATCHER (D440) — sets `html.kb-open` while the on-screen keyboard is up, so the
+   sticky bar and the corner pair can get out of its way (the rules live in site.css).
+   ⭐ WHY visualViewport AND NOT A FOCUS EVENT. Focus tells you an input was tapped, not that a
+   keyboard appeared — a Bluetooth keyboard, a date spinner or a desktop browser all focus without
+   one, and hiding the bar there would be a bug of its own. `visualViewport.height` collapsing well
+   below the layout height is the keyboard ITSELF, whatever raised it.
+   ⚠️ THE 0.78 RATIO, NOT A PIXEL COUNT. iOS keyboards run roughly 260-400px depending on device,
+   predictive bar and language, so any fixed threshold is wrong on some phone; a share of the
+   viewport holds across all of them. iOS chrome collapsing on scroll is only ~60-90px, about 0.10,
+   so it stays well clear and the bar does not flicker while reading.
+   ⛔ TCFORM.JS IS THE ONE FILE ON EVERY PAGE, INCLUDING THE LANDING PAGE — site.js is not (the
+   landing page carries its JS inline), so this must live here or the fix misses `/`. */
+(function(){
+  var vv = window.visualViewport;
+  if (!vv) return;                       /* desktop Safari <13 and old Android: no keyboard anyway */
+  var root = document.documentElement, on = false;
+  function check(){
+    /* the layout viewport is the honest comparison — innerHeight does not move for the keyboard */
+    var open = (vv.height / (root.clientHeight || vv.height)) < 0.78;
+    if (open === on) return;
+    on = open;
+    root.classList.toggle('kb-open', open);
+  }
+  vv.addEventListener('resize', check);
+  /* ⚠️ A SCROLL CAN CHANGE THE RATIO TOO — iOS fires resize on the visual viewport when the
+     keyboard opens, but scrolling the page while it is open re-offsets it without a resize. */
+  vv.addEventListener('scroll', check);
+  /* ⚠️ AND ON BLUR THE KEYBOARD LEAVES WITHOUT ALWAYS FIRING resize IN TIME — one late re-check
+     costs nothing and stops the bar staying hidden after the user taps Done. */
+  document.addEventListener('focusout', function(){ setTimeout(check, 260); });
+  check();
+})();

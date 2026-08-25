@@ -187,3 +187,18 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
+(function(){
+  var vv = window.visualViewport;
+  if (!vv) return;
+  var root = document.documentElement, on = false;
+  function check(){
+    var open = (vv.height / (root.clientHeight || vv.height)) < 0.78;
+    if (open === on) return;
+    on = open;
+    root.classList.toggle('kb-open', open);
+  }
+  vv.addEventListener('resize', check);
+  vv.addEventListener('scroll', check);
+  document.addEventListener('focusout', function(){ setTimeout(check, 260); });
+  check();
+})();

@@ -97,10 +97,27 @@ $devLine   = $device ? ('Sent from a ' . $device . ($screen ? ' (' . $screen . '
 
 /* ── attachments ───────────────────────────────────────────────────────────────────────────── */
 $files = []; $totalB = 0;
+/* ⚠️ AN iOS PHOTO ARRIVES WITH NO EXTENSION AT ALL (D439). Picking from the iPhone library gives
+   the file a bare UUID name — his own screenshot shows `2bb8c52f-b918-4a2a-9160-41810dddaf2b`,
+   129 KB — so `pathinfo(…, EXTENSION)` returns '' , '' is not in $EXT_OK, and the photo was
+   dropped in silence: the enquiry sent with no picture and nobody was told. The extension is a
+   convenience, not the evidence — fall back to the MIME type the browser reports, then to the
+   bytes themselves via getimagesize(), which no filename can lie about. */
+$MIME_EXT = ['image/jpeg'=>'jpg','image/png'=>'png','image/heic'=>'heic','image/heif'=>'heif',
+             'image/webp'=>'webp','image/gif'=>'gif','application/pdf'=>'pdf',
+             'application/msword'=>'doc',
+             'application/vnd.openxmlformats-officedocument.wordprocessingml.document'=>'docx'];
 foreach ($_FILES as $f) {
   if (!is_array($f) || ($f['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) continue;
   $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
-  if (!in_array($ext, $EXT_OK, true)) continue;
+  if (!in_array($ext, $EXT_OK, true)) {
+    $mime = strtolower(trim(explode(';', (string)($f['type'] ?? ''))[0]));
+    $ext  = $MIME_EXT[$mime] ?? '';
+    if ($ext === '' && ($g = @getimagesize($f['tmp_name'])) && !empty($g['mime']))
+      $ext = $MIME_EXT[strtolower($g['mime'])] ?? '';
+    if (!in_array($ext, $EXT_OK, true)) continue;
+    $f['name'] = (pathinfo($f['name'], PATHINFO_FILENAME) ?: 'photo') . '.' . $ext;
+  }
   if ($f['size'] > $FILE_MAX) continue;
   $totalB += $f['size'];
   if ($totalB > $TOTAL_MAX) break;
@@ -339,18 +356,58 @@ if ($attach) {
 
 $subject = 'New enquiry — ' . $name . ($postcode ? ' (' . $postcode . ')' : '')
          . ' · ' . page_label($page) . ($device ? ' · ' . $device : '');
-$headers = "From: " . mb_encode_mimeheader($FROM_NAME, 'UTF-8') . " <$FROM>\r\n"
-         . ($emailOK ? "Reply-To: $emailOK\r\n" : '')
-         . "MIME-Version: 1.0\r\nContent-Type: $ctype\r\nX-Mailer: topcat-send-php";
+/* ⭐⭐⭐ THE SENDER FALLBACK CHAIN (D439) — one hard-coded envelope sender is why every enquiry
+   failed on the live host. `mail()` was called ONCE, with `-fwebsite@topcatworktops.co.uk`, and a
+   mail server only accepts an envelope sender it is authorised to use. Two things make it refuse
+   here: the site is on the STAGING host `thadeusg3.sg-host.com`, where `topcatworktops.co.uk` is
+   not a local domain at all; and that domain's MX is `smtp.google.com`, so its mail lives on
+   Google Workspace, not on the web host. Exim rejects, `mail()` returns false, and the visitor is
+   told to phone instead. ⛔ THE FORM WAS RETURNING A HONEST ERROR — the fault was never in the
+   front end, so do not "fix" the message.
+   ⭐ So try the senders in order of preference and stop at the first the server accepts:
+     1. the branded address with its envelope — correct once the domain is local to the host;
+     2. the same From:, no `-f` — the host then supplies its own default envelope, which is the
+        single most common SiteGround fix and needs nothing created;
+     3. an address on the SERVING host itself — always authorised, because the server owns it.
+   ⚠️ A `false` from `mail()` means it was NOT queued, so retrying cannot double-send.
+   ⚠️ `Reply-To` is the customer either way, so a reply still reaches them whichever sender wins.
+   ⭐ The winning sender rides along in `X-TC-Sender` and in the JSON, so the next person to look
+      at this can see which rung carried it without adding logging. */
+$hostDom = preg_replace('/[^a-z0-9.\-]/i', '', explode(':', $_SERVER['HTTP_HOST'] ?? '')[0]);
+$attempts = [
+  ['from' => $FROM, 'env' => $FROM,  'via' => 'branded+envelope'],
+  ['from' => $FROM, 'env' => null,   'via' => 'branded+host-envelope'],
+];
+if ($hostDom !== '' && stripos($FROM, '@' . $hostDom) === false) {
+  $attempts[] = ['from' => 'website@' . $hostDom, 'env' => 'website@' . $hostDom, 'via' => 'host-domain'];
+}
 
-$sent = @mail($TO, mb_encode_mimeheader($subject, 'UTF-8'), $body, $headers, '-f' . $FROM);
+$sent = false; $usedVia = ''; $triedVia = [];
+foreach ($attempts as $a) {
+  $hdr = "From: " . mb_encode_mimeheader($FROM_NAME, 'UTF-8') . " <" . $a['from'] . ">\r\n"
+       . ($emailOK ? "Reply-To: $emailOK\r\n" : '')
+       . "MIME-Version: 1.0\r\nContent-Type: $ctype\r\n"
+       . "X-TC-Sender: " . $a['via'] . "\r\nX-Mailer: topcat-send-php";
+  $triedVia[] = $a['via'];
+  $sent = $a['env'] === null
+        ? @mail($TO, mb_encode_mimeheader($subject, 'UTF-8'), $body, $hdr)
+        : @mail($TO, mb_encode_mimeheader($subject, 'UTF-8'), $body, $hdr, '-f' . $a['env']);
+  if ($sent) { $usedVia = $a['via']; break; }
+}
 
 if (!$sent) {
   $keep = __DIR__ . '/_enquiry-files/.failed';
   if (!is_dir($keep)) { @mkdir($keep, 0755, true); @file_put_contents($keep . '/.htaccess', "Require all denied\n"); }
   @file_put_contents($keep . '/' . date('Ymd-His') . '-' . bin2hex(random_bytes(4)) . '.json',
-    json_encode(['post' => $_POST, 'stored' => $stored], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-  http_response_code(500); echo json_encode(['ok' => false, 'error' => 'mail failed']); exit;
+    json_encode(['post' => $_POST, 'stored' => $stored, 'tried' => $triedVia, 'host' => $hostDom],
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+  /* ⚠️ EVERY RUNG WAS REFUSED, so the host's mail() is off, not just the sender — which is a Site
+     Tools question, not a code one. `tried` names the rungs so that is provable from one failed
+     submission. ⛔ The enquiry itself is NOT lost: it is written to `_enquiry-files/.failed/`
+     above, behind `Require all denied`. Check there before telling anyone their details vanished. */
+  http_response_code(500);
+  echo json_encode(['ok' => false, 'error' => 'mail failed', 'tried' => $triedVia, 'saved' => true]);
+  exit;
 }
 
 /* ⚠️ THE AUTOREPLY, WRITTEN AND SWITCHED OFF — his instruction, see the header.
@@ -363,4 +420,4 @@ if ($SEND_AUTOREPLY && $emailOK && $AUTOREPLY_FROM) {
 }
 */
 
-echo json_encode(['ok' => true]);
+echo json_encode(['ok' => true, 'via' => $usedVia]);
