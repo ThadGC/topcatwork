@@ -5599,7 +5599,7 @@ if(faqIndex && panel && faqBody){
    slow dolly. A seek then costs at most seven extra frame decodes, which is nothing at 1080p, and
    `-refs 4` keeps the decoder's reference list short for the same reason.
    ⚠️ **12fps, NOT 24 — and it is a scroll rate, not a frame rate.** Over 900vh of travel the film's
-   531 frames land one every ~15px of scroll, so the limit on smoothness is the wheel, not the file;
+   1062 frames land one every ~7.5px of scroll (D416 — at 531 the FILE was the limit, and he saw it);
    the halved frame count buys the bitrate that made crf 25 affordable.
 
    ⚠️ **`--cineH` AND `--cineHold` ARE READ OFF THE STYLESHEET, NOT DECLARED HERE**, so the pace has
@@ -5626,7 +5626,12 @@ if(faqIndex && panel && faqBody){
   if(reduce.matches||!vid.canPlayType('video/mp4')){ root.classList.remove('cine-on'); return; }
   window.__cineHold=true;                 // the hero's IIFE below must not stage itself in on load
 
-  const FPS=12, DUR=44.25;                // the file's own rate and length, and the fallback
+  /* ⭐⭐⭐ 24fps SINCE D416 (25 Aug) — he scrolled slowly and the 12fps cuts stepped 83ms of
+     motion per frame: *"jumping frame by frame… very important."* The masters are 24fps, so 24
+     is the film's own rate, not an invention; the cuts are also keyframe-dense now (-g 4, was 8)
+     so a slow scrub's seeks resolve in ≤3 P-frames instead of ≤7. All three bands moved together
+     — the scroll maths depends on the three sharing one rate. */
+  const FPS=24, DUR=44.25;                // the file's own rate and length, and the fallback
   const EASE=0.12;                        // how hard the playhead chases the scroll
   const INK_AT=0.93;                      // where in the FILM the copy starts to rise
   const HALF=0.5/FPS;

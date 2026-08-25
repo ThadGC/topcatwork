@@ -1,7 +1,23 @@
-# START HERE — 25 August 2026, after THE FORMS-AND-SPEED ROUND (D406–D415)
+# START HERE — 25 August 2026, after THE FORMS-AND-SPEED ROUND (D406–D418)
 
 Read this, then `HANDOVER.md` **§D** (the register, newest first — this round is **D406–D415**),
 **§2** (the standing rules) and **§2s** (SITE SPEED). About twenty minutes, and enough to work safely.
+
+> ⭐⭐⭐ **THIRD PASS THE SAME EVENING (D416–D418), all his, all verified:**
+> **D416 — THE FILM IS 24fps NOW.** He scrolled slowly and caught the 12fps cuts stepping
+> (*"jumping frame by frame… very important"*). Re-encoded from the masters at their own 24fps
+> with `-g 4` (matrix + SSIM + the eye test in `.src-2026-08-23/encode.sh`): **608 → 6.91 MB ·
+> 864 → 9.69 · 1920 → 22.31, 1062 frames each, sources ?v=4, posters ?v=5, `FPS=24` in the
+> scrub.** Verified: a slow scroll painted 265 frames, EVERY step 0 or +1 — zero jumps.
+> First paint unchanged (the poster); the growth streams behind it; D415 (no loader) stands.
+> ⛔ All-intra at an affordable CRF was killed BY EYE — the veins thin. The table is written.
+> **D417 — the nav's GET A QUOTE wears the film titles' champagne ramp with INK text** — he
+> tried white and reversed it within the hour. ⛔ Do not re-propose white on the ramp.
+> **D418 — `--uipx`, one 1440-anchored pixel:** the desktop chrome (nav, quote button, logo,
+> lede, cue, chips, skip) is `calc(N*var(--uipx))`, `clamp(0.86px,100vw/1440,1.18px)` on the
+> desktop band only — at 1440 it computes to the approved px TO THE DIGIT, at 1280 everything
+> scales ×0.889 in step. His spec: the preview's proportions on every desktop screen. Both
+> stylesheets carry the var; new desktop chrome joins by USING it.
 
 > ⚠️ **This replaces the previous version of this same file**, now
 > `HANDOVER-2026-08-25-inner-pages-round-start-here.md` (D391–D405). Everything that still
@@ -147,14 +163,15 @@ life"* is not; *"unique"*, never *"completely unique"*.
 
 | Surface | First load |
 |---|---|
-| **landing, phone** | **~290 KB to first paint** (119 KB html + 54 KB poster + ~18 KB logo + fonts); the 3.87 MB film streams BEHIND the poster |
-| **landing, desktop** | ~360 KB (122 KB poster); film 13.28 MB streamed |
+| **landing, phone** | **~290 KB to first paint** (119 KB html + 54 KB poster + ~18 KB logo + fonts); the **6.91 MB** film (D416) streams BEHIND the poster |
+| **landing, desktop** | ~360 KB (122 KB poster); film **22.31 MB** streamed (D416) |
 | **internal pages** | 6–10 KB html + 37 KB site.css + 67 KB site.js, both cached once for all seven |
 | **generated pages** | 5–10 KB html + 5.3 KB service.css + 3 KB tcform.js + the hero's srcset rung |
 | **stone collection** | 23.8 KB html, all 132 tiles `loading="lazy"` with srcset |
 
 1. ⛔⛔ **ONE FILM PER BAND, ONE EVER FETCHED — re-verified after every loader edit** (608/864/
-   1920 by `getAttribute('src')`, zero cross-band URLs). ⚠️ The desktop poster is
+   1920 by `getAttribute('src')`, zero cross-band URLs). ⭐ **D416: 24fps `-g 4`, 6.91/9.69/22.31 MB,
+   sources `?v=4`, posters `?v=5` — ⛔ read the D416 matrix in encode.sh before re-compressing.** ⚠️ The desktop poster is
    `topcat-intro-poster.webp` (no "1920") — a probe grepping "1920-poster" reports it missing
    when it is not.
 2. ⭐ **The poster preloads at `fetchPriority:'high'`** from the in-place band script.
@@ -270,7 +287,7 @@ cd "Website Demo" && python3 make_upload.py                      # the shipping 
 ```
 
 ⛔⛔ **NEVER RUN `trade/build_trade.py`.** ⛔ `build_images.py` / `patch_images.py` are one-shot.
-**The CSS gate** (brace delta 0, count vs HEAD — `index.html` is at **3353** since D413) and
+**The CSS gate** (brace delta 0, count vs HEAD — `index.html` is at **3355** since D418) and
 **`node --check` on all three inline `<script>` blocks** after every `index.html` edit (exclude
 `ld+json` and `src=`). ⭐ **div balance: 260/258 since D410.** ⚠️ A brace inside a comment counts.
 
@@ -286,7 +303,7 @@ cd "Website Demo" && python3 make_upload.py                      # the shipping 
 | `#footer` height | **503.78** |
 | `.hero-bg` children | **7** |
 | broken images / 4xx / console errors | **0 / 0 / none** |
-| the film fetched | **one per band: 608 / 864 / 1920** |
+| the film fetched | **one per band: 608 / 864 / 1920, `?v=4`** |
 | document height, **fresh load, AFTER the film buffers** | **24014** ⚠️ an early read shows less (§7) |
 | document height, **after the film locks** | **15464** |
 

@@ -3,6 +3,8 @@
    Built to the Brand Identity v2 palette, matching the V1 landing page tokens.
    ========================================================================== */
 :root{
+  /* D418: one 1440-anchored pixel — desktop chrome scales in proportion (see index.html) */
+  --uipx:1px;
   --ink:#0B0B0D; --ink-2:#15151A; --ink-3:#1D1D23;
   --bone:#F4F1EA; --muted:rgba(244,241,234,0.60); --faint:rgba(244,241,234,0.34);
   /* ⭐⭐⭐ **READING COPY IS WHITE, SUPPORTING DETAIL STAYS GREY — 17 Aug 2026 (D304).** Client:
@@ -34,6 +36,7 @@
   --marbleBG:url('/assets/stone-floor.webp');
   --floorVeil:0.70; --floorVeilRGB:2,2,4; --floorGlowA:0.06; --floorGlowB:0.04;
 }
+@media(min-width:1121px){ :root{--uipx:clamp(0.86px,calc(100vw / 1440),1.18px)} }
 /* ⭐⭐ **THE SAME GLOBAL GUARD THE LANDING PAGE CARRIES — 24 Aug 2026.** No word on this site can
    spill out of its box at any width. `break-word` only acts when a single word genuinely cannot
    fit a line of its own, so it changes nothing today and catches every future long stone name,
@@ -161,10 +164,10 @@ header.bar.scrolled::after{opacity:1;transform:scaleX(1)}
    ⚠️ HEIGHT ONLY. Width follows the intrinsic ratio (horizontal 4.5053:1, vertical 1.0664:1). */
 .brand{display:flex;align-items:center;text-decoration:none}
 /* ⚠️ 34px and 104px are the landing page's own two numbers (D263). HEIGHT ONLY, always. */
-.brand-logo{height:34px;width:auto;display:block}
+.brand-logo{height:calc(34*var(--uipx));width:auto;display:block}
 .brand-stack .brand-logo{height:104px}
 nav.top{display:flex;gap:clamp(18px,2.2vw,30px);align-items:center}
-nav.top a{position:relative;color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:0.16em;
+nav.top a{position:relative;color:var(--muted);text-decoration:none;font-size:calc(11*var(--uipx));letter-spacing:0.16em;
   text-transform:uppercase;padding:8px 1px;transition:color .4s var(--ease)}
 /* the hairline grows in under the word — no boxes, no bullets, and the links stay quieter than
    the CTA. Lifted from the landing page's nav so a link behaves the same on every page. */
@@ -185,9 +188,11 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
    which is the pairing D235 disliked on the landing — flagged for him, one line to change. */
 .bar-cta{
   position:relative;overflow:hidden;
-  font-family:var(--brand);font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--ink);text-decoration:none;padding:12px 22px;border:1px solid rgba(140,107,52,0.9);
-  border-radius:2px;background:var(--gold);white-space:nowrap;
+  font-family:var(--brand);font-size:calc(11*var(--uipx));font-weight:600;letter-spacing:0.2em;text-transform:uppercase;
+  /* ⭐ 25 Aug (client): the champagne ramp as the ground, INK text — he tried white and
+     reversed it the same hour. D417/D418; matched to index.html (the two-stylesheet rule). */
+  color:var(--ink);text-decoration:none;padding:calc(12*var(--uipx)) calc(22*var(--uipx));border:1px solid rgba(140,107,52,0.9);
+  border-radius:2px;background:linear-gradient(180deg,#E4CD92 0%,#C6A664 62%,#BC9A54 100%);white-space:nowrap;
   transition:filter .45s var(--ease),border-color .45s var(--ease);
 }
 .bar-cta:hover{filter:brightness(1.07);border-color:var(--gold-hi)}
