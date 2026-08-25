@@ -594,13 +594,34 @@
        point of the rule above: this band IS the landing hero's picture, and leaving it behind
        would have put a different kitchen on the seven internal pages from the one on the home
        page. ⛔ If the hero changes again, change these two lines with it. */
-    --pageHeadImg:url('/assets/site/hero-night-2000.webp');
+    /* ⭐⭐⭐ **HIS OWN TWO RENDERS OF THE NIGHT PENTHOUSE, 24 Aug 2026 — ONE PER SHAPE.** Client:
+       *"you'll see these two images. One is for mobile and the other is for desktop... Those are
+       going to be what goes into the inner pages hero sections. So behind the projects page hero
+       section, we'll have this image. And then on mobile, it's the same, and then tablet will
+       obviously just be the cropped version of the desktop image."*
+       ⭐ **SO THERE ARE TWO PICTURES AND THREE FILES, AND THE TABLET'S IS THE DESKTOP'S PICTURE
+       CUT SMALLER — exactly as he described it.** The wide render is 16:9 and the mobile one is
+       9:16; a 9:16 frame cover-cropped into a 3.5:1 desktop band would show a hand's width of it.
+       ⚠️ **SIZED BY THE COVER-SCALED RENDER WIDTH, NOT THE ELEMENT WIDTH** (the 11 Aug rule), and
+       measured rather than guessed — the band's box is **1468×467 at 1440, 796×455 at 768 and
+       408×418 at 390**, so the cover render widths are 1468 / 1148 / 408. Files: 1672 (the wide
+       master's own full width), 1150 and 900.
+       ⭐⭐ **AND THE WHOLE SET IS LIGHTER THAN THE ONE IT REPLACES: 69 / 42 / 78 KB against the old
+       95 desktop and 58 phone**, with a tablet cut that never existed before — that band used to
+       pull the 95 KB desktop file. ⛔ A visitor fetches exactly ONE of the three: they are
+       `--pageHeadImg` values on three non-overlapping media queries, so only the matching rule's
+       `url()` is ever resolved.
+       ⚠️ The masters are in `.src-2026-08-24/` and are never shipped. ⛔ Do not delete them. */
+    --pageHeadImg:url('/assets/site/pagehead-wide-1672.webp');
   }
-  /* ⚠️ the head is ~340px tall on a phone; cover-scaling the 2000px master to it wastes most of
-     the download, and this file is the ONE image on these pages (the performance rule from
-     11 Aug: size by the cover-scaled render width, not the element width) */
+  /* the tablet takes the same picture, cut to its own band — his instruction, and 42 KB not 69 */
+  @media(min-width:721px) and (max-width:1120px){
+    .page-head{--pageHeadImg:url('/assets/site/pagehead-wide-1150.webp')}
+  }
+  /* ⚠️ the phone's band is 408×418 — very nearly SQUARE — so it takes his portrait render and
+     shows the middle 58% of it. A landscape file cropped to that box would be a sliver of ceiling. */
   @media(max-width:720px){
-    .page-head{--pageHeadImg:url('/assets/site/hero-night-1400.webp')}
+    .page-head{--pageHeadImg:url('/assets/site/pagehead-tall-900.webp')}
   }
   /* ⭐⭐ THE PROJECTS PAGE RUNS THE GALLERY AS A COLUMN AT EVERY WIDTH — D195.
      `build_pages.py` puts `.pg-col` on that page's <main>. Setting `--galMode` is the whole
