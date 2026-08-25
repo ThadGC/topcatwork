@@ -10349,7 +10349,13 @@
            p=matchMedia('(max-width:720px)').matches,
            n=matchMedia('(max-width:1120px)').matches;
        v.poster=(p&&d.posterPhone)||(n&&d.posterNarrow)||d.poster; v.preload='auto';
-       v.src=(p&&d.srcPhone)||(n&&d.srcNarrow)||d.src;})();
+       v.src=(p&&d.srcPhone)||(n&&d.srcNarrow)||d.src;
+       /* ⭐ SPEED (25 Aug): the poster IS first paint (§2s.3), so ask for it at image-priority
+          HIGH rather than the default. Same URL the line above set — one fetch, served earlier.
+          Harmless where fetchpriority is unsupported: the hint is simply ignored. */
+       var l=document.createElement('link');
+       l.rel='preload';l.as='image';l.href=v.poster;l.fetchPriority='high';
+       document.head.appendChild(l);})();
       </script>
       <!-- ⭐⭐⭐ THE OPENING OVERLAY — third build, 23 August 2026 (D333). HIS OWN STILLS AT
            LAST: the film's opening was re-rendered and the stills with it, and this time they are

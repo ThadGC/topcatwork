@@ -76,3 +76,11 @@
   AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
                                 application/javascript application/json image/svg+xml
 </IfModule>
+
+# ⭐ SPEED PASS (25 Aug 2026, D411). Brotli where the host's Apache carries mod_brotli —
+# ~15-20% smaller than gzip on this site's text. Harmless where it does not: the deflate
+# block above still answers, and both blocks are IfModule-guarded.
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml \
+                                        application/javascript application/json image/svg+xml
+</IfModule>
