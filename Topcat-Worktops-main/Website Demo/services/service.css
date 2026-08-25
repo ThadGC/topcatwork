@@ -419,6 +419,40 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
   text-shadow:0 1px 2px rgba(7,7,9,0.9),0 0 14px rgba(7,7,9,0.75),0 0 30px rgba(7,7,9,0.55)}
 .svc-hero .cta-row{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
 
+/* ⭐⭐⭐ **THE HERO'S CTA PAIR IS THE LANDING HERO'S PAIR ON A PHONE — 24 Aug 2026.**
+   Client, on /services/kitchen-worktops.html at 320: *"you don't have to have these gigantic
+   buttons that says get your free quote and call... that looks uneven and unbalanced and doesn't
+   sit right with me."* Then, with a screenshot of the landing hero on his own phone: *"the buttons
+   say get a free quote and give us a call, and those are evenly lined up... so it can be similar
+   to what we have in the main hero section."*
+   ⛔⛔ **"UNEVEN" WAS LITERAL AND IT NAMES THE FAULT EXACTLY.** `.cta-row` is a flex row that wraps,
+   so on a phone the two buttons stacked — but each one still sized itself to its OWN label, so a
+   wide gold "GET YOUR FREE QUOTE" sat above a narrower ghost "CALL 0800 098 2812". Two stacked
+   buttons of different widths is precisely what he was looking at. **He has ruled on this exact
+   thing twice before on the landing page** (D188: *"make the get a free quote and call us button
+   the same size again"*), and this component had never been given the answer.
+   ⭐⭐ **SO IT TAKES THE LANDING HERO'S OWN CONSTRUCTION, NUMBER FOR NUMBER**: one column, the
+   measure on the ROW at 76% rather than on the buttons, `stretch` so neither can disagree with the
+   other, 10px gap, 12px side padding. Both buttons are the width of their track, so they cannot
+   come out uneven whatever the labels say.
+   ⭐ **AND THE LABELS ARE THE LANDING PAGE'S TOO, IN HIS WORDS** — "Get a free quote" and "Give us
+   a call" — through the site's own `.cta-long`/`.cta-short` two-spans-one-shown idiom (D120), so
+   each band gets real markup rather than a pseudo a screen reader cannot read.
+   ⚠️ "Give us a call" drops the number from the accessible name, which is fine: the `tel:` href
+   carries it and the number is printed in the page and the footer.
+   ⚠️ The desktop and tablet keep the long labels and the row — they have the width for it. */
+.cta-short{display:none}
+@media(max-width:720px){
+  .cta-long{display:none}
+  .cta-short{display:inline}
+  .cta-row{flex-direction:column;align-items:stretch;flex-wrap:nowrap;
+    gap:10px;width:76%;margin-left:auto;margin-right:auto}
+  .cta-row .btn-gold,.cta-row .btn-ghost{
+    justify-content:center;text-align:center;
+    padding:13px 12px;font-size:11.5px;letter-spacing:0.16em;
+  }
+}
+
 /* ---------- the four bubbles ----------
    ⭐⭐⭐ THE TRUST ROW IS THE LANDING PAGE'S OWN BUBBLES NOW — D263. It was three spans of 12.5px
    grey text sitting in a row under the buttons, which said the same three things in the weakest

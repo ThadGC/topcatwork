@@ -456,8 +456,8 @@ def cta_band(heading, line):
     <h2>{gold_last(heading)}</h2>
     <p>{e(line)}</p>
     <div class="cta-row">
-      <a class="btn-gold" href="/contact/">Get your free quote</a>
-      <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+      <a class="btn-gold" href="/contact/"><span class="cta-long">Get your free quote</span><span class="cta-short">Get a free quote</span></a>
+      <a class="btn-ghost" href="tel:{PHONE_TEL}"><span class="cta-long">Call {PHONE_DISPLAY}</span><span class="cta-short">Give us a call</span></a>
     </div>
     <p class="cta-note">Free home visit with samples. Every cut-out included. Ten year guarantee.</p>
   </div>
@@ -1836,8 +1836,8 @@ def material_page(m):
       <h1>{gold_last(m['h1'])}</h1>
       <p class="lede">{e(m['lede'])}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/estimate/">Price it in a minute</a>
-        <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+        <a class="btn-gold" href="/estimate/"><span class="cta-long">Price it in a minute</span><span class="cta-short">Get a price</span></a>
+        <a class="btn-ghost" href="tel:{PHONE_TEL}"><span class="cta-long">Call {PHONE_DISPLAY}</span><span class="cta-short">Give us a call</span></a>
       </div>
       <!-- ⭐⭐ D263: the landing page's four bubbles replace the three spans of grey trust text.
            ⚠️ The county list goes with them and is not lost - it is still named in full in the
@@ -2030,8 +2030,8 @@ def county_page(c):
       <h1>{gold_last(c['h1'])}</h1>
       <p class="lede">{e(c['lede'])}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/contact/">Book a free home visit</a>
-        <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+        <a class="btn-gold" href="/contact/"><span class="cta-long">Book a free home visit</span><span class="cta-short">Book a free visit</span></a>
+        <a class="btn-ghost" href="tel:{PHONE_TEL}"><span class="cta-long">Call {PHONE_DISPLAY}</span><span class="cta-short">Give us a call</span></a>
       </div>
       <!-- ⭐⭐ D263: the landing page's bubbles, with this county's dialling code kept as a
            fifth that spans the row. -->
@@ -2131,8 +2131,8 @@ def town_page(t):
       <h1>{gold_last(t['h1'])}</h1>
       <p class="lede">{e(t['lede'])}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/contact/">Book a free home visit</a>
-        <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+        <a class="btn-gold" href="/contact/"><span class="cta-long">Book a free home visit</span><span class="cta-short">Book a free visit</span></a>
+        <a class="btn-ghost" href="tel:{PHONE_TEL}"><span class="cta-long">Call {PHONE_DISPLAY}</span><span class="cta-short">Give us a call</span></a>
       </div>
       <!-- ⭐⭐ D263: the landing page's bubbles, with this town's postcodes and dialling code
            kept as two more. Six bubbles is three even rows. -->

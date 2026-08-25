@@ -1132,6 +1132,15 @@
      at every width. ⚠️ It cannot help a `white-space:nowrap` element — nowrap does not wrap, it
      overflows (the D171 trap) — which is why the buttons below are handled separately. */
   body{overflow-wrap:break-word}
+  /* ⭐⭐⭐ **THE `#hero` ARRIVAL, PAINTED SILENT.** See the head script for why this cannot be done
+     by moving the scroll earlier. Every layer that belongs to the film's OPENING is held at zero
+     until the picture has seeked to its end; `.hero-inner` is deliberately NOT in this list,
+     because the ending's own copy is what he should see the instant the page appears.
+     ⚠️ `.hero-vid` gets a transition so it fades in on the right frame rather than cutting. */
+  html.to-hero .cine-plate,html.to-hero .cine-story,html.to-hero .cine-cue,
+  html.to-hero .cine-open,html.to-hero .cine-skip{opacity:0 !important;transition:none !important}
+  html.to-hero .hero-vid{opacity:0 !important}
+  html.cine-on .hero-vid{transition:opacity .5s var(--ease)}
   .section{padding:clamp(30px,4.6vh,84px) clamp(20px,5vw,64px)}
   /* Every section head is centred. The title and sub carry their own max-widths, so text-align
      alone would only centre the text INSIDE those narrow boxes while the boxes stayed flush
@@ -9801,6 +9810,25 @@
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   if(!document.createElement('video').canPlayType('video/mp4'))return;
   document.documentElement.classList.add('cine-on');
+  /* ⭐⭐⭐ **ARRIVING ON `#hero` MUST NOT FLASH THE FILM'S FIRST FRAME — 24 Aug 2026.** Client, on
+     the logo he asked for at D381: *"when I click the topcat logo in the top corner, it's a very
+     quick flash of the first video frame that shows the quarry, and then it quickly goes to
+     surfaces worth building around."*
+     ⛔⛔ **THE JUMP CANNOT BE EARLY ENOUGH TO WIN THIS RACE, SO THE FIX IS NOT TO PAINT.** The
+     scroll is set by the film's own IIFE, which runs at the END of the body — by then the browser
+     has already painted the poster (the quarry still), the opening titles and the scroll cue. No
+     amount of moving that call earlier helps: `measure()` needs a laid-out page.
+     ⭐ So this flag goes up in the HEAD, before a single one of those layers exists, and the
+     stylesheet holds them at zero. The film's IIFE takes it back down once the video has actually
+     seeked to the end, so the picture fades in already on the right frame.
+     ⚠️ **THE TIMEOUT IS THE SAFETY CATCH AND IT IS NOT OPTIONAL** — if the film fails, or the IIFE
+     returns early, or JS dies after this line, the flag must still come off or the hero is blank
+     for ever. */
+  if((location.hash||'').toLowerCase()==='#hero'){
+    document.documentElement.classList.add('to-hero');
+    if('scrollRestoration' in history) history.scrollRestoration='manual';
+    setTimeout(function(){document.documentElement.classList.remove('to-hero');},3000);
+  }
 }catch(e){}})();
 </script>
 </head>
@@ -18542,9 +18570,17 @@ if(faqIndex && panel && faqBody){
      ⛔ The click path is separate from the load path and both are needed: clicking the logo while
      already ON the landing page changes only the hash, which fires no navigation and no load. */
   function heroHash(){ return (location.hash||'').toLowerCase()==='#hero'; }
+  /* ⭐⭐ **AND THE PICTURE COMES BACK ONLY WHEN IT IS ON THE RIGHT FRAME.** `to-hero` is raised in
+     the head (see there); this is what takes it down. ⛔ Not on a timer alone: `seeked` is the only
+     event that says the decoder is actually showing the end of the film, and the whole point is
+     that the visitor never sees any other frame. The head's 3s catch covers a film that never
+     arrives. ⚠️ `currentTime` would lie here — it leads the screen by 1-3 frames (§7). */
+  function unveil(){ root.classList.remove('to-hero'); }
   if(heroHash()){
     skipToEnd();
-    addEventListener('load',()=>{ skipToEnd(); setTimeout(skipToEnd,60); });
+    vid.addEventListener('seeked',()=>{ requestAnimationFrame(()=>requestAnimationFrame(unveil)); },{once:true});
+    vid.addEventListener('error',unveil,{once:true});
+    addEventListener('load',()=>{ skipToEnd(); setTimeout(()=>{ skipToEnd(); unveil(); },160); });
   }
   document.addEventListener('click',e=>{
     const a=e.target.closest&&e.target.closest('a.brand'); if(!a)return;
@@ -18552,6 +18588,8 @@ if(faqIndex && panel && faqBody){
     if(u.hash.toLowerCase()!=='#hero'||u.pathname.replace(/index\.html$/,'/')!==location.pathname.replace(/index\.html$/,'/'))return;
     e.preventDefault();
     if(location.hash.toLowerCase()!=='#hero')history.replaceState(null,'','#hero');
+    /* ⚠️ no `to-hero` here: the film is already decoded and `skipToEnd()` snaps the playhead in the
+       same frame as the scroll, so there is nothing to hide. The flag exists for a fresh LOAD. */
     skipToEnd();
   });
 

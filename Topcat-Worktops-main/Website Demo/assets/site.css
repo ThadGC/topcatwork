@@ -1110,6 +1110,15 @@
      at every width. ⚠️ It cannot help a `white-space:nowrap` element — nowrap does not wrap, it
      overflows (the D171 trap) — which is why the buttons below are handled separately. */
   body{overflow-wrap:break-word}
+  /* ⭐⭐⭐ **THE `#hero` ARRIVAL, PAINTED SILENT.** See the head script for why this cannot be done
+     by moving the scroll earlier. Every layer that belongs to the film's OPENING is held at zero
+     until the picture has seeked to its end; `.hero-inner` is deliberately NOT in this list,
+     because the ending's own copy is what he should see the instant the page appears.
+     ⚠️ `.hero-vid` gets a transition so it fades in on the right frame rather than cutting. */
+  html.to-hero .cine-plate,html.to-hero .cine-story,html.to-hero .cine-cue,
+  html.to-hero .cine-open,html.to-hero .cine-skip{opacity:0 !important;transition:none !important}
+  html.to-hero .hero-vid{opacity:0 !important}
+  html.cine-on .hero-vid{transition:opacity .5s var(--ease)}
   .section{padding:clamp(30px,4.6vh,84px) clamp(20px,5vw,64px)}
   /* Every section head is centred. The title and sub carry their own max-widths, so text-align
      alone would only centre the text INSIDE those narrow boxes while the boxes stayed flush

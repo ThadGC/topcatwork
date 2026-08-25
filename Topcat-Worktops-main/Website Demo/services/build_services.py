@@ -754,8 +754,8 @@ def page(s):
       <h1>{gold_last(s['h1'])}</h1>
       <p class="lede">{e(s['lede'])}</p>
       <div class="cta-row">
-        <a class="btn-gold" href="/contact/">Get your free quote</a>
-        <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+        <a class="btn-gold" href="/contact/"><span class="cta-long">Get your free quote</span><span class="cta-short">Get a free quote</span></a>
+        <a class="btn-ghost" href="tel:{PHONE_TEL}"><span class="cta-long">Call {PHONE_DISPLAY}</span><span class="cta-short">Give us a call</span></a>
       </div>
       <!-- ⭐⭐ D263: THE LANDING PAGE'S FOUR BUBBLES REPLACE THE TRUST LINE. It was three spans of
            12.5px grey text saying the rating, the guarantee and the visit in the quietest voice on
@@ -825,8 +825,8 @@ def page(s):
     <h2>Tell us about your <em>project</em></h2>
     <p>Book a free home visit and we will measure up, talk through the stone and give you a fixed, itemised quote. We reply within one working day. Prefer to talk it through? Ask for Nick.</p>
     <div class="cta-row">
-      <a class="btn-gold" href="/contact/">Get your free quote</a>
-      <a class="btn-ghost" href="tel:{PHONE_TEL}">Call {PHONE_DISPLAY}</a>
+      <a class="btn-gold" href="/contact/"><span class="cta-long">Get your free quote</span><span class="cta-short">Get a free quote</span></a>
+      <a class="btn-ghost" href="tel:{PHONE_TEL}"><span class="cta-long">Call {PHONE_DISPLAY}</span><span class="cta-short">Give us a call</span></a>
     </div>
   </div></section>
 </main>

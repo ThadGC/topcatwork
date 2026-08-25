@@ -6623,9 +6623,17 @@ if(faqIndex && panel && faqBody){
      ⛔ The click path is separate from the load path and both are needed: clicking the logo while
      already ON the landing page changes only the hash, which fires no navigation and no load. */
   function heroHash(){ return (location.hash||'').toLowerCase()==='#hero'; }
+  /* ⭐⭐ **AND THE PICTURE COMES BACK ONLY WHEN IT IS ON THE RIGHT FRAME.** `to-hero` is raised in
+     the head (see there); this is what takes it down. ⛔ Not on a timer alone: `seeked` is the only
+     event that says the decoder is actually showing the end of the film, and the whole point is
+     that the visitor never sees any other frame. The head's 3s catch covers a film that never
+     arrives. ⚠️ `currentTime` would lie here — it leads the screen by 1-3 frames (§7). */
+  function unveil(){ root.classList.remove('to-hero'); }
   if(heroHash()){
     skipToEnd();
-    addEventListener('load',()=>{ skipToEnd(); setTimeout(skipToEnd,60); });
+    vid.addEventListener('seeked',()=>{ requestAnimationFrame(()=>requestAnimationFrame(unveil)); },{once:true});
+    vid.addEventListener('error',unveil,{once:true});
+    addEventListener('load',()=>{ skipToEnd(); setTimeout(()=>{ skipToEnd(); unveil(); },160); });
   }
   document.addEventListener('click',e=>{
     const a=e.target.closest&&e.target.closest('a.brand'); if(!a)return;
@@ -6633,6 +6641,8 @@ if(faqIndex && panel && faqBody){
     if(u.hash.toLowerCase()!=='#hero'||u.pathname.replace(/index\.html$/,'/')!==location.pathname.replace(/index\.html$/,'/'))return;
     e.preventDefault();
     if(location.hash.toLowerCase()!=='#hero')history.replaceState(null,'','#hero');
+    /* ⚠️ no `to-hero` here: the film is already decoded and `skipToEnd()` snaps the playhead in the
+       same frame as the scroll, so there is nothing to hide. The flag exists for a fresh LOAD. */
     skipToEnd();
   });
 
