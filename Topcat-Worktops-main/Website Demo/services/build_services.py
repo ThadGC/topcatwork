@@ -833,10 +833,13 @@ def page(s):
 
   <section class="block"><div class="wrap rise">
     <h2>The <em>materials</em></h2>
-    <p class="sub">Marble, quartz and granite, with more available on request. Not sure what suits you? We will tell you the truth, not just what is easiest to sell.</p>
+    <p class="sub">Marble, quartz and granite, with porcelain and more available on request. Not sure what suits you? We will tell you the truth, not just what is easiest to sell.</p>
     {related_intro_materials()}
   </div></section>
 
+{cta_inline("See the stone in <em>your own kitchen</em>",
+            "We bring the samples to you and look at them in your own light, at no charge. "
+            "If something suits the room better than what you had in mind, we will say so.")}
   <section class="block"><div class="wrap rise">
     <h2>How it <em>works</em></h2>
     <p class="sub">From the first visit to the finished surface, four simple steps.</p>
@@ -848,6 +851,9 @@ def page(s):
     <ul class="ticks">{why}</ul>
   </div></section>
 
+{cta_inline("Ready for a <em>real number</em>?",
+            "A free home visit, then a fixed, itemised quote covering template, fabrication, edges "
+            "and fitting. Nothing is charged until you have said yes.")}
   <section class="block"><div class="wrap rise">
     <h2>Areas we <em>cover</em></h2>
     <p class="sub">We fit across {e(AREA)}, with nationwide templating on request. That includes {e(TOWNS)}.</p>
@@ -887,10 +893,67 @@ def page(s):
 </html>"""
 
 
+# ⭐⭐⭐ THE MID-PAGE CTA — 25 August 2026. Client: *"we need to add more CTAs throughout that page.
+# So tastefully add it where it needs to go, not under every single part, but where you believe it
+# would fit best. It can be our normal CTA or it can be a custom CTA."*
+#
+# ⭐⭐ **TWO, AND WHERE THEY GO IS THE WHOLE OF "TASTEFULLY".** These pages run nine sections, and
+# before today the only ask in the reading column was the band at the very bottom (plus the sticky
+# quote card, which is desktop-only, ≥1121). Two is what the page carries without nagging:
+#     after THE MATERIALS  — he has just been shown the range and asked "not sure what suits you?",
+#                            so the offer that answers it is samples in his own kitchen
+#     after WHY TOPCAT     — he has just read the six reasons, which is where the argument is at
+#                            its strongest and the natural place to ask for a number
+# ⛔ **NOT AFTER THE FAQ.** That sits two sections above the closing band, and two asks that close
+# together read as pestering, which is the "under every single part" he ruled out.
+# ⭐ **THE COPY DIFFERS IN EACH, AND FROM THE BAND**, so the page asks three times in three voices
+# rather than repeating one line. ⚠️ Both use the site's own `.cta-long`/`.cta-short` pair (D120),
+# so the labels follow the per-band wording every other CTA on the site uses.
+# ⚠️ §2 checked: no absolute, nothing that cannot be kept, commas not em dashes, no exclamation
+# marks, and "free" is the home visit, which is true and already claimed everywhere.
+def cta_inline(line_html, sub):
+    return (
+        '  <section class="block cta-inline-wrap"><div class="wrap rise">\n'
+        '    <div class="cta-inline">\n'
+        '      <div class="ci-copy">\n'
+        f'        <p class="ci-line">{line_html}</p>\n'
+        f'        <p class="ci-sub">{e(sub)}</p>\n'
+        '      </div>\n'
+        '      <div class="cta-row">\n'
+        '        <a class="btn-gold" href="/contact/"><span class="cta-long">Get your free quote</span>'
+        '<span class="cta-short">Get a free quote</span></a>\n'
+        f'        <a class="btn-ghost" href="tel:{PHONE_TEL}"><span class="cta-long">Call {PHONE_DISPLAY}</span>'
+        '<span class="cta-short">Give us a call</span></a>\n'
+        '      </div>\n'
+        '    </div>\n'
+        '  </div></section>\n'
+    )
+
+
 def related_intro_materials():
-    mats = [("Marble", "/stones/"), ("Quartz", "/stones/"),
-            ("Granite", "/stones/")]
-    return '<div class="mats">' + "".join(f'<a href="{h}">{e(t)}</a>' for t, h in mats) + "</div>"
+    """⭐⭐ **PORCELAIN JOINS THE STRIP — 25 August 2026.** Client: *"we should have porcelain also
+    there just because. So add porcelain as one of the materials."*
+
+    ⛔⛔⛔ **AND IT CANNOT POINT AT `/stones/` LIKE THE OTHER THREE DO.** §2 rule 8 is explicit:
+    porcelain is offered *bespoke and enquiry-led only*, there is **no supplied porcelain range**,
+    and the rule ends *"do NOT invent porcelain slab names or add porcelain to the stone wheel"* —
+    which is also why the estimator's porcelain tab carries `noCat:true`. A fourth pill sending a
+    visitor to the stone catalogue would land them in 132 slabs with no porcelain among them, and
+    the first thing they would conclude is that we do not actually sell it.
+    ⭐ **SO IT GOES TO THE PAGE THAT DOES EXIST** — `/materials/porcelain-worktops.html`, the
+    enquiry-led page reinstated on 7 Aug — and it says **on request** on its face.
+    ⚠️ **THE WORDING IS HIS OWN RULING, GIVEN WHEN THE CONFLICT WAS PUT TO HIM:** *"If you want to,
+    you can just state that porcelain is upon request."* So the label carries it rather than hiding
+    it, and the sub above the strip names it too. ⛔ Do not quietly drop the qualifier to make the
+    four pills match — the qualifier is the reason the pill is allowed to be there at all."""
+    mats = [("Marble", "/stones/", None), ("Quartz", "/stones/", None),
+            ("Granite", "/stones/", None),
+            ("Porcelain", "/materials/porcelain-worktops.html", "on request")]
+    out = []
+    for t, h, note in mats:
+        tail = f'<span class="mat-note">{e(note)}</span>' if note else ""
+        out.append(f'<a href="{h}">{e(t)}{tail}</a>')
+    return '<div class="mats">' + "".join(out) + "</div>"
 
 
 def main():

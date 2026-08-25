@@ -692,6 +692,58 @@ article>section.block:first-child::before,
 .mats a{border:1px solid var(--hair);border-radius:100px;padding:10px 20px;text-decoration:none;color:var(--bone);
   font-size:13px;letter-spacing:0.04em;transition:all .35s var(--ease)}
 .mats a:hover{border-color:var(--gold);color:var(--gold)}
+/* ⭐ **"on request" RIDES INSIDE THE PORCELAIN PILL — 25 Aug 2026.** Client, when the missing
+   porcelain range was put to him: *"you can just state that porcelain is upon request."* It is set
+   quieter and tracked so the pill still reads as one object, and it is the qualifier that lets the
+   pill exist at all (§2 rule 8 — porcelain is enquiry-led, with no supplied range).
+   ⛔ Do not delete it to make the four pills symmetrical. */
+/* ⛔⛔ **INLINE, NOT ON ITS OWN LINE — caught by measurement, not by eye.** As a `display:block`
+   second line the Porcelain pill stood **54.8px against its neighbours' 42.8**, and `.mats` is a
+   wrapping flex row where **each line stretches independently**: at 600 and above every pill
+   matched the tallest and it looked fine, but at 375 the row broke as [Marble Quartz Granite] at
+   42.8 and [Porcelain] alone at 54.8, and at 320 as two lines of two. **A row that is supposed to
+   be uniform reading as two different heights is exactly the D387 fault** — the trust tags, again,
+   in a different component. ⭐ Inline, the pill is one line tall like the other three and simply
+   wider, so every width is uniform. ⚠️ Sibling-height is the test that catches this; an overflow
+   sweep never will. */
+.mats a .mat-note{color:var(--faint);font-size:10px;letter-spacing:0.14em;text-transform:uppercase}
+.mats a .mat-note::before{content:"\00B7";margin:0 7px;letter-spacing:0;color:var(--hair)}
+.mats a:hover .mat-note{color:var(--gold-soft)}
+
+/* ---------- the mid-page CTA ----------------------------------------------------------------
+   ⭐⭐⭐ **MORE THAN ONE ASK PER PAGE — 25 August 2026.** Client: *"on the inner pages like the
+   Kitchen Islands page, we need to add more CTAs throughout that page. So tastefully add it where
+   it needs to go, not under every single part, but where you believe it would fit best."*
+   ⭐⭐ **"NOT UNDER EVERY SINGLE PART" IS THE BRIEF, SO THIS IS DELIBERATELY NOT THE CLOSING BAND
+   AGAIN.** `.cta-band` is a centred block with a 42px Cinzel h2 and an 18px radius — repeating it
+   twice more would make one page shout the same thing three times in the same voice. This is the
+   same MATERIAL (hairline rim, `--ink-2`, depth beneath) in a quieter shape: a single serif line
+   with the pair beside it, left-aligned, 12px radius, roughly half the vertical weight.
+   ⚠️ **IT IS A `<p>`, NOT A HEADING.** A third h2 between two real sections would put a sales line
+   into the document outline between "How it works" and "Why Topcat", which is wrong for a screen
+   reader and wrong for the page's structure.
+   ⛔⛔ **THE PAIR GOES EVEN THE MOMENT IT STACKS (D188, and D390 on this very component).** Below
+   640 the row becomes a stretched column so the gold and the ghost are the same width — *"that
+   looks uneven and unbalanced"* is the complaint this rule exists to prevent. */
+.cta-inline{display:flex;align-items:center;justify-content:space-between;
+  gap:clamp(18px,2.6vw,34px);flex-wrap:wrap;
+  border:1px solid var(--hair);border-radius:12px;background:var(--ink-2);
+  padding:clamp(20px,2.6vw,30px) clamp(20px,2.8vw,34px);
+  box-shadow:0 26px 60px -44px rgba(0,0,0,0.9)}
+.cta-inline .ci-copy{flex:1 1 260px;min-width:0}
+.cta-inline .ci-line{font-family:var(--serif);font-weight:400;color:var(--bone);
+  font-size:clamp(18px,1.9vw,23px);line-height:1.25;margin:0 0 6px}
+.cta-inline .ci-sub{color:var(--muted);font-size:14px;line-height:1.6;margin:0;max-width:52ch}
+.cta-inline .cta-row{display:flex;gap:10px;flex-wrap:wrap;flex:0 0 auto;margin:0}
+@media(max-width:640px){
+  .cta-inline{display:block}
+  .cta-inline .cta-row{margin-top:18px;flex-direction:column;align-items:stretch}
+  .cta-inline .cta-row a{justify-content:center}
+}
+/* ⚠️ The section that holds it needs no divider of its own — it is an interruption between two
+   sections, not a section, so it must not draw the rule that separates them. */
+section.cta-inline-wrap{padding:0 0 clamp(46px,7vh,86px);position:static}
+section.cta-inline-wrap::before{content:none}
 
 /* ---------- FAQ ----------
    ⭐⭐⭐ REDESIGNED 16 August 2026 (D263). Client: *"redesign the frequently asked questions thing
