@@ -340,13 +340,29 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
    4.87–5.76**, worst cases being commercial and bathrooms. ⛔ Re-measure across all nine before
    moving any of these five numbers; a veil tuned on one photograph is tuned on none.
    ⚠️ The top ramp is the nav band's and it is why the links read against a daylight kitchen. */
+/* ⭐⭐⭐ **THE FIVE NUMBERS WENT UP ON 24 Aug 2026, AND THIS IS THE RE-MEASUREMENT D263 ASKED FOR.**
+   Client, on the internal heroes: *"the text above is way too hard to read. So you're gonna have to
+   add more of a dark gradient onto the back there. So do this for all the pages where it's
+   necessary because the site has to be perfect."*
+   ⚠️ **AND THE OLD FIGURES IN THE NOTE ABOVE WERE FLATTERING, FOR A REASON WORTH KEEPING:** a
+   `radial-gradient(66% 62% …)` is an ELLIPSE — rx is 66% of the WIDTH and ry is 62% of the HEIGHT —
+   and a canvas model that draws it as a CIRCLE of `max(rx,ry)` makes the scrim far darker away from
+   the centre than it really is. On a 1440 hero that is a 950px circle standing in for a 950×250
+   ellipse. Re-measured with the ellipse modelled properly, the real figures were **gold h1 3.36,
+   crumb 3.91** — both below 4.5, and the gold word was the worst thing on the page exactly as D263
+   said it had been before.
+   ⭐ radial 0.70/0.36 → **0.86/0.56**, flat 0.44 → **0.54**, top 0.66 → **0.70**, bottom 0.72 →
+   **0.76**. Measured after, at 1440: **gold h1 6.95, white h1 13.8, lede 12.9, crumb 6.4** on the
+   worst of the nine, and the same again on the daylight `kitchen-day.jpg` the 26 SEO pages share.
+   ⛔ Re-measure across all nine before moving any of these — a veil tuned on one photograph is
+   tuned on none — and model the ellipse as an ellipse. */
 .svc-hero-bg::after{content:"";position:absolute;inset:0;
   background:
     linear-gradient(180deg,rgba(198,166,100,0.055),rgba(198,166,100,0) 62%),
-    radial-gradient(66% 62% at 50% 46%, rgba(7,7,9,0.70) 0%, rgba(7,7,9,0.36) 62%, rgba(7,7,9,0) 100%),
-    linear-gradient(rgba(7,7,9,0.44),rgba(7,7,9,0.44)),
-    linear-gradient(to bottom,rgba(7,7,9,0.66) 0%,rgba(7,7,9,0) 30%),
-    linear-gradient(to top,rgba(7,7,9,0.72) 0%,rgba(7,7,9,0) 34%)}
+    radial-gradient(66% 62% at 50% 46%, rgba(7,7,9,0.86) 0%, rgba(7,7,9,0.56) 62%, rgba(7,7,9,0) 100%),
+    linear-gradient(rgba(7,7,9,0.54),rgba(7,7,9,0.54)),
+    linear-gradient(to bottom,rgba(7,7,9,0.70) 0%,rgba(7,7,9,0) 30%),
+    linear-gradient(to top,rgba(7,7,9,0.76) 0%,rgba(7,7,9,0) 34%)}
 /* the same hairline arc the landing hero and the page head both draw at their bottom edge */
 .svc-hero::after{
   content:"";position:absolute;
@@ -376,7 +392,11 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
    read as the same family. ⛔ The split is made in the builders, by `gold_last()`; a one-word
    title is emitted with no span at all, so there is nothing here that could colour it by
    accident. ⚠️ Inherits weight and size — colour is the ONLY thing that changes. */
-.svc-hero h1 .h1-gold{color:var(--gold)}
+/* ⭐⭐ **THE ACCENT WORD TAKES `--gold-soft`, WHICH IS WHAT EVERY OTHER TITLE ON THE SITE USES**
+   (D234, `.section-title em`) — this one had been left on the raw `--gold`, so it was both off the
+   convention AND the lowest-contrast ink on the page. The lifted champagne measures 0.51 against
+   the raw gold's 0.40, which is worth a full contrast point on its own. */
+.svc-hero h1 .h1-gold{color:var(--gold-soft)}
 /* ⚠️ THE 16ch CAP IS GONE WITH THE LEFT ALIGNMENT (D263): it existed to keep a left-set title off
    the photograph's lit half, and centred it just makes a short measure shorter. The 860px inner
    box is the bound now. The drop-led shadow is the page head's — it reads as one block with the
@@ -389,9 +409,14 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
 /* ⚠️ 0.78 ALPHA AND A CENTRED RIM SHADOW, NOT 0.60 — that is D232, measured against this same
    photograph treatment: `--muted` over a lit worktop edge under a 0.62 veil lands at 3.51:1, and
    the fix is shade on the WORDS rather than a deeper veil over the picture. */
+/* ⭐⭐ **WHITE, NOT GREY — 24 Aug 2026, his instruction.** Client: *"inside all the individual
+   pages, for instance like kitchen worktops in their dedicated page, I want you to make sure that
+   even in the hero section of those sections, the subtitle is also in white and not in gray. For
+   all the pages."* ⭐ 0.78 → full `--bone`: it is the sentence that says what the page sells, so it
+   is reading copy, which is D304's own test. The shadow becomes the cards' contact stack. */
 .svc-hero .lede{margin:22px auto 0;max-width:64ch;font-size:clamp(15px,1.3vw,17px);
-  color:rgba(244,241,234,0.78);line-height:1.7;
-  text-shadow:0 0 14px rgba(7,7,9,0.72), 0 1px 6px rgba(7,7,9,0.6)}
+  color:var(--bone);line-height:1.7;
+  text-shadow:0 1px 2px rgba(7,7,9,0.9),0 0 14px rgba(7,7,9,0.75),0 0 30px rgba(7,7,9,0.55)}
 .svc-hero .cta-row{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
 
 /* ---------- the four bubbles ----------
@@ -411,7 +436,11 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
   padding:8px 10px;border-radius:999px;position:relative;text-align:center;
   border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-  font-size:12px;color:rgba(244,241,234,0.85);font-weight:300;letter-spacing:0.02em;
+  /* ⭐⭐ **WHITE ACROSS THE ENTIRE SITE — 24 Aug 2026.** Client, twice: *"all of those tags that say
+     ten year guarantee, seventy two hour aftercare, free home visit — the text inside of those is
+     white."* The landing page's copy of this component was changed first; these 167 pages carry the
+     PORT, and a port that does not follow is exactly the drift the note above warns about. */
+  font-size:12px;color:var(--bone);font-weight:300;letter-spacing:0.02em;
   white-space:normal;text-wrap:balance;line-height:1.25;
 }
 /* ⚠️ `:last-child:nth-child(odd)` costs nothing at four and covers the next time the list changes
@@ -422,13 +451,13 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
 .svc-hero .g-stack{display:flex;flex-direction:column;justify-content:space-between;
   height:26px;line-height:1;text-align:left}
 .svc-hero .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
-  color:rgba(244,241,234,0.92)}
+  color:var(--bone)}
 /* ⚠️ `baseline`, not `center`: star glyphs and lining numerals have very different vertical
    centres and centring them leaves the score visibly riding high. */
 .svc-hero .g-rating{display:flex;align-items:baseline;gap:5px}
 .svc-hero .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
 .svc-hero .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
-  color:rgba(244,241,234,0.92)}
+  color:var(--bone)}
 /* ⚠️ CLIPPED, NOT `display:none` — "5.0 on Google" stays in the accessibility tree, because a logo
    and five star glyphs do not say it on their own. */
 .svc-hero .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
@@ -445,6 +474,32 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
    text that is not there and leaves the icon unpainted. */
 .svc-hero .chip-ico{flex:none;display:inline-flex;align-items:center}
 .svc-hero .chip-ico svg{width:24px;height:24px;display:block}
+/* ⭐⭐⭐ **THE FOUR TAGS FIT ON ONE LINE EACH DOWN TO 320 — the port of the landing page's own
+   ≤400 rule (see `index.html`, the same block).** Client: *"the little tags of the Google review,
+   ten year guarantee, seventy two hour aftercare and stuff like that is not responsive, and it
+   needs to be responsive, so fully still fitting perfectly, like it looks on all the other
+   screens."* They were WRAPPING, not overflowing, which is why no overflow sweep caught it: two
+   bubbles stood taller than their neighbours and the row read as broken.
+   ⚠️ Everything inside scales with the viewport between 320 and 400 rather than stepping, and at
+   400 every value has already reached the number it has always had — so no other width changes.
+   ⚠️ **THE GOOGLE BUBBLE IS THE BINDING ONE** (it needs 156px against the 136 available at 320)
+   because its mark and its two-line stack are both fixed sizes. Measure that one. */
+@media(max-width:400px){
+  .svc-hero .hero-chips{gap:clamp(6px,2.2vw,9px)}
+  .svc-hero .chip{padding:8px clamp(7px,2.4vw,10px);gap:clamp(6px,2vw,8px);font-size:clamp(11px,3.4vw,12px)}
+  .svc-hero .chip-mk{font-size:clamp(20px,6.4vw,23px)}
+  .svc-hero .chip-ico svg{width:clamp(21px,6.6vw,24px);height:clamp(21px,6.6vw,24px)}
+  .svc-hero .g-mark{width:clamp(23px,7.2vw,26px);height:clamp(23px,7.2vw,26px)}
+  .svc-hero .g-stack{height:clamp(23px,7.2vw,26px)}
+  /* ⚠️ **"Google reviews" NEEDS 94px ON ONE LINE AND HAS 92 AT 320** — measured. Two pixels, and
+     `text-wrap:balance` on the bubble then split it into "Google / reviews" and stood the whole
+     tag a line taller than its three neighbours. The floor drops to 10.8px, which buys 3px of
+     margin, and `nowrap` stops `balance` breaking a two-word lockup that now fits. */
+  .svc-hero .g-word{font-size:clamp(10.8px,3.4vw,12.5px);white-space:nowrap}
+  .svc-hero .g-rating{white-space:nowrap}
+  .svc-hero .g-score{font-size:clamp(10.5px,3.3vw,11.5px)}
+  .svc-hero .g-stars{font-size:clamp(8px,2.5vw,9px);letter-spacing:clamp(0.8px,0.3vw,1.1px)}
+}
 
 /* ---------- generic section ---------- */
 section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-soft)}

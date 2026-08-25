@@ -666,9 +666,27 @@
     content:"";position:absolute;top:0;bottom:0;z-index:0;pointer-events:none;
     left:calc(-1 * var(--curveOut));right:calc(-1 * var(--curveOut));
     border-bottom-left-radius:var(--curveR);border-bottom-right-radius:var(--curveR);
+    /* ⭐⭐⭐ **THE COPY BAND IS DARKENED IN ITS OWN RIGHT — 24 Aug 2026, HIS INSTRUCTION.** Client,
+       looking at /trade/ on a phone: *"the text above is way too hard to read. So you're gonna have
+       to add more of a dark gradient onto the back there. So do this for all the pages where it's
+       necessary because the site has to be perfect."*
+       ⛔⛔ **THE FLAT 0.62 WAS DOING ALL OF THE WORK IN THE MIDDLE AND IT WAS NOT ENOUGH FOR HIS NEW
+       PHOTOGRAPH.** The two ramps died at 26% and 34%, so the centre of the band — which is exactly
+       where the H1 and the description sit — had nothing but the flat layer over a lit marble
+       island and three pendant lights. **Measured worst glyph-local contrast at 320: 5.06:1 on the
+       title and 5.07 on the description.** The mean was 16, which is why it passed every casual
+       look: the fault is the VARIATION, not the average — the words cross a bright island and a
+       dark window in the same line.
+       ⭐⭐ **SO THE NEW LAYER PEAKS WHERE THE WORDS ARE AND FALLS AWAY AT BOTH EDGES**, rather than
+       raising the flat wash and flattening the whole picture. The flat layer comes DOWN 0.62 → 0.50
+       to pay for it, so the photograph's top and bottom are barely darker than before while the
+       copy band goes from 0.62 to 0.83 combined. **After: 10.06:1 and 10.36:1.**
+       ⚠️ ⛔ Not a panel: it reaches the frame's own edges and has no edge of its own (§2 rule 11). */
     background:
       linear-gradient(180deg,rgba(198,166,100,0.055),rgba(198,166,100,0) 62%),
-      linear-gradient(rgba(7,7,9,0.62),rgba(7,7,9,0.62)),
+      linear-gradient(to bottom,
+        rgba(7,7,9,0.34) 0%,rgba(7,7,9,0.62) 26%,rgba(7,7,9,0.66) 50%,rgba(7,7,9,0.62) 74%,rgba(7,7,9,0.34) 100%),
+      linear-gradient(rgba(7,7,9,0.50),rgba(7,7,9,0.50)),
       linear-gradient(to bottom,rgba(7,7,9,0.55) 0%,rgba(7,7,9,0) 26%),
       linear-gradient(to top,rgba(7,7,9,0.72) 0%,rgba(7,7,9,0) 34%),
       var(--pageHeadImg,none) center 42% / cover no-repeat;
@@ -740,7 +758,11 @@
   }
   /* the title is already full bone and measures 7.41:1 against the same worst pixel; it takes the
      drop-led shadow only so the two lines read as one block rather than one lit and one not */
-  .page-head h1{text-shadow:0 0 18px rgba(7,7,9,0.5), 0 2px 10px rgba(7,7,9,0.45)}
+  /* ⭐ and the words carry their own contact shadow, the same stack the project cards took — a
+     single wide blur does almost nothing against a bright patch larger than itself */
+  .page-head h1{text-shadow:0 1px 2px rgba(7,7,9,0.92),0 2px 12px rgba(7,7,9,0.8),0 0 34px rgba(7,7,9,0.6)}
+  .page-head p{text-shadow:0 1px 2px rgba(7,7,9,0.9),0 0 14px rgba(7,7,9,0.75),0 0 30px rgba(7,7,9,0.55)}
+  .page-head .crumbs,.page-head .crumbs a{text-shadow:0 1px 2px rgba(7,7,9,0.9),0 0 12px rgba(7,7,9,0.7)}
   /* the crumb sits above the title, quiet, and names where the customer is */
   .page-crumb{
     display:flex;justify-content:center;align-items:center;gap:9px;margin-bottom:18px;
@@ -4383,6 +4405,37 @@
   }
   .chip .chip-ico{flex:none;display:inline-flex;align-items:center}
   .chip .chip-ico svg{width:24px;height:24px;display:block}
+  /* ⭐⭐⭐ **THE FOUR BUBBLES FIT ON ONE LINE EACH DOWN TO 320 — 24 Aug 2026.** Client, on /trade/ at
+     a narrow width: *"the little tags of the Google review, ten year guarantee, seventy two hour
+     aftercare and stuff like that is not responsive, and it needs to be responsive, so fully still
+     fitting perfectly, like it looks on all the other screens."*
+     ⛔⛔ **THEY WERE NOT OVERFLOWING — THEY WERE WRAPPING, WHICH IS WHY NO OVERFLOW SWEEP CAUGHT
+     IT.** `white-space:normal` (D224, and correct — a nowrap label in a grid cell overflows rather
+     than wraps) meant the two longest labels took a second line, so two bubbles stood 48px tall
+     against their neighbours' 44 and the row read as broken. **Measured at 320: each bubble has
+     136px and they need 141, 144, 147 and 156.**
+     ⭐⭐ **SO EVERYTHING INSIDE THE BUBBLE SCALES WITH THE VIEWPORT BETWEEN 320 AND 400** — the
+     padding, the gap, the label, the struck numeral, the house and the Google lockup — rather than
+     one of them stepping at a breakpoint. Below 400 is the only place this is needed; at 400 every
+     value has already reached the number it has always had, so no other width changes at all.
+     ⚠️ **THE GOOGLE BUBBLE IS THE BINDING ONE** (156px) because its mark and its two-line stack are
+     both fixed sizes — measure THAT one when re-tuning, not the guarantee.
+     ⚠️ The `#hero …` half of each selector is required: those rules are set by id elsewhere and a
+     bare class cannot out-specify them (§5). */
+  @media(max-width:400px){
+    #hero .hero-chips,.page-head .hero-chips{gap:clamp(6px,2.2vw,9px)}
+    .hero-chips .chip{padding:8px clamp(7px,2.4vw,10px);gap:clamp(6px,2vw,8px);font-size:clamp(11px,3.4vw,12px)}
+    .chip .chip-mk{font-size:clamp(20px,6.4vw,23px)}
+    .chip .chip-ico svg{width:clamp(21px,6.6vw,24px);height:clamp(21px,6.6vw,24px)}
+    #hero .g-mark,.page-head .g-mark{width:clamp(23px,7.2vw,26px);height:clamp(23px,7.2vw,26px)}
+    #hero .g-stack,.page-head .g-stack{height:clamp(23px,7.2vw,26px)}
+    /* ⚠️ "Google reviews" needs 94px on one line and has 92 at 320 — the floor drops to 10.8px for
+       3px of margin, and nowrap stops a two-word lockup being split (see service.css, same note) */
+    #hero .g-word,.page-head .g-word{font-size:clamp(10.8px,3.4vw,12.5px);white-space:nowrap}
+    #hero .g-rating,.page-head .g-rating{white-space:nowrap}
+    #hero .g-score,.page-head .g-score{font-size:clamp(10.5px,3.3vw,11.5px)}
+    #hero .g-stars,.page-head .g-stars{font-size:clamp(8px,2.5vw,9px);letter-spacing:clamp(0.8px,0.3vw,1.1px)}
+  }
 
 
   /* ---------- the floating WhatsApp button (D173) ----------
