@@ -5822,8 +5822,25 @@
        peak of its approach, so it clears the slab at every frame it is visible. ⚠️ Re-measure IN
        THE BAND if this beat is ever re-timed; the whole-frame number would have vetoed a design
        that is actually fine. */
+    /* ⛔⛔⛔ **`0px`, NOT `0` — A UNITLESS ZERO HERE KILLED EVERY TRANSFORM ON THESE LINES.**
+       25 Aug 2026 (D430). Client: *"the text comes in from the left side and goes back out on the
+       left side. It's no longer doing this correctly on all devices"* and *"all of the animations
+       of the text are now incorrect."*
+       ⭐⭐⭐ **THE MECHANISM, AND IT IS D418c's TRAP IN A SECOND PLACE.** The shared transform is
+       `translateX(calc(var(--lx,0)*1px)) translateY(calc(var(--ly) + (var(--lyp,0)*1px))) …`.
+       With `--ly:0` — a NUMBER — that inner sum is `calc(0 + 0px)`, and CSS cannot add a number to
+       a length, **not even when both are zero**. The declaration is invalid at computed-value time,
+       so the property falls back to `none` and **the slide, the depth pass and the scale all go
+       with it** — the engine kept writing `--lx` every frame (measured at -409.16) and the browser
+       kept throwing it away. ⛔ Nothing logs, nothing throws: the words simply appear instead of
+       arriving, which is exactly what he described.
+       ⚠️ **IT ENTERED AT D361 AND WAS NEVER MINE TO SEE:** the `+ (var(--lyp,0) * 1px)` term was
+       added for a rise that D364 reversed, and adding a LENGTH to this sum retroactively made every
+       unitless `--ly` invalid. The three `[data-vpos]` rules below already say `0%` and were fine.
+       ⭐ `0px` and not `0%` on purpose: a percentage here resolves against the line's own height,
+       and this rule's whole point is that the line is anchored by its top. */
     html.cine-on .cine-line[data-vpos-wide]{
-      bottom:auto;--ly:0;
+      bottom:auto;--ly:0px;
       font-size:clamp(38px,5vw,76px);line-height:1.06;
       width:clamp(320px,52vw,760px);
     }

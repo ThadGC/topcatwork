@@ -5844,8 +5844,25 @@
        peak of its approach, so it clears the slab at every frame it is visible. ⚠️ Re-measure IN
        THE BAND if this beat is ever re-timed; the whole-frame number would have vetoed a design
        that is actually fine. */
+    /* ⛔⛔⛔ **`0px`, NOT `0` — A UNITLESS ZERO HERE KILLED EVERY TRANSFORM ON THESE LINES.**
+       25 Aug 2026 (D430). Client: *"the text comes in from the left side and goes back out on the
+       left side. It's no longer doing this correctly on all devices"* and *"all of the animations
+       of the text are now incorrect."*
+       ⭐⭐⭐ **THE MECHANISM, AND IT IS D418c's TRAP IN A SECOND PLACE.** The shared transform is
+       `translateX(calc(var(--lx,0)*1px)) translateY(calc(var(--ly) + (var(--lyp,0)*1px))) …`.
+       With `--ly:0` — a NUMBER — that inner sum is `calc(0 + 0px)`, and CSS cannot add a number to
+       a length, **not even when both are zero**. The declaration is invalid at computed-value time,
+       so the property falls back to `none` and **the slide, the depth pass and the scale all go
+       with it** — the engine kept writing `--lx` every frame (measured at -409.16) and the browser
+       kept throwing it away. ⛔ Nothing logs, nothing throws: the words simply appear instead of
+       arriving, which is exactly what he described.
+       ⚠️ **IT ENTERED AT D361 AND WAS NEVER MINE TO SEE:** the `+ (var(--lyp,0) * 1px)` term was
+       added for a rise that D364 reversed, and adding a LENGTH to this sum retroactively made every
+       unitless `--ly` invalid. The three `[data-vpos]` rules below already say `0%` and were fine.
+       ⭐ `0px` and not `0%` on purpose: a percentage here resolves against the line's own height,
+       and this rule's whole point is that the line is anchored by its top. */
     html.cine-on .cine-line[data-vpos-wide]{
-      bottom:auto;--ly:0;
+      bottom:auto;--ly:0px;
       font-size:clamp(38px,5vw,76px);line-height:1.06;
       width:clamp(320px,52vw,760px);
     }
@@ -17979,10 +17996,23 @@ if(faqIndex && panel && faqBody){
      in-between frames are MADE: motion-compensated interpolation to 60fps, 2655 frames, **2.56px
      of scroll per frame and a 16.7ms step**. See `.src-2026-08-23/encode60.sh` for the matrix and
      why it cost +12% rather than +150%.
-     ⚠️ `SRCFPS` is the rate the slab-reveal tables were TRACKED at and it stays 24 — see
-     `revealTick()`, which now reads them on a fractional index. */
+     ⛔⛔⛔ **`SRCFPS` IS 12 AND IT IS NOT THE FILM'S RATE — IT IS THE TRACKING GRID'S.** The
+     slab-reveal tables (D354 desktop, D360 phone, D368 tablet) were measured off a frame dump of
+     the 12fps film: `.textanim-2026-08-24/track_edge.py` line 8 says so in its own words, *"frame
+     number = film time * 12"*, and every row it prints is stamped `t = f/12`. So a row index is
+     `mediaTime * 12`, WHATEVER rate the file is encoded at — the tables describe the picture's
+     TIMELINE, which has never changed.
+     ⛔⛔ **D416 TOOK THIS CONSTANT FROM 12 TO 24 WITH THE ENCODE AND THE TABLES WERE NOT RE-BASED,
+     WHICH SILENTLY TURNED THE SLAB REVEAL OFF.** Every lookup came out at twice its row, ran past
+     the end of the table, and `done` went true — so the clip came OFF and the copy sat ON TOP of
+     the slab instead of behind it. Client: *"this text is supposed to be behind this slab… I don't
+     understand why that text is now in front of the slab."* ⚠️ Nothing threw and nothing measured
+     wrong: an out-of-range reveal looks exactly like a section with no reveal.
+     ⭐ **THE LESSON, WRITTEN WHERE IT WILL BE READ:** the file's frame rate and the tables' grid
+     are two different numbers and they must never be spelled with the same constant again. Change
+     the encode freely; `SRCFPS` only changes if the tables are re-tracked. */
   const FPS=60, DUR=44.25;                // the file's own rate and length, and the fallback
-  const SRCFPS=24;                        // the master's rate: the reveal tables' own grid
+  const SRCFPS=12;                        // the TRACKING grid of the reveal tables — never the file's rate
   const EASE=0.15;                        // the chase's pull, expressed per 1/60s (see tick())
   const INK_AT=0.93;                      // where in the FILM the copy starts to rise
   /* ⛔⛔⛔ **D421's ONE-FRAME DEAD ZONE IS GONE, AND SO IS THE `currentTime` COMPARISON.** Both were
@@ -18026,7 +18056,7 @@ if(faqIndex && panel && faqBody){
      ⛔ `node --check` cannot see this: it is a runtime error in syntactically perfect code, which is
      exactly what §7 warns about. Declare film state here, with the rest of it. */
   let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false,
-      locked=false, settleT=null, seekFr=-1, lastT=0, vpW=0, vpH=0;
+      locked=false, settleT=null, seekFr=-1, lastT=0, vpW=0, vpH=0, seekAt=0, kicked=false;
   let veiled=-1;
   const clamp=v=>v<0?0:v>1?1:v;
   const heroBg=hero.querySelector('.hero-bg');
@@ -18123,16 +18153,66 @@ if(faqIndex && panel && faqBody){
      inside frame `f` — a seek to the boundary is a coin flip between two frames on some builds and
      that alone reads as a stutter. ⛔ Comparing `vid.currentTime` is what this replaces: it leads
      the painted frame, so it could not answer "is this frame already on screen". `seekFr` can. */
+  /* ⛔⛔⛔ **THE QUEUE MUST NOT TRUST `seeking` FOREVER — 25 Aug 2026 (D431). THIS FROZE THE FILM
+     ON REAL iOS AND NOWHERE ELSE.** Client, with a screen recording: *"the video is no longer
+     playing on mobile, so it's not moving."*
+     ⭐⭐⭐ **CAUGHT IN THE iOS SIMULATOR WITH AN ON-PAGE READOUT, WHICH IS THE ONLY PLACE IT SHOWS.**
+     The numbers were unambiguous: `tgt0.247 eas0.247 want13.86` — the engine correctly wanted frame
+     831 — beside `sk0 seeking1 pend1 raf0`. **Safari had left `seeking` true on the very first seek
+     and never fired `seeked`**, so `pending` was set, nothing drained it, and every seek for the
+     rest of the session was refused by the first line of this function. One hung seek deadlocked
+     the whole film. ⚠️ Desktop Chrome always fires `seeked`, so this cannot be reproduced there —
+     three rounds of measuring it in a desktop harness would never have found it.
+     ⭐ **SO THE GATE IS NOW TIME-BOUNDED.** A seek genuinely in flight is still respected — that is
+     D310's rule and it is still right, a decoder handed a new time mid-seek drops the first one —
+     but after `SEEK_STALL` the in-flight seek is treated as lost and the newest frame is issued
+     anyway. Dropping a seek we no longer want is exactly what should happen.
+     ⭐⭐ **AND THE FIRST STALL KICKS THE DECODER.** A muted `playsinline` video that has never
+     decoded a frame is the case Safari hangs on; one `play()`/`pause()` pair puts it in a state
+     where seeks resolve. It runs AT MOST ONCE and only after a stall, so no browser that works
+     ever executes it. ⚠️ `muted` and `playsinline` are both already on the element — without them
+     iOS refuses a programmatic `play()` outright. */
+  const SEEK_STALL=140;
+  /* ⭐⭐⭐ **THE DECODER IS WOKEN BEFORE THE FIRST SEEK, NOT AFTER IT HANGS — D431b.** Measured on
+     the simulator after D431's watchdog: seeks were being ISSUED correctly (`want13.42`, `sk805`)
+     and `currentTime` followed, but the PICTURE was still showing t≈3 — Safari was accepting the
+     time and not presenting the frame, with `seeking` stuck true throughout.
+     ⭐⭐ **A MUTED `playsinline` VIDEO THAT HAS NEVER DECODED A FRAME IS THE CASE SAFARI WILL NOT
+     SCRUB.** One `play()` immediately followed by `pause()` puts the media element into the state
+     where seeks resolve and present — it is the standard prerequisite for scrubbing video on iOS,
+     and it is why every scroll-scrub implementation does it. ⛔ It has to happen on `loadeddata`,
+     BEFORE the first seek; doing it only on a stall (D431) left the first seconds broken.
+     ⚠️ Harmless everywhere else: the element is muted, it advances by one frame at t=0 and pauses
+     inside the same task, and the opening plate is opaque over it at that moment (D333). ⚠️ It is
+     also why `muted` and `playsinline` must stay on the element — without them iOS rejects the
+     `play()` and the film never scrubs at all. */
+  function decoderKick(){
+    if(kicked)return; kicked=true;
+    try{ const p=vid.play();
+         const stop=()=>{ try{vid.pause();}catch(e){} seekFr=-1; seek(); };
+         if(p&&p.then)p.then(stop,()=>{kicked=false;}); else stop();
+    }catch(e){ kicked=false; }
+  }
+  vid.addEventListener('loadeddata',decoderKick);
+  if(vid.readyState>=2)decoderKick();
   function seek(){
-    if(vid.seeking){pending=true;return;}
+    const now=performance.now();
+    if(vid.seeking){
+      if(now-seekAt<SEEK_STALL){ pending=true; return; }
+      decoderKick();                 /* the in-flight seek is hung, not slow */
+    }
     pending=false;
     const last=Math.max(0,Math.round(dur*FPS)-1);
     const f=Math.max(0,Math.min(last,Math.floor(want*FPS)));
     if(f===seekFr)return;
-    seekFr=f;
+    seekFr=f; seekAt=now;
     try{vid.currentTime=(f+0.5)/FPS;}catch(e){}
   }
   vid.addEventListener('seeked',()=>{ if(pending)seek(); });
+  /* ⚠️ A STALLED SEEK LEAVES NOTHING RUNNING TO RETRY IT: the chase stops itself once it has caught
+     up, so without this the film would stay frozen until the next scroll event. One cheap timer,
+     armed only while a seek is outstanding. */
+  setInterval(()=>{ if(!locked&&live&&(pending||vid.seeking)&&performance.now()-seekAt>SEEK_STALL)seek(); },200);
 
   function ink(film){
     const on=film>=INK_AT;
