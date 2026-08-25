@@ -2928,24 +2928,22 @@ if(faqIndex && panel && faqBody){
       if(checkFilmDead()||++deadTries>10||vid.readyState>=2)clearInterval(deadPoll);
     },400);
   }
-  var FILM_WAIT=7000, SPAN_MIN=6, filmWatch=null, filmOK=false;
+  var SPAN_MIN=4, filmOK=false;
   function bufferedSpan(){
     try{ var b=vid.buffered,m=0;
          for(var i=0;i<b.length;i++)m=Math.max(m,b.end(i)-b.start(i));
          return m; }catch(e){ return 0; }
   }
-  function filmReady(){ return vid.readyState>=3&&bufferedSpan()>=SPAN_MIN; }
-  function armFilmWatch(){
-    if(filmOK||filmWatch!==null)return;
-    if(filmReady()){ filmOK=true; return; }
-    filmWatch=setTimeout(function(){
-      filmWatch=null;
-      if(filmReady()){ filmOK=true; return; }
-      fail();
-    },FILM_WAIT);
+  function filmReady(){
+    if(filmOK)return true;
+    if(vid.readyState>=3&&bufferedSpan()>=SPAN_MIN){ filmOK=true; }
+    return filmOK;
   }
-  vid.addEventListener('progress',function(){ if(!filmOK&&filmReady()){ filmOK=true;
-    if(filmWatch!==null){ clearTimeout(filmWatch); filmWatch=null; } } });
+  function filmMaybeReady(){ if(!filmOK&&filmReady()){ onScroll(); dispatchEvent(new Event('scroll')); } }
+  vid.addEventListener('progress',filmMaybeReady);
+  vid.addEventListener('canplay',filmMaybeReady);
+  vid.addEventListener('canplaythrough',filmMaybeReady);
+  vid.addEventListener('loadeddata',filmMaybeReady);
   const SEEK_STALL=140;
   function decoderKick(){
     if(kicked)return; kicked=true;
@@ -3424,7 +3422,7 @@ if(faqIndex && panel && faqBody){
     if(locked)return;
     if(!live)return;
     target=clamp((window.scrollY-top)/travel);
-    if(target>0.002)armFilmWatch();
+    if(!filmReady())target=0;
     kick();
     armSettle();
   }
