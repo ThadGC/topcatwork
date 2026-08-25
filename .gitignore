@@ -89,3 +89,31 @@ Frame images/
 # `TC*` prefix rule never matched their names. By LOCATION this time, not by name: any PNG inside
 # a `.src-*` master folder is a master still that nothing serves.
 **/assets/video/.src-*/*.png
+
+# ─── The V1 animation stills (D438) ──────────────────────────────────────────
+# ⛔ 45.6 MB in 8 PNGs that NOTHING references — not one HTML, CSS, JS or build script names them
+# (checked by grep over the whole tree). They are the V1 storyboard frames, superseded by the film.
+# ⚠️ SAME RULE AS `Frame images/` ABOVE, and for the same reason: a master nothing serves does not
+# belong in a clone. On disk, out of git.
+# ⛔ DO NOT DELETE THEM — they are originals, and D241's rule is that a re-cut needs the master.
+Animation V1 Images/
+
+# ─── Superseded media inside the dated dot-folders (D438) ────────────────────
+# ⛔ 20.3 MB in 37 files parked in folders his own naming already calls dead: `.superseded-*`,
+# `.removed-*`, `.unused-frames-*`, `.reverted-*`. Every reference to them is either the README
+# inside the same dead folder or a HANDOVER entry recording the day they were dropped.
+# ⭐ THE SCRIPTS IN THOSE FOLDERS STAY TRACKED — all 15 `.py`/`.sh` builders (`encode.sh`,
+# `make_plates.py`, `cut_splash_hob.py`, …) are how every shipped asset is re-derived, and they
+# are kilobytes. This rule is media-only, by extension, so a new builder is never swallowed.
+# ⚠️ AND ONE INPUT IS EXEMPT BY NAME: `service-splash-marble.jpg` is read by
+# `.src-2026-08-18/cut_splash_hob.py`, so it is a build INPUT, not a superseded output.
+**/.superseded-*/**/*.jpg
+**/.superseded-*/**/*.jpeg
+**/.superseded-*/**/*.webp
+**/.superseded-*/**/*.png
+**/.removed-2026-08-21/**/*.webp
+**/.unused-frames-*/**/*.webp
+**/.unused-frames-*/**/*.png
+**/.reverted-*/**/*.mp4
+**/.reverted-*/**/*.webp
+!**/.src-2026-08-18/service-splash-marble.jpg
