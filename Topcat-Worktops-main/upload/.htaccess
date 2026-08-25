@@ -45,8 +45,21 @@
   #    own stamp). If that bump is ever forgotten, an hour is a mistake that
   #    heals itself; a year is the Argento correction being invisible for
   #    twelve months.
-  <FilesMatch "\.(webp|jpg|jpeg|png|svg|ico|woff2)$">
+  <FilesMatch "\.(webp|jpg|jpeg|png|svg|ico)$">
     Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
+  # ---- The self-hosted fonts: a year, and immutable (D443) -----------------
+  # ⭐ These came off Google's own CDN and are named for the SUBSET THEY ARE
+  #    (`cinzel-latin-var`, `montserrat-latin-var`), not for a version — a
+  #    variable font covering every weight the site asks for. The bytes behind
+  #    that name do not change; a new cut would be a new name.
+  # ⛔ SO THE IMAGE RULE ABOVE WAS WRONG FOR THEM. One hour meant re-fetching
+  #    both faces through the day, which is the whole reason for self-hosting
+  #    undone. They belong with the fingerprinted CSS and JS, not with the slab
+  #    tiles that rely on a hand-bumped ?v=.
+  <FilesMatch "\.woff2$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 
   # ---- The scroll film: a week, and it carries a hand-bumped ?v= -----------

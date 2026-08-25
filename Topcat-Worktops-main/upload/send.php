@@ -51,6 +51,47 @@ $MUTE  = '#8A857A';
 $LINK  = '#8A6D3B';
 
 header('Content-Type: application/json; charset=utf-8');
+
+/* ⭐⭐⭐ THE SELF-TEST (D444) — `/send.php?selftest=1` in the address bar.
+   ⭐ WHY IT EXISTS: the sender chain below can only be proved on the host, and proving it by
+   submitting the real form means a junk enquiry in `info@` every time, with no clue which rung
+   carried it. This sends one plainly-marked test and answers in JSON: `ok`, and `via` naming the
+   rung that worked — or `tried`, listing the rungs that were all refused, which is the signature
+   of mail() being off at the host rather than the sender being wrong.
+   ⛔ IT CANNOT BE POINTED ANYWHERE. The recipient is `$TO`, hard-coded above; there is no
+   parameter that redirects it, so the worst anyone can do with this URL is post a test to Topcat's
+   own inbox. That is why it needs no secret — a secret in a public repo is not one.
+   ⚠️ RATE-LIMITED TO ONE A MINUTE by a lock file, so it cannot be leant on as a mail bomb. */
+if (isset($_GET['selftest'])) {
+  $lock = sys_get_temp_dir() . '/tc-selftest.lock';
+  if (is_file($lock) && (time() - (int)@filemtime($lock)) < 60) {
+    http_response_code(429);
+    echo json_encode(['ok' => false, 'error' => 'rate limited — one self-test a minute']); exit;
+  }
+  @touch($lock);
+  $hostDom = preg_replace('/[^a-z0-9.\-]/i', '', explode(':', $_SERVER['HTTP_HOST'] ?? '')[0]);
+  $rungs = [[$FROM, $FROM, 'branded+envelope'], [$FROM, null, 'branded+host-envelope']];
+  if ($hostDom !== '' && stripos($FROM, '@' . $hostDom) === false)
+    $rungs[] = ['website@' . $hostDom, 'website@' . $hostDom, 'host-domain'];
+  $body = "This is the Topcat send.php self-test.\n\nIf you are reading it, the website can send "
+        . "mail to " . $TO . " and the enquiry form works.\n\nHost: " . $hostDom
+        . "\nSent: " . date('j M Y, H:i') . "\n";
+  $tried = [];
+  foreach ($rungs as $r) {
+    $hdr = "From: " . mb_encode_mimeheader($FROM_NAME, 'UTF-8') . " <{$r[0]}>\r\n"
+         . "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nX-TC-Sender: {$r[2]}";
+    $tried[] = $r[2];
+    $sent = $r[1] === null ? @mail($TO, 'Topcat website self-test', $body, $hdr)
+                           : @mail($TO, 'Topcat website self-test', $body, $hdr, '-f' . $r[1]);
+    if ($sent) { echo json_encode(['ok' => true, 'via' => $r[2], 'to' => $TO]); exit; }
+  }
+  http_response_code(500);
+  echo json_encode(['ok' => false, 'error' => 'every sender refused — the host mail() is off, '
+                  . 'not the sender: Site Tools → Email, or switch to authenticated SMTP',
+                    'tried' => $tried, 'to' => $TO]);
+  exit;
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
   http_response_code(405); echo json_encode(['ok' => false, 'error' => 'POST only']); exit;
 }

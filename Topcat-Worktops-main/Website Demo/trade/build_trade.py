@@ -314,9 +314,9 @@ def page():
 <meta property="og:site_name" content="Topcat Worktops">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+
+
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/cinzel-latin-var.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/montserrat-latin-var.woff2" crossorigin>
 <link rel="stylesheet" href="/services/service.css">
 {jsonld()}
 </head>

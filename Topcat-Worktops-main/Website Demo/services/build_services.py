@@ -766,9 +766,9 @@ def page(s):
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{FAVICON}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/cinzel-latin-var.woff2" crossorigin><link rel="preload" as="font" type="font/woff2" href="/assets/fonts/montserrat-latin-var.woff2" crossorigin>
 <link rel="stylesheet" href="service.css{SVC_SIG}">
 <link rel="stylesheet" href="/assets/footer.css{FOOT_SIG}">
 <link rel="stylesheet" href="/assets/nav.css{NAV_SIG}">
