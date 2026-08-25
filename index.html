@@ -7183,27 +7183,6 @@ if(faqIndex && panel && faqBody){
   const gcv=document.createElement('canvas'); gcv.width=48; gcv.height=8;
   const gctx=gcv.getContext('2d',{willReadFrequently:true});
   let graded=-1;
-  // ---- FRAME-GRADE THROTTLE (D454) ----------------------------------------
-  // grade() and bandGrade() sample the film by pulling the decoded video frame
-  // back off the GPU -- drawImage(vid,...) then getImageData(). The readback is
-  // the expensive half: measured at ~8.3ms PER CALL on a desktop against the
-  // 1920 cut (the getImageData itself is 0.008ms), and far worse on a phone.
-  // Both ran once per rAF tick -- grade() for the nav band, bandGrade() once for
-  // EVERY lit line of copy -- so one 60fps frame spent 17-33ms in readbacks
-  // alone against a 16.7ms budget. That is the choppy background and the choppy
-  // text: they are dropped frames, not a slow network.
-  //
-  // Nothing is lost by sampling less often. The film is SCRUBBED, not played: a
-  // new frame only reaches the screen when a seek completes, every ~100-150ms.
-  // Sampling faster than the film changes just re-reads the same pixels. So we
-  // stamp a token per presented frame and every sampler memoises against it --
-  // one readback per film frame, not one per line per tick.
-  let gTok=0, gradeTok=-1;
-  const bandMemo=new WeakMap();
-  function gTick(){
-    const t=(vid.readyState>=2&&!isNaN(vid.currentTime))?vid.currentTime:0;
-    gTok=Math.round(t*SRCFPS);
-  }
   let target=0, eased=-1, want=0, pending=false, raf=null, live=true, inked=null, fetched=false,
       locked=false, settleT=null, seekFr=-1, lastT=0, vpW=0, vpH=0, seekAt=0, kicked=false;
   let veiled=-1;
@@ -7335,8 +7314,6 @@ if(faqIndex && panel && faqBody){
   }
   function grade(){
     if(!vid.videoWidth||vid.readyState<2)return;
-    if(gTok===gradeTok)return;          // same film frame: --navGrade cannot have moved
-    gradeTok=gTok;
     const bg=heroBg.getBoundingClientRect(); if(!bg.height)return;
     const bandH=barH();
     const vr=vid.videoWidth/vid.videoHeight, br=bg.width/bg.height;
@@ -7526,13 +7503,6 @@ if(faqIndex && panel && faqBody){
     const r=box?{left:bg.left+box.ox,top:bg.top+box.oy,width:box.ow,height:box.oh}
                :el.getBoundingClientRect();
     if(!r.height)return -1;
-    // Key is the film frame PLUS the box, rounded to 8px. A line travels across
-    // the frame while it is lit, so a moved line must resample even on a held
-    // frame -- but a line sitting still on a held frame must not.
-    const key=gTok+'|'+Math.round(r.left/8)+','+Math.round(r.top/8)
-                    +','+Math.round(r.width/8)+','+Math.round(r.height/8);
-    const memo=bandMemo.get(el);
-    if(memo&&memo.key===key)return memo.v;
     const vr=vid.videoWidth/vid.videoHeight, br=bg.width/bg.height;
     let dw,dh,dx,dy;
     if(vr>br){ dh=bg.height; dw=dh*vr; dx=(bg.width-dw)/2; dy=0; }
@@ -7545,9 +7515,7 @@ if(faqIndex && panel && faqBody){
     const cell=[];
     for(let i=0;i<384;i++) cell.push(0.2126*d[i*4]+0.7152*d[i*4+1]+0.0722*d[i*4+2]);
     cell.sort((a,b)=>a-b);
-    const v=clamp((cell[383]-GRADE_LO)/(GRADE_HI-GRADE_LO));
-    bandMemo.set(el,{key,v});
-    return v;
+    return clamp((cell[383]-GRADE_LO)/(GRADE_HI-GRADE_LO));
   }
   let firstAlpha=0;
   function story(t){
@@ -7697,7 +7665,7 @@ if(faqIndex && panel && faqBody){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
-    seek(); gTick(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
+    seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
     armSettle();
     if(locked)dropHeroHash();
   }
@@ -7738,7 +7706,6 @@ if(faqIndex && panel && faqBody){
     const film=clamp(eased/(1-hold));
     want=film*dur;
     seek();
-    gTick();
     ink(film);
     veil(film);
     curve(film);
