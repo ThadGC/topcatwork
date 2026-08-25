@@ -1,119 +1,29 @@
-# ─── Raw harvest working files ───────────────────────────────────────────────
-# 1.8 GB of supplier-sourced slab photography downloaded by harvest.py, plus the
-# upscale scratch directory. These are INPUTS to the pipeline, not site assets —
-# build_stones.py writes what the site actually serves into stones/ and assets/.
-# They are also third-party photographs whose licensing is still an open question
-# (see HANDOVER.md §7), which is a second reason they do not belong in a repo.
-# ⚠️ These are `**/`-anchored ON PURPOSE. A gitignore pattern that contains a
-# slash is anchored to the directory holding the .gitignore, and the site lives
-# at `Topcat-Worktops-main/Website Demo/…`, not at the repo root — a plain
-# `Website Demo/stones/…` pattern silently matches nothing and stages all 1.8 GB.
-**/harvest/raw/
-**/harvest/_upscale/
+# ============================================================================
+# `main` IS THE WEBSITE. Nothing else lives here.
+#
+# Every file in this repo is a file the host serves. Clone it, upload the
+# CONTENTS of the folder, and the site is live. There is no build step, no
+# source tree beside it and no folder to choose between — that ambiguity is
+# what put a stale build on the host for several rounds.
+#
+# ⛔ THE SOURCE AND THE BUILDERS ARE ON THE `source` BRANCH.
+#    `git checkout source` — index.html's uncompressed original, the four page
+#    builders, make_upload.py and the HANDOVER decision register are all there,
+#    with the full history. Change the site THERE, run the builders, then
+#    publish the result onto this branch. Editing files here by hand works, but
+#    the next build from `source` will overwrite them.
+# ============================================================================
 
-# ─── Local version control ───────────────────────────────────────────────────
-# 58 dated snapshots of index.html at ~700 KB each, plus the handover snapshots.
-# They exist only because this project had no git. Git replaces them — keeping
-# both would put 44 MB of near-duplicate history in every clone.
-*.bak
-*.bak.md
-*.pre-*.bak
-
-# ─── OS / editor noise ───────────────────────────────────────────────────────
+# ─── OS / editor noise ──────────────────────────────────────────────────────
 .DS_Store
 ._*
 Thumbs.db
 
-# ─── Agent session state ─────────────────────────────────────────────────────
+# ─── Agent session state ────────────────────────────────────────────────────
 .claude/
 
-# ─── The upload folder — COMMITTED SINCE 25 Aug 2026 (D434), REVERSING D289 ───
-# It used to be ignored as a build artefact: `Website Demo/make_upload.py` writes it and every
-# file in it already exists one directory up.
-# ⛔⛔ THE CLIENT REVERSED THAT AND HIS REASON IS BETTER: *"Why is the upload not in the repo? The
-# dev should be able to just take it as is and upload it."* The developer's job is to drag a
-# folder onto the host, not to install python and run a build first — and a build step between
-# "what was tested" and "what ships" is a place for the two to differ.
-# ⚠️ THE COST, STATED: 103 MB and 643 files, and the builders re-stamp every HTML file with new
-# `?v=` hashes on each run, so a round that touches the site re-commits most of them. Largest
-# single file is the 24 MB desktop film — GitHub warns at 50 MB and blocks at 100, so there is
-# room, and the repo was already 1.2 GB.
-# ⛔ `make_upload.py` MUST STILL BE RUN before the final push of a round, or the folder in git is
-# last round's site. It refuses a stale build, which is the guard that makes this safe.
-
-# ─── The scroll film's 86 MB master ──────────────────────────────────────────
-# D310. `assets/video/topcat-intro-1920.mp4` is the 11.7 MB file the site
-# actually serves and it IS committed — the delivery flow is a clean clone plus
-# `make_upload.py`, so anything the site loads has to be in here.
-# The client's master (.mov, ProRes-sized, PCM audio) is kept beside the encode
-# script that made it, on disk, but NOT in git: GitHub warns past 50 MB and hard
-# blocks at 100, and a master nothing serves would be in every clone forever.
-# ⛔ Do not delete it — a re-cut needs the master, not the encode (D241's rule).
-# ⛔ THE FILM MASTERS STAY ON DISK AND OUT OF GIT. The landscape master is 86 MB and the client's
-# 9:16 master is 35 MB; GitHub warns past 50 MB and the repo is already over a gigabyte. Both live in
-# `assets/video/.src-*/` and MUST NOT BE DELETED — every shipped cut is derived from them by
-# `encode.sh`. ⚠️ The rule covers .mp4 as well as .mov: the 9:16 master arrived as an .mp4 and the
-# .mov-only rule silently let 35 MB into a commit (caught at D317, before the push).
-**/assets/video/.src-*/*.mov
-**/assets/video/.src-*/*.mp4
-# ⚠️ AND BY NAME, NOT ONLY BY FOLDER: the 9:16 master was parked out of `.src-*` into a
-# `.reverted-*` folder at D318 and immediately fell back into the index. A master is a master
-# wherever it is filed.
-**/assets/video/.*/TC-FINAL-VIDEO-*
-# ⚠️ AND BY HIS NAMING, NOT ONE FILE'S NAME. He names every master `TC ...` — `TC FINAL VIDEO.mov`,
-# `TC FINAL VIDEO 9x16.mp4`, `TC MOBILE FIXED.mov` (D319) — so the rule matches the PREFIX in the
-# video folder and in any dot-folder under it. ⛔ Nothing the site serves is named `TC*`; every
-# shipped cut is `topcat-intro-*`, so this cannot swallow a live file.
-**/assets/video/TC*
-**/assets/video/.*/TC*
-# ─── The generation stills (D320) ────────────────────────────────────────────
-# ⛔ His six frame images are MASTERS, exactly like the film masters above: 19.6 MB of PNG that
-# nothing serves. The site serves `assets/video/plates/*.webp`, which ARE committed (0.56 MB), and
-# `.plates-2026-08-21/holds.py` is what derives one from the other.
-# ⚠️ He dropped them at the repo root in `Frame images/`; that folder stays on disk and out of git.
-# ⛔ DO NOT DELETE THEM — re-exporting a plate needs the original, never the WebP or the video.
-# ⚠️ The whole drop folder: the guide is versioned at `Topcat-Worktops-main/Docs/` instead, which
-# is where every other reference document lives. Keeping a second copy here would let the two drift.
-Frame images/
-# ⚠️ AND THE SAME RULE FOR THE OVERLAY STILLS HE SENDS DIRECTLY (D330). `F1 FIXED.png` and
-# `Mobile f1.png` are 8.7 MB of PNG master that nothing serves — the site serves the WebP crops
-# derived from them by `.plates-2026-08-22/make_plates.py`, which ARE committed.
-# ⛔⛔ THE `TC*` RULE ABOVE DOES NOT CATCH THESE. He named the films `TC …` and these he did not,
-# so a prefix rule silently let 8.7 MB toward a commit — caught by `git check-ignore` before the
-# push, which is the check to run on any new dot-folder of his originals.
-# ⛔ DO NOT DELETE THEM — re-exporting an overlay needs the original, never the WebP or the video.
-**/assets/video/.plates-*/src/
-# ⚠️ AND WHEN THE STILLS ARRIVE IN THE SAME DROP AS THE MASTERS (D333, 23 Aug). `F1 FIXED SLAB.png`
-# and `F1 SLAB mobile.png` landed beside the two `TC video … final fix.mov` masters and were filed
-# with them in `.src-2026-08-23/` — where the `.plates-*/src/` rule above cannot see them and the
-# `TC*` prefix rule never matched their names. By LOCATION this time, not by name: any PNG inside
-# a `.src-*` master folder is a master still that nothing serves.
-**/assets/video/.src-*/*.png
-
-# ─── The V1 animation stills (D438) ──────────────────────────────────────────
-# ⛔ 45.6 MB in 8 PNGs that NOTHING references — not one HTML, CSS, JS or build script names them
-# (checked by grep over the whole tree). They are the V1 storyboard frames, superseded by the film.
-# ⚠️ SAME RULE AS `Frame images/` ABOVE, and for the same reason: a master nothing serves does not
-# belong in a clone. On disk, out of git.
-# ⛔ DO NOT DELETE THEM — they are originals, and D241's rule is that a re-cut needs the master.
-Animation V1 Images/
-
-# ─── Superseded media inside the dated dot-folders (D438) ────────────────────
-# ⛔ 20.3 MB in 37 files parked in folders his own naming already calls dead: `.superseded-*`,
-# `.removed-*`, `.unused-frames-*`, `.reverted-*`. Every reference to them is either the README
-# inside the same dead folder or a HANDOVER entry recording the day they were dropped.
-# ⭐ THE SCRIPTS IN THOSE FOLDERS STAY TRACKED — all 15 `.py`/`.sh` builders (`encode.sh`,
-# `make_plates.py`, `cut_splash_hob.py`, …) are how every shipped asset is re-derived, and they
-# are kilobytes. This rule is media-only, by extension, so a new builder is never swallowed.
-# ⚠️ AND ONE INPUT IS EXEMPT BY NAME: `service-splash-marble.jpg` is read by
-# `.src-2026-08-18/cut_splash_hob.py`, so it is a build INPUT, not a superseded output.
-**/.superseded-*/**/*.jpg
-**/.superseded-*/**/*.jpeg
-**/.superseded-*/**/*.webp
-**/.superseded-*/**/*.png
-**/.removed-2026-08-21/**/*.webp
-**/.unused-frames-*/**/*.webp
-**/.unused-frames-*/**/*.png
-**/.reverted-*/**/*.mp4
-**/.reverted-*/**/*.webp
-!**/.src-2026-08-18/service-splash-marble.jpg
+# ─── Enquiry uploads written by send.php at runtime ─────────────────────────
+# ⛔ Customer attachments and the `.failed/` queue of enquiries that could not
+#    be mailed. They are created ON THE HOST by real visitors — they are not
+#    part of the site and must never be committed or overwritten by an upload.
+_enquiry-files/
