@@ -7189,6 +7189,11 @@ document.addEventListener('topcat:files',renderUploads);
 
   let mat='Quartz';
   let stone=null;         // the stone entry currently in play — never null after boot
+  /* ⭐ 25 Aug (client): "we need to gather as much data as possible… did they click on a certain
+     stone? What stone they quoted for?" The estimator drops notes into the shared journey queue;
+     `assets/tcform.js` owns the store and sends it WITH an enquiry and nowhere else. `t:'est'`
+     OVERWRITES (compute runs on every keystroke), `t:'ev'` appends. */
+  const jot=o=>{try{(window.__tcq=window.__tcq||[]).push(o)}catch(e){}};
   /* ⚠️ FIRST-RUN STATE (client, 6 Aug): ONE row, and NO shape chip preselected. The panel used
      to open on a preset L-shape, which is somebody else's kitchen the visitor has to undo
      before they can describe their own. One standard run reads at a glance, still draws a real
@@ -7396,6 +7401,7 @@ document.addEventListener('topcat:files',renderUploads);
       document.dispatchEvent(new CustomEvent('topcat:stone',{detail:{name:stone.name,
         mat:stone.mat||mat,stone:stone.stone,seed:stone.seed,slug:stone.slug,sup:stone.sup,src:'estimator'}}));
       selfEvent=false;
+      jot({t:'ev',k:'Estimator stone',v:stone.name});
     }
     animateNext=true; compute();
   }
@@ -7479,6 +7485,7 @@ document.addEventListener('topcat:files',renderUploads);
          number — repeating the same button here reads as a stutter, so the ticket ends on
          the stone and the promise instead */
       ctaBtn.hidden=true;
+      jot({t:'est',mat:mat,stone:stone.name,poa:true});
       return;
     }
     calcWrap.hidden=false; poaWrap.hidden=true; statsEl.hidden=false;
@@ -7532,6 +7539,8 @@ document.addEventListener('topcat:files',renderUploads);
     addsEl.hidden=!added.length;
     if(added.length)addsEl.textContent='Includes '+added.join(' and ')+'.';
     showRange(lo,hi);
+    jot({t:'est',mat:mat,stone:stone.name,pieces:pieces.map(p=>p.len+'×'+p.wid+'×'+p.th+'mm '+p.use),
+      slabs:n,island:island,extras:added,lo:lo,hi:hi});
   }
   let deb=null;
   const softCompute=()=>{ clearTimeout(deb); deb=setTimeout(compute,140); };
@@ -7653,6 +7662,7 @@ document.addEventListener('topcat:files',renderUploads);
   tabs.forEach(b=>b.addEventListener('click',()=>{
     if(b.dataset.mat===mat)return;
     mat=b.dataset.mat; syncTabs();
+    jot({t:'ev',k:'Estimator material',v:mat});
     /* a by-hand material change means the stone that came with it no longer stands — take that
        material's best seller. Silently: the enquiry chip should only ever carry a stone the
        visitor actually chose, not one we defaulted them into. */

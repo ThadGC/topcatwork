@@ -7359,6 +7359,8 @@
      ⚠️ The control inside is the SHARED uploader (.tc-up), so this must never be the only way
      to see what is attached — the toggle opens itself when the store is non-empty and says how
      many files are on the enquiry, otherwise a plan attached in the estimator would vanish. */
+  /* the grey capacity note under the disclosure — always visible, bottom-right of the block */
+  .cu-maxnote{text-align:right;color:var(--faint);font-size:11px;letter-spacing:0.05em;margin-top:5px}
   .cta-up-t{
     display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
     font:inherit;font-size:13px;font-weight:300;color:var(--muted);
@@ -10034,7 +10036,12 @@
     <a href="/trade/">Trade</a>
     <a href="/contact/">Contact</a>
   </nav>
-  <a class="bar-cta" href="#cta">Get a quote</a>
+  <!-- ⭐ 25 Aug (client): "all the get a free quote and get a quote buttons are going to the
+       contact us page. It must not go to the form at the bottom." Quote-LABELLED controls only —
+       "Tell us about your kitchen", "Get in touch" and the estimator's own handoff still ride
+       the in-page glide to #cta, because they are invitations to this page's form, not the
+       quote buttons he named. -->
+  <a class="bar-cta" href="/contact/">Get a quote</a>
   <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
     <span></span><span></span><span></span>
   </button>
@@ -10129,7 +10136,7 @@
        ⚠️ `.mn-row` REPLACES the old single `.mn-cta`, so the `:nth-child` stagger above still counts
        the seven links and then this row as one item — it does not need re-numbering. -->
   <div class="mn-row">
-    <a class="mn-cta" href="#cta">Get a free quote</a>
+    <a class="mn-cta" href="/contact/">Get a free quote</a>
     <div class="mn-pair">
       <a class="mn-alt" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.688-1.48-1.538-1.653-1.835-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0m0 21.784h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.437-9.884 9.888-9.884a9.82 9.82 0 0 1 6.988 2.896 9.825 9.825 0 0 1 2.892 6.995c-.002 5.45-4.437 9.886-9.885 9.886"/></svg>
@@ -10164,7 +10171,7 @@
      ("the call button must be switched with the get a quote button"). The three keep their own
      dress, so the filled gold one simply travels to the left with it. -->
 <div class="mbar" id="mobileBar">
-  <a class="mbar-a mbar-cta" href="#cta">Get a quote</a>
+  <a class="mbar-a mbar-cta" href="/contact/">Get a quote</a>
   <!-- ⭐ D372: WhatsApp replaces Email as the bar's middle action — his call, and it is also why
        the floating corner buttons can stand down while the bar is up: the bar now carries the
        same WhatsApp link itself. The email address still lives in the contact block and footer. -->
@@ -10759,7 +10766,7 @@
                "Get a free quote" as of 13 Aug (D186), the client's own words, answering the open
                question D177 left. The `.cta-long` beside it is the frozen desktop's and is
                deliberately still "Get your free quote". -->
-          <a href="#cta" class="btn-gold"><span class="cta-long">Get your free quote</span><span class="cta-short">Get a free quote</span></a>
+          <a href="/contact/" class="btn-gold"><span class="cta-long">Get your free quote</span><span class="cta-short">Get a free quote</span></a>
           <a href="tel:+448000982812" class="btn-ghost hero-call-mobile"><span class="cta-long">Give us a call</span><span class="cta-short">Give us a call</span></a>
           <a href="#cta" class="btn-ghost hero-call-desktop">Request a call</a>
         </div>
@@ -11872,6 +11879,10 @@
           <div class="cta-up-body" id="ctaUpBody">
             <div class="cta-up-in"><div class="tc-up" data-up></div></div>
           </div>
+          <!-- ⭐ 25 Aug (client): "where it says add plans or measurements, further down on the
+               right side of that block, just add a little gray text saying max fifty megabytes."
+               The 50 MB is TC_UP.MAXB's own number, stated rather than duplicated in prose. -->
+          <div class="cu-maxnote" aria-hidden="true">Max 50 MB per file</div>
         </div>
 
         <button type="submit" class="cta-send">Send my enquiry</button>
@@ -19256,6 +19267,11 @@ document.addEventListener('topcat:files',renderUploads);
 
   let mat='Quartz';
   let stone=null;         // the stone entry currently in play — never null after boot
+  /* ⭐ 25 Aug (client): "we need to gather as much data as possible… did they click on a certain
+     stone? What stone they quoted for?" The estimator drops notes into the shared journey queue;
+     `assets/tcform.js` owns the store and sends it WITH an enquiry and nowhere else. `t:'est'`
+     OVERWRITES (compute runs on every keystroke), `t:'ev'` appends. */
+  const jot=o=>{try{(window.__tcq=window.__tcq||[]).push(o)}catch(e){}};
   /* ⚠️ FIRST-RUN STATE (client, 6 Aug): ONE row, and NO shape chip preselected. The panel used
      to open on a preset L-shape, which is somebody else's kitchen the visitor has to undo
      before they can describe their own. One standard run reads at a glance, still draws a real
@@ -19463,6 +19479,7 @@ document.addEventListener('topcat:files',renderUploads);
       document.dispatchEvent(new CustomEvent('topcat:stone',{detail:{name:stone.name,
         mat:stone.mat||mat,stone:stone.stone,seed:stone.seed,slug:stone.slug,sup:stone.sup,src:'estimator'}}));
       selfEvent=false;
+      jot({t:'ev',k:'Estimator stone',v:stone.name});
     }
     animateNext=true; compute();
   }
@@ -19546,6 +19563,7 @@ document.addEventListener('topcat:files',renderUploads);
          number — repeating the same button here reads as a stutter, so the ticket ends on
          the stone and the promise instead */
       ctaBtn.hidden=true;
+      jot({t:'est',mat:mat,stone:stone.name,poa:true});
       return;
     }
     calcWrap.hidden=false; poaWrap.hidden=true; statsEl.hidden=false;
@@ -19599,6 +19617,8 @@ document.addEventListener('topcat:files',renderUploads);
     addsEl.hidden=!added.length;
     if(added.length)addsEl.textContent='Includes '+added.join(' and ')+'.';
     showRange(lo,hi);
+    jot({t:'est',mat:mat,stone:stone.name,pieces:pieces.map(p=>p.len+'×'+p.wid+'×'+p.th+'mm '+p.use),
+      slabs:n,island:island,extras:added,lo:lo,hi:hi});
   }
   let deb=null;
   const softCompute=()=>{ clearTimeout(deb); deb=setTimeout(compute,140); };
@@ -19720,6 +19740,7 @@ document.addEventListener('topcat:files',renderUploads);
   tabs.forEach(b=>b.addEventListener('click',()=>{
     if(b.dataset.mat===mat)return;
     mat=b.dataset.mat; syncTabs();
+    jot({t:'ev',k:'Estimator material',v:mat});
     /* a by-hand material change means the stone that came with it no longer stands — take that
        material's best seller. Silently: the enquiry chip should only ever carry a stone the
        visitor actually chose, not one we defaulted them into. */
@@ -20785,6 +20806,6 @@ document.querySelectorAll('.rise').forEach(el=>io.observe(el));
      the reply and the single `ENDPOINT` constant that makes all 38 forms live. ⚠️ `defer`, and it
      is the only external JS this page loads besides its own: ~4 KB, cached once for 176 pages.
      ⛔ Every page family loads THIS file — never a second copy of the logic. -->
-<script src="/assets/tcform.js?v=1" defer></script>
+<script src="/assets/tcform.js?v=2" defer></script>
 </body>
 </html>

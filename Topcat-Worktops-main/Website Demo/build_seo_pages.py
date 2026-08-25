@@ -438,7 +438,7 @@ def qform_html(preselect=""):
 # ⭐ `assets/tcform.js` owns every form on the site now: the same validation, the same error state
 # and the same reply everywhere, and `.qf-done` only ever shows after a real, successful POST.
 # ⛔ Do not put a second submit handler back on this family.
-QFORM_JS = '<script src="/assets/tcform.js?v=1" defer></script>'
+QFORM_JS = '<script src="/assets/tcform.js?v=2" defer></script>'
 
 
 def crumbs(items):
@@ -2690,7 +2690,14 @@ PRIVACY = [
    "is your name, your email address, your telephone number, your postcode, the service you are "
    "interested in, and anything you choose to write in the message box.",
    "You do not have to give us both an email address and a phone number. One or the other is "
-   "enough for us to reply, and the forms are built that way."]),
+   "enough for us to reply, and the forms are built that way.",
+   # ⭐ 25 Aug 2026 — the journey exists now (tcform.js), so the policy says so. Written from the
+   # code, not guessed: localStorage only, sent only inside a submitted enquiry, no third party.
+   "When you send an enquiry, it also carries a short summary of how you used this site on this "
+   "device, such as the pages you viewed, the buttons you pressed, and any estimate you built in "
+   "the worktop estimator, including the stone you chose. We include it so we can answer you "
+   "accurately. Until you send a form it stays in your browser and is not transmitted to us or "
+   "to anyone else."]),
  ("Why we use it", [
    "We use your details for one purpose: to answer your enquiry, arrange a free home visit where "
    "you have asked for one, and prepare and discuss a quotation. That is the basis on which we "
@@ -2698,8 +2705,12 @@ PRIVACY = [
    "We do not send marketing email, we do not build a mailing list from enquiries, and we do not "
    "sell, rent or share your details with anyone for their own marketing."]),
  ("Cookies and tracking", [
-   "This website sets no cookies of its own and stores nothing in your browser. There is no "
-   "analytics, no tag manager, no advertising tag and no social media pixel anywhere on it.",
+   "This website sets no cookies. There is no analytics service, no tag manager, no "
+   "advertising tag and no social media pixel anywhere on it.",
+   "The site keeps a small note of your visit in your own browser's storage, on your device, so "
+   "that an enquiry you send can include the summary described above. It stays on your device, "
+   "expires by itself within a month, and is sent to us only as part of an enquiry you choose to "
+   "submit. No third party receives it, and clearing your browser data removes it.",
    "The one third party the site loads is Google Fonts, which serves the two typefaces the pages "
    "are set in. Your browser requests those files from Google, and in doing so Google receives "
    "your IP address. Google states that it does not use these requests to build an advertising "

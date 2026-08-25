@@ -87,6 +87,36 @@ const ASSET_CACHE = 'public, max-age=300, must-revalidate';
 http.createServer((req, res) => {
   const url = req.url.split('?')[0];
 
+  /* ── ⭐ DEV MOCK FOR THE FORM ENDPOINT — 25 Aug 2026. ─────────────────────────────────────────
+     Production is `send.php` (PHP, on the host); this node server cannot run it, and silently
+     404ing every submit would make a working front end look broken. So the SAME path answers
+     here with {ok:true, dev:true} and logs which fields arrived — enough to drive the whole
+     submit flow locally, verify the journey/estimate payloads, and see the success state.
+     ⛔ NO MAIL IS SENT FROM HERE, EVER. The real test is on the host. `make_upload.py` never
+     ships this file, so the mock cannot mask the real endpoint in production. */
+  if (req.method === 'POST' && url === '/send.php') {
+    let buf = [], n = 0, CAP = 5 * 1024 * 1024;      // echo small posts; just drain huge ones
+    req.on('data', c => { n += c.length; if (n <= CAP) buf.push(c); });
+    req.on('end', () => {
+      try {
+        const body = Buffer.concat(buf).toString('utf8');
+        const names = [...body.matchAll(/name="([^"]+)"/g)].map(m => m[1]);
+        const jm = body.match(/name="journey"\r\n\r\n([\s\S]*?)\r\n--/);
+        console.log('[send.php mock] %s KB, fields: %s', Math.round(n / 1024), names.join(', '));
+        if (jm) {
+          try {
+            const j = JSON.parse(jm[1]);
+            console.log('[send.php mock] journey: %d events, last: %s',
+              j.ev.length, JSON.stringify(j.ev[j.ev.length - 1]));
+          } catch (e) { console.log('[send.php mock] journey unparseable'); }
+        }
+      } catch (e) { console.log('[send.php mock] %s KB (not echoed)', Math.round(n / 1024)); }
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+      res.end(JSON.stringify({ ok: true, dev: true }));
+    });
+    return;
+  }
+
   if (url === '/__reload') {
     res.writeHead(200, {
       'Content-Type':'text/event-stream',

@@ -36,15 +36,93 @@
 (function () {
   'use strict';
 
-  /* ⭐⭐⭐ SET THIS AND EVERY FORM ON THE SITE POSTS FOR REAL. Nothing else has to change.
-     It is posted a `FormData`, so file attachments on the enquiry card ride along unchanged. */
-  var ENDPOINT = '';
+  /* ⭐⭐⭐ LIVE SINCE 25 Aug 2026 — his own ask: "we have to make sure the emails are actually
+     going there so we can test them." `/send.php` ships with the site (it is in `Website Demo/`
+     and rides `make_upload.py` into `upload/`), builds the branded grid email and mails it to
+     info@topcatworktops.co.uk. The dev server answers the same path with a harmless JSON mock,
+     so the whole flow is testable locally; real mail needs the real host's PHP.
+     ⚠️ Root-relative on purpose: /stones/x.html and /services/y.html post to the same file. */
+  var ENDPOINT = '/send.php';
+
+  /* the host's PHP defaults cap a POST around 128 MB; the front end stops a hair earlier with a
+     human answer instead of letting the server cut the connection with none */
+  var MAX_POST = 100 * 1024 * 1024;
 
   var PHONE_TXT = '0800 098 2812';
 
   /* a mail address, deliberately loose: the job is to catch "x", "me@" and "me@me",
      not to adjudicate RFC 5322 — a real address that this rejects would be a lost customer */
   var RX_MAIL = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+
+  /* ============================================================================================
+     ⭐⭐⭐ THE JOURNEY — 25 Aug 2026, client: "we need to gather as much data as possible. So if
+     someone used the estimator on the site or chose a service or interacted with different
+     sections, we need that information… After submitting the form, all that data must be sent
+     along with the email."
+     ⭐ WHAT THIS IS: a first-party note of the visit, kept in THIS BROWSER's localStorage and
+     sent to Topcat ONLY inside an enquiry the visitor submits. No cookie, no beacon, no third
+     party, nothing transmitted on its own — /privacy/ describes it in exactly those terms, so
+     changing this behaviour means changing that page in the same commit.
+     ⭐ TWO STORES: `tc_journey` is the APPEND trail (page views, meaningful clicks, estimator
+     picks, capped and aged out); `tc_estimate` is the LATEST estimator snapshot, OVERWRITTEN on
+     every recompute — compute() runs per keystroke and a trail of half-typed kitchens is noise
+     where the finished one is signal.
+     ⭐ The estimator (an inline script that runs before this file) drops notes into the
+     `window.__tcq` array; boot() drains it and swaps in a live object so later notes flow
+     straight through. The queue pattern is ORDER-PROOF: neither file needs the other loaded.
+     ============================================================================================ */
+  var J_KEY = 'tc_journey', E_KEY = 'tc_estimate';
+  var J_MAX = 120;                          // events kept; oldest fall off
+  var J_TTL = 30 * 24 * 3600 * 1000;        // a month-old trail is somebody else's visit
+
+  function jload() {
+    try {
+      var j = JSON.parse(localStorage.getItem(J_KEY) || 'null');
+      if (j && j.started && (Date.now() - j.started) < J_TTL && j.ev instanceof Array) return j;
+    } catch (e) {}
+    return { started: Date.now(), ev: [] };
+  }
+  function jsave(j) { try { localStorage.setItem(J_KEY, JSON.stringify(j)); } catch (e) {} }
+  function jpush(o) {
+    var j = jload();
+    o.at = Date.now();
+    j.ev.push(o);
+    if (j.ev.length > J_MAX) j.ev = j.ev.slice(j.ev.length - J_MAX);
+    jsave(j);
+  }
+  function takeQ(o) {
+    if (!o || typeof o !== 'object') return;
+    if (o.t === 'est') { try { localStorage.setItem(E_KEY, JSON.stringify(o)); } catch (e) {} }
+    else jpush(o);
+  }
+  function journeyBoot() {
+    var j = jload();
+    /* first touch of a fresh trail: where they came from, and any campaign tags */
+    if (!j.ev.length) {
+      var src = { t: 'ev', k: 'Arrived', v: (document.referrer || 'direct') };
+      if (/utm_/.test(location.search)) src.v += ' ' + location.search.slice(0, 120);
+      jpush(src);
+    }
+    jpush({ t: 'ev', k: 'Viewed', v: location.pathname });
+    /* drain what the estimator queued before we loaded, then take the queue over */
+    var q0 = window.__tcq;
+    if (q0 instanceof Array) for (var i = 0; i < q0.length; i++) takeQ(q0[i]);
+    window.__tcq = { push: takeQ };
+    /* meaningful clicks: any link or button with a short human label. Capture phase, so a
+       handler that swallows the event cannot swallow the note. The estimator's own row
+       furniture (thickness segs, the × on a row) is skipped — the `est` snapshot already
+       carries the finished configuration, which is the signal those clicks are noise around. */
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest && e.target.closest('a,button');
+      if (!a || a.closest('.est-row,.est-seg,.tc-up,#estTabs')) return;   /* #estTabs: the specific hook already logs it */
+      var tx = String(a.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!tx) tx = String(a.getAttribute('aria-label') || '').trim();
+      if (tx.length < 2 || tx.length > 60) return;
+      var sec = a.closest('section[id],footer,nav,header');
+      jpush({ t: 'ev', k: 'Clicked', v: tx,
+              s: sec ? (sec.id || sec.tagName.toLowerCase()) : '', p: location.pathname });
+    }, true);
+  }
 
   function q(f, n) { return f.querySelector('[name="' + n + '"]'); }
   function v(el) { return el ? String(el.value || '').trim() : ''; }
@@ -124,6 +202,13 @@
   function payload(f) {
     var fd = new FormData(f);
     fd.append('page', location.pathname);
+    /* ⭐ the whole visit rides with the enquiry — the email's "WHAT THEY DID ON THE SITE" block */
+    try {
+      var j = jload();
+      if (j.ev.length) fd.append('journey', JSON.stringify(j));
+      var est = localStorage.getItem(E_KEY);
+      if (est) fd.append('estimate', est);
+    } catch (e) {}
     /* the enquiry card's picked-stone chip and its attachments, when the page has them.
        ⚠️ Read through a hook rather than reaching into the landing page's own state, so this
        file stays the only thing that knows how a form is sent. */
@@ -156,10 +241,22 @@
       return;
     }
 
+    var fd = payload(f);
+    /* per-file 50 MB is enforced where files are picked (TC_UP); the TOTAL is enforced here,
+       because eight legal files can still add up past what one POST can carry */
+    var totalB = 0;
+    fd.forEach(function (v) { if (v && typeof v.size === 'number') totalB += v.size; });
+    if (totalB > MAX_POST) {
+      say(f, 'Your attachments come to over 100 MB together, which is more than the form can '
+           + 'carry in one go. Please take a file or two off and send the largest to us on '
+           + 'WhatsApp instead.', 'bad');
+      return;
+    }
+
     var was = btn ? btn.textContent : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
     say(f, 'Sending…', '');
-    fetch(ENDPOINT, { method: 'POST', body: payload(f), headers: { Accept: 'application/json' } })
+    fetch(ENDPOINT, { method: 'POST', body: fd, headers: { Accept: 'application/json' } })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r; })
       .then(function () { sent(f, name); f.reset(); })
       .catch(function () {
@@ -186,6 +283,7 @@
   }
 
   function boot() {
+    journeyBoot();
     Array.prototype.forEach.call(document.querySelectorAll('form.cta-form, form.qform, form[data-tcform]'), wire);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

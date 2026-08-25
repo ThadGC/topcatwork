@@ -7337,6 +7337,8 @@
      ⚠️ The control inside is the SHARED uploader (.tc-up), so this must never be the only way
      to see what is attached — the toggle opens itself when the store is non-empty and says how
      many files are on the enquiry, otherwise a plan attached in the estimator would vanish. */
+  /* the grey capacity note under the disclosure — always visible, bottom-right of the block */
+  .cu-maxnote{text-align:right;color:var(--faint);font-size:11px;letter-spacing:0.05em;margin-top:5px}
   .cta-up-t{
     display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
     font:inherit;font-size:13px;font-weight:300;color:var(--muted);
