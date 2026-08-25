@@ -2117,6 +2117,11 @@
   html.cine-on .cine-skip[hidden]{display:none}
   html.cine-on .cine-skip:hover{border-color:var(--gold);color:var(--gold)}
   html.cine-on .cine-skip:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  html.cine-on .wa-fab,html.cine-on .call-fab,html.cine-on .cine-skip{
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+    background:rgba(8,8,11,0.78);
+  }
+  html.cine-on .cine-skip:hover{background:rgba(8,8,11,0.88)}
   @media(max-width:1120px){
     html.cine-on .cine-skip{position:fixed;right:auto;left:50%;transform:translateX(-50%);
       bottom:calc(env(safe-area-inset-bottom,0px) + 18px);

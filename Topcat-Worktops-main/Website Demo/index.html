@@ -6213,6 +6213,35 @@
   html.cine-on .cine-skip[hidden]{display:none}
   html.cine-on .cine-skip:hover{border-color:var(--gold);color:var(--gold)}
   html.cine-on .cine-skip:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  /* ⛔⛔⛔⛔ **NO `backdrop-filter` ON ANY OF THE THREE CONTROLS WHILE THE FILM IS RUNNING — 25 Aug
+     2026 (D435). THIS IS THE FLASHING DARK BAND, AND IT IS THE TWELFTH TIME HE HAS REPORTED IT.**
+     Client, with a crop of the call disc: *"This phone icon still has that issue of it having that
+     dark side part that is constantly flashing. This may be the twelfth time that I've asked you
+     to fix it."*
+     ⭐⭐⭐ **THE MECHANISM WAS ALREADY CORRECTLY DIAGNOSED AT D419 AND THEN REINTRODUCED AT D420.**
+     D419 found it: these controls are their own compositing root, and `backdrop-filter` samples the
+     backdrop across the video layer's compositor tiles — Chrome paints the sampling seam as a band
+     across the disc. It removed the blur under `html.cine-on` and wrote *"do not put backdrop-filter
+     back under html.cine-on"*. **D420 then found the OTHER fault — a `linear-gradient(155deg,…)`
+     that had been in the FABs' base rule since D173 — and, giving all three the skip pill's ground
+     so they would match, put `blur(9px)` back in the base rule, which applies here.** Two real
+     faults, one fixed, the other re-armed by the fix.
+     ⭐⭐ **AND IT FLASHES RATHER THAN SITTING STILL BECAUSE THE BACKDROP IS A FILM.** The blur
+     re-samples every painted frame, so the seam moves with the picture — which is exactly the word
+     he used, and it is why it only happens on the landing page and only while the film is scrubbing.
+     ⭐ **ALL THREE TOGETHER, SO THEY STILL MATCH EACH OTHER** — that was his instruction at D405 and
+     D420, and D419's mistake was taking the blur off the two discs while leaving the pill frosted,
+     which is what made them look different. One flat ground, `rgba(8,8,11,0.78)`, the alpha D419
+     measured as reading the same as 0.70-plus-frost over the quarry.
+     ⚠️ **THE INNER PAGES KEEP THE FROST.** They have no film, so nothing re-samples, nothing seams,
+     and `html.cine-on` is the landing page's own class. ⛔ Do not "restore" the blur here, and do not
+     chase this with another colour: the colour was never the fault, and neither was the gradient
+     alone. */
+  html.cine-on .wa-fab,html.cine-on .call-fab,html.cine-on .cine-skip{
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+    background:rgba(8,8,11,0.78);
+  }
+  html.cine-on .cine-skip:hover{background:rgba(8,8,11,0.88)}
   /* ⛔⛔ THE WHATSAPP FLOAT OWNS THE BOTTOM-RIGHT CORNER ON EVERY NARROW BAND, and this control
      landed on top of it — caught in a tablet screenshot at 834x1112, the two overlapping. So the
      control is centred instead, clear of the float and clear of the phone's action bar.
