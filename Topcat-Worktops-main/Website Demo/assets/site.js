@@ -5948,26 +5948,41 @@ if(faqIndex && panel && faqBody){
      ⚠️ THE TEST IS BUFFERED SECONDS, NOT readyState. iOS reports readyState 4 off a couple of
      buffered seconds, then stalls the moment the scrub seeks past them — which is precisely the
      frozen-poster case. `SPAN_MIN` is the run of film that has to be there before we trust it. */
-  var FILM_WAIT=7000, SPAN_MIN=6, filmWatch=null, filmOK=false;
+  /* ⭐⭐⭐⭐ THE FILM WAITS — IT NEVER GIVES UP (D450, REPLACING D441 OUTRIGHT).
+     Client: *"just make sure mobile is working perfectly smooth. and the video and everything plays
+     exactly as it does on the preview."*
+     ⛔⛔ **D441 WAS MY OWN REGRESSION AND THIS IS THE REVERSAL.** It called `fail()` if the phone
+     had not buffered 6 contiguous seconds within 7 of the first scroll — on a phone pulling 7.7 MB
+     that is a high bar, so a merely-slow connection had the film KILLED OUTRIGHT and replaced with
+     the static hero. He asked for the film and my code was throwing it away. **"Still not playing"
+     was me.**
+     ⭐⭐⭐ THE RULE NOW: a slow film is not a failed film. Wait as long as it takes, and start
+     scrubbing the instant it can scrub. Only a REAL error gives up, and that is `filmDead()` above
+     (`.error` or `networkState 3`), which is a fact rather than a stopwatch.
+     ⭐⭐ AND WHILE IT IS NOT READY, THE STORY IS HELD AT THE START. That is the whole of what made
+     it look broken: the scroll drove the copy forward over a picture that could not move, so the
+     lines marched across a frozen poster. `filmReady()` gates the narrative, not the scrolling —
+     the page still scrolls normally, it simply does not begin the film until there is film to run.
+     ⚠️ `readyState>=3` (HAVE_FUTURE_DATA) AND a real buffered run, because iOS reports 4 off a
+     couple of seconds and then stalls the moment the scrub seeks past them. */
+  var SPAN_MIN=4, filmOK=false;
   function bufferedSpan(){
     try{ var b=vid.buffered,m=0;
          for(var i=0;i<b.length;i++)m=Math.max(m,b.end(i)-b.start(i));
          return m; }catch(e){ return 0; }
   }
-  function filmReady(){ return vid.readyState>=3&&bufferedSpan()>=SPAN_MIN; }
-  function armFilmWatch(){
-    if(filmOK||filmWatch!==null)return;
-    if(filmReady()){ filmOK=true; return; }
-    filmWatch=setTimeout(function(){
-      filmWatch=null;
-      if(filmReady()){ filmOK=true; return; }
-      /* ⛔ Still not enough film to scrub after the wait — take the static hero rather than leave
-         him watching a still with the copy moving over it. */
-      fail();
-    },FILM_WAIT);
+  function filmReady(){
+    if(filmOK)return true;
+    if(vid.readyState>=3&&bufferedSpan()>=SPAN_MIN){ filmOK=true; }
+    return filmOK;
   }
-  vid.addEventListener('progress',function(){ if(!filmOK&&filmReady()){ filmOK=true;
-    if(filmWatch!==null){ clearTimeout(filmWatch); filmWatch=null; } } });
+  /* ⚠️ The moment it becomes ready, re-run the scroll maths once so the film takes up the position
+     the page is ALREADY at — otherwise it would sit on frame 0 until the next scroll event. */
+  function filmMaybeReady(){ if(!filmOK&&filmReady()){ onScroll(); dispatchEvent(new Event('scroll')); } }
+  vid.addEventListener('progress',filmMaybeReady);
+  vid.addEventListener('canplay',filmMaybeReady);
+  vid.addEventListener('canplaythrough',filmMaybeReady);
+  vid.addEventListener('loadeddata',filmMaybeReady);
 
   /* the seek queue: one in flight, one waiting, and the waiting one is always the newest
      ⭐⭐ **AND THE TARGET IS A FRAME, NOT A TIME (D425).** `want` is continuous; the film is not.
@@ -7110,9 +7125,13 @@ if(faqIndex && panel && faqBody){
     if(locked)return;
     if(!live)return;
     target=clamp((window.scrollY-top)/travel);
-    /* ⭐ D441: the film is WANTED from the first real movement into the runway — arm the starved-
-       connection watchdog here and nowhere else, so a visitor who never scrolls never trips it. */
-    if(target>0.002)armFilmWatch();
+    /* ⭐⭐⭐ D450: HOLD THE STORY AT THE START UNTIL THERE IS FILM TO RUN. This one line is what
+       stops the broken look — without it the scroll drives the copy forward over a picture that
+       cannot move, and the lines march across a frozen poster, which is exactly what he filmed.
+       ⚠️ It gates the NARRATIVE, not the page: scrolling still works normally, the sequence simply
+       has not begun yet. The moment `filmReady()` turns true, `filmMaybeReady()` re-runs this and
+       the film takes up the position the page is already at. */
+    if(!filmReady())target=0;
     kick();
     armSettle();
   }
