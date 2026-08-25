@@ -1649,8 +1649,20 @@
        low and clearly apart from the wall. Both measures are vh-led, so they keep shrinking on
        a short laptop rather than pushing the section past the fold. */
     #reviews{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-start;
-      padding-top:clamp(34px,13.5vh,128px)}
-    #reviews .rev-cta{margin-top:clamp(18px,5vh,54px)}
+      padding-top:clamp(34px,13.5vh,128px);
+      /* ⭐ 25 Aug (client): "the like what you're reading is too high up from the divider… the same
+         distance from the border as the Surfaces for every space." The 100vh section used to pool
+         ALL of its slack UNDER the strap line, so on a tall window the line floated hundreds of px
+         above the divider while the services title sat a fixed distance below it. The bottom
+         padding is now BUILT FROM the other side's own formulas — #services' padding-top plus
+         .svc-intro's — so line→divider equals divider→title by construction, at every window
+         height, and tracks any future change to those clamps. The divider's own margins are
+         symmetric and cancel out. */
+      padding-bottom:calc(clamp(74px,9vh,104px) + clamp(6px,2.5vh,30px))}
+    /* margin-top:auto moves the section's slack ABOVE the strap line (pinning it to the floor,
+       beside the divider); the old clamp stays as padding-top so a short window still keeps a
+       minimum gap to the wall instead of letting auto collapse to zero. */
+    #reviews .rev-cta{margin-top:auto;padding-top:clamp(18px,5vh,54px)}
     /* flex items with margin:0 auto do NOT stretch — the auto margins win and the stage shrank
        to the deck's width, dragging the pager arrows in over the cards (same trap #process hit) */
     #reviews .section-head,#reviews .rev-stage,#reviews .rev-cta{width:100%}
