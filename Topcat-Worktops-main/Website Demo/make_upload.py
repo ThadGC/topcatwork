@@ -26,7 +26,15 @@ import tempfile
 from strip_for_host import balance_report, is_idempotent, strip_css, strip_html, strip_js
 
 HERE = pathlib.Path(__file__).resolve().parent
-OUT = HERE.parent / "upload"
+# ⭐⭐⭐ ONE FOLDER, AT THE TOP OF THE REPO (D446). Client, after a broken deploy:
+#   *"stop putting things in different folders. take the site as we want it to be and put it
+#   all in one folder."*
+# ⛔ THE SITE IS `WEBSITE/` AND NOTHING ELSE. It used to be `Topcat-Worktops-main/upload/`,
+#   sitting beside `Website Demo/` — two trees that look alike, one of which is the source and
+#   is NOT uploadable. That ambiguity is how a stale build sat on the host for rounds (D442).
+# ⚠️ `HERE` is `Website Demo`, so `.parent` is `Topcat-Worktops-main` and `.parent.parent`
+#   is the repo root. Upload the CONTENTS of that folder — not the folder itself.
+OUT = HERE.parent.parent / "WEBSITE"
 
 STRIP = {"html": strip_html, "css": strip_css, "js": strip_js}
 
