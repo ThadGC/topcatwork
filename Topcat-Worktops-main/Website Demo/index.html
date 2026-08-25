@@ -899,7 +899,12 @@
      are frozen and their sections set their own paddings (D259 says so), but do not copy it. */
   @media(min-width:1121px){
     :root{--barH:calc(68*var(--uipx))}
-    header.bar{padding-top:calc(11*var(--uipx));padding-bottom:calc(11*var(--uipx))}
+    /* ⭐ **THE CONTENTS SIT 4px LOWER IN THE BAR — D433.** Client, of the transparent state over the
+       film: *"the logo is too close to the top. So move that slightly down. Move everything slightly
+       down in the nav bar. Slightly."* ⭐ The total is unchanged at 22, so `--barH` and every
+       padding that reads it are untouched; `align-items:center` then carries the whole row —
+       logo, links and the quote button — down by half the difference, 4px at the approved frame. */
+    header.bar{padding-top:calc(15*var(--uipx));padding-bottom:calc(7*var(--uipx))}
   }
 
   .mobile-nav{
@@ -5367,7 +5372,15 @@
        the crop turns vertical and the skyline rises. */
     html.cine-on .cine-hero{
       display:block;position:absolute;z-index:3;pointer-events:none;
-      left:clamp(20px,7vw,132px);top:22vh;width:clamp(320px,46vw,660px);
+      /* ⭐⭐⭐ **THE FIRST SCREEN TAKES THE FILM'S OWN ANCHOR TOO — D432d.** Client: *"for the slab
+         you choose is unique, has to be the same place or height as the very first frame."* The
+         slab beat is anchored to the picture (D432); leaving this one on `22vh` meant the two only
+         agreed at 1440x900 and drifted apart everywhere else — 13 film px at 1512x830 and 58 at
+         2560x1200. Same law, same height, every window. ⚠️ 237.6 IS `22vh` at the approved frame,
+         so nothing moves there. ⚠️ Its SIZE still comes from `--heroScale` (D418c) — only the
+         vertical anchor changed, and the approved column and arrow-to-chips ratios were re-measured
+         after (see the register row). */
+      left:clamp(20px,7vw,132px);top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px));width:clamp(320px,46vw,660px);
       opacity:0;                                  /* the scrub owns it from the first tick */
       /* ⭐⭐⭐ **THE BLOCK SLIDES OFF TO THE SIDE, ON THE SCROLL — D352.** ⛔ This is NOT the pin: the
          pin is parked in `.textanim-2026-08-24/removed-pin-d349-d351.txt` and it went because
@@ -5876,20 +5889,20 @@
       width:calc(898.56 * var(--filmU,1px));
     }
     /* the slab beat, on the first screen's own line */
-    /* ⭐⭐⭐ **THE TWO WIDE BEATS SHARE ONE HEIGHT — 25 Aug 2026 (D432c).** Client: *"let's essentially
-       stay the same height as the slab you choose's unique text."*
-       ⛔⛔ **AND IT IS THIS BEAT THAT MOVED, NOT THE KITCHEN ONE, BECAUSE THE PICTURE DECIDES.**
-       Levelling them by bringing the kitchen beat DOWN to 237.6 was measured against the film first
-       and it does not fit: across the whole window that beat is visible (t 27.5→36.5) the island's
-       top edge under the title's own x range never falls below **y 434**, and the title's ink
-       already ends at **414** — so it can descend **2 film px** before it is on the stone, against
-       the 65 it would need. His other standing instruction — *"none of the text must touch the
-       slab"* — is the one that cannot bend, so the slab beat rises to meet the kitchen beat
-       instead. Both now sit at 172.8 and their ink tops land within 2px of each other (159 / 161,
-       the difference being the two title sizes).
-       ⭐ 237.6 was `top:22vh` at the approved frame; it is kept here in the register row in case he
-       wants the pair levelled the other way with the kitchen title re-measured against the island. */
-    html.cine-on .cine-line[data-vpos-wide="hero"]{top:calc(var(--filmY,0px) + 172.8 * var(--filmU,1px))}
+    /* ⭐⭐⭐ **237.6 IS THE FIRST SCREEN'S OWN HEIGHT AND THIS BEAT SHARES IT — 25 Aug 2026 (D432d).**
+       Client: *"for the slab you choose is unique, has to be the same place or height as the very
+       first frame."*
+       ⭐ **VERIFIED BY INK, NOT BY THE RULE:** `.cine-hero` is `top:22vh` = 237.6 film px and its
+       title's first line measures **y 224–341**; this beat at the same 237.6 measures **y 224–341**
+       too. The two openings hand over at exactly the same height.
+       ⛔⛔ **D432c LEVELLED THESE TWO AT 172.8 AND THAT WAS WRONG — HE CALLED IT IMMEDIATELY.** The
+       error was in the measurement that justified it: I compared the island's top edge against the
+       SUBTITLE'S BOX bottom (414) while reading the island under the TITLE's x range, which is two
+       different rows of the composition. The title's second line actually ends at **360**, and the
+       island under the subtitle's narrower span sits at **500** — so the kitchen beat had ~74 film
+       px of room, not 2. ⚠️ **A BOX IS NOT INK. Measure the line, and measure it under its own x
+       range.** */
+    html.cine-on .cine-line[data-vpos-wide="hero"]{top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px))}
     /* ⭐⭐⭐ **THE SUBTITLE IS INDENTED TO THE TITLE'S STEM, NOT TO THE BOX — D347.** Client: *"the g
        of the word get is not in line with the t of the and tone… the middle of the g and the middle
        of the stem of the t, those go together."*
@@ -5981,7 +5994,15 @@
        reported. ⚠️ The 21 film px between the subtitle and the island's corner is HIS spacing, and
        it is now the same 21px on every screen instead of closing to nothing on some of them. ⛔ Do
        not "improve" it: if the gap is ever to change, he says so. */
-    html.cine-on .cine-line[data-vpos-wide="high"]{top:calc(var(--filmY,0px) + 172.8 * var(--filmU,1px));
+    /* ⭐⭐ **207 — SLIGHTLY ABOVE THE SLAB BEAT, AND LOWER THAN IT WAS — D432d.** Client: *"the stone
+       sets the tone of the room can be slightly higher up, but not as high as it is now."* So it
+       sits **30.6 film px above** the slab beat's 237.6 rather than the 64.8 it had.
+       ⭐ **THE ROOM WAS MEASURED PER LINE AND PER x RANGE, WHICH IS WHAT D432c GOT WRONG.** At 207
+       the title's second line ends at **y 394** against an island that never rises above **434**
+       under that line's span, and the subtitle ends at **443** against **500** under its own,
+       narrower span — 40 and 57 film px of clearance, at every frame from t 27.5 to 36.5 and,
+       because both text and picture are in film coordinates, on every screen. */
+    html.cine-on .cine-line[data-vpos-wide="high"]{top:calc(var(--filmY,0px) + 207 * var(--filmU,1px));
       font-size:calc(82.94 * var(--filmU,1px))}
   }
 
