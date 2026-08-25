@@ -4678,6 +4678,17 @@
        the corner clears. Same sibling-combinator state read as the old lift — `.mbar` must stay
        an EARLIER SIBLING of both fabs or this dies silently (D180's own trap, still live). */
     .mbar.on ~ .wa-fab,.mbar.on ~ .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
+    /* ⛔⛔ **THE CORNER PAIR IS GONE WHERE THE BAR IS ALWAYS UP — D436.** Client, of the inner
+       pages: *"it shouldn't be there at all."* The `.mbar.on ~` rule above already fades them
+       (D372), but a faded control is still in the accessibility tree and is still a second copy of
+       the two numbers the bar itself carries. ⚠️ `bar-always` is set by the bar's own script on
+       every page that is NOT the landing page; the landing page never carries it and keeps its
+       pair, which flanks the skip control through the film.
+       ⛔⛔ **AND IT IS DECLARED HERE, IN index.html, BECAUSE `assets/site.css` IS LIFTED FROM THIS
+       FILE VERBATIM AT BUILD TIME.** Editing site.css by hand appears to work and is thrown away by
+       the next `build_pages.py` — the same trap as site.js, and both were hit in one round. Only
+       `services/service.css` is a real source you may edit directly. */
+    html.bar-always .wa-fab,html.bar-always .call-fab{display:none}
   }
   /* ⛔⛔⛔ THE HERO SCROLL CUE IS DELETED, MARKUP AND RULES — 14 Aug 2026 (D234). Client: *"on the
      hero section of the desktop version, remove the down arrow that says scroll above it. So
@@ -5370,7 +5381,23 @@
          so nothing moves there. ⚠️ Its SIZE still comes from `--heroScale` (D418c) — only the
          vertical anchor changed, and the approved column and arrow-to-chips ratios were re-measured
          after (see the register row). */
-      left:clamp(20px,7vw,132px);top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px));width:clamp(320px,46vw,660px);
+      /* ⛔⛔⛔ **THE MEASURE IS FLAT px — A `vw` WIDTH INSIDE A SCALED BLOCK SHRINKS TWICE AND
+         CHANGES THE LINE COUNT. 25 Aug 2026 (D437).** Client, with two screenshots: *"The first
+         screenshot is incorrect. It has three lines in the title. It has to have two lines in the
+         title like in the second screenshot. The only thing that I changed here is I dragged the
+         screen size to be slightly smaller."*
+         ⭐⭐⭐ **THE TYPE AND THE BOX WERE ON DIFFERENT LAWS.** `.cine-hero` carries
+         `scale(var(--heroScale))`, so a `46vw` width was scaled a SECOND time by the transform
+         while the 72px title was scaled once — the box narrowed faster than the type and the
+         headline wrapped. At 1440x900 the ratio is 660/72 = 9.2 characters of room; at 1200x1050 it
+         had fallen to 7.7, which is the third line. A flat 660px inside the one scale holds that
+         ratio at every desktop window, so the wrap is fixed by construction rather than by a
+         breakpoint. ⚠️ **THIS IS THE THIRD TIME THIS TRAP HAS BEEN PAID FOR** — the title's own
+         `5vw` (D418b), the subtitle's `--uipx` (D423) and now the measure. **Nothing inside a
+         scaled block may carry its own scale.**
+         ⚠️ Per band, as he said — the phone and tablet keep their own approved wraps and their own
+         rules; this is the desktop composition only. */
+      left:clamp(20px,7vw,132px);top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px));width:660px;
       opacity:0;                                  /* the scrub owns it from the first tick */
       /* ⭐⭐⭐ **THE BLOCK SLIDES OFF TO THE SIDE, ON THE SCROLL — D352.** ⛔ This is NOT the pin: the
          pin is parked in `.textanim-2026-08-24/removed-pin-d349-d351.txt` and it went because

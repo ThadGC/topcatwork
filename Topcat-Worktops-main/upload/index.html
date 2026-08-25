@@ -1778,6 +1778,7 @@
                  opacity .3s var(--ease),transform .35s var(--ease)}
     .wa-fab svg,.call-fab svg{width:23px;height:23px}
     .mbar.on ~ .wa-fab,.mbar.on ~ .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
+    html.bar-always .wa-fab,html.bar-always .call-fab{display:none}
   }
   @media(max-height:560px){
     .hero-inner{--heroPadB:clamp(52px,13.5vh,150px)}
@@ -1889,7 +1890,7 @@
     }
     html.cine-on .cine-hero{
       display:block;position:absolute;z-index:3;pointer-events:none;
-      left:clamp(20px,7vw,132px);top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px));width:clamp(320px,46vw,660px);
+      left:clamp(20px,7vw,132px);top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px));width:660px;
       opacity:0;
       transform:translate3d(calc(var(--tx,0) * 1px),0,calc(var(--hz,0) * 1px)) scale(var(--heroScale,1));
       transform-origin:left top;
@@ -7139,11 +7140,14 @@ if(faqIndex && panel && faqBody){
 })();
 (function(){
   const mbar=document.getElementById('mobileBar');
-  const ctas=document.querySelector('.hero-ctas')
-           ||document.querySelector('.page-head .cta-row')
-           ||document.querySelector('.svc-hero .cta-row')
-           ||document.querySelector('.page-head,.svc-hero');
-  if(!mbar||!ctas)return;
+  if(!mbar)return;
+  if(!document.querySelector('.hero-ctas')){
+    document.documentElement.classList.add('bar-always');
+    mbar.classList.add('on');
+    return;
+  }
+  const ctas=document.querySelector('.hero-ctas');
+  if(!ctas)return;
   let shown=false;
   const on=()=>{
     const past=ctas.getBoundingClientRect().bottom < (document.querySelector('header.bar')?.offsetHeight||76);

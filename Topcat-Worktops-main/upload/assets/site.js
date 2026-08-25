@@ -2821,11 +2821,14 @@ if(faqIndex && panel && faqBody){
 })();
 (function(){
   const mbar=document.getElementById('mobileBar');
-  const ctas=document.querySelector('.hero-ctas')
-           ||document.querySelector('.page-head .cta-row')
-           ||document.querySelector('.svc-hero .cta-row')
-           ||document.querySelector('.page-head,.svc-hero');
-  if(!mbar||!ctas)return;
+  if(!mbar)return;
+  if(!document.querySelector('.hero-ctas')){
+    document.documentElement.classList.add('bar-always');
+    mbar.classList.add('on');
+    return;
+  }
+  const ctas=document.querySelector('.hero-ctas');
+  if(!ctas)return;
   let shown=false;
   const on=()=>{
     const past=ctas.getBoundingClientRect().bottom < (document.querySelector('header.bar')?.offsetHeight||76);

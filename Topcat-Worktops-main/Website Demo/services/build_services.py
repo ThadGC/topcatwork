@@ -503,17 +503,15 @@ MBAR_HTML = _mbar_from_index()
 # on every page in every family, including the sitemap.
 # ⛔ NOTHING HERE TESTS THE WIDTH. `.mbar` is `display:none` above 1120px, so the stylesheet stays
 # the only thing that decides which bands have a bar (the landing page's own reasoning).
+# ⭐⭐⭐ **UP FROM THE FIRST PIXEL — 25 Aug 2026 (D436).** Client: *"on the inner pages, it should
+# just have the sticky bottom bar from the get go… only on the main landing page should the sticky
+# bar come up only after they swipe down slightly."* None of these pages is the landing page, so
+# there is nothing to gate on and the whole scroll/resize watcher goes with it — two listeners off
+# every one of the 167 generated pages (§2s). ⚠️ The landing page keeps its own scroll-gated copy,
+# in index.html and in site.js; do not "unify" them, they are two different behaviours now.
 MBAR_JS = ("<script>(function(){var b=document.getElementById('mobileBar');"
-           "var a=document.querySelector('.svc-hero .cta-row')"
-           "||document.querySelector('.page-head .cta-row')"
-           "||document.querySelector('.svc-hero,.page-head,.stp-hero')"
-           "||document.querySelector('main h1');"
-           "if(!b||!a)return;var s=false;function o(){"
-           "var h=(document.querySelector('header.bar')||{}).offsetHeight||76;"
-           "var p=a.getBoundingClientRect().bottom<h;"
-           "if(p!==s){s=p;b.classList.toggle('on',p);}}"
-           "o();window.addEventListener('scroll',o,{passive:true});"
-           "window.addEventListener('resize',o);})();</script>")
+           "if(!b)return;document.documentElement.classList.add('bar-always');"
+           "b.classList.add('on');})();</script>")
 
 
 # ⭐⭐ AND THE FOOTER'S OWN SCRIPT COMES WITH IT. On the tablet the Area and Hours blocks move out

@@ -5611,11 +5611,31 @@ if(faqIndex && panel && faqBody){
    visitor had already reached the bottom, which is the opposite of the point. */
 (function(){
   const mbar=document.getElementById('mobileBar');
-  const ctas=document.querySelector('.hero-ctas')            /* the landing hero — his original spec */
-           ||document.querySelector('.page-head .cta-row')   /* the seven internal pages */
-           ||document.querySelector('.svc-hero .cta-row')    /* the 167 generated pages */
-           ||document.querySelector('.page-head,.svc-hero'); /* a head with no buttons of its own */
-  if(!mbar||!ctas)return;
+  if(!mbar)return;
+  /* ⭐⭐⭐ **UP FROM THE FIRST PIXEL EVERYWHERE EXCEPT THE LANDING PAGE — 25 Aug 2026 (D436).**
+     Client: *"on the inner pages, there's the phone button and the WhatsApp button… it shouldn't be
+     there at all. On the inner pages, it should just have the sticky bottom bar from the get go.
+     Only on the main landing page should the sticky bar come up only after they swipe down
+     slightly."*
+     ⛔⛔ **THIS EDIT HAS TO BE MADE HERE, IN index.html.** `build_pages.py` copies this whole
+     `<script>` VERBATIM into `assets/site.js` — editing site.js by hand looks like it works and is
+     silently reverted by the next build. (Caught by driving the pages: the generated families took
+     the change and the seven internal ones did not.)
+     ⭐ **THE LANDING PAGE IS IDENTIFIED BY `.hero-ctas`, NOT BY `cine-on`.** The film's class comes
+     off whenever the film fails or the visitor asks for reduced motion, and a landing page without
+     its film is still the landing page — keying on it would flip the bar to always-on for exactly
+     the visitors already having a degraded time.
+     ⭐ `bar-always` on the root is what takes the corner discs off: the bar carries WhatsApp and
+     Call itself (D372), so the pair is a second copy of the same two numbers. ⛔ On the landing page
+     the pair is NOT redundant — it flanks the skip control through the film, before this bar has
+     any right to exist. */
+  if(!document.querySelector('.hero-ctas')){
+    document.documentElement.classList.add('bar-always');
+    mbar.classList.add('on');
+    return;
+  }
+  const ctas=document.querySelector('.hero-ctas');
+  if(!ctas)return;
   let shown=false;
   const on=()=>{
     const past=ctas.getBoundingClientRect().bottom < (document.querySelector('header.bar')?.offsetHeight||76);

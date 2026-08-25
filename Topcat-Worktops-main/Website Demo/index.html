@@ -4700,6 +4700,17 @@
        the corner clears. Same sibling-combinator state read as the old lift — `.mbar` must stay
        an EARLIER SIBLING of both fabs or this dies silently (D180's own trap, still live). */
     .mbar.on ~ .wa-fab,.mbar.on ~ .call-fab{opacity:0;pointer-events:none;transform:translateY(8px)}
+    /* ⛔⛔ **THE CORNER PAIR IS GONE WHERE THE BAR IS ALWAYS UP — D436.** Client, of the inner
+       pages: *"it shouldn't be there at all."* The `.mbar.on ~` rule above already fades them
+       (D372), but a faded control is still in the accessibility tree and is still a second copy of
+       the two numbers the bar itself carries. ⚠️ `bar-always` is set by the bar's own script on
+       every page that is NOT the landing page; the landing page never carries it and keeps its
+       pair, which flanks the skip control through the film.
+       ⛔⛔ **AND IT IS DECLARED HERE, IN index.html, BECAUSE `assets/site.css` IS LIFTED FROM THIS
+       FILE VERBATIM AT BUILD TIME.** Editing site.css by hand appears to work and is thrown away by
+       the next `build_pages.py` — the same trap as site.js, and both were hit in one round. Only
+       `services/service.css` is a real source you may edit directly. */
+    html.bar-always .wa-fab,html.bar-always .call-fab{display:none}
   }
   /* ⛔⛔⛔ THE HERO SCROLL CUE IS DELETED, MARKUP AND RULES — 14 Aug 2026 (D234). Client: *"on the
      hero section of the desktop version, remove the down arrow that says scroll above it. So
@@ -5392,7 +5403,23 @@
          so nothing moves there. ⚠️ Its SIZE still comes from `--heroScale` (D418c) — only the
          vertical anchor changed, and the approved column and arrow-to-chips ratios were re-measured
          after (see the register row). */
-      left:clamp(20px,7vw,132px);top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px));width:clamp(320px,46vw,660px);
+      /* ⛔⛔⛔ **THE MEASURE IS FLAT px — A `vw` WIDTH INSIDE A SCALED BLOCK SHRINKS TWICE AND
+         CHANGES THE LINE COUNT. 25 Aug 2026 (D437).** Client, with two screenshots: *"The first
+         screenshot is incorrect. It has three lines in the title. It has to have two lines in the
+         title like in the second screenshot. The only thing that I changed here is I dragged the
+         screen size to be slightly smaller."*
+         ⭐⭐⭐ **THE TYPE AND THE BOX WERE ON DIFFERENT LAWS.** `.cine-hero` carries
+         `scale(var(--heroScale))`, so a `46vw` width was scaled a SECOND time by the transform
+         while the 72px title was scaled once — the box narrowed faster than the type and the
+         headline wrapped. At 1440x900 the ratio is 660/72 = 9.2 characters of room; at 1200x1050 it
+         had fallen to 7.7, which is the third line. A flat 660px inside the one scale holds that
+         ratio at every desktop window, so the wrap is fixed by construction rather than by a
+         breakpoint. ⚠️ **THIS IS THE THIRD TIME THIS TRAP HAS BEEN PAID FOR** — the title's own
+         `5vw` (D418b), the subtitle's `--uipx` (D423) and now the measure. **Nothing inside a
+         scaled block may carry its own scale.**
+         ⚠️ Per band, as he said — the phone and tablet keep their own approved wraps and their own
+         rules; this is the desktop composition only. */
+      left:clamp(20px,7vw,132px);top:calc(var(--filmY,0px) + 237.6 * var(--filmU,1px));width:660px;
       opacity:0;                                  /* the scrub owns it from the first tick */
       /* ⭐⭐⭐ **THE BLOCK SLIDES OFF TO THE SIDE, ON THE SCROLL — D352.** ⛔ This is NOT the pin: the
          pin is parked in `.textanim-2026-08-24/removed-pin-d349-d351.txt` and it went because
@@ -18018,11 +18045,31 @@ if(faqIndex && panel && faqBody){
    visitor had already reached the bottom, which is the opposite of the point. */
 (function(){
   const mbar=document.getElementById('mobileBar');
-  const ctas=document.querySelector('.hero-ctas')            /* the landing hero — his original spec */
-           ||document.querySelector('.page-head .cta-row')   /* the seven internal pages */
-           ||document.querySelector('.svc-hero .cta-row')    /* the 167 generated pages */
-           ||document.querySelector('.page-head,.svc-hero'); /* a head with no buttons of its own */
-  if(!mbar||!ctas)return;
+  if(!mbar)return;
+  /* ⭐⭐⭐ **UP FROM THE FIRST PIXEL EVERYWHERE EXCEPT THE LANDING PAGE — 25 Aug 2026 (D436).**
+     Client: *"on the inner pages, there's the phone button and the WhatsApp button… it shouldn't be
+     there at all. On the inner pages, it should just have the sticky bottom bar from the get go.
+     Only on the main landing page should the sticky bar come up only after they swipe down
+     slightly."*
+     ⛔⛔ **THIS EDIT HAS TO BE MADE HERE, IN index.html.** `build_pages.py` copies this whole
+     `<script>` VERBATIM into `assets/site.js` — editing site.js by hand looks like it works and is
+     silently reverted by the next build. (Caught by driving the pages: the generated families took
+     the change and the seven internal ones did not.)
+     ⭐ **THE LANDING PAGE IS IDENTIFIED BY `.hero-ctas`, NOT BY `cine-on`.** The film's class comes
+     off whenever the film fails or the visitor asks for reduced motion, and a landing page without
+     its film is still the landing page — keying on it would flip the bar to always-on for exactly
+     the visitors already having a degraded time.
+     ⭐ `bar-always` on the root is what takes the corner discs off: the bar carries WhatsApp and
+     Call itself (D372), so the pair is a second copy of the same two numbers. ⛔ On the landing page
+     the pair is NOT redundant — it flanks the skip control through the film, before this bar has
+     any right to exist. */
+  if(!document.querySelector('.hero-ctas')){
+    document.documentElement.classList.add('bar-always');
+    mbar.classList.add('on');
+    return;
+  }
+  const ctas=document.querySelector('.hero-ctas');
+  if(!ctas)return;
   let shown=false;
   const on=()=>{
     const past=ctas.getBoundingClientRect().bottom < (document.querySelector('header.bar')?.offsetHeight||76);
