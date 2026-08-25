@@ -5896,6 +5896,36 @@ if(faqIndex && panel && faqBody){
     if(typeof filmWatch!=='undefined'&&filmWatch!==null){ clearTimeout(filmWatch); filmWatch=null; }
   }
   vid.addEventListener('error',fail);
+  /* ⭐⭐⭐⭐ THE BROKEN STATE HE FILMED, REPRODUCED ON A REAL iPHONE AND FIXED AT THE ROOT (D448).
+     Client: *"the mobile version of the video when I use it on my phone is still not playing."*
+     ⭐⭐⭐ **CAUGHT IT IN THE iOS SIMULATOR WITH A LIVE READOUT ON THE PAGE.** When the film fails to
+     load, the phone reports `readyState 0, networkState 3, error 4, videoWidth 0` — AND
+     `html` STILL CARRIES `cine-on` while `#hero` has picked up `.loaded`. That combination is the
+     exact mess in his screenshots: **the static hero fades in ON TOP of the film's own story text,
+     two headlines and two sets of buttons over a poster that never moves.** With the film loading,
+     the same page reports `error none, buffered 44.2` and renders perfectly — so the fault is not
+     the layout, it is that A FAILED FILM NEVER TURNS THE FILM MODE OFF.
+     ⛔⛔ **WHY `fail()` NEVER RAN: the `error` event had ALREADY FIRED.** `v.src` is assigned by a
+     small script in the HEAD, next to the <video>; this engine runs at the end of BODY. A file that
+     fails fast — no byte-range support, a bad MIME type, a decoder iOS will not give us — errors in
+     between, and `addEventListener('error')` after the fact hears nothing, ever. **An event listener
+     cannot catch an event that happened before it existed; the STATE has to be read.**
+     ⭐ So read it: synchronously now, and again on a few beats while the file is still arriving.
+     ⚠️ `networkState===3` (NO_SOURCE) is checked as well as `.error`, because iOS reaches it without
+     always populating `.error`. ⛔ `readyState` is NOT part of the test — 0 is normal while loading. */
+  function filmDead(){ return !!vid.error || vid.networkState===3; }
+  function checkFilmDead(){ if(filmDead()){ fail(); return true; } return false; }
+  if(!checkFilmDead()){
+    var deadTries=0;
+    var deadPoll=setInterval(function(){
+      if(checkFilmDead()||++deadTries>10||vid.readyState>=2)clearInterval(deadPoll);
+    },400);
+  }
+  /* ⚠️ `fail()` ALREADY LEAVES EXACTLY ONE HERO and needs no help: dropping `cine-on` hides the
+     story text on its own (`.cine-story` is `display:none` without that class, line ~5211) and
+     `stage()` adds `.loaded` so the static hero finishes arriving. ⛔ DO NOT WRAP `fail` TO "ALSO"
+     SET `.loaded` — `vid.addEventListener('error',fail)` captured the original reference, so a
+     reassignment would apply to some call sites and not others, which is worse than either. */
   /* ⭐⭐⭐⭐ THE FILM THAT NEVER ARRIVES (D441) — a frozen poster while the story marched on.
      Client, filming his iPhone: *"You can clearly see the video isn't even playing for mobile, and
      it's constantly jittering and shaking up and down… is it maybe that you're just not playing the

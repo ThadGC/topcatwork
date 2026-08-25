@@ -7240,6 +7240,14 @@ if(faqIndex && panel && faqBody){
     if(typeof filmWatch!=='undefined'&&filmWatch!==null){ clearTimeout(filmWatch); filmWatch=null; }
   }
   vid.addEventListener('error',fail);
+  function filmDead(){ return !!vid.error || vid.networkState===3; }
+  function checkFilmDead(){ if(filmDead()){ fail(); return true; } return false; }
+  if(!checkFilmDead()){
+    var deadTries=0;
+    var deadPoll=setInterval(function(){
+      if(checkFilmDead()||++deadTries>10||vid.readyState>=2)clearInterval(deadPoll);
+    },400);
+  }
   var FILM_WAIT=7000, SPAN_MIN=6, filmWatch=null, filmOK=false;
   function bufferedSpan(){
     try{ var b=vid.buffered,m=0;
