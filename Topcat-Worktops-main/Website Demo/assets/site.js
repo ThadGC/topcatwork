@@ -6596,16 +6596,44 @@ if(faqIndex && panel && faqBody){
       root.classList.toggle('skip-live',!d);
     }
   }
-  if(skipEl)skipEl.addEventListener('click',()=>{
-    /* ⭐⭐ SKIP MEANS LAND ON THE PAGE AS THE FILM LEAVES IT, so this moves the scroll AND snaps the
-       playhead. Without the snap, the eased chase would run all 44 seconds of film past the viewer
-       at speed, which is the opposite of skipping it.
-       ⚠️ `instant`: the page sets `scroll-behavior:smooth`, and a smooth scroll of nine screens is
-       precisely the thing being skipped. */
+  /* ⭐⭐ SKIP MEANS LAND ON THE PAGE AS THE FILM LEAVES IT, so this moves the scroll AND snaps the
+     playhead. Without the snap, the eased chase would run all 44 seconds of film past the viewer
+     at speed, which is the opposite of skipping it.
+     ⚠️ `instant`: the page sets `scroll-behavior:smooth`, and a smooth scroll of nine screens is
+     precisely the thing being skipped.
+     ⭐⭐⭐ **IT IS A NAMED FUNCTION NOW BECAUSE THE LOGO USES IT TOO — 24 Aug 2026.** Client: *"when
+     someone clicks on the top cat logo in the top corner, it takes them to the surfaces worth
+     building around part... not the start of the video."* The skip control and the logo are the
+     same destination, so they are the same code — ⛔ do not write the scroll a second time. */
+  function skipToEnd(){
     measure();
     window.scrollTo({top:Math.round(top+travel),behavior:'instant'});
     target=1; eased=1; want=dur;
     seek(); ink(1); veil(1); curve(1); story(dur); heroCopy(dur); plate(dur); chrome(1); grade();
+  }
+  if(skipEl)skipEl.addEventListener('click',skipToEnd);
+
+  /* ⭐⭐ **THE LOGO, FROM ANYWHERE ON THE SITE.** Every header logo points at `#hero`; on this page
+     that hash means "the hero as the film leaves it", which the browser cannot do on its own —
+     `#hero` is sticky and starts at scroll 0, so an untouched hash jump lands on the FIRST frame,
+     the exact thing he asked to stop happening.
+     ⚠️ **TWICE, AND THE SECOND ONE AFTER `load`** — a scroll set straight after a navigation is
+     undone by the browser's own scroll restoration, and the film also needs `measure()` to have
+     seen a laid-out page. This is the same trap the gallery hit (§7).
+     ⛔ The click path is separate from the load path and both are needed: clicking the logo while
+     already ON the landing page changes only the hash, which fires no navigation and no load. */
+  function heroHash(){ return (location.hash||'').toLowerCase()==='#hero'; }
+  if(heroHash()){
+    skipToEnd();
+    addEventListener('load',()=>{ skipToEnd(); setTimeout(skipToEnd,60); });
+  }
+  document.addEventListener('click',e=>{
+    const a=e.target.closest&&e.target.closest('a.brand'); if(!a)return;
+    const u=new URL(a.getAttribute('href'),location.href);
+    if(u.hash.toLowerCase()!=='#hero'||u.pathname.replace(/index\.html$/,'/')!==location.pathname.replace(/index\.html$/,'/'))return;
+    e.preventDefault();
+    if(location.hash.toLowerCase()!=='#hero')history.replaceState(null,'','#hero');
+    skipToEnd();
   });
 
   function tick(){

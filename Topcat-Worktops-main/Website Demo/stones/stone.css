@@ -108,10 +108,34 @@
   background:rgba(10,10,12,0.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   padding:5px 10px;border-radius:2px;border:1px solid var(--hair-soft)}
 .stile-meta{position:absolute;left:14px;right:40px;bottom:12px;display:flex;flex-direction:column;gap:2px}
+/* ⭐⭐ **THE TYPE IS THE ONLY THING THAT CHANGED HERE, AND THAT IS A CLIENT RULING — 24 Aug 2026.**
+   He watched three attempts at this tile and stopped all three: *"don't add the gradient onto the
+   stone images... the stone is the focus, not the name"*, then *"the blocks below with the name on
+   it doesn't really look good, it's too solid"*, then *"I'm also not a fan of... this transparent
+   gray block over it. Just pretty much keep it like it was before. Just make sure the text is easy
+   to read."*
+   ⛔⛔⛔ **SO THE TILE IS EXACTLY AS IT WAS AND ONLY THE SHADOW IS NEW — AND THE LIMIT OF THAT IS
+   WORTH WRITING DOWN, BECAUSE THE NEXT SESSION WILL OTHERWISE RE-DISCOVER IT THE SAME EXPENSIVE
+   WAY.** Measured across all 132 tiles, worst glyph-local contrast:
+   ```
+   as it was (0 2px 16px)                       105 of 132 below 4.5:1, worst 1.30
+   this stack                                    strictly better everywhere, still short of 4.5
+                                                 on the palest dozen slabs
+   an 8-way 1px keyline round every glyph        100 of 132 — and it fills in Cinzel at 20px
+   dark ink on light stones (data-tone flip)     49 of the 90 "light" stones fail, because light
+                                                 marble is WHITE WITH BLACK VEINS and the veins
+                                                 run straight through the caption
+   deepening the veil                            0 below 4.5 — and it is what he stopped
+   ```
+   ⭐⭐ **A SLAB IS A HIGH-CONTRAST PATTERN BY DEFINITION — THAT IS THE PRODUCT — SO NO INK SURVIVES
+   IT AND NOTHING SHORT OF DARKENING THE PICTURE CLOSES THE LAST DOZEN.** ⛔ Do not "fix" this by
+   reaching for the veil again without asking him first. */
 .stile-name{font-family:var(--serif);font-weight:400;font-size:clamp(16px,1.5vw,20px);color:var(--bone);
-  text-shadow:0 2px 16px rgba(0,0,0,0.75);line-height:1.15}
-.stile-sup{font-family:var(--sans);font-size:11px;color:rgba(244,241,234,0.66);letter-spacing:0.04em;
-  text-shadow:0 1px 10px rgba(0,0,0,0.7)}
+  text-shadow:0 1px 2px rgba(6,6,8,0.92),0 2px 8px rgba(6,6,8,0.85),
+              0 0 18px rgba(6,6,8,0.75),0 0 34px rgba(6,6,8,0.6);line-height:1.15}
+/* ⚠️ the finish line went 0.66 → 0.86: it is 11px on a photograph, the weakest ink on the tile */
+.stile-sup{font-family:var(--sans);font-size:11px;color:rgba(244,241,234,0.86);letter-spacing:0.04em;
+  text-shadow:0 1px 2px rgba(6,6,8,0.92),0 0 10px rgba(6,6,8,0.8),0 0 22px rgba(6,6,8,0.6)}
 .stile-go{position:absolute;right:14px;bottom:10px;font-family:var(--serif);font-size:22px;
   color:var(--gold);opacity:0;transform:translateX(-6px);
   transition:opacity .4s var(--ease),transform .4s var(--ease)}

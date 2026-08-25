@@ -29,6 +29,36 @@
     --gold-soft:#D4B778;     /* accent words in headings — a lifted champagne so they read against the limestone */
     --hair:rgba(198,166,100,0.34);
     --hair-soft:rgba(244,241,234,0.10);
+    /* ⭐⭐⭐ **THE CAPTION FALLOFF — ONE CURVE, EVERY CARD THAT PRINTS TEXT OVER A PHOTOGRAPH.**
+       Client, 24 Aug 2026, on the project cards: *"it's kind of hard to read... find the most
+       perfect way, best looking way to make that text easier to read that still looks great. On
+       all the projects must be easy to read. Everywhere where there's a card like that."*
+       ⛔⛔ **THE FAULT WAS NEVER THE TEXT, IT WAS A TWO-STOP RAMP THAT DIED BEFORE THE TEXT DID.**
+       The old veil ran 0.88 at the floor to 0.04 at 58% — so a title that wraps to TWO lines put
+       its first line up at 41% of the card, where the ramp had already fallen to 0.28. Measured
+       worst glyph-local contrast on the eight project photographs: **Rickmansworth 3.55:1 and
+       Hornchurch 3.77:1 — the two he named, the two worst of the eight, picked out by eye.**
+       Every ONE-line title measured 6.1 or better. That is the whole story.
+       ⭐⭐ **THE SHAPE IS `.pt-scrim`'s, WHICH SOLVED THIS SAME PROBLEM ONCE ALREADY** (see the
+       process tiles: *"a few-stop ramp is what made this hard to read"*). Fourteen eased stops, so
+       the curve has no kink of its own to show — a two-stop ramp has a visible corner where it
+       flattens, which is the D365 complaint (*"you can't see the border of the gradient"*) waiting
+       to happen. ⛔ **Do not flatten this back to a few stops.**
+       ⛔ It is anchored on the bottom edge and reaches EXACTLY ZERO inside its own box, so it is a
+       wash and never a panel (§2 rule 11).
+       ⭐ After: worst name **6.99:1**, worst location line **6.57:1**, every card, and the
+       photographs keep their upper two thirds untouched. */
+    --photo-fade:
+      rgba(8,8,10,0.86) 0%,   rgba(8,8,10,0.835) 8%,  rgba(8,8,10,0.79) 16%,
+      rgba(8,8,10,0.72) 24%,  rgba(8,8,10,0.635) 32%, rgba(8,8,10,0.545) 40%,
+      rgba(8,8,10,0.45) 48%,  rgba(8,8,10,0.355) 56%, rgba(8,8,10,0.265) 64%,
+      rgba(8,8,10,0.185) 72%, rgba(8,8,10,0.115) 80%, rgba(8,8,10,0.06) 88%,
+      rgba(8,8,10,0.025) 94%, rgba(8,8,10,0) 100%;
+    /* ⭐⭐ **AND THE TYPE CARRIES ITS OWN CONTACT SHADOW.** One wide soft blur does almost nothing
+       against a bright patch bigger than itself — measured: the old `0 2px 18px` shadow moved the
+       worst card from 3.55 to 3.90 and no further. A STACK works: a tight near-opaque shadow that
+       hugs the glyph edge, a mid blur, and a wide low-alpha halo that seats the whole word. */
+    --photo-ink:6,6,8;
     /* ⭐⭐ THE FIXED HEADER'S HEIGHT, AS A NUMBER THE REST OF THE PAGE CAN READ — 16 Aug 2026
        (D259). The hero has to give its composition back exactly the height the bar takes off the
        top of the frame, and until now that height existed only as an outcome (18px of padding
@@ -3404,9 +3434,12 @@
   .gal-grid-item{position:relative;aspect-ratio:4/3;border-radius:12px;overflow:hidden;border:1px solid var(--hair-soft);cursor:pointer;background:var(--ink-2);--glow-r:170px}
   .gal-grid-item img{width:100%;height:100%;object-fit:cover;filter:saturate(0.9) brightness(0.85);transition:transform .5s var(--ease),filter .5s var(--ease)}
   .gal-grid-item:hover img{transform:scale(1.05);filter:saturate(1) brightness(1)}
-  .gg-veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,10,0.86),transparent 55%)}
-  .gg-name{position:absolute;left:14px;bottom:28px;right:14px;z-index:2;font-family:var(--serif);font-size:17px;color:var(--bone)}
-  .gg-place{position:absolute;left:14px;bottom:12px;z-index:2;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold)}
+  /* the same caption falloff as the hallway cards — these ARE the same project blocks */
+  .gg-veil{position:absolute;inset:0;background:linear-gradient(to top,var(--photo-fade))}
+  .gg-name{position:absolute;left:14px;bottom:28px;right:14px;z-index:2;font-family:var(--serif);font-size:17px;color:var(--bone);
+    text-shadow:0 1px 2px rgba(var(--photo-ink),0.92),0 2px 10px rgba(var(--photo-ink),0.78),0 0 24px rgba(var(--photo-ink),0.6)}
+  .gg-place{position:absolute;left:14px;bottom:12px;z-index:2;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);
+    text-shadow:0 1px 2px rgba(var(--photo-ink),0.9),0 0 12px rgba(var(--photo-ink),0.7)}
   .gal-grid-close{position:fixed;top:22px;right:26px;z-index:102;padding:11px 22px;background:rgba(10,10,12,0.8);
     border:1px solid rgba(198,166,100,0.45);color:var(--bone);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;border-radius:2px}
   .gal-grid-close:hover{border-color:var(--gold);color:var(--gold)}
@@ -3440,8 +3473,21 @@
   }
   .gal-card img{width:100%;height:100%;object-fit:cover;display:block;
     filter:saturate(0.86) brightness(0.84) contrast(1.02);transition:filter .5s var(--ease)}
+  /* ⭐⭐⭐ **THE FADE IS SIZED BY `--cw`, NOT BY THE CARD'S HEIGHT, AND THAT IS THE WHOLE TRICK.**
+     Every part of the caption is `calc(var(--cw) * k)` — the type, the leading, the insets — so
+     the top of a two-line title sits at a CONSTANT **0.25 × --cw** off the floor at every band.
+     The card's HEIGHT is what changes: 1.61:1 on desktop and tablet, but **2.28:1 on the phone**,
+     where the same caption therefore reaches **59% of the frame instead of 41%**.
+     ⛔⛔ **A FADE MEASURED IN % OF THE CARD IS THEREFORE A DIFFERENT FADE ON EVERY BAND**, and it
+     was measured: with the fade at 100% the phone's two-line titles came back at **3.52 / 3.95 /
+     4.21:1** — no better than before the fix — while the desktop's read 6.99. Sizing the fade off
+     `--cw` puts the caption on the SAME POINT OF THE CURVE everywhere: **phone worst 5.85, tablet
+     and desktop 6.99**, one declaration, no per-band copies.
+     ⭐ `max(100%, …)` is the floor: on desktop and tablet 0.62·cw IS the card height to within a
+     pixel, so those two bands are untouched; only the phone's short card takes the taller fade,
+     which then leaves a 0.196 wash on its top edge — a wash with no edge, never a panel. */
   .gal-veil{position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:linear-gradient(to top,rgba(8,8,10,0.88),rgba(8,8,10,0.04) 58%)}
+    background:linear-gradient(to top,var(--photo-fade)) bottom/100% max(100%,calc(var(--cw,420px) * 0.62)) no-repeat}
   /* Label type is sized off the card itself rather than fixed px, so it stays in proportion
      on a narrow stage where the card has to shrink. At the desktop card (418px) this lands on
      30px / 11px — nudge the multipliers, not the px. */
@@ -3460,9 +3506,14 @@
     bottom:calc(var(--cw,420px) * 0.043);z-index:2;
     opacity:1;transform:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
   .gal-name{display:block;font-family:var(--serif);font-size:calc(var(--cw,420px) * 0.072);
-    font-weight:400;line-height:1.1;color:var(--bone);text-shadow:0 2px 18px rgba(0,0,0,0.75)}
+    font-weight:400;line-height:1.1;color:var(--bone);
+    text-shadow:0 1px 2px rgba(var(--photo-ink),0.92),0 2px 10px rgba(var(--photo-ink),0.78),
+                0 0 30px rgba(var(--photo-ink),0.62)}
+  /* ⚠️ the location line had NO shadow at all, and gold is the weakest ink on the card (0.40
+     luminance against bone's 0.88) — it was the worst-off text here after the title */
   .gal-place{display:block;font-size:calc(var(--cw,420px) * 0.0264);letter-spacing:0.24em;
-    text-transform:uppercase;color:var(--gold);margin-top:calc(var(--cw,420px) * 0.014)}
+    text-transform:uppercase;color:var(--gold);margin-top:calc(var(--cw,420px) * 0.014);
+    text-shadow:0 1px 2px rgba(var(--photo-ink),0.9),0 0 14px rgba(var(--photo-ink),0.7)}
   /* hover only on the set that's parked at the front — mid-move it is just noise. The LABELS are
      no longer gated here; see `.gal-meta` above (client, 14 Aug 2026). */
   /* The flat inset hover ring that used to live on .gal-door::after is GONE — that pseudo is the
@@ -4115,7 +4166,13 @@
     display:inline-flex;align-items:center;gap:9px;padding:10px 17px;border-radius:999px;position:relative;
     border:1px solid rgba(198,166,100,0.28);background:rgba(9,9,11,0.55);
     -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-    font-size:12px;color:rgba(244,241,234,0.85);font-weight:300;letter-spacing:0.02em;white-space:nowrap;
+    /* ⭐⭐ **THE BUBBLE'S WORDS ARE WHITE, NOT GREY — 24 Aug 2026.** Client: *"go and make sure that
+       the blocks that says Google reviews, ten year guarantee, seventy two hour aftercare, free
+       home visit — just make sure that all that text is white as well... not gray across all
+       devices."* ⭐ 0.85 → full `--bone`. It is D304's own split applied one level further: these
+       read as facts a buyer is weighing, not as labels on something else. ⛔ The gold numerals and
+       the house keep their metal — he named the WORDS. */
+    font-size:12px;color:var(--bone);font-weight:300;letter-spacing:0.02em;white-space:nowrap;
   }
   .chip b{color:var(--gold);font-weight:500;letter-spacing:2.5px;font-size:11.5px}
   /* ⛔ The phone's own CTA and subtitle copy are off by default and come on inside the ≤1120
@@ -4141,8 +4198,9 @@
   #hero .g-mark,.page-head .g-mark{display:block;flex:none;width:26px;height:26px}
   #hero .g-stack,.page-head .g-stack{display:flex;flex-direction:column;justify-content:space-between;
     height:26px;line-height:1;text-align:left}
+  /* ⭐ "Google reviews" is one of the four he named — full bone, same as the other three */
   #hero .g-word,.page-head .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
-    color:rgba(244,241,234,0.92)}
+    color:var(--bone)}
   /* ⭐ **THE RATING IS ONE LINE: `5.0 ★★★★★`, SCORE FIRST.** The score sits under the "G" of
      Google and the stars follow it — client, 14 August 2026, asked more than once.
      ⛔ **D176 RECORDED THE OPPOSITE ORDER (★★★★★ then 5.0) AND IS SUPERSEDED. Do not restore it
@@ -4154,7 +4212,7 @@
   #hero .g-rating,.page-head .g-rating{display:flex;align-items:baseline;gap:5px}
   #hero .g-stars,.page-head .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
   #hero .g-score,.page-head .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
-    color:rgba(244,241,234,0.92)}
+    color:var(--bone)}
   /* ⚠️ CLIPPED, NOT `display:none` — see the markup note. "5.0 on Google" stays in the
      accessibility tree because a logo and five star glyphs do not say it on their own. */
   #hero .chip-legacy,.page-head .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;

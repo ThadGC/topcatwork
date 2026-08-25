@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=e803e014a7">
+<link rel="stylesheet" href="/assets/site.css?v=f1577c81b2">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -41,7 +41,14 @@
   <i class="bar-flare" aria-hidden="true"></i>
   <!-- The link carries the accessible name, so the image is decorative and takes alt="" rather
        than announcing the brand a second time. -->
-  <a class="brand" href="/" aria-label="Topcat Worktops, home">
+  <!-- ⭐⭐ **THE LOGO LANDS ON THE SECOND HERO, NOT ON THE FILM'S FIRST FRAME — 24 Aug 2026.**
+       Client: *"when someone clicks on the top cat logo in the top corner, it takes them to the
+       surfaces worth building around part. That's the second hero section... not the start of the
+       video."* ⭐ `#hero` was ALREADY the convention on the other 167 pages (every one of the four
+       builders emits `/index.html#hero`); it simply never did anything, because `#hero` is sticky
+       at the top of the document so the browser's own hash jump lands on the film's FIRST frame.
+       The film script honours it now — see `skipToEnd()`. -->
+  <a class="brand" href="/#hero" aria-label="Topcat Worktops, home">
     <img class="brand-logo" src="/assets/brand/topcat-horizontal.svg" alt="" width="1455" height="323" decoding="async">
   </a>
   <!-- ⚠️ Trade is a REAL PAGE, not a hash. It is the only nav item that leaves the page, and
@@ -1045,6 +1052,6 @@
 
 </main>
 
-<script src="/assets/site.js?v=c8d179e107" defer></script>
+<script src="/assets/site.js?v=25638a1a7e" defer></script>
 </body>
 </html>
