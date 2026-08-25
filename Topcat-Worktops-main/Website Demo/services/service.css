@@ -15,6 +15,7 @@
   --body:var(--bone);
   --gold:#C6A664; --gold-lo:#8C6B34; --gold-hi:#E4CD92; --gold-soft:#D4B778;
   --hair:rgba(198,166,100,0.34); --hair-soft:rgba(244,241,234,0.10);
+  --warn:#E08A6B;   /* the one alert colour on the site — see index.html :root for why it is not red */
   --ease:cubic-bezier(0.16,1,0.3,1);
   --serif:"Cinzel","Cormorant Garamond",Georgia,serif;
   --sans:"Montserrat",system-ui,-apple-system,sans-serif;
@@ -687,6 +688,17 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
     font-family:var(--sans);font-size:14px;font-weight:300;
     transition:border-color .35s var(--ease),background .35s var(--ease)}
   .qform input::placeholder{color:rgba(244,241,234,0.42)}
+  /* ⭐⭐ **THE SHARED FORM ERROR STATE — 24 Aug 2026.** The same two classes `assets/tcform.js`
+     writes on the landing page's enquiry card, so a mistyped email looks identical on all 176
+     pages. ⚠️ The message goes into `.qf-note`, the line this card ALREADY has under the button,
+     so an error never pushes the button down the page.
+     ⛔ **AND `.qf-done` NOW ONLY EVER SHOWS AFTER A REAL SEND.** It used to appear on any submit,
+     including an empty one, saying "we have your details" when nothing had been sent. */
+  .qform .tc-bad{border-color:var(--warn,#E08A6B);background:rgba(224,138,107,0.07)}
+  .qform .tc-bad:focus{border-color:var(--warn,#E08A6B);box-shadow:0 0 0 3px rgba(224,138,107,0.16)}
+  .qform .qf-note.tc-bad,.qform .tc-formnote.tc-bad{color:var(--warn,#E08A6B)}
+  .qform .qf-note.tc-ok,.qform .tc-formnote.tc-ok{color:var(--gold)}
+  .qform .tc-formnote{margin-top:10px;font-size:12.5px;line-height:1.55;color:var(--muted)}
   /* ⚠️ The native select inherits the page's dark ground but its OPTION list is drawn by the
      operating system, so the options are given an explicit dark pair or they render as black text
      on black on a Mac. */

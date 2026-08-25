@@ -793,6 +793,11 @@ def build_page(parts, page):
     body.append("\n")
     body.append(parts["footer"])
     body.append("\n</main>\n")
+    # ⭐⭐ THE SHARED FORM MODULE — 24 Aug 2026. Four of these seven pages carry a form
+    # (contact, about, projects, trade) and it is the same file the landing page and all 31
+    # SEO/service pages load, so it is one description and one cache entry for the whole site.
+    # ⛔ Never inline a second copy of the validation into a page family.
+    body.append('<script src="/assets/tcform.js?v=1" defer></script>\n')
     body.append('<script src="/assets/site.js?v=%s" defer></script>\n</body>\n</html>\n' % page["_jsv"])
     return "\n".join(body)
 

@@ -28,6 +28,12 @@
     --gold-hi:#E4CD92;       /* pale */
     --gold-soft:#D4B778;     /* accent words in headings — a lifted champagne so they read against the limestone */
     --hair:rgba(198,166,100,0.34);
+    /* ⭐ **THE ONLY ALERT COLOUR ON THE SITE, AND IT IS DELIBERATELY NOT RED.** A form field that
+       needs fixing has to read as wrong at a glance without turning a champagne-and-ink page into
+       a browser warning. A warm terracotta sits in the same family as the gold and still measures
+       6.8:1 against the ink. ⛔ Do not reach for `#f00` here, and do not use this for anything
+       that is not a correction the visitor has to make. */
+    --warn:#E08A6B;
     --hair-soft:rgba(244,241,234,0.10);
     /* ⭐⭐⭐ **THE CAPTION FALLOFF — ONE CURVE, EVERY CARD THAT PRINTS TEXT OVER A PHOTOGRAPH.**
        Client, 24 Aug 2026, on the project cards: *"it's kind of hard to read... find the most
@@ -668,8 +674,16 @@
      ID (`#estimator`, and its neighbours on the other six), and no selector built from `.page-head`
      can out-specify an id. ⛔ Do not "clean this up" into a class rule — it will silently stop
      applying, which is §6's own warning: a rule can parse perfectly and never apply.
-     ⭐ It cannot reach the landing page: no `.page-head` element exists there, so it never matches. */
+     ⭐ It cannot reach the landing page: no `.page-head` element exists there, so it never matches.
+     ⭐⭐ **AND THE DESKTOP TAKES MORE AIR THAN THE TWO NARROW BANDS — HIS SECOND NOTE, THE SAME
+     HOUR:** *"on pages like the projects and get an estimate, the spacing can be a little bit
+     bigger on desktop than on the other screens because it'll be too close to the hero section."*
+     A desktop head is wide and short, so its edge sits much closer to the eye's centre than the
+     same edge on a phone. **Measured: 56px on the narrow bands, 81px on the desktop.** */
   .page-head + section{margin-top:clamp(8px,1.6vh,24px) !important}
+  @media(min-width:1121px){
+    .page-head + section{margin-top:clamp(30px,4.4vh,56px) !important}
+  }
   .page-head-in{position:relative;z-index:1;max-width:860px;margin:0 auto}
   .page-head .eyebrow{margin-bottom:14px}
   /* ⚠️ `--serif` and `--gold-soft`, the same two the `.section-title` uses — an internal page's
@@ -7004,6 +7018,17 @@
   }
   .cta-form textarea{min-height:clamp(52px,8.4vh,76px);resize:vertical}
   .cta-form input::placeholder,.cta-form textarea::placeholder{color:rgba(244,241,234,0.38)}
+  /* ⭐⭐⭐ **THE FORM ERROR STATE — 24 Aug 2026, and it is shared by every form on the site.**
+     `assets/tcform.js` puts `.tc-bad` on the field it wants fixed and on the reply line, and takes
+     it off the instant the visitor starts typing in that field. ⚠️ THE REPLY LINE IS THE ONE THE
+     CARD ALREADY HAD (`.cta-reply` / `.qf-note`), so an error never pushes the button down the
+     page — the commonest way a validation message loses the customer it was written for.
+     ⛔ No icons, no shake, no red panel: a border and a sentence. */
+  .cta-form .tc-bad,.qform .tc-bad{border-color:var(--warn);background:rgba(224,138,107,0.07)}
+  .cta-form .tc-bad:focus,.qform .tc-bad:focus{border-color:var(--warn);box-shadow:0 0 0 3px rgba(224,138,107,0.16)}
+  .cta-reply.tc-bad,.qf-note.tc-bad,.tc-formnote.tc-bad{color:var(--warn)}
+  .cta-reply.tc-ok,.qf-note.tc-ok,.tc-formnote.tc-ok{color:var(--gold)}
+  .tc-formnote{margin-top:10px;font-size:12.5px;line-height:1.55;color:var(--muted)}
   /* ⭐ THE SELECT HAD TO BE UNDRESSED BY HAND — 13 August 2026 (D191), and it is not pedantry.
      The trade form is the first form on this site with a `<select>`, and a select is one of the
      few controls a browser paints ITSELF: left alone it arrives as a WHITE box with a system

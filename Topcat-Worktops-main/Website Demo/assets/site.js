@@ -8000,34 +8000,23 @@ function viewSequence(host,tiles,apply,opts){
   const form=document.getElementById('ctaForm');
   const reply=document.getElementById('ctaReply');
   if(!form||!reply) return;
-  const resting=reply.textContent;
-  /* everything the enquiry carries, in one object, ready for a real POST */
-  function buildEnquiry(){
-    const fd=new FormData();
-    ['name','email','phone','postcode','message'].forEach(k=>{
-      const el=form.querySelector('[name='+k+']'); if(el)fd.append(k,el.value.trim());
-    });
+  /* ⭐⭐⭐ **THE SUBMIT IS NOT HERE ANY MORE — `assets/tcform.js` OWNS IT, FOR ALL 38 FORMS.**
+     24 Aug 2026, on his *"make sure that every form is working"*. What used to live here was a
+     demo message with NO validation at all: an empty form, an address of "x" and a phone number
+     of "1" were all accepted. Worse, the same submit on the 31 SEO pages claimed *"we have your
+     details"* when nothing had been sent, and the trade page's button did nothing whatsoever.
+     ⛔ **DO NOT ADD A SECOND SUBMIT LISTENER HERE.** One description, one file; a form added next
+     month is correct for free. See the header of `tcform.js` for what each form was doing wrong.
+     ⭐ **WHAT STAYS HERE IS WHAT ONLY THIS PAGE KNOWS**: the picked-stone chip and the shared
+     upload store. They reach the enquiry through the hook below rather than by `tcform.js`
+     reaching into this page's state. */
+  window.TC_FORM_EXTRA=function(fd,f){
+    if(f!==form) return;
     const chipEl=document.getElementById('ctaStoneName');
     if(chipEl&&chipEl.textContent)fd.append('stone',chipEl.textContent);
     if(TC_UP.link)fd.append('stone_link',TC_UP.link);
     TC_UP.files.forEach((it,i)=>fd.append('file'+(i+1),it.file,it.file.name));
-    return fd;
-  }
-  form.addEventListener('submit',e=>{
-    e.preventDefault();
-    /* built on every submit so the demo message can say what a real send would carry */
-    const enquiry=buildEnquiry();
-    const nFiles=TC_UP.files.length;
-    const extras=[nFiles?(nFiles===1?'1 file':nFiles+' files'):'',TC_UP.link?'your stone link':'']
-      .filter(Boolean).join(' and ');
-    const name=(form.querySelector('[name=name]').value||'').trim();
-    const who=name?`Thanks ${name}, this`:'This';
-    reply.textContent=extras
-      ? `${who} is a demo form, so nothing was sent. A live form would send ${extras} with it.`
-      : `${who} is a demo form, so nothing was sent.`;
-    reply.style.color='var(--gold)';
-    setTimeout(()=>{ reply.textContent=resting; reply.style.color=''; },6500);
-  });
+  };
   /* mount every upload control on the page, then paint them once from the shared store */
   document.querySelectorAll('.tc-up[data-up]').forEach(mountUpload);
   renderUploads();

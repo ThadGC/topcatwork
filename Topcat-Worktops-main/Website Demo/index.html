@@ -50,6 +50,12 @@
     --gold-hi:#E4CD92;       /* pale */
     --gold-soft:#D4B778;     /* accent words in headings — a lifted champagne so they read against the limestone */
     --hair:rgba(198,166,100,0.34);
+    /* ⭐ **THE ONLY ALERT COLOUR ON THE SITE, AND IT IS DELIBERATELY NOT RED.** A form field that
+       needs fixing has to read as wrong at a glance without turning a champagne-and-ink page into
+       a browser warning. A warm terracotta sits in the same family as the gold and still measures
+       6.8:1 against the ink. ⛔ Do not reach for `#f00` here, and do not use this for anything
+       that is not a correction the visitor has to make. */
+    --warn:#E08A6B;
     --hair-soft:rgba(244,241,234,0.10);
     /* ⭐⭐⭐ **THE CAPTION FALLOFF — ONE CURVE, EVERY CARD THAT PRINTS TEXT OVER A PHOTOGRAPH.**
        Client, 24 Aug 2026, on the project cards: *"it's kind of hard to read... find the most
@@ -690,8 +696,16 @@
      ID (`#estimator`, and its neighbours on the other six), and no selector built from `.page-head`
      can out-specify an id. ⛔ Do not "clean this up" into a class rule — it will silently stop
      applying, which is §6's own warning: a rule can parse perfectly and never apply.
-     ⭐ It cannot reach the landing page: no `.page-head` element exists there, so it never matches. */
+     ⭐ It cannot reach the landing page: no `.page-head` element exists there, so it never matches.
+     ⭐⭐ **AND THE DESKTOP TAKES MORE AIR THAN THE TWO NARROW BANDS — HIS SECOND NOTE, THE SAME
+     HOUR:** *"on pages like the projects and get an estimate, the spacing can be a little bit
+     bigger on desktop than on the other screens because it'll be too close to the hero section."*
+     A desktop head is wide and short, so its edge sits much closer to the eye's centre than the
+     same edge on a phone. **Measured: 56px on the narrow bands, 81px on the desktop.** */
   .page-head + section{margin-top:clamp(8px,1.6vh,24px) !important}
+  @media(min-width:1121px){
+    .page-head + section{margin-top:clamp(30px,4.4vh,56px) !important}
+  }
   .page-head-in{position:relative;z-index:1;max-width:860px;margin:0 auto}
   .page-head .eyebrow{margin-bottom:14px}
   /* ⚠️ `--serif` and `--gold-soft`, the same two the `.section-title` uses — an internal page's
@@ -7026,6 +7040,17 @@
   }
   .cta-form textarea{min-height:clamp(52px,8.4vh,76px);resize:vertical}
   .cta-form input::placeholder,.cta-form textarea::placeholder{color:rgba(244,241,234,0.38)}
+  /* ⭐⭐⭐ **THE FORM ERROR STATE — 24 Aug 2026, and it is shared by every form on the site.**
+     `assets/tcform.js` puts `.tc-bad` on the field it wants fixed and on the reply line, and takes
+     it off the instant the visitor starts typing in that field. ⚠️ THE REPLY LINE IS THE ONE THE
+     CARD ALREADY HAD (`.cta-reply` / `.qf-note`), so an error never pushes the button down the
+     page — the commonest way a validation message loses the customer it was written for.
+     ⛔ No icons, no shake, no red panel: a border and a sentence. */
+  .cta-form .tc-bad,.qform .tc-bad{border-color:var(--warn);background:rgba(224,138,107,0.07)}
+  .cta-form .tc-bad:focus,.qform .tc-bad:focus{border-color:var(--warn);box-shadow:0 0 0 3px rgba(224,138,107,0.16)}
+  .cta-reply.tc-bad,.qf-note.tc-bad,.tc-formnote.tc-bad{color:var(--warn)}
+  .cta-reply.tc-ok,.qf-note.tc-ok,.tc-formnote.tc-ok{color:var(--gold)}
+  .tc-formnote{margin-top:10px;font-size:12.5px;line-height:1.55;color:var(--muted)}
   /* ⭐ THE SELECT HAD TO BE UNDRESSED BY HAND — 13 August 2026 (D191), and it is not pedantry.
      The trade form is the first form on this site with a `<select>`, and a select is one of the
      few controls a browser paints ITSELF: left alone it arrives as a WHITE box with a system
@@ -19809,34 +19834,23 @@ function viewSequence(host,tiles,apply,opts){
   const form=document.getElementById('ctaForm');
   const reply=document.getElementById('ctaReply');
   if(!form||!reply) return;
-  const resting=reply.textContent;
-  /* everything the enquiry carries, in one object, ready for a real POST */
-  function buildEnquiry(){
-    const fd=new FormData();
-    ['name','email','phone','postcode','message'].forEach(k=>{
-      const el=form.querySelector('[name='+k+']'); if(el)fd.append(k,el.value.trim());
-    });
+  /* ⭐⭐⭐ **THE SUBMIT IS NOT HERE ANY MORE — `assets/tcform.js` OWNS IT, FOR ALL 38 FORMS.**
+     24 Aug 2026, on his *"make sure that every form is working"*. What used to live here was a
+     demo message with NO validation at all: an empty form, an address of "x" and a phone number
+     of "1" were all accepted. Worse, the same submit on the 31 SEO pages claimed *"we have your
+     details"* when nothing had been sent, and the trade page's button did nothing whatsoever.
+     ⛔ **DO NOT ADD A SECOND SUBMIT LISTENER HERE.** One description, one file; a form added next
+     month is correct for free. See the header of `tcform.js` for what each form was doing wrong.
+     ⭐ **WHAT STAYS HERE IS WHAT ONLY THIS PAGE KNOWS**: the picked-stone chip and the shared
+     upload store. They reach the enquiry through the hook below rather than by `tcform.js`
+     reaching into this page's state. */
+  window.TC_FORM_EXTRA=function(fd,f){
+    if(f!==form) return;
     const chipEl=document.getElementById('ctaStoneName');
     if(chipEl&&chipEl.textContent)fd.append('stone',chipEl.textContent);
     if(TC_UP.link)fd.append('stone_link',TC_UP.link);
     TC_UP.files.forEach((it,i)=>fd.append('file'+(i+1),it.file,it.file.name));
-    return fd;
-  }
-  form.addEventListener('submit',e=>{
-    e.preventDefault();
-    /* built on every submit so the demo message can say what a real send would carry */
-    const enquiry=buildEnquiry();
-    const nFiles=TC_UP.files.length;
-    const extras=[nFiles?(nFiles===1?'1 file':nFiles+' files'):'',TC_UP.link?'your stone link':'']
-      .filter(Boolean).join(' and ');
-    const name=(form.querySelector('[name=name]').value||'').trim();
-    const who=name?`Thanks ${name}, this`:'This';
-    reply.textContent=extras
-      ? `${who} is a demo form, so nothing was sent. A live form would send ${extras} with it.`
-      : `${who} is a demo form, so nothing was sent.`;
-    reply.style.color='var(--gold)';
-    setTimeout(()=>{ reply.textContent=resting; reply.style.color=''; },6500);
-  });
+  };
   /* mount every upload control on the page, then paint them once from the shared store */
   document.querySelectorAll('.tc-up[data-up]').forEach(mountUpload);
   renderUploads();
@@ -20420,5 +20434,10 @@ document.querySelectorAll('.rise').forEach(el=>io.observe(el));
 </script>
 
 <!-- V1/V2 version switch. Additive only: V1 design/content is otherwise unchanged. -->
+<!-- ⭐⭐⭐ **ONE FORM BEHAVIOUR FOR THE WHOLE SITE — 24 Aug 2026.** Validation, the error state,
+     the reply and the single `ENDPOINT` constant that makes all 38 forms live. ⚠️ `defer`, and it
+     is the only external JS this page loads besides its own: ~4 KB, cached once for 176 pages.
+     ⛔ Every page family loads THIS file — never a second copy of the logic. -->
+<script src="/assets/tcform.js?v=1" defer></script>
 </body>
 </html>

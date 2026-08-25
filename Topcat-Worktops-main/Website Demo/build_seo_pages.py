@@ -385,9 +385,15 @@ def qform_html(preselect=""):
 </aside>"""
 
 
-QFORM_JS = ("<script>(function(){var f=document.getElementById('qform');if(!f)return;"
-            "f.addEventListener('submit',function(ev){ev.preventDefault();"
-            "f.classList.add('sent');});})();</script>")
+# ⛔⛔⛔ **THIS USED TO BE THE WORST BUG ON THE SITE AND IT WAS ON 31 PAGES — 24 Aug 2026.**
+# The old snippet was three lines: preventDefault, add `.sent`, done. `.sent` hides the fields and
+# reveals `.qf-done`, which reads *"Thank you, we have your details and will come back to you
+# within one working day."* — on an EMPTY form, with nothing sent and nothing stored. A visitor
+# typed nothing, pressed the button and was told Topcat had their number.
+# ⭐ `assets/tcform.js` owns every form on the site now: the same validation, the same error state
+# and the same reply everywhere, and `.qf-done` only ever shows after a real, successful POST.
+# ⛔ Do not put a second submit handler back on this family.
+QFORM_JS = '<script src="/assets/tcform.js?v=1" defer></script>'
 
 
 def crumbs(items):
