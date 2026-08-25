@@ -534,7 +534,13 @@
      ⭐⭐ D106/D113/D114/D197 again, and the fourth time it has been a padding or display value
      quietly overruled by a shorter selector further up. **When a rule looks correct and the page
      disagrees, print the COMPUTED value before you change the declaration.** */
-  @media(min-width:1121px){ :root{--uipx:clamp(0.86px,calc(100vw / 1440),1.18px)} }
+  /* ⭐⭐ D418b — HIS SECOND SCREENSHOT PAIR PROVED THE FIRST FIX KEYED ON THE WRONG AXIS.
+     His window is wide and SHORT; the first screen is a 100vh composition, so the constraining
+     dimension there is the HEIGHT — a width-only anchor made his chrome BIGGER. The anchor is
+     now the TIGHTER of the two against the approved 1440×900 frame: at 1440×900 it is exactly
+     1px, on a wide-short window the height side wins and the whole first screen closes down in
+     proportion, and the arrow gets its air back above the chips. */
+  @media(min-width:1121px){ :root{--uipx:clamp(0.80px,min(100vw / 1440, 100vh / 900),1.18px)} }
   nav.top .nav-menu a{
     padding:calc(11*var(--uipx)) calc(26*var(--uipx));font-size:calc(10.5*var(--uipx));letter-spacing:0.15em;white-space:nowrap;
     text-decoration:underline;text-decoration-color:transparent;
@@ -4556,6 +4562,16 @@
       box-shadow:0 10px 26px -12px rgba(0,0,0,0.85);
       transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
                  opacity .3s var(--ease),transform .35s var(--ease)}
+    /* ⛔⛔ D419 (25 Aug) — HIS PHOTOGRAPH OF THE STRIPE ACROSS THE CALL BUTTON. A fixed element's
+       backdrop-filter over the film's video layer is the D405 flicker in still form: the blur
+       samples across a compositor tile seam and paints it as a band. isolation:isolate did not
+       stop it. So ON THE FILM'S PAGE the buttons do not sample at all — flat 0.78 keeps the skip
+       pill's tone without the frost — and the artifact has no mechanism left. Inner pages have
+       no video and keep the original frosted dress. ⛔ Do not put backdrop-filter back under
+       html.cine-on. */
+    html.cine-on .wa-fab,html.cine-on .call-fab{
+      -webkit-backdrop-filter:none;backdrop-filter:none;
+      background:rgba(8,8,11,0.78)}
     /* ⭐⭐⭐ **BOTH GLYPHS ARE 23px AND THEY NOW MEAN THE SAME THING — 25 August 2026.** Client:
        *"the little phone icon inside the circle is too small. So fix it across the board."*
        ⛔⛔ **THE BOX WAS NEVER THE PROBLEM, THE ARTWORK WAS.** Measured with `getBBox()`: the
@@ -5323,7 +5339,9 @@
        and the indicator barely moves either way. 57% is the best vertical position on this frame. */
     html.cine-on .cine-hero .cine-hl{
       margin:0;font-family:var(--serif);font-weight:400;
-      font-size:clamp(38px,5vw,76px);line-height:1.06;letter-spacing:-0.004em;
+      /* D418b: 72 × the 1440×900-anchored pixel — 72px at the reference, keyed to the
+         window's SHORT side so the title never towers on a wide-short screen */
+      font-size:clamp(38px,calc(72*var(--uipx)),76px);line-height:1.06;letter-spacing:-0.004em;
       color:var(--bone);text-wrap:balance;
       /* a contact shadow so the type reads as an object in the room, exactly as the titles do —
          ⛔ never the legibility mechanism on its own, which is what D313 proved twice */
@@ -5420,13 +5438,13 @@
        to. Nothing else moves. ⭐ To put it beside the word instead: `flex-direction:row`,
        `align-items:center`, and drop the shaft to ~34px. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:36px 0 0;display:inline-flex;flex-direction:column;gap:26px;align-items:flex-start;
+      margin:calc(36*var(--uipx)) 0 0;display:inline-flex;flex-direction:column;gap:calc(26*var(--uipx));align-items:flex-start;
     }
     /* ⛔ THE WORD IS BONE, NOT GOLD, and that is deliberate after D327b. The headline's "starts
        here." is the gold on this frame; a second gold sixty pixels under it competes with the first
        and neither wins. White word, gold marks — the hierarchy the rest of the site uses. */
     html.cine-on .cine-hero .cine-hero-cue span{
-      font:500 14px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
+      font-weight:500;font-size:calc(14*var(--uipx));line-height:1;font-family:var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
       text-shadow:0 1px 16px rgba(6,6,8,0.9),0 1px 3px rgba(6,6,8,0.8);
     }
     /* ⛔⛔ ITS OWN KEYFRAMES, NOT `cineCue`. The film's cue drops to **opacity 0.2** for a third of
@@ -5472,14 +5490,14 @@
        so that half of a 2.5 stroke still lands the tip exactly on the box's left edge, which is
        what keeps it in line with the "S" of SCROLL. */
     html.cine-on .cine-hero .cine-hero-cue i{
-      display:block;position:relative;width:32px;height:96px;
+      display:block;position:relative;width:calc(32*var(--uipx));height:calc(96*var(--uipx));
       filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
       will-change:transform;
       animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
     }
     /* the base: the silhouette that is never allowed to go anywhere */
     html.cine-on .cine-hero .cine-hero-cue i > svg{
-      display:block;width:32px;height:96px;color:rgba(198,166,100,0.62);
+      display:block;width:calc(32*var(--uipx));height:calc(96*var(--uipx));color:rgba(198,166,100,0.62);
       fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
     }
     /* the arrow's own shape, held still, with the light moving inside it */

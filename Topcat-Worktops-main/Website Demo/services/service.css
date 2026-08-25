@@ -36,7 +36,7 @@
   --marbleBG:url('/assets/stone-floor.webp');
   --floorVeil:0.70; --floorVeilRGB:2,2,4; --floorGlowA:0.06; --floorGlowB:0.04;
 }
-@media(min-width:1121px){ :root{--uipx:clamp(0.86px,calc(100vw / 1440),1.18px)} }
+@media(min-width:1121px){ :root{--uipx:clamp(0.80px,min(100vw / 1440, 100vh / 900),1.18px)} }  /* D418b: the tighter axis vs 1440×900 */
 /* ⭐⭐ **THE SAME GLOBAL GUARD THE LANDING PAGE CARRIES — 24 Aug 2026.** No word on this site can
    spill out of its box at any width. `break-word` only acts when a single word genuinely cannot
    fit a line of its own, so it changes nothing today and catches every future long stone name,
