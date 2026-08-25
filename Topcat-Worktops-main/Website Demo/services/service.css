@@ -473,8 +473,21 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
   /* ⭐⭐ **WHITE ACROSS THE ENTIRE SITE — 24 Aug 2026.** Client, twice: *"all of those tags that say
      ten year guarantee, seventy two hour aftercare, free home visit — the text inside of those is
      white."* The landing page's copy of this component was changed first; these 167 pages carry the
-     PORT, and a port that does not follow is exactly the drift the note above warns about. */
-  font-size:12px;color:var(--bone);font-weight:300;letter-spacing:0.02em;
+     PORT, and a port that does not follow is exactly the drift the note above warns about.
+     ⛔⛔⛔ **AND HE ASKED A THIRD TIME, BECAUSE THE COLOUR WAS THE WRONG VARIABLE — 25 Aug 2026.**
+     *"I've told you many times... that text needs to be white and not gray."* It was ALREADY
+     `--bone`. What made it read grey was `font-weight:300`: at 12px the stems land under a pixel,
+     so most of the glyph is partial-coverage antialiasing rather than ink. **Measured on canvas at
+     4x, mean painted luminance inside the glyphs against the chip plate:**
+         300 / #F4F1EA   194.1   → the eye integrates #c2c2c2   ← what he kept seeing
+         500 / #F4F1EA   210.4   → #d2d2d2
+         500 / #FFFFFF   222.3   → #dedede   ← shipped
+     ⭐ **WEIGHT FIRST, COLOUR SECOND.** Weight alone buys +16.3 of the +28.2; going to pure white
+     on top buys the rest. ⚠️ Pure `#fff` rather than `--bone` is deliberate and is scoped to these
+     four tags only — the limestone white is right everywhere else on the site and stays.
+     ⚠️ **THE COST IS 2.8px** on the widest label ("10 year guarantee", 104.6 → 107.4 at 12px), which
+     the ≤400 block below absorbs. ⛔ Re-measure the 320 fit after ANY change here (D387). */
+  font-size:12px;color:#fff;font-weight:500;letter-spacing:0.02em;
   white-space:normal;text-wrap:balance;line-height:1.25;
 }
 /* ⚠️ `:last-child:nth-child(odd)` costs nothing at four and covers the next time the list changes
@@ -485,13 +498,13 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
 .svc-hero .g-stack{display:flex;flex-direction:column;justify-content:space-between;
   height:26px;line-height:1;text-align:left}
 .svc-hero .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
-  color:var(--bone)}
+  color:#fff}
 /* ⚠️ `baseline`, not `center`: star glyphs and lining numerals have very different vertical
    centres and centring them leaves the score visibly riding high. */
 .svc-hero .g-rating{display:flex;align-items:baseline;gap:5px}
 .svc-hero .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
 .svc-hero .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
-  color:var(--bone)}
+  color:#fff}
 /* ⚠️ CLIPPED, NOT `display:none` — "5.0 on Google" stays in the accessibility tree, because a logo
    and five star glyphs do not say it on their own. */
 .svc-hero .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
@@ -535,12 +548,95 @@ nav.top a:focus-visible{outline:1px solid var(--gold);outline-offset:3px;color:v
   .svc-hero .g-stars{font-size:clamp(8px,2.5vw,9px);letter-spacing:clamp(0.8px,0.3vw,1.1px)}
 }
 
-/* ---------- generic section ---------- */
-section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-soft)}
-.block h2{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3vw,38px);line-height:1.1;max-width:22ch;margin-bottom:8px}
+/* ---------- generic section ----------
+   ⛔⛔⛔ **THE GREY LINE ACROSS THE TOP OF EVERY SECTION IS GONE — 25 Aug 2026.** Client, on the
+   tablet: *"where you can see in the third screenshot under the hero section, it looks like there
+   is a gray line there, which is terrible."*
+   ⭐⭐ **HE FOUND A RULE-10 BREACH.** `border-top:1px solid var(--hair-soft)` is literally a line
+   across the top of a section, and §2 rule 10 is *"Don't ever use that fingernail design on top of
+   sections"* — given as a GENERAL rule on 9 Aug and broken here ever since, because the line is
+   white at 10% rather than gold and so never read as "that fingernail design". ⛔ It is the rule,
+   not the colour: no top hairline on any card, tile, panel or section edge, anywhere.
+   ⚠️ **IT WAS WORST DIRECTLY UNDER THE HERO**, where the first `.block`'s top border drew a full-
+   width grey rule immediately below the photograph's gold arc — two horizontal lines a few pixels
+   apart, one gold and one grey. That is exactly what his screenshot shows.
+   ⭐ **SO SPACING NOW CARRIES THE SEPARATION, WHICH IS WHAT HE ASKED FOR IN THE SAME BREATH**
+   (*"everything has to be spaced perfectly"*): the section's own padding goes up to replace the
+   divider's work. ⚠️ Do not put the border back and reduce the padding — that is the trade he
+   rejected. */
+section.block{padding:clamp(46px,7vh,86px) 0;position:relative}
+
+/* ⭐⭐⭐ **AND HE PUT A DIVIDER BACK, MINUTES LATER, HAVING SEEN THE PAGE WITHOUT ONE — 25 Aug 2026.**
+   Client: *"I see you've removed the gray lines on the inner pages between the sections. The
+   sections need to be divided somehow... you're going to have to add some sort of line back,
+   whether it's gold or gray or whatever. Just make sure that the inner pages aren't just all on one
+   flat thing that it looks like there was no effort."*
+   ⛔⛔ **HE IS NOT ASKING FOR THE OLD LINE BACK, AND BOTH OF HIS INSTRUCTIONS ARE TRUE AT ONCE.**
+   The thing he called terrible was a full-bleed grey rule drawn HARD ACROSS THE PAGE DIRECTLY UNDER
+   THE HERO. The thing he wants is for the sections to be visibly divided. So:
+       ⭐ it FADES TO NOTHING AT BOTH ENDS, so it has no hard edge meeting the page gutter — that
+         edge-to-edge quality is what made the old one read as a cheap seam rather than an ornament
+       ⭐ it is CENTRED AND CAPPED at 560px, so it reads as a mark between two sections rather than
+         as a border belonging to the one below it
+       ⭐ it is CHAMPAGNE, the site's own hairline colour, not the 10% white it was
+       ⛔ **AND IT NEVER DRAWS UNDER THE HERO** — the first section of every page family is exempt
+         below, which is the precise thing he complained about in the first place
+   ⚠️ **THIS IS A CLIENT REVERSAL OF §2 RULE 10 FOR THIS SURFACE, MADE WITH THE ALTERNATIVE IN
+   FRONT OF HIM, AND IT IS HIS TO MAKE.** Rule 10 forbids the "fingernail" — a bright hard line on
+   the top edge of a card or section. This is a faded centred separator and it is what he asked for
+   in his own words. ⛔ It does NOT reopen rule 10 anywhere else: no card, tile or panel gets a top
+   line, and nothing full-bleed or hard-edged goes back on a section. */
+/* ⛔⛔⛔ **AND IT SPANS THE FULL WIDTH — HE CORRECTED THE CENTRED VERSION ON SIGHT, 25 Aug 2026.**
+   Client: *"I see you've added a small gold line that fits in the center. You can't do that. It has
+   to touch the side. Whether the thin part of the line touches the side or it's all just one sorted
+   line, you can't have it the way that you're having it now."*
+   ⭐ **SO IT REACHES BOTH EDGES AND THE GRADE STAYS** — his own first option, "the thin part of the
+   line touches the side". It runs edge to edge at **0.10 alpha at the ends, rising to 0.36 across
+   the middle**, so the line genuinely arrives at both sides rather than dissolving before it gets
+   there. ⛔ Do not fade the ends to zero: an invisible end is the centred line again with extra
+   steps, and it is the thing he rejected.
+   ⭐⭐ **`left:0;right:0` RATHER THAN A WIDTH, AND THAT IS WHY IT IS RIGHT AT EVERY BAND.** The line
+   takes whatever box the section occupies: on the narrow bands `section.block` spans the page, so
+   the rule spans the page; on the desktop the same section is the reading column beside the quote
+   card, so it stops at the column and does NOT run under the card. One declaration, correct in both
+   places, and no media query to keep in step. */
+section.block::before,section.faq:not(.block)::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,rgba(198,166,100,0.10) 0%,rgba(198,166,100,0.36) 22%,
+    rgba(198,166,100,0.36) 78%,rgba(198,166,100,0.10) 100%)}
+/* ⛔⛔⛔ **NOTHING DRAWS A LINE UNDER A HERO. THAT IS THE WHOLE COMPLAINT AND IT IS NAMED DIRECTLY.**
+   ⚠️ **THE FIRST VERSION OF THIS EXEMPTION KEYED ON `:first-child` AND MISSED THE 132 STONE PAGES**,
+   where `<main>` opens with `<section class="stp-hero">` and the first `.block` is therefore the
+   SECOND child — so a champagne rule drew directly under the slab hero on every one of them, which
+   is exactly the thing he called terrible. Measured, not spotted: a sweep of seven families
+   reported `firstHasDivider:true` on the stone leaf alone.
+   ⭐ **SO THE CONDITION IS ADJACENCY TO A HERO, NOT POSITION IN THE PARENT** — that is what the rule
+   actually means, and it holds however a family nests its sections. The `:first-child` arms stay
+   for the families that open with no hero at all (the guides, and the reading column inside
+   `.lead-grid`, whose hero is outside the grid). */
+.lead-main>section.block:first-child::before,
+main>section.block:first-child::before,
+main>article>section.block:first-child::before,
+article>section.block:first-child::before,
+.svc-hero+section.block::before,
+.stp-hero+section.block::before,
+.page-head+section.block::before,
+.svc-hero+section.faq::before,
+.stp-hero+section.faq::before{content:none}
+/* ⭐⭐⭐ **THE TITLE IS NO LONGER SITTING ON ITS OWN SUBTITLE — 25 Aug 2026.** Client, twice in one
+   message: *"the titles inside the pages are also too close to the actual text"* and *"again, the
+   title is too close to the text."* It was a flat **8px** under a heading that runs from 24px to
+   38px — less than half the subtitle's own line-height, so the two read as one block of text.
+   ⭐⭐ **AND THE FIX IS `em`, NOT A PIXEL VALUE — the round's own lesson: size the thing by what
+   its content is sized by.** The heading is `clamp(24px,3vw,38px)`, so a fixed gap is wrong at one
+   end of that range whatever number you pick. `0.66em` reads off the heading itself: **15.8px at
+   the phone's 24px, 25.1px at the desktop's 38px**, the same optical gap at both.
+   ⚠️ Measured before: 8px at every band on all 167 pages. */
+.block h2{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3vw,38px);line-height:1.1;max-width:22ch;margin-bottom:0.66em}
 /* ⭐ D306 — section subtitles are white here too. He asked for it "in the surfaces for every
-   space and every other place", and this class is that line on all 176 generated pages. */
-.block .sub{color:var(--body);max-width:64ch;margin-bottom:34px;font-size:15px}
+   space and every other place", and this class is that line on all 176 generated pages.
+   ⭐ The gap DOWN to the content scales with the section's own rhythm for the same reason. */
+.block .sub{color:var(--body);max-width:64ch;margin-bottom:clamp(26px,3.4vh,38px);font-size:15px;line-height:1.6}
 .prose p{max-width:70ch;margin-bottom:18px;color:var(--body);font-size:15.5px}
 .prose p:last-child{margin-bottom:0}
 
@@ -550,18 +646,45 @@ section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-sof
 .feat h3{font-family:var(--serif);font-weight:500;color:var(--gold-soft);font-size:18px;letter-spacing:0.01em;margin-bottom:10px}
 .feat p{color:var(--body);font-size:14.5px;line-height:1.65}
 
-/* ---------- checklist ---------- */
-.ticks{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px 34px;list-style:none}
-.ticks li{position:relative;padding-left:30px;color:var(--body);font-size:15px;line-height:1.6}
-.ticks li::before{content:"";position:absolute;left:0;top:7px;width:15px;height:15px;border-radius:50%;
-  background:radial-gradient(circle at 50% 50%,var(--gold-hi),var(--gold-lo));box-shadow:0 0 0 4px rgba(198,166,100,0.12)}
-.ticks li strong{display:block;color:var(--bone);font-weight:500;margin-bottom:3px}
+/* ---------- checklist ----------
+   ⛔⛔⛔ **HE NAMED THIS ONE SECTION AS THE THING THAT LOOKS WRONG — 25 Aug 2026.** Client, on the
+   "Why Topcat" list: *"we also can't have sections like this that just look terrible. Doesn't feel
+   like it's part of the design. Doesn't feel like it was done very well. And again, the title is
+   too close to the text. And the other small titles that can probably just be gold."*
+   ⭐⭐⭐ **THREE THINGS WERE WRONG AND THE FIRST ONE IS WHY IT FELT FOREIGN: THE TITLE WAS IN THE
+   WRONG TYPEFACE.** Every other small title on these pages — `.feat h3`, `.step .n`, `.qform h3`,
+   the FAQ summaries — is **Cinzel in gold**. `.ticks li strong` was **Montserrat 500 in white**, so
+   it was the only heading on the page speaking in the body font. That is what "doesn't feel like
+   it's part of the design" was pointing at, and no amount of spacing would have fixed it.
+   ⭐ **SECOND: 3px.** `margin-bottom:3px` under the title — his "too close to the text", measured.
+   Now 10px, the same as `.feat h3`, which he has never complained about.
+   ⭐ **THIRD: IT WAS THE ONLY UNDRESSED BLOCK ON THE PAGE.** `.feat` and `.step` are both panels
+   with a hairline, a radius and `--ink-2`; this sat as bare text between them, which is why it read
+   as unfinished next to its neighbours. It takes the SAME dress rather than a new one, so the page
+   has one card, described once. ⛔ Do not give it a third look of its own.
+   ⛔⛔ **AND THE GOLD DISC IS GONE.** It was a 15px filled circle inside a 4px ring — rule 11's
+   *"I don't like the circles. Stop doing that."* The tick is two rotated borders: it means
+   "included", which is what this list actually says on the materials and county pages, and it is
+   not a disc, a ring or a plate. */
+.ticks{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;list-style:none}
+.ticks li{position:relative;border:1px solid var(--hair);border-radius:6px;background:var(--ink-2);
+  padding:clamp(20px,2.2vw,28px) clamp(18px,2vw,26px) clamp(20px,2.2vw,28px) clamp(46px,4.4vw,58px);
+  color:var(--body);font-size:14.5px;line-height:1.65}
+.ticks li::before{content:"";position:absolute;left:clamp(20px,2.1vw,27px);
+  top:calc(clamp(20px,2.2vw,28px) + 4px);
+  width:7px;height:12px;border:solid var(--gold);border-width:0 1.8px 1.8px 0;
+  transform:rotate(45deg);transform-origin:center}
+.ticks li strong{display:block;font-family:var(--serif);font-weight:500;color:var(--gold-soft);
+  font-size:17px;letter-spacing:0.01em;line-height:1.25;margin-bottom:10px}
 
 /* ---------- steps ---------- */
 .steps{counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
 .step{border:1px solid var(--hair-soft);border-radius:6px;padding:24px;background:var(--ink-2)}
 .step .n{font-family:var(--serif);color:var(--gold);font-size:13px;letter-spacing:0.2em;margin-bottom:12px}
-.step h3{font-family:var(--serif);font-weight:500;font-size:17px;margin-bottom:8px}
+/* ⭐ **GOLD, ON HIS INSTRUCTION — 25 Aug 2026:** *"the other small titles that can probably just be
+   gold."* This was the last white Cinzel sub-head on the page; `.feat h3` and `.ticks li strong`
+   are both `--gold-soft`, so the three card families now agree. ⭐ 8px → 10px to match them too. */
+.step h3{font-family:var(--serif);font-weight:500;color:var(--gold-soft);font-size:17px;line-height:1.25;margin-bottom:10px}
 .step p{color:var(--body);font-size:14px;line-height:1.6}
 
 /* ---------- materials strip ---------- */
@@ -588,9 +711,14 @@ section.block{padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-sof
 /* ⚠️ THE SEO FAMILIES EMIT `<section class="faq">` WITH NO `.block`, so this section had no padding
    at all and its heading fell through to a browser-default `h2` — 26 pages of Times New Roman on a
    page set in Cinzel and Montserrat. That is a fair part of what "way too basic" was looking at. */
-section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(--hair-soft)}
+/* ⛔⛔ **AND THIS ONE KEPT ITS OWN TOP BORDER UNTIL 25 Aug 2026.** D250 took the hairline off every
+   FAQ ROW and off the CTA band, but the SECTION's border survived both passes and is the same rule
+   10 breach — the client pointed at the grey line under the hero, which is this rule's sibling on
+   `section.block`. Both are gone; the padding matches the generic section so the rhythm is one
+   number, not two. */
+section.faq:not(.block){padding:clamp(46px,7vh,86px) 0;position:relative}
 .faq>.wrap>h2{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3vw,38px);
-  line-height:1.1;max-width:22ch;margin-bottom:26px}
+  line-height:1.1;max-width:22ch;margin-bottom:0.66em}
 .faq .faq-grid{display:grid;gap:12px}
 @media(min-width:901px){.faq .faq-grid{grid-template-columns:1fr 1fr;gap:12px 16px;align-items:start}}
 .faq details{
@@ -731,19 +859,34 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
      belongs to the card, which is centred in it with `justify-self:center` and no column gap — so
      the space to its left (the text) and to its right (the page border) are equal by construction
      rather than by a tuned number. ⚠️ `minmax(372px,1fr)` on that column is the guard: at 1121 the
-     card holds its width and the reading column gives way instead of the card overflowing. */
+     card holds its width and the reading column gives way instead of the card overflowing.
+     ⛔⛔⛔ **AND THAT GUARD WAS THE BUG — 25 Aug 2026.** Client, with a screenshot: *"not all the
+     responsiveness was done perfectly."* The prose ran flush into the quote card with **no gutter
+     at all**. Measured, `.lead-main`'s right edge against `.lead-aside`'s left:
+         1121 → 0px      1280 → 0px      1440 → 38px     1680 → 98px     1920 → 158px
+     ⭐⭐ **`justify-self:center` CANNOT CENTRE A CARD IN A COLUMN ITS OWN WIDTH.** The floor was
+     `372px` and the card is `372px`, so from 1121 to ~1440 the column WAS the card and "centred"
+     collapsed to "flush". The mechanism above was right; the number underneath it was not.
+     ⭐ **THE FLOOR IS NOW `372 + 2×40`, so the narrowest the column can get still leaves 40px each
+     side** and the equal-by-construction property survives instead of being replaced by a tuned
+     `column-gap` — a gap would sit on ONE side of the card and break the very symmetry D300 built.
+     ⚠️ Nothing changes at 1680 and above; the reading column absorbs it at 1121 (724 → 557px, still
+     under its own 70ch cap, so no line lengthens). ⛔ Do not lower this back to 372. */
   .lead-grid{
     max-width:none;margin:0;
     padding-left:max(clamp(20px,5vw,64px), calc((100% - var(--maxw)) / 2 + clamp(20px,5vw,64px)));
     padding-right:clamp(20px,5vw,64px);
-    display:grid;grid-template-columns:minmax(0,724px) minmax(372px,1fr);
+    display:grid;grid-template-columns:minmax(0,724px) minmax(452px,1fr);
     gap:0;
     align-items:start}
   /* ⚠️ THE SECTIONS INSIDE KEEP THEIR OWN `.wrap` and it must stop constraining them — it is
      already inside the grid's max-width and padding, so a second 1160px cap plus a second helping
      of side padding would inset the copy twice and re-open the gap this rule closes. */
   .lead-grid .block .wrap{max-width:none;padding:0;margin:0}
-  .lead-grid .block:first-child{border-top:0;padding-top:clamp(30px,4.6vh,54px)}
+  /* ⚠️ `border-top:0` left this rule on 25 Aug 2026 — `section.block` no longer draws one at all
+     (see the generic-section note). The padding is still its own and still has to stay in step with
+     `.lead-aside`'s margin-top below. */
+  .lead-grid .block:first-child{padding-top:clamp(30px,4.6vh,54px)}
 
   .lead-aside{
     display:block;justify-self:center;
@@ -823,3 +966,52 @@ section.faq:not(.block){padding:clamp(38px,6vh,72px) 0;border-top:1px solid var(
    `display:none` — a hidden label is not announced. */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* ============================================================================================
+   ⭐⭐⭐ THE STICKY ACTION BAR REACHES THESE 167 PAGES — 25 August 2026
+   Client: *"when there are inner pages, there needs to be a sticky nav bar on all the pages for
+   mobile and tablet so that there's always an easy way for the clients to contact."*
+
+   ⛔⛔ **THE BAR'S OWN RULES ARE NOT HERE AND MUST NOT BE COPIED HERE.** They are extracted from
+   `index.html` into the generated `/assets/nav.css`, which every one of these pages already loads
+   — see `_is_nav_sel()` in `build_pages.py`. That is deliberate: the trust tags spent eleven days
+   grey on 167 pages precisely because a shared component was hand-copied into two stylesheets and
+   only one copy was ever updated. One description, extracted, no new request (§2s).
+
+   ⚠️ **THIS ONE RULE CANNOT TRAVEL WITH THEM**, because its selector is `body` and the extractor
+   matches on the component's own class. Without it the footer's last line sits permanently under
+   the bar. ⛔ Keep it in step with the 66px in `index.html` — the bar is 59px plus its padding.
+   ============================================================================================ */
+@media(max-width:1120px){body{padding-bottom:66px}}
+
+/* ============================================================================================
+   ⭐⭐ THE LEGAL PAGES — /terms/ and /privacy/, 25 August 2026
+   Two long documents of nothing but prose, on a site that has no other page shaped like that.
+   ⭐ The measure is 78ch rather than the 70ch `.prose` uses: a numbered clause is read once and
+   scanned, not read for pleasure, and a slightly longer line means fewer of them.
+   ⚠️ The clause headings are `h2` and the sub-clauses `h3`, so the document's own numbering
+   carries the hierarchy and a screen reader gets it too. ⛔ `.block h2`'s `max-width:22ch` is
+   overridden here — "4. Delivery & Installation" is fine at 22ch but "10. Governing Law &
+   Dispute Resolution" wraps into a stack of three words.
+   ⭐ The sub-heading takes the site's small-caps brand voice rather than Cinzel: at 14px Cinzel
+   is unreadable, which is the same reason the step numerals are the only serif thing that small.
+   ============================================================================================ */
+.legal{max-width:78ch}
+/* ⚠️ **THE INTRO LINE NEEDED ITS OWN AIR AND HAD NONE — caught on the first render.** `.lede` is
+   styled by `.svc-hero .lede`, and these two pages have no hero, so it fell through to a bare `p`
+   with `margin-bottom:0`: the opening sentence sat directly on top of clause 1, which is the exact
+   fault he had just complained about twice elsewhere on the site. It is white here too (D304 —
+   reading copy is white, supporting detail is grey, and this line is read). */
+.legal-lede{color:var(--body);font-size:16px;line-height:1.7;max-width:70ch;
+  margin:0 0 clamp(30px,4vh,46px)}
+.legal h2{font-family:var(--serif);font-weight:400;color:var(--bone);max-width:none;
+  font-size:clamp(19px,2.1vw,25px);line-height:1.25;margin:clamp(34px,4.4vh,52px) 0 0.55em}
+.legal h2:first-child{margin-top:0}
+.legal h3{font-family:var(--brand);font-weight:600;color:var(--gold-soft);font-size:13px;
+  letter-spacing:0.08em;text-transform:uppercase;margin:26px 0 9px}
+.legal p{color:var(--body);font-size:15.5px;line-height:1.75;margin-bottom:15px}
+.legal address{font-style:normal;color:var(--body);font-size:15.5px;line-height:1.9;margin-bottom:15px}
+/* ⚠️ The closing line of each document is the one that carries weight — the acceptance clause on
+   the terms and the revision date on the policy — so it is set apart rather than run on. */
+.legal .legal-close{margin-top:clamp(28px,3.4vh,40px);padding-top:clamp(18px,2.2vh,24px);
+  border-top:1px solid var(--hair-soft);color:var(--muted);font-size:14.5px}

@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=2e5e3e3481">
+<link rel="stylesheet" href="/assets/site.css?v=b6832832b1">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -792,13 +792,24 @@
     <div class="foot-tail" id="footTail"></div>
     <div class="foot-bar">
       <span>© 2026 Topcat Worktops Ltd. All rights reserved.</span>
-      <!-- Sitemap is the only one of these four that is a real page. Privacy, Terms and
-           Cookies are still href="#" placeholders waiting on the client's policies. -->
+      <!-- ⭐⭐⭐ **ALL FOUR ARE REAL PAGES NOW — 25 August 2026.** Client: *"make sure that the
+           button for it is working."* Privacy, Terms and Cookies had been `href="#"` since the
+           footer was written, on all 176 pages: three dead controls in the one place a visitor
+           goes looking for exactly these documents.
+           ⭐ **THE TERMS ARE HIS OWN, MOVED ACROSS FROM topcatworktops.co.uk/terms VERBATIM**, on
+           his instruction, and the privacy policy is written against an audit of what this site
+           actually does rather than from a template — see `build_seo_pages.py`.
+           ⚠️ **"COOKIES" IS AN ANCHOR INTO THE POLICY, NOT A FOURTH DOCUMENT.** The site sets no
+           cookies at all, so a standalone cookie policy would be a page saying nothing; the
+           policy's own "Cookies and tracking" section carries `id="cookies"` and answers it
+           honestly, including the one third party (Google Fonts) that does see an IP address.
+           ⛔ If a cookie is ever added to this site — any analytics, any embed — that section is
+           the first thing that has to change, and it stops being true the moment it is added. -->
       <div class="foot-legal">
         <a href="/sitemap.html">Sitemap</a>
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Cookies</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/privacy/#cookies">Cookies</a>
       </div>
     </div>
   </footer>
@@ -807,6 +818,6 @@
 
 <script src="/assets/tcform.js?v=1" defer></script>
 
-<script src="/assets/site.js?v=6626a13c78" defer></script>
+<script src="/assets/site.js?v=f8db41951d" defer></script>
 </body>
 </html>

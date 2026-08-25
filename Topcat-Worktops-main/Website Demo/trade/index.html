@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=2e5e3e3481">
+<link rel="stylesheet" href="/assets/site.css?v=b6832832b1">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -127,7 +127,7 @@
     <a href="/trade/">Trade</a>
     <a href="/contact/">Contact</a>
   </nav>
-  <a class="bar-cta" href="#cta">Get a quote</a>
+  <a class="bar-cta" href="#tradeCta">Get a quote</a>
   <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
     <span></span><span></span><span></span>
   </button>
@@ -215,7 +215,7 @@
        ⚠️ `.mn-row` REPLACES the old single `.mn-cta`, so the `:nth-child` stagger above still counts
        the seven links and then this row as one item — it does not need re-numbering. -->
   <div class="mn-row">
-    <a class="mn-cta" href="#cta">Get a free quote</a>
+    <a class="mn-cta" href="#tradeCta">Get a free quote</a>
     <div class="mn-pair">
       <a class="mn-alt" href="https://wa.me/447464940287" target="_blank" rel="noopener noreferrer">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.688-1.48-1.538-1.653-1.835-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413A11.815 11.815 0 0 0 12.05 0m0 21.784h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.437-9.884 9.888-9.884a9.82 9.82 0 0 1 6.988 2.896 9.825 9.825 0 0 1 2.892 6.995c-.002 5.45-4.437 9.886-9.885 9.886"/></svg>
@@ -249,7 +249,7 @@
      ("the call button must be switched with the get a quote button"). The three keep their own
      dress, so the filled gold one simply travels to the left with it. -->
 <div class="mbar" id="mobileBar">
-  <a class="mbar-a mbar-cta" href="#cta">Get a quote</a>
+  <a class="mbar-a mbar-cta" href="#tradeCta">Get a quote</a>
   <!-- ⭐ D372: WhatsApp replaces Email as the bar's middle action — his call, and it is also why
        the floating corner buttons can stand down while the bar is up: the bar now carries the
        same WhatsApp link itself. The email address still lives in the contact block and footer. -->
@@ -576,7 +576,7 @@
       <!-- ⭐ The second half of this line is now the CTA (client, 9 Aug). It used to be a
            dangling sentence sitting where every other section carries an action. -->
       <p class="rev-cta-line">Like what you're reading?
-        <a class="rev-cta-go" href="#cta">Tell us about your kitchen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg></a>
+        <a class="rev-cta-go" href="#tradeCta">Tell us about your kitchen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg></a>
       </p>
     </div>
   </section>
@@ -590,7 +590,7 @@
     <div class="rev-cta section-cta">
       <p class="rev-cta-line">Start with a free home visit. We take it from there.</p>
       <div class="rev-cta-btns">
-        <a class="rev-cta-primary" href="#cta">Get in touch</a>
+        <a class="rev-cta-primary" href="#tradeCta">Get in touch</a>
         <a class="rev-cta-ghost" href="tel:+448000982812">Call us</a>
       </div>
     </div>
@@ -830,13 +830,24 @@
     <div class="foot-tail" id="footTail"></div>
     <div class="foot-bar">
       <span>© 2026 Topcat Worktops Ltd. All rights reserved.</span>
-      <!-- Sitemap is the only one of these four that is a real page. Privacy, Terms and
-           Cookies are still href="#" placeholders waiting on the client's policies. -->
+      <!-- ⭐⭐⭐ **ALL FOUR ARE REAL PAGES NOW — 25 August 2026.** Client: *"make sure that the
+           button for it is working."* Privacy, Terms and Cookies had been `href="#"` since the
+           footer was written, on all 176 pages: three dead controls in the one place a visitor
+           goes looking for exactly these documents.
+           ⭐ **THE TERMS ARE HIS OWN, MOVED ACROSS FROM topcatworktops.co.uk/terms VERBATIM**, on
+           his instruction, and the privacy policy is written against an audit of what this site
+           actually does rather than from a template — see `build_seo_pages.py`.
+           ⚠️ **"COOKIES" IS AN ANCHOR INTO THE POLICY, NOT A FOURTH DOCUMENT.** The site sets no
+           cookies at all, so a standalone cookie policy would be a page saying nothing; the
+           policy's own "Cookies and tracking" section carries `id="cookies"` and answers it
+           honestly, including the one third party (Google Fonts) that does see an IP address.
+           ⛔ If a cookie is ever added to this site — any analytics, any embed — that section is
+           the first thing that has to change, and it stops being true the moment it is added. -->
       <div class="foot-legal">
         <a href="/sitemap.html">Sitemap</a>
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Cookies</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/privacy/#cookies">Cookies</a>
       </div>
     </div>
   </footer>
@@ -845,6 +856,6 @@
 
 <script src="/assets/tcform.js?v=1" defer></script>
 
-<script src="/assets/site.js?v=6626a13c78" defer></script>
+<script src="/assets/site.js?v=f8db41951d" defer></script>
 </body>
 </html>

@@ -3448,8 +3448,11 @@
        ⚠️ This makes `.gal-mid-actions` a ONE-child column on a phone. It is `flex-direction:
        column`, so that is safe — but if a second control is ever added back, re-read D113: this
        same block put the subtitle in the middle of the screen when a `space-between` met three
-       children instead of two. */
-    #gallery .gal-grid-btn{display:none}
+       children instead of two.
+       ⭐⭐ **AND IT LEFT THIS PHONE-ONLY BLOCK ON 25 Aug 2026 — see the rule just after this
+       media query.** It is one line lower in the file now, in a query of its own that covers BOTH
+       narrow bands, because the client asked for the same removal on the tablet. ⛔ Do not put a
+       second copy back here: one rule, one widened query (the standing device-scope rule). */
 
     /* ========================================================================
        ⭐⭐ THE PHONE GALLERY IS A SCROLLING COLUMN — 12 Aug 2026 (D122). MOBILE ONLY.
@@ -3528,6 +3531,24 @@
        reads as a rim around a photograph rather than as a divider on one edge of it. */
     .gal-door{border-color:rgba(198,166,100,0.5)}
   }
+
+  /* ⛔⛔⛔ **"VIEW AS GRID" IS GONE ON BOTH NARROW BANDS — 25 Aug 2026.** Client, on the tablet:
+     *"below the project grid, it says get in touch or view as grid. It is already a grid, so we
+     don't need to have the view as grid. So in those spaces where it's already a grid, you can
+     remove the view as grid button across everywhere where it is."*
+     ⭐⭐ **THE BUTTON OFFERS A VIEW THE VISITOR IS ALREADY LOOKING AT.** On the phone (D122) and on
+     the tablet the gallery IS a column of cards; only the desktop still spreads them, so only the
+     desktop has anything to switch TO. His test is exactly right and it is the one to keep: the
+     control belongs wherever the gallery is NOT already a grid.
+     ⭐ **THE PHONE RULE MOVED HERE RATHER THAN BEING COPIED** — one description, one widened query,
+     which is the standing device-scope rule. It was `@media(max-width:720px)` from D121.
+     ⭐ HIDDEN, NOT DELETED, AND D121'S REASON STILL HOLDS: `openGrid()` binds at load to every
+     `.gal-grid-btn` on the page and the overlay is reachable from elsewhere, so removing the
+     element would take it off the frozen desktop too (§2 rule 15).
+     ⚠️ It lands on BOTH the landing gallery and `/projects/`, which is what "everywhere where it
+     is" asks for — the same markup is emitted on both. */
+  @media(max-width:1120px){ #gallery .gal-grid-btn{display:none} }
+
   /* CTA + "View as grid" under the title, STACKED (client's call), interactive once settled */
   .gal-mid-actions{margin-top:clamp(18px,2.6vh,30px);display:flex;flex-direction:column;
     gap:10px;align-items:center;pointer-events:none}
@@ -4307,8 +4328,21 @@
        home visit — just make sure that all that text is white as well... not gray across all
        devices."* ⭐ 0.85 → full `--bone`. It is D304's own split applied one level further: these
        read as facts a buyer is weighing, not as labels on something else. ⛔ The gold numerals and
-       the house keep their metal — he named the WORDS. */
-    font-size:12px;color:var(--bone);font-weight:300;letter-spacing:0.02em;white-space:nowrap;
+       the house keep their metal — he named the WORDS.
+       ⛔⛔⛔ **THIRD ASK, 25 Aug 2026 — AND THE COLOUR WAS NEVER THE VARIABLE.** *"I've told you many
+       fucking times... that text needs to be white and not gray."* It was already `--bone`. The
+       thing making it grey is `font-weight:300`: at 12px Montserrat's stems fall under one pixel,
+       so the glyph is mostly partial-coverage antialiasing and the eye integrates the average, not
+       the peak. **Measured on canvas at 4x supersample, mean painted luminance inside the ink:**
+           300 / #F4F1EA  →  194.1  =  #c2c2c2   ← what shipped, and what he kept seeing
+           500 / #F4F1EA  →  210.4  =  #d2d2d2
+           500 / #FFFFFF  →  222.3  =  #dedede   ← shipped now
+       ⭐ **WEIGHT CARRIES +16.3 OF THE +28.2; PURE WHITE CARRIES THE REST.** Both, together.
+       ⚠️ `#fff` instead of `--bone` is scoped to these four tags alone — limestone stays the site's
+       white everywhere else. ⚠️ Costs 2.8px on the widest label; the ≤400 block absorbs it (D387).
+       ⭐⭐ **THE LESSON: "STILL GREY" AFTER A COLOUR CHANGE MEANS MEASURE THE PAINTED PIXELS, NOT
+       THE DECLARED VALUE.** `getComputedStyle` said #F4F1EA the whole time and was no help. */
+    font-size:12px;color:#fff;font-weight:500;letter-spacing:0.02em;white-space:nowrap;
   }
   .chip b{color:var(--gold);font-weight:500;letter-spacing:2.5px;font-size:11.5px}
   /* ⛔ The phone's own CTA and subtitle copy are off by default and come on inside the ≤1120
@@ -4336,7 +4370,7 @@
     height:26px;line-height:1;text-align:left}
   /* ⭐ "Google reviews" is one of the four he named — full bone, same as the other three */
   #hero .g-word,.page-head .g-word{font-family:var(--brand);font-weight:600;font-size:12.5px;letter-spacing:0.02em;
-    color:var(--bone)}
+    color:#fff}
   /* ⭐ **THE RATING IS ONE LINE: `5.0 ★★★★★`, SCORE FIRST.** The score sits under the "G" of
      Google and the stars follow it — client, 14 August 2026, asked more than once.
      ⛔ **D176 RECORDED THE OPPOSITE ORDER (★★★★★ then 5.0) AND IS SUPERSEDED. Do not restore it
@@ -4348,7 +4382,7 @@
   #hero .g-rating,.page-head .g-rating{display:flex;align-items:baseline;gap:5px}
   #hero .g-stars,.page-head .g-stars{color:var(--gold);font-size:9px;letter-spacing:1.1px}
   #hero .g-score,.page-head .g-score{font-family:var(--brand);font-weight:600;font-size:11.5px;letter-spacing:0.02em;
-    color:var(--bone)}
+    color:#fff}
   /* ⚠️ CLIPPED, NOT `display:none` — see the markup note. "5.0 on Google" stays in the
      accessibility tree because a logo and five star glyphs do not say it on their own. */
   #hero .chip-legacy,.page-head .chip-legacy{position:absolute;width:1px;height:1px;overflow:hidden;
@@ -11934,13 +11968,24 @@
     <div class="foot-tail" id="footTail"></div>
     <div class="foot-bar">
       <span>© 2026 Topcat Worktops Ltd. All rights reserved.</span>
-      <!-- Sitemap is the only one of these four that is a real page. Privacy, Terms and
-           Cookies are still href="#" placeholders waiting on the client's policies. -->
+      <!-- ⭐⭐⭐ **ALL FOUR ARE REAL PAGES NOW — 25 August 2026.** Client: *"make sure that the
+           button for it is working."* Privacy, Terms and Cookies had been `href="#"` since the
+           footer was written, on all 176 pages: three dead controls in the one place a visitor
+           goes looking for exactly these documents.
+           ⭐ **THE TERMS ARE HIS OWN, MOVED ACROSS FROM topcatworktops.co.uk/terms VERBATIM**, on
+           his instruction, and the privacy policy is written against an audit of what this site
+           actually does rather than from a template — see `build_seo_pages.py`.
+           ⚠️ **"COOKIES" IS AN ANCHOR INTO THE POLICY, NOT A FOURTH DOCUMENT.** The site sets no
+           cookies at all, so a standalone cookie policy would be a page saying nothing; the
+           policy's own "Cookies and tracking" section carries `id="cookies"` and answers it
+           honestly, including the one third party (Google Fonts) that does see an IP address.
+           ⛔ If a cookie is ever added to this site — any analytics, any embed — that section is
+           the first thing that has to change, and it stops being true the moment it is added. -->
       <div class="foot-legal">
         <a href="/sitemap.html">Sitemap</a>
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Cookies</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/privacy/#cookies">Cookies</a>
       </div>
     </div>
   </footer>
@@ -17487,9 +17532,30 @@ if(faqIndex && panel && faqBody){
    ⚠️ Nothing here tests the width. `.mbar` is `display:none` above 1120px, so `offsetParent`
    is null and the class does nothing — the stylesheet stays the only thing that decides which
    bands have a bar. */
+/* ⭐⭐⭐ **THE BAR NOW RISES ON EVERY INNER PAGE TOO — 25 Aug 2026.** Client: *"when there are inner
+   pages, there needs to be a sticky nav bar on all the pages for mobile and tablet so that there's
+   always an easy way for the clients to contact."*
+   ⛔⛔ **IT HAS BEEN DORMANT ON ALL SEVEN INTERNAL PAGES SINCE THE DAY IT SHIPPED, AND THE MARKUP
+   WAS THERE THE WHOLE TIME.** `.hero-ctas` is the LANDING hero's button row and exists nowhere
+   else, so `if(!ctas)return` bailed before binding a single listener — the bar was in the DOM, the
+   CSS was correct, and nothing ever added `.on`. It was carried as a known gap and never fixed
+   because nobody had asked for it.
+   ⭐⭐ **THE ANCHOR IS NOW WHICHEVER HERO THE PAGE ACTUALLY HAS, IN DOCUMENT ORDER**, still read as
+   a rect rather than a scroll number (the original reasoning below stands, and is why this could
+   be widened at all). The landing page keeps its own CTA row so its behaviour is unchanged to the
+   pixel; the internal and generated pages fall through to their own hero's CTA pair, and a page
+   with a head but no buttons at all falls through to the head itself.
+   ⚠️ ORDER MATTERS IN THIS LIST — `querySelector` with a selector list returns the first match in
+   DOCUMENT order, not the first selector that matches, so the members are mutually exclusive by
+   construction: no page carries both `.hero-ctas` and `.svc-hero .cta-row`. ⛔ Do not add a
+   selector that could match a CTA row at the FOOT of a page, or the bar would only appear once the
+   visitor had already reached the bottom, which is the opposite of the point. */
 (function(){
   const mbar=document.getElementById('mobileBar');
-  const ctas=document.querySelector('.hero-ctas');
+  const ctas=document.querySelector('.hero-ctas')            /* the landing hero — his original spec */
+           ||document.querySelector('.page-head .cta-row')   /* the seven internal pages */
+           ||document.querySelector('.svc-hero .cta-row')    /* the 167 generated pages */
+           ||document.querySelector('.page-head,.svc-hero'); /* a head with no buttons of its own */
   if(!mbar||!ctas)return;
   let shown=false;
   const on=()=>{

@@ -114,7 +114,18 @@ def _is_nav_sel(head):
     # `html.nav-open` state rules. ⚠️ Deliberately NOT here: `header.bar .bar-cta` and
     # `header.bar{--barH}` — bar rules belong to each family's own bar, and service.css takes
     # its own ≤1120 pair by hand.
-    return (".nav-burger" in head) or (".mobile-nav" in head) or (".mn-" in head) or ("nav-open" in head)
+    # ⭐⭐⭐ **`.mbar` JOINED THIS LIST ON 25 Aug 2026** — client: *"when there are inner pages,
+    # there needs to be a sticky nav bar on all the pages for mobile and tablet so that there's
+    # always an easy way for the clients to contact."* The sticky action bar is the OTHER half of
+    # narrow-band navigation, and it belongs in the same generated sheet for three reasons: the
+    # 167 generated pages already load `nav.css`, so it costs **no new request** (§2s); it is
+    # extracted from `index.html` rather than re-typed, so the landing bar and the leaf bar cannot
+    # drift the way the trust tags did; and every rule keeps its own media query on the way across.
+    # ⚠️ This catches `.mbar`, `.mbar-a` and `.mbar-cta`; `html.nav-open .mbar` was already caught
+    # by "nav-open". ⛔ It does NOT catch the `body{padding-bottom:66px}` that clears the bar —
+    # that head is `body`, and it is declared by hand in `service.css` instead.
+    return (".nav-burger" in head) or (".mobile-nav" in head) or (".mn-" in head) \
+        or ("nav-open" in head) or (".mbar" in head)
 
 
 def _nav_css(css):
@@ -875,6 +886,21 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
         out = os.path.join(out_dir, "index.html")
         html = build_page(parts, page)
+        # ⛔⛔⛔ **THE TRADE PAGE HAD FIVE DEAD CONTACT LINKS AND NOBODY HAD NOTICED — 25 Aug 2026.**
+        # Every other page in this family closes on `<section id="cta">`; the trade page closes on
+        # `id="tradeCta"` instead, because its form is a different block (TRADE_CTA_SECTION). The
+        # shared chrome does not know that, so the header CTA, the mobile-nav CTA, the sticky bar's
+        # quote button and BOTH review-section CTAs all pointed at an anchor that does not exist on
+        # this page — five "get in touch" controls that scrolled nowhere.
+        # ⚠️ **IT SURFACED BECAUSE THE STICKY BAR WOKE UP.** The bar has been dormant on these seven
+        # pages since it shipped, so its dead button was invisible; the other four have been dead in
+        # plain sight the whole time. ⭐ Rewritten at write time rather than in seven templates: the
+        # chrome keeps ONE description of where "get a quote" goes, and the page that names its
+        # section differently corrects it on the way out.
+        # ⛔ If any page is ever given a contact section under a third id, it belongs in this map.
+        anchor_fix = {"trade": "#tradeCta"}.get(page["slug"])
+        if anchor_fix:
+            html = html.replace('href="#cta"', 'href="%s"' % anchor_fix)
         with open(out, "w", encoding="utf-8") as fh:
             fh.write(html)
         written.append("%s/index.html (%d KB, %d sections)"

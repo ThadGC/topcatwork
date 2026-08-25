@@ -5540,9 +5540,30 @@ if(faqIndex && panel && faqBody){
    ⚠️ Nothing here tests the width. `.mbar` is `display:none` above 1120px, so `offsetParent`
    is null and the class does nothing — the stylesheet stays the only thing that decides which
    bands have a bar. */
+/* ⭐⭐⭐ **THE BAR NOW RISES ON EVERY INNER PAGE TOO — 25 Aug 2026.** Client: *"when there are inner
+   pages, there needs to be a sticky nav bar on all the pages for mobile and tablet so that there's
+   always an easy way for the clients to contact."*
+   ⛔⛔ **IT HAS BEEN DORMANT ON ALL SEVEN INTERNAL PAGES SINCE THE DAY IT SHIPPED, AND THE MARKUP
+   WAS THERE THE WHOLE TIME.** `.hero-ctas` is the LANDING hero's button row and exists nowhere
+   else, so `if(!ctas)return` bailed before binding a single listener — the bar was in the DOM, the
+   CSS was correct, and nothing ever added `.on`. It was carried as a known gap and never fixed
+   because nobody had asked for it.
+   ⭐⭐ **THE ANCHOR IS NOW WHICHEVER HERO THE PAGE ACTUALLY HAS, IN DOCUMENT ORDER**, still read as
+   a rect rather than a scroll number (the original reasoning below stands, and is why this could
+   be widened at all). The landing page keeps its own CTA row so its behaviour is unchanged to the
+   pixel; the internal and generated pages fall through to their own hero's CTA pair, and a page
+   with a head but no buttons at all falls through to the head itself.
+   ⚠️ ORDER MATTERS IN THIS LIST — `querySelector` with a selector list returns the first match in
+   DOCUMENT order, not the first selector that matches, so the members are mutually exclusive by
+   construction: no page carries both `.hero-ctas` and `.svc-hero .cta-row`. ⛔ Do not add a
+   selector that could match a CTA row at the FOOT of a page, or the bar would only appear once the
+   visitor had already reached the bottom, which is the opposite of the point. */
 (function(){
   const mbar=document.getElementById('mobileBar');
-  const ctas=document.querySelector('.hero-ctas');
+  const ctas=document.querySelector('.hero-ctas')            /* the landing hero — his original spec */
+           ||document.querySelector('.page-head .cta-row')   /* the seven internal pages */
+           ||document.querySelector('.svc-hero .cta-row')    /* the 167 generated pages */
+           ||document.querySelector('.page-head,.svc-hero'); /* a head with no buttons of its own */
   if(!mbar||!ctas)return;
   let shown=false;
   const on=()=>{

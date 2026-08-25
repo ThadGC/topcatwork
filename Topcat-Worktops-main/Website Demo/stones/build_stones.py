@@ -396,6 +396,55 @@ def _footer_from_index():
 
 FOOTER_HTML = _footer_from_index()
 
+# ============================================================================================
+# ⭐⭐⭐ THE STICKY ACTION BAR, LIFTED FROM index.html — 25 August 2026
+# Client: *"when there are inner pages, there needs to be a sticky nav bar on all the pages for
+# mobile and tablet so that there's always an easy way for the clients to contact."*
+#
+# ⛔⛔ **LIFTED, NOT RE-TYPED — the D290/D295 way, and for the reason the trust tags proved.** The
+# bar's markup has exactly one description (`index.html`) and its CSS is extracted into the
+# generated `/assets/nav.css` by `_is_nav_sel()` in `build_pages.py`. A hand-copy is how a shared
+# component ends up correct on the landing page and wrong on 167 others for eleven days.
+#
+# ⚠️ **ONE REWRITE ON THE LIFT, and it is the same one the mobile nav needs:** the landing bar's
+# quote button is `href="#cta"` and NO generated page carries that id, so it becomes `/contact/`.
+# Left alone it would be a dead anchor on every leaf page — a contact button that contacts nobody,
+# which is the precise opposite of what he asked for.
+# ⚠️ There are no nested `<div>`s inside `.mbar`, so the first `</div>` closes it.
+def _mbar_from_index():
+    import pathlib as _p
+    src = (_p.Path(__file__).resolve().parent.parent / "index.html").read_text(encoding="utf-8")
+    i = src.index('<div class="mbar" id="mobileBar">')
+    j = src.index("</div>", i) + len("</div>")
+    out = src[i:j].replace('href="#cta"', 'href="/contact/"')
+    assert 'href="/contact/"' in out and "wa.me" in out and "tel:" in out, "mbar lift lost a link"
+    return out
+
+
+MBAR_HTML = _mbar_from_index()
+
+# ⭐⭐ THE BAR'S OWN SCRIPT. These pages do not load `assets/site.js` (the 509 KB landing bundle),
+# so the eight lines that matter are inlined, exactly as FOOT_JS and the nav toggle already are.
+# ⭐ **THE ANCHOR CASCADE IS WIDER HERE THAN ON THE LANDING PAGE BECAUSE THESE FAMILIES DO NOT ALL
+# HAVE A HERO.** Services, materials and the county pages have `.svc-hero`; the 132 stone pages
+# have `.stp-hero`; the guides have no hero at all and open straight into a `.block` with the h1.
+# The last fallback is the page's own `<h1>`, so the bar rises once the title has gone by — true
+# on every page in every family, including the sitemap.
+# ⛔ NOTHING HERE TESTS THE WIDTH. `.mbar` is `display:none` above 1120px, so the stylesheet stays
+# the only thing that decides which bands have a bar (the landing page's own reasoning).
+MBAR_JS = ("<script>(function(){var b=document.getElementById('mobileBar');"
+           "var a=document.querySelector('.svc-hero .cta-row')"
+           "||document.querySelector('.page-head .cta-row')"
+           "||document.querySelector('.svc-hero,.page-head,.stp-hero')"
+           "||document.querySelector('main h1');"
+           "if(!b||!a)return;var s=false;function o(){"
+           "var h=(document.querySelector('header.bar')||{}).offsetHeight||76;"
+           "var p=a.getBoundingClientRect().bottom<h;"
+           "if(p!==s){s=p;b.classList.toggle('on',p);}}"
+           "o();window.addEventListener('scroll',o,{passive:true});"
+           "window.addEventListener('resize',o);})();</script>")
+
+
 # ⭐⭐ AND THE FOOTER'S OWN SCRIPT COMES WITH IT. On the tablet the Area and Hours blocks move out
 # of the contact column into `.foot-tail`, and there is no CSS property that re-parents a node
 # (D200) — so the landing page does it in JS. These pages do NOT load `assets/site.js`, which is
@@ -414,7 +463,7 @@ FOOT_JS = ("<script>(function(){var f=document.querySelector('#footer')||documen
 
 
 def footer_html():
-    return FOOTER_HTML + FOOT_JS
+    return MBAR_HTML + MBAR_JS + FOOTER_HTML + FOOT_JS
 
 
 # ⭐⭐ THE MOBILE NAV IS LIFTED FROM index.html TOO — 17 Aug 2026 (D295), §13 item 7. Below
@@ -1692,13 +1741,13 @@ def stone_page(s):
   </section>
 
   <section class="block"><div class="wrap prose rise">
-    <h2>About {e(shown_mat(s).lower())}</h2>
+    <h2>About <em>{e(shown_mat(s).lower())}</em></h2>
     <p>{e(facts['why'])}</p>
     <p>Every cut-out is free of charge, drainer grooves and pencil edges come as standard, and the surface is templated to the millimetre once your units are level. The quote you approve is the price you pay, covered by a ten-year guarantee.</p>
   </div></section>
 
   <section class="block"><div class="wrap rise">
-    <h2>See it in your home, not on a screen</h2>
+    <h2>See it in your home, not on a <em>screen</em></h2>
     <p class="sub">Colour on a screen is a guide, stone in your own light is the truth. We bring samples to you on a free home visit across {e(AREA)}, and before a single cut you approve photographs of the actual slab that will become your worktop.</p>
     <div class="cta-row">
       <a class="btn-gold" href="{deep_link(s, 'cta')}">Book a free home visit</a>
@@ -1707,7 +1756,7 @@ def stone_page(s):
   </div></section>
 
   <section class="block"><div class="wrap rise">
-    <h2>More {e(range_label(s).lower())} to consider</h2>
+    <h2>More {e(range_label(s).lower())} to <em>consider</em></h2>
     <p class="sub">Three that look closest to it, or <a class="stp-all" href="/stones/">browse the full collection</a>.</p>
     <div class="st-grid related">{related_tiles(s)}</div>
     <!-- ⛔ THE COMPARE DOOR USED TO SIT HERE (D141) AND IT MOVED UNDER THE SLAB ON 15 Aug 2026 on

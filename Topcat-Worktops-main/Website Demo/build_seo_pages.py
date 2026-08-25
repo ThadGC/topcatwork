@@ -135,17 +135,13 @@ def e(s):
     return html.escape(str(s), quote=True)
 
 
-def gold_last(text):
-    """⭐⭐ THE LAST WORD OF A PAGE TITLE IS GOLD, THE REST WHITE — 14 Aug 2026 (D229).
-    ⛔ THE SAME FUNCTION LIVES IN `services/build_services.py` AND THE TWO MUST AGREE. They are
-    one visual rule on one shared component (`.svc-hero`, which this family and the service
-    pages both use), and the alternative to two copies is importing across builders, which runs
-    the other one's module-level work. ⚠️ If you change one, change the other.
-    ⛔ One word stays white: `rsplit` returns a single part and nothing is wrapped."""
-    parts = str(text).rsplit(" ", 1)
-    if len(parts) == 1:
-        return e(text)
-    return f'{e(parts[0])} <span class="h1-gold">{e(parts[1])}</span>'
+# ⛔⛔ **A SECOND `gold_last` USED TO LIVE HERE AND IT WAS DEAD CODE — removed 25 Aug 2026.**
+# It emitted `<span class="h1-gold">`, while the one at the bottom of this section emits `<em>`.
+# Both are defined at module level, so the LATER one always won and this one never ran once: every
+# heading this builder has ever written used `<em>`. Verified against the shipped pages
+# (`<h1>Quartzite <em>worktops</em></h1>`) before deleting. ⚠️ Two same-named defs in one module is
+# not a fallback, it is a silent override — if you need two shapes, give them two names, which is
+# what `gold_last` / `gold_head` now do.
 
 
 # ---------------------------------------------------------------------------
@@ -230,6 +226,55 @@ def _footer_from_index():
 
 FOOTER_HTML = _footer_from_index()
 
+# ============================================================================================
+# ⭐⭐⭐ THE STICKY ACTION BAR, LIFTED FROM index.html — 25 August 2026
+# Client: *"when there are inner pages, there needs to be a sticky nav bar on all the pages for
+# mobile and tablet so that there's always an easy way for the clients to contact."*
+#
+# ⛔⛔ **LIFTED, NOT RE-TYPED — the D290/D295 way, and for the reason the trust tags proved.** The
+# bar's markup has exactly one description (`index.html`) and its CSS is extracted into the
+# generated `/assets/nav.css` by `_is_nav_sel()` in `build_pages.py`. A hand-copy is how a shared
+# component ends up correct on the landing page and wrong on 167 others for eleven days.
+#
+# ⚠️ **ONE REWRITE ON THE LIFT, and it is the same one the mobile nav needs:** the landing bar's
+# quote button is `href="#cta"` and NO generated page carries that id, so it becomes `/contact/`.
+# Left alone it would be a dead anchor on every leaf page — a contact button that contacts nobody,
+# which is the precise opposite of what he asked for.
+# ⚠️ There are no nested `<div>`s inside `.mbar`, so the first `</div>` closes it.
+def _mbar_from_index():
+    import pathlib as _p
+    src = (_p.Path(__file__).resolve().parent / "index.html").read_text(encoding="utf-8")
+    i = src.index('<div class="mbar" id="mobileBar">')
+    j = src.index("</div>", i) + len("</div>")
+    out = src[i:j].replace('href="#cta"', 'href="/contact/"')
+    assert 'href="/contact/"' in out and "wa.me" in out and "tel:" in out, "mbar lift lost a link"
+    return out
+
+
+MBAR_HTML = _mbar_from_index()
+
+# ⭐⭐ THE BAR'S OWN SCRIPT. These pages do not load `assets/site.js` (the 509 KB landing bundle),
+# so the eight lines that matter are inlined, exactly as FOOT_JS and the nav toggle already are.
+# ⭐ **THE ANCHOR CASCADE IS WIDER HERE THAN ON THE LANDING PAGE BECAUSE THESE FAMILIES DO NOT ALL
+# HAVE A HERO.** Services, materials and the county pages have `.svc-hero`; the 132 stone pages
+# have `.stp-hero`; the guides have no hero at all and open straight into a `.block` with the h1.
+# The last fallback is the page's own `<h1>`, so the bar rises once the title has gone by — true
+# on every page in every family, including the sitemap.
+# ⛔ NOTHING HERE TESTS THE WIDTH. `.mbar` is `display:none` above 1120px, so the stylesheet stays
+# the only thing that decides which bands have a bar (the landing page's own reasoning).
+MBAR_JS = ("<script>(function(){var b=document.getElementById('mobileBar');"
+           "var a=document.querySelector('.svc-hero .cta-row')"
+           "||document.querySelector('.page-head .cta-row')"
+           "||document.querySelector('.svc-hero,.page-head,.stp-hero')"
+           "||document.querySelector('main h1');"
+           "if(!b||!a)return;var s=false;function o(){"
+           "var h=(document.querySelector('header.bar')||{}).offsetHeight||76;"
+           "var p=a.getBoundingClientRect().bottom<h;"
+           "if(p!==s){s=p;b.classList.toggle('on',p);}}"
+           "o();window.addEventListener('scroll',o,{passive:true});"
+           "window.addEventListener('resize',o);})();</script>")
+
+
 # ⭐⭐ AND THE FOOTER'S OWN SCRIPT COMES WITH IT. On the tablet the Area and Hours blocks move out
 # of the contact column into `.foot-tail`, and there is no CSS property that re-parents a node
 # (D200) — so the landing page does it in JS. These pages do NOT load `assets/site.js`, which is
@@ -251,7 +296,7 @@ def footer_html():
     # ⚠️ QFORM_JS ships on every page in this family, including the three indexes and the sitemap
     # that carry no card: its IIFE returns immediately when `#qform` is absent, which is cheaper
     # than a second template branch and cannot drift out of step with the markup.
-    return FOOTER_HTML + FOOT_JS + BAR_JS + QFORM_JS
+    return MBAR_HTML + MBAR_JS + FOOTER_HTML + FOOT_JS + BAR_JS + QFORM_JS
 
 # ⭐⭐ THE MOBILE NAV IS LIFTED FROM index.html TOO — 17 Aug 2026 (D295), §13 item 7. Below
 # 1121px these pages hid `nav.top` and offered NOTHING in its place: no way off a leaf page on
@@ -448,6 +493,24 @@ def gold_last(text):
     """
     parts = e(text).rsplit(" ", 1)
     return parts[0] if len(parts) == 1 else f'{parts[0]} <em>{parts[1]}</em>'
+
+
+def gold_head(text):
+    """⭐⭐⭐ THE SECTION HEADING'S GOLD — 25 Aug 2026. Client: *"Make sure the inner pages titles
+    have the white and the gold as it needs to be"* and *"the other small titles that can probably
+    just be gold."*
+
+    ⛔ IT IS NOT `gold_last`, AND THE DIFFERENCE IS THE ONE-WORD CASE. D229 is a ruling about the
+    PAGE TITLE — *"if it's just one word, it's gonna be a white word"* — and that h1 rule is
+    untouched. A SECTION heading that stays white because it happens to be one word ("Related",
+    "Materials", "Cost") is precisely the inconsistency he was pointing at: some sections gilded,
+    some not, down one page. So a one-word section heading goes gold in full.
+    ⚠️ Escapes first, wraps after, exactly as `gold_last` does.
+    """
+    parts = e(text).rsplit(" ", 1)
+    if len(parts) == 1:
+        return f'<em>{parts[0]}</em>'
+    return f'{parts[0]} <em>{parts[1]}</em>'
 
 
 def cta_band(heading, line):
@@ -1727,7 +1790,7 @@ def applications_html(place=None):
         f'<a class="app" href="{h}"><h3>{e(t)}</h3><p>{e(d)}</p></a>'
         for t, h, d in APPLICATIONS)
     return f"""<section class="block"><div class="wrap">
-  <h2>Not only kitchens</h2>
+  <h2>Not only <em>kitchens</em></h2>
   <p class="note">Kitchens are most of what we do{where}, but they are not all of it. If it is
   stone and it needs templating and fitting, it is worth asking us about.</p>
   <div class="appgrid">{items}</div>
@@ -1749,7 +1812,7 @@ def process_html():
         f'<div class="step"><div class="n">Step {i}</div><h3>{e(t)}</h3><p>{e(p)}</p></div>'
         for i, (t, p) in enumerate(PROCESS, 1))
     return f"""<section class="block"><div class="wrap">
-  <h2>How it works</h2>
+  <h2>How it <em>works</em></h2>
   <div class="steps">{steps}</div>
 </div></section>"""
 
@@ -1757,7 +1820,7 @@ def process_html():
 def included_html():
     items = "".join(f"<li>{e(x)}</li>" for x in INCLUDED)
     return f"""<section class="block"><div class="wrap">
-  <h2>What is included as standard</h2>
+  <h2>What is included as <em>standard</em></h2>
   <ul class="ticks">{items}</ul>
   <p class="note">Cut-outs, drainer grooves and pencil edges are commonly itemised as extras
   elsewhere. They are not extras here, which is worth checking when you compare two quotes that
@@ -1805,7 +1868,7 @@ def render_sections(sections):
         else:
             head, paras = sec
             body = "".join(f"<p>{e(p)}</p>" for p in paras)
-            out.append(f'<section class="block"><div class="wrap"><h2>{e(head)}</h2>'
+            out.append(f'<section class="block"><div class="wrap"><h2>{gold_head(head)}</h2>'
                        f'<div class="prose">{body}</div></div></section>')
     return "".join(out)
 
@@ -1818,7 +1881,7 @@ def material_page(m):
     cr = [("/index.html#hero", "Home"), ("/materials/", "Materials"), (None, m["h1"])]
     facts = "".join(f"<div class='fact'><dt>{e(k)}</dt><dd>{e(v)}</dd></div>" for k, v in m["facts"])
     body = "".join(
-        f'<section class="block"><div class="wrap"><h2>{e(h)}</h2><div class="prose"><p>{e(p)}</p></div></div></section>'
+        f'<section class="block"><div class="wrap"><h2>{gold_head(h)}</h2><div class="prose"><p>{e(p)}</p></div></div></section>'
         for h, p in m["body"])
     rel = "".join(
         f'<li><a href="/materials/{s}.html">{e(next(x["h1"] for x in MATERIALS if x["slug"]==s))}</a></li>'
@@ -1867,7 +1930,7 @@ def material_page(m):
   {faq_block(m['faqs'])}
 
   <section class="block"><div class="wrap">
-    <h2>Related</h2>
+    <h2><em>Related</em></h2>
     <div class="rel-cols">
       <div><p class="foot-k">Other materials</p><ul class="rel">{rel}</ul></div>
       <div><p class="foot-k">Guides worth reading</p><ul class="rel">{gds}</ul></div>
@@ -1940,7 +2003,7 @@ def guide_page(g):
   {faq_block(g['faqs'])}
 
   <section class="block"><div class="wrap">
-    <h2>Related</h2>
+    <h2><em>Related</em></h2>
     <div class="rel-cols">
       <div><p class="foot-k">More guides</p><ul class="rel">{rel}</ul></div>
       <div><p class="foot-k">Materials</p><ul class="rel">{mats}</ul></div>
@@ -2047,7 +2110,7 @@ def county_page(c):
   </div></section>
 
   <section class="block"><div class="wrap">
-    <h2>What a kitchen costs in {e(c['name'])}</h2>
+    <h2>What a kitchen costs in <em>{e(c['name'])}</em></h2>
     {_local_price_table()}
     <p class="note">Those figures are for kitchens, which is the job we are asked for most.
     Bathrooms, vanity tops, splashbacks, utility rooms, outdoor kitchens, commercial fit-outs,
@@ -2057,14 +2120,14 @@ def county_page(c):
   </div></section>
 
   <section class="block"><div class="wrap">
-    <h2>Towns and areas we cover in {e(c['name'])}</h2>
+    <h2>Towns and areas we cover in <em>{e(c['name'])}</em></h2>
     <p class="note">{e(c['towns_note'])}</p>
     <ul class="rel two-up">{town_links}</ul>
     <ul class="chips">{areas}</ul>
   </div></section>
 
   <section class="block"><div class="wrap">
-    <h2>Materials</h2>
+    <h2><em>Materials</em></h2>
     <ul class="rel two-up">{mats}</ul>
   </div></section>
 
@@ -2164,7 +2227,7 @@ def town_page(t):
   </div></section>
 
   <section class="block"><div class="wrap">
-    <h2>Materials</h2>
+    <h2><em>Materials</em></h2>
     <ul class="rel two-up">{mats}</ul>
   </div></section>
 
@@ -2416,6 +2479,290 @@ def sitemap_page():
 
 
 # ===========================================================================
+
+# ============================================================================================
+# ⭐⭐⭐ THE TERMS AND THE PRIVACY POLICY — 25 August 2026
+# Client: *"Here is the link for the terms and conditions of the current TopCat website. Make sure
+# that the terms are actually in the site, and you just move it over into this. You can copy all of
+# that exactly as it is... Then if you're going to guess about a privacy policy, don't write one.
+# But if you believe we can write a decent privacy policy, a basic one, then go ahead and write
+# that and make sure that the button for it is working."*
+#
+# ⛔⛔⛔ **THE TERMS ARE HIS, VERBATIM, FROM topcatworktops.co.uk/terms — NOT EDITED, NOT TIDIED,
+# NOT MODERNISED.** *"copy all of that exactly as it is."* Every clause, number and heading is the
+# source's. ⚠️ Three things in them CONTRADICT THE NEW SITE and were deliberately left alone
+# because they are legal text and his to change, not mine — they are written up in the handover
+# for him to rule on:
+#     5.1  "workmanship for 2 weeks" — the whole site promises a TEN YEAR guarantee and 72 hour
+#          aftercare. A two-week workmanship warranty in the terms undercuts the headline claim.
+#     10.2 disputes go to the "Financial Ombudsman" — the FOS covers financial services, not
+#          worktop installation, so this route does not exist for this business.
+#     12   the contact block ends "www.topcatworktops.com" where the business is .co.uk.
+# ⛔ DO NOT SILENTLY FIX THESE. He asked for a copy, and a copy is what this is.
+#
+# ⭐⭐ **THE PRIVACY POLICY IS WRITTEN, NOT GUESSED, AND EVERY SENTENCE IN IT IS CHECKED AGAINST
+# WHAT THE SITE ACTUALLY DOES.** He gave the condition himself, so the build was: audit first,
+# write only what the audit supports. Verified before a word was written —
+#     no analytics, no tag manager, no advertising or social pixel  (grepped, zero hits)
+#     no cookies and no localStorage in any shipped file           (only dev-server.js, not shipped)
+#     ONE third party: Google Fonts, on all 184 pages, which does receive the visitor's IP
+#     the forms collect name, email, phone, optional postcode, service and message
+#     `ENDPOINT` in tcform.js is still empty, so nothing is transmitted anywhere YET
+# ⚠️ **THE POLICY IS WRITTEN TO BE TRUE BOTH BEFORE AND AFTER THE BACKEND IS CONNECTED**, which is
+# why it says what is collected and why, rather than naming a processor that does not exist yet.
+# ⛔ THREE THINGS ARE NOT IN IT BECAUSE ONLY HE CAN SUPPLY THEM, and inventing any of them is
+# exactly the guessing he forbade: the ICO registration number, the real retention period, and the
+# name of the mail/CRM processor once one is chosen. They are listed in the handover.
+# ⚠️ §2 rule 12 applies to legal copy hardest: nothing here claims anything that cannot be kept.
+# ============================================================================================
+
+TERMS_INTRO = ("Please review how Topcat Worktops handles quotations, installations and warranties "
+               "before accepting your proposal.")
+
+# ⚠️ VERBATIM. (number, heading, [(subnumber_and_heading | None, [paragraphs])])
+TERMS = [
+ ("1", "General Information", [
+   (None, ["Topcat Worktops provides services for the supply, delivery and installation of quartz, "
+           "granite, marble and other natural stone worktops (\u201cWorktops\u201d). These Terms apply to "
+           "all transactions, including orders, quotations and installations."])]),
+ ("2", "Quotation & Orders", [
+   ("2.1 Quotation Validity", [
+     "Quotations provided by Topcat Worktops are valid for 30 days from the date of issue unless "
+     "stated otherwise. After this period, pricing and availability may be subject to change."]),
+   ("2.2 Order Confirmation", [
+     "An order is considered confirmed when you provide written acceptance of the quotation and "
+     "make the required deposit payment (where applicable). Any changes to the order after "
+     "confirmation may result in additional charges. Changes may be made before payment of the "
+     "deposit, but this can result in a new quote."])]),
+ ("3", "Payment Terms", [
+   ("3.1 Deposit", [
+     "A minimum deposit of 50% is required to confirm your order. The balance of the total cost is "
+     "due on the day of installation unless otherwise agreed in writing. If a worktop is delivered "
+     "to the customer and it is of a substandard quality, Topcat Worktops will resolve this and no "
+     "further payment will be made until the job can progress."]),
+   ("3.2 Final Payment", [
+     "Final payment must be made in full before the installation team begins work. Failure to make "
+     "full payment may result in delays or the cancellation of your installation."]),
+   ("3.3 Methods of Payment", [
+     "We accept payments via bank transfer. Payment details will be provided upon order "
+     "confirmation."])]),
+ ("4", "Delivery & Installation", [
+   ("4.1 Delivery", [
+     "We will deliver your Worktop to the address specified in your order. Delivery times are "
+     "estimates and may vary based on location and availability of materials. We will notify you "
+     "of any changes to the delivery schedule. All deliveries are made inside of normal working "
+     "hours (9am\u20135pm, Monday to Friday)."]),
+   ("4.2 Installation", [
+     "Installation is scheduled once your Worktop is ready. You must ensure that the installation "
+     "site is ready and accessible before the scheduled date. This includes having adequate space "
+     "for delivery and installation, and ensuring that any necessary plumbing or electrical work "
+     "has been completed. Our installers are not trained or qualified to undertake electrical or "
+     "plumbing work and the base for the worktops must be to the standard required prior to "
+     "delivery. Our team may make suggestions to improve a base if needed. All binders or sealants "
+     "used must be given 48 hours to set."]),
+   ("4.3 Site Preparation", [
+     "Any preparation work required to install the Worktop, such as the removal of old countertops, "
+     "is not included unless specifically outlined in the order. We can provide this service for an "
+     "additional cost upon request. Our installers are not trained or qualified to undertake "
+     "electrical or plumbing work and the base for the worktops must be to the standard required "
+     "prior to delivery. Our team may make suggestions to improve a base for a worktop."]),
+   ("4.4 Access & Site Conditions", [
+     "You must ensure that the installation area is clear, accessible and free from obstructions. "
+     "If the installation cannot proceed due to site conditions or access issues, we may need to "
+     "reschedule or charge additional fees."]),
+   ("4.5 Delays", [
+     "We are not liable for any delays in delivery or installation caused by circumstances outside "
+     "our control, including but not limited to adverse weather, supply chain disruptions or "
+     "unforeseen site conditions."])]),
+ ("5", "Product Quality & Warranty", [
+   ("5.1 Product Warranty", [
+     "All Worktops supplied by Topcat Worktops come with a manufacturer\u2019s warranty, which "
+     "typically covers defects in material for 15 years and workmanship for 2 weeks. This warranty "
+     "does not cover damage resulting from misuse, accidents, improper care or installation errors. "
+     "Please see the manufacturer\u2019s terms and conditions for full details of the warranty for "
+     "your material."]),
+   ("5.2 Inspection", [
+     "Upon installation, you should inspect the Worktop for any visible defects or damage. If there "
+     "are any issues, please notify us within 48 hours so we can resolve the matter."]),
+   ("5.3 Natural Variations", [
+     "Natural stone Worktops (e.g., granite, marble) may have inherent variations in colour, "
+     "texture and veining. These variations are considered normal, and we cannot guarantee that the "
+     "finished product will match the sample exactly. We recommend that you review the materials "
+     "before confirming your order."])]),
+ ("6", "Cancellations & Returns", [
+   ("6.1 Order Cancellation", [
+     "You may cancel your order within seven days of placing it, provided that installation has not "
+     "yet commenced. After this period, cancellations may incur a cancellation fee for any "
+     "materials that have been ordered and cannot be returned. You may also have to pay any fees "
+     "incurred for returning materials."]),
+   ("6.2 Returns", [
+     "We do not accept returns for custom-cut or installed Worktops. If you receive a defective "
+     "product, we will work with you to arrange for a replacement or repair. Please contact Topcat "
+     "Worktops to arrange this."])]),
+ ("7", "Customer Responsibilities", [
+   ("7.1 Site Accessibility", [
+     "You are responsible for ensuring that the installation site is accessible and ready for "
+     "installation as per the agreed schedule. Failure to do so may result in additional charges "
+     "for rescheduling or delays."]),
+   ("7.2 Damage Prevention", [
+     "You are responsible for maintaining the Worktop post-installation. While our Worktops are "
+     "designed to be durable, you should follow the care and maintenance guidelines provided to "
+     "avoid any damage."]),
+   ("7.3 Permits & Approvals", [
+     "If required, you are responsible for obtaining any necessary permits or approvals for the "
+     "installation of the Worktop, including building or planning permissions."])]),
+ ("8", "Liability", [
+   ("8.1 Limitation of Liability", [
+     "Topcat Worktops\u2019 liability is limited to the cost of the Worktop and installation "
+     "services. We are not liable for any indirect, incidental or consequential damages arising "
+     "from the use of our products or services."]),
+   ("8.2 Force Majeure", [
+     "Topcat Worktops will not be held responsible for any failure to perform our obligations under "
+     "these Terms due to events outside of our reasonable control, such as acts of God, war, "
+     "strikes or natural disasters."])]),
+ ("9", "Privacy & Data Protection", [
+   (None, ["We are committed to protecting your privacy. Any personal information you provide to us "
+           "will be handled in accordance with our Privacy Policy, which is available on our "
+           "website."])]),
+ ("10", "Governing Law & Dispute Resolution", [
+   ("10.1 Governing Law", [
+     "These Terms shall be governed by and construed in accordance with the laws of England and "
+     "Wales."]),
+   ("10.2 Dispute Resolution", [
+     "Any disputes arising from or in connection with these Terms shall be resolved through the "
+     "Financial Ombudsman before escalating to formal legal proceedings. Begin the process at "
+     "financial-ombudsman.org.uk."])]),
+ ("11", "Changes to Terms", [
+   (None, ["Topcat Worktops reserves the right to modify these Terms at any time. Any changes will "
+           "be communicated to you, and the updated Terms will be posted on our website with "
+           "reasonable notice provided."])]),
+]
+
+TERMS_CONTACT = ["Topcat Worktops", "27 Old Gloucester Street,", "London,", "United Kingdom,",
+                 "WC1N 3AX", "0800 0982812", "info@topcatworktops.co.uk", "www.topcatworktops.com"]
+TERMS_CLOSE = ("Acceptance of quotation is considered acknowledgement and agreement to these Terms "
+               "and Conditions.")
+
+
+def terms_page():
+    url = f"{BASE}/terms/"
+    cr = [("/index.html#hero", "Home"), (None, "Terms & Conditions")]
+    body = []
+    for num, head, subs in TERMS:
+        body.append(f"<h2>{num}. {gold_head(head)}</h2>")
+        for sub, paras in subs:
+            if sub:
+                body.append(f"<h3>{e(sub)}</h3>")
+            for p in paras:
+                body.append(f"<p>{e(p)}</p>")
+    body.append(f"<h2>12. {gold_head('Contact Information')}</h2>")
+    body.append("<p>For any questions or concerns regarding these Terms, please contact us at:</p>")
+    body.append("<address>" + "<br>".join(e(l) for l in TERMS_CONTACT) + "</address>")
+    body.append(f'<p class="legal-close">{e(TERMS_CLOSE)}</p>')
+    ld = ld_block(org_ld(), breadcrumb_ld(cr, url))
+    title = "Terms & Conditions | Topcat Worktops"
+    md = ("The terms on which Topcat Worktops quotes, supplies, delivers and installs quartz, "
+          "granite and marble worktops, including payment, warranty and cancellation.")
+    return head_html(title, md, url, 1, ld) + f"""
+{crumbs(cr)}
+<main>
+  <section class="block"><div class="wrap">
+    <h1>Terms &amp; <em>Conditions</em></h1>
+    <p class="legal-lede">{e(TERMS_INTRO)}</p>
+    <div class="legal">{''.join(body)}</div>
+  </div></section>
+</main>
+{footer_html()}
+</body>
+</html>"""
+
+
+# ⭐ Written from the audit above. ⚠️ Each heading is a plain statement of one thing the site does.
+PRIVACY = [
+ ("Who we are", [
+   "Topcat Worktops Ltd supplies and installs quartz, granite, marble and other natural stone "
+   "worktops across London and the Home Counties. When you use this website or enquire with us, "
+   "Topcat Worktops Ltd is the data controller for the personal information you provide.",
+   "You can reach us at 27 Old Gloucester Street, London, WC1N 3AX, on 0800 098 2812, or by email "
+   "at info@topcatworktops.co.uk."]),
+ ("What we collect", [
+   "We collect only what you type into an enquiry form on this site. Depending on the form, that "
+   "is your name, your email address, your telephone number, your postcode, the service you are "
+   "interested in, and anything you choose to write in the message box.",
+   "You do not have to give us both an email address and a phone number. One or the other is "
+   "enough for us to reply, and the forms are built that way."]),
+ ("Why we use it", [
+   "We use your details for one purpose: to answer your enquiry, arrange a free home visit where "
+   "you have asked for one, and prepare and discuss a quotation. That is the basis on which we "
+   "hold it, and we do not use it for anything else.",
+   "We do not send marketing email, we do not build a mailing list from enquiries, and we do not "
+   "sell, rent or share your details with anyone for their own marketing."]),
+ ("Cookies and tracking", [
+   "This website sets no cookies of its own and stores nothing in your browser. There is no "
+   "analytics, no tag manager, no advertising tag and no social media pixel anywhere on it.",
+   "The one third party the site loads is Google Fonts, which serves the two typefaces the pages "
+   "are set in. Your browser requests those files from Google, and in doing so Google receives "
+   "your IP address. Google states that it does not use these requests to build an advertising "
+   "profile. No other third party receives anything about your visit."]),
+ ("Who else sees your enquiry", [
+   "Your enquiry is read by the people at Topcat Worktops who need to read it in order to answer "
+   "it and to carry out the work. Where we use an outside supplier to deliver or install your "
+   "worktop, we pass on only what that job needs, such as a delivery address and a contact number.",
+   "We may also have to disclose information where the law requires it. We do not transfer your "
+   "information outside the United Kingdom for our own purposes."]),
+ ("How long we keep it", [
+   "We keep enquiries that do not become orders for as long as they are useful in answering you "
+   "and no longer than we need them. Where an enquiry becomes an order, we keep the records for as "
+   "long as the guarantee runs and for as long as tax and accounting law requires us to.",
+   "If you would like your details removed sooner, ask us and we will do it."]),
+ ("Your rights", [
+   "Under UK data protection law you can ask us for a copy of the information we hold about you, "
+   "ask us to correct it if it is wrong, ask us to delete it, and object to our using it. Ask by "
+   "email at info@topcatworktops.co.uk or by phone on 0800 098 2812, and we will reply within one "
+   "month.",
+   "If you are not happy with how we have handled your information you can complain to the "
+   "Information Commissioner's Office at ico.org.uk, or on 0303 123 1113."]),
+ ("Security", [
+   "Enquiries sent from this site travel over an encrypted connection, and access to them is "
+   "limited to the people who need it. No method of transmission over the internet is completely "
+   "secure, so we cannot promise absolute security, but we take reasonable care of what you send "
+   "us."]),
+ ("Changes to this policy", [
+   "If we change how we handle personal information, we will update this page and change the date "
+   "below. This policy applies to this website only, and not to any other site you may reach from "
+   "a link on it."]),
+]
+
+
+def privacy_page():
+    url = f"{BASE}/privacy/"
+    cr = [("/index.html#hero", "Home"), (None, "Privacy Policy")]
+    body = []
+    for head, paras in PRIVACY:
+        anchor = ' id="cookies"' if head.startswith("Cookies") else ""
+        body.append(f"<h2{anchor}>{gold_head(head)}</h2>")
+        for p in paras:
+            body.append(f"<p>{e(p)}</p>")
+    body.append('<p class="legal-close">Last updated 25 August 2026.</p>')
+    ld = ld_block(org_ld(), breadcrumb_ld(cr, url))
+    title = "Privacy Policy | Topcat Worktops"
+    md = ("What Topcat Worktops does with the details you send through this website, how long we "
+          "keep them, and your rights over them. No cookies, no tracking, no marketing lists.")
+    return head_html(title, md, url, 1, ld) + f"""
+{crumbs(cr)}
+<main>
+  <section class="block"><div class="wrap">
+    <h1>Privacy <em>Policy</em></h1>
+    <p class="legal-lede">What we collect when you enquire, what we do with it, and what you can ask
+    us to do about it. This site sets no cookies and carries no tracking of any kind.</p>
+    <div class="legal">{''.join(body)}</div>
+  </div></section>
+</main>
+{footer_html()}
+</body>
+</html>"""
+
+
 def main():
     written = []
 
@@ -2439,13 +2786,16 @@ def main():
     for t in TOWNS:
         w(f"worktops/{t['county']}/{t['slug']}/index.html", town_page(t))
 
+    w("terms/index.html", terms_page())
+    w("privacy/index.html", privacy_page())
+
     w("sitemap.html", sitemap_page())
 
     for path in written:
         print("wrote", path)
     print(f"done: {len(written)} pages "
           f"({len(MATERIALS)} materials, {len(GUIDES)} guides, "
-          f"{len(COUNTIES)} counties, {len(TOWNS)} towns, 3 indexes, 1 sitemap)")
+          f"{len(COUNTIES)} counties, {len(TOWNS)} towns, 3 indexes, 1 sitemap, 2 legal)")
 
 
 if __name__ == "__main__":
