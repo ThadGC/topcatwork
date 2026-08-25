@@ -877,6 +877,16 @@ buildCards(document.getElementById('svcGridServices'), SERVICES, {nameOnly:true,
     });
   }
   function sync(){ arrange(); label(); }
+  /* ⭐⭐⭐ THE FIRST SCREEN'S ONE SCALE — D418c. 1 at the approved 1440×900 frame, and the tighter
+     of the two axes below it, so the whole composition (title, lede, cue, both arrow copies) keeps
+     the reference's proportions on every desktop window shape. ⛔ Desktop band only: the phone and
+     tablet compositions are his own and are not scaled. */
+  function setHeroScale(){
+    var v = innerWidth >= 1121 ? Math.max(0.70, Math.min(innerWidth / 1440, innerHeight / 900, 1)) : 1;
+    document.documentElement.style.setProperty('--heroScale', String(Math.round(v * 1000) / 1000));
+  }
+  setHeroScale();
+  addEventListener('resize', setHeroScale, {passive:true});
   sync();
   addEventListener('resize',sync,{passive:true});
 })();
@@ -5632,9 +5642,13 @@ if(faqIndex && panel && faqBody){
      so a slow scrub's seeks resolve in ≤3 P-frames instead of ≤7. All three bands moved together
      — the scroll maths depends on the three sharing one rate. */
   const FPS=24, DUR=44.25;                // the file's own rate and length, and the fallback
-  const EASE=0.12;                        // how hard the playhead chases the scroll
+  const EASE=0.15;                        // how hard the playhead chases the scroll (D421: shorter tail)
   const INK_AT=0.93;                      // where in the FILM the copy starts to rise
-  const HALF=0.5/FPS;
+  /* ⭐⭐ D421 — ONE FRAME, NOT HALF. Client: "if I swipe quickly and it starts slowing down…
+     it's still glitching towards the end." The decay tail asked for dozens of seeks smaller than a
+     single frame; each costs a decode and the queue thrashes. Below one frame there is nothing new
+     to show. ⚠️ Still named HALF: every call site reads it as "the smallest seek worth making". */
+  const HALF=1.0/FPS;
   /* ⭐ D312: this no longer asks WHETHER the film runs — it runs at every band now — only WHICH cut
      is playing. All three are the same 44.25s at the same 12fps, so the scroll maths never changes.
      ⭐⭐ D319: THREE cuts again, and `band()` is the one cascade the whole film reads — the source,

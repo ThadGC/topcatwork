@@ -540,7 +540,18 @@
      now the TIGHTER of the two against the approved 1440×900 frame: at 1440×900 it is exactly
      1px, on a wide-short window the height side wins and the whole first screen closes down in
      proportion, and the arrow gets its air back above the chips. */
-  @media(min-width:1121px){ :root{--uipx:clamp(0.80px,min(100vw / 1440, 100vh / 900),1.18px)} }
+  @media(min-width:1121px){ :root{
+    /* ⚠️ THE FLOOR WAS THE SECOND MISS: at 0.80 a 1121–1250px desktop hit the floor and stopped
+       shrinking, which is the window he was looking at. ⭐ THIS ONE IS VALID CSS because its
+       bounds carry units — `min(100vw/1440, 100vh/900)` is a LENGTH. */
+    --uipx:clamp(0.74px,min(100vw / 1440, 100vh / 900),1.18px);
+  } }
+  /* ⛔⛔⛔ `--heroScale` IS SET FROM JS AND CANNOT BE A CSS CLAMP — this cost a round. A unitless
+     `clamp(0.70, min(100vw/1440, 100vh/900), 1)` is INVALID: a viewport unit divided by a number is
+     still a LENGTH, so the clamp mixes lengths with numbers, `scale()` rejects it, and the whole
+     transform silently falls back — the title kept its full size and looked untouched. ⚠️ The
+     symptom is exactly "the fix did nothing", with no console error. See setHeroScale(). */
+  :root{--heroScale:1}
   nav.top .nav-menu a{
     padding:calc(11*var(--uipx)) calc(26*var(--uipx));font-size:calc(10.5*var(--uipx));letter-spacing:0.15em;white-space:nowrap;
     text-decoration:underline;text-decoration-color:transparent;
@@ -4504,8 +4515,19 @@
     position:fixed;right:18px;bottom:24px;z-index:38;
     width:54px;height:54px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(155deg,#15151b,#0e0e12);
-    border:1px solid rgba(198,166,100,0.55);
+    /* ⛔⛔⛔ THE GROUND IS THE SKIP PILL'S, TO THE DIGIT — 25 Aug 2026 (D420). Client: *"the
+       gradient behind the WhatsApp button and the phone button does not look the same as the one
+       behind the skip intro button. It has to look like the one behind the skip intro button."*
+       ⭐⭐⭐ **AND THE STRIPE HE PHOTOGRAPHED WAS THIS ELEMENT'S OWN BACKGROUND, NOT THE VIDEO
+       BEHIND IT.** It was `linear-gradient(155deg,#15151b,#0e0e12)` — a diagonal ramp across a
+       46px disc, which reads as a pale band cutting the circle. **Two rounds went to the backdrop
+       (D405's `isolation`, D419's flat ground) on the assumption that the fault was compositing;
+       it was a gradient that had sat in this rule since D173.** ⛔ NO GRADIENT ON THESE DISCS.
+       ⭐ The three lines below are copied from `html.cine-on .cine-skip`, and they live in the
+       BASE rule so every band and every page shows one ground. */
+    background:rgba(8,8,11,0.70);
+    -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+    border:1px solid rgba(198,166,100,0.72);
     box-shadow:0 16px 36px -14px rgba(0,0,0,0.92);
     color:var(--gold);
     -webkit-tap-highlight-color:transparent;
@@ -4555,23 +4577,11 @@
        his device, the next step is the `position:fixed` theory above, not another colour.** */
     .wa-fab,.call-fab{
       width:46px;height:46px;
-      background:rgba(8,8,11,0.70);
-      -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-      isolation:isolate;
-      border-color:rgba(198,166,100,0.5);
+      /* ⚠️ The ground is the BASE rule's now (D420) — the skip pill's, at every band.
+         ⛔ Do not restate it here; that divergence is how the two drifted apart. */
       box-shadow:0 10px 26px -12px rgba(0,0,0,0.85);
       transition:bottom .5s var(--ease),border-color .35s var(--ease),color .35s var(--ease),
                  opacity .3s var(--ease),transform .35s var(--ease)}
-    /* ⛔⛔ D419 (25 Aug) — HIS PHOTOGRAPH OF THE STRIPE ACROSS THE CALL BUTTON. A fixed element's
-       backdrop-filter over the film's video layer is the D405 flicker in still form: the blur
-       samples across a compositor tile seam and paints it as a band. isolation:isolate did not
-       stop it. So ON THE FILM'S PAGE the buttons do not sample at all — flat 0.78 keeps the skip
-       pill's tone without the frost — and the artifact has no mechanism left. Inner pages have
-       no video and keep the original frosted dress. ⛔ Do not put backdrop-filter back under
-       html.cine-on. */
-    html.cine-on .wa-fab,html.cine-on .call-fab{
-      -webkit-backdrop-filter:none;backdrop-filter:none;
-      background:rgba(8,8,11,0.78)}
     /* ⭐⭐⭐ **BOTH GLYPHS ARE 23px AND THEY NOW MEAN THE SAME THING — 25 August 2026.** Client:
        *"the little phone icon inside the circle is too small. So fix it across the board."*
        ⛔⛔ **THE BOX WAS NEVER THE PROBLEM, THE ARTWORK WAS.** Measured with `getBBox()`: the
@@ -5295,7 +5305,16 @@
          the SCROLL, which is continuous, and it moves about **1.5x** the speed the scene does, so it
          reads as being pulled off the side rather than as something attached to the mountain.
          ⚠️ `translate3d` so the offset is compositor work rather than paint, and the Z stays 0. */
-      transform:translate3d(calc(var(--tx,0) * 1px),0,calc(var(--hz,0) * 1px));
+      /* ⭐⭐⭐ D418c — ONE SCALE FOR THE WHOLE FIRST-SCREEN COMPOSITION, composed with the exit
+         travel this block already carries. Scaling the parts individually desynchronised the
+         arrow's TWO copies (the base silhouette and the light that passes through it) and put his
+         "flash" beside the arrow. `--heroScale` is set from JS (setHeroScale) — 1 at the approved
+         1440×900 frame, the tighter axis below it — so title, lede, cue and arrow keep the
+         reference's proportions on every desktop window, and the air down to the Google chips
+         opens as the block shrinks. ⛔ The chips are NOT scaled: they are pinned to the frame's
+         foot and are the thing that gap is measured against. */
+      transform:translate3d(calc(var(--tx,0) * 1px),0,calc(var(--hz,0) * 1px)) scale(var(--heroScale,1));
+      transform-origin:left top;
     }
     /* ⛔ the desktop opening title goes here; the ORIGINAL CUE IS HIDDEN FURTHER DOWN, beside its
        own rules — hidden from here it lost on source order, because `html.cine-on .cine-cue` has
@@ -5331,6 +5350,12 @@
       opacity:0;                                  /* the scrub owns it, exactly as the copy is */
       /* ⭐ THE SAME OFFSET AS THE WORDS, FROM THE SAME WRITE — the first screen leaves as ONE object
          and the same screen edge dissolves it, so there is no second animation to keep in step. */
+      /* ⭐⭐⭐ D418c — ONE TRANSFORM FOR THE WHOLE COMPOSITION. Scaling the parts individually
+         (D418b) desynchronised the arrow's TWO copies — the base silhouette and the light that
+         passes through it — and put his "flash" beside the arrow instead of through it. One scale
+         on the block cannot do that. `--heroScale` is 1 at the approved 1440×900 frame and closes
+         down with the TIGHTER axis on any smaller desktop, from the block's own top-left, so the
+         title never towers and the air down to the Google chips opens as it shrinks. */
       transform:translate3d(calc(var(--tx,0) * 1px),0,0);
     }
 
@@ -5341,7 +5366,12 @@
       margin:0;font-family:var(--serif);font-weight:400;
       /* D418b: 72 × the 1440×900-anchored pixel — 72px at the reference, keyed to the
          window's SHORT side so the title never towers on a wide-short screen */
-      font-size:clamp(38px,calc(72*var(--uipx)),76px);line-height:1.06;letter-spacing:-0.004em;
+      /* ⛔ NOT `vw` — that was the last of the fault. A vw size GROWS with the window's width
+         while `--heroScale` only shrinks with its tighter axis, so on a wide-short screen the two
+         fought and the title still came out proportionally larger than the approved frame. It is
+         the reference's own 72px flat, and the ONE scale below does all the resizing, so the
+         painted size is 72 × (the frame's own ratio) on every desktop. */
+      font-size:72px;line-height:1.06;letter-spacing:-0.004em;
       color:var(--bone);text-wrap:balance;
       /* a contact shadow so the type reads as an object in the room, exactly as the titles do —
          ⛔ never the legibility mechanism on its own, which is what D313 proved twice */
@@ -5438,13 +5468,13 @@
        to. Nothing else moves. ⭐ To put it beside the word instead: `flex-direction:row`,
        `align-items:center`, and drop the shaft to ~34px. */
     html.cine-on .cine-hero .cine-hero-cue{
-      margin:calc(36*var(--uipx)) 0 0;display:inline-flex;flex-direction:column;gap:calc(26*var(--uipx));align-items:flex-start;
+      margin:36px 0 0;display:inline-flex;flex-direction:column;gap:26px;align-items:flex-start;
     }
     /* ⛔ THE WORD IS BONE, NOT GOLD, and that is deliberate after D327b. The headline's "starts
        here." is the gold on this frame; a second gold sixty pixels under it competes with the first
        and neither wins. White word, gold marks — the hierarchy the rest of the site uses. */
     html.cine-on .cine-hero .cine-hero-cue span{
-      font-weight:500;font-size:calc(14*var(--uipx));line-height:1;font-family:var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
+      font:500 14px/1 var(--brand);letter-spacing:0.3em;text-transform:uppercase;color:var(--bone);
       text-shadow:0 1px 16px rgba(6,6,8,0.9),0 1px 3px rgba(6,6,8,0.8);
     }
     /* ⛔⛔ ITS OWN KEYFRAMES, NOT `cineCue`. The film's cue drops to **opacity 0.2** for a third of
@@ -5490,14 +5520,14 @@
        so that half of a 2.5 stroke still lands the tip exactly on the box's left edge, which is
        what keeps it in line with the "S" of SCROLL. */
     html.cine-on .cine-hero .cine-hero-cue i{
-      display:block;position:relative;width:calc(32*var(--uipx));height:calc(96*var(--uipx));
+      display:block;position:relative;width:32px;height:96px;
       filter:drop-shadow(0 2px 9px rgba(6,6,8,0.8));
       will-change:transform;
       animation:cineHeroDip 1.8s cubic-bezier(.33,0,.16,1) infinite;
     }
     /* the base: the silhouette that is never allowed to go anywhere */
     html.cine-on .cine-hero .cine-hero-cue i > svg{
-      display:block;width:calc(32*var(--uipx));height:calc(96*var(--uipx));color:rgba(198,166,100,0.62);
+      display:block;width:32px;height:96px;color:rgba(198,166,100,0.62);
       fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
     }
     /* the arrow's own shape, held still, with the light moving inside it */
@@ -6025,7 +6055,16 @@
      (the tablet band block carries its bottom and its flank constants). Both corner rulings are
      in the register — D368 and D369 — so neither is re-proposed cold. */
   @media(max-width:1120px){
-    html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 21px)}
+    /* ⭐⭐ D422 (client): "the skip intro button must be exactly in line with the phone button and
+       the WhatsApp button, not lower, exactly in the fucking line."
+       ⭐ THE TWO DISCS ARE 46px TALL AT 18px OFF THE FLOOR on both narrow bands, so their centres
+       sit 41px up. The pill was 43px tall at 21px — 2px low and 3px shorter, which is exactly the
+       "lower" he saw. It takes the discs' OWN height and their OWN offset, so the three centres
+       agree to the pixel. ⛔ Matching `bottom` alone does not align them; the heights must match
+       too, and this is the rule that governs at both narrow bands. */
+    html.cine-on .cine-skip{right:auto;left:50%;transform:translateX(-50%);
+      bottom:calc(env(safe-area-inset-bottom,0px) + 18px);
+      height:46px;padding-top:0;padding-bottom:0;box-sizing:border-box}
   }
   /* ⭐⭐⭐ THE PILL IS NOW EVERY BAND'S — 24 August 2026 (D375). His phone instruction was *"round
      the skip button sides into a pill side shape"* (D359a), the tablet took it at D368 by the
