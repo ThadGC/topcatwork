@@ -1,0 +1,226 @@
+'use client';
+
+import { useRef } from 'react';
+
+import { useFooterTail } from '@/hooks/useFooterTail';
+
+import { WhatsAppPathsSolid } from './glyphs';
+import {
+  EMAIL,
+  EMAIL_HREF,
+  FOOT_AREA,
+  FOOT_BROWSE_HEAD,
+  FOOT_COPYRIGHT,
+  FOOT_EXPLORE,
+  FOOT_HOURS,
+  FOOT_LEGAL,
+  FOOT_TAGLINE,
+  INSTAGRAM_URL,
+  LINKEDIN_URL,
+  PHONE_DISPLAY,
+  PHONE_TEL,
+  WHATSAPP_DISPLAY,
+  WHATSAPP_URL,
+} from './nav-data';
+
+export interface SiteFooterProps {
+  /**
+   * The Browse column's last link. The source hard-codes a bare `#faq`, which
+   * resolves on the three pages that have a FAQ section and is a dead link on
+   * the other 174. Defaulted to the source's value; pass '/#faq' to fix it.
+   */
+  readonly faqHref?: string;
+}
+
+/**
+ * `footer.site#footer` — byte-identical across all 177 modern pages.
+ *
+ * ---------------------------------------------------------------------------
+ * THE TAIL
+ * ---------------------------------------------------------------------------
+ * `.foot-c-area` and `.foot-c-hours` are rendered inside `.foot-contact`,
+ * where the phone layout wants them, and an empty `<div class="foot-tail">`
+ * sits below the grid. At 721px and up a script moves those two nodes into
+ * the tail, where they get a full-width row of their own instead of being
+ * squeezed into the fourth column. See useFooterTail for why this is a DOM
+ * move rather than a conditional render.
+ *
+ * Two consequences for anyone editing below this line:
+ *
+ *   1. `.foot-tail:empty{display:none}` is what keeps the empty div invisible
+ *      on phones. The div must have NO children — not a comment, not a space.
+ *      `<div ... />` is correct; do not "tidy" it into `<div>{null}</div>`.
+ *
+ *   2. `.foot-c-area` and `.foot-c-hours` must stay static JSX. No key, no
+ *      conditional, no interpolated child below them, or React will re-insert
+ *      them where it thinks they belong and undo the move.
+ */
+export function SiteFooter({ faqHref = '#faq' }: SiteFooterProps) {
+  const footer = useRef<HTMLElement>(null);
+  const tail = useRef<HTMLDivElement>(null);
+  const contact = useRef<HTMLDivElement>(null);
+  const area = useRef<HTMLDivElement>(null);
+  const hours = useRef<HTMLDivElement>(null);
+
+  useFooterTail({ footer, tail, contact, area, hours });
+
+  return (
+    <footer className="site" id="footer" ref={footer}>
+      <div className="foot-grid">
+        <div className="foot-brand">
+          <a
+            className="brand brand-stack"
+            href="/"
+            aria-label="Topcat Worktops, home"
+          >
+            <img
+              className="brand-logo"
+              src="/assets/brand/topcat-vertical.svg"
+              alt=""
+              width={528}
+              height={495}
+              decoding="async"
+            />
+          </a>
+          <p className="foot-tag">{FOOT_TAGLINE}</p>
+          <span className="foot-stars">
+            <b>★★★★★</b> 5.0 · Google reviews
+          </span>
+          {/*
+            `.foot-guar` is display:none everywhere except below 720px, where
+            the footer's star line becomes a pill and this becomes a second
+            one under it. It is rendered on every viewport regardless — the
+            source does the same, and hiding it in JS instead would cost a
+            hydration mismatch for no gain.
+          */}
+          <span className="foot-stars foot-guar">
+            <b>10</b> year guarantee
+          </span>
+          <div className="foot-social">
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Topcat Worktops on Instagram"
+            >
+              {/* Stroked, not filled — the only stroked glyph in the chrome. */}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                aria-hidden="true"
+              >
+                <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" />
+                <circle cx="12" cy="12" r="4.1" />
+                <circle
+                  cx="17.1"
+                  cy="6.9"
+                  r="1.15"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
+            </a>
+            <a
+              href={LINKEDIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Topcat Worktops on LinkedIn"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.6 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.35 4.33 5.4V21h-3.6v-5.02c0-1.2-.02-2.74-1.73-2.74-1.73 0-2 1.3-2 2.65V21H9.6z" />
+              </svg>
+            </a>
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Message Topcat Worktops on WhatsApp"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <WhatsAppPathsSolid />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div className="foot-col foot-explore">
+          <div className="foot-k">Explore</div>
+          <ul>
+            {FOOT_EXPLORE.map((link) => (
+              <li key={link.href}>
+                <a href={link.href}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="foot-col foot-browse">
+          <div className="foot-k">Browse</div>
+          <ul>
+            {FOOT_BROWSE_HEAD.map((link) => (
+              <li key={link.href}>
+                <a href={link.href}>{link.label}</a>
+              </li>
+            ))}
+            <li>
+              <a href={faqHref}>FAQ</a>
+            </li>
+          </ul>
+        </div>
+
+        <div className="foot-col foot-contact" ref={contact}>
+          <div className="foot-k">Contact</div>
+          <div className="foot-c-phone">
+            <span className="foot-ck">Phone</span>
+            <a className="foot-cv" href={PHONE_TEL}>
+              {PHONE_DISPLAY}
+            </a>
+          </div>
+          <div className="foot-c-email">
+            <span className="foot-ck">Email</span>
+            <a className="foot-cv" href={EMAIL_HREF}>
+              {EMAIL}
+            </a>
+          </div>
+          <div className="foot-c-wa">
+            <span className="foot-ck">WhatsApp</span>
+            <a
+              className="foot-cv"
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {WHATSAPP_DISPLAY}
+            </a>
+          </div>
+
+          {/* --- moved into .foot-tail at >=721px. Keep static. --- */}
+          <div className="foot-c-area" ref={area}>
+            <span className="foot-ck">Area</span>
+            <span className="foot-cv">{FOOT_AREA}</span>
+          </div>
+          <div className="foot-c-hours" ref={hours}>
+            <span className="foot-ck">Hours</span>
+            <span className="foot-cv">{FOOT_HOURS}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Must render with zero children — see the note above. */}
+      <div className="foot-tail" id="footTail" ref={tail} />
+
+      <div className="foot-bar">
+        <span>{FOOT_COPYRIGHT}</span>
+        <div className="foot-legal">
+          {FOOT_LEGAL.map((link) => (
+            <a key={link.href} href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </footer>
+  );
+}
