@@ -2847,7 +2847,7 @@ if(faqIndex && panel && faqBody){
   const reduce=matchMedia('(prefers-reduced-motion: reduce)');
   if(reduce.matches||!vid.canPlayType('video/mp4')){ root.classList.remove('cine-on'); return; }
   window.__cineHold=true;
-  const FPS=60, DUR=44.25;
+  const FPS=24, DUR=44.25;
   const SRCFPS=12;
   const EASE=0.15;
   const INK_AT=0.93;
