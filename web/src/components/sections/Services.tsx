@@ -50,6 +50,55 @@ const MORE_ICON = (
 /** site.js:458 — the helix visits the services in this order, not source order. */
 const HELIX_ORDER = [0, 1, 7, 3, 4, 5, 6, 2] as const;
 
+/**
+ * `sizes` for the eight card photographs.
+ *
+ * THE LEGACY STRING WAS WRONG FOR THE LEGACY LAYOUT, which is why this is a
+ * fidelity fix and not a quality trade. site.js declared
+ * `(max-width:720px) 440px, 1160px` — a 440px slot on a 384px-wide handset is
+ * wider than the viewport, so it cannot describe any two-column grid, and it
+ * is what put 1,863,538 B of below-the-fold stone on the wire ahead of the
+ * film's own poster while the visitor was still watching the hero.
+ *
+ * WHAT THE CASCADE ACTUALLY RESOLVES TO, read off the stylesheet rather than
+ * guessed. `home-sections.css:109` puts `#services .services-grid` at one
+ * column below 600px, but `home-sections.css:524` — a LATER `@media
+ * (max-width:720px)` block of equal specificity — overrides it back to
+ * `repeat(2,1fr)` with `gap:10px`, `max-width:none` and `padding:0`. Later
+ * wins, so every phone gets two columns, not one. The grid sits inside
+ * `.section`'s `clamp(20px,5vw,64px)` side padding (home-sections.css:18), so
+ * a column is exactly
+ *
+ *     (100vw - 2 * clamp(20px,5vw,64px) - 10px) / 2
+ *
+ * which is 45vw - 5px for any viewport at or above 400px and less than that
+ * below it. `45vw` is therefore a tight upper bound over the whole band and
+ * never under-declares: 167 CSS px at 384px wide, 319 at 720. It is written as
+ * a bare `vw` and not as that `calc(clamp(...))` on purpose — a `sizes` entry
+ * a browser cannot parse is dropped, and the fallback is 100vw, which would
+ * pick a LARGER rung than we ship today.
+ *
+ * WHICH RUNG THAT PICKS. 167 CSS px at dpr 3.75 is 626 device px; the cover
+ * crop (a 1.5 photograph in the 1.38 box at `home-sections.css:527`) plus
+ * `.stone`'s scale takes the painted requirement to ~708. The ladder's bottom
+ * rung is 880w — still 1.24x supersampled — where 440px asked for 1650 and
+ * pulled 2400w, 3.4x the linear resolution the screen can resolve.
+ *
+ * THE NUMBER. Of the eight cards, six are fetched before the film's poster is
+ * requested (device log, t=527-678ms): 1,863,538 B at the 2400/1550/1200 rungs
+ * against 363,758 B at 880w. 1,499,780 B saved off the front of the waterfall,
+ * 1,947,290 B across all eight.
+ *
+ * THE VISUAL COST WAS CHECKED, NOT ASSUMED: rendered through the exact crop
+ * and scale the phone performs, 880w scores SSIM 0.878-0.922 against the 2400w
+ * render, 0.797 on `outdoor`, the noisiest. That gap is a resampling
+ * difference above the display's Nyquist limit rather than detail the screen
+ * can show. If a reviewer wants the 1600w rung held anyway (SSIM 0.958-0.981,
+ * 838,164 B saved instead of 1,499,780), declare `90vw` here and change
+ * nothing else.
+ */
+const CARD_SIZES = '(max-width:720px) 45vw, 1160px';
+
 /** site.js:439 — reveal on at 0.78 of viewport height, off again at 0.94. */
 const SVC_ON = 0.78;
 const SVC_OFF = 0.94;
@@ -84,11 +133,13 @@ function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
       return;
     }
 
-    cards.forEach((el, i) => {
-      el.classList.remove('enter');
-      el.classList.add('svc-rev');
-      el.style.setProperty('--si', String(i));
-    });
+    const dress = () => {
+      cards.forEach((el, i) => {
+        el.classList.remove('enter');
+        el.classList.add('svc-rev');
+        el.style.setProperty('--si', String(i));
+      });
+    };
 
     const measure = () => {
       cards.forEach((el) => {
@@ -125,11 +176,75 @@ function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
       check();
     };
 
-    measure();
-    check();
-    window.addEventListener('scroll', check, { passive: true });
-    window.addEventListener('resize', onResize);
+    /*
+      THE ENTRANCE IS ARMED, NOT RUN AT MOUNT — and everything below this line
+      is a delay, not a change: the same `dress`, `measure`, `check` and the
+      same two listeners, started when the grid is a viewport and a half away
+      instead of during hydration.
+
+      Three measured reasons, all on the S21 Ultra (384x722 CSS, dpr 3.75):
+
+       1. `measure()` writes `transform`, reads `getBoundingClientRect()`,
+          writes again and then reads `offsetWidth` to force the reflow back —
+          per card, for eight cards. Eight forced synchronous layouts of a
+          1,701-element document, landing inside React's passive-effect flush,
+          on the same main thread the film is trying to open its first byte
+          range on. The in-page probe caught hydration as two long tasks, 98ms
+          and 170ms, both before `firstScrollAt: 563ms`.
+       2. `check()` was on `window.scroll` from mount. The probe counted 3,745
+          `getBoundingClientRect()` calls over 14.4s (207ms of forced layout),
+          four per scroll event from the non-film modules, and this was one of
+          the four — for a section that is ~5,700px below the fold behind an
+          800vh film runway.
+       3. `.svc-rev` carries `will-change:transform,opacity`
+          (home-sections.css:560,586) and nothing ever takes it off. Adding it
+          at mount promotes eight below-the-fold cards to their own compositor
+          layers for the whole intro, next to the video's layer.
+
+      `--svcFrom` is measured later rather than at hydration, which is if
+      anything more correct — fonts and images have settled by then. (Below
+      600px it is not even read: home-sections.css:558 replaces the transform
+      with a small translate+scale.) The cards keep their SSR `.enter` state,
+      which is `opacity:0`, until `dress()` swaps in `.svc-rev`, which is also
+      `opacity:0` — so there is no frame in which they are visible unstyled.
+
+      One viewport and a half of margin, against a reveal that triggers at 0.78
+      of a viewport (SVC_ON), so the grid is always dressed and measured long
+      before it can be seen. Once armed nothing is torn down: the listeners
+      live for the page's life exactly as they did before.
+    */
+    let armed = false;
+    let io: IntersectionObserver | null = null;
+
+    const arm = () => {
+      if (armed) return;
+      armed = true;
+      io?.disconnect();
+      io = null;
+      dress();
+      measure();
+      check();
+      window.addEventListener('scroll', check, { passive: true });
+      window.addEventListener('resize', onResize);
+    };
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) arm();
+        },
+        { rootMargin: '150% 0px' },
+      );
+      io.observe(grid);
+    } else {
+      // No IntersectionObserver: behave exactly as before. Failing to the old
+      // behaviour is the only safe direction — undressed cards stay at
+      // `opacity:0`, which is eight blank tiles.
+      arm();
+    }
+
     return () => {
+      io?.disconnect();
       window.removeEventListener('scroll', check);
       window.removeEventListener('resize', onResize);
     };
@@ -224,7 +339,7 @@ export default function Services() {
       <div className="services-grid" id="svcGridServices" ref={gridRef}>
         {SERVICES.map((s, i) => {
           const idx = '0' + (i + 1);
-          const responsive = srcSet(s.img, '(max-width:720px) 440px, 1160px');
+          const responsive = srcSet(s.img, CARD_SIZES);
           return (
             <article
               key={s.href}
@@ -265,12 +380,31 @@ export default function Services() {
                 </div>
 
                 <div className="face back">
+                  {/*
+                    THE SECOND COPY OF THE PHOTOGRAPH IS NOT A BUG, and it is
+                    not free to remove. `.face` is `backface-visibility:hidden`,
+                    so the two halves of the flip are separate painted planes;
+                    site.css gives them different treatments (`.face.front
+                    .stone` sits at full opacity under a mid-transparent veil,
+                    `.face.back .stone` at 0.20 under a near-opaque one), which
+                    one shared element cannot satisfy. Sixteen <img> elements
+                    for eight photographs is the flip card's real shape.
+
+                    It costs no bytes. Both elements carry the same `src`, the
+                    same `srcSet` and the same `sizes`, so they resolve to one
+                    URL and the image cache serves one fetch — the device log
+                    confirms it: six distinct service files, six requests, no
+                    repeats. (The one URL that does appear twice in that log,
+                    topcat-vertical.svg, is an artefact of the test server's
+                    `Cache-Control: no-store`; SiteGround does not send that.)
+                  */}
                   <div className="stone">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={s.img}
                       {...responsive}
                       alt=""
+                      aria-hidden="true"
                       loading="lazy"
                       decoding="async"
                     />

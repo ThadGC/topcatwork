@@ -120,20 +120,82 @@ describe('markup', () => {
     expect(container.textContent).toContain('hero copy');
   });
 
-  it('ships no video src in the EXPORTED html, so the wrong encode is never fetched', () => {
-    // Asserted against the static-export output, not the hydrated DOM: the
-    // band is unknown at build time, so baking a src into the HTML would start
-    // a 1920 download on a phone before any JS could stop it. The engine picks
-    // the encode on mount instead — which is why the live DOM does have one.
+  it('bakes no fetchable media URL into the EXPORTED html', () => {
+    // The band is unknown at build time, so a `src` on the <video> would start
+    // a 24 MB desktop download on a phone before any JS could stop it, and a
+    // `src` on the still would spend 151,604 bytes on an element that
+    // `html.cine-on` holds at opacity 0 for the whole session.
+    //
+    // Neither is an ATTRIBUTE in the export. All six encode URLs are in the
+    // export — they have to be, the parse-time script picks from them — but
+    // inside a <script>, where nothing fetches them speculatively.
     mockMatchMedia(1440);
     const html = renderToStaticMarkup(<HeroFilm />);
     expect(html).toContain('<video');
     expect(html).toContain('preload="none"');
-    expect(html).not.toContain('topcat-intro');
     expect(html).not.toMatch(/<video[^>]*\ssrc=/);
-    // The still hero, on the other hand, must be in the HTML with a
-    // fetchpriority, because it is what the visitor actually sees first.
-    expect(html).toMatch(/<img[^>]*hero-night/);
+    expect(html).not.toMatch(/<video[^>]*\sposter=/);
+    // The still is present and addressable, but deferred.
+    expect(html).toMatch(/<img[^>]*data-src="[^"]*hero-night/);
+    expect(html).not.toMatch(/<img[^>]*\ssrc="[^"]*hero-night[^"]*"[^>]*fetchpriority/i);
+
+    // Every `topcat-intro` mention is inside a script tag, not an attribute.
+    for (const at of [...html.matchAll(/topcat-intro/g)].map((m) => m.index)) {
+      const before = html.slice(0, at);
+      expect(before.lastIndexOf('<script')).toBeGreaterThan(before.lastIndexOf('</script>'));
+    }
+  });
+
+  it('gives a no-JS visitor a real <img src> hero, inside <noscript>', () => {
+    // With the still deferred, <noscript> is the ONLY hero a visitor without
+    // JavaScript gets. It must carry the src and the srcset, and it must be
+    // raw markup — React hydrating children inside a <noscript> is a mismatch
+    // on every load, because the browser parses that content as text.
+    mockMatchMedia(1440);
+    const html = renderToStaticMarkup(<HeroFilm />);
+    const ns = /<noscript>(.*?)<\/noscript>/s.exec(html);
+    expect(ns).toBeTruthy();
+    expect(ns![1]).toMatch(/^<img [^>]*src="\/assets\/site\/hero-night-2752\.webp"/);
+    expect(ns![1]).toContain('srcset=');
+    expect(ns![1]).toContain('width="2752"');
+    // And it must be out of flow. `.bgImg` is a 100%-height block inside a
+    // clipped `.bg`, so a second one in normal flow lands entirely below the
+    // deferred element and the no-JS hero paints blank.
+    expect(ns![1]).toContain('position:absolute');
+  });
+
+  it('sets the cine gate and the media boot during parse, not from an effect', () => {
+    // `html.cine-on` is what switches the runway to 800vh on a phone. Until it
+    // lands, the services strip sits ~1.3k px below the fold instead of ~5.8k,
+    // inside Chrome's lazy threshold — which is how 1,863,538 bytes of service
+    // imagery got in front of the film. Both scripts must be in the export.
+    mockMatchMedia(390);
+    const html = renderToStaticMarkup(<HeroFilm />);
+    expect(html).toContain("classList.add('cine-on')");
+    expect(html).toContain('stopImmediatePropagation');
+    expect(html).toContain('document.currentScript');
+    // The gate has to precede the elements it gates.
+    expect(html.indexOf("classList.add('cine-on')")).toBeLessThan(html.indexOf('<img'));
+    // The media boot has to follow them.
+    expect(html.indexOf('document.currentScript')).toBeGreaterThan(html.indexOf('<video'));
+  });
+
+  it('preloads the band plate — the first picture of the intro — and only that', () => {
+    // `.plate` is over the film at opacity 1 until the decoder paints, so it is
+    // what the visitor looks at while the film buffers. It was arriving at
+    // t=553ms, behind the service strip. The reduced-motion clause is what
+    // keeps a visitor who will never see the film from fetching 41,906 bytes.
+    mockMatchMedia(390);
+    const html = renderToStaticMarkup(<HeroFilm />);
+    const links = [...html.matchAll(/<link[^>]*rel="preload"[^>]*>/g)].map((m) => m[0]);
+    expect(links).toHaveLength(3);
+    for (const l of links) {
+      expect(l).toContain('as="image"');
+      expect(l).toContain('prefers-reduced-motion: no-preference');
+    }
+    expect(links.some((l) => l.includes('plate-f0-phone.webp'))).toBe(true);
+    // The still hero is NOT preloaded — it is the thing being deferred.
+    expect(links.some((l) => l.includes('hero-night'))).toBe(false);
   });
 
   it('marks the film muted and inline — the transport depends on play()', () => {
@@ -177,9 +239,33 @@ describe('how the clip is loaded', () => {
     const { container } = render(<HeroFilm />);
     const video = container.querySelector('video')!;
     expect(video.getAttribute('src')).toBe('/assets/video/topcat-intro-608.mp4?v=9');
+    // The poster IS the plate — same sha256, one URL, one download. The
+    // separate `topcat-intro-608-poster.webp?v=9` was 41,906 duplicate bytes
+    // arriving at t=556ms, in the window the film needs for its first range
+    // request. See the note on DEFAULT_SOURCES.poster.
     expect(video.getAttribute('poster')).toBe(
-      '/assets/video/topcat-intro-608-poster.webp?v=9',
+      '/assets/video/plates/plate-f0-phone.webp?v=5',
     );
+  });
+
+  it('leaves a src the parse-time boot already attached alone', () => {
+    // The boot script points the element at the band encode ~480ms before
+    // hydration gets here. Re-assigning the identical URL and calling load()
+    // would abort that fetch and throw the buffer away — the head start would
+    // cost a round trip instead of saving one.
+    mockMatchMedia(390);
+    const loads = vi.fn();
+    HTMLMediaElement.prototype.load = loads;
+
+    const view = render(<HeroFilm />);
+    const video = view.container.querySelector('video')!;
+    expect(video.getAttribute('src')).toBe('/assets/video/topcat-intro-608.mp4?v=9');
+    const first = loads.mock.calls.length;
+
+    // Remount against an element that already carries the source: the second
+    // attach must not call load() again.
+    view.rerender(<HeroFilm />);
+    expect(loads.mock.calls.length).toBe(first);
   });
 
   it('stops listening for clip errors once unmounted', () => {
@@ -446,5 +532,86 @@ describe('the scroll path', () => {
       render(<HeroFilm />);
       dispatchEvent(new Event('scroll'));
     }).not.toThrow();
+  });
+});
+
+/**
+ * THE PARSE-TIME GATE'S FAILURE MODE.
+ *
+ * `html.cine-on` is now asserted during HTML parse, which is the whole point —
+ * it is what makes the runway 800vh before Chrome's lazy-loading pass measures
+ * how far below the fold the services strip is. But it is asserted by a script
+ * that cannot know whether the JavaScript behind it will arrive, and on the
+ * phone band that class carries `chrome.css:1141`, which is `display:none` on
+ * the WhatsApp and call buttons until the engine adds `skip-live`.
+ *
+ * So the class is armed rather than asserted. These tests run the exported
+ * script itself — not a copy of it — against a stand-in for the film's subtree.
+ */
+describe('the parse-time gate disarms itself if the engine never arrives', () => {
+  /** The gate is the first inline script in the export. */
+  function gateScript(): string {
+    mockMatchMedia(390);
+    const found = /<script>([\s\S]*?)<\/script>/.exec(
+      renderToStaticMarkup(<HeroFilm />),
+    );
+    expect(found).toBeTruthy();
+    return found![1];
+  }
+
+  function stage() {
+    document.documentElement.className = '';
+    Reflect.deleteProperty(window, '__cineHold');
+    document.body.innerHTML =
+      '<div id="cine"><div class="bg">' +
+      '<img data-src="/still.webp" data-srcset="/still.webp 100w">' +
+      '<video src="/film.mp4"></video>' +
+      '</div></div>';
+  }
+
+  afterEach(() => {
+    vi.useRealTimers();
+    document.body.innerHTML = '';
+    Reflect.deleteProperty(window, '__cineHold');
+  });
+
+  it('holds the gate when the engine reports for duty', () => {
+    vi.useFakeTimers();
+    const src = gateScript();
+    stage();
+    new Function(src)();
+    expect(document.documentElement.classList.contains('cine-on')).toBe(true);
+
+    // useHeroFilm.ts:1185 — the film is running.
+    window.__cineHold = true;
+    dispatchEvent(new Event('load'));
+    vi.advanceTimersByTime(10000);
+
+    expect(document.documentElement.classList.contains('cine-on')).toBe(true);
+    // The still stays deferred: `.bgImg` is at opacity 0 for the session.
+    expect(document.querySelector('img')!.getAttribute('src')).toBeNull();
+    expect(document.querySelector('video')!.getAttribute('src')).toBe(
+      '/film.mp4',
+    );
+  });
+
+  it('drops the gate and promotes the still when it does not', () => {
+    vi.useFakeTimers();
+    const src = gateScript();
+    stage();
+    new Function(src)();
+    expect(document.documentElement.classList.contains('cine-on')).toBe(true);
+
+    // No `__cineHold`: React never reached the film.
+    dispatchEvent(new Event('load'));
+    vi.advanceTimersByTime(10000);
+
+    expect(document.documentElement.classList.contains('cine-on')).toBe(false);
+    const img = document.querySelector('img')!;
+    expect(img.getAttribute('src')).toBe('/still.webp');
+    expect(img.getAttribute('srcset')).toBe('/still.webp 100w');
+    expect(img.hasAttribute('data-src')).toBe(false);
+    // And a 6.22 MB download nobody can watch is called off.
+    expect(document.querySelector('video')!.hasAttribute('src')).toBe(false);
   });
 });

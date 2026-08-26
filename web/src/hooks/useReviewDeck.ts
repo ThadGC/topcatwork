@@ -291,11 +291,88 @@ export function useReviewDeck(count: number): ReviewDeck {
 
   /* --------------------------------------------------------------- wire */
 
+  /**
+   * THE FIRST LAYOUT IS ARMED, NOT RUN AT MOUNT.
+   *
+   * `layout()` ends in `cards.forEach(fitQuote)`, and `fitQuote` binary-
+   * searches the word count by writing `textContent` and reading
+   * `scrollHeight` on each step. Fifteen cards of 20-165 words is ~90
+   * write/read pairs — ~90 forced synchronous layouts of a 1,700-element
+   * document — and at mount they all land inside React's passive-effect
+   * flush, on the same main thread the film is trying to start on.
+   *
+   * Measured, headless Chrome at the S21 Ultra's metrics (384x722, dpr 3.75),
+   * 10 interleaved runs per variant: it is the single largest JS cost in the
+   * startup path, 59-167ms of samples inside the hydration long task.
+   *
+   * None of it is visible work at that moment. `#reviews` is the section
+   * AFTER the film, and the film is a 1050vh runway, so on a phone the deck
+   * sits some 5,700px below the fold when this effect runs.
+   *
+   * So it is armed three ways and runs once:
+   *   - an IntersectionObserver a viewport and a half early, which is the
+   *     guarantee — the deck is always laid out well before it can be seen;
+   *   - an idle backstop, so a visitor who never scrolls still gets a deck;
+   *   - the first resize, which needs a layout anyway.
+   *
+   * `layout()` itself is untouched, and the end state is identical: all 15
+   * cards' transform/opacity/z-index/pointer-events, the clamp text, the
+   * "Read more" labels, `--revScale`, `--revPagerX` and the pager's disabled
+   * state were dumped from both versions and compared field by field.
+   */
   useEffect(() => {
-    layout();
-    const onResize = () => layout();
+    const deck = deckRef.current;
+    let disarm: (() => void) | null = null;
+    let ran = false;
+
+    const run = () => {
+      if (ran) return;
+      ran = true;
+      disarm?.();
+      disarm = null;
+      layout();
+    };
+
+    if (deck && typeof IntersectionObserver !== 'undefined') {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) run();
+        },
+        { rootMargin: '150% 0px' },
+      );
+      io.observe(deck);
+      disarm = () => io.disconnect();
+    } else {
+      // No IntersectionObserver: lay out now, exactly as before. Failing to
+      // the old behaviour is the only safe direction — an unlaid deck is
+      // fifteen cards in a pile.
+      run();
+    }
+
+    /*
+      THE BACKSTOP HAS NO DEADLINE, and that is the point. A
+      `{ timeout: 1200 }` would have fired the ninety forced layouts at 1.2s —
+      inside the window this deferral exists to protect. The film opens its
+      first byte range at ~90ms and needs SPAN_MIN (4s) of contiguous buffer
+      before the scrub is allowed to start, and the probe's `firstScrollAt` was
+      563ms. A plain idle callback runs when the main thread is genuinely free,
+      which during the intro it is not; the observer above is the guarantee,
+      this is only for a visitor who never scrolls. The 3s timer is for the
+      browsers with no `requestIdleCallback` at all.
+    */
+    const idle =
+      typeof requestIdleCallback === 'function'
+        ? requestIdleCallback(run)
+        : (setTimeout(run, 3000) as unknown as number);
+
+    const onResize = () => (ran ? layout() : run());
     window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      disarm?.();
+      if (typeof cancelIdleCallback === 'function') cancelIdleCallback(idle);
+      else clearTimeout(idle);
+    };
   }, [layout, count]);
 
   const page = useCallback(

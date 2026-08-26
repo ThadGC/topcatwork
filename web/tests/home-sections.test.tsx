@@ -119,6 +119,81 @@ describe('Reviews', () => {
     expect(screen.getByLabelText('Previous reviews')).toBeInTheDocument();
     expect(screen.getByLabelText('Next reviews')).toBeInTheDocument();
   });
+
+  /**
+   * The deck's first layout is deferred, and this is the contract that makes
+   * the deferral safe rather than merely cheap.
+   *
+   * `layout()` ends in `fitQuote` per card, which binary-searches the word
+   * count by writing `textContent` and reading `scrollHeight` — about ninety
+   * forced synchronous layouts for fifteen cards. Run at mount it lands
+   * inside React's passive-effect flush, on the same main thread the hero
+   * film is starting on, for a section that is ~5,700px below the fold.
+   *
+   * So: nothing at mount, everything when the deck is approached.
+   */
+  describe('the deck lays out when it is approached, not at mount', () => {
+    let callbacks: IntersectionObserverCallback[] = [];
+    let observed: Element[] = [];
+    let realIO: typeof IntersectionObserver;
+
+    beforeEach(() => {
+      callbacks = [];
+      observed = [];
+      realIO = globalThis.IntersectionObserver;
+      class RecordingIO {
+        constructor(cb: IntersectionObserverCallback) {
+          callbacks.push(cb);
+        }
+        observe(el: Element) {
+          observed.push(el);
+        }
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      }
+      globalThis.IntersectionObserver =
+        RecordingIO as unknown as typeof IntersectionObserver;
+      window.IntersectionObserver = globalThis.IntersectionObserver;
+    });
+
+    afterEach(() => {
+      globalThis.IntersectionObserver = realIO;
+      window.IntersectionObserver = realIO;
+    });
+
+    it('writes no card transforms until the observer fires', () => {
+      const { container } = render(<Reviews />);
+      const cards = Array.from(
+        container.querySelectorAll<HTMLElement>('#revDeck .rev'),
+      );
+      expect(cards.length).toBe(REVIEWS.length);
+      // `layout()` is the only thing that writes these. None of them yet.
+      expect(cards.every((el) => el.style.transform === '')).toBe(true);
+      expect(observed).toContain(container.querySelector('#revDeck'));
+    });
+
+    it('lays the whole deck out once the observer reports it visible', () => {
+      const { container } = render(<Reviews />);
+      const deck = container.querySelector('#revDeck');
+      // The deck is watched, and the reveal observers are too, so fire every
+      // callback for the deck entry and let each decide.
+      for (const cb of callbacks) {
+        cb(
+          [{ isIntersecting: true, target: deck }] as unknown as IntersectionObserverEntry[],
+          {} as IntersectionObserver,
+        );
+      }
+      const cards = Array.from(
+        container.querySelectorAll<HTMLElement>('#revDeck .rev'),
+      );
+      // jsdom gives every box zero size, so the numbers are degenerate — but
+      // `layout()` having run at all is exactly what is being asserted.
+      expect(cards.some((el) => el.style.transform !== '')).toBe(true);
+    });
+  });
 });
 
 describe('Services', () => {
@@ -160,6 +235,93 @@ describe('Services', () => {
     expect(container.querySelectorAll('#svcNav button')).toHaveLength(
       SERVICES.length,
     );
+  });
+
+  it('asks for a slot the phone actually has, not a 440px one', () => {
+    // `(max-width:720px) 440px` is wider than a 384px handset and cannot
+    // describe the two-column grid home-sections.css:524 puts there. It pulled
+    // the 2400w rung: 1,863,538 B of below-the-fold stone on the wire before
+    // the film's own poster was requested, where 880w (363,758 B) covers the
+    // slot 1.24x over at dpr 3.75.
+    const { container } = render(<Services />);
+    for (const img of container.querySelectorAll<HTMLImageElement>(
+      '#svcGridServices .stone img',
+    )) {
+      expect(img.getAttribute('sizes')).toBe('(max-width:720px) 45vw, 1160px');
+    }
+  });
+
+  /**
+   * The entrance is armed, not run at mount — see the note in Services.tsx.
+   * `measure()` is eight forced synchronous layouts and `.svc-rev` carries a
+   * permanent `will-change`, both for a grid ~5,700px below the fold while the
+   * film is starting.
+   */
+  describe('the grid dresses itself when it is approached, not at mount', () => {
+    let callbacks: IntersectionObserverCallback[] = [];
+    let observed: Element[] = [];
+    let realIO: typeof IntersectionObserver;
+
+    beforeEach(() => {
+      callbacks = [];
+      observed = [];
+      realIO = globalThis.IntersectionObserver;
+      class RecordingIO {
+        constructor(cb: IntersectionObserverCallback) {
+          callbacks.push(cb);
+        }
+        observe(el: Element) {
+          observed.push(el);
+        }
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      }
+      globalThis.IntersectionObserver =
+        RecordingIO as unknown as typeof IntersectionObserver;
+      window.IntersectionObserver = globalThis.IntersectionObserver;
+    });
+
+    afterEach(() => {
+      globalThis.IntersectionObserver = realIO;
+      window.IntersectionObserver = realIO;
+    });
+
+    it('leaves the cards in their SSR state, and watches the grid', () => {
+      const { container } = render(<Services />);
+      const cards = Array.from(
+        container.querySelectorAll<HTMLElement>('#svcGridServices .svc'),
+      );
+      expect(cards).toHaveLength(SERVICES.length);
+      // No `.svc-rev` means no `will-change`, and no `--svcFrom` means
+      // `measure()` has not run.
+      expect(cards.every((el) => !el.classList.contains('svc-rev'))).toBe(true);
+      expect(
+        cards.every((el) => el.style.getPropertyValue('--svcFrom') === ''),
+      ).toBe(true);
+      expect(observed).toContain(container.querySelector('#svcGridServices'));
+    });
+
+    it('dresses and measures every card once the observer reports it near', () => {
+      const { container } = render(<Services />);
+      const grid = container.querySelector('#svcGridServices');
+      for (const cb of callbacks) {
+        cb(
+          [{ isIntersecting: true, target: grid }] as unknown as IntersectionObserverEntry[],
+          {} as IntersectionObserver,
+        );
+      }
+      const cards = Array.from(
+        container.querySelectorAll<HTMLElement>('#svcGridServices .svc'),
+      );
+      expect(cards.every((el) => el.classList.contains('svc-rev'))).toBe(true);
+      expect(cards.every((el) => !el.classList.contains('enter'))).toBe(true);
+      expect(
+        cards.every((el) => el.style.getPropertyValue('--svcFrom') !== ''),
+      ).toBe(true);
+    });
   });
 });
 
@@ -241,6 +403,55 @@ describe('Process', () => {
   it('does not make the aftercare banner a button', () => {
     const { container } = render(<Process />);
     expect(container.querySelector('.pt-e')).not.toHaveAttribute('role');
+  });
+
+  /** Armed, not run at mount — the same deferral, for the same rect read. */
+  describe('the flow boots when it is approached, not at mount', () => {
+    let callbacks: IntersectionObserverCallback[] = [];
+    let realIO: typeof IntersectionObserver;
+
+    beforeEach(() => {
+      callbacks = [];
+      realIO = globalThis.IntersectionObserver;
+      class RecordingIO {
+        constructor(cb: IntersectionObserverCallback) {
+          callbacks.push(cb);
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      }
+      globalThis.IntersectionObserver =
+        RecordingIO as unknown as typeof IntersectionObserver;
+      window.IntersectionObserver = globalThis.IntersectionObserver;
+    });
+
+    afterEach(() => {
+      globalThis.IntersectionObserver = realIO;
+      window.IntersectionObserver = realIO;
+    });
+
+    it('adds no .flow class until the observer reports the flow near', () => {
+      const { container } = render(<Process />);
+      const flow = container.querySelector('#procFlow')!;
+      // jsdom's every rect is zero, so `check()` would pass its 0.72 gate the
+      // instant it ran. It has not run.
+      expect(flow.classList.contains('flow')).toBe(false);
+
+      // `boot()` refuses to measure a zero-width grid and retries instead —
+      // and in jsdom every box is zero-width. Give it one.
+      Object.defineProperty(flow, 'clientWidth', { value: 800 });
+      for (const cb of callbacks) {
+        cb(
+          [{ isIntersecting: true, target: flow }] as unknown as IntersectionObserverEntry[],
+          {} as IntersectionObserver,
+        );
+      }
+      expect(flow.classList.contains('flow')).toBe(true);
+    });
   });
 });
 

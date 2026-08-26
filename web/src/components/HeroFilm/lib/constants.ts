@@ -165,22 +165,14 @@ export const VP_H_SLOP = 140;
  * bitrates of one cut and must never be re-derived from each other.
  *
  * ── the `?v=` stamp ─────────────────────────────────────────────────────────
- * All six are stamped `v=9` together, and the desktop poster changed NAME at
- * the same time (`topcat-intro-poster` -> `topcat-intro-1920-poster`) so every
- * poster is now named for the clip it was cut from. .htaccess holds .mp4 for a
- * week, so a visitor holding a `v=8` 60fps clip would scrub an upsampled film
- * through an engine on a 24fps lattice. One stamp for all six removes the
- * question of which files moved.
+ * The three clips are stamped `v=9` together. .htaccess holds .mp4 for a week,
+ * so a visitor holding a `v=8` 60fps clip would scrub an upsampled film through
+ * an engine on a 24fps lattice. One stamp for all three removes the question of
+ * which files moved.
+ *
+ * The posters carry the PLATES' `v=5` instead, because they ARE the plates —
+ * see the note on `poster` below.
  */
-export const DEFAULT_SOURCES = {
-  src: '/assets/video/topcat-intro-1920.mp4?v=9',
-  poster: '/assets/video/topcat-intro-1920-poster.webp?v=9',
-  srcNarrow: '/assets/video/topcat-intro-864.mp4?v=9',
-  posterNarrow: '/assets/video/topcat-intro-864-poster.webp?v=9',
-  srcPhone: '/assets/video/topcat-intro-608.mp4?v=9',
-  posterPhone: '/assets/video/topcat-intro-608-poster.webp?v=9',
-} as const;
-
 /**
  * Default frame-0 still plates, per band.
  *
@@ -192,11 +184,47 @@ export const DEFAULT_SOURCES = {
  * the 60fps clips (and, for the two mobile bands, from the un-scaled 1080
  * crops — those plates were 864x1080 and 608x1080 against 576x720 and 406x720
  * encodes).
+ *
+ * Declared BEFORE `DEFAULT_SOURCES` because the posters below are these — see
+ * the note there.
  */
 export const DEFAULT_PLATES = {
   src: '/assets/video/plates/plate-f0.webp?v=5',
   srcNarrow: '/assets/video/plates/tablet/plate-f0.webp?v=5',
   srcPhone: '/assets/video/plates/plate-f0-phone.webp?v=5',
+} as const;
+
+export const DEFAULT_SOURCES = {
+  src: '/assets/video/topcat-intro-1920.mp4?v=9',
+  /*
+    THE POSTER IS THE PLATE. Not "the same picture" — the same bytes:
+
+      sha256 topcat-intro-1920-poster.webp == plates/plate-f0.webp
+             345566a78915aae5041dea524cc6e03651959cb31e787f47a449709d8202907d
+      sha256 topcat-intro-864-poster.webp  == plates/tablet/plate-f0.webp
+             cad5acc4682ba5bd35b31b5198e62b2e065d7319d3f0892f72cd4c5e1d1dbc1b
+      sha256 topcat-intro-608-poster.webp  == plates/plate-f0-phone.webp
+             c544793a0d40cd2007da34504005335b9daecafd1f40441e1a789b768d070e89
+
+    scripts/encode-film.sh:174,181,186 makes them with `cp -f`, so they cannot
+    drift. They used to be named as two different URLs, which is two cache
+    keys, which is TWO DOWNLOADS of one picture: on the phone band the server
+    log showed `topcat-intro-608-poster.webp?v=9` (41,906 B) arriving at 556ms
+    and `plates/plate-f0-phone.webp?v=5` (41,906 B) at 553ms — 41,906 wasted
+    bytes and an extra request in the three hundred milliseconds the film is
+    trying to open its first byte-range.
+
+    Naming the poster with the PLATE's URL is what collapses them. The plate is
+    the one that has to be this URL (it is a CSS background on `.plate`, and it
+    is what the visitor actually looks at while the decoder warms up), so the
+    poster follows it rather than the other way round. Both files stay on disk;
+    the `-poster` copies are simply no longer requested by the page.
+  */
+  poster: DEFAULT_PLATES.src,
+  srcNarrow: '/assets/video/topcat-intro-864.mp4?v=9',
+  posterNarrow: DEFAULT_PLATES.srcNarrow,
+  srcPhone: '/assets/video/topcat-intro-608.mp4?v=9',
+  posterPhone: DEFAULT_PLATES.srcPhone,
 } as const;
 
 /**

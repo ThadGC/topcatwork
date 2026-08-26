@@ -85,6 +85,7 @@ import {
   wipeEase,
 } from './lib/outputs';
 import { filmFrame, revealFrame, type RevealFrame } from './lib/geometry';
+import { promoteDeferredImage } from './lib/deferredImg';
 import { attachFilmSource, type FilmSourceHandle } from './lib/filmSource';
 import { filmMode, type FilmMode , gradeOff , revealOff } from './lib/mode';
 import {
@@ -1139,6 +1140,15 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
   /** `fail()` — drop the film and leave a still hero behind. */
   const fail = useCallback(() => {
     const root = document.documentElement;
+    /*
+      The still hero ships with `data-src` and no `src`, because under
+      `cine-on` it is at opacity 0 for the whole session and fetching it costs
+      151,604 bytes for nothing — see ./lib/deferredImg.ts. Dropping `cine-on`
+      is precisely the moment that stops being true, so promote it FIRST: the
+      class change is what makes the element visible, and an <img> with no src
+      is a blank hero.
+    */
+    promoteDeferredImage(refs.bg.current?.querySelector('img[data-src]'));
     root.classList.remove('cine-on');
     root.classList.remove('skip-live');
     root.classList.remove('to-hero');
@@ -1270,11 +1280,32 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       onScroll();
     };
 
+    /*
+      THE SYNTHETIC SCROLL FIRES ONCE, NOT ON EVERY `progress`.
+
+      `maybeReady` is bound to `progress`, `canplay`, `canplaythrough` and
+      `loadeddata` below. `progress` fires repeatedly for as long as the film
+      is downloading, and on the phone band the film is 6.22 MB — so it fires
+      right across the intro. Each of those dispatched a global `scroll`, and a
+      global `scroll` runs every other scroll-driven module on the page: the
+      header's `#hero` rect read, the sticky bar's `.hero-ctas` rect plus a
+      `querySelector('header.bar')` and an `offsetHeight`, and (until they were
+      armed behind an observer) Services' and Process' below-the-fold rect
+      reads. That is how work for sections 5,700px down was running before the
+      visitor had scrolled at all: the probe's `firstScrollAt` was 563ms.
+
+      `transport.ready()` is a one-way latch, so the page only needs telling
+      once — that single dispatch is what covers a film that becomes ready
+      while the visitor is holding still. `onScroll()` itself is NOT deduped:
+      it is the film's own repaint and has to run on every new chunk of data.
+    */
+    let announced = false;
     const maybeReady = () => {
-      if (transport.ready()) {
-        onScroll();
-        dispatchEvent(new Event('scroll'));
-      }
+      if (!transport.ready()) return;
+      onScroll();
+      if (announced) return;
+      announced = true;
+      dispatchEvent(new Event('scroll'));
     };
 
     /**

@@ -92,7 +92,9 @@ export default function Process() {
 
     // site.js:328 — the grid can be zero-width on first paint (fonts, images
     // still settling); retry until it has a box to measure.
-    let timer: ReturnType<typeof setTimeout>;
+    // Undefined until `boot()` first retries — which, now that boot is armed
+    // rather than run at mount, may never happen at all.
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const boot = () => {
       if (!flow.clientWidth) {
         timer = setTimeout(boot, 120);
@@ -101,15 +103,59 @@ export default function Process() {
       measure();
       check();
     };
-    boot();
-
     const onResize = () => {
       measure();
       check();
     };
-    window.addEventListener('scroll', check, { passive: true });
-    window.addEventListener('resize', onResize);
+
+    /*
+      ARMED, NOT RUN AT MOUNT — the same deferral as Services', for the same
+      measured reason and with the same shape.
+
+      `check()` reads `#procFlow`'s `getBoundingClientRect()` on every scroll
+      event. The in-page probe on the S21 Ultra counted 3,745 of those calls in
+      14.4s — 207ms of forced layout — four per event from the non-film
+      modules, and this was one of the four, for a section that sits below
+      Services, itself ~5,700px below the fold behind the 800vh film runway.
+      `boot()` also reads `clientWidth` at mount, inside the same hydration
+      commit the film is starting in (long tasks at 98ms and 170ms, first
+      scroll at 563ms).
+
+      Nothing about the behaviour moves: `boot()`'s zero-width retry, the 0.72
+      / 0.92 thresholds and both listeners are identical, and once armed they
+      stay for the page's life. A viewport and a half of margin against a
+      trigger at 0.72 of a viewport means the flow is always measured before it
+      can be seen. `measure()` is a no-op below 980px in any case — the arrows
+      it positions are `display:none` there — so on the phone this removes a
+      per-scroll rect read and nothing else.
+    */
+    let armed = false;
+    let io: IntersectionObserver | null = null;
+
+    const arm = () => {
+      if (armed) return;
+      armed = true;
+      io?.disconnect();
+      io = null;
+      boot();
+      window.addEventListener('scroll', check, { passive: true });
+      window.addEventListener('resize', onResize);
+    };
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) arm();
+        },
+        { rootMargin: '150% 0px' },
+      );
+      io.observe(flow);
+    } else {
+      arm();
+    }
+
     return () => {
+      io?.disconnect();
       clearTimeout(timer);
       window.removeEventListener('scroll', check);
       window.removeEventListener('resize', onResize);
