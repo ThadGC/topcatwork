@@ -39,11 +39,26 @@ export const SRCSET: Readonly<Record<string, string>> = {
   "assets/team/fitting.jpg": "/assets/site/team-fitting-248.webp 248w, /assets/site/team-fitting-386.webp 386w"
 };
 
-/** site.js:112 — `function ss(u,z)`. Returns props, not an attribute string. */
+/**
+ * site.js:112 — `function ss(u,z)`. Returns props, not an attribute string.
+ *
+ * THE LEADING SLASH. Three of the map's keys are relative — `assets/team/
+ * fitting.jpg` and its two siblings — because that is the form site.js wrote
+ * into its own markup. The port serves everything from the root, so its callers
+ * pass `/assets/team/fitting.jpg`, which missed the map and dropped the
+ * srcset: About's collage tile fetched the 81,685-byte source JPEG instead of
+ * the 17,276-byte `team-fitting-386.webp` that exists for exactly that slot
+ * (measured 105x145 CSS, 394 device px at dpr 3.75 — 386w is the right rung).
+ *
+ * Both forms are tried rather than rewriting the keys, so the map stays a
+ * verbatim copy of `SS` and a caller may pass either shape.
+ */
 export function srcSet(
   url: string | undefined,
   sizes: string,
 ): { srcSet: string; sizes: string } | Record<string, never> {
-  const s = url ? SRCSET[url] : undefined;
+  const s = url
+    ? (SRCSET[url] ?? (url.startsWith('/') ? SRCSET[url.slice(1)] : SRCSET['/' + url]))
+    : undefined;
   return s ? { srcSet: s, sizes } : {};
 }

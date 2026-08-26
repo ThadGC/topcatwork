@@ -34,6 +34,7 @@
 import { useMemo, useRef, type ReactNode } from 'react';
 import { TcDefs } from '@/components/sections/TcDefs';
 import styles from './HeroFilm.module.css';
+import { FilmMediaBoot, HeroFilmBoot } from './HeroFilmBoot';
 import { DEFAULT_PLATES, DEFAULT_SOURCES } from './lib/constants';
 import { HERO_COPY, STORY } from './lib/timeline';
 import {
@@ -77,6 +78,44 @@ const DEFAULT_STILL = {
   height: 1536,
   alt: '',
 };
+
+/** Minimal attribute-value escape for the hand-built <noscript> markup below. */
+function attr(value: string | number): string {
+  return String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+/**
+ * The still hero as a raw HTML string, for the <noscript> twin.
+ *
+ * Built by hand rather than rendered as JSX because React must not hydrate
+ * inside a <noscript> — see the note at the call site.
+ *
+ * THE INLINE `position:absolute`, which is not decoration. `.bgImg` is
+ * `display:block; width:100%; height:100%` (HeroFilm.module.css:127) and `.bg`
+ * around it is `position:absolute; inset:0; overflow:hidden` (:85). With
+ * scripting disabled the twin is a SECOND block box of the parent's full
+ * height in normal flow, so it lays out BELOW the deferred `<img>` — which is
+ * empty, but still takes its 100%, and `.bg` clips the rest. The no-JS hero
+ * would be a blank frame. Taking the twin out of flow onto the same box the
+ * deferred element occupies is what puts the picture back; `object-fit` and
+ * the `.bgImg` transform apply either way, so it is the identical rendering.
+ */
+export function noscriptStill(
+  still: NonNullable<HeroFilmProps['still']>,
+  className: string,
+): string {
+  const parts = [
+    `class="${attr(className)}"`,
+    `style="position:absolute;inset:0"`,
+    `src="${attr(still.src)}"`,
+    still.srcSet ? `srcset="${attr(still.srcSet)}"` : '',
+    still.sizes ? `sizes="${attr(still.sizes)}"` : '',
+    `width="${attr(still.width)}"`,
+    `height="${attr(still.height)}"`,
+    `alt="${attr(still.alt ?? '')}"`,
+  ].filter(Boolean);
+  return `<img ${parts.join(' ')}>`;
+}
 
 /** The down-arrow used by the hero block's "Scroll to begin" affordance. */
 function CueArrow() {
@@ -147,6 +186,52 @@ export function HeroFilm({
 
   return (
     <div className={styles.cine} ref={cine} id="cine">
+      {/*
+        The parse-time gate. First child of `.cine` so `html.cine-on` — and
+        with it the 800vh phone runway — is in force before this subtree is
+        laid out, before the still <img> and the <video> are parsed, and before
+        Chrome's lazy-loading pass measures how far below the fold the services
+        strip is. See the header of ./HeroFilmBoot.tsx for what it was costing
+        while it went unrendered.
+      */}
+      <HeroFilmBoot />
+
+      {/*
+        The frame-0 plate, preloaded per band.
+
+        This is the first picture of the intro: `.plate` sits over the film at
+        opacity 1 until the decoder paints a real frame, so it — not the still
+        hero, which `cine-on` has already taken to opacity 0 — is what the
+        visitor looks at while the film buffers. It was arriving at t=553ms on
+        the phone, behind 1.86 MB of below-the-fold service imagery, because
+        nothing asks for it until the engine writes it as a CSS background.
+
+        `media` does the band pick, and the reduced-motion clause is what stops
+        a visitor who will never see the film from fetching 41,906 bytes of it.
+        Both are evaluated by the preload scanner, ahead of script execution,
+        which is why this earns its place beside a boot script that could
+        otherwise set it itself. The URL is the same one the <video poster> and
+        the `.plate` background use, so all three are one request.
+      */}
+      <link
+        rel="preload"
+        as="image"
+        href={plates.srcPhone}
+        media="(max-width:720px) and (prefers-reduced-motion: no-preference)"
+      />
+      <link
+        rel="preload"
+        as="image"
+        href={plates.srcNarrow}
+        media="(min-width:721px) and (max-width:1120px) and (prefers-reduced-motion: no-preference)"
+      />
+      <link
+        rel="preload"
+        as="image"
+        href={plates.src}
+        media="(min-width:1121px) and (prefers-reduced-motion: no-preference)"
+      />
+
       <section className={styles.hero} ref={hero} id="hero">
         {/*
           `svg.tc-defs` — the two gold gradients, and the source really does
@@ -162,12 +247,25 @@ export function HeroFilm({
         <TcDefs />
 
         <div className={styles.bg} ref={bg} aria-hidden="true">
-          {/* Still hero. Never removed: it is what is on screen whenever the
-              film is off, and `html.cine-on` fades it out when it is not. */}
+          {/*
+            Still hero. Never removed: it is what is on screen whenever the film
+            is off, and `html.cine-on` takes it to opacity 0 when it is not.
+
+            THE URL IS IN `data-src`, NOT `src`. `cine-on` is set during parse,
+            so on every device that runs the film this element is at zero for
+            the whole session — and it was still being fetched, 151,604 bytes of
+            it, first on the wire at t=68ms and at `fetchpriority="high"`. See
+            ./lib/deferredImg.ts for the three things that promote it back, and
+            why CSS cannot solve this on its own.
+
+            `sizes`, `width` and `height` stay real: none of them starts a fetch,
+            and the last two are the aspect-ratio box that keeps the deferral
+            from costing layout shift.
+          */}
           <img
             className={styles.bgImg}
-            src={still.src}
-            srcSet={still.srcSet}
+            data-src={still.src}
+            data-srcset={still.srcSet}
             sizes={still.sizes}
             width={still.width}
             height={still.height}
@@ -176,6 +274,21 @@ export function HeroFilm({
             fetchPriority="high"
             decoding="async"
           />
+
+          {/*
+            The no-JavaScript twin. Nothing above promotes the still without a
+            script, so this is the only hero a no-JS visitor gets — and it is a
+            plain <img src>, exactly what shipped before the deferral. It costs
+            ~250 bytes of markup and is never fetched by a browser that runs JS.
+
+            `dangerouslySetInnerHTML`, not JSX children, and that is not a
+            style choice. With scripting ENABLED the browser parses everything
+            inside <noscript> as raw TEXT, so the DOM React hydrates against has
+            a text node here — while JSX children would have React expecting an
+            <img> element, which is a hydration mismatch on every load. Handing
+            it a string means React never looks inside.
+          */}
+          <noscript dangerouslySetInnerHTML={{ __html: noscriptStill(still, styles.bgImg) }} />
 
           {/*
             No `src` and no `poster` in the markup. The engine picks the band's
@@ -197,6 +310,23 @@ export function HeroFilm({
             disablePictureInPicture
             // React has no prop for this one; it is a real HTML attribute.
             {...{ disableremoteplayback: 'true' }}
+          />
+
+          {/*
+            Parse-time, and LAST of the three — it reaches the <img> and the
+            <video> above through `document.currentScript.parentNode`, so both
+            have to exist by the time it runs.
+
+            It is the whole of the film's cold start: pick the band, attach the
+            encode, promote the still instead if the film is off. The engine
+            still owns everything after that, and re-attaches through
+            `attachFilmSource`, which now leaves an element that already carries
+            the right URL alone rather than calling load() on it. Measured
+            effect: the film's first byte moves from t=568ms to ~t=90ms.
+          */}
+          <FilmMediaBoot
+            sources={[sources.src, sources.srcNarrow, sources.srcPhone]}
+            posters={[sources.poster, sources.posterNarrow, sources.posterPhone]}
           />
 
           <div className={styles.plate} ref={plate} aria-hidden="true" />

@@ -175,8 +175,26 @@ export function attachFilmSource(
   video.addEventListener('error', onDirectError, { once: true });
   video.addEventListener('seeked', onSeeked, { once: true });
   delete video.dataset.painted;
-  video.src = source;
-  reload(video);
+
+  /*
+    DO NOT RE-ATTACH A SOURCE THE ELEMENT ALREADY HAS.
+
+    The parse-time script in ../HeroFilmBoot.tsx points this element at the
+    band's encode at roughly t=90ms, ~480ms before hydration reaches here. If
+    this then assigned the identical URL and called `load()`, the media element
+    would run resource selection again: the in-flight range request is aborted
+    and every buffered byte is discarded. The head start would not merely be
+    wasted, it would cost a round trip.
+
+    Compared on the ATTRIBUTE, not on `video.src` — the property resolves to an
+    absolute URL and would never equal the root-relative string we were handed.
+    The listeners above are attached either way, because they are this handle's
+    contract regardless of who set the src.
+  */
+  if (video.getAttribute('src') !== source) {
+    video.src = source;
+    reload(video);
+  }
 
   return handle;
 }
