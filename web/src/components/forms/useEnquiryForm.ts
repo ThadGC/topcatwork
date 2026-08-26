@@ -12,7 +12,8 @@
    assets/site.css and services/service.css needs no change at all.
 
    ⛔ NO NEXT API ROUTE, NO SERVER ACTION. `output: 'export'` forbids both,
-   and send.php is staying. This posts a multipart body straight at it.
+   and the endpoint is now app/api/enquiry. This posts the same multipart
+   body at it -- only the URL moved.
    ========================================================================== */
 
 import { useCallback, useRef, useState } from 'react';

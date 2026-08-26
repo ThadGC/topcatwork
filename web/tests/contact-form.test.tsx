@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import ContactForm from '@/components/forms/ContactForm';
-import { MSG } from '@/lib/form/validate';
+import { MSG , ENDPOINT } from '@/lib/form/validate';
 
 /*
   `input`, not `change`. The form clears a bad field on the INPUT event
@@ -42,7 +42,7 @@ afterEach(() => {
 });
 
 describe('<ContactForm/> — the happy path', () => {
-  it('posts a multipart body to /send.php and nowhere else', async () => {
+  it('posts a multipart body to the enquiry endpoint and nowhere else', async () => {
     render(<ContactForm />);
     fill('Your name', 'Nick Bell');
     fill('Email address', 'nick@example.com');
@@ -51,7 +51,10 @@ describe('<ContactForm/> — the happy path', () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
     const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toBe('/send.php');
+    // The endpoint moved off PHP when the app stopped being a static
+    // export: send.php only survived the rewrite because output:'export'
+    // forbids route handlers. ENDPOINT is the single source of truth.
+    expect(url).toBe(ENDPOINT);
     expect(init.method).toBe('POST');
     expect(init.body).toBeInstanceOf(FormData);
     expect(init.headers).toEqual({ Accept: 'application/json' });

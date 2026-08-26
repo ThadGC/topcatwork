@@ -8,7 +8,7 @@
    whole reason it is a component. send.php identifies it by id: `ctaForm`
    becomes `form_name: "Enquiry card"` in the client's inbox.
 
-   It posts to /send.php. It does not go through a Next route handler or a
+   It posts to the enquiry route handler. It used to post to /send.php, which
    server action, because `output: 'export'` has neither and because the PHP
    endpoint is staying exactly as it is.
 

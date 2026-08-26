@@ -20,7 +20,7 @@
 export const PHONE_TXT = '0800 098 2812';
 
 /** tcform.js:3 — the endpoint. Static export: this is the legacy PHP file. */
-export const ENDPOINT = '/send.php';
+export const ENDPOINT = '/api/enquiry';
 
 /** tcform.js:4 — the client-side ceiling on one multipart POST. */
 export const MAX_POST = 100 * 1024 * 1024;

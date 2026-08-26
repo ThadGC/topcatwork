@@ -2,7 +2,7 @@
    The POST contract — a verbatim port of `payload()` and the fetch in
    `submit()` (tcform.js:118–171).
 
-   ⛔ send.php IS NOT BEING REIMPLEMENTED. It stays on the SiteGround host
+   send.php IS GONE. It only survived the rewrite because output:'export'
    exactly as it is, and this project is a static export, so there is no Next
    route handler and no server action anywhere near a form. The whole job of
    this file is to build a multipart body send.php already understands.
