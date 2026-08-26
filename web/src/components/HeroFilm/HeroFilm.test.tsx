@@ -168,7 +168,7 @@ describe('how the clip is loaded', () => {
     mockMatchMedia(1440);
     const { container } = render(<HeroFilm />);
     const src = container.querySelector('video')!.getAttribute('src') ?? '';
-    expect(src).toBe('/assets/video/topcat-intro-1920.mp4?v=8');
+    expect(src).toBe('/assets/video/topcat-intro-1920.mp4?v=9');
     expect(src.startsWith('blob:')).toBe(false);
   });
 
@@ -176,9 +176,9 @@ describe('how the clip is loaded', () => {
     mockMatchMedia(390);
     const { container } = render(<HeroFilm />);
     const video = container.querySelector('video')!;
-    expect(video.getAttribute('src')).toBe('/assets/video/topcat-intro-608.mp4?v=8');
+    expect(video.getAttribute('src')).toBe('/assets/video/topcat-intro-608.mp4?v=9');
     expect(video.getAttribute('poster')).toBe(
-      '/assets/video/topcat-intro-608-poster.webp?v=8',
+      '/assets/video/topcat-intro-608-poster.webp?v=9',
     );
   });
 
@@ -265,6 +265,107 @@ describe('reduced motion', () => {
         ),
       );
     });
+  });
+});
+
+describe('the reveal clip', () => {
+  /**
+   * The reveal uncovers the headline with two clipping panes carrying
+   * transforms. What this checks is not the picture — that is lib/reveal.ts's
+   * job and it is tested there against the polygons it replaced — but the two
+   * DOM states either side of it: the pane clips WHILE the sweep is running,
+   * and it is RELEASED the moment it is not.
+   *
+   * The release matters. A pane clips to the copy's content box plus its
+   * bleed, and the old `clip-path` was removed from the element at exactly this
+   * point rather than left on it. Parked in the clipping state instead, the
+   * line would be cut to a box sized for the reveal for the rest of the page's
+   * life, and any ink added later — a bigger shadow, an outline, a text-stroke
+   * — would be silently trimmed to it.
+   *
+   * jsdom has no layout, so the numbers here are supplied: a `getBoundingClientRect`
+   * for the film box and a `currentTime` for the frame. That is enough, because
+   * the reveal is keyed to the film's own frame index and nothing else.
+   */
+  const RECT = {
+    left: 0,
+    top: 0,
+    right: 1440,
+    bottom: 900,
+    width: 1440,
+    height: 900,
+    x: 0,
+    y: 0,
+    toJSON: () => ({}),
+  } as DOMRect;
+
+  let media: Array<[string, PropertyDescriptor | undefined]> = [];
+
+  /** Mount the film with a given source frame on screen. */
+  function mountAtFrame(sourceFrame: number) {
+    mockMatchMedia(1440);
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(RECT);
+    media = (['readyState', 'currentTime'] as const).map((k) => [
+      k,
+      Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, k),
+    ]);
+    Object.defineProperty(HTMLMediaElement.prototype, 'readyState', {
+      configurable: true,
+      get: () => 4,
+    });
+    Object.defineProperty(HTMLMediaElement.prototype, 'currentTime', {
+      configurable: true,
+      get: () => sourceFrame / 12, // SRCFPS
+      set: () => {},
+    });
+
+    const { container } = render(<HeroFilm />);
+    const line = container.querySelectorAll('p[data-vpos]')[1] as HTMLElement;
+    return {
+      line,
+      wedge: line.querySelector<HTMLElement>('[data-rv="wedge"]')!,
+      strip: line.querySelector<HTMLElement>('[data-rv="strip"]')!,
+    };
+  }
+
+  afterEach(() => {
+    for (const [k, d] of media) {
+      if (d) Object.defineProperty(HTMLMediaElement.prototype, k, d);
+      else delete (HTMLMediaElement.prototype as unknown as Record<string, unknown>)[k];
+    }
+    media = [];
+    vi.restoreAllMocks();
+  });
+
+  it('clips while the sweep is running', () => {
+    // Frame 124 is REV_F0: the wide reveal's first frame, with the whole line
+    // still covered.
+    const { line, wedge } = mountAtFrame(124);
+    expect(line.hasAttribute('data-rv-open')).toBe(false);
+    expect(wedge.style.transform).toMatch(/^matrix\(/);
+    expect(wedge.style.transform).not.toBe('matrix(1,0,0,1,0,0)');
+  });
+
+  it('lets go of it once the sweep is over', () => {
+    // Past the end of the wide table (124 + 82). The stylesheet hangs the
+    // pane's `overflow` and its `will-change` off this attribute.
+    const { line, wedge } = mountAtFrame(124 + 82);
+    expect(line.hasAttribute('data-rv-open')).toBe(true);
+    expect(wedge.style.transform).toBe('matrix(1,0,0,1,0,0)');
+  });
+
+  it('parks the second copy instead of translating it off-screen', () => {
+    // The strip pane carries the phone's horizontal edge and nothing else, so
+    // on the wide band it is parked for the whole film. Parked means hidden
+    // over the identity: translating it away instead would leave its inner
+    // counter-translated a hundred thousand pixels out of a box that, without
+    // `overflow: clip`, is a scroll container.
+    for (const frame of [124, 124 + 40, 124 + 82]) {
+      const { strip } = mountAtFrame(frame);
+      expect(strip.style.visibility).toBe('hidden');
+      expect(strip.style.transform).toBe('matrix(1,0,0,1,0,0)');
+      cleanup();
+    }
   });
 });
 

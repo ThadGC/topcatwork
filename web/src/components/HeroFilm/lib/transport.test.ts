@@ -20,8 +20,11 @@ import {
   type TransportCommand,
   type TransportInput,
 } from './transport';
+import { FPS } from './constants';
 
 const DUR = 44.25;
+/** The lattice under test is the config's, which is the SOURCE rate. */
+const F = DEFAULT_TRANSPORT.fps;
 
 /** A settled, playing, caught-up element. Override one field per test. */
 function state(over: Partial<TransportInput> = {}): TransportInput {
@@ -47,28 +50,59 @@ const isSeek = (c: TransportCommand): c is Extract<TransportCommand, { kind: 'se
   c.kind === 'seek';
 
 describe('frame arithmetic', () => {
+  it('quantises onto the SOURCE lattice, not a 60fps one', () => {
+    // Both masters are 24fps / 1062 frames / 44.25s. The lattice has to be
+    // the source's or the mid-frame sampling below is sampling the midpoint
+    // of nothing.
+    expect(F).toBe(FPS);
+    expect(F).toBe(24);
+    expect(lastFrameIndex(DUR, F)).toBe(1061);
+    expect(Math.round(DUR * F)).toBe(1062);
+  });
+
   it('never addresses a frame at or past the duration', () => {
-    const last = lastFrameIndex(DUR, 60);
-    expect(last).toBe(Math.round(DUR * 60) - 1);
-    expect(frameTime(last, 60)).toBeLessThan(DUR);
+    const last = lastFrameIndex(DUR, F);
+    expect(last).toBe(Math.round(DUR * F) - 1);
+    expect(frameTime(last, F)).toBeLessThan(DUR);
+    // It stops exactly half a source frame short — the midpoint of the last
+    // frame — where the old 1/60 lattice left only 8.3ms. Asserted as a ratio
+    // against the old lattice rather than as `> 1 / (2 * F)`, which is the
+    // value itself and would be decided by floating point.
+    const headroom = DUR - frameTime(last, F);
+    expect(headroom).toBeCloseTo(1 / (2 * F), 12);
+    expect(headroom).toBeGreaterThan(DUR - frameTime(lastFrameIndex(DUR, 60), 60));
   });
 
   it('samples mid-frame, so a rounding wobble cannot pick the neighbour', () => {
-    expect(frameTime(0, 60)).toBeCloseTo(0.5 / 60, 10);
-    expect(frameTime(119, 60)).toBeCloseTo(119.5 / 60, 10);
+    expect(frameTime(0, F)).toBeCloseTo(0.5 / F, 10);
+    expect(frameTime(119, F)).toBeCloseTo(119.5 / F, 10);
+  });
+
+  it('puts every lattice point strictly inside a source frame', () => {
+    // The reason the lattice must equal the source rate. On the old 1/60 grid
+    // against this 24fps master, f = 2 resolved to 2.5/60 = 1/24 EXACTLY —
+    // the boundary between source frames 0 and 1, where floating point picks
+    // the picture. The `+ 0.5` only buys anything when the grid is the film's.
+    for (let f = 0; f <= lastFrameIndex(DUR, F); f += 7) {
+      const offset = frameTime(f, F) * FPS - f;
+      expect(offset).toBeGreaterThan(0.05);
+      expect(offset).toBeLessThan(0.95);
+    }
+    // The counter-example, spelled out so nobody re-introduces it.
+    expect(frameTime(2, 60) * FPS).toBeCloseTo(1, 12);
   });
 
   it('clamps into range and survives nonsense', () => {
-    const last = lastFrameIndex(DUR, 60);
-    expect(frameFor(-5, 60, last)).toBe(0);
-    expect(frameFor(1e9, 60, last)).toBe(last);
-    expect(frameFor(Number.NaN, 60, last)).toBe(0);
+    const last = lastFrameIndex(DUR, F);
+    expect(frameFor(-5, F, last)).toBe(0);
+    expect(frameFor(1e9, F, last)).toBe(last);
+    expect(frameFor(Number.NaN, F, last)).toBe(0);
   });
 
   it('reports frame 0 when the duration is not known yet', () => {
-    expect(lastFrameIndex(Number.NaN, 60)).toBe(0);
-    expect(lastFrameIndex(Number.POSITIVE_INFINITY, 60)).toBe(0);
-    expect(lastFrameIndex(0, 60)).toBe(0);
+    expect(lastFrameIndex(Number.NaN, F)).toBe(0);
+    expect(lastFrameIndex(Number.POSITIVE_INFINITY, F)).toBe(0);
+    expect(lastFrameIndex(0, F)).toBe(0);
   });
 });
 
@@ -146,7 +180,7 @@ describe('decideTransport — the seek fallback', () => {
     const first = decideTransport(back);
     expect(isSeek(first)).toBe(true);
     if (!isSeek(first)) return;
-    expect(first.time).toBeCloseTo(frameTime(frameFor(8, 60, lastFrameIndex(DUR, 60)), 60), 10);
+    expect(first.time).toBeCloseTo(frameTime(frameFor(8, F, lastFrameIndex(DUR, F)), F), 10);
 
     // Same want, same frame: the controller must not re-issue the seek on the
     // next animation frame while the first one is still settling.
@@ -166,7 +200,7 @@ describe('decideTransport — the seek fallback', () => {
     const cmd = decideTransport(state({ want: 9_999, currentTime: 0 }));
     expect(isSeek(cmd)).toBe(true);
     if (!isSeek(cmd)) return;
-    expect(cmd.frame).toBe(lastFrameIndex(DUR, 60));
+    expect(cmd.frame).toBe(lastFrameIndex(DUR, F));
     expect(cmd.time).toBeLessThan(DUR);
   });
 

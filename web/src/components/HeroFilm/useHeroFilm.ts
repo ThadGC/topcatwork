@@ -86,8 +86,19 @@ import {
 } from './lib/outputs';
 import { filmFrame, revealFrame, type RevealFrame } from './lib/geometry';
 import { attachFilmSource, type FilmSourceHandle } from './lib/filmSource';
-import { filmMode, type FilmMode } from './lib/mode';
-import { revealClip } from './lib/reveal';
+import { filmMode, type FilmMode , gradeOff , revealOff } from './lib/mode';
+import {
+  IDENTITY,
+  PANE_OFF,
+  STRIP_BLEED,
+  WEDGE_BLEED,
+  affineCss,
+  invertAffine,
+  isPaneOff,
+  revealPanes,
+  type Affine,
+  type PaneBleed,
+} from './lib/reveal';
 import { FrameSampler } from './lib/sampler';
 import { STORY, beatWindow, pickBand, type Band } from './lib/timeline';
 import { useCineBand, filmSupported, type CineEnv } from './useCineBand';
@@ -160,6 +171,93 @@ interface BeatMemo {
 
 const NO_MEMO = (): BeatMemo => ({ o: -1, z: -1, b: -1, g: -1 });
 
+/**
+ * One of the reveal's clip panes: the wrapper that clips, and the inner span
+ * that carries the exact inverse so the glyphs stay put. See lib/reveal.ts.
+ *
+ * `w` and `i` are the last matrix written to each half. Everything else in this
+ * engine memoises its style writes and so does this: a frame that does not move
+ * the edge must not touch the DOM.
+ */
+interface PaneEls {
+  wrap: HTMLElement;
+  inner: HTMLElement;
+  w: string;
+  i: string;
+  /** last parked state written to the wrapper. See `writePane`. */
+  p: boolean;
+}
+
+interface RevealPaneEls {
+  host: HTMLElement | null;
+  wedge: PaneEls | null;
+  strip: PaneEls | null;
+}
+
+/**
+ * Find one pane inside the reveal line and give it its box.
+ *
+ * The negative margin expands the pane's clip box past the copy; the equal
+ * padding puts its CONTENT box back exactly where the copy was, so the text
+ * lays out and wraps identically. That leaves both halves of the pair sharing
+ * one origin — the line's content-box top-left — which is `(bl.l, bl.t)` inside
+ * the wrapper's own border box and `(0, 0)` inside the inner's. Both are
+ * written, because a default `50% 50%` on either one would stop the pair
+ * cancelling and drift the glyphs.
+ */
+function grabPane(host: HTMLElement, key: string, bl: PaneBleed): PaneEls | null {
+  const wrap = host.querySelector<HTMLElement>('[data-rv="' + key + '"]');
+  const inner = host.querySelector<HTMLElement>('[data-rv="' + key + '-in"]');
+  if (!wrap || !inner) return null;
+  wrap.style.margin = -bl.t + 'px ' + -bl.r + 'px ' + -bl.b + 'px ' + -bl.l + 'px';
+  wrap.style.padding = bl.t + 'px ' + bl.r + 'px ' + bl.b + 'px ' + bl.l + 'px';
+  wrap.style.transformOrigin = bl.l + 'px ' + bl.t + 'px';
+  inner.style.transformOrigin = '0px 0px';
+  return { wrap, inner, w: '', i: '', p: false };
+}
+
+/**
+ * Write one pane's transform pair. The inner always carries the inverse.
+ *
+ * A pane the frame has no edge for — the strip on the two bands whose reveal
+ * has only one, and both panes once the sweep is released — is PARKED rather
+ * than transformed away. lib/reveal.ts's `PANE_OFF` says "this pane uncovers
+ * nothing" by translating the box a hundred thousand pixels off the copy, which
+ * is true but would leave the pane's inner counter-translated the same hundred
+ * thousand pixels back out of its box: under the `overflow: hidden` fallback
+ * (Safari before 16, which has no `overflow: clip`) that is a live scroll
+ * container with a hundred-thousand-pixel scroll range. `visibility` over the
+ * identity says the same thing and leaves nothing behind to scroll. It is a
+ * paint-only property, so parking and unparking costs no layout either.
+ */
+function writePane(pane: PaneEls | null, m: Affine): void {
+  if (!pane) return;
+  const park = isPaneOff(m);
+  if (park !== pane.p) {
+    pane.p = park;
+    pane.wrap.style.visibility = park ? 'hidden' : '';
+  }
+  const w = affineCss(park ? IDENTITY : m);
+  if (w !== pane.w) {
+    pane.w = w;
+    pane.wrap.style.transform = w;
+  }
+  const i = affineCss(invertAffine(park ? IDENTITY : m));
+  if (i !== pane.i) {
+    pane.i = i;
+    pane.inner.style.transform = i;
+  }
+}
+
+/**
+ * The attribute that takes the clip off the reveal line.
+ *
+ * It is the released state — the sweep is over, or never started, or
+ * `?reveal=off` turned it off — and the stylesheet hangs `overflow: visible`
+ * and `will-change: auto` off it. Written once per transition, never per frame.
+ */
+const RV_OPEN = 'data-rv-open';
+
 export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
   const { refs, sources, plates, loadedClass, cueGoneClass } = opts;
   const env = useCineBand();
@@ -189,6 +287,10 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
   const scrub = useFilmScrub(refs.video, isMobile);
   const play = useFilmTransport(refs.video);
   const mode = useRef<FilmMode>('scrub');
+  /** `?grade=off`: skip every readback. See lib/mode.ts for why. */
+  const noGrade = useRef(false);
+  /** `?reveal=off`: stop per-frame clip-path writes. See lib/mode.ts. */
+  const noReveal = useRef(false);
   const picked = useRef<FilmTransport>(scrub);
 
   /**
@@ -252,7 +354,25 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
   const inked = useRef<boolean | null>(null);
   const plateO = useRef(-1);
   const plateUrl = useRef('');
-  const revClip = useRef<string | null>(null);
+  /**
+   * Has the sweep finished?
+   *
+   * `null` while the reveal is not running at all. This is what the polygon's
+   * `''` used to mean and it is read in exactly the same place: the reveal
+   * line's scrim is only allowed on once the line is fully uncovered, because
+   * during the sweep a rect sample would grade the copy against pixels the
+   * viewer cannot see it over.
+   */
+  const revDone = useRef<boolean | null>(null);
+  /**
+   * Is the line released — i.e. is the clip off?
+   *
+   * Memo for the one attribute this costs, so a frame that does not change the
+   * state does not touch the DOM. `null` is "never written", which is not the
+   * same as `false`: the line ships without the attribute and the first tick
+   * has to be able to leave it that way.
+   */
+  const revOpen = useRef<boolean | null>(null);
   const revSc = useRef<number | null>(null);
   const kitTx = useRef<number | null>(null);
   const heroO = useRef(-1);
@@ -288,18 +408,61 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     revealTickRef.current();
   });
 
+  /** The two clip panes, resolved out of the reveal line and given their box. */
+  const RP = useRef<RevealPaneEls>({ host: null, wedge: null, strip: null });
+
+  const resolvePanes = useCallback((el: HTMLElement): RevealPaneEls => {
+    const p = RP.current;
+    if (p.host === el) return p;
+    p.host = el;
+    p.wedge = grabPane(el, 'wedge', WEDGE_BLEED);
+    p.strip = grabPane(el, 'strip', STRIP_BLEED);
+    return p;
+  }, []);
+
+  /**
+   * One frame of the reveal — two transforms per pane, and nothing else.
+   *
+   * NO clip-path, no mask, no filter, no width or height. Every one of those
+   * re-rasterises the headline; a transform on a promoted layer does not, which
+   * is the entire point of the exercise. lib/reveal.ts derives the transforms
+   * from the same measured tables the polygon used, so the picture is the same
+   * picture frame for frame.
+   *
+   * The one thing here that is not a transform is the release: the moment the
+   * sweep is over the clip comes OFF, because a pane clips to the copy's box
+   * plus its bleed and that is a state to sweep through, not a state to park a
+   * headline in. The polygon was removed from the element at exactly this
+   * point. It costs one attribute, at one frame of the film.
+   */
   const revealTick = useCallback(() => {
     const el = refs.lines.current?.[1] ?? null; // beat 1 is the reveal line
     if (!el) return;
     const band = bandRef.current;
     const frame = RV.current;
     const on = band.mode !== 'off' && !!frame?.ok;
+    const p = resolvePanes(el);
+
+    /**
+     * Hand the line back: no clip, no promotion, no second copy.
+     *
+     * The wedge carries the identity and shows the copy exactly where it lays
+     * out; the strip is parked, so its duplicate — which lies precisely on top
+     * of the wedge's, both being at the identity — never paints. The attribute
+     * is what takes `overflow` and `will-change` off both panes.
+     */
+    const release = () => {
+      if (revOpen.current !== true) {
+        revOpen.current = true;
+        el.setAttribute(RV_OPEN, '');
+      }
+      writePane(p.wedge, IDENTITY);
+      writePane(p.strip, PANE_OFF);
+    };
 
     if (!on || !frame) {
-      if (revClip.current !== null) {
-        revClip.current = null;
-        el.style.clipPath = '';
-      }
+      revDone.current = null;
+      release();
       if (revSc.current !== null) {
         revSc.current = null;
         el.style.removeProperty('--lsc');
@@ -308,12 +471,26 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     }
 
     const fr = videoFrame.frame(refs.video.current);
-    const c = revealClip(fr, frame, { phone: band.phone && !band.wide, tablet: band.tablet });
-    if (c !== revClip.current) {
-      revClip.current = c;
-      el.style.clipPath = c;
+    const panes = revealPanes(fr, frame, {
+      phone: band.phone && !band.wide,
+      tablet: band.tablet,
+    });
+    revDone.current = panes.done;
+
+    // `?reveal=off` still computes the geometry — `done` is what gates the
+    // line's scrim — it just does not clip. See lib/mode.ts. `done` lands in
+    // the same branch: the sweep is finished, so the clip is finished with it.
+    if (noReveal.current || panes.done) {
+      release();
+      return;
     }
-  }, [refs, videoFrame]);
+    if (revOpen.current !== false) {
+      revOpen.current = false;
+      el.removeAttribute(RV_OPEN);
+    }
+    writePane(p.wedge, panes.wedge);
+    writePane(p.strip, panes.strip);
+  }, [refs, videoFrame, resolvePanes]);
   revealTickRef.current = revealTick;
 
   /* ── measurement ───────────────────────────────────────────────────────── */
@@ -399,6 +576,23 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       revealTick();
       return;
     }
+    // The panes have to be boxed before the line is measured: their negative
+    // margins cancel their padding exactly, so the line's own size does not
+    // move either way, but reading first and writing after would leave a
+    // measurement taken against a box that is about to change.
+    resolvePanes(el);
+
+    // `offsetWidth` and friends are rounded to whole pixels and that is fine
+    // for the film frame, which is where the polygon lived. The panes are NOT
+    // fine with it — half a pixel of error in a pane's edge is half a pixel of
+    // error in the reveal — so their four numbers come off `getComputedStyle`,
+    // whose `width`/`height` are the used CONTENT box, exact.
+    const cs = getComputedStyle(el);
+    const num = (v: string): number => {
+      const n = parseFloat(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
     const bg = bgRect();
     const v = refs.video.current;
     RV.current = revealFrame({
@@ -408,13 +602,17 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
         top: el.offsetTop,
         width: el.offsetWidth,
         height: el.offsetHeight,
+        padLeft: num(cs.paddingLeft),
+        padTop: num(cs.paddingTop),
+        contentW: num(cs.width),
+        contentH: num(cs.height),
       },
       fw: band.phone ? FILM_W.phone : band.tablet ? FILM_W.tablet : FILM_W.wide,
       videoW: v?.videoWidth ?? 0,
       videoH: v?.videoHeight ?? 0,
     });
     revealTick();
-  }, [refs, bgRect, revealTick]);
+  }, [refs, bgRect, revealTick, resolvePanes]);
 
   /* ── outputs ───────────────────────────────────────────────────────────── */
 
@@ -492,7 +690,7 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     const v = refs.video.current;
     const bg = bgRect();
     if (!v || !bg) return;
-    const g = sampler.current.navGrade(v, bg, barHeight());
+    const g = noGrade.current ? -1 : sampler.current.navGrade(v, bg, barHeight());
     if (g < 0 || g === graded.current) return;
     graded.current = g;
     refs.cine.current?.style.setProperty('--navGrade', String(g));
@@ -506,7 +704,9 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
         const v = refs.video.current;
         const bg = bgRect();
         if (v && bg) {
-          const g = sampler.current.bandGrade('L' + i, v, bg, el.getBoundingClientRect());
+          const g = noGrade.current
+            ? -1
+            : sampler.current.bandGrade('L' + i, v, bg, el.getBoundingClientRect());
           if (g >= 0) {
             const w = r2(g * o);
             if (w !== memo.g) {
@@ -572,7 +772,7 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
           // The scrim only comes on once the wipe has finished. During the
           // wipe the line is half-masked, so a rect sample would grade against
           // pixels the viewer cannot see it over.
-          if (band.mode === 'nr' && revClip.current === '' && o > 0.02) {
+          if (band.mode === 'nr' && revDone.current === true && o > 0.02) {
             applyBandGrade(i, el, o);
           } else if (memo.g !== 0) {
             memo.g = 0;
@@ -825,10 +1025,17 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
 
       if (eased.current < 0) eased.current = target.current;
 
-      // The chase. `FE` is one 1/60s film frame expressed in eased units; the
+      // The chase. `FE` is one source frame expressed in eased units; the
       // floor term guarantees the film never advances slower than one frame
       // per animation frame, so a slow scroll still reads as motion rather
       // than as a stutter.
+      //
+      // FPS cancels out of `floor` exactly — FE * (dt / (1000/FPS)) reduces to
+      // (1 - hold) * dt / (dur * 1000), i.e. "at least real time" — so moving
+      // FPS from 60 to the source's 24 left the floor byte-for-byte the same.
+      // It only widens the snap threshold below, from 2% of a 1/60s frame to
+      // 2% of a 1/24s one: 0.33ms of film against 0.83ms, both far under a
+      // frame and both meaning the same thing, "close enough, stop chasing".
       const FE = (1 - hold.current) / (dur.current * FPS);
       const d = target.current - eased.current;
       const ad = Math.abs(d);
@@ -862,6 +1069,16 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       // Keep running while either half is still moving: the scroll chase, or
       // the transport catching up to it. The legacy loop only watched the
       // former, which was safe when a seek landed the frame synchronously.
+      //
+      // The slop is `1 / SRCFPS` = 83.3ms, TWO source frames, and it is not a
+      // typo for `1 / FPS`. It is what has to park the loop at the end of the
+      // film: there `want` is `dur`, while the scrub can only ever address
+      // `ceiling * dur` and its deadband lets the element rest one epsilon
+      // short of even that. Tighten this to one source frame and the residue
+      // at film progress 1 — 22ms of ceiling plus up to 42ms of mobile
+      // deadband — sits permanently outside it, so `catching` never goes
+      // false, the loop never parks and `armSettle()` is never reached from
+      // here. lib/scrub.ts states the inequality; scrub.test.ts asserts it.
       const chasing = eased.current !== target.current;
       const catching =
         !!v && (!v.paused || v.seeking || Math.abs(want.current - v.currentTime) > 1 / SRCFPS);
@@ -912,6 +1129,8 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     // leaves its `null` state — the lifecycle effect below bails out while it
     // is null, so by the time the loop exists the transport is already chosen.
     mode.current = filmMode();
+    noGrade.current = gradeOff();
+    noReveal.current = revealOff();
     picked.current = mode.current === 'play' ? play : scrub;
     mobile.current = scrubIsMobile();
     setEnabled(filmSupported(env.reduce));

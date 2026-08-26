@@ -4,9 +4,9 @@
  * HERO FILM.
  *
  * A 44-second film scrubbed by the page scroll, with three story beats keyed
- * to specific shots, a clip-path reveal tracked frame-by-frame against an edge
- * in the footage, and a hand-off at the end that collapses the runway and
- * releases the hero copy.
+ * to specific shots, a reveal tracked frame-by-frame against an edge in the
+ * footage, and a hand-off at the end that collapses the runway and releases the
+ * hero copy.
  *
  * ── the shape ───────────────────────────────────────────────────────────────
  *   <div .cine>            tall runway; scrolling it is what scrubs the film
@@ -206,26 +206,84 @@ export function HeroFilm({
         </div>
 
         <div className={styles.story}>
-          {STORY.map((beat, i) => (
-            <p
-              key={beat.id}
-              ref={(el) => {
-                lines.current[i] = el;
-              }}
-              className={
-                beat.id === 'open' ? styles.line + ' ' + styles.open : styles.line
-              }
-              // Read by CSS, not by JS: the port keeps the band-specific
-              // placement in the stylesheet, where the breakpoints already are.
-              data-vpos={beat.vpos}
-              data-vpos-wide={beat.vposWide}
-              data-vpos-narrow={beat.vposNarrow}
-            >
-              {beat.text}
-              {beat.emphasis ? <em>{beat.emphasis}</em> : null}
-              {beat.sub ? <span className={styles.lineSub}>{beat.sub}</span> : null}
-            </p>
-          ))}
+          {STORY.map((beat, i) => {
+            const copy = (
+              <>
+                {beat.text}
+                {beat.emphasis ? <em>{beat.emphasis}</em> : null}
+                {beat.sub ? <span className={styles.lineSub}>{beat.sub}</span> : null}
+              </>
+            );
+            return (
+              <p
+                key={beat.id}
+                ref={(el) => {
+                  lines.current[i] = el;
+                }}
+                className={
+                  beat.id === 'open'
+                    ? styles.line + ' ' + styles.open
+                    : beat.id === 'reveal'
+                      ? styles.line + ' ' + styles.rvLine
+                      : styles.line
+                }
+                // Read by CSS, not by JS: the port keeps the band-specific
+                // placement in the stylesheet, where the breakpoints already are.
+                data-vpos={beat.vpos}
+                data-vpos-wide={beat.vposWide}
+                data-vpos-narrow={beat.vposNarrow}
+              >
+                {beat.id === 'reveal' ? (
+                  <>
+                    {/*
+                      THE REVEAL, COMPOSITED.
+
+                      This beat is not faded in, it is uncovered by an edge
+                      tracked against the film. That used to be a fresh
+                      `clip-path` polygon written to this paragraph every
+                      animation frame, which cannot be composited: the browser
+                      re-rasterises the whole headline sixty times a second, and
+                      on a phone at devicePixelRatio 3.75 that is the stutter.
+
+                      So the clip is a box instead. Each PANE clips with its own
+                      `overflow`, carries the edge on a transform, and the INNER
+                      span carries the exact inverse — the clip edge moves, the
+                      glyphs do not, and nothing is ever repainted. The engine
+                      writes both transforms and both transform-origins;
+                      lib/reveal.ts derives them from the same measured tables
+                      the polygon used.
+
+                      TWO panes, because the phone's reveal has a second,
+                      horizontal edge and the region it uncovers is the UNION of
+                      two half-planes — which is not convex, so no single
+                      clipping box can hold it. The wedge pane takes everything
+                      left of the slant; the strip pane takes what is above the
+                      horizontal edge and right of the slant. They are disjoint,
+                      they overlap by a hair so the shared edge has no seam, and
+                      the strip is display:none above 720px, where there is no
+                      second edge to carry.
+                    */}
+                    <span className={styles.rvPane} data-rv="wedge">
+                      <span className={styles.rvInner} data-rv="wedge-in">
+                        {copy}
+                      </span>
+                    </span>
+                    <span
+                      className={styles.rvPane + ' ' + styles.rvStrip}
+                      data-rv="strip"
+                      aria-hidden="true"
+                    >
+                      <span className={styles.rvInner} data-rv="strip-in">
+                        {copy}
+                      </span>
+                    </span>
+                  </>
+                ) : (
+                  copy
+                )}
+              </p>
+            );
+          })}
 
           <div className={styles.heroCopy} ref={heroCopy}>
             <p className={styles.hl}>

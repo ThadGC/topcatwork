@@ -38,6 +38,35 @@ export interface Rect {
 }
 
 /** Grid the film is downsampled onto. 48 wide; height varies by consumer. */
+/**
+ * Position quantiser for the readback memo.
+ *
+ * The memo used to key on the rect rounded to ONE PIXEL, and that quietly
+ * defeated the whole cache. A story line is in motion for the entire intro --
+ * the wipe slides it, the clip-path uncovers it -- so its rect moved by more
+ * than a pixel every tick, every key was a miss, and the readback ran on every
+ * animation frame despite the cache. The symptom was exact: the film juddered
+ * until the text overlay left the screen and went smooth the instant it did,
+ * because that is when bandGrade() stops being called at all.
+ *
+ * QUANTISE_PX is one sample column. The readback lays a GRID_W x GRID_H grid
+ * over the box, so for a hero line around 800px wide a column is ~16px; moving
+ * the box less than that cannot change which pixels fall in which cell by more
+ * than a rounding error, and the result is a luminance driving a glow, not
+ * something anyone can see to the pixel. Fixed rather than derived from the
+ * rect so that a changing width cannot change the step and reintroduce misses.
+ */
+const QUANTISE_PX = 16;
+
+const quantise = (r: Rect): string =>
+  Math.round(r.left / QUANTISE_PX) +
+  ',' +
+  Math.round(r.top / QUANTISE_PX) +
+  ',' +
+  Math.round(r.width / QUANTISE_PX) +
+  ',' +
+  Math.round(r.height / QUANTISE_PX);
+
 const GRID_W = 48;
 const GRID_H = 8;
 
@@ -142,16 +171,7 @@ export class FrameSampler {
   }
 
   private memo(id: string, rect: Rect, compute: () => number | null): number {
-    const key =
-      id +
-      '|' +
-      Math.round(rect.left) +
-      ',' +
-      Math.round(rect.top) +
-      ',' +
-      Math.round(rect.width) +
-      ',' +
-      Math.round(rect.height);
+    const key = id + '|' + quantise(rect);
     const hit = this.cache.get(key);
     if (hit !== undefined) return hit;
     const v = compute();

@@ -12,7 +12,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { attachFilmSource } from './filmSource';
 
-const URL_DIRECT = '/assets/video/topcat-intro-1920.mp4?v=8';
+const URL_DIRECT = '/assets/video/topcat-intro-1920.mp4?v=9';
 const URL_BLOB = 'blob:topcat/deadbeef';
 
 let video: HTMLVideoElement;

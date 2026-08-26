@@ -83,11 +83,18 @@ export function filmFrame(
 }
 
 /**
- * The film -> element coordinate frame used by the reveal polygons.
+ * The film -> element coordinate frame used by the reveal.
  *
  * `sc` is box-px per film-px; `dx`/`dy` are the film origin in *viewport*
  * coordinates (they fold in the box's own viewport position), and
  * `left`/`top`/`w`/`h` are the target element's offset box.
+ *
+ * `pl`/`pt`/`cw`/`ch` are the element's own padding and CONTENT-box size, and
+ * they are a separate set of numbers on purpose: `left`/`top`/`w`/`h` come off
+ * `offsetLeft` and friends, which browsers round to whole pixels, while the
+ * composited reveal's clip panes are placed off `getComputedStyle`, which is
+ * exact. Half a pixel of error in a pane's edge is half a pixel of error in the
+ * reveal, so the pane geometry never reads the rounded set. See ./reveal.ts.
  */
 export interface RevealFrame {
   sc: number;
@@ -97,6 +104,12 @@ export interface RevealFrame {
   top: number;
   w: number;
   h: number;
+  /** the element's padding-left / padding-top, in px */
+  pl: number;
+  pt: number;
+  /** the element's content-box width / height, in px */
+  cw: number;
+  ch: number;
   /** the film's nominal source width for this band: 1920 / 864 / 608 */
   fw: number;
   ok: boolean;
@@ -106,16 +119,28 @@ export interface RevealFrame {
  * `measureReveal()`'s frame computation, site.js 3078-3088.
  *
  * `bgRect` is `.hero-bg`'s viewport rect; `el` is the reveal line's offset box
- * within it. `videoW`/`videoH` fall back to `fw x 1080` before metadata lands.
+ * within it, plus its exact padding and content box. `videoW`/`videoH` fall
+ * back to `fw x 1080` before metadata lands.
  */
 export function revealFrame(args: {
   bgRect: { left: number; top: number; width: number; height: number };
-  el: { left: number; top: number; width: number; height: number };
+  el: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    padLeft?: number;
+    padTop?: number;
+    contentW?: number;
+    contentH?: number;
+  };
   fw: number;
   videoW: number;
   videoH: number;
 }): RevealFrame {
   const { bgRect, el, fw } = args;
+  const pl = el.padLeft ?? 0;
+  const pt = el.padTop ?? 0;
   const base: RevealFrame = {
     sc: 0.8333,
     dx: -80,
@@ -124,6 +149,10 @@ export function revealFrame(args: {
     top: el.top,
     w: el.width,
     h: el.height,
+    pl,
+    pt,
+    cw: el.contentW ?? Math.max(0, el.width - 2 * pl),
+    ch: el.contentH ?? Math.max(0, el.height - 2 * pt),
     fw,
     ok: false,
   };

@@ -448,11 +448,9 @@ body[data-tokens='content']::before {
       DONE, and not the way this note originally proposed. The fix that ships
       is the one from VDM Digital's scroll-scrub engine, ported wholesale into
       src/components/HeroFilm/lib/scrub.ts: one seek in flight at a time (no
-      queue, no pending flag, no stall timer), an epsilon deadband of 8ms
-      desktop / 20ms mobile, and a 20%-per-frame lerp between the scroll and
-      the decoder. Half of the win is in the encode rather than the code — the
-      mobile cuts went from GOP 12 to GOP 4, which is what makes each of those
-      seeks cheap in the first place. See scripts/encode-film.sh.
+      queue, no pending flag, no stall timer), an epsilon deadband, and a
+      20%-per-frame lerp between the scroll and the decoder. Half of the win is
+      in the encode rather than the code — see scripts/encode-film.sh.
 
       The forward-playing playbackRate chase this note used to describe was
       built, measured and demoted; it survives behind ?film=play in
@@ -461,7 +459,18 @@ body[data-tokens='content']::before {
       forward has to be constantly corrected, and hardware decoders disagree
       about what playbackRate 6.4 means.
 
-      Constants: FPS=60, DUR=44.25, INK_AT=0.93.
+   3. THE FILM WAS THE WRONG FRAME RATE. Both masters are 24fps / 1062 frames
+      / 44.25s; every shipped mp4 was 60fps, i.e. 2651 frames carrying 1062
+      frames of information. The engine inherited FPS=60 to match, so its seek
+      lattice addressed ~2.5 positions inside each real frame and the VDM
+      deadbands (8ms / 20ms) were fractions of a frame rate the film does not
+      have. Re-encoded at -r 24 and retuned: FPS is the source rate, and the
+      deadbands are now half a source frame (desktop) and a whole one
+      (mobile), derived rather than written down. SRCFPS stays 12 — it is the
+      clip-path reveal GRID, every second source frame, and the reveal tables
+      are indexed in it.
+
+      Constants: FPS=24, SRCFPS=12, DUR=44.25, INK_AT=0.93.
       Everything downstream — veil(), curve(), story(), heroCopy(), ink(),
       plate() — is a pure function of film time t and needed no change.
    ------------------------------------------------------------------------- */

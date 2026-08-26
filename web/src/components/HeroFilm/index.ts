@@ -43,6 +43,7 @@ export {
   lerpToward,
   scrubEpsilon,
   DEFAULT_SCRUB,
+  SRC_FRAME,
   HAVE_CURRENT_DATA,
 } from './lib/scrub';
 export type { ScrubCommand, ScrubConfig, ScrubInput } from './lib/scrub';
@@ -71,8 +72,44 @@ export type {
 export { STORY, HERO_COPY, beatWindow, pickBand } from './lib/timeline';
 export type { Band, StoryBeat, BeatWindow } from './lib/timeline';
 
-export { revealClip, wideClip, phoneClip, at } from './lib/reveal';
-export type { RevealBox } from './lib/reveal';
+/**
+ * The reveal.
+ *
+ * `revealPanes` is what the engine drives: two composited clip panes, no
+ * clip-path anywhere. `revealClip` and its two halves are the ORIGINAL polygon
+ * geometry — no longer written to the DOM, kept because they are the definition
+ * of the picture the panes are tested against.
+ */
+export {
+  revealPanes,
+  widePanes,
+  phonePanes,
+  wedgePane,
+  cornerPane,
+  paneSlant,
+  paneLevel,
+  insidePane,
+  applyAffine,
+  composeAffine,
+  invertAffine,
+  affineCss,
+  IDENTITY,
+  PANE_OFF,
+  PANE_SEAM,
+  WEDGE_BLEED,
+  STRIP_BLEED,
+  revealClip,
+  wideClip,
+  phoneClip,
+  at,
+} from './lib/reveal';
+export type {
+  RevealBox,
+  RevealMetrics,
+  RevealPanes,
+  PaneBleed,
+  Affine,
+} from './lib/reveal';
 
 export * from './lib/outputs';
 export { coverFit, filmFrame, revealFrame, sampleRect } from './lib/geometry';

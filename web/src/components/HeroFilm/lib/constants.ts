@@ -1,21 +1,58 @@
 /**
  * HERO FILM — constants.
  *
- * Every number here is copied verbatim out of the legacy cine module
+ * Every number here started as a verbatim copy out of the legacy cine module
  * (assets/site.js 2841-3473). This is a PORT, not a redesign: do not round a
  * value, do not merge two nearly-equal values, do not "tidy" a magic number.
- * The film was tuned frame-by-frame against a 12fps source; the reveal tables
- * in ./reveal.ts are keyed to these exact figures.
+ * The reveal tables in ./reveal.ts are keyed to these exact figures.
+ *
+ * ── the one thing that was NOT a port ───────────────────────────────────────
+ * The legacy module carried `FPS = 60`, and every shipped mp4 was 60fps. The
+ * masters are not: `TC video desktop final fix.mov` and `TC video mobile final
+ * fix.mov` are both 24fps, 1062 frames, 44.25s. The 60fps clips were upsampled
+ * — 2651 frames carrying 1062 frames of information — so the lattice was
+ * addressing 2.5 positions inside every real frame. `FPS` below is now the
+ * source rate, and the values derived from it (the scrub deadband in
+ * ./scrub.ts, the end-of-film ceiling) moved with it. See each one for why.
  */
 
 /**
- * Seek quantisation grid. NOT the source frame rate — the legacy module
- * snapped `currentTime` onto a 1/60s lattice and sampled mid-frame, so a
- * scroll delta smaller than 1/60s never issued a decoder seek.
+ * The source frame rate, and therefore the seek lattice.
+ *
+ * Both masters are 24fps. Every seek that lands on a frame boundary is a coin
+ * toss between two pictures, which is why ./transport.ts addresses
+ * `(frame + 0.5) / FPS` — the midpoint of a frame. That trick only works when
+ * the lattice IS the source's: at 60 against a 24fps source, `f = 2` resolves
+ * to 2.5/60 = 1/24 exactly, i.e. the boundary the `+0.5` exists to avoid.
+ *
+ * It is also the seek BUDGET. At 60 the film asked for ~2.5 distinct times per
+ * real frame and got the same picture back 1.5 times out of every 2.5 — decode
+ * work with nothing on the other end of it.
+ *
+ * Consumers, and what each one does with it:
+ *   - ./transport.ts   `lastFrameIndex` / `frameFor` / `frameTime`: the seek
+ *                      lattice, used by the `?film=play` fallback and by
+ *                      `useFilmScrub.snap()` (skip-to-end, lock-at-end).
+ *   - ./scrub.ts       the epsilon deadband, derived as a fraction of 1/FPS.
+ *   - ./outputs.ts     `plateOpacity`: `shownTime * FPS < PLATE_CUT`.
+ *   - useHeroFilm.ts   the `FE` chase floor — where FPS cancels out of its own
+ *                      expression and the value is unchanged either way.
  */
-export const FPS = 60;
+export const FPS = 24;
 
-/** The real source frame rate. Drives the clip-path reveal tables. */
+/**
+ * The clip-path reveal grid, in ./reveal.ts. NOT the source frame rate.
+ *
+ * The reveal tables were measured on every SECOND source frame, so they are a
+ * 12fps grid over a 24fps master, and `REV_F0` / `TREV_F0` / `PREV_F0` are
+ * indices into that grid. The check is that they land on their beats: 124/12 =
+ * 10.33s against a wide beat at 10.3, 157/12 = 13.08s against a tablet beat at
+ * 13.0, 170/12 = 14.17s against a phone beat at 14.5. Read the same indices as
+ * 24fps and the wide reveal would start at 5.2s, half a film early.
+ *
+ * It also sets the "is the picture still moving" slop in useHeroFilm.ts, where
+ * two source frames of tolerance is load-bearing — see the comment there.
+ */
 export const SRCFPS = 12;
 
 /** Fallback duration, replaced by `video.duration` once it is finite and > 1. */
@@ -53,7 +90,15 @@ export const GRADE_LO = 30;
 export const GRADE_HI = 185;
 export const GRADE_MIN = 0.2;
 
-/** The still plate covers frame 0 only: `shownTime * FPS < 0.5`. */
+/**
+ * The still plate covers frame 0 only: `shownTime * FPS < 0.5`.
+ *
+ * Read as half a source frame, which at 24fps is 20.8ms. `shownTime` is the
+ * PRESENTED `mediaTime`, so it takes the values 0, 1/24, 2/24 …; the only one
+ * under half a frame is frame 0 itself. (At the old FPS = 60 the same
+ * expression meant 8.3ms, which selected the same single frame — this moved
+ * with the constant without changing which frames it covers.)
+ */
 export const PLATE_CUT = 0.5;
 
 /** A seek younger than this is left alone; older than this it is re-kicked. */
@@ -98,26 +143,42 @@ export const VP_H_SLOP = 140;
 /**
  * Default film sources, per band.
  *
- * The two mobile cuts were re-encoded to the scrub recipe (scripts/
- * encode-film.sh): height capped at 720 and GOP 4, down from a full 1080 at
- * GOP 12. The GOP is the whole point — it is the only number that decides how
- * many frames a decoder must chew through to present the one that was asked
- * for, and it roughly doubled the byte size (6.3 -> 11.8 MB) buying that.
- * The desktop cut already ships GOP 8 and is unchanged.
+ * All three cuts were re-encoded from the 24fps masters (scripts/
+ * encode-film.sh) — every previous mp4 was 60fps, i.e. 2651 frames carrying
+ * 1062 frames of information. Encoding at the source rate spends the same
+ * <= GOP decodes per seek on 2.5x fewer frames, so the seek gets cheaper and
+ * the file gets smaller at the same time:
+ *
+ *      1920   1920x1080   24.47 -> 23.08 MB   332 -> 133 keyframes   GOP 8
+ *       864    576x720     6.78 ->  5.97 MB   221 -> 266 keyframes   GOP 12 -> 4
+ *       608    406x720      6.28 ->  6.22 MB  221 -> 266 keyframes   GOP 12 -> 4
+ *
+ * Read the GOP column, not the keyframe count: the mobile bands went from a
+ * keyframe every 12 frames to one every 4 — THREE TIMES the keyframe density
+ * per frame of film, and therefore a third of the wasted decodes per seek —
+ * while the raw count only rose from 221 to 266 because there are 2.5x fewer
+ * frames to cover. Desktop keeps GOP 8 and simply carries 2.5x fewer frames.
+ *
+ * The two mobile files come from a DIFFERENT master to the desktop one: the
+ * mobile master is framed and graded for the portrait crop (mean luma
+ * difference 112/255 at t=0 against the desktop master). They are not two
+ * bitrates of one cut and must never be re-derived from each other.
  *
  * ── the `?v=` stamp ─────────────────────────────────────────────────────────
- * All six are stamped `v=8` together. A visitor holding the OLD 608/864 cut at
- * `v=7` would scrub a 12-GOP film through an engine tuned for a 4-GOP one and
- * conclude, correctly, that nothing was fixed. One stamp for all six removes
- * the question of which files moved.
+ * All six are stamped `v=9` together, and the desktop poster changed NAME at
+ * the same time (`topcat-intro-poster` -> `topcat-intro-1920-poster`) so every
+ * poster is now named for the clip it was cut from. .htaccess holds .mp4 for a
+ * week, so a visitor holding a `v=8` 60fps clip would scrub an upsampled film
+ * through an engine on a 24fps lattice. One stamp for all six removes the
+ * question of which files moved.
  */
 export const DEFAULT_SOURCES = {
-  src: '/assets/video/topcat-intro-1920.mp4?v=8',
-  poster: '/assets/video/topcat-intro-poster.webp?v=8',
-  srcNarrow: '/assets/video/topcat-intro-864.mp4?v=8',
-  posterNarrow: '/assets/video/topcat-intro-864-poster.webp?v=8',
-  srcPhone: '/assets/video/topcat-intro-608.mp4?v=8',
-  posterPhone: '/assets/video/topcat-intro-608-poster.webp?v=8',
+  src: '/assets/video/topcat-intro-1920.mp4?v=9',
+  poster: '/assets/video/topcat-intro-1920-poster.webp?v=9',
+  srcNarrow: '/assets/video/topcat-intro-864.mp4?v=9',
+  posterNarrow: '/assets/video/topcat-intro-864-poster.webp?v=9',
+  srcPhone: '/assets/video/topcat-intro-608.mp4?v=9',
+  posterPhone: '/assets/video/topcat-intro-608-poster.webp?v=9',
 } as const;
 
 /**
@@ -125,14 +186,17 @@ export const DEFAULT_SOURCES = {
  *
  * Held over the film until the decoder paints a real frame, so each one is
  * extracted from the exact clip above and never from the master — otherwise
- * the handover from plate to first frame is a visible pop. The two mobile
- * plates were re-extracted alongside the new encodes; `v=4` retires the ones
- * cut from the 1080 mobile clips.
+ * the handover from plate to first frame is a visible pop. All three were
+ * re-cut from the 24fps encodes and are byte-identical to that band's poster,
+ * which is the same frame by the same command; `v=5` retires the ones cut from
+ * the 60fps clips (and, for the two mobile bands, from the un-scaled 1080
+ * crops — those plates were 864x1080 and 608x1080 against 576x720 and 406x720
+ * encodes).
  */
 export const DEFAULT_PLATES = {
-  src: '/assets/video/plates/plate-f0.webp?v=4',
-  srcNarrow: '/assets/video/plates/tablet/plate-f0.webp?v=4',
-  srcPhone: '/assets/video/plates/plate-f0-phone.webp?v=4',
+  src: '/assets/video/plates/plate-f0.webp?v=5',
+  srcNarrow: '/assets/video/plates/tablet/plate-f0.webp?v=5',
+  srcPhone: '/assets/video/plates/plate-f0-phone.webp?v=5',
 } as const;
 
 /**

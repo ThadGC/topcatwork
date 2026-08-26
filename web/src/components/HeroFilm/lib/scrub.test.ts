@@ -11,12 +11,14 @@
 import { describe, it, expect } from 'vitest';
 import {
   DEFAULT_SCRUB,
+  SRC_FRAME,
   decideScrub,
   lerpToward,
   scrubEpsilon,
   type ScrubCommand,
   type ScrubInput,
 } from './scrub';
+import { FPS, SRCFPS } from './constants';
 
 const DUR = 44.25;
 
@@ -82,19 +84,108 @@ describe('the epsilon deadband', () => {
   });
 
   it('seeks once the error clears the deadband', () => {
-    const cmd = decideScrub(state({ want: 10, current: 10, currentTime: 10.02 }));
+    const out = 10 + DEFAULT_SCRUB.epsilonDesktop * 1.5;
+    const cmd = decideScrub(state({ want: 10, current: 10, currentTime: out }));
     expect(isSeek(cmd)).toBe(true);
   });
 
-  it('is 8ms on desktop and 20ms on mobile', () => {
-    expect(scrubEpsilon(false)).toBe(0.008);
-    expect(scrubEpsilon(true)).toBe(0.02);
+  it('is derived from the SOURCE frame duration, not from a written-down ms', () => {
+    // The whole retune in one assertion. The masters are 24fps, so a frame is
+    // 41.7ms; the VDM reference's 8ms / 20ms were its own clips' numbers and
+    // are not transferable.
+    expect(SRC_FRAME).toBeCloseTo(1 / 24, 12);
+    expect(SRC_FRAME).toBe(1 / FPS);
+    expect(scrubEpsilon(false)).toBe(SRC_FRAME / 2);
+    expect(scrubEpsilon(true)).toBe(SRC_FRAME);
     expect(DEFAULT_SCRUB.epsilonDesktop).toBeLessThan(DEFAULT_SCRUB.epsilonMobile);
   });
 
+  it('is never tighter than half a source frame, on either device', () => {
+    // THE FLOOR, and the reason this test exists. It is a cost argument, not
+    // a proof of "same picture" — see the block above DEFAULT_SCRUB for why
+    // the symmetric version of that claim does not hold. From a frame-start
+    // `currentTime` every FORWARD target inside half a frame is the picture
+    // already on screen, so a tighter band buys decodes and nothing else; and
+    // it does not buy freshness either, because the backward exposure stays
+    // one frame however narrow the band gets. At the old 8ms desktop value
+    // that was five wasted seeks per presented picture, for the same
+    // worst-case staleness.
+    const half = SRC_FRAME / 2;
+    expect(DEFAULT_SCRUB.epsilonDesktop).toBeGreaterThanOrEqual(half);
+    expect(DEFAULT_SCRUB.epsilonMobile).toBeGreaterThanOrEqual(half);
+    expect(scrubEpsilon(false)).toBeGreaterThanOrEqual(half);
+    expect(scrubEpsilon(true)).toBeGreaterThanOrEqual(half);
+  });
+
+  it('never lets either device rest more than a whole source frame out', () => {
+    // THE CAP, and what actually bounds the staleness. A band of one source
+    // frame can hold a target that belongs to the immediate neighbour; a band
+    // any wider could hold one two frames away. One frame is the promise.
+    expect(DEFAULT_SCRUB.epsilonDesktop).toBeLessThanOrEqual(SRC_FRAME);
+    expect(DEFAULT_SCRUB.epsilonMobile).toBeLessThanOrEqual(SRC_FRAME);
+  });
+
+  it('holds inside the deadband on EITHER side of the target', () => {
+    // Sweep the whole sub-half-frame range rather than asserting one sample,
+    // and sweep it in both directions: the band is symmetric about
+    // `currentTime` (`Math.abs`), so an element sitting BEHIND the target has
+    // to be exercised too. It used to only ever be driven ahead of it, which
+    // is the half of the range where the deadband is cheapest to defend.
+    //
+    // Stepped as n/20 rather than by adding 0.05, so the last k is 0.45 and
+    // not 0.49999999999999994 — which rounds up onto the boundary itself.
+    for (let n = 1; n <= 9; n++) {
+      const k = n / 20;
+      for (const dir of [1, -1]) {
+        const drift = { want: 10, current: 10, currentTime: 10 + dir * SRC_FRAME * k };
+        const at = `k=${dir * k}`;
+        expect(decideScrub(state({ ...drift, mobile: false })).kind, at).toBe('hold');
+        expect(decideScrub(state({ ...drift, mobile: true })).kind, at).toBe('hold');
+      }
+    }
+  });
+
+  it('is one source frame stale at worst, and that worst case is BACKWARD', () => {
+    // The asymmetric case the symmetry argument misses, pinned so the comment
+    // above DEFAULT_SCRUB cannot drift back into claiming zero staleness.
+    //
+    // `currentTime` is not a frame midpoint. Firefox and Safari snap a landed
+    // seek to the frame's START, so take the honest case: the element sits on
+    // frame 240's start (exactly 10.0s) and the chase asks for a time just
+    // inside the band behind it. That target belongs to frame 239 — a
+    // different picture — and the deadband holds anyway.
+    const frameStart = 240 * SRC_FRAME;
+    const frameOf = (t: number) => Math.floor(t / SRC_FRAME);
+    expect(frameOf(frameStart)).toBe(240);
+
+    for (const mobile of [false, true]) {
+      const eps = scrubEpsilon(mobile);
+      const behind = frameStart - eps * 0.999;
+      const dev = 'mobile=' + mobile;
+
+      const cmd = decideScrub(
+        state({ want: behind, current: behind, currentTime: frameStart, mobile }),
+      );
+      expect(cmd.kind, dev).toBe('hold');
+      // A DIFFERENT frame is being refused — not the one on screen…
+      expect(frameOf(behind), dev).not.toBe(240);
+      // …but never more than one frame away, on either device. That is the
+      // whole promise, and it is what the SRC_FRAME cap above buys.
+      expect(240 - frameOf(behind), dev).toBe(1);
+
+      // Clear the band and it is fetched, same as forward.
+      const further = frameStart - eps * 1.001;
+      expect(
+        decideScrub(state({ want: further, current: further, currentTime: frameStart, mobile })).kind,
+        dev,
+      ).toBe('seek');
+    }
+  });
+
   it('lets mobile absorb an error desktop would correct', () => {
-    // 12ms out: over the desktop deadband, under the mobile one.
-    const drift = { want: 10, current: 10, currentTime: 10.012 };
+    // 0.6 of a source frame out: over the desktop deadband (half a frame),
+    // under the mobile one (a whole frame).
+    const drift = { want: 10, current: 10, currentTime: 10 + SRC_FRAME * 0.6 };
     expect(decideScrub(state({ ...drift, mobile: false })).kind).toBe('seek');
     expect(decideScrub(state({ ...drift, mobile: true })).kind).toBe('hold');
   });
@@ -127,7 +218,11 @@ describe('the epsilon deadband', () => {
     // Twenty times the frames, and not one extra seek.
     expect(long.seeks).toBe(short.seeks);
     expect(long.seeks).toBeLessThan(20);
-    expect(long.currentTime).toBeCloseTo(10.5, 2);
+    // It settles inside the deadband, which is the only accuracy the scrub
+    // ever promises: within half a source frame of the demand, i.e. the
+    // picture on screen is that frame or the one before it.
+    expect(10.5 - long.currentTime).toBeGreaterThanOrEqual(0);
+    expect(10.5 - long.currentTime).toBeLessThanOrEqual(DEFAULT_SCRUB.epsilonDesktop);
   });
 });
 
@@ -199,11 +294,17 @@ describe('the target lerp', () => {
     expect(chasedBack).toBeLessThan(DEFAULT_SCRUB.epsilonMobile);
   });
 
-  it('never yanks the decoder back more than one 60fps frame', () => {
+  it('never yanks the decoder backwards at all on a spiky forward scroll', () => {
     // The end-to-end version of the above, through the real policy. Raw, this
     // input would send the decoder 500ms backwards six times — six keyframe
     // hunts, in an input that is really just one steady forward scroll with
     // wheel noise on it.
+    //
+    // It used to assert "less than one 60fps frame". At a frame-derived
+    // deadband the answer is stronger and exactly zero: the lerp attenuates
+    // every reversal to under half a source frame and the deadband then
+    // refuses to issue a seek for any of them, so not one backward seek is
+    // emitted.
     const raw = [10, 10.6, 10.1, 10.7, 10.2, 10.8, 10.3, 10.9];
     let current = 10;
     let currentTime = 10;
@@ -219,7 +320,7 @@ describe('the target lerp', () => {
         currentTime = cmd.time;
       }
     }
-    expect(worstBack).toBeLessThan(1 / 60);
+    expect(worstBack).toBe(0);
     expect(currentTime).toBeGreaterThan(10.3);
   });
 });
@@ -245,10 +346,64 @@ describe('guards', () => {
     expect(cmd.time).toBeCloseTo(DEFAULT_SCRUB.ceiling * DUR, 10);
   });
 
-  it('still reaches the last 12fps source frame despite that ceiling', () => {
-    // The closing beauty frame starts at DUR - 1/12. The ceiling must not
-    // stop short of it or the film has no payoff.
-    expect(DEFAULT_SCRUB.ceiling * DUR).toBeGreaterThan(DUR - 1 / 12);
+  it('still reaches the last SOURCE frame despite that ceiling', () => {
+    // The closing beauty frame is source frame 1061 of 1062 and starts at
+    // DUR - 1/24 = 44.2083. The ceiling must not stop short of it or the film
+    // has no payoff.
+    //
+    // This is where the frame rate correction bit hardest and most quietly.
+    // The old ceiling of 0.999 was chosen against a believed 12fps source —
+    // an 83ms last frame starting at 44.1667, which 44.2058 clears easily. The
+    // real source is 24fps and its last frame starts 25ms later than that, so
+    // 0.999 addressed frame 1060 and the closing frame was unreachable by
+    // scrubbing. Nothing threw; you simply never saw the last frame until the
+    // lock-at-end `snap()` put it there.
+    const lastFrameStart = DUR - 1 / FPS;
+    expect(DEFAULT_SCRUB.ceiling * DUR).toBeGreaterThanOrEqual(lastFrameStart);
+    expect(Math.floor(DEFAULT_SCRUB.ceiling * DUR * FPS)).toBe(Math.round(DUR * FPS) - 1);
+    // …and 0.999 would not, which is the regression this pins.
+    expect(0.999 * DUR).toBeLessThan(lastFrameStart);
+  });
+
+  it('leaves the rAF loop able to park at the end of the film', () => {
+    // useHeroFilm.ts keeps ticking while |want - currentTime| > 1 / SRCFPS.
+    // At film progress 1 `want` is `dur`, but the scrub can only address
+    // `ceiling * dur`, and the deadband lets the element rest one epsilon
+    // short of that. If the sum of those two residues exceeds the slop, the
+    // loop never parks, `armSettle()` is never reached from the tick and the
+    // film's lock-at-end depends entirely on the scroll handler's copy of it.
+    //
+    // Nothing about that failure is visible in a screenshot, so it is pinned
+    // here rather than discovered on a phone.
+    const residue = (1 - DEFAULT_SCRUB.ceiling) * DUR + DEFAULT_SCRUB.epsilonMobile;
+    expect(residue).toBeLessThan(1 / SRCFPS);
+    // The old pairing — a 0.999 ceiling with a whole-source-frame deadband —
+    // is exactly the combination that does not park.
+    expect(0.001 * DUR + SRC_FRAME).toBeGreaterThan(1 / SRCFPS);
+  });
+
+  it('empirically rests inside that slop from any approach', () => {
+    // The bound above is an inequality on constants; this drives the real
+    // policy to film progress 1 from a fine sweep of starting positions and
+    // checks where it actually comes to rest. The staircase phase is what
+    // decides the residue, so one starting point proves nothing.
+    const C = DEFAULT_SCRUB.ceiling * DUR;
+    let worst = 0;
+    for (let k = 0; k < 400; k++) {
+      const start = C - 0.3 * (k / 400);
+      let current = start;
+      let currentTime = start;
+      for (let i = 0; i < 400; i++) {
+        const cmd = decideScrub(
+          state({ want: DUR, current, currentTime, mobile: true }),
+        );
+        if (cmd.kind === 'idle') continue;
+        current = cmd.current;
+        if (isSeek(cmd)) currentTime = cmd.time;
+      }
+      worst = Math.max(worst, DUR - currentTime);
+    }
+    expect(worst).toBeLessThan(1 / SRCFPS);
   });
 
   it('never addresses a negative time', () => {

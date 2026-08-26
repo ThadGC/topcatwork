@@ -101,6 +101,14 @@ export function useFilmScrub(
    * the 1/FPS lattice from lib/transport.ts is still the right tool: it is
    * what guarantees the final seek addresses the last frame and not the
    * element's ended state.
+   *
+   * FPS is the source's 24, so `frameTime` lands on the MIDPOINT of a real
+   * frame — at the end of the film, 1061.5/24 = 44.2292s of a 44.25s, 1062
+   * frame master. On the old 1/60 lattice the same call produced 2654.5/60 =
+   * 44.2417s: still inside the last source frame, but arrived at by accident,
+   * and with lattice points elsewhere in the film (f = 2 -> 2.5/60 = 1/24)
+   * landing exactly ON a frame boundary, which is the coin toss the `+0.5`
+   * exists to prevent.
    */
   const snap = useCallback(
     (time: number, dur: number) => {

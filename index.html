@@ -3605,12 +3605,12 @@
     <div class="hero-bg" aria-hidden="true">
       <img src="/assets/site/hero-night-2752.webp" srcset="/assets/site/hero-night-1400.webp 1400w, /assets/site/hero-night-2000.webp 2000w, /assets/site/hero-night-2752.webp 2752w" sizes="(max-width:720px) 1000px, 1739px" width="2752" height="1536" alt="" id="heroImg" draggable="false" fetchpriority="high" decoding="async">
       <video class="hero-vid" id="heroVid" playsinline muted preload="none"
-             data-src="/assets/video/topcat-intro-1920.mp4?v=6"
-             data-poster="/assets/video/topcat-intro-poster.webp?v=5"
-             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=7"
-             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=5"
-             data-src-phone="/assets/video/topcat-intro-608.mp4?v=7"
-             data-poster-phone="/assets/video/topcat-intro-608-poster.webp?v=5"
+             data-src="/assets/video/topcat-intro-1920.mp4?v=9"
+             data-poster="/assets/video/topcat-intro-1920-poster.webp?v=9"
+             data-src-narrow="/assets/video/topcat-intro-864.mp4?v=9"
+             data-poster-narrow="/assets/video/topcat-intro-864-poster.webp?v=9"
+             data-src-phone="/assets/video/topcat-intro-608.mp4?v=9"
+             data-poster-phone="/assets/video/topcat-intro-608-poster.webp?v=9"
              width="1920" height="1080" aria-hidden="true" tabindex="-1"
              disablepictureinpicture disableremoteplayback></video><script>      (function(){var v=document.getElementById('heroVid');
        if(!v||!document.documentElement.classList.contains('cine-on'))return;
@@ -3623,9 +3623,9 @@
        l.rel='preload';l.as='image';l.href=v.poster;l.fetchPriority='high';
        document.head.appendChild(l);})();</script>
       <div class="cine-plate" id="cinePlate" aria-hidden="true"
-           data-src="/assets/video/plates/plate-f0.webp?v=3"
-           data-src-narrow="/assets/video/plates/tablet/plate-f0.webp?v=3"
-           data-src-phone="/assets/video/plates/plate-f0-phone.webp?v=3"></div>
+           data-src="/assets/video/plates/plate-f0.webp?v=5"
+           data-src-narrow="/assets/video/plates/tablet/plate-f0.webp?v=5"
+           data-src-phone="/assets/video/plates/plate-f0-phone.webp?v=5"></div>
       <div class="hero-shade"></div>
       <div class="hero-navgrade" aria-hidden="true"></div>
       <div class="cine-edge" aria-hidden="true"></div>
@@ -7167,7 +7167,7 @@ if(faqIndex && panel && faqBody){
   const reduce=matchMedia('(prefers-reduced-motion: reduce)');
   if(reduce.matches||!vid.canPlayType('video/mp4')){ root.classList.remove('cine-on'); return; }
   window.__cineHold=true;
-  const FPS=60, DUR=44.25;
+  const FPS=24, DUR=44.25;
   const SRCFPS=12;
   const EASE=0.15;
   const INK_AT=0.93;

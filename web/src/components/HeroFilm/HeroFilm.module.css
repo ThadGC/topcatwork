@@ -397,6 +397,122 @@
   text-shadow: 0 2px 22px rgba(6, 6, 8, 0.82);
 }
 
+/* ── the reveal's clip panes ────────────────────────────────────────────────
+   The reveal line is uncovered by an edge tracked frame by frame against the
+   film. It used to be a `clip-path` polygon rewritten every animation frame,
+   and an animating clip-path CANNOT be composited — the browser re-rasterises
+   the whole headline sixty times a second, which on a phone at
+   devicePixelRatio 3.75 is the stutter this replaces.
+
+   So the clip is a BOX now. Each `.rvPane` clips with its own overflow and
+   carries the edge on a transform; the `.rvInner` inside it carries the exact
+   inverse, so the clip edge moves while the glyphs do not. Only `transform`
+   changes, so the compositor does all of it and neither layer is ever
+   repainted. The engine writes both transforms — and both transform-origins,
+   which must agree or the pair stops cancelling — from lib/reveal.ts.
+
+   The line is a single-cell GRID so that two panes can occupy the same box
+   without stacking: an absolutely-positioned second pane would need the line's
+   own padding restated to lay its copy out identically, and a second in-flow
+   pane would double the line's height. Both panes are grid items in cell 1/1,
+   so both get exactly the line's content box as their containing block and the
+   row is still one copy tall. `minmax(0, 1fr)` rather than a bare auto track:
+   an auto track sizes to max-content, which would stop the headline wrapping.
+
+   The panes' own bleed — the margin/padding pair that pushes each pane's box
+   out past the copy without moving its content box — is written from JS, so
+   lib/reveal.ts's WEDGE_BLEED / STRIP_BLEED stay the only place those numbers
+   live.
+   -------------------------------------------------------------------------- */
+
+:global(html.cine-on) .rvLine {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+}
+
+:global(html.cine-on) .rvPane {
+  grid-area: 1 / 1;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  /* Only correct while the pane is UNBOXED, which is the state it ships in:
+     with no margin and no padding its border box IS its content box, so 0 0 is
+     already the shared origin. The moment the engine gives the pane its bleed
+     it rewrites this to (bleed.l, bleed.t), because the origins of the two
+     halves have to be the same point or the pair stops cancelling. The size of
+     that mistake is not theoretical — measured on this page at source frame
+     155, leaving the origin at 0 0 after boxing slid the headline 12.4px left,
+     which is the (L − I)·ε the header of lib/reveal.ts names. The order is
+     safe: the pane is boxed before any transform but the identity is written,
+     and under the identity the origin does not matter. */
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* `clip` clips at exactly the same edge as `hidden` but does not make the pane
+   a scroll container, and the inner is counter-transformed a couple of thousand
+   pixels out of that box — a scrollable overflow nothing should ever be able to
+   scroll. The two are written as base + @supports rather than as two
+   declarations in one rule because the CSS minifier drops the losing half of a
+   duplicate property, which would take the `hidden` fallback with it. */
+@supports (overflow: clip) {
+  :global(html.cine-on) .rvPane {
+    overflow: clip;
+  }
+}
+
+:global(html.cine-on) .rvInner {
+  display: block;
+  margin: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* ── released ───────────────────────────────────────────────────────────────
+   The sweep is over — or it never ran (reduced motion, no decoder, the `off`
+   band) or `?reveal=off` turned it off. The engine writes `data-rv-open` on the
+   line once per transition, and the clip comes off.
+
+   It has to come off. A pane clips to the copy's content box plus its bleed,
+   and while the sweep is running that is the point; parked there for the rest
+   of the page's life it is a trap. Today's ink fits — the line's
+   `0 2px 30px` text-shadow and the gold `em`'s `drop-shadow(0 2px 12px)` both
+   land well inside the bleed — but an outline, a text-stroke or a bigger shadow
+   added later would be silently cut, and cut by a number chosen for the reveal
+   rather than for the type. The `clip-path` this replaced was REMOVED from the
+   element at this same moment and the line left unclipped; so is this.
+
+   `will-change` goes with it, and this is the half that costs a phone
+   something. It is the reveal's promotion, not the line's: pinned for the rest
+   of the session it holds a full-resolution text layer in memory at
+   devicePixelRatio 3.75, and through the narrow band's exit — where `--lsc`
+   takes the line from 1 to 0.84 over a couple of seconds — it hands the
+   compositor a promoted layer to STRETCH rather than a line to re-raster sharp.
+
+   The strip pane needs no rule here: it is parked in this state, which the
+   engine writes as `visibility: hidden` over the identity, so its second copy
+   does not paint even though it now lies exactly on top of the wedge's.
+   -------------------------------------------------------------------------- */
+:global(html.cine-on) .rvLine[data-rv-open] .rvPane {
+  overflow: visible;
+  will-change: auto;
+}
+
+:global(html.cine-on) .rvLine[data-rv-open] .rvInner {
+  will-change: auto;
+}
+
+/* The strip pane exists only for the phone's second, horizontal edge. Above
+   720px there is no such edge, so the second copy of the copy is not rendered
+   at all — no layer, no raster, no duplicate for a screen reader to reach
+   (it is aria-hidden regardless). */
+@media (min-width: 721px) {
+  :global(html.cine-on) .rvStrip {
+    display: none;
+  }
+}
+
 /* The opening beat is carried for its timing only — it drives the scroll cue's
    alpha — and is not displayed in either band. Verbatim from the source. */
 :global(html.cine-on) .open {

@@ -47,7 +47,14 @@ import { FPS, SEEK_STALL } from './constants';
 export const HAVE_CURRENT_DATA = 2;
 
 export interface TransportConfig {
-  /** Seek quantisation grid. Seeks land mid-frame on a 1/`fps` lattice. */
+  /**
+   * Seek quantisation grid. Seeks land mid-frame on a 1/`fps` lattice.
+   *
+   * The default is `FPS`, the SOURCE rate (24). That is also what makes the
+   * frame-level dedupe below mean something: on the old 1/60 grid a 24fps
+   * source produced ~2.5 distinct frame indices per real frame, so the dedupe
+   * let through two extra seeks for every picture it could actually change.
+   */
   fps: number;
   /** Proportional gain on the time error. */
   kp: number;

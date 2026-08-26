@@ -29,7 +29,7 @@ import {
   veilValue,
   wipeEase,
 } from './outputs';
-import { GRADE_MIN, INK_AT, Z_FAR } from './constants';
+import { FPS, GRADE_MIN, INK_AT, Z_FAR } from './constants';
 import { coverFit, filmFrame } from './geometry';
 
 const DUR = 44.25;
@@ -89,9 +89,17 @@ describe('ink', () => {
 
 describe('plate', () => {
   it('covers frame 0 only', () => {
-    expect(plateOpacity(0)).toBe(1);
-    expect(plateOpacity(0.004)).toBe(1); // < 0.5/60
-    expect(plateOpacity(0.02)).toBe(0);
+    // The argument is the PRESENTED `mediaTime`, so the only values it ever
+    // really takes are multiples of one source frame. `PLATE_CUT` is half a
+    // frame, so frame 0 is in and every other frame is out — and that is true
+    // whether FPS is the source's 24 or the 60 it used to be, because the
+    // threshold scales with the constant. Asserted against the frame grid
+    // rather than a bare millisecond figure so it stays true either way.
+    const frame = (n: number) => n / FPS;
+    expect(plateOpacity(frame(0))).toBe(1);
+    expect(plateOpacity(frame(0.49))).toBe(1);
+    expect(plateOpacity(frame(1))).toBe(0);
+    expect(plateOpacity(frame(2))).toBe(0);
     expect(plateOpacity(10)).toBe(0);
   });
 });
