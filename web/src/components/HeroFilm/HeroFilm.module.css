@@ -1,0 +1,1077 @@
+/* ==========================================================================
+   HERO FILM — module stylesheet.
+
+   A verbatim value port of the cine block in assets/site.css (1631-1700,
+   1773-2117) plus the tablet overrides at 3244-3340. Numbers are copied, not
+   recomputed. If a value here looks arbitrary it is because it was tuned
+   against the film frame by frame.
+
+   ── why `:global(html.cine-on)` ─────────────────────────────────────────────
+   The film's on/off state is a class on the ROOT element, not on this
+   component, and it is set by an inline script during HTML parse (see
+   ./HeroFilmBoot.tsx) so the correct layout is in force before the first
+   paint. A hashed module class cannot be set from a pre-hydration script, so
+   the gate stays global and only the parts it gates are scoped. Other modules
+   read `html.cine-on` too — the header bar's `.preform` state, the hero
+   parallax fallback.
+
+   ── the three bands ─────────────────────────────────────────────────────────
+     >=1121px   wide    the film-space layout: lines positioned in FILM
+                        coordinates off --filmU/--filmX/--filmY
+     721-1120   tablet  its own 864-wide cut, left-aligned lines
+     <=720px    phone   the 608-wide cut, centred lines
+   Both the narrow and the phone media queries match on a phone. That is
+   deliberate and the JS relies on it.
+   ========================================================================== */
+
+/* ── the runway ─────────────────────────────────────────────────────────────
+   `.cine` is a tall scroll runway; `.hero` inside it is sticky. Scrolling the
+   runway is what scrubs the film — there is no scroll-jacking anywhere, the
+   page scrolls normally and the film reads its position.
+   -------------------------------------------------------------------------- */
+
+.cine {
+  position: relative;
+}
+
+:global(html.cine-on) .cine {
+  --cineH: 1050vh;
+  --cineHold: 0.1387;
+  --cineVeilAt: 38;
+  --cineVeilMin: 0.2;
+  height: var(--cineH);
+}
+
+@media (max-width: 1120px) {
+  :global(html.cine-on) .cine {
+    --cineH: 900vh;
+    --cineHold: 0.2;
+  }
+  :global(html.cine-on) .cine > .hero {
+    min-height: 100vh;
+  }
+}
+
+@media (max-width: 720px) {
+  :global(html.cine-on) .cine {
+    --cineH: 800vh;
+    --cineHold: 0.2125;
+  }
+}
+
+/* The lock. `cine-done` collapses the runway to a single viewport, and the
+   engine subtracts the same distance from scrollY in the same frame, so
+   nothing moves and the page below rises by exactly the runway length. */
+:global(html.cine-on.cine-done) .cine {
+  --cineH: 100vh;
+}
+
+:global(html.cine-on) .cine > .hero {
+  position: sticky;
+  top: 0;
+}
+
+/* ── the hero shell ─────────────────────────────────────────────────────── */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  --curveR: 48px;
+  --curveOut: 14px;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  left: calc(-1 * var(--curveOut));
+  right: calc(-1 * var(--curveOut));
+  clip-path: inset(0 round 0 0 var(--curveR) var(--curveR));
+  border-bottom-left-radius: var(--curveR);
+  border-bottom-right-radius: var(--curveR);
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+/* The bottom-corner hairline. Rides --cineCurve, so it only exists over the
+   last 10% of the film, as the page below is about to be revealed. */
+.hero::after {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--curveOut));
+  right: calc(-1 * var(--curveOut));
+  bottom: 0;
+  height: calc(var(--curveR) + 1px);
+  border: 0 solid var(--hair);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-bottom-left-radius: var(--curveR);
+  border-bottom-right-radius: var(--curveR);
+  z-index: 3;
+  pointer-events: none;
+}
+
+:global(html.cine-on) .cine .hero {
+  --curveR: calc(48px * var(--cineCurve, 1));
+}
+:global(html.cine-on) .cine .hero::after {
+  opacity: var(--cineCurve, 1);
+}
+
+/* The still hero. This is what a reduced-motion visitor, a browser with no
+   MP4 decoder and a no-JS visitor all get, and it is the SSR state. */
+.bgImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% 50%;
+  display: block;
+  transform: scale(1.14);
+  transition: transform 3s var(--ease-slow);
+  will-change: auto;
+}
+.hero.loaded .bgImg {
+  transform: scale(1.08);
+}
+:global(html.cine-on) .cine .bgImg {
+  opacity: 0;
+}
+
+.vid {
+  display: none;
+}
+:global(html.cine-on) .vid {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  transform: translateZ(0);
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+}
+
+/* Frame-0 still. Covers the decoder's first paint and nothing else — the
+   engine drops it the moment the film is off frame 0. */
+.plate {
+  display: none;
+}
+:global(html.cine-on) .plate {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ── scrims ─────────────────────────────────────────────────────────────── */
+
+.hero {
+  --heroScrimA: 0.7;
+  --heroScrimB: 0.36;
+  --navScrim: linear-gradient(
+    to bottom,
+    rgba(7, 7, 9, 0.6) 0%,
+    rgba(7, 7, 9, 0.555) 2.4%,
+    rgba(7, 7, 9, 0.474) 5.1%,
+    rgba(7, 7, 9, 0.378) 7.5%,
+    rgba(7, 7, 9, 0.282) 10.2%,
+    rgba(7, 7, 9, 0.198) 12.6%,
+    rgba(7, 7, 9, 0.126) 15%,
+    rgba(7, 7, 9, 0.078) 17.4%,
+    rgba(7, 7, 9, 0.042) 20.1%,
+    rgba(7, 7, 9, 0.018) 22.5%,
+    rgba(7, 7, 9, 0.006) 25.2%,
+    rgba(7, 7, 9, 0) 30%
+  );
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(
+      70% 66% at 50% 42%,
+      rgba(7, 7, 9, var(--heroScrimA)) 0%,
+      rgba(7, 7, 9, var(--heroScrimB)) 62%,
+      rgba(7, 7, 9, 0) 100%
+    ),
+    radial-gradient(280px 220px at 96% 93%, rgba(7, 7, 9, 0.92), transparent 72%),
+    linear-gradient(
+      90deg,
+      rgba(7, 7, 9, 0.26) 0%,
+      rgba(7, 7, 9, 0.3) 40%,
+      rgba(7, 7, 9, 0.46) 100%
+    ),
+    linear-gradient(to top, rgba(7, 7, 9, 0.9) 2%, rgba(7, 7, 9, 0) 32%),
+    var(--navScrim);
+}
+
+/* The veil. Held at 0.20 for the whole film so the footage reads, then ramped
+   to full over the tail so the hero copy has something to land on. */
+:global(html.cine-on) .cine .shade {
+  opacity: var(--cineVeil, 1);
+}
+
+/* Nav grade. A second copy of the top scrim, faded in proportionally to how
+   bright the film actually is under the header — sampled per video frame, not
+   guessed. Doubled deliberately: one copy is not enough over a white quarry. */
+.navgrade {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--navScrim), var(--navScrim);
+}
+:global(html.cine-on) .cine .navgrade {
+  display: block;
+  opacity: var(--navGrade, 0);
+}
+
+/* Edge vignette, driven by how much of the hero copy is still on screen. */
+.edge {
+  display: none;
+}
+
+@media (min-width: 1121px) {
+  :global(html.cine-on) .cine .edge {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: var(--cineEdge, 0);
+    background:
+      radial-gradient(
+        62% 58% at 0% 10%,
+        rgba(6, 6, 9, 0.72) 0%,
+        rgba(6, 6, 9, 0.331) 52%,
+        rgba(6, 6, 9, 0) 100%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(6, 6, 9, 0.88) 0%,
+        rgba(6, 6, 9, 0.82) 15%,
+        rgba(6, 6, 9, 0.64) 30%,
+        rgba(6, 6, 9, 0.42) 42%,
+        rgba(6, 6, 9, 0.2) 50%,
+        rgba(6, 6, 9, 0.08) 58%,
+        rgba(6, 6, 9, 0.02) 66%,
+        rgba(6, 6, 9, 0) 72%
+      );
+  }
+}
+
+@media (max-width: 1120px) {
+  :global(html.cine-on) .cine .edge {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: var(--cineEdge, 0);
+    background:
+      radial-gradient(
+        120% 85% at 0% 30%,
+        rgba(6, 6, 9, 0.57) 0%,
+        rgba(6, 6, 9, 0.27) 55%,
+        rgba(6, 6, 9, 0) 85%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(6, 6, 9, 0.74) 0%,
+        rgba(6, 6, 9, 0.68) 26%,
+        rgba(6, 6, 9, 0.46) 45%,
+        rgba(6, 6, 9, 0.2) 60%,
+        rgba(6, 6, 9, 0.06) 70%,
+        rgba(6, 6, 9, 0) 78%
+      );
+  }
+}
+
+/* ── the story plane ────────────────────────────────────────────────────── */
+
+.story,
+.cue,
+.skip {
+  display: none;
+}
+
+:global(html.cine-on) .story {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  perspective: 1000px;
+  /* Off-centre origin: the beats fly past the camera on the left-hand side,
+     where the film's own subject is not. */
+  perspective-origin: 26% 50%;
+}
+
+:global(html.cine-on) .line {
+  position: absolute;
+  top: 50%;
+  left: clamp(20px, 7vw, 132px);
+  width: min(21ch, 44vw);
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(30px, 4.6vw, 70px);
+  line-height: 1.05;
+  letter-spacing: -0.004em;
+  color: var(--bone);
+  text-wrap: balance;
+  opacity: 0;
+  --ly: -50%;
+  /* Every one of these four channels is written from JS as a bare number, so
+     the transform can be rebuilt without re-parsing a string each frame. */
+  transform: translateX(calc(var(--lx, 0) * 1px))
+    translateY(var(--ly))
+    translateZ(calc(var(--lz, -150) * 1px))
+    scale(var(--lsc, 1));
+  text-shadow:
+    0 2px 30px rgba(6, 6, 8, 0.66),
+    0 1px 4px rgba(6, 6, 8, 0.5);
+}
+
+/* Per-line scrim. Opacity is the sampled brightness of the film UNDER this
+   line, so a beat over a dark shot gets no scrim at all and a beat over a
+   white slab gets a full one. */
+:global(html.cine-on) .line::before {
+  content: '';
+  position: absolute;
+  inset: -1.15em -2.4em;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    farthest-side at 50% 50%,
+    rgba(6, 6, 9, 0.62) 0%,
+    rgba(6, 6, 9, 0.58) 38%,
+    rgba(6, 6, 9, 0.36) 60%,
+    rgba(6, 6, 9, 0.14) 80%,
+    rgba(6, 6, 9, 0) 100%
+  );
+  opacity: var(--lg, 0);
+}
+
+:global(html.cine-on) .line em,
+:global(html.cine-on) .heroCopy .hl em {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--cineGoldMid, #c6a664);
+  text-shadow: none;
+  filter: drop-shadow(0 2px 12px rgba(6, 6, 9, 0.55));
+  background: linear-gradient(
+    180deg,
+    var(--cineGoldTop, #e4cd92) 0%,
+    var(--cineGoldMid, #c6a664) 62%,
+    var(--cineGoldLow, #bc9a54) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+:global(html.cine-on) .lineSub {
+  display: block;
+  margin: 24px 0 0;
+  max-width: 600px;
+  font: 400 19px/1.6 var(--brand);
+  letter-spacing: 0.014em;
+  color: #fff;
+  text-wrap: balance;
+  text-shadow: 0 2px 22px rgba(6, 6, 8, 0.82);
+}
+
+/* The opening beat is carried for its timing only — it drives the scroll cue's
+   alpha — and is not displayed in either band. Verbatim from the source. */
+:global(html.cine-on) .open {
+  display: none;
+}
+
+.heroCopy,
+.trust {
+  display: none;
+}
+
+/* ── wide band: the film-space layout ───────────────────────────────────────
+   Above 1121px the lines are not positioned in viewport units at all. They are
+   positioned in FILM units — --filmU is px-per-film-pixel and --filmX/--filmY
+   are the film origin — so a line sits on the same spot of the same shot at
+   every window size. That is why the JS writes those three vars and lets CSS
+   do the rest.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1121px) {
+  :global(html.cine-on) .story {
+    --edgeFade: calc(clamp(20px, 7vw, 132px) * 0.5);
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.1) calc(var(--edgeFade) * 0.18),
+      rgba(255, 255, 255, 0.34) calc(var(--edgeFade) * 0.36),
+      rgba(255, 255, 255, 0.66) calc(var(--edgeFade) * 0.55),
+      rgba(255, 255, 255, 0.88) calc(var(--edgeFade) * 0.72),
+      rgba(255, 255, 255, 0.98) calc(var(--edgeFade) * 0.88),
+      #fff var(--edgeFade)
+    );
+    mask-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.1) calc(var(--edgeFade) * 0.18),
+      rgba(255, 255, 255, 0.34) calc(var(--edgeFade) * 0.36),
+      rgba(255, 255, 255, 0.66) calc(var(--edgeFade) * 0.55),
+      rgba(255, 255, 255, 0.88) calc(var(--edgeFade) * 0.72),
+      rgba(255, 255, 255, 0.98) calc(var(--edgeFade) * 0.88),
+      #fff var(--edgeFade)
+    );
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  :global(html.cine-on) .line[data-vpos-wide] {
+    bottom: auto;
+    --ly: 0px;
+    left: calc(var(--filmX, 0px) + 200.16 * var(--filmU, 1px));
+    font-size: calc(86.4 * var(--filmU, 1px));
+    line-height: 1.06;
+    width: calc(898.56 * var(--filmU, 1px));
+  }
+  :global(html.cine-on) .line[data-vpos-wide='hero'] {
+    top: calc(var(--filmY, 0px) + 237.6 * var(--filmU, 1px));
+  }
+  :global(html.cine-on) .line[data-vpos-wide] .lineSub {
+    font-size: calc(22.8 * var(--filmU, 1px));
+    margin-top: calc(28.8 * var(--filmU, 1px));
+    max-width: calc(720 * var(--filmU, 1px));
+  }
+  :global(html.cine-on) .line[data-vpos-wide='hero'] .lineSub {
+    margin-left: calc(15.845 * var(--filmU, 1px));
+  }
+  :global(html.cine-on) .line[data-vpos-wide='high'] .lineSub {
+    margin-left: calc(16.106 * var(--filmU, 1px));
+  }
+  /* The reveal line's clip-path already hard-edges the glyphs; a drop-shadow
+     on top of it shows the mask seam. */
+  :global(html.cine-on) .line[data-vpos-wide='hero'] em {
+    filter: none;
+  }
+  :global(html.cine-on) .line[data-vpos-wide='high'] {
+    top: calc(var(--filmY, 0px) + 207 * var(--filmU, 1px));
+    font-size: calc(82.94 * var(--filmU, 1px));
+  }
+
+  :global(html.cine-on) .heroCopy {
+    display: block;
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    left: clamp(20px, 7vw, 132px);
+    top: calc(var(--filmY, 0px) + 237.6 * var(--filmU, 1px));
+    width: 660px;
+    opacity: 0;
+    transform: translate3d(calc(var(--tx, 0) * 1px), 0, calc(var(--hz, 0) * 1px))
+      scale(var(--heroScale, 1));
+    transform-origin: left top;
+  }
+
+  :global(html.cine-on) .trust {
+    display: flex;
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    left: clamp(20px, 7vw, 132px);
+    bottom: 35px;
+    gap: 10px;
+    align-items: center;
+    opacity: 0;
+    transform: translate3d(calc(var(--tx, 0) * 1px), 0, 0);
+  }
+
+  :global(html.cine-on) .heroCopy .hl {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 72px;
+    line-height: 1.06;
+    letter-spacing: -0.004em;
+    color: var(--bone);
+    text-wrap: balance;
+    text-shadow:
+      0 2px 30px rgba(6, 6, 8, 0.66),
+      0 1px 4px rgba(6, 6, 8, 0.5);
+  }
+  :global(html.cine-on) .heroCopy .heroSub {
+    margin: 28px 0 0;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.62;
+    font-family: var(--brand);
+    letter-spacing: 0.014em;
+    color: #fff;
+    max-width: 525px;
+    text-wrap: balance;
+    text-shadow: 0 2px 20px rgba(6, 6, 8, 0.85);
+  }
+  :global(html.cine-on) .heroCopy .heroCue {
+    margin: 36px 0 0;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 26px;
+    align-items: flex-start;
+  }
+  :global(html.cine-on) .heroCopy .heroCue span {
+    font: 500 14px/1 var(--brand);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-shadow:
+      0 1px 16px rgba(6, 6, 8, 0.9),
+      0 1px 3px rgba(6, 6, 8, 0.8);
+  }
+  :global(html.cine-on) .heroCopy .heroCue i {
+    display: block;
+    position: relative;
+    width: 32px;
+    height: 96px;
+    filter: drop-shadow(0 2px 9px rgba(6, 6, 8, 0.8));
+    will-change: transform;
+    animation: cineHeroDip 1.8s cubic-bezier(0.33, 0, 0.16, 1) infinite;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i > svg {
+    display: block;
+    width: 32px;
+    height: 96px;
+    color: rgba(198, 166, 100, 0.62);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i b {
+    position: absolute;
+    inset: 0;
+    display: block;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    -webkit-mask-size: 32px 96px;
+    mask-size: 32px 96px;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i b span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 56px;
+    display: block;
+    background: linear-gradient(
+      to bottom,
+      rgba(228, 205, 146, 0) 0%,
+      var(--cineGoldTop, #e4cd92) 48%,
+      rgba(228, 205, 146, 0) 100%
+    );
+    will-change: transform;
+    animation: cineHeroSheen 1.8s linear infinite;
+  }
+}
+
+@keyframes cineHeroSheen {
+  0%,
+  6% {
+    transform: translateY(-56px);
+  }
+  62%,
+  100% {
+    transform: translateY(96px);
+  }
+}
+@keyframes cineHeroDip {
+  0%,
+  46% {
+    transform: translateY(0);
+  }
+  55% {
+    transform: translateY(3px);
+  }
+  74%,
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes cineHeroSheenT {
+  0%,
+  6% {
+    transform: translateY(-70px);
+  }
+  62%,
+  100% {
+    transform: translateY(120px);
+  }
+}
+
+@media (min-width: 1121px) and (prefers-reduced-motion: reduce) {
+  :global(html.cine-on) .heroCopy .heroCue i {
+    animation: none;
+    transform: none;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i b span {
+    animation: none;
+    transform: translateY(20px);
+    height: 96px;
+  }
+}
+
+/* ── narrow band (tablet + phone) ───────────────────────────────────────── */
+
+@media (max-width: 1120px) {
+  :global(html.cine-on) .heroCopy {
+    display: block;
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    left: 0;
+    right: clamp(16px, 6vw, 40px);
+    top: 22vh;
+    padding-left: clamp(20px, 7vw, 54px);
+    text-align: left;
+    opacity: 0;
+    transform: translateZ(calc(var(--hz, 0) * 1px));
+  }
+  :global(html.cine-on) .line[data-vpos-wide='hero'] em {
+    filter: none;
+  }
+  :global(html.cine-on) .heroCopy .hl {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(40px, 11vw, 54px);
+    line-height: 1.08;
+    letter-spacing: -0.004em;
+    color: var(--bone);
+    text-wrap: balance;
+    text-shadow:
+      0 2px 30px rgba(6, 6, 8, 0.66),
+      0 1px 4px rgba(6, 6, 8, 0.5);
+  }
+  :global(html.cine-on) .heroCopy .heroSub {
+    margin: 20px 0 0;
+    font: 400 17px/1.6 var(--brand);
+    letter-spacing: 0.014em;
+    color: #fff;
+    max-width: 30ch;
+    text-wrap: balance;
+    text-shadow: 0 2px 22px rgba(6, 6, 8, 0.82);
+  }
+  :global(html.cine-on) .heroCopy .heroCue {
+    margin: 28px 0 0;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  :global(html.cine-on) .heroCopy .heroCue span {
+    font: 500 13px/1 var(--brand);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-shadow:
+      0 1px 16px rgba(6, 6, 8, 0.9),
+      0 1px 3px rgba(6, 6, 8, 0.8);
+  }
+  :global(html.cine-on) .heroCopy .heroCue i {
+    display: block;
+    position: relative;
+    width: 32px;
+    height: 96px;
+    filter: drop-shadow(0 2px 9px rgba(6, 6, 8, 0.8));
+    will-change: transform;
+    animation: cineHeroDip 1.8s cubic-bezier(0.33, 0, 0.16, 1) infinite;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i > svg {
+    display: block;
+    width: 32px;
+    height: 96px;
+    color: var(--gold, #c6a664);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i b {
+    position: absolute;
+    inset: 0;
+    display: block;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    -webkit-mask-size: 32px 96px;
+    mask-size: 32px 96px;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i b span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 56px;
+    display: block;
+    background: linear-gradient(
+      to bottom,
+      rgba(228, 205, 146, 0) 0%,
+      #efd9a4 26%,
+      #ffffff 42%,
+      #ffffff 54%,
+      #efd9a4 70%,
+      rgba(228, 205, 146, 0) 100%
+    );
+    will-change: transform;
+    animation: cineHeroSheen 1.8s linear infinite;
+  }
+
+  :global(html.cine-on) .lineSub {
+    margin-inline: auto;
+    font-size: 16px;
+    margin-top: 18px;
+    max-width: none;
+  }
+  :global(html.cine-on) .line {
+    left: 0;
+    right: 0;
+    width: auto;
+    padding: 0 clamp(20px, 7vw, 54px);
+    text-align: center;
+    font-size: clamp(27px, 6.6vw, 44px);
+  }
+  :global(html.cine-on) .line[data-vpos='top'] {
+    top: 13vh;
+    --ly: 0%;
+  }
+  :global(html.cine-on) .line[data-vpos='low'] {
+    top: auto;
+    bottom: 17vh;
+    --ly: 0%;
+  }
+  :global(html.cine-on) .line[data-vpos-narrow='top'] {
+    top: 13vh;
+    bottom: auto;
+    --ly: 0%;
+  }
+}
+
+@media (max-width: 720px) {
+  :global(html.cine-on) .line {
+    font-size: clamp(29px, 8.7vw, 44px);
+    font-weight: 600;
+  }
+  :global(html.cine-on) .line[data-vpos-narrow='top'] {
+    top: 14.5vh;
+  }
+  :global(html.cine-on) .lineSub {
+    margin-top: 14px;
+  }
+  :global(html.cine-on) .line[data-vpos-wide='high'] {
+    top: 25.6vh;
+  }
+}
+
+/* ── tablet only, 721-1120px ─────────────────────────────────────────────── */
+
+@media (min-width: 721px) and (max-width: 1120px) {
+  :global(html.cine-on) .line {
+    left: clamp(20px, 7vw, 54px);
+    right: auto;
+    width: clamp(320px, 52vw, 560px);
+    padding: 0;
+    text-align: left;
+    font-size: clamp(38px, 5.6vw, 54px);
+    font-weight: 600;
+  }
+  :global(html.cine-on) .line[data-vpos-narrow='top'] {
+    top: 15vh;
+  }
+  :global(html.cine-on) .line[data-vpos-wide='high'] {
+    top: 20vh;
+    width: clamp(360px, 62vw, 640px);
+    font-size: clamp(40px, 5.9vw, 56px);
+  }
+  :global(html.cine-on) .lineSub {
+    margin: 16px 0 0;
+    font-size: 17px;
+    max-width: none;
+  }
+  :global(html.cine-on) .line[data-vpos-wide='high'] .lineSub {
+    font-size: 20px;
+  }
+  :global(html.cine-on) .line[data-vpos-wide='high']::before {
+    inset: -1.15em -2.4em -1.75em;
+    background: radial-gradient(
+      farthest-side at 50% 46%,
+      rgba(6, 6, 9, 0.68) 0%,
+      rgba(6, 6, 9, 0.64) 46%,
+      rgba(6, 6, 9, 0.42) 66%,
+      rgba(6, 6, 9, 0.17) 84%,
+      rgba(6, 6, 9, 0) 100%
+    );
+  }
+  :global(html.cine-on) .heroCopy {
+    left: 0;
+    right: 0;
+    padding: 0 clamp(40px, 8vw, 120px);
+    text-align: center;
+  }
+  :global(html.cine-on) .heroCopy .hl {
+    font-size: clamp(54px, 7.6vw, 76px);
+    line-height: 1.06;
+  }
+  :global(html.cine-on) .heroCopy .heroSub {
+    font-size: 19px;
+    max-width: 52ch;
+    margin: 24px auto 0;
+  }
+  :global(html.cine-on) .heroCopy .heroCue {
+    margin: 30px auto 0;
+    align-items: center;
+  }
+  :global(html.cine-on) .heroCopy .heroCue span {
+    font-size: 15px;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i,
+  :global(html.cine-on) .heroCopy .heroCue i > svg {
+    width: 40px;
+    height: 120px;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i b {
+    -webkit-mask-size: 40px 120px;
+    mask-size: 40px 120px;
+  }
+  :global(html.cine-on) .heroCopy .heroCue i b span {
+    height: 70px;
+    animation-name: cineHeroSheenT;
+  }
+  :global(html.cine-on) .skip {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 27px);
+  }
+}
+
+/* ── chrome: scroll cue + skip ──────────────────────────────────────────── */
+
+:global(html.cine-on) .cue {
+  display: flex;
+  position: absolute;
+  z-index: 3;
+  left: clamp(20px, 7vw, 132px);
+  top: calc(50% + 108px);
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  pointer-events: none;
+  font-size: calc(10.5 * var(--uipx));
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--bone);
+  text-shadow:
+    0 1px 16px rgba(6, 6, 8, 0.8),
+    0 1px 3px rgba(6, 6, 8, 0.7);
+  transition:
+    opacity 0.6s var(--ease),
+    transform 0.6s var(--ease);
+}
+:global(html.cine-on) .cue i {
+  width: 2px;
+  height: 46px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, var(--gold), rgba(198, 166, 100, 0));
+  box-shadow: 0 0 10px rgba(6, 6, 8, 0.7);
+  transform-origin: top;
+  animation: cineCue 2.6s var(--ease) infinite;
+}
+@keyframes cineCue {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+    opacity: 0.35;
+  }
+  45% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  75% {
+    transform: scaleY(1);
+    opacity: 0.2;
+  }
+}
+:global(html.cine-on) .cue.gone {
+  opacity: 0;
+  transform: translateY(10px);
+}
+@media (max-width: 1120px) {
+  :global(html.cine-on) .cue {
+    left: 0;
+    right: 0;
+    top: 25vh;
+    bottom: auto;
+    align-items: center;
+  }
+  :global(html.cine-on) .cue i {
+    height: 34px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :global(html.cine-on) .cue i {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+/* Both bands hide it. Carried verbatim: the cue lost its slot to the hero
+   block's own "Scroll to begin" affordance, and the alpha it computes is
+   still what tells `chrome()` when the opening beat has cleared. */
+@media (min-width: 1121px) {
+  :global(html.cine-on) .cue {
+    display: none;
+  }
+}
+@media (max-width: 1120px) {
+  :global(html.cine-on) .cue {
+    display: none;
+  }
+}
+
+:global(html.cine-on) .skip {
+  display: inline-flex;
+  position: absolute;
+  z-index: 6;
+  right: clamp(18px, 3.4vw, 46px);
+  bottom: clamp(20px, 4vh, 42px);
+  align-items: center;
+  gap: 11px;
+  padding: calc(13 * var(--uipx)) calc(26 * var(--uipx));
+  /* No backdrop-filter: it is a compositing layer over a playing video and
+     costs more than the effect is worth. The source removed it too. */
+  background: rgba(8, 8, 11, 0.78);
+  border: 1px solid rgba(198, 166, 100, 0.72);
+  border-radius: 999px;
+  color: var(--bone);
+  font-family: var(--brand, inherit);
+  font-size: calc(12 * var(--uipx));
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 26px rgba(4, 4, 6, 0.5);
+  cursor: pointer;
+  transition:
+    border-color 0.4s var(--ease),
+    color 0.4s var(--ease),
+    background-color 0.4s var(--ease),
+    opacity 0.5s var(--ease);
+}
+:global(html.cine-on) .skip::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  flex: none;
+  margin-left: 1px;
+  border-right: 2px solid var(--gold);
+  border-bottom: 2px solid var(--gold);
+  transform: translateX(-2px) rotate(-45deg);
+}
+:global(html.cine-on) .skip:hover {
+  background: rgba(8, 8, 11, 0.88);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+:global(html.cine-on) .skip:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+:global(html.cine-on) .skip[hidden] {
+  display: none;
+}
+@media (max-width: 1120px) {
+  :global(html.cine-on) .skip {
+    position: fixed;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+    height: 46px;
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* ── the hero copy slot ─────────────────────────────────────────────────────
+   `children` land here. Under the film they are held back — invisible and
+   scaled down — until `ink()` adds `.loaded` at 93% of the film, which is the
+   handoff: the film ends, the page begins.
+   -------------------------------------------------------------------------- */
+
+.inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  --heroPadB: clamp(72px, 10.8vh, 132px);
+  padding: max(72px, calc(var(--heroPadB) - var(--hTitle, 72px) * 0.1234))
+    clamp(20px, 5vw, 64px) var(--heroPadB);
+}
+
+:global(html.cine-on) .cine .inner {
+  transition:
+    opacity 1.05s var(--ease) 180ms,
+    transform 1.05s var(--ease) 180ms;
+}
+:global(html.cine-on) .cine .hero:not(.loaded) .inner {
+  opacity: 0;
+  transform: scale(0.84);
+}
+
+/* ── to-hero: the #hero deep link ───────────────────────────────────────────
+   Landing on /#hero must not show the film playing itself out. Everything the
+   film draws is force-hidden until the engine has snapped to the last frame
+   and the first `seeked` has landed, at which point the root class is dropped.
+   -------------------------------------------------------------------------- */
+
+:global(html.to-hero) .plate,
+:global(html.to-hero) .story,
+:global(html.to-hero) .cue,
+:global(html.to-hero) .open,
+:global(html.to-hero) .skip {
+  opacity: 0 !important;
+  transition: none !important;
+}
+:global(html.to-hero) .vid {
+  opacity: 0 !important;
+}
+
+/* ── reduced motion ─────────────────────────────────────────────────────────
+   The film never starts (the boot script does not set `cine-on`), so all that
+   is left is to stop the still hero from animating either.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .bgImg {
+    transform: none !important;
+  }
+}

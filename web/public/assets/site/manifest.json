@@ -1,0 +1,207 @@
+[
+ {
+  "name": "service-worktops",
+  "native": "554x554",
+  "rungs": [
+   {
+    "w": 554,
+    "file": "assets/site/service-worktops-554.webp",
+    "bytes": 32044
+   }
+  ]
+ },
+ {
+  "name": "service-islands",
+  "native": "468x655",
+  "rungs": [
+   {
+    "w": 468,
+    "file": "assets/site/service-islands-468.webp",
+    "bytes": 21634
+   }
+  ]
+ },
+ {
+  "name": "service-splashbacks",
+  "native": "706x434",
+  "rungs": [
+   {
+    "w": 706,
+    "file": "assets/site/service-splashbacks-706.webp",
+    "bytes": 52494
+   }
+  ]
+ },
+ {
+  "name": "process-consultation",
+  "native": "547x365",
+  "rungs": [
+   {
+    "w": 547,
+    "file": "assets/site/process-consultation-547.webp",
+    "bytes": 23462
+   }
+  ]
+ },
+ {
+  "name": "process-quote",
+  "native": "675x900",
+  "rungs": [
+   {
+    "w": 675,
+    "file": "assets/site/process-quote-675.webp",
+    "bytes": 53662
+   }
+  ]
+ },
+ {
+  "name": "process-template",
+  "native": "678x452",
+  "rungs": [
+   {
+    "w": 678,
+    "file": "assets/site/process-template-678.webp",
+    "bytes": 28482
+   }
+  ]
+ },
+ {
+  "name": "process-install",
+  "native": "600x300",
+  "rungs": [
+   {
+    "w": 600,
+    "file": "assets/site/process-install-600.webp",
+    "bytes": 21270
+   }
+  ]
+ },
+ {
+  "name": "hero-kitchen",
+  "native": "2750x1536",
+  "rungs": [
+   {
+    "w": 1400,
+    "file": "assets/site/hero-kitchen-1400.webp",
+    "bytes": 55540
+   },
+   {
+    "w": 2000,
+    "file": "assets/site/hero-kitchen-2000.webp",
+    "bytes": 95262
+   },
+   {
+    "w": 2750,
+    "file": "assets/site/hero-kitchen-2750.webp",
+    "bytes": 153442
+   }
+  ]
+ },
+ {
+  "name": "cta-slab",
+  "native": "2752x1536",
+  "rungs": [
+   {
+    "w": 1958,
+    "file": "assets/site/cta-slab-1958.webp",
+    "bytes": 38342
+   },
+   {
+    "w": 2752,
+    "file": "assets/site/cta-slab-2752.webp",
+    "bytes": 63930
+   }
+  ]
+ },
+ {
+  "name": "quarry",
+  "native": "2816x1536",
+  "rungs": [
+   {
+    "w": 518,
+    "file": "assets/site/quarry-518.webp",
+    "bytes": 26822
+   },
+   {
+    "w": 955,
+    "file": "assets/site/quarry-955.webp",
+    "bytes": 71972
+   }
+  ]
+ },
+ {
+  "name": "kitchen-day",
+  "native": "2746x1568",
+  "rungs": [
+   {
+    "w": 626,
+    "file": "assets/site/kitchen-day-626.webp",
+    "bytes": 24206
+   },
+   {
+    "w": 1188,
+    "file": "assets/site/kitchen-day-1188.webp",
+    "bytes": 66170
+   }
+  ]
+ },
+ {
+  "name": "team/handshake",
+  "native": "900x780",
+  "rungs": [
+   {
+    "w": 600,
+    "file": "assets/site/team-handshake-600.webp",
+    "bytes": 21106
+   },
+   {
+    "w": 900,
+    "file": "assets/site/team-handshake-900.webp",
+    "bytes": 36574
+   }
+  ]
+ },
+ {
+  "name": "team/samples",
+  "native": "900x900",
+  "rungs": [
+   {
+    "w": 248,
+    "file": "assets/site/team-samples-248.webp",
+    "bytes": 9944
+   },
+   {
+    "w": 386,
+    "file": "assets/site/team-samples-386.webp",
+    "bytes": 18854
+   }
+  ]
+ },
+ {
+  "name": "team/fitting",
+  "native": "506x900",
+  "rungs": [
+   {
+    "w": 248,
+    "file": "assets/site/team-fitting-248.webp",
+    "bytes": 9124
+   },
+   {
+    "w": 386,
+    "file": "assets/site/team-fitting-386.webp",
+    "bytes": 17276
+   }
+  ]
+ },
+ {
+  "name": "team/team",
+  "native": "900x506",
+  "rungs": [
+   {
+    "w": 900,
+    "file": "assets/site/team-team-900.webp",
+    "bytes": 37900
+   }
+  ]
+ }
+]
