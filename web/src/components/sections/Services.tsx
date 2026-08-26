@@ -251,12 +251,89 @@ function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
   }, [gridRef]);
 }
 
+/**
+ * PHONE TAPS NAVIGATE; WIDER CLICKS FLIP — site.js:364-392.
+ *
+ * The source registers a CAPTURE-phase interceptor on the grid. Below 720px
+ * (`--svcMode: phone`, the CSS->JS channel already declared at
+ * home-sections.css:525) a tap on a card must go to that service page; the
+ * flip only exists at tablet and desktop. Capture phase is what lets it beat
+ * the card's own flip handler.
+ *
+ * Without this the port flipped on every device, so a phone tap turned the
+ * card over instead of opening the page — which reads as the card vanishing.
+ *
+ * `label()` mirrors site.js:383-390: on phone each card is announced as a
+ * link, because that is what it behaves as.
+ */
+function usePhoneCardLinks(gridRef: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    const svcMode = () =>
+      getComputedStyle(grid).getPropertyValue('--svcMode').trim() || 'desktop';
+
+    const cards = () => Array.from(grid.children);
+
+    const hrefFor = (card: Element) => {
+      const i = cards().indexOf(card);
+      return i >= 0 && SERVICES[i] ? SERVICES[i].href : null;
+    };
+
+    const intercept = (e: Event) => {
+      if (svcMode() !== 'phone') return;
+      const target = e.target as HTMLElement | null;
+      const card = target?.closest?.('.svc');
+      if (!card || !grid.contains(card)) return;
+      /* A real link inside the card keeps its own behaviour. site.js:372. */
+      if (target?.closest('a')) return;
+      const href = hrefFor(card);
+      if (!href) return;
+      e.stopPropagation();
+      e.preventDefault();
+      location.href = href;
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      intercept(e);
+    };
+
+    const label = () => {
+      const phone = svcMode() === 'phone';
+      cards().forEach((el, i) => {
+        const s = SERVICES[i];
+        if (phone && s?.href) {
+          el.setAttribute('role', 'link');
+          el.setAttribute('aria-label', s.t);
+        } else {
+          el.removeAttribute('role');
+          el.removeAttribute('aria-label');
+        }
+      });
+    };
+
+    grid.addEventListener('click', intercept, true);
+    grid.addEventListener('keydown', onKeyDown, true);
+    label();
+    window.addEventListener('resize', label, { passive: true });
+
+    return () => {
+      grid.removeEventListener('click', intercept, true);
+      grid.removeEventListener('keydown', onKeyDown, true);
+      window.removeEventListener('resize', label);
+    };
+  }, [gridRef]);
+}
+
 export default function Services() {
   const sectionRef = useReveal<HTMLElement>();
   const gridRef = useRef<HTMLDivElement | null>(null);
   const [flipped, setFlipped] = useState<ReadonlySet<number>>(new Set());
 
   useServicesReveal(gridRef);
+  usePhoneCardLinks(gridRef);
   useCursorGlow(gridRef, '.svc');
 
   const toggle = (i: number) =>
