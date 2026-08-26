@@ -10,6 +10,8 @@ import SectionDivider from '@/components/sections/SectionDivider';
 import { TcDefs } from '@/components/sections/TcDefs';
 import { CONTACT_LD } from '@/data/ld/contact';
 
+import '@/styles/home-sections.css';
+
 /*
   A SITE-STYLED PAGE: assets/site.css, the bare `:root` token set, and the
   `rich` chrome variant that <SiteChrome> resolves from the path.

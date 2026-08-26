@@ -12,6 +12,8 @@ import { TcDefs } from '@/components/sections/TcDefs';
 import Why from '@/components/sections/Why';
 import { ABOUT_LD } from '@/data/ld/about';
 
+import '@/styles/home-sections.css';
+
 /*
   A SITE-STYLED PAGE — assets/site.css, bare `:root` tokens, `rich` chrome.
 

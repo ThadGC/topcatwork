@@ -11,6 +11,8 @@ import SectionDivider from '@/components/sections/SectionDivider';
 import { TcDefs } from '@/components/sections/TcDefs';
 import { PROJECTS_LD } from '@/data/ld/projects';
 
+import '@/styles/home-sections.css';
+
 /*
   A SITE-STYLED PAGE — assets/site.css, bare `:root` tokens, `rich` chrome.
 

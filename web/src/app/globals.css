@@ -701,6 +701,273 @@ header.bar {
   }
 }
 
+/* -------------------------------------------------------------------------
+   .page-head — the masthead on /about/, /contact/, /estimate/ and /projects/.
+   site.css:179-247, ported verbatim. Only the three custom properties are
+   omitted, because they are already declared above.
+
+   Without this block those four pages render with no padding, so the crumb,
+   h1 and lede sit underneath the fixed header, and .hero-chips has no measure
+   so the row grows to thousands of pixels. The pages read as blank.
+   ------------------------------------------------------------------------- */
+.page-head {
+  position: relative;
+  padding: calc(76px + clamp(42px, 6vh, 72px)) clamp(20px, 5vw, 64px) clamp(34px, 5vh, 58px);
+  text-align: center;
+  overflow: hidden;
+}
+
+.page-head .hero-chips {
+  justify-content: center;
+  margin: clamp(20px, 3vh, 30px) auto 0;
+  max-width: 520px;
+  width: 100%;
+}
+
+.page-head::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  left: calc(-1 * var(--curveOut));
+  right: calc(-1 * var(--curveOut));
+  border-bottom-left-radius: var(--curveR);
+  border-bottom-right-radius: var(--curveR);
+  background:
+    linear-gradient(180deg, rgba(198, 166, 100, 0.055), rgba(198, 166, 100, 0) 62%),
+    linear-gradient(to bottom,
+      rgba(7, 7, 9, 0.34) 0%, rgba(7, 7, 9, 0.62) 26%, rgba(7, 7, 9, 0.66) 50%,
+      rgba(7, 7, 9, 0.62) 74%, rgba(7, 7, 9, 0.34) 100%),
+    linear-gradient(rgba(7, 7, 9, 0.5), rgba(7, 7, 9, 0.5)),
+    linear-gradient(to bottom, rgba(7, 7, 9, 0.55) 0%, rgba(7, 7, 9, 0) 26%),
+    linear-gradient(to top, rgba(7, 7, 9, 0.72) 0%, rgba(7, 7, 9, 0) 34%),
+    var(--pageHeadImg, none) center 42% / cover no-repeat;
+}
+
+.page-head::after {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--curveOut));
+  right: calc(-1 * var(--curveOut));
+  bottom: 0;
+  height: calc(var(--curveR) + 1px);
+  border: 0 solid var(--hair);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-bottom-left-radius: var(--curveR);
+  border-bottom-right-radius: var(--curveR);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.page-head + section {
+  margin-top: clamp(8px, 1.6vh, 24px) !important;
+}
+
+@media (min-width: 1121px) {
+  .page-head + section {
+    margin-top: clamp(30px, 4.4vh, 56px) !important;
+  }
+}
+
+.page-head-in {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.page-head .eyebrow {
+  margin-bottom: 14px;
+}
+
+.page-head h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 1.07;
+  color: var(--bone);
+  font-size: clamp(32px, min(4.8vw, 6vh), 58px);
+  letter-spacing: 0.01em;
+  margin: 0 0 clamp(14px, 2.2vh, 22px);
+  text-shadow: 0 1px 2px rgba(7, 7, 9, 0.92), 0 2px 12px rgba(7, 7, 9, 0.8), 0 0 34px rgba(7, 7, 9, 0.6);
+}
+
+.page-head h1 em {
+  font-style: normal;
+  color: var(--gold-soft);
+}
+
+.page-head p {
+  font-size: clamp(14px, min(1.4vw, 2.2vh), 16.5px);
+  line-height: 1.72;
+  font-weight: 300;
+  color: var(--body);
+  max-width: 64ch;
+  margin: 0 auto;
+  text-shadow: 0 1px 2px rgba(7, 7, 9, 0.9), 0 0 14px rgba(7, 7, 9, 0.75), 0 0 30px rgba(7, 7, 9, 0.55);
+}
+
+.page-head .crumbs,
+.page-head .crumbs a {
+  text-shadow: 0 1px 2px rgba(7, 7, 9, 0.9), 0 0 12px rgba(7, 7, 9, 0.7);
+}
+
+.page-crumb {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  font-family: var(--brand);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(244, 241, 234, 0.42);
+}
+
+.page-crumb a {
+  color: rgba(244, 241, 234, 0.42);
+  text-decoration: none;
+  transition: color 0.3s var(--ease);
+}
+
+.page-crumb a:hover {
+  color: var(--gold);
+}
+
+.page-crumb span {
+  color: rgba(198, 166, 100, 0.5);
+}
+
+@media (max-width: 720px) {
+  .page-head {
+    padding: calc(66px + clamp(40px, 6.4vh, 66px)) 20px clamp(38px, 6vh, 60px);
+  }
+
+  .page-head h1 {
+    font-size: clamp(30px, 8.6vw, 40px);
+  }
+
+  .page-crumb {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   The Google chip inside .page-head — site.css:1699-1735.
+
+   The source writes these as selector lists, `#hero .x, .page-head .x`. The port
+   kept the `#hero` half (home-sections.css) and the `.svc-hero` half
+   (content.css) and dropped `.page-head` entirely, so on /about/, /contact/,
+   /estimate/ and /projects/ the `.chip-legacy` fallback was never clipped to its
+   screen-reader line. Both layouts painted at once and the chip overflowed.
+   ------------------------------------------------------------------------- */
+.page-head .chip-google {
+  align-items: center;
+}
+
+.page-head .g-mark {
+  display: block;
+  flex: none;
+  width: 26px;
+  height: 26px;
+}
+
+.page-head .g-stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 26px;
+  line-height: 1;
+  text-align: left;
+}
+
+.page-head .g-word {
+  font-family: var(--brand);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.page-head .g-rating {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.page-head .g-stars {
+  color: var(--gold);
+  font-size: 9px;
+  letter-spacing: 1.1px;
+}
+
+.page-head .g-score {
+  font-family: var(--brand);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.page-head .chip-legacy {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.page-head .hero-chips > *:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.page-head .chip-reason {
+  display: inline-flex;
+  align-items: center;
+  white-space: normal;
+  text-wrap: balance;
+  line-height: 1.25;
+}
+
+@media (max-width: 400px) {
+  .page-head .hero-chips {
+    gap: clamp(6px, 2.2vw, 9px);
+  }
+
+  .page-head .g-mark {
+    width: clamp(23px, 7.2vw, 26px);
+    height: clamp(23px, 7.2vw, 26px);
+  }
+
+  .page-head .g-stack {
+    height: clamp(23px, 7.2vw, 26px);
+  }
+
+  .page-head .g-word {
+    font-size: clamp(10.8px, 3.4vw, 12.5px);
+    white-space: nowrap;
+  }
+
+  .page-head .g-rating {
+    white-space: nowrap;
+  }
+
+  .page-head .g-score {
+    font-size: clamp(10.5px, 3.3vw, 11.5px);
+  }
+
+  .page-head .g-stars {
+    font-size: clamp(8px, 2.5vw, 9px);
+    letter-spacing: clamp(0.8px, 0.3vw, 1.1px);
+  }
+}
+
 .hero {
   --hTitle: clamp(72px, min(6.2vw, 10.6vh), 92px);
   --heroScrimA: 0.7;

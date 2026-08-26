@@ -11,6 +11,8 @@ import Stones from '@/components/sections/Stones';
 import { TcDefs } from '@/components/sections/TcDefs';
 import { ESTIMATE_LD } from '@/data/ld/estimate';
 
+import '@/styles/home-sections.css';
+
 /*
   A SITE-STYLED PAGE — assets/site.css, bare `:root` tokens, `rich` chrome.
 
