@@ -29,7 +29,13 @@ const DESCRIPTION =
 const TITLE = 'Worktop Cost Estimator | Quartz, Granite & Marble | Topcat Worktops';
 
 export const metadata: Metadata = {
-  title: TITLE,
+  /*
+    `absolute`, not a bare string. The root layout sets a `'%s | Topcat'`
+    title template and this title already ends in the brand — without
+    `absolute` the exported <title> carries the suffix twice. Same reason
+    src/lib/seo.ts wraps every extracted title; see the note there.
+  */
+  title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: 'https://www.topcatworktops.co.uk/estimate/' },
   robots: { index: true, follow: true },

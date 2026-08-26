@@ -159,6 +159,89 @@ describe('markup', () => {
   });
 });
 
+describe('how the clip is loaded', () => {
+  it('attaches the band encode as a direct same-origin URL, never a blob', () => {
+    // Direct first is the reference's order and the reason it works: byte
+    // ranges keep currentTime seekable and sidestep Chrome's blob: media
+    // safety check. The Blob path is the fallback, and it only exists once
+    // the element has actually errored.
+    mockMatchMedia(1440);
+    const { container } = render(<HeroFilm />);
+    const src = container.querySelector('video')!.getAttribute('src') ?? '';
+    expect(src).toBe('/assets/video/topcat-intro-1920.mp4?v=8');
+    expect(src.startsWith('blob:')).toBe(false);
+  });
+
+  it('picks the phone encode on a phone, stamp and all', () => {
+    mockMatchMedia(390);
+    const { container } = render(<HeroFilm />);
+    const video = container.querySelector('video')!;
+    expect(video.getAttribute('src')).toBe('/assets/video/topcat-intro-608.mp4?v=8');
+    expect(video.getAttribute('poster')).toBe(
+      '/assets/video/topcat-intro-608-poster.webp?v=8',
+    );
+  });
+
+  it('stops listening for clip errors once unmounted', () => {
+    // The teardown contract: release() drops the loader's listeners, so a late
+    // error on a detached element cannot start a 25 MB fallback download for a
+    // film that is no longer on the page.
+    mockMatchMedia(1440);
+    const fetchSpy = vi.fn(() => new Promise<never>(() => {}));
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const view = render(<HeroFilm />);
+    const video = view.container.querySelector('video')!;
+    view.unmount();
+
+    video.dispatchEvent(new Event('error'));
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('iOS priming', () => {
+  it('never plays the film on a pointer device', () => {
+    // The scrub transport seeks and never plays. A stray play() on desktop is
+    // pure drift — the old prime fired on every device and ignored the band.
+    mockMatchMedia(1440);
+    const play = vi.fn(() => Promise.resolve());
+    HTMLMediaElement.prototype.play = play;
+
+    const { container } = render(<HeroFilm />);
+    const video = container.querySelector('video')!;
+    dispatchEvent(new Event('scroll'));
+    dispatchEvent(new Event('pointerdown'));
+    // `loadedmetadata` in particular: that is where the old unconditional
+    // "prime the decoder while we are still at the top of the page" play()
+    // lived, and it fired on desktop too.
+    video.dispatchEvent(new Event('loadedmetadata'));
+    video.dispatchEvent(new Event('loadeddata'));
+    video.dispatchEvent(new Event('canplay'));
+
+    expect(play).not.toHaveBeenCalled();
+  });
+
+  it('primes once on a touch device, and only after a gesture', () => {
+    // iOS will not paint a frame until playback has been initiated once, and
+    // will not allow playback until the visitor has touched something. So:
+    // wait for the gesture, then play/pause exactly once.
+    mockMatchMedia(390);
+    const play = vi.fn(() => Promise.resolve());
+    HTMLMediaElement.prototype.play = play;
+
+    const { container } = render(<HeroFilm />);
+    container.querySelector('video')!.dispatchEvent(new Event('loadeddata'));
+    expect(play).not.toHaveBeenCalled();
+
+    dispatchEvent(new Event('pointerdown'));
+    expect(play).toHaveBeenCalledTimes(1);
+
+    // A second gesture is not a second prime.
+    dispatchEvent(new Event('pointerdown'));
+    expect(play).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('reduced motion', () => {
   it('never turns the film on, and leaves the still hero visible', () => {
     mockMatchMedia(1440, true);

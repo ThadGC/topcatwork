@@ -31,11 +31,29 @@ export type {
 
 export { useCineBand, filmSupported } from './useCineBand';
 export type { CineEnv } from './useCineBand';
+export { useFilmScrub, scrubIsMobile } from './useFilmScrub';
 export { useFilmTransport } from './useFilmTransport';
 export type { FilmTransport } from './useFilmTransport';
 export { useVideoFrame } from './useVideoFrame';
 export type { PresentedFrame, VideoFrameHandle } from './useVideoFrame';
 
+/** The default transport: coalesced seeks, epsilon deadband, target lerp. */
+export {
+  decideScrub,
+  lerpToward,
+  scrubEpsilon,
+  DEFAULT_SCRUB,
+  HAVE_CURRENT_DATA,
+} from './lib/scrub';
+export type { ScrubCommand, ScrubConfig, ScrubInput } from './lib/scrub';
+
+export { attachFilmSource } from './lib/filmSource';
+export type { FilmSourceHandle, FilmSourceOptions } from './lib/filmSource';
+
+export { filmMode, readFilmMode } from './lib/mode';
+export type { FilmMode } from './lib/mode';
+
+/** The alternative transport, reachable only through `?film=play`. */
 export {
   decideTransport,
   chaseRate,

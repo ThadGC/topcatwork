@@ -10391,7 +10391,7 @@
       "seo": {
         "title": "Compare Stones Side by Side | Topcat Worktops",
         "description": "Put any of our marble, quartz and granite worktops side by side and compare the stone, finish, colour, pattern and care at a glance. Then ask us for samples of the ones you like, brought to your home across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-        "robots": "index, follow",
+        "robots": "noindex, follow",
         "canonical": "https://www.topcatworktops.co.uk/stones/compare.html",
         "lang": "en-GB",
         "og": {

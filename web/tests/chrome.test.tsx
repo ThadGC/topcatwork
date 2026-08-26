@@ -1,16 +1,24 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 
 import { MobileNav } from '../src/components/chrome/MobileNav';
+import { SiteChrome } from '../src/components/chrome/SiteChrome';
 import { SiteFooter } from '../src/components/chrome/SiteFooter';
 import { SiteHeader } from '../src/components/chrome/SiteHeader';
 import { StickyContactBar } from '../src/components/chrome/StickyContactBar';
+import { TradeFooter } from '../src/components/chrome/TradeFooter';
 import {
   FOOT_EXPLORE,
+  FOOT_LEGAL,
   PRIMARY,
   SERVICES,
   STONES_DESKTOP,
   STONES_MOBILE,
+  TRADE_FOOT_LEGAL,
+  isBarePath,
   thresholdForVariant,
   variantForPath,
 } from '../src/components/chrome/nav-data';
@@ -343,5 +351,109 @@ describe('SiteFooter', () => {
       'href',
       '/#faq',
     );
+  });
+});
+
+/* ------------------------------------------------------------------------ */
+
+describe('/trade/ — the one page with no mobile chrome', () => {
+  /**
+   * 177 of the 178 live pages carry `nav.mobile-nav`, the `.nav-burger` that
+   * opens it, the `.mbar` sticky bar and `footer.site#footer`. /trade/ carries
+   * none of them and ships its own footer instead. Giving it the shared chrome
+   * rewrites the one page a builder or developer actually lands on, so each
+   * half of that divergence is nailed down here.
+   */
+  it('knows which routes are bare, and does not over-match', () => {
+    for (const p of ['/trade', '/trade/']) expect(isBarePath(p), p).toBe(true);
+    for (const p of ['/', '/privacy/', '/sitemap', '/trader/', null, undefined]) {
+      expect(isBarePath(p), String(p)).toBe(false);
+    }
+    // Still `lite` for every other purpose: flat bar, 12px threshold.
+    expect(variantForPath('/trade/')).toBe('lite');
+  });
+
+  it('gives /trade/ no sheet, no burger and no sticky bar', () => {
+    pathname = '/trade';
+    const { container } = render(
+      <SiteChrome>
+        <main />
+      </SiteChrome>,
+    );
+    expect(container.querySelector('header.bar')).toBeInTheDocument();
+    expect(container.querySelector('.nav-burger')).toBeNull();
+    expect(container.querySelector('#mobileNav')).toBeNull();
+    expect(container.querySelector('.mbar')).toBeNull();
+    expect(container.querySelector('.wa-fab')).toBeNull();
+    // Its own footer, not the shared one.
+    expect(container.querySelector('footer.site')).toBeInTheDocument();
+    expect(container.querySelector('#footer')).toBeNull();
+  });
+
+  it('keeps the sheet, the burger and the bar on every other lite route', () => {
+    pathname = '/privacy';
+    const { container } = render(
+      <SiteChrome>
+        <main />
+      </SiteChrome>,
+    );
+    expect(container.querySelector('.nav-burger')).toBeInTheDocument();
+    expect(container.querySelector('#mobileNav')).toBeInTheDocument();
+    expect(container.querySelector('.mbar')).toBeInTheDocument();
+    expect(container.querySelector('footer.site#footer')).toBeInTheDocument();
+  });
+
+  it('drops the burger only when asked', () => {
+    const { container, rerender } = render(<SiteHeader variant="lite" />);
+    expect(container.querySelector('.nav-burger')).toBeInTheDocument();
+    rerender(<SiteHeader variant="lite" burger={false} />);
+    expect(container.querySelector('.nav-burger')).toBeNull();
+  });
+
+  it('ships /trade/ its own footer copy, not the shared footer copy', () => {
+    const { container } = render(<TradeFooter />);
+    // The tagline is the tell: the shared footer says "from slab selection to
+    // a flawless fit", this one says "by one team".
+    expect(container.querySelector('.foot-tag')).toHaveTextContent(
+      'Bespoke stone worktops, templated, fitted and guaranteed by one team.',
+    );
+    // None of the shared footer's extras.
+    for (const sel of [
+      '.foot-guar',
+      '.foot-social',
+      '.foot-tail',
+      '.foot-c-wa',
+      '.foot-explore',
+      '.foot-browse',
+    ]) {
+      expect(container.querySelector(sel), sel).toBeNull();
+    }
+    // A three-link bottom bar, not the shared four.
+    const legal = [...container.querySelectorAll('.foot-legal a')];
+    expect(legal.map((a) => a.textContent)).toEqual(
+      TRADE_FOOT_LEGAL.map((l) => l.label),
+    );
+    expect(legal.map((a) => a.getAttribute('href'))).toEqual([
+      '/contact/',
+      '/index.html#faq',
+      '/sitemap.html',
+    ]);
+  });
+});
+
+/* ------------------------------------------------------------------------ */
+
+describe('the footer Sitemap link', () => {
+  it('points at a route that exists', () => {
+    // FOOT_LEGAL renders in the bottom bar of all 199 exported pages, so a
+    // missing app/sitemap/page.tsx is 199 links to a 404, not one.
+    expect(FOOT_LEGAL[0]).toEqual({ href: '/sitemap.html', label: 'Sitemap' });
+    expect(
+      existsSync(resolve(__dirname, '../src/app/sitemap/page.tsx')),
+    ).toBe(true);
+    // `.html` leaf, so postexport must NOT be asked for a directory form.
+    expect(
+      readFileSync(resolve(__dirname, '../scripts/postexport.mjs'), 'utf8'),
+    ).not.toContain("'/sitemap/'");
   });
 });

@@ -1,4 +1,5 @@
 import HeroFilm from '@/components/HeroFilm';
+import { JsonLd } from '@/components/chrome/JsonLd';
 import About from '@/components/sections/About';
 import Cta from '@/components/sections/Cta';
 import Estimator from '@/components/sections/Estimator';
@@ -12,6 +13,7 @@ import Services from '@/components/sections/Services';
 import Stones from '@/components/sections/Stones';
 import TradePrompt from '@/components/sections/TradePrompt';
 import Why from '@/components/sections/Why';
+import { HOME_LD } from '@/data/ld/home';
 
 import '@/styles/home-sections.css';
 
@@ -49,6 +51,18 @@ import '@/styles/home-sections.css';
 export default function HomePage() {
   return (
     <main>
+      {/*
+        The page's structured data — one HomeAndConstructionBusiness block,
+        lifted verbatim out of index.html. It is the site's primary
+        entity: name, description, the two sameAs profiles, the eight
+        AdministrativeArea entries, the St Albans PostalAddress, the
+        07:00-21:00 openingHoursSpecification and the three makesOffer
+        Services. Every other archetype in the port renders <JsonLd/>;
+        this is the page whose graph the rest of them point at, so it
+        must not be the one that ships without it.
+      */}
+      <JsonLd data={HOME_LD} />
+
       {/*
         The film is another agent's; the words inside it are this page's.
         <HeroFilm> renders `children` into its `.inner` slot and `trust` into

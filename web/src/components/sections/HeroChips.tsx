@@ -2,16 +2,29 @@
  * `.hero-chips` — the four trust chips: the Google rating, the guarantee,
  * the aftercare window and the free home visit.
  *
- * ONE DIFFERENCE BETWEEN THE TWO CHROMES, and it is the only one: the
- * site-styled pages add `glow-card` to each chip (site.js attaches a
- * pointer-tracking glow to that class), the content-styled pages do not.
- * Hence the `glow` prop rather than two copies of the block.
+ * TWO DIFFERENCES BETWEEN THE TWO CHROMES, and `glow` selects both, because
+ * across the 29 live pages that carry this row they correlate exactly — the
+ * six site-styled pages have both, the twenty-three content-styled ones have
+ * neither:
  *
- * `.chip-legacy` is the fallback the CSS shows when the stacked Google
- * layout cannot fit; both are always in the markup and CSS picks one.
+ *   1. `glow-card` on each chip. site.js attaches a pointer-tracking glow to
+ *      that class, and only the site-styled pages load site.js.
+ *   2. `<b>` around the stars inside `.chip-legacy`. site.css:1128 styles
+ *      `.chip b` gold at 11.5px; service.css has no such rule and the source
+ *      writes the stars bare there.
+ *
+ * So `glow` is really "this is a Family-A page". The prop keeps its original
+ * name because four call sites already pass it.
+ *
+ * `.chip-legacy` is the fallback the CSS shows when the stacked Google layout
+ * cannot fit; both are always in the markup and CSS picks one. Inside a
+ * `#hero` or a `.svc-hero` it is clipped to a screen-reader line, which is
+ * why difference 2 is invisible on nearly every page that has it — invisible,
+ * but still a difference from what the host serves, so it is reproduced.
  */
 export function HeroChips({ glow = false }: { glow?: boolean }) {
   const chip = (rest: string) => (glow ? `chip ${rest} glow-card` : `chip ${rest}`);
+  const stars = '★★★★★';
 
   return (
     <div className="hero-chips">
@@ -41,8 +54,20 @@ export function HeroChips({ glow = false }: { glow?: boolean }) {
             <span className="g-stars">★★★★★</span>
           </span>
         </span>
+        {/*
+          Each branch is ONE expression on purpose. Written as
+          `{glow ? <b>{stars}</b> : stars} 5.0 on Google`, the false branch
+          puts two adjacent text nodes in the tree and React's SSR separates
+          them with an `<!-- -->` marker — a node the live HTML does not have.
+        */}
         <span className="chip-legacy">
-          <b>★★★★★</b> 5.0 on Google
+          {glow ? (
+            <>
+              <b>{stars}</b> 5.0 on Google
+            </>
+          ) : (
+            `${stars} 5.0 on Google`
+          )}
         </span>
       </span>
       <span className={chip('chip-guarantee')}>

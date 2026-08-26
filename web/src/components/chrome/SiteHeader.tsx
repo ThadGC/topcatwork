@@ -26,6 +26,13 @@ export interface SiteHeaderProps {
   readonly cine?: boolean;
   /** Override the measured 40 / 12. For tests and for the client's decision. */
   readonly scrollThreshold?: number;
+  /**
+   * The `.nav-burger` that opens `nav.mobile-nav`. On 177 of the 178 live
+   * pages. Pass `false` on /trade/, which ships neither — a burger with
+   * `aria-controls="mobileNav"` and no sheet to control is a button that
+   * announces a menu and then does nothing.
+   */
+  readonly burger?: boolean;
 }
 
 /**
@@ -54,6 +61,7 @@ export function SiteHeader({
   variant: variantProp,
   cine = false,
   scrollThreshold,
+  burger = true,
 }: SiteHeaderProps) {
   const variant = useChromeVariant(variantProp);
   const { navOpen } = useNavState();
@@ -94,21 +102,23 @@ export function SiteHeader({
         Get a quote
       </a>
 
-      <button
-        className="nav-burger"
-        id="navBurger"
-        type="button"
-        aria-label={navOpen ? 'Close menu' : 'Open menu'}
-        aria-expanded={navOpen}
-        aria-controls="mobileNav"
-        /* `true` = this close came from the burger, so reset the sub-panels.
-           See setNavOpen in nav-state.ts for why that is not unconditional. */
-        onClick={() => setNavOpen(!navOpen, true)}
-      >
-        <span />
-        <span />
-        <span />
-      </button>
+      {burger ? (
+        <button
+          className="nav-burger"
+          id="navBurger"
+          type="button"
+          aria-label={navOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={navOpen}
+          aria-controls="mobileNav"
+          /* `true` = this close came from the burger, so reset the sub-panels.
+             See setNavOpen in nav-state.ts for why that is not unconditional. */
+          onClick={() => setNavOpen(!navOpen, true)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      ) : null}
     </header>
   );
 }

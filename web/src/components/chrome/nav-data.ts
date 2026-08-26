@@ -4,19 +4,27 @@
  * ---------------------------------------------------------------------------
  * URL SHAPE
  * ---------------------------------------------------------------------------
- * next.config.ts pins `output: 'export'` + `trailingSlash: true`, so the build
- * emits directory URLs (`/services/kitchen-worktops/index.html`). Next cannot
- * emit `/services/kitchen-worktops.html` under that config, so the four legacy
- * `.html` link shapes become directories here:
+ * next.config.ts pins `output: 'export'` + `trailingSlash: FALSE`, so a leaf
+ * route exports to the legacy URL unchanged: `app/services/[slug]/page.tsx`
+ * emits `out/services/kitchen-worktops.html`. The `.html` link shapes below
+ * are therefore the real exported paths and must stay as the source writes
+ * them — rewriting one to a directory URL is a dead link, not a redirect,
+ * because postexport.mjs only creates directory forms for urls that END in a
+ * slash.
  *
- *   /services/<slug>.html   ->  /services/<slug>/     (9 links)
- *   /stones/compare.html    ->  /stones/compare/      (2 links)
- *   /sitemap.html           ->  /sitemap/             (1 link)
- *   /index.html#hero        ->  /#hero                (brand, lite pages)
+ *   /services/<slug>.html   9 links, live as written        ✔ route exists
+ *   /stones/compare.html    2 links                          ✔ route exists
+ *   /sitemap.html           1 link, on every page            ✔ route exists
+ *   /index.html#hero    ->  /#hero    (brand, lite pages)   the one rewrite
  *
- * Those are the ONLY href changes in the whole chrome, and every one of them
- * lands on the same page. They need 301s in .htaccess at cutover — that list
- * is exactly the mapping above.
+ * That last one is the only href in the whole chrome that differs from the
+ * legacy markup, and it lands on the same page — .htaccess serves index.html
+ * at the root either way, so it needs no redirect.
+ *
+ * ⚠️ This block used to describe `trailingSlash: true` and mapped all four
+ * shapes to directories. The config moved and the hrefs moved with it; if you
+ * are ever tempted to put the slashes back, read the long note in
+ * next.config.ts first — 149 of the 178 live URLs are `.html` leaves.
  */
 
 /* --- contact ------------------------------------------------------------ */
@@ -61,15 +69,15 @@ export const PRIMARY: readonly NavLink[] = [
 /* --- the nine service pages, desktop dropdown and mobile sub alike ------ */
 
 export const SERVICES: readonly NavLink[] = [
-  { href: '/services/kitchen-worktops/', label: 'Kitchen worktops' },
-  { href: '/services/kitchen-islands/', label: 'Kitchen islands' },
-  { href: '/services/splashbacks/', label: 'Splashbacks' },
-  { href: '/services/bathroom-worktops/', label: 'Bathrooms' },
-  { href: '/services/outdoor-kitchens/', label: 'Outdoor spaces' },
-  { href: '/services/fireplaces/', label: 'Fireplaces' },
-  { href: '/services/dining-tables/', label: 'Dining tables' },
-  { href: '/services/vanity-tops/', label: 'Vanity tops' },
-  { href: '/services/commercial-worktops/', label: 'Commercial' },
+  { href: '/services/kitchen-worktops.html', label: 'Kitchen worktops' },
+  { href: '/services/kitchen-islands.html', label: 'Kitchen islands' },
+  { href: '/services/splashbacks.html', label: 'Splashbacks' },
+  { href: '/services/bathroom-worktops.html', label: 'Bathrooms' },
+  { href: '/services/outdoor-kitchens.html', label: 'Outdoor spaces' },
+  { href: '/services/fireplaces.html', label: 'Fireplaces' },
+  { href: '/services/dining-tables.html', label: 'Dining tables' },
+  { href: '/services/vanity-tops.html', label: 'Vanity tops' },
+  { href: '/services/commercial-worktops.html', label: 'Commercial' },
 ];
 
 /**
@@ -82,7 +90,7 @@ export const SERVICES: readonly NavLink[] = [
 export const STONES_DESKTOP: readonly NavLink[] = [
   { href: '/#stones', label: 'Stone selector' },
   { href: '/stones/', label: 'All stones' },
-  { href: '/stones/compare/', label: 'Compare stones' },
+  { href: '/stones/compare.html', label: 'Compare stones' },
 ];
 
 export const STONES_MOBILE: readonly NavLink[] = [
@@ -91,7 +99,7 @@ export const STONES_MOBILE: readonly NavLink[] = [
   { href: '/stones/#quartz', label: 'Quartz' },
   { href: '/stones/#marble', label: 'Marble & Quartzite' },
   { href: '/stones/#granite', label: 'Granite' },
-  { href: '/stones/compare/', label: 'Compare stones' },
+  { href: '/stones/compare.html', label: 'Compare stones' },
 ];
 
 /* --- footer columns ----------------------------------------------------- */
@@ -118,7 +126,7 @@ export const FOOT_BROWSE_HEAD: readonly NavLink[] = [
 ];
 
 export const FOOT_LEGAL: readonly NavLink[] = [
-  { href: '/sitemap/', label: 'Sitemap' },
+  { href: '/sitemap.html', label: 'Sitemap' },
   { href: '/privacy/', label: 'Privacy' },
   { href: '/terms/', label: 'Terms' },
   { href: '/privacy/#cookies', label: 'Cookies' },
@@ -165,3 +173,52 @@ export function variantForPath(pathname: string | null | undefined): ChromeVaria
 export function thresholdForVariant(variant: ChromeVariant): number {
   return variant === 'rich' ? 40 : 12;
 }
+
+/* --- the one page with no mobile chrome --------------------------------- */
+
+/**
+ * `/trade/` is the single exception on the whole site, and it is an exception
+ * three times over. 177 of the 178 live pages carry `nav.mobile-nav`, the
+ * `.nav-burger` that opens it and the `.mbar` sticky contact bar; /trade/
+ * carries none of them, and its footer is its own markup rather than
+ * `footer.site#footer` — a different tagline, no guarantee pill, no social
+ * row, no WhatsApp line, no `.foot-tail`, and a three-link bottom bar reading
+ * "Get a quote / FAQ / Sitemap" instead of "Sitemap / Privacy / Terms /
+ * Cookies".
+ *
+ * It is a landing page written for a different audience, so this is a
+ * deliberate divergence in the source and not drift. Giving it the shared
+ * chrome silently rewrites the one page a builder or developer actually
+ * lands on.
+ *
+ * It is still `lite` for every other purpose — flat seven-link bar, the 12px
+ * scroll threshold, service.css — so this is a separate flag rather than a
+ * third ChromeVariant.
+ */
+export const BARE_ROUTES: readonly string[] = ['/trade'];
+
+/** True on the routes that ship no mobile nav, no burger and no sticky bar. */
+export function isBarePath(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  const clean = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+  return BARE_ROUTES.includes(clean);
+}
+
+/* --- /trade/'s own footer strings --------------------------------------- */
+
+export const TRADE_FOOT_TAGLINE =
+  'Bespoke stone worktops, templated, fitted and guaranteed by one team.';
+
+/** `#faq` resolves on the home page, which is where /trade/'s footer points. */
+export const TRADE_FOOT_BROWSE: readonly NavLink[] = [
+  { href: '/materials/', label: 'Materials' },
+  { href: '/guides/', label: 'Worktop guides' },
+  { href: '/worktops/', label: 'Areas we cover' },
+  { href: '/index.html#faq', label: 'FAQ' },
+];
+
+export const TRADE_FOOT_LEGAL: readonly NavLink[] = [
+  { href: '/contact/', label: 'Get a quote' },
+  { href: '/index.html#faq', label: 'FAQ' },
+  { href: '/sitemap.html', label: 'Sitemap' },
+];

@@ -27,6 +27,29 @@
  * ACTUAL presented time. The beats were tuned against specific frames; drive
  * them from the scroll target and they fire against frames the decoder has not
  * reached yet, and the copy drifts off the shots it was written for.
+ *
+ * ── the transport ───────────────────────────────────────────────────────────
+ * The default is the disciplined seek ported from VDM Digital's shipping
+ * scroll-scrub engine: ONE seek in flight at a time, an epsilon deadband, and
+ * a 20%-per-frame lerp between the scroll and the decoder. See ./lib/scrub.ts,
+ * which carries the reasoning. The forward-play `playbackRate` chase that used
+ * to be the default survives behind `?film=play` (./lib/mode.ts) so the two
+ * can be compared on a real device, but it is not the VDM approach and it is
+ * not what ships.
+ *
+ * ── two stages of smoothing, on purpose ─────────────────────────────────────
+ * The reference lerps ONCE, because its `target` is raw scroll. Topcat lerps
+ * twice: `eased` above (EASE 0.15 plus a one-frame floor), and then the
+ * scrub's own 0.2. That is not an oversight — `eased` is also what `hold`,
+ * `armSettle()` and `lockFilm()` are expressed in, so it cannot be removed
+ * without redefining when the runway collapses.
+ *
+ * The cost is scroll-to-picture lag: roughly 0.17s from `eased` plus 0.1s from
+ * the scrub at a brisk 1.5x scroll, versus 0.1s for the reference. It is a lag
+ * between the SCROLL and the picture, never between the picture and the copy,
+ * because every visible output is composed from the film's actual presented
+ * time. If it ever reads as soft, EASE is the knob — raising it shortens the
+ * first stage without touching the second or the lock.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -62,11 +85,14 @@ import {
   wipeEase,
 } from './lib/outputs';
 import { filmFrame, revealFrame, type RevealFrame } from './lib/geometry';
+import { attachFilmSource, type FilmSourceHandle } from './lib/filmSource';
+import { filmMode, type FilmMode } from './lib/mode';
 import { revealClip } from './lib/reveal';
 import { FrameSampler } from './lib/sampler';
 import { STORY, beatWindow, pickBand, type Band } from './lib/timeline';
 import { useCineBand, filmSupported, type CineEnv } from './useCineBand';
-import { useFilmTransport } from './useFilmTransport';
+import { useFilmScrub, scrubIsMobile } from './useFilmScrub';
+import { useFilmTransport, type FilmTransport } from './useFilmTransport';
 import { useVideoFrame } from './useVideoFrame';
 
 declare global {
@@ -151,7 +177,40 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
    */
   const [enabled, setEnabled] = useState<boolean | null>(null);
 
-  const transport = useFilmTransport(refs.video);
+  /* ── the transport, and the `?film=` switch ─────────────────────────────── */
+
+  /** Coarse pointer / small viewport. Refreshed by `sync()`, read per frame. */
+  const mobile = useRef(false);
+  const isMobile = useCallback(() => mobile.current, []);
+
+  // Both are pure ref containers with no effects, so both are constructed and
+  // one is selected. A conditional hook is not an option and neither costs
+  // anything to build.
+  const scrub = useFilmScrub(refs.video, isMobile);
+  const play = useFilmTransport(refs.video);
+  const mode = useRef<FilmMode>('scrub');
+  const picked = useRef<FilmTransport>(scrub);
+
+  /**
+   * A stable facade over whichever transport the switch chose.
+   *
+   * It exists so the selection can be made in an effect — `location` does not
+   * exist during the static export's render — without the engine's effect
+   * dependency arrays ever seeing a new object identity, which would tear the
+   * film down and rebuild it.
+   */
+  const facade = useRef<FilmTransport>(undefined as unknown as FilmTransport);
+  if (!facade.current) {
+    facade.current = {
+      step: (want, dur, dt) => picked.current.step(want, dur, dt),
+      snap: (time, dur) => picked.current.snap(time, dur),
+      ready: () => picked.current.ready(),
+      reset: () => picked.current.reset(),
+      halt: () => picked.current.halt(),
+    };
+  }
+  const transport = facade.current;
+
   const sampler = useRef<FrameSampler>(undefined as unknown as FrameSampler);
   if (!sampler.current) sampler.current = new FrameSampler();
 
@@ -174,7 +233,17 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
   const settleT = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vpW = useRef(0);
   const vpH = useRef(0);
-  const fetched = useRef(false);
+
+  /** The live source attachment: direct URL first, Blob fallback second. */
+  const source = useRef<FilmSourceHandle | null>(null);
+  /**
+   * Has the decoder painted a real frame yet?
+   *
+   * The frame-0 plate is held over the film until it has. Drop this gate and
+   * the first paint on iOS is a black video box where the plate used to be —
+   * the element reports `readyState` long before it has anything on screen.
+   */
+  const painted = useRef(false);
 
   // Output memo guards — legacy `graded`, `veiled`, `curved`, `inked`, …
   const graded = useRef(-1);
@@ -393,7 +462,11 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
         plateUrl.current = url;
         el.style.backgroundImage = "url('" + url + "')";
       }
-      const o = plateOpacity(shown);
+      // The plate is the exact first frame of the exact clip this band
+      // decodes, so holding it until a real frame has painted is invisible;
+      // dropping it early is a black box. `plateOpacity()` then takes over and
+      // covers frame 0 only, exactly as it always did.
+      const o = painted.current ? plateOpacity(shown) : 1;
       if (o !== plateO.current) {
         plateO.current = o;
         el.style.opacity = String(o);
@@ -401,6 +474,14 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     },
     [refs, plates],
   );
+
+  /** First real painted frame: release the plate and repaint it once. */
+  const onPainted = useCallback(() => {
+    if (painted.current) return;
+    painted.current = true;
+    plateO.current = -1;
+    plate(want.current);
+  }, [plate]);
 
   const barHeight = useCallback((): number => {
     const bar = document.querySelector('header.bar');
@@ -827,8 +908,14 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
   /* ── boot ──────────────────────────────────────────────────────────────── */
 
   useEffect(() => {
+    // Both of these are client-only reads, and both must land before `enabled`
+    // leaves its `null` state — the lifecycle effect below bails out while it
+    // is null, so by the time the loop exists the transport is already chosen.
+    mode.current = filmMode();
+    picked.current = mode.current === 'play' ? play : scrub;
+    mobile.current = scrubIsMobile();
     setEnabled(filmSupported(env.reduce));
-  }, [env.reduce]);
+  }, [env.reduce, play, scrub]);
 
   /** `fail()` — drop the film and leave a still hero behind. */
   const fail = useCallback(() => {
@@ -869,6 +956,11 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     window.__cineHold = true;
     cine.style.removeProperty('height');
 
+    // The deadband and the iOS prime both key off this, and it can only change
+    // on the events that call sync(): a band change, a resize, an orientation
+    // flip. Cached so the animation loop is not asking matchMedia twice a frame.
+    mobile.current = scrubIsMobile();
+
     measurePin();
     measureReveal();
     measureKit();
@@ -876,26 +968,26 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     plate(want.current);
 
     // fetchFilm(): pick this band's encode and only reload if it changed.
+    //
+    // Compared against the HANDLE's source and not against `v.src`, because on
+    // the Blob fallback path `v.src` is a `blob:` URL that matches nothing.
     const band = bandRef.current;
     const src = pickBand(band, sources.src, sources.srcNarrow, sources.srcPhone);
     const poster = pickBand(band, sources.poster, sources.posterNarrow, sources.posterPhone);
-    const have = v.getAttribute('src');
-    if (fetched.current && have === src) {
-      if (v.preload !== 'auto') v.preload = 'auto';
-    } else {
-      fetched.current = true;
+    if (source.current?.source !== src) {
+      source.current?.release();
       if (poster) v.poster = poster;
       v.preload = 'auto';
-      if (have !== src) {
-        v.src = src;
-        want.current = -1;
-        transport.reset();
-        try {
-          v.load();
-        } catch {
-          /* ignore */
-        }
-      }
+      painted.current = false;
+      plateO.current = -1;
+      want.current = -1;
+      transport.reset();
+      source.current = attachFilmSource(v, src, {
+        onFail: () => failRef.current(),
+        onPainted,
+      });
+    } else if (v.preload !== 'auto') {
+      v.preload = 'auto';
     }
 
     measure();
@@ -907,7 +999,18 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     beats.current = STORY.map(NO_MEMO);
     onScroll();
     dispatchEvent(new Event('scroll'));
-  }, [refs, measurePin, measureReveal, measureKit, plate, sources, transport, measure, onScroll]);
+  }, [
+    refs,
+    measurePin,
+    measureReveal,
+    measureKit,
+    plate,
+    onPainted,
+    sources,
+    transport,
+    measure,
+    onScroll,
+  ]);
 
   const syncRef = useRef(sync);
   syncRef.current = sync;
@@ -944,16 +1047,6 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       if (Number.isFinite(v.duration) && v.duration > 1) dur.current = v.duration;
       setFilmFrame();
       measureReveal();
-      // Prime the decoder while the film is still at the top of the page, so
-      // the first real chase is not also the first decode.
-      if (window.scrollY < 4) {
-        try {
-          const p = v.play();
-          if (p && typeof p.then === 'function') p.then(() => v.pause()).catch(() => {});
-        } catch {
-          /* ignore */
-        }
-      }
       measure();
       onScroll();
     };
@@ -965,22 +1058,79 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       }
     };
 
-    const onError = () => failRef.current();
+    /**
+     * iOS PRIMING — `primeVideo()` in the VDM reference.
+     *
+     * iOS will not paint a single frame of an inline video until playback has
+     * been initiated at least once, no matter what `currentTime` is set to. So
+     * play it and immediately pause it: one frame's worth of playback, and
+     * from then on seeks paint.
+     *
+     * Two conditions, both from the reference and both load-bearing:
+     *
+     *  - MOBILE ONLY. On desktop a seek paints on its own, and a stray play()
+     *    on a film the scrub transport believes is paused is just drift.
+     *    Topcat's old prime fired on every device and ignored the band.
+     *  - AFTER A GESTURE. iOS rejects play() without one. The promise is
+     *    caught rather than retried: a rejection leaves the plate up, which is
+     *    the correct picture, and the next gesture tries again for free.
+     */
+    let userReady = false;
+    const primeFilm = () => {
+      if (!mobile.current) return;
+      try {
+        const p = v.play();
+        if (p && typeof p.then === 'function') {
+          p.then(
+            () => {
+              try {
+                v.pause();
+              } catch {
+                /* detached */
+              }
+            },
+            () => {
+              /* keep the plate; a later gesture or seek retries naturally */
+            },
+          );
+        } else {
+          v.pause();
+        }
+      } catch {
+        /* keep the plate */
+      }
+    };
+    const onFirstGesture = () => {
+      if (userReady) return;
+      userReady = true;
+      primeFilm();
+    };
+    const onPrimeData = () => {
+      if (userReady) primeFilm();
+    };
 
     v.addEventListener('loadedmetadata', onMeta);
     v.addEventListener('progress', maybeReady);
     v.addEventListener('canplay', maybeReady);
     v.addEventListener('canplaythrough', maybeReady);
     v.addEventListener('loadeddata', maybeReady);
-    v.addEventListener('error', onError);
+    v.addEventListener('loadeddata', onPrimeData);
     addEventListener('scroll', scroll, { passive: true });
     addEventListener('resize', resize);
     addEventListener('load', onLoad);
+    addEventListener('pointerdown', onFirstGesture, { once: true, passive: true });
+    addEventListener('touchstart', onFirstGesture, { once: true, passive: true });
 
     // A film that will never load must not leave the page holding its breath.
+    //
+    // Declaring failure is the LOADER's job now: an `error` on the direct URL
+    // is a Blob-fallback trigger, not a failure, and only lib/filmSource.ts
+    // knows when both paths are spent. This is only the case it cannot see —
+    // an element that quietly settled on NETWORK_NO_SOURCE without ever
+    // raising one.
     let deadTries = 0;
     const deadPoll = setInterval(() => {
-      if (v.error || v.networkState === 3) {
+      if (v.networkState === 3 && !v.error && !source.current?.viaBlob) {
         failRef.current();
         clearInterval(deadPoll);
       } else if (++deadTries > 10 || v.readyState >= 2) {
@@ -1070,10 +1220,12 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       v.removeEventListener('canplay', maybeReady);
       v.removeEventListener('canplaythrough', maybeReady);
       v.removeEventListener('loadeddata', maybeReady);
-      v.removeEventListener('error', onError);
+      v.removeEventListener('loadeddata', onPrimeData);
       removeEventListener('scroll', scroll);
       removeEventListener('resize', resize);
       removeEventListener('load', onLoad);
+      removeEventListener('pointerdown', onFirstGesture);
+      removeEventListener('touchstart', onFirstGesture);
       if (hashLoad) removeEventListener('load', hashLoad);
       if (hashTimer) clearTimeout(hashTimer);
       document.removeEventListener('click', onBrandClick);
@@ -1088,12 +1240,18 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       raf.current = null;
       transport.halt();
       sampler.current.dispose();
+      // Complete teardown of the media, per the reference: abort the in-flight
+      // clip fetch, drop the loader's listeners, and revoke the Blob URL. A
+      // leaked object URL pins the whole clip — up to 25 MB — in memory for the
+      // lifetime of the tab.
+      source.current?.release();
+      source.current = null;
+      painted.current = false;
       // Leave no trace on the document: this component unmounts on every
       // client-side navigation away from the home page.
       root.classList.remove('cine-on', 'cine-done', 'skip-live', 'to-hero');
       window.__cineHold = false;
       locked.current = false;
-      fetched.current = false;
     };
     // `refs` is a stable object of stable refs; the loop's dependencies are
     // all stable callbacks. Re-running this effect would tear down the film.

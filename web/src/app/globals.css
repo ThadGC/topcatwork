@@ -21,6 +21,7 @@
      8  Height-based media queries
      9  prefers-reduced-motion — the 13 source blocks
     10  The gold text-gradient recipe
+    11  svg.tc-defs — the gradient carrier
    ========================================================================== */
 
 /* -------------------------------------------------------------------------
@@ -436,16 +437,33 @@ body[data-tokens='content']::before {
       Cache the 48x8 luma array once per presented frame; grade() and all
       eight bandGrade() calls then read slices of it.
 
-   2. SCRUB -> PLAYBACK-RATE CHASE. seek() (site.js:2955-2967) sets
-      vid.currentTime = (f + 0.5) / FPS every frame. Each write is a decoder
-      seek: mean 22ms, p90 38ms, so the film delivers ~45fps irregularly and
-      reads as judder. Run the film FORWARD and modulate playbackRate to chase
-      the scroll, with a feed-forward term on the scroll's own velocity — a
-      plain proportional chase leaves ~1.8s of standing lag. Hard-seek ONLY
-      when the user scrolls backwards or when drift exceeds ~2.2s.
-      Constants: FPS=60, DUR=44.25, SEEK_STALL=140, INK_AT=0.93.
+   2. SCRUB -> DISCIPLINED SEEK. seek() (site.js:2955-2967) sets
+      vid.currentTime = (f + 0.5) / FPS every frame, and queues a pending seek
+      to re-fire from the 'seeked' handler. Each write is a decoder seek: mean
+      22ms, p90 38ms — and the queue means every landed seek immediately
+      starts another, so the decoder never gets a frame's idle time to present
+      anything. The film delivers ~45fps IRREGULARLY, and it is the
+      irregularity, not the rate, that reads as judder.
+
+      DONE, and not the way this note originally proposed. The fix that ships
+      is the one from VDM Digital's scroll-scrub engine, ported wholesale into
+      src/components/HeroFilm/lib/scrub.ts: one seek in flight at a time (no
+      queue, no pending flag, no stall timer), an epsilon deadband of 8ms
+      desktop / 20ms mobile, and a 20%-per-frame lerp between the scroll and
+      the decoder. Half of the win is in the encode rather than the code — the
+      mobile cuts went from GOP 12 to GOP 4, which is what makes each of those
+      seeks cheap in the first place. See scripts/encode-film.sh.
+
+      The forward-playing playbackRate chase this note used to describe was
+      built, measured and demoted; it survives behind ?film=play in
+      lib/mode.ts, with its own tests in lib/transport.test.ts. It removed the
+      judder by removing the seeks, but a scrubbed film that is really playing
+      forward has to be constantly corrected, and hardware decoders disagree
+      about what playbackRate 6.4 means.
+
+      Constants: FPS=60, DUR=44.25, INK_AT=0.93.
       Everything downstream — veil(), curve(), story(), heroCopy(), ink(),
-      plate() — is a pure function of film time t and needs no change.
+      plate() — is a pure function of film time t and needed no change.
    ------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------
@@ -1112,4 +1130,26 @@ header.bar {
 /* .bar-cta uses the same stops as a real background, not as text. */
 .bar-cta {
   background: linear-gradient(180deg, #e4cd92 0%, #c6a664 62%, #bc9a54 100%);
+}
+
+/* -------------------------------------------------------------------------
+   11. svg.tc-defs — THE GRADIENT CARRIER  (index.html inline <style>)
+   -------------------------------------------------------------------------
+   The `<svg>` that holds `#tcGold` and `#tcGoldSolid` is in the flow of the
+   document, so it needs taking out of it. Verbatim from the source's inline
+   sheet, where the rule sits between `.hero` and `.hero-bg`.
+
+   It is stated here as well as in styles/content.css because the two sheets
+   never load together: content.css is the 172 Family-B pages and this is the
+   six that load site.css — the home page above all, whose `.wbtn` icons fill
+   with `url(#tcGoldSolid)` and whose hero chip strokes with `url(#tcGold)`.
+   Without the rule the carrier is a full-width empty box between the top of
+   `#hero` and the film.
+   ------------------------------------------------------------------------- */
+.tc-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
 }

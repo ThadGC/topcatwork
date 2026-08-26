@@ -19,6 +19,17 @@ export function extractSeo(root) {
     const m = metas.find((n) => attr(n, 'name') === name);
     return m ? attr(m, 'content') : null;
   };
+  // `robots` is the one meta that must be read LAST-wins, not first-wins.
+  // stones/compare.html emits the tag twice — `index, follow` early in <head>
+  // and `noindex, follow` as the final meta — and a crawler honours the most
+  // restrictive last directive it sees. Reading it with `meta()` captured the
+  // decorative first copy and silently re-indexed the one page on the site the
+  // client de-indexed. Every other page emits the tag once, so last-wins is
+  // identical to first-wins for the other 177.
+  const metaLast = (name) => {
+    const found = metas.filter((n) => attr(n, 'name') === name);
+    return found.length ? attr(found[found.length - 1], 'content') : null;
+  };
   const prop = (p) => {
     const m = metas.find((n) => attr(n, 'property') === p);
     return m ? attr(m, 'content') : null;
@@ -31,7 +42,7 @@ export function extractSeo(root) {
   return {
     title: text(firstTag(head, 'title')),
     description: meta('description'),
-    robots: meta('robots'),
+    robots: metaLast('robots'),
     canonical: linkHref('canonical'),
     lang: attr(firstTag(root, 'html'), 'lang'),
     og: {

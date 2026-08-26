@@ -7,6 +7,7 @@ export { MobileNav, type MobileNavProps } from './MobileNav';
 export { SiteChrome, type SiteChromeProps } from './SiteChrome';
 export { SiteFooter, type SiteFooterProps } from './SiteFooter';
 export { SiteHeader, type SiteHeaderProps } from './SiteHeader';
+export { TradeFooter } from './TradeFooter';
 export {
   StickyContactBar,
   type StickyContactBarProps,

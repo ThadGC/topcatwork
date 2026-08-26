@@ -9,7 +9,8 @@ import { MobileNav } from './MobileNav';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 import { StickyContactBar } from './StickyContactBar';
-import { variantForPath, type ChromeVariant } from './nav-data';
+import { TradeFooter } from './TradeFooter';
+import { isBarePath, variantForPath, type ChromeVariant } from './nav-data';
 
 export interface SiteChromeProps {
   readonly children: ReactNode;
@@ -32,6 +33,7 @@ export interface SiteChromeProps {
  *   rich   header -> mobile-nav -> mbar -> wa-fab -> call-fab
  *          -> <main> page ... footer </main>
  *   lite   header -> mobile-nav -> <main> page </main> -> mbar -> footer
+ *   bare   header -> <main> page </main> -> trade footer      (/trade/ only)
  *
  * The FABs really do sit between the sticky bar and <main>, and that is
  * load-bearing: `.mbar.on ~ .wa-fab` is a general sibling combinator, so the
@@ -81,6 +83,26 @@ export function SiteChrome({
   const variant = variantProp ?? variantForPath(pathname);
   const isHome = pathname === '/' || pathname === '';
   const cine = cineProp ?? isHome;
+
+  /*
+    /trade/ — the one page with no mobile chrome and its own footer. See the
+    long note beside BARE_ROUTES in nav-data.ts. The header is still the lite
+    bar (flat seven links, 12px threshold), just without the burger, because
+    there is no sheet for it to open.
+
+    <KeyboardOpenWatcher/> stays: the source loads tcform.js here too, and the
+    `html.kb-open` class it writes is free when there is nothing to suppress.
+  */
+  if (isBarePath(pathname)) {
+    return (
+      <>
+        <KeyboardOpenWatcher />
+        <SiteHeader variant="lite" burger={false} />
+        {children}
+        <TradeFooter />
+      </>
+    );
+  }
 
   if (variant === 'rich') {
     return (

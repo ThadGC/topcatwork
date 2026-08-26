@@ -32,6 +32,7 @@
  */
 
 import { useMemo, useRef, type ReactNode } from 'react';
+import { TcDefs } from '@/components/sections/TcDefs';
 import styles from './HeroFilm.module.css';
 import { DEFAULT_PLATES, DEFAULT_SOURCES } from './lib/constants';
 import { HERO_COPY, STORY } from './lib/timeline';
@@ -147,6 +148,19 @@ export function HeroFilm({
   return (
     <div className={styles.cine} ref={cine} id="cine">
       <section className={styles.hero} ref={hero} id="hero">
+        {/*
+          `svg.tc-defs` — the two gold gradients, and the source really does
+          keep them here, as the first child of `#hero` (index.html:4). They
+          are NOT decoration that could live anywhere: `.wbtn svg` fills with
+          `url(#tcGoldSolid)` and the hero's "Free home visit" chip strokes
+          with `url(#tcGold)`, and a `url(#id)` paint resolves against the
+          document — with no `<defs>` in the DOM the stroke resolves to
+          nothing and the icon disappears. The class is unhashed on purpose:
+          the rule that gives it zero size is global (globals.css §11), like
+          it is on the 172 content-styled pages.
+        */}
+        <TcDefs />
+
         <div className={styles.bg} ref={bg} aria-hidden="true">
           {/* Still hero. Never removed: it is what is on screen whenever the
               film is off, and `html.cine-on` fades it out when it is not. */}

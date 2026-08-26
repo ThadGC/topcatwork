@@ -8,16 +8,19 @@
    emptied because an extraction changed shape.
    ========================================================================== */
 
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
 
-import AboutPage from '@/app/about/page';
-import ContactPage from '@/app/contact/page';
-import EstimatePage from '@/app/estimate/page';
-import ProjectsPage from '@/app/projects/page';
-import PrivacyPage from '@/app/(content)/privacy/page';
-import TermsPage from '@/app/(content)/terms/page';
-import TradePage from '@/app/(content)/trade/page';
+import AboutPage, { metadata as aboutMeta } from '@/app/about/page';
+import ContactPage, { metadata as contactMeta } from '@/app/contact/page';
+import EstimatePage, { metadata as estimateMeta } from '@/app/estimate/page';
+import ProjectsPage, { metadata as projectsMeta } from '@/app/projects/page';
+import PrivacyPage, { metadata as privacyMeta } from '@/app/(content)/privacy/page';
+import TermsPage, { metadata as termsMeta } from '@/app/(content)/terms/page';
+import TradePage, { metadata as tradeMeta } from '@/app/(content)/trade/page';
 
 beforeEach(() => {
   localStorage.clear();
@@ -110,5 +113,47 @@ describe('the three content-styled pages', () => {
     expect(crumb.querySelector('[aria-current="page"]')?.textContent).toBe(
       'Privacy Policy',
     );
+  });
+});
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * THE DOUBLE-SUFFIX GUARD.
+ *
+ * app/layout.tsx sets `title: { template: '%s | Topcat' }`, and every legacy
+ * title already ends in the brand. A page that writes `title: 'Privacy Policy
+ * | Topcat Worktops'` as a bare string therefore ships "Privacy Policy |
+ * Topcat Worktops | Topcat" — a silent SEO regression on the exact string
+ * these pages rank on, invisible in the source file and visible only in the
+ * exported <head>.
+ *
+ * src/lib/seo.ts already solves it with `{ absolute }` for the 171 extracted
+ * pages; these seven write their metadata by hand, so they are checked
+ * against the legacy <title> itself rather than against each other.
+ */
+describe('the seven hand-written page titles', () => {
+  const legacyTitle = (dir: string) => {
+    const html = readFileSync(resolve(__dirname, `../../${dir}/index.html`), 'utf8');
+    return /<title>(.*?)<\/title>/s
+      .exec(html)![1]
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+  };
+
+  it.each([
+    ['about', aboutMeta],
+    ['contact', contactMeta],
+    ['estimate', estimateMeta],
+    ['projects', projectsMeta],
+    ['privacy', privacyMeta],
+    ['terms', termsMeta],
+    ['trade', tradeMeta],
+  ])('/%s/ declares an absolute title equal to the legacy one', (dir, meta) => {
+    expect(meta.title).toEqual({ absolute: legacyTitle(dir) });
+    // The failure this exists to catch, stated directly.
+    expect(typeof meta.title).not.toBe('string');
+    expect(legacyTitle(dir)).not.toMatch(/\| Topcat \| Topcat$/);
   });
 });

@@ -11,7 +11,13 @@ import { TERMS_HTML } from '@/data/legal/terms';
 /* A CONTENT-STYLED PAGE — see the note at the top of ../privacy/page.tsx. */
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions | Topcat Worktops',
+  /*
+    `absolute`, not a bare string. The root layout sets a `'%s | Topcat'`
+    title template and this title already ends in the brand — without
+    `absolute` the exported <title> carries the suffix twice. Same reason
+    src/lib/seo.ts wraps every extracted title; see the note there.
+  */
+  title: { absolute: 'Terms & Conditions | Topcat Worktops' },
   description:
     'The terms on which Topcat Worktops quotes, supplies, delivers and installs quartz, granite and marble worktops, including payment, warranty and cancellation.',
   alternates: { canonical: 'https://www.topcatworktops.co.uk/terms/' },

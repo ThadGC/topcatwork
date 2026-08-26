@@ -23,7 +23,15 @@ const DESCRIPTION =
   'Stone worktop supply and fit for the trade across London, Hertfordshire, Essex and Berkshire. Template to fit through one contact, dates confirmed in writing, trade terms that hold, and a ten-year guarantee on every install.';
 
 export const metadata: Metadata = {
-  title: 'Trade Worktops for Builders, Developers & Kitchen Designers | Topcat',
+  /*
+    `absolute`, not a bare string. The root layout sets a `'%s | Topcat'`
+    title template and this title already ends in the brand — without
+    `absolute` the exported <title> carries the suffix twice. Same reason
+    src/lib/seo.ts wraps every extracted title; see the note there.
+  */
+  title: {
+    absolute: 'Trade Worktops for Builders, Developers & Kitchen Designers | Topcat',
+  },
   description: DESCRIPTION,
   alternates: { canonical: 'https://www.topcatworktops.co.uk/trade/' },
   robots: { index: true, follow: true },

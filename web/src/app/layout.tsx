@@ -51,7 +51,18 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    /*
+      en-GB, not en. 177 of the 178 live pages serve `<html lang="en-GB">` —
+      the value the extractor already records as `seo.lang` on all 169 data-
+      backed records — and this is a UK-only fitter, so the region subtag is
+      load-bearing for locale targeting.
+
+      The single exception is the home page, which genuinely serves
+      `lang="en"`. App Router has one root layout and a page cannot reach the
+      <html> element, so that one override is applied to out/index.html by
+      scripts/postexport.mjs, alongside the directory-URL copies.
+    */
+    <html lang="en-GB">
       <head>
         {/*
           The two self-hosted variable faces are preloaded on every legacy

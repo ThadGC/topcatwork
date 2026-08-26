@@ -20,7 +20,13 @@ import { PRIVACY_HTML } from '@/data/legal/privacy';
 */
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Topcat Worktops',
+  /*
+    `absolute`, not a bare string. The root layout sets a `'%s | Topcat'`
+    title template and this title already ends in the brand — without
+    `absolute` the exported <title> carries the suffix twice. Same reason
+    src/lib/seo.ts wraps every extracted title; see the note there.
+  */
+  title: { absolute: 'Privacy Policy | Topcat Worktops' },
   description:
     'What Topcat Worktops does with the details you send through this website, how long we keep them, and your rights over them. No cookies, no tracking, no marketing lists.',
   alternates: { canonical: 'https://www.topcatworktops.co.uk/privacy/' },
