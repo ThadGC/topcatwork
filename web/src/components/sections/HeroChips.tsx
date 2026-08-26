@@ -22,12 +22,27 @@
  * why difference 2 is invisible on nearly every page that has it — invisible,
  * but still a difference from what the host serves, so it is reproduced.
  */
-export function HeroChips({ glow = false }: { glow?: boolean }) {
+import type { CSSProperties } from 'react';
+
+export function HeroChips({
+  glow = false,
+  hd,
+}: {
+  glow?: boolean;
+  /**
+   * Entrance-stagger delay, e.g. '880ms'. Opt-in, and only the homepage hero
+   * passes it. `.hero-el` is `opacity:0` until `#hero.loaded` releases it, so
+   * emitting it on the four pages that render these chips OUTSIDE `#hero`
+   * (trade, services, materials, PageHead) would be markup live does not have.
+   */
+  hd?: string;
+}) {
   const chip = (rest: string) => (glow ? `chip ${rest} glow-card` : `chip ${rest}`);
+  const chipsClass = hd ? 'hero-chips hero-el' : 'hero-chips';
   const stars = '★★★★★';
 
   return (
-    <div className="hero-chips">
+    <div className={chipsClass} style={hd ? ({ '--hd': hd } as CSSProperties) : undefined}>
       <span className={chip('chip-google')}>
         <svg className="g-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
           <path

@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 import { HeroChips } from '@/components/sections/HeroChips';
 
 /**
@@ -10,21 +12,22 @@ import { HeroChips } from '@/components/sections/HeroChips';
  * That is the film's own API (see src/components/HeroFilm/index.ts), so this
  * is the caller holding up its end, not a section reaching into the hero.
  *
- * ONE DEPARTURE FROM THE SOURCE MARKUP, and it is forced. Every element in
+ * THE ENTRANCE STAGGER (restored, D460). Every element in
  * the legacy block carries `hero-el` with an inline `--hd` stagger
- * (180/340/560/720/880ms). `.hero-el` is `opacity:0` until
- * `.hero.loaded .hl > .hero-el` releases it (site.css:1772), and that
- * selector needs the global `.hero` class — which the ported film no longer
- * has, because its section is styled by a CSS module and keeps only
- * `id="hero"`. The film holds the whole `.inner` back instead and reveals it
- * in one move at the 93% handoff (HeroFilm.module.css:1045), so the per-line
- * stagger has nothing to release it.
+ * (180/340/560/720/880ms), released by `.hero.loaded .hl > .hero-el`.
  *
- * Carrying `hero-el` anyway would leave the headline permanently invisible.
- * The class and the `--hd` values are therefore omitted here, and the
- * matching CSS is omitted from the extraction — see the note in
- * scripts/extract-home-css.mjs. If the film later ports the stagger, both
- * come back together.
+ * That selector wants the global `.hero` class, which the ported section does
+ * not carry — it is styled by a CSS module and keeps only `id="hero"`. The
+ * film DOES still toggle the global `loaded` class on that same element
+ * (useHeroFilm.ts:430), so the rules are simply re-keyed onto `#hero.loaded`
+ * in globals.css and the markup below is faithful again.
+ *
+ * WHAT THIS DOES AND DOES NOT CHANGE. On the film path it changes nothing,
+ * and that is correct: live suppresses its own stagger while the film runs
+ * via `html.cine-on .cine .hero:not(.loaded) .hero-el{…transition:none}`,
+ * so the copy arrives as one object at the 93% handoff. The stagger only
+ * ever plays when the film is OFF — reduced motion, no MP4 support, or a
+ * failed load — which is exactly the path that was losing it.
  *
  * `.hl` stays: it is `display:block; overflow:hidden` and is what puts the
  * two title lines on their own rows.
@@ -93,12 +96,18 @@ export default function HeroCopy() {
   return (
     <div className="hero-copy">
       <h1 className="hero-title">
-        <span className="hl">Surfaces worth</span>
         <span className="hl">
-          <em>building around</em>
+          <span className="hero-el" style={{ '--hd': '180ms' } as CSSProperties}>
+            Surfaces worth
+          </span>
+        </span>
+        <span className="hl">
+          <span className="hero-el" style={{ '--hd': '340ms' } as CSSProperties}>
+            <em>building around</em>
+          </span>
         </span>
       </h1>
-      <p className="hero-sub">
+      <p className="hero-sub hero-el" style={{ '--hd': '560ms' } as CSSProperties}>
         <span className="hs-wide">
           Chosen from the slab you approve, fitted by us{' '}
           <span className="nowrap">across England and the British Isles.</span>
@@ -108,7 +117,7 @@ export default function HeroCopy() {
           our own team.
         </span>
       </p>
-      <div className="hero-ctas">
+      <div className="hero-ctas hero-el" style={{ '--hd': '720ms' } as CSSProperties}>
         <a href="/contact/" className="btn-gold">
           <span className="cta-long">Get your free quote</span>
           <span className="cta-short">Get a free quote</span>
@@ -130,7 +139,7 @@ export default function HeroCopy() {
         </a>
       </div>
       {/* `glow` is the site-chrome variant: these chips take the cursor glow. */}
-      <HeroChips glow />
+      <HeroChips glow hd="880ms" />
     </div>
   );
 }

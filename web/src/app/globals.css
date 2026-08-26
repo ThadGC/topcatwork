@@ -1153,3 +1153,49 @@ header.bar {
   overflow: hidden;
   pointer-events: none;
 }
+
+/* ---------------------------------------------------------------------------
+   HERO ENTRANCE STAGGER (D460)
+
+   Restored from the legacy site, re-keyed. The originals gate on
+   `.hero.loaded`; the ported section is styled by a CSS module and carries
+   only `id="hero"`, but the film still toggles the GLOBAL `loaded` class on
+   that same element (useHeroFilm.ts), so `#hero.loaded` is the same gate.
+
+   Note what this does NOT do: on the film path it changes nothing. Live
+   suppresses its own stagger while the film runs -- the `html.cine-on` rule
+   below, carried over verbatim -- so the copy still arrives as one object at
+   the 93% handoff. The cascade only plays when the film is off: reduced
+   motion, no MP4 support, or a failed load. That was the path losing it.
+   --------------------------------------------------------------------------- */
+#hero .hero-el {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 1.15s var(--ease),
+    transform 1.15s var(--ease);
+  transition-delay: var(--hd, 0ms);
+}
+#hero.loaded .hero-el {
+  opacity: 1;
+  transform: none;
+}
+#hero .hl > .hero-el {
+  transform: translateY(116%);
+  opacity: 1;
+}
+#hero.loaded .hl > .hero-el {
+  transform: none;
+}
+html.cine-on #hero:not(.loaded) .hero-el {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  #hero .hero-el,
+  #hero .hl > .hero-el {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
