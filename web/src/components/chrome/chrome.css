@@ -171,6 +171,26 @@ header.bar.preform .brand-logo {
     opacity: 1;
     transform: scaleX(1);
   }
+
+  /*
+    ...but NOT while the cine film is still running.
+
+    site.css:110-112 writes the rule above as `header.bar::before`, which is
+    specificity (0,1,1) and therefore LOSES to `header.bar.preform::before`
+    (0,2,1) at site.css:2113. Qualifying it with #siteBar to separate the two
+    header families raised it to (1,1,1), which beats .preform - so below
+    1120px the bar painted its plate and hairline over the whole film, and the
+    index opened with a formed navbar instead of the logo floating on the
+    footage. Restoring the source behaviour needs the ID on .preform too.
+  */
+  header.bar#siteBar.preform::before {
+    opacity: 0;
+  }
+
+  header.bar#siteBar.preform::after {
+    opacity: 0;
+    transform: scaleX(0);
+  }
 }
 
 /* -------------------------------------------------------------------------

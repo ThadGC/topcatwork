@@ -64,7 +64,7 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
 
   const errors: string[] = [];
   const fields: Record<string, string> = {};
-  const files: File[] = [];
+  const files: { field: string; file: File }[] = [];
   let attachmentBytes = 0;
 
   for (const [key, value] of form.entries()) {
@@ -80,7 +80,8 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
       continue;
     }
     attachmentBytes += value.size;
-    files.push(value);
+    /* The field NAME matters: send.php reads file1..fileN (uploads.ts:161). */
+    files.push({ field: key, file: value });
   }
 
   for (const key of REQUIRED) {
@@ -98,10 +99,70 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
   }
 
   // ---------------------------------------------------------------------
-  // Delivery. Deliberately absent — see the header. A transport slots in
-  // here, is handed `fields` and `files`, and sets `delivered`.
+  // Delivery.
+  //
+  // The legacy endpoint IS the transport. send.php is 464 lines of tested
+  // delivery - a sender ladder, MIME multipart, the iOS no-extension case,
+  // and the large-attachment spill to a download link - and it is still
+  // live and still mails info@topcatworktops.co.uk. Re-implementing all of
+  // that here to reach the same mailbox would be a second thing to keep
+  // correct, for no gain.
+  //
+  // So this route validates, then forwards the SAME multipart body to it,
+  // server-side: no CORS, no browser involvement, and the success message
+  // the visitor sees becomes true again.
+  //
+  // Point ENQUIRY_FORWARD_URL at the production hosts own /send.php when
+  // the site moves to the live domain. Setting it to an empty string turns
+  // forwarding off and the route falls back to validate-and-log.
   // ---------------------------------------------------------------------
-  const delivered = false;
+  const FORWARD_URL =
+    process.env.ENQUIRY_FORWARD_URL ?? 'https://thadeusg3.sg-host.com/send.php';
+
+  let delivered = false;
+  let deliveryError: string | null = null;
+
+  if (FORWARD_URL) {
+    try {
+      const out = new FormData();
+      for (const [key, value] of Object.entries(fields)) out.append(key, value);
+      for (const { field, file } of files) out.append(field, file, file.name || field);
+
+      const upstream = await fetch(FORWARD_URL, { method: 'POST', body: out });
+      const raw = await upstream.text();
+      let parsed: { ok?: boolean; error?: string } | null = null;
+      try {
+        parsed = JSON.parse(raw) as { ok?: boolean; error?: string };
+      } catch {
+        /* send.php answers JSON; anything else is a host-level failure page. */
+      }
+
+      delivered = upstream.ok && parsed?.ok === true;
+      if (!delivered) {
+        deliveryError = parsed?.error ?? `upstream ${upstream.status}`;
+      }
+    } catch (e) {
+      deliveryError = e instanceof Error ? e.message : String(e);
+    }
+  }
+
+  /*
+    A visitor must never be told "we have your details" when nothing was
+    sent. useEnquiryForm shows the thank-you panel on a 2xx, so a failed
+    delivery has to be a non-2xx here or the old lie comes straight back.
+  */
+  if (FORWARD_URL && !delivered) {
+    console.error('[enquiry] delivery failed', { to: FORWARD_URL, deliveryError });
+    return NextResponse.json(
+      {
+        ok: false,
+        errors: [
+          'We could not send that just now. Please call 0800 098 2812 and we will take it down.',
+        ],
+      },
+      { status: 502 },
+    );
+  }
 
   // Logged rather than dropped, so a demo enquiry is recoverable from the
   // host's function logs and it is obvious the endpoint really ran.
