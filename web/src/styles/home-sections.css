@@ -781,12 +781,26 @@ main{position:relative;z-index:1;overflow-x:clip}
 .pm-points{display:grid;gap:clamp(10px,1.6vh,15px);margin:0;padding:0;list-style:none;
     border-top:1px solid var(--hair-soft);padding-top:clamp(13px,2vh,18px)}
 .pm-points li{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
-.pm-points .pk{display:flex;align-items:center;gap:8px;flex:none;min-width:clamp(112px,12vw,150px);
+.pm-points .pk{display:flex;align-items:center;gap:8px;flex:none;width:clamp(164px,12.4vw,176px);
     font-family:var(--brand);font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);
     padding-top:2px}
 .pm-points .pk::before{content:"";width:5px;height:5px;transform:rotate(45deg);background:var(--gold);flex:none}
 .pm-points .pv{color:var(--body);font-size:clamp(13px,1vw,14.5px);line-height:1.6}
-.pm-foot{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:clamp(16px,2.4vh,24px)}
+/* THE PANEL ON A PHONE. The label/value pair is a two-column grid whose label
+   column is `min-width:clamp(112px,12vw,150px)`. At 360px that leaves the
+   value about 200px, so every answer broke into a ragged four-line column
+   beside a one-line label — the client: "this design looks terrible ... it
+   needs to be much neater". Below the phone band the pair stacks instead:
+   the label on its own line, the answer full width under it. */
+@media(max-width:720px){
+  .pm-points{gap:clamp(14px,2.2vh,20px)}
+  .pm-points li{grid-template-columns:1fr;gap:5px}
+  .pm-points .pk{width:auto;font-size:10.5px;letter-spacing:0.2em}
+  .pm-points .pv{font-size:14px;line-height:1.62}
+  /* The panel is a sheet on a phone; the copy should not touch its edges. */
+  .pm-body{padding:clamp(16px,2.4vh,22px) 18px clamp(20px,3vh,26px)}
+  .pm-lede{margin-bottom:clamp(15px,2.2vh,19px)}
+}
 .pm-x{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;
     display:grid;place-items:center;cursor:pointer;
     background:rgba(11,11,13,0.6);border:1px solid var(--hair);color:var(--gold);

@@ -39,6 +39,15 @@ import type { NextConfig } from 'next';
  */
 const nextConfig: NextConfig = {
   trailingSlash: false,
+  /*
+    The little round badge in the bottom-left corner. It is Next's own dev
+    indicator — the menu behind it reads Route / Route Info / Preferences —
+    and it is injected by the dev server only: it has never appeared in a
+    production build, so it was never going to reach a visitor. The client saw
+    it while reviewing and asked for it gone, and there is no reason to keep
+    it, so it is off here too.
+  */
+  devIndicators: false,
   images: {
     // The srcset ladders in the ported markup are hand-built and already
     // responsive. Leaving Next's optimiser off keeps the served bytes

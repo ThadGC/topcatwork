@@ -127,3 +127,38 @@ export async function sendByForward(
     error: parsed?.error ?? `upstream ${upstream.status}`,
   };
 }
+
+/**
+ * The confirmation the CUSTOMER gets back.
+ *
+ * BEST EFFORT, ALWAYS. It is sent after the enquiry itself and its failure is
+ * swallowed: the enquiry reaching the office is what matters, and a bounced
+ * courtesy email must never turn a delivered enquiry into an error the
+ * visitor sees.
+ *
+ * ⚠️ SMTP ONLY. The legacy send.php fallback cannot do this — its own
+ * autoreply is commented out in that file, and this route has no transport of
+ * its own until SMTP is configured. Set the credentials in .env.example and
+ * customers start being confirmed.
+ */
+export async function sendAutoReply(mail: ComposedEmail, to: string): Promise<boolean> {
+  if (!smtpConfigured() || !to) return false;
+  const from =
+    process.env.SMTP_FROM ||
+    (process.env.SMTP_USER ? `Topcat Worktops <${process.env.SMTP_USER}>` : '');
+  if (!from) return false;
+  try {
+    await transport().sendMail({
+      from,
+      to,
+      /* A reply to the confirmation should reach a person, not the robot. */
+      replyTo: mailTo(),
+      subject: mail.subject,
+      text: mail.text,
+      html: mail.html,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}

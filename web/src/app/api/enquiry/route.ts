@@ -34,8 +34,8 @@
  */
 import { NextResponse } from 'next/server';
 
-import { composeEnquiry, type Attachment } from '@/lib/mail/compose';
-import { mailTo, sendByForward, sendBySmtp, smtpConfigured } from '@/lib/mail/send';
+import { composeAutoReply, composeEnquiry, type Attachment } from '@/lib/mail/compose';
+import { mailTo, sendAutoReply, sendByForward, sendBySmtp, smtpConfigured } from '@/lib/mail/send';
 
 /* Buffers and a TCP socket — this cannot run on the edge runtime. */
 export const runtime = 'nodejs';
@@ -190,6 +190,13 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
     );
   }
 
+  /* The customer's confirmation. After the enquiry, never instead of it, and
+     its failure is swallowed — see sendAutoReply. */
+  let confirmed = false;
+  if (delivered && fields.email) {
+    confirmed = await sendAutoReply(composeAutoReply({ fields, attachments }), fields.email.trim());
+  }
+
   console.info('[enquiry]', {
     at: new Date().toISOString(),
     to: mailTo(),
@@ -203,6 +210,7 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
     attachments: files.length,
     attachmentBytes,
     delivered,
+    confirmed,
   });
 
   return NextResponse.json({

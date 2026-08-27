@@ -388,3 +388,94 @@ export function composeEnquiry(opts: {
 
   return { subject, html, text: t.join('\n'), replyTo: email || undefined };
 }
+
+/* --------------------------------------------------------------------------
+   THE AUTOREPLY — what the customer gets back.
+
+   New on 27 Aug 2026, at the client's request: "we need to craft an email that
+   the client receives ... just saying we've received your inquiry for these
+   details, we will get back to you shortly, thank you for contacting Topcat
+   Worktops."
+
+   ⚠️ THIS REVERSES AN EARLIER DECISION. send.php has an autoreply written and
+   commented out, with the note "WRITTEN AND SWITCHED OFF, his instruction". It
+   is on again, here.
+
+   NO EM DASHES, and no en dashes used as punctuation, anywhere in the copy
+   below. The client asked for that specifically. Sentences are separated with
+   full stops and commas instead.
+   -------------------------------------------------------------------------- */
+
+/** tcform.js:145 — the greeting uses the first whitespace-delimited word. */
+function firstWord(name: string): string {
+  return String(name ?? '').trim().split(/\s+/)[0] ?? '';
+}
+
+export function composeAutoReply(opts: {
+  fields: Record<string, string>;
+  attachments?: Attachment[];
+}): ComposedEmail {
+  const f = opts.fields;
+  const get = (k: string) => (f[k] ?? '').trim();
+  const attachments = opts.attachments ?? [];
+
+  const name = get('name');
+  const hi = firstWord(name);
+
+  /* Only what they actually gave us, echoed back so they can check it. */
+  const detail: [string, string][] = [];
+  if (name) detail.push(['Name', name]);
+  if (get('email')) detail.push(['Email', get('email')]);
+  if (get('phone')) detail.push(['Phone', get('phone')]);
+  if (get('postcode')) detail.push(['Postcode', get('postcode')]);
+  if (get('service')) detail.push(['What you need', get('service')]);
+  if (get('stone')) detail.push(['Stone', get('stone')]);
+  if (get('message')) detail.push(['Your message', get('message')]);
+  if (attachments.length)
+    detail.push([
+      attachments.length === 1 ? 'File attached' : 'Files attached',
+      attachments.map((a) => a.filename).join(', '),
+    ]);
+
+  const rows = detail
+    .map(([k, v]) =>
+      `<tr><td style="padding:11px 18px;background:${BONE};border-right:1px solid ${SEAM};border-bottom:1px solid ${ROWLN};color:${MUTE};font:600 10.5px/1.6 Arial,Helvetica,sans-serif;letter-spacing:0.1em;text-transform:uppercase;width:34%;vertical-align:top">${h(k)}</td>` +
+      `<td style="padding:11px 18px;background:#FFFFFF;border-bottom:1px solid ${ROWLN};color:${TEXT};font:400 14.5px/1.6 Arial,Helvetica,sans-serif;vertical-align:top">${h(v).replace(/\r?\n/g, '<br>')}</td></tr>`,
+    )
+    .join('');
+
+  const subject = 'Thank you for contacting Topcat Worktops';
+
+  const html =
+    `<!doctype html><html><body style="margin:0;padding:24px 0;background:${INK}">` +
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:${INK}"><tr><td align="center">` +
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:96%;background:#FFFFFF;border-radius:4px;overflow:hidden">` +
+    `<tr><td style="padding:22px 18px;background:${INK};color:${GOLD};font:700 13px/1.4 Arial,Helvetica,sans-serif;letter-spacing:0.22em;text-transform:uppercase">Topcat Worktops</td></tr>` +
+    `<tr><td style="padding:26px 18px 6px;background:#FFFFFF;color:${TEXT};font:400 15px/1.7 Arial,Helvetica,sans-serif">` +
+    (hi ? `<p style="margin:0 0 14px">Hi ${h(hi)},</p>` : '') +
+    `<p style="margin:0 0 14px">Thank you for contacting Topcat Worktops. We have received your enquiry and someone from our team will get back to you shortly, always within one working day.</p>` +
+    `<p style="margin:0 0 4px">These are the details you sent us.</p></td></tr>` +
+    (rows
+      ? `<tr><td style="padding:14px 0 0"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">${rows}</table></td></tr>`
+      : '') +
+    `<tr><td style="padding:22px 18px 26px;background:#FFFFFF;color:${TEXT};font:400 15px/1.7 Arial,Helvetica,sans-serif">` +
+    `<p style="margin:0 0 14px">If anything above is not right, reply to this email and we will put it straight. If it is urgent, call us free on <a href="tel:+448000982812" style="color:${LINK}">0800 098 2812</a>.</p>` +
+    `<p style="margin:0">Thank you again,<br>Topcat Worktops</p></td></tr>` +
+    `<tr><td style="padding:16px 18px;background:${BONE};color:${MUTE};font:400 11.5px/1.7 Arial,Helvetica,sans-serif">` +
+    `0800 098 2812 &nbsp;&middot;&nbsp; <a href="mailto:info@topcatworktops.co.uk" style="color:${LINK}">info@topcatworktops.co.uk</a><br>` +
+    `This is an automatic confirmation. You do not need to do anything else.</td></tr>` +
+    `</table></td></tr></table></body></html>`;
+
+  const t: string[] = [];
+  if (hi) t.push(`Hi ${hi},`, '');
+  t.push('Thank you for contacting Topcat Worktops. We have received your enquiry and someone from our team will get back to you shortly, always within one working day.', '');
+  if (detail.length) {
+    t.push('These are the details you sent us.', '');
+    for (const [k, v] of detail) t.push(`${k}: ${v}`);
+    t.push('');
+  }
+  t.push('If anything above is not right, reply to this email and we will put it straight. If it is urgent, call us free on 0800 098 2812.', '');
+  t.push('Thank you again,', 'Topcat Worktops', '0800 098 2812', 'info@topcatworktops.co.uk');
+
+  return { subject, html, text: t.join('\n') };
+}

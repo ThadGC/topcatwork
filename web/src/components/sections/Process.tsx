@@ -339,18 +339,12 @@ export default function Process() {
                 </li>
               ))}
             </ul>
-            <div className="pm-foot">
-              <a
-                className="rev-cta-primary"
-                href="#cta"
-                onClick={() => setDetail(null)}
-              >
-                Get in touch
-              </a>
-              <a className="rev-cta-ghost" href="tel:+448000982812">
-                Call us
-              </a>
-            </div>
+            {/* The two CTAs that used to close this panel are gone, on every
+                band. The client, 27 Aug: "there also doesn't need to be a CTA
+                inside it, so you can remove it for all devices — the CTA
+                inside the flippable cards for the process section." The
+                section's own `.rev-cta` below the tiles is untouched; this
+                panel is a detail view, not a place to be sold to. */}
           </div>
         </div>
       </div>

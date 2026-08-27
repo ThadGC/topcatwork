@@ -13,7 +13,7 @@
    ========================================================================== */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { composeEnquiry, evLine, humanMs, summariseJourney } from '@/lib/mail/compose';
+import { composeAutoReply, composeEnquiry, evLine, humanMs, summariseJourney } from '@/lib/mail/compose';
 
 const T0 = Date.UTC(2026, 7, 27, 9, 0, 0);
 
@@ -286,5 +286,58 @@ describe('the route delivers, and never lies about it', () => {
     const res = await post(fd);
     expect(res.status).toBe(422);
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('the confirmation the customer gets back', () => {
+  const reply = composeAutoReply({
+    fields: fields(),
+    attachments: [
+      { filename: 'plans.pdf', size: 2_100_000, content: Buffer.from('x'), contentType: 'application/pdf' },
+    ],
+  });
+
+  it('says what the client asked it to say', () => {
+    expect(reply.subject).toBe('Thank you for contacting Topcat Worktops');
+    expect(reply.text).toContain('Hi Jane,');
+    expect(reply.text).toContain('We have received your enquiry');
+    expect(reply.text).toContain('get back to you shortly');
+    expect(reply.text).toContain('Thank you for contacting Topcat Worktops');
+  });
+
+  it('USES NO EM DASHES OR EN DASHES, anywhere the customer can see', () => {
+    expect(reply.subject).not.toMatch(/[—–]/);
+    expect(reply.text).not.toMatch(/[—–]/);
+    /* The HTML carries the visitor's own words too, so strip tags and check
+       the copy the template contributes. */
+    expect(reply.html.replace(/<[^>]*>/g, '')).not.toMatch(/[—–]/);
+  });
+
+  it('echoes back the details they actually sent, and nothing they did not', () => {
+    expect(reply.text).toContain('Name: Jane Cooper');
+    expect(reply.text).toContain('Email: jane@example.com');
+    expect(reply.text).toContain('Postcode: HP1 2AB');
+    expect(reply.text).toContain('Stone: Calacatta Gold · Quartz');
+    expect(reply.text).toContain('File attached: plans.pdf');
+    /* The office's own diagnostics are not the customer's business. */
+    expect(reply.text).not.toContain('journey');
+    expect(reply.text).not.toContain('Their visit');
+    expect(reply.html).not.toContain('step by step');
+  });
+
+  it('does not greet a nameless enquiry with an empty Hi', () => {
+    const anon = composeAutoReply({ fields: { ...fields(), name: '' } });
+    expect(anon.text.startsWith('Hi')).toBe(false);
+  });
+
+  it('escapes what the visitor typed', () => {
+    const xss = composeAutoReply({ fields: fields({ name: '<img src=x onerror=1>' }) });
+    expect(xss.html).not.toContain('<img src=x');
+    expect(xss.html).toContain('&lt;img');
+  });
+
+  it('gives the customer a way back that is a person', () => {
+    expect(reply.text).toContain('0800 098 2812');
+    expect(reply.text).toContain('info@topcatworktops.co.uk');
   });
 });
