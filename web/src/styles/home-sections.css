@@ -55,6 +55,23 @@ main{position:relative;z-index:1;overflow-x:clip}
   .svc{aspect-ratio:auto;min-height:420px}
 }
 .svc.enter{opacity:0}
+/*
+  site.css:1404 — `.rise{opacity:1;transform:none}.svc.enter{opacity:1}` under
+  reduce.
+
+  It has to live HERE, not in globals.css, and it has to come after the two
+  base rules above. globals.css is imported by layout.tsx and this sheet is
+  imported per page, so globals.css loses every equal-specificity tie to it —
+  a media query adds no specificity. With the override stranded in globals.css
+  the base `.rise{opacity:0;transform:translateY(34px)}` won under reduce, so
+  every reveal block on the page sat invisible at opacity 0 until the observer
+  reached it, where the source shows the whole page from first paint. Same
+  failure mode as the eight max-height overrides relocated in ccf203a.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .rise { opacity: 1; transform: none; }
+  .svc.enter { opacity: 1; }
+}
 @keyframes svcIn{0%{opacity:0;transform:perspective(1300px) translateY(100px) translateZ(-70px) rotateX(-17deg) scale(0.93)}
     50%{opacity:1}
     100%{opacity:1;transform:perspective(1300px) translateY(0) translateZ(0) rotateX(0) scale(1)}}

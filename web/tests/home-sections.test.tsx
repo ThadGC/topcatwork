@@ -339,25 +339,37 @@ describe('Gallery', () => {
     );
   });
 
+  /*
+   * The overlays are queried off `document`, not off `container`: site.js:2527
+   * moves #projDetail (and the lightbox, and the grid view) to <body>, and the
+   * port reproduces that with a portal, so they are deliberately NOT inside
+   * the section the component renders.
+   */
   it('opens the project detail on click and closes it again', () => {
     const { container } = render(<Gallery />);
-    const detail = container.querySelector('#projDetail')!;
+    const detail = document.querySelector('#projDetail')!;
+    expect(detail.parentElement).toBe(document.body);
     expect(detail.className).not.toContain('on');
 
     fireEvent.click(container.querySelector('.gal-card')!);
     expect(detail.className).toContain('on');
-    expect(container.querySelector('#projName')?.textContent).toBe(
+    expect(document.querySelector('#projName')?.textContent).toBe(
       PROJECTS[0].name,
     );
-    expect(container.querySelectorAll('.proj-ph')).toHaveLength(
+    expect(document.querySelectorAll('.proj-ph')).toHaveLength(
       PROJECTS[0].gallery.length,
     );
     expect(document.documentElement.classList.contains('proj-open')).toBe(true);
 
-    fireEvent.click(container.querySelector('#projClose')!);
+    fireEvent.click(document.querySelector('#projClose')!);
     expect(detail.className).not.toContain('on');
     expect(document.documentElement.classList.contains('proj-open')).toBe(
       false,
+    );
+    // closeFocus (site.js:2475) drops the class and nothing else — the copy
+    // stays put so the 0.5s fade has something to fade.
+    expect(document.querySelector('#projName')?.textContent).toBe(
+      PROJECTS[0].name,
     );
   });
 
@@ -368,8 +380,32 @@ describe('Gallery', () => {
     expect(idx).toBeGreaterThan(-1);
     fireEvent.click(container.querySelectorAll('.gal-card')[idx]);
     expect(
-      container.querySelector<HTMLElement>('#projDesc')!.style.display,
+      document.querySelector<HTMLElement>('#projDesc')!.style.display,
     ).toBe('none');
+  });
+
+  it('closes the open project when any link in the site bar is clicked', () => {
+    // site.js:2476-2478 — the capture-phase listener on header.bar. Without it
+    // the logo navigates but the overlay stays over the page.
+    const bar = document.createElement('header');
+    bar.className = 'bar';
+    bar.innerHTML = '<a href="/#hero">Topcat Worktops, home</a>';
+    document.body.appendChild(bar);
+    try {
+      const { container } = render(<Gallery />);
+      fireEvent.click(container.querySelector('.gal-card')!);
+      expect(document.querySelector('#projDetail')!.className).toContain('on');
+
+      fireEvent.click(bar.querySelector('a')!);
+      expect(document.querySelector('#projDetail')!.className).not.toContain(
+        'on',
+      );
+      expect(document.documentElement.classList.contains('proj-open')).toBe(
+        false,
+      );
+    } finally {
+      bar.remove();
+    }
   });
 });
 

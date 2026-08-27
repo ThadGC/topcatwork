@@ -114,10 +114,16 @@ function attach(el: HTMLElement): () => void {
  * @param selector  override when a section glows something other than
  *                  `.glow-card` — the gallery attaches to `.gal-door`, which
  *                  is a `.glow-card` too, so the default covers it.
+ * @param rescanOn  changes to this value re-run the scan. The source calls
+ *                  `attachGlow` as it BUILDS each card, so a subtree that is
+ *                  populated later — the project detail's `.proj-ph` tiles,
+ *                  which only exist once a project is opened — would otherwise
+ *                  be scanned once at mount while still empty and never again.
  */
 export function useCursorGlow(
   root: RefObject<HTMLElement | null>,
   selector = '.glow-card',
+  rescanOn?: unknown,
 ): void {
   useEffect(() => {
     const el = root.current;
@@ -136,5 +142,5 @@ export function useCursorGlow(
       detachers.push(attach(n));
     });
     return () => detachers.forEach((d) => d());
-  }, [root, selector]);
+  }, [root, selector, rescanOn]);
 }

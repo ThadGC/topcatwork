@@ -4,6 +4,7 @@ import { REVIEWS } from '@/data/home/reviews';
 import { useCursorGlow } from '@/hooks/useCursorGlow';
 import { useReveal } from '@/hooks/useReveal';
 import { useReviewDeck } from '@/hooks/useReviewDeck';
+import { useMarbleDataFill } from '@/lib/marble';
 
 /**
  * `section.section.mode-grid#reviews` — index.html:3700.
@@ -17,17 +18,19 @@ import { useReviewDeck } from '@/hooks/useReviewDeck';
  * execute scripts. Rendering them in the tree costs nothing — the layout is
  * still JS (see useReviewDeck) but the text is in the HTML.
  *
- * `.rev-stone` stays empty. On the legacy page `marbleFill()` paints a
- * procedural marble into it; that generator belongs to the stone renderer and
- * is not part of this composition. `.rev-stone::after` supplies a gradient
- * over it either way, so an unfilled stone reads as a dark card rather than a
- * hole.
+ * `.rev-stone` carries the procedural marble, painted from `data-marble` by
+ * `useMarbleDataFill` — site.js:1500, `marbleFill(el, +el.dataset.marble)`.
+ * The generator lives in src/lib/marble.ts. `.rev-stone::after` lays a
+ * gradient over the result, so the card reads as veined stone under the copy
+ * rather than the flat black it showed while the fill was unwired.
  */
 export default function Reviews() {
   const { sectionRef, stageRef, deckRef, page, pagerDisabled, toggleExpand } =
     useReviewDeck(REVIEWS.length);
   const revealRef = useReveal<HTMLElement>();
   useCursorGlow(deckRef, '.rev');
+  // site.js:1500 — one seeded marble per card, read off `data-marble`.
+  useMarbleDataFill(deckRef, '.rev-stone');
 
   return (
     <section
