@@ -70,7 +70,7 @@ export default function AboutPage() {
       <SectionDivider />
       <Why />
       <SectionDivider />
-      <Reviews />
+      <Reviews inner />
       <SectionDivider />
       <Faq />
       <SectionDivider />

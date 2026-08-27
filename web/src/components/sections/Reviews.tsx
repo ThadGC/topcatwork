@@ -24,7 +24,16 @@ import { useMarbleDataFill } from '@/lib/marble';
  * gradient over the result, so the card reads as veined stone under the copy
  * rather than the flat black it showed while the fill was unwired.
  */
-export default function Reviews() {
+/**
+ * `inner` — the section is one of several on an inner page rather than the
+ * home page's full-height panel. On `/`, `#reviews` is `min-height:100vh`
+ * with `clamp(34px,13.5vh,128px)` above the title, which is right for a
+ * section that owns the viewport. On `/contact` it sits directly under a
+ * `<SectionDivider />` and that padding measured 121.5px at 1440x900 against
+ * 37.8px on the form above it and 30.6px on the FAQ below — the client:
+ * "the spacing between the divider and the ... title is way too big".
+ */
+export default function Reviews({ inner = false }: { inner?: boolean } = {}) {
   const { sectionRef, stageRef, deckRef, page, pagerDisabled, toggleExpand } =
     useReviewDeck(REVIEWS.length);
   const revealRef = useReveal<HTMLElement>();
@@ -34,7 +43,7 @@ export default function Reviews() {
 
   return (
     <section
-      className="section mode-grid"
+      className={'section mode-grid' + (inner ? ' rev-compact' : '')}
       id="reviews"
       ref={(node) => {
         sectionRef.current = node;

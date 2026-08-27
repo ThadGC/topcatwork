@@ -302,6 +302,22 @@ main{position:relative;z-index:1;overflow-x:clip}
       padding-bottom:calc(clamp(74px,9vh,104px) + clamp(6px,2.5vh,30px))}
   #reviews .rev-cta{margin-top:auto;padding-top:clamp(18px,5vh,54px)}
   #reviews .section-head,#reviews .rev-stage,#reviews .rev-cta{width:100%}
+  /* AN INNER PAGE'S REVIEWS SECTION IS NOT THE HOME PAGE'S PANEL. On `/` this
+     section owns the viewport, so 100vh and 13.5vh above the title are right.
+     On `/contact` it sits under a `<SectionDivider />` with the enquiry form
+     above and the FAQ below, and the same rule measured 121.5px between the
+     divider and the title against 37.8px on the form and 30.6px on the FAQ.
+     The client: "the spacing between the divider and the ... title is way too
+     big ... the same spacing away as the actual form design." Back to the
+     `.section` default at both ends. Set by `<Reviews inner />` — see
+     Reviews.tsx; the four inner pages pass it, `/` does not.
+     NOT `.rev-inner` — that name is already the review card's own inner face
+     (`position:absolute;inset:0`, below), and putting it on the section took
+     the whole section out of flow: the two dividers collapsed to 56px apart
+     with the reviews floating over them. */
+  #reviews.rev-compact{min-height:0;
+      padding-top:clamp(30px,4.6vh,84px);
+      padding-bottom:clamp(30px,4.6vh,84px)}
 }
 .rev-stage{position:relative;max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:center;height:calc(var(--revCardH) + clamp(20px,3.4vh,46px));
     transition:margin-bottom .45s var(--ease)}

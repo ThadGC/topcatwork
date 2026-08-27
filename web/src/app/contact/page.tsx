@@ -68,7 +68,7 @@ export default function ContactPage() {
       />
       <Cta />
       <SectionDivider />
-      <Reviews />
+      <Reviews inner />
       <SectionDivider />
       <Faq />
     </main>

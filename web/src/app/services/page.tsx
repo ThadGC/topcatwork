@@ -78,7 +78,7 @@ export default function ServicesHubPage() {
       <SectionDivider />
       <Why />
       <SectionDivider />
-      <Reviews />
+      <Reviews inner />
       <SectionDivider />
       <Cta />
     </main>

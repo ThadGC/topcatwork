@@ -66,7 +66,7 @@ export default function ProjectsPage() {
       />
       <Gallery />
       <SectionDivider />
-      <Reviews />
+      <Reviews inner />
       <SectionDivider />
       <Process />
       <SectionDivider />
