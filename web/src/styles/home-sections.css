@@ -1536,19 +1536,31 @@ html.proj-open .proj-close{top:92px}
   .est-help-cta .rev-cta-primary,.est-help-cta .rev-cta-ghost{flex:1 1 100%}
 }
 .est-poa[hidden]{display:none}
-.est-poa{display:grid;gap:clamp(9px,1.5vh,15px)}
+/* Flex + explicit margins, not one grid gap. A single gap makes every space
+   in the column identical, so the title, its lead and the points all read as
+   four unrelated things. The rhythm below is tight inside a group (title to
+   its own lead) and wider between groups (lead to the points). */
+.est-poa{display:flex;flex-direction:column;gap:0}
+/* Retired 27 Aug: the short gold rule that used to open this column had no
+   counterpart across the gutter, so the two headings sat on different lines.
+   `.est-poa-k` is the eyebrow that replaced it. Kept in case the mark is
+   wanted back somewhere. */
 .est-poa-rule{height:1px;background:linear-gradient(90deg,var(--gold),rgba(198,166,100,0));width:78px}
+.est-poa-k{display:block;margin-bottom:clamp(7px,1.05vh,10px)}
 .est-poa h3{margin:0;font-family:var(--serif);font-weight:400;line-height:1.12;color:var(--bone);
     font-size:clamp(19px,min(2.1vw,3.1vh),29px)}
 .est-poa h3 em{font-style:normal;background:linear-gradient(100deg,var(--gold-hi),var(--gold) 55%,var(--gold-lo));
     -webkit-background-clip:text;background-clip:text;color:transparent}
-.est-poa p{margin:0;font-size:13px;line-height:1.65;color:var(--muted);max-width:47ch}
-.est-poa-points{display:grid;gap:clamp(5px,0.9vh,9px);margin:clamp(1px,0.5vh,5px) 0 0;padding:0;list-style:none}
+/* The lead belongs to the title — tighter than any other space here. */
+.est-poa p{margin:clamp(7px,1.05vh,11px) 0 0;font-size:13px;line-height:1.65;color:var(--muted);max-width:47ch}
+.est-poa-points{display:grid;gap:clamp(5px,0.9vh,9px);margin:clamp(11px,1.6vh,16px) 0 0;padding:0;list-style:none}
 .est-poa-points li{position:relative;padding-left:19px;font-size:12.5px;line-height:1.5;color:var(--bone);font-weight:300}
 .est-poa-points li::before{content:"";position:absolute;left:1px;top:0.52em;width:7px;height:7px;
     background:var(--gold);transform:rotate(45deg)}
-.est-poa-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:clamp(2px,0.8vh,8px)}
-.est-poa-cta .rev-cta-primary,.est-poa-cta .rev-cta-ghost{min-width:172px;text-align:center}
+.est-poa-foot{display:grid;gap:clamp(10px,1.4vh,14px);margin-top:clamp(15px,2.2vh,22px)}
+.est-poa-cta{display:grid;gap:9px}
+.est-poa-foot .rev-cta-primary,.est-poa-foot .rev-cta-ghost{min-width:0;width:100%;text-align:center}
+.est-poa-or{margin:0}
 /* The priced-by-hand panel is far shorter than the calculator it replaces,
    and since 27 Aug the board beside it carries the enquiry form and is
    taller — so on the two-column layout the panel's buttons sit at the foot
@@ -1564,20 +1576,41 @@ html.proj-open .proj-close{top:92px}
   /* flex, not the grid it is by default: a stretched GRID spreads the spare
      height across every row and pulls the copy apart. A flex column stacks
      identically (same gap, one column) and hands all of it to one margin. */
-  .est-panel.est-poa-on > .est-poa{display:flex;flex-direction:column;flex:1 1 auto;
-      justify-content:space-between}
+  .est-panel.est-poa-on > .est-poa{display:flex;flex-direction:column;flex:1 1 auto}
+  /* THE TWO HEADINGS SIT ON ONE LINE. The client: "the porcelain priced by
+     hand [is] not in line with the price on application". Two things were in
+     the way, and only the second is obvious.
+     1. The head of this column is a different height in the two priced-by-
+        hand states: marble carries the selected-stone chip under the tabs,
+        porcelain has no per-stone choice and hides it. Measured at 1440: the
+        chip is 47.9px tall at 760, 51.9 at 900, 52.9 at 1080, and that was
+        the ENTIRE difference between the two states. `.est-nochip` reserves
+        it, so the hairline and everything under it sit on one line either
+        way — and switching material no longer makes the copy jump.
+     2. With that reserved, both states still sat ~27px low, because this
+        head (label + tabs + chip) is simply taller than the board's (label +
+        name-plate bar). That is corrected on the board, in `.est-out` below,
+        rather than by squeezing this column against its own hairline.
+     Re-measure with `probe-poa-layout.mjs` (it prints ALIGN.titleDelta) on
+     BOTH materials if either column's head changes. */
+  .est-panel.est-poa-on.est-nochip > .est-block:first-child{
+      padding-bottom:clamp(47px,5.9vh,53px)}
   /* The two columns are `align-items:stretch`, so whichever is taller sets the
-     height and the other carries the slack. Spreading it between the blocks
-     reads as air; dumping it all above the buttons reads as a hole. The gap
-     is capped so a very short panel cannot pull the copy apart, which is what
-     stretching the grid used to do. */
-  .est-panel.est-poa-on > .est-poa > * + *{margin-top:0}
-  .est-panel.est-poa-on .est-poa-cta{margin-top:clamp(2px,0.8vh,8px)}
+     height and the other carries the slack. This used to be
+     `justify-content:space-between`, which handed the slack to EVERY gap:
+     measured at 1440x900 it put 61px between the rule and the title, 61px
+     between the title and its lead, 61px before the points and 68px before
+     the buttons. All of it now goes to one margin above the foot, where a
+     labelled hairline makes it read as a section break instead of a hole. */
+  .est-panel.est-poa-on .est-poa-foot{margin-top:auto;padding-top:clamp(6px,1.2vh,14px)}
 
   /* The panel's primary is dropped here: the form in the next column IS "get
      a price for this stone", and two gold buttons saying it was the point of
-     the note. What is left is how to reach a person — phone and email. */
-  .est-panel.est-poa-on .est-poa-cta .rev-cta-primary{display:none}
+     the note. What is left is how to reach a person — phone and email, and
+     the phone takes the gold so the column still has an anchor. */
+  .est-panel.est-poa-on .est-poa-get{display:none}
+  .est-panel.est-poa-on .est-poa-call{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .est-panel.est-poa-on .est-poa-call:hover{background:var(--gold-hi);border-color:var(--gold-hi)}
   .est-poa-mail{display:inline-flex;align-items:center;justify-content:center;
       text-transform:none;letter-spacing:0.01em}
 
@@ -1598,7 +1631,9 @@ html.proj-open .proj-close{top:92px}
 
   /* And the whole board stacks from the top instead of pinning the outcome
      block to the bottom — with the bar above it there is nothing to pin. */
-  .est-preview.est-poa-on .est-out{margin-top:0;padding-top:clamp(11px,1.5vh,15px)}
+  /* +27px over the calculator's own spacing — see point 2 above. It also
+     gives the head some air under the name-plate bar, which it did not have. */
+  .est-preview.est-poa-on .est-out{margin-top:0;padding-top:calc(clamp(11px,1.5vh,15px) + 27px)}
   /* The bar already names the stone and its finish. */
   .est-preview.est-poa-on .est-meta{display:none}
   .est-preview.est-poa-on .est-form{margin-top:clamp(9px,1.3vh,13px);

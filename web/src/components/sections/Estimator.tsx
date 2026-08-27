@@ -492,7 +492,13 @@ export default function Estimator() {
               taller — see home-sections.css. */}
           <div
             className={
-              'est-panel glow-card rise' + (showEngine && !result.poaHidden ? ' est-poa-on' : '')
+              'est-panel glow-card rise' +
+              (showEngine && !result.poaHidden ? ' est-poa-on' : '') +
+              /* Porcelain has no per-stone choice, so the stone chip below the
+                 tabs is hidden and this column's head is 52px shorter than it
+                 is on marble. Without this the priced-by-hand heading sat on a
+                 different line in each state. See `.est-nochip`. */
+              (showEngine && est.stoneBtnHidden ? ' est-nochip' : '')
             }
             id="estPanel"
           >
@@ -779,7 +785,12 @@ export default function Estimator() {
             </div>
 
             <div className="est-poa" id="estPoa" hidden={showEngine ? result.poaHidden : true}>
-              <span className="est-poa-rule" aria-hidden="true" />
+              {/* The same `.est-k` eyebrow the board opposite uses above "Price
+                  on application". It is here so the two columns rhyme —
+                  eyebrow over title, on the same line — which is what puts
+                  this title level with that one. It replaced a short gold
+                  rule that had nothing to answer to across the gutter. */}
+              <span className="est-k est-poa-k">How we price it</span>
               {/* site.js:3909 — the head is the one string the panel writes as HTML. */}
               <h3
                 id="estPoaTitle"
@@ -805,28 +816,41 @@ export default function Estimator() {
                   something better
                 </li>
                 <li>Samples come to your kitchen, and you approve your own slab from photographs before a single cut</li>
+                <li>
+                  A free home visit to template, a fixed itemised price in writing before anything is cut, and a
+                  ten-year guarantee on the install
+                </li>
               </ul>
               {/* The uploader used to sit here, with nothing under it to send
                   it with. It now lives inside the board's own form, next to
                   the fields it is attached to — see EstimateEnquiry.tsx. */}
-              <div className="est-poa-cta">
+              {/* The foot of the column. Everything above it is one tight
+                  block of copy; on desktop ALL the panel's spare height lands
+                  here in ONE place (`margin-top:auto`) instead of being
+                  spread between every line, which opened a 61px hole between
+                  each of them. The labelled hairline is the same `.cta-or`
+                  the contact card uses, so the slack reads as structure. */}
+              <div className="est-poa-foot">
                 {/* Points at the board's own form, not at `#cta` down the page.
-                    Until 27 Aug there was nothing else it could point at; now
-                    the thing it promises is in the next column (and, on a
-                    phone, directly below). */}
-                <a className="rev-cta-primary" href="#estPoaForm">
+                    Phone only: on desktop the form IS in the next column, so
+                    a button saying "get a price" beside it is noise. */}
+                <a className="rev-cta-primary est-poa-get" href="#estPoaForm">
                   Get a price for this stone
                 </a>
-                <a className="rev-cta-ghost" href="tel:+448000982812">
-                  Call 0800 098 2812
-                </a>
-                {/* Desktop only — see `.est-poa-mail` in home-sections.css.
-                    The phone's two-button row is the one the client signed
-                    off; on desktop the primary is dropped (the form beside it
-                    IS the primary) and the email takes its place. */}
-                <a className="rev-cta-ghost est-poa-mail" href="mailto:info@topcatworktops.co.uk">
-                  info@topcatworktops.co.uk
-                </a>
+                <div className="cta-or est-poa-or">Or reach us directly</div>
+                <div className="est-poa-cta">
+                  {/* Stacked, not a row. Two equal outlined buttons side by
+                      side read as a pair of tabs. This one goes gold on
+                      desktop, where the primary above it is hidden and the
+                      column would otherwise have no anchor. */}
+                  <a className="rev-cta-ghost est-poa-call" href="tel:+448000982812">
+                    Call 0800 098 2812
+                  </a>
+                  {/* Desktop only — see `.est-poa-mail` in home-sections.css. */}
+                  <a className="rev-cta-ghost est-poa-mail" href="mailto:info@topcatworktops.co.uk">
+                    info@topcatworktops.co.uk
+                  </a>
+                </div>
               </div>
             </div>
           </div>
