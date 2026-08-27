@@ -108,11 +108,23 @@
 # 608:1080 -> 406:720 is 0.16% wide, both of which lib/constants.ts FILM_W
 # records and tolerates.
 #
-# POSTERS AND PLATES ARE CUT FROM THE ENCODED CLIP, NEVER FROM THE MASTER. Each
-# is held on screen until the decoder paints a real frame and is then swapped
-# for that frame — if it came from the master it is a different image and the
-# swap is a visible pop. The plate is the same frame by the same command as the
-# poster, so it is copied rather than re-encoded and the two are byte-identical.
+# ⛔ REVERSED 27 Aug. POSTERS AND PLATES NOW COME FROM THE CLIENT'S HIGH-RES
+# FRAME-0 RENDERS, not from the encoded clip. The old rule (cut from the clip,
+# "never from the master", so the swap cannot pop) traded a visible blur on
+# arrival for an invisible handover. That is the wrong way round: the visitor
+# looks at the plate at REST, and only sees the swap once scrolling has already
+# put the film in motion. The client reported the blur directly.
+#
+# The numbers that settled it: `.plate` is background-size:cover on a box of
+# 100vw+2*--curveOut by 100vh, so a 393pt phone at DPR 3 paints this picture at
+# ~1438x2556 device px. The clip-cut phone plate was 406x720 — a 3.5x upscale.
+# From the still it is 1080x1920, a 1.33x one.
+#
+# The stills must stay frame-exact against the MASTER or the swap really will
+# pop. Both shipped ones were verified that way (offset sweep, PSNR peak at
+# dx=0 falling ~5.5dB at +/-1px; grade within 2.4 luma). Re-verify before
+# swapping in any new render. The plate and poster are still one picture,
+# copied rather than re-encoded, so they stay byte-identical.
 #
 # Usage:
 #   bash scripts/encode-film.sh [--mobile|--desktop|--all] <desktop-master> [outdir]
@@ -203,10 +215,32 @@ poster() {
   rm -f "$tmp"
 }
 
+# ── plates — from the CLIENT'S HIGH-RES STILL, never from the clip ────────────
+# See the header. ffmpeg here has no libwebp and cwebp is not installed, so this
+# uses the sharp that Next.js already pulls in. Override the stills with
+# TOPCAT_STILL_WIDE / TOPCAT_STILL_PHONE.
+STILL_WIDE="${TOPCAT_STILL_WIDE:-$HOME/Downloads/F1 FIXED SLAB.png}"
+STILL_PHONE="${TOPCAT_STILL_PHONE:-$HOME/Downloads/F1 SLAB mobile.png}"
+
+plate_from_still() {            # $1 still  $2 out.webp  $3 width  $4 quality
+  [ -f "$1" ] || { echo "Still not found: $1" >&2; exit 66; }
+  local web_root sharp_dir
+  web_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+  sharp_dir=$(find "$web_root/node_modules/.pnpm" -maxdepth 4 -type d -name sharp -path '*sharp@*' 2>/dev/null | head -1)
+  [ -n "$sharp_dir" ] || { echo "sharp not installed — run pnpm install in web/" >&2; exit 127; }
+  NODE_PATH="$(dirname "$sharp_dir")" node -e '
+    const sharp = require("sharp");
+    sharp(process.argv[1]).resize({ width: +process.argv[3] })
+      .webp({ quality: +process.argv[4], effort: 6 }).toFile(process.argv[2])
+      .then(i => console.log(`  plate ${i.width}x${i.height} ${i.size} B -> ${process.argv[2]}`))
+      .catch(e => { console.error(e.message); process.exit(1); });
+  ' "$1" "$2" "$3" "$4"
+}
+
 if [ "$DO_DESKTOP" = 1 ]; then
   encode_desktop
-  poster "$OUT/topcat-intro-1920.mp4" "$OUT/topcat-intro-1920-poster.webp"
-  cp -f "$OUT/topcat-intro-1920-poster.webp" "$OUT/plates/plate-f0.webp"
+  plate_from_still "$STILL_WIDE" "$OUT/plates/plate-f0.webp" 2688 78
+  cp -f "$OUT/plates/plate-f0.webp" "$OUT/topcat-intro-1920-poster.webp"
 fi
 
 if [ "$DO_MOBILE" = 1 ]; then
@@ -217,8 +251,8 @@ if [ "$DO_MOBILE" = 1 ]; then
 
   # phone — 608 wide, centred: (1920 - 608) / 2 = 656.
   encode_mobile 608 "crop=608:1080:656:0"
-  poster "$OUT/topcat-intro-608.mp4" "$OUT/topcat-intro-608-poster.webp"
-  cp -f "$OUT/topcat-intro-608-poster.webp" "$OUT/plates/plate-f0-phone.webp"
+  plate_from_still "$STILL_PHONE" "$OUT/plates/plate-f0-phone.webp" 1080 80
+  cp -f "$OUT/plates/plate-f0-phone.webp" "$OUT/topcat-intro-608-poster.webp"
 fi
 
 echo "Encoded into $OUT:"

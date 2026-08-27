@@ -184,7 +184,7 @@ describe('markup', () => {
     // `.plate` is over the film at opacity 1 until the decoder paints, so it is
     // what the visitor looks at while the film buffers. It was arriving at
     // t=553ms, behind the service strip. The reduced-motion clause is what
-    // keeps a visitor who will never see the film from fetching 41,906 bytes.
+    // keeps a visitor who will never see the film from fetching 161,438 bytes.
     mockMatchMedia(390);
     const html = renderToStaticMarkup(<HeroFilm />);
     const links = [...html.matchAll(/<link[^>]*rel="preload"[^>]*>/g)].map((m) => m[0]);
@@ -246,11 +246,11 @@ describe('how the clip is loaded', () => {
     const video = container.querySelector('video')!;
     expect(video.getAttribute('src')).toBe('/assets/video/topcat-intro-608.mp4?v=9');
     // The poster IS the plate — same sha256, one URL, one download. The
-    // separate `topcat-intro-608-poster.webp?v=9` was 41,906 duplicate bytes
+    // separate `topcat-intro-608-poster.webp?v=9` was 161,438 duplicate bytes
     // arriving at t=556ms, in the window the film needs for its first range
     // request. See the note on DEFAULT_SOURCES.poster.
     expect(video.getAttribute('poster')).toBe(
-      '/assets/video/plates/plate-f0-phone.webp?v=5',
+      '/assets/video/plates/plate-f0-phone.webp?v=6',
     );
   });
 

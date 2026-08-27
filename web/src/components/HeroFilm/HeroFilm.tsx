@@ -207,7 +207,7 @@ export function HeroFilm({
         nothing asks for it until the engine writes it as a CSS background.
 
         `media` does the band pick, and the reduced-motion clause is what stops
-        a visitor who will never see the film from fetching 41,906 bytes of it.
+        a visitor who will never see the film from fetching 161,438 bytes of it.
         Both are evaluated by the preload scanner, ahead of script execution,
         which is why this earns its place beside a boot script that could
         otherwise set it itself. The URL is the same one the <video poster> and

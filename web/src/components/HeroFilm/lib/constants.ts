@@ -195,21 +195,47 @@ export const VP_H_SLOP = 140;
 /**
  * Default frame-0 still plates, per band.
  *
- * Held over the film until the decoder paints a real frame, so each one is
- * extracted from the exact clip above and never from the master — otherwise
- * the handover from plate to first frame is a visible pop. All three were
- * re-cut from the 24fps encodes and are byte-identical to that band's poster,
- * which is the same frame by the same command; `v=5` retires the ones cut from
- * the 60fps clips (and, for the two mobile bands, from the un-scaled 1080
- * crops — the phone plate was 608x1080 against a 406x720 encode). There are
- * two plates now, not three: the tablet shares the wide one.
+ * ⛔ REVERSED 27 Aug (v=6). These are now cut from the CLIENT'S OWN HIGH-RES
+ * RENDERS of frame 0, not from the shipped encodes:
+ *
+ *   wide   `F1 FIXED SLAB.png`  2688x1513  ->  2688x1513 webp q78  343,850 B
+ *   phone  `F1 SLAB mobile.png` 1080x1920  ->  1080x1920 webp q80  161,438 B
+ *
+ * The rule this replaces said to cut the plate from the exact clip "and never
+ * from the master", so that the handover from plate to first frame could not
+ * pop. That bought an invisible handover at the cost of a VISIBLE BLUR on
+ * arrival, which is the wrong trade and the client reported it as such:
+ * "There can be no blur on the image when the user loads in."
+ *
+ * The blur was not subtle and it was not the encode's fault. `.plate` is
+ * `background-size:cover` on a box of `100vw + 2*--curveOut` by `100vh`, so a
+ * 393pt phone at DPR 3 renders this picture at ~1438x2556 device px. The old
+ * phone plate was 406x720 — a 3.5x upscale. It is now 1080x1920, a 1.33x one.
+ * The wide plate was 1920x1080 against ~3198x1800 on a retina 1440; it is now
+ * 2688x1513. Both were additionally carrying the video encode's own loss.
+ *
+ * Why the handover still does not pop: both stills were verified frame-exact
+ * against the MASTERS before use (offset sweep, PSNR peak at dx=0 falling
+ * ~5.5dB at +/-1px; grade within 2.4 luma), and `.plate` and `.vid` share
+ * `cover` + centre, so the geometry is identical. What changes at handover is
+ * sharpness only, and it happens on the first scroll — with the film already
+ * in motion, which masks it. At rest, which is what the visitor actually
+ * looks at, the picture is now sharp.
+ *
+ * The ceiling here is the source, not the encoder: 1080w is still 0.75x of
+ * what a 393pt/DPR3 phone wants and 2688w is 0.84x of a retina 1440. Higher
+ * would need a bigger render from the client, not a re-encode. AVIF was
+ * measured and saves only ~10% at matched quality, which does not justify a
+ * second format against the one-URL rule below.
+ *
+ * Still byte-identical to that band's poster — see the note there.
  *
  * Declared BEFORE `DEFAULT_SOURCES` because the posters below are these — see
  * the note there.
  */
 export const DEFAULT_PLATES = {
-  src: '/assets/video/plates/plate-f0.webp?v=5',
-  srcPhone: '/assets/video/plates/plate-f0-phone.webp?v=5',
+  src: '/assets/video/plates/plate-f0.webp?v=6',
+  srcPhone: '/assets/video/plates/plate-f0-phone.webp?v=6',
 } as const;
 
 export const DEFAULT_SOURCES = {
@@ -218,9 +244,9 @@ export const DEFAULT_SOURCES = {
     THE POSTER IS THE PLATE. Not "the same picture" — the same bytes:
 
       sha256 topcat-intro-1920-poster.webp == plates/plate-f0.webp
-             345566a78915aae5041dea524cc6e03651959cb31e787f47a449709d8202907d
+             36bcf321aa6e759ba247251c9b64ebac39fc0137808dae31c69f10acdaf0fa14
       sha256 topcat-intro-608-poster.webp  == plates/plate-f0-phone.webp
-             c544793a0d40cd2007da34504005335b9daecafd1f40441e1a789b768d070e89
+             db54b8fb798ee0c82b5ff86d8b38e695fa88e2d59346668e398c99c6cf672516
 
     scripts/encode-film.sh makes them with `cp -f`, so they cannot
     drift. They used to be named as two different URLs, which is two cache
