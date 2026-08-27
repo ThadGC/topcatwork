@@ -6,6 +6,7 @@ import { SERVICES } from '@/data/home/services';
 import { srcSet } from '@/data/home/srcset';
 import { useCursorGlow } from '@/hooks/useCursorGlow';
 import { useReveal } from '@/hooks/useReveal';
+import { useServiceHelix } from '@/hooks/useServiceHelix';
 
 /**
  * `section.section#services` — index.html:3717.
@@ -330,10 +331,12 @@ function usePhoneCardLinks(gridRef: React.RefObject<HTMLDivElement | null>) {
 export default function Services() {
   const sectionRef = useReveal<HTMLElement>();
   const gridRef = useRef<HTMLDivElement | null>(null);
+  const helixRef = useRef<HTMLDivElement | null>(null);
   const [flipped, setFlipped] = useState<ReadonlySet<number>>(new Set());
 
   useServicesReveal(gridRef);
   usePhoneCardLinks(gridRef);
+  useServiceHelix(helixRef);
   useCursorGlow(gridRef, '.svc');
 
   const toggle = (i: number) =>
@@ -397,7 +400,46 @@ export default function Services() {
         </div>
 
         <div className="svc-helix" id="svcHelix" aria-label="Service showcase">
-          <div className="helix-stage" id="helixStage" />
+          <div className="helix-stage" id="helixStage" ref={helixRef}>
+            {HELIX_ORDER.map((idx) => {
+              const s = SERVICES[idx];
+              const responsive = srcSet(s.img, '(max-width:720px) 210px, 385px');
+              return (
+                <article
+                  key={s.href}
+                  className="helix-card"
+                  role="group"
+                  aria-label={s.t}
+                >
+                  <div className="hx-face hx-front glow-card">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={s.img}
+                      {...responsive}
+                      alt={s.t}
+                      draggable={false}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className="hx-veil" />
+                    <div className="hx-meta">
+                      <h3 className="hx-name">{s.t}</h3>
+                      <a className="hx-link" href={s.href}>
+                        View this service
+                      </a>
+                    </div>
+                  </div>
+                  <div className="hx-face hx-back glow-card">
+                    <div className="hx-back-frame">
+                      <span className="hx-back-diamond" />
+                      <span className="hx-back-word">Topcat</span>
+                      <span className="hx-back-sub">Worktops</span>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
           <div className="helix-ui">
             <button className="wbtn" id="helixPrev" aria-label="Previous service">
               <svg viewBox="0 0 24 24">

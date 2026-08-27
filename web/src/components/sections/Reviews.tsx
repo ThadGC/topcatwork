@@ -174,7 +174,7 @@ export default function Reviews() {
 
       <div className="rev-cta">
         <p className="rev-cta-line">
-          Like what you&apos;re reading?
+          Like what you&apos;re reading?{' '}
           <a className="rev-cta-go" href="#cta">
             Let us bring your vision to life
             <svg
