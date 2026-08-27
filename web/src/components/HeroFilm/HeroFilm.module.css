@@ -141,6 +141,26 @@
   opacity: 0;
 }
 
+/* THE END OF THE FILM SHOWS THE STILL, NOT THE DECODER'S LAST PAINT.
+   `lockFilm()` seeks to the final frame, but `currentTime` reports the
+   REQUESTED time immediately while the picture only follows once that byte
+   range is buffered — and the 1920 cut is 24 MB. Reach the end (or press
+   Skip) before the tail has arrived and the decoder keeps the last frame it
+   actually decoded, which is a quarry shot, under the hero copy. Measured:
+   currentTime 44.25 of a 44.25s film, quarry on screen.
+
+   The still IS the film's last frame (hero-night-2752.webp — the night
+   kitchen), so revealing it here is what the shot was always meant to be; it
+   just no longer depends on the network. The <img> precedes the <video> in
+   the markup, so it sits underneath and the 0.5s fade below uncovers it with
+   nothing showing through. */
+:global(html.cine-on.cine-done) .cine .bgImg {
+  opacity: 1;
+}
+:global(html.cine-on.cine-done) .vid {
+  opacity: 0;
+}
+
 .vid {
   display: none;
 }
