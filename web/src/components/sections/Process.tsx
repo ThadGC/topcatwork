@@ -319,7 +319,12 @@ export default function Process() {
           </button>
           <div className="pm-shot">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt={p?.t ?? ''} id="pmShot" src={p?.img} draggable={false} />
+            {/* Rendered only when a card is open. It used to be here always,
+                with `src={undefined}` — a src-less <img> sitting in the DOM of
+                every page that carries this section, which the 27 Aug image
+                audit picked up as a broken image on five pages. Nothing else
+                references `#pmShot`. */}
+            {p ? <img alt={p.t} id="pmShot" src={p.img} draggable={false} /> : null}
             <span className="pm-badge" id="pmBadge">
               {detail === null ? '' : String(detail + 1)}
             </span>

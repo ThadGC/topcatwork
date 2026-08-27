@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 import HeroFilm from '@/components/HeroFilm';
 import JourneyTracker from '@/components/forms/JourneyTracker';
 import { JsonLd } from '@/components/chrome/JsonLd';
@@ -49,6 +51,20 @@ import '@/styles/home-sections.css';
  * All four are the chrome agent's, and slot in without touching this file's
  * section order.
  */
+/**
+ * The home page carried NO canonical, on this build or the legacy one. The
+ * 27 Aug audit walked all 178 pages: every other one has a title, a
+ * description, exactly one h1 and a canonical, and only `/` was missing this.
+ * Inherited rather than a regression, but it is the most linked page on the
+ * site and the one most likely to be reached with query strings on it.
+ *
+ * Only `alternates` is set here: title, description and openGraph stay the
+ * root layout's, which are already written for this page.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://www.topcatworktops.co.uk/' },
+};
+
 export default function HomePage() {
   return (
     <main>

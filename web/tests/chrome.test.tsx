@@ -333,15 +333,23 @@ describe('SiteFooter', () => {
     ).toBeInTheDocument();
   });
 
-  it('carries the Explore column and the bare #faq link the source ships', () => {
+  it('carries the Explore column and an FAQ link that resolves everywhere', () => {
     const { container } = render(<SiteFooter />);
     expect(container.querySelectorAll('.foot-explore li')).toHaveLength(
       FOOT_EXPLORE.length,
     );
-    // Dead on 174 of 178 pages. A source bug, carried; pass faqHref to fix it.
+    /*
+      WAS a bare `#faq`, which is what the source ships and what this test used
+      to assert. It resolves on only three of the 178 pages (home, about,
+      contact) and was dead on the other 175 — the 27 Aug control audit clicked
+      it on /privacy, /terms and /stones/compare.html and it went nowhere.
+      The client asked for every button to go where it is supposed to, so the
+      default is now `/#faq`. Deliberate divergence from the legacy build; do
+      not "restore" it to match old.
+    */
     expect(screen.getByRole('link', { name: 'FAQ' })).toHaveAttribute(
       'href',
-      '#faq',
+      '/#faq',
     );
   });
 

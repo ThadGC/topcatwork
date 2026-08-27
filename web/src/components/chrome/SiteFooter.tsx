@@ -56,7 +56,16 @@ export interface SiteFooterProps {
  *      conditional, no interpolated child below them, or React will re-insert
  *      them where it thinks they belong and undo the move.
  */
-export function SiteFooter({ faqHref = '#faq' }: SiteFooterProps) {
+/*
+  `/#faq`, not a bare `#faq`. The source hard-codes the bare form, which
+  resolves only on the three pages that have a FAQ section (home, about,
+  contact) and is a dead link on the other 174 — the 27 Aug control audit
+  clicked it on /privacy, /terms and /stones/compare.html and it went nowhere.
+  The client asked for every button to go where it is supposed to, so this is
+  the fix the port note already proposed. On the three pages that do have one,
+  this now goes to the home page's FAQ, which is the same <Faq/> component.
+*/
+export function SiteFooter({ faqHref = '/#faq' }: SiteFooterProps) {
   const footer = useRef<HTMLElement>(null);
   const tail = useRef<HTMLDivElement>(null);
   const contact = useRef<HTMLDivElement>(null);

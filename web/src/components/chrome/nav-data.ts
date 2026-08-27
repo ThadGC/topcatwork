@@ -129,8 +129,11 @@ export const FOOT_EXPLORE: readonly NavLink[] = [
 /**
  * `faqHref` fills the last slot. The source hard-codes a bare `#faq`, which
  * only resolves on the three pages that actually have a FAQ section (home,
- * about, contact) and is a dead link on the other 174. Carried as-is; pass
- * `faqHref="/#faq"` to <SiteFooter> if the client wants it fixed.
+ * about, contact) and was a dead link on the other 174.
+ *
+ * FIXED 27 Aug 2026: <SiteFooter> now defaults it to `/#faq`. The client asked
+ * for every button to go where it is supposed to, and the audit caught this
+ * one going nowhere on /privacy, /terms and /stones/compare.html.
  */
 export const FOOT_BROWSE_HEAD: readonly NavLink[] = [
   { href: '/materials/', label: 'Materials' },
