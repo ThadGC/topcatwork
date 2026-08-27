@@ -38,6 +38,11 @@ export const WHATSAPP_DISPLAY = '07464 940287';
 export const EMAIL = 'info@topcatworktops.co.uk';
 export const EMAIL_HREF = `mailto:${EMAIL}`;
 
+/* Added 27 Aug 2026 at the client's request; he supplied this URL. It is the
+   numeric profile form Facebook gives a page that has not claimed a
+   username yet — if he ever sets one, this becomes
+   https://www.facebook.com/<username>/ and should be updated here. */
+export const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61577924849490';
 export const INSTAGRAM_URL = 'https://www.instagram.com/topcatworktops/';
 export const LINKEDIN_URL = 'https://www.linkedin.com/company/topcat-worktops/';
 
