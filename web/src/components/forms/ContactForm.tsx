@@ -22,8 +22,9 @@
    islands happen to be on the page.
    ========================================================================== */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { MATERIALS, matLabel, type MatKey } from '@/data/home/stoneWheel';
 import { appendUploads, clearUploads, getFiles, getLink, subscribe } from '@/lib/form/uploads';
 import TcUpload from './TcUpload';
 import { badProps, useEnquiryForm } from './useEnquiryForm';
@@ -39,7 +40,27 @@ interface StoneDetail {
 
 const CLASSES = ['cta-form'] as const;
 
-export default function ContactForm() {
+/** The three material tabs, in the wheel's own order. */
+const PICK_MATS: MatKey[] = ['Quartz', 'Marble', 'Granite'];
+
+export interface ContactFormProps {
+  /**
+   * Offer a stone picker when no stone has been chosen.
+   *
+   * OFF EVERYWHERE EXCEPT THE HOME PAGE, and that is the client's line
+   * (27 Aug): "on the home page, the get in touch form, if someone hasn't
+   * selected a stone, they should be able to choose... but it has to say
+   * that it's optional. It doesn't have to be on the inner contact forms."
+   *
+   * The home page is the one page where the enquiry card sits below the
+   * stone wheel, so it is the one page where arriving at the form without a
+   * stone reads as something the visitor missed rather than something the
+   * page never offered.
+   */
+  stonePicker?: boolean;
+}
+
+export default function ContactForm({ stonePicker = false }: ContactFormProps = {}) {
   const [stone, setStone] = useState<string>('');
   const [upOpen, setUpOpen] = useState(false);
   const [upCount, setUpCount] = useState('');
@@ -77,11 +98,17 @@ export default function ContactForm() {
     return () => document.removeEventListener('topcat:stone', onStone);
   }, []);
 
-  /* site.js:4366–4372 — the hook the payload builder calls. */
+  /* site.js:4366–4372 — the hook the payload builder calls.
+
+     CHAINED, NOT REPLACED. The estimator's POA form installs one too, and on
+     /estimate/ and the home page both are mounted at once; whichever mounted
+     last would otherwise strip the other's stone and attachments. Every link
+     ignores forms that are not its own, so chaining is safe. */
   useEffect(() => {
     const el = form.formRef.current;
     const previous = window.TC_FORM_EXTRA;
     window.TC_FORM_EXTRA = (fd, f) => {
+      if (typeof previous === 'function') previous(fd, f);
       if (f !== el) return;
       if (stone) fd.append('stone', stone);
       appendUploads(fd);
@@ -102,6 +129,41 @@ export default function ContactForm() {
     sync();
     return subscribe(sync);
   }, []);
+
+  /* The wheel's own three lists, flattened into <optgroup>s. Derived, not
+     copied: `MATERIALS` is itself derived from data/stones.json. */
+  const pickGroups = useMemo(
+    () =>
+      PICK_MATS.map((m) => ({
+        key: m,
+        label: matLabel(m),
+        stones: MATERIALS[m],
+      })),
+    [],
+  );
+
+  /* Choosing here dispatches the SAME event the wheel dispatches, so the
+     chip, the payload and any other listener are fed by one path. */
+  const onPick = (slug: string) => {
+    if (!slug) return;
+    for (const m of PICK_MATS) {
+      const hit = MATERIALS[m].find((x) => x.slug === slug);
+      if (!hit) continue;
+      document.dispatchEvent(
+        new CustomEvent('topcat:stone', {
+          detail: {
+            name: hit.name,
+            mat: hit.mat,
+            kind: hit.kind,
+            stone: hit.stone,
+            seed: hit.seed,
+            slug: hit.slug,
+          },
+        }),
+      );
+      return;
+    }
+  };
 
   const note = form.note;
 
@@ -146,6 +208,28 @@ export default function ContactForm() {
           {...badProps(form.bad, 'postcode')}
         />
       </div>
+      {/* The picker and the chip are one slot: pick a stone and the chip
+          replaces the select, clear the chip and the select comes back. */}
+      {stonePicker && !stone ? (
+        <select
+          id="ctaStonePick"
+          className="cta-stonepick"
+          value=""
+          onChange={(e) => onPick(e.target.value)}
+          aria-label="Choose your stone — optional"
+        >
+          <option value="">Choose your stone (optional)</option>
+          {pickGroups.map((g) => (
+            <optgroup key={g.key} label={g.label}>
+              {g.stones.map((x) => (
+                <option key={x.slug} value={x.slug}>
+                  {x.name}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+      ) : null}
       <div className="cta-stone" id="ctaStone" hidden={!stone}>
         <span className="cs-label">Your stone</span>
         <span className="cs-name" id="ctaStoneName">

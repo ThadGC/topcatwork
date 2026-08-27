@@ -56,7 +56,7 @@ export const REV_S: readonly number[] = [
   -0.3803, -0.3845,
 ];
 
-/* ── tablet, 721-1120px — film width 864, reveal starts at source frame 157 ── */
+/* ── tablet, 721-1120px — film width 584, reveal starts at source frame 157 ── */
 
 export const TREV_F0 = 157;
 export const TREV_YREF = 360;

@@ -99,7 +99,9 @@ export default function HomePage() {
       <SectionDivider />
       <Faq />
 
-      <Cta />
+      {/* The one page whose enquiry card sits below the stone wheel, so the
+          one page that offers the stone as an optional field. See Cta.tsx. */}
+      <Cta stonePicker />
 
       <TradePrompt />
 

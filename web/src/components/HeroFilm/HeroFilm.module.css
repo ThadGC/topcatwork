@@ -18,7 +18,7 @@
    ── the three bands ─────────────────────────────────────────────────────────
      >=1121px   wide    the film-space layout: lines positioned in FILM
                         coordinates off --filmU/--filmX/--filmY
-     721-1120   tablet  its own 864-wide cut, left-aligned lines
+     721-1120   tablet  its own 584-wide cut, left-aligned lines
      <=720px    phone   the 608-wide cut, centred lines
    Both the narrow and the phone media queries match on a phone. That is
    deliberate and the JS relies on it.

@@ -185,15 +185,39 @@ export function clearOpening(
 }
 
 /**
+ * Which slot the wheel parks the landing stone in.
+ *
+ * NOT THE SOURCE'S — the source only ever has `Math.min(LAND, n - 1)`, because
+ * its belt always wraps (it repeats the list until it is wider than the wheel).
+ * A belt that does NOT wrap is a fan of exactly `n` slabs with two ends, and
+ * parking a 4-stone fan at slot 3 puts three of them off the left edge. Centre
+ * it instead, so every stone that survived the filter is on screen.
+ *
+ * See `makeBelt` for why short belts stopped wrapping.
+ */
+export function landSlot(n: number, wraps: boolean): number {
+  if (n <= 0) return 0;
+  return wraps ? Math.min(LAND, n - 1) : Math.floor((n - 1) / 2);
+}
+
+/**
  * site.js:1033-1038 — rotate the cleared belt so the landing stone sits at
  * index `LAND` (3), which is where `startGallery` parks `current`.
+ *
+ * `slot` is this port's: a non-wrapping belt lands in the middle instead. It
+ * defaults to the source's slot, so every existing caller and test is
+ * unchanged.
  */
-export function fanOrder(list: WheelStone[], currentMat: MatKey): WheelStone[] {
+export function fanOrder(
+  list: WheelStone[],
+  currentMat: MatKey,
+  slot?: number,
+): WheelStone[] {
   if (list.length < 3) return list.slice();
   /* ONE argument — see landingIndex's trap note. */
   const { list: belt, s } = clearOpening(list, landingIndex(list, currentMat));
   const n = belt.length;
-  const L = Math.min(LAND, n - 1);
+  const L = slot == null ? Math.min(LAND, n - 1) : Math.min(Math.max(slot, 0), n - 1);
   const out = new Array<WheelStone>(n);
   for (let k = 0; k < n; k++) out[(L + k) % n] = belt[(s + k) % n];
   return out;
@@ -375,6 +399,9 @@ export function useStoneWheel(
     let nodes: HTMLDivElement[] = [];
     let animTimers: ReturnType<typeof setTimeout>[] = [];
     let bendCache: number | null = null;
+    /* Not the source's: it always wraps. Refreshed by every `metrics()` call,
+       which `layout` makes once a frame, and read by `tick`'s end-stops. */
+    let beltWrap = true;
     /* site.js:1158. Set only by the `?stone=` deep-link at site.js:4600,
        which is a different section and is not in this hook's scope — so it
        stays null here. Kept because startGallery reads it. */
@@ -460,9 +487,11 @@ export function useStoneWheel(
       nextBtn!.style.pointerEvents = p;
     }
 
-    /* site.js:1084 — signed distance to slab `i` the short way round. */
+    /* site.js:1084 — signed distance to slab `i` the short way round. On a
+       flat belt there is no way round: the distance is just the difference. */
     function shortestOffset(i: number) {
       const n = SLABS.length;
+      if (!beltWrap) return i - Math.min(Math.max(Math.round(current), 0), n - 1);
       let d = mod(i - mod(Math.round(current), n), n);
       if (d > n / 2) d -= n;
       return d;
@@ -472,25 +501,55 @@ export function useStoneWheel(
        The geometry. Desktop (≥1121px) sizes the step from the space actually
        available between the rail and the centre line; every narrower band
        falls back to three competing minimums. */
-    function metrics() {
+    function stepFor() {
       const cw = (nodes[0] && nodes[0].offsetWidth) || 320;
       const W = wheel!.clientWidth || 1200;
-      let step: number;
       if (window.matchMedia('(min-width:1121px)').matches) {
         const stageW = (wheel!.parentElement && wheel!.parentElement.clientWidth) || W;
         const railW =
           parseFloat(getComputedStyle(wheel!.parentElement!).getPropertyValue('--railW')) || 190;
         const stonesPad = parseFloat(getComputedStyle(root!).paddingLeft) || 0;
         const allowed = Math.max(stageW / 2 - railW - 28 + stonesPad, cw * 1.2);
-        step = Math.max((allowed - cw / 2) / 3, cw * 0.42);
-      } else {
-        step = Math.max(cw * 0.52, W * 0.085, (W + cw * 2) / SLABS.length);
+        return Math.max((allowed - cw / 2) / 3, cw * 0.42);
       }
+      /* The source has a third term here, `(W + cw * 2) / SLABS.length`, which
+         inflates the step until the belt is wide enough to wrap unseen. It is
+         inert for any list long enough to fill the wheel and it is exactly
+         wrong for one that is not — with a single match it makes the step a
+         whole viewport wide. `wrapsAt` below now decides the same question
+         honestly, so the term is gone. site.js:1103. */
+      return Math.max(cw * 0.52, W * 0.085);
+    }
+
+    /**
+     * Is the belt long enough to hide its own seam?
+     *
+     * The wheel is a circle: `layout` wraps each slab's x into +/- half a belt,
+     * so slab 0 reappears one belt-width away. That is invisible only while a
+     * belt is wider than the wheel plus a slab either side. The source keeps it
+     * true by repeating the list; this build does not repeat (see `makeBelt`),
+     * so a short belt is laid out flat instead and the answer has to be asked.
+     */
+    function wrapsAt(n: number, step: number) {
+      const cw = (nodes[0] && nodes[0].offsetWidth) || 320;
+      const W = wheel!.clientWidth || 1200;
+      return n * step >= W + cw * 2;
+    }
+
+    function metrics() {
+      const step = stepFor();
       const H = Math.max(wheel!.clientWidth / 2, 1);
       const bend = wheelBend();
       /* Sagitta -> radius: a chord of half-width H bulging `bend` deep. */
       const R = (H * H + bend * bend) / (2 * bend);
-      return { step, H, R };
+      beltWrap = wrapsAt(SLABS.length, step);
+      return { step, H, R, wrap: beltWrap };
+    }
+
+    /** The slot `startGallery`, `primeWheel`, `fanOut` and `playAnim` all park
+     *  on. One function so they cannot disagree — they read the same belt. */
+    function landIdx() {
+      return landSlot(SLABS.length, wrapsAt(SLABS.length, stepFor()));
     }
 
     /* site.js:1104-1111 — cached, and the cache is dropped on resize. */
@@ -503,23 +562,28 @@ export function useStoneWheel(
     }
 
     /**
-     * site.js:1112-1121 — order the list, then repeat it until the belt is
-     * wider than the wheel plus a slab either side.
+     * The belt is the matching stones, once each.
      *
-     * IT MEASURES `nodes[0]`, WHICH IS STILL THE OLD MATERIAL'S SLAB. Every
-     * caller builds nodes first and rebuilds after. Below 1121px there is no
-     * repetition at all — the ordered list is the belt.
+     * DELIBERATELY NOT site.js:1112-1121. The source orders the list and then
+     * REPEATS it until the belt is wider than the wheel plus a slab either
+     * side, which is invisible on the full 67-stone collection (one repetition
+     * covers it) and absurd on a filtered one: the client filtered down to a
+     * single Azul Shimmer on 27 Aug and got a wheel of nine Azul Shimmers.
+     * His rule, and it is the obvious one — "we don't duplicate any stones in
+     * the wheel, the amount that's available is what we show".
+     *
+     * So the ordered list IS the belt, at every width. A belt too short to
+     * fill the wheel stops wrapping instead of repeating: see `wrapsAt`, and
+     * the `wrap` branches in `layout`, `fanOut`, `shortestOffset` and `tick`.
+     *
+     * It still measures `nodes[0]`, which is STILL THE OLD MATERIAL'S SLAB —
+     * every caller builds nodes first and rebuilds after — because `fanOrder`
+     * now needs the landing slot and that needs the step. Same order as the
+     * source, same reason.
      */
     function makeBelt(list: WheelStone[]): WheelStone[] {
       if (!list.length) return [];
-      list = fanOrder(list, currentMat);
-      if (!window.matchMedia('(min-width:1121px)').matches) return list.slice();
-      const cw = (nodes[0] && nodes[0].offsetWidth) || 320;
-      const need = (wheel!.clientWidth || 1200) + cw * 2;
-      const reps = Math.max(1, Math.ceil(need / Math.max(list.length * metrics().step, 1)));
-      const out: WheelStone[] = [];
-      for (let r = 0; r < reps; r++) out.push(...list);
-      return out;
+      return fanOrder(list, currentMat, landSlot(list.length, wrapsAt(list.length, stepFor())));
     }
 
     /**
@@ -533,11 +597,14 @@ export function useStoneWheel(
      */
     function layout(pos: number) {
       const n = SLABS.length;
-      const { step, H, R } = metrics();
+      const { step, H, R, wrap } = metrics();
       const total = n * step;
       nodes.forEach((el, i) => {
         let x = (i - pos) * step;
-        x = mod(x + total / 2, total) - total / 2;
+        /* A short belt is a flat fan, not a circle — wrapping it would bring
+           its far end round into view beside its near one, which is the
+           duplicate `makeBelt` just stopped producing. */
+        if (wrap) x = mod(x + total / 2, total) - total / 2;
         const ax = Math.min(Math.abs(x), H);
         const arc = R - Math.sqrt(Math.max(R * R - ax * ax, 0));
         const rot = Math.sign(x) * Math.asin(ax / R) * (180 / Math.PI);
@@ -551,8 +618,9 @@ export function useStoneWheel(
           1,
           stepsOut <= 3 ? 1 - 0.22 * stepsOut : Math.max(0.18, 0.34 - 0.16 * (stepsOut - 3)),
         );
+        /* The seam fade only means anything on a belt that HAS a seam. */
         const fade =
-          n % 2 === 0
+          wrap && n % 2 === 0
             ? Math.max(0, Math.min(1, (total / 2 - step * 0.5 - Math.abs(x)) / (step * 0.5)))
             : 1;
         const vis = op * fade;
@@ -563,7 +631,9 @@ export function useStoneWheel(
         el.style.pointerEvents = vis < 0.15 ? 'none' : 'auto';
         el.classList.toggle('center', near > 0.5);
       });
-      const c = mod(Math.round(pos), n);
+      const c = wrap
+        ? mod(Math.round(pos), n)
+        : Math.min(Math.max(Math.round(pos), 0), n - 1);
       if (c !== idx) {
         idx = c;
         slabReadout(idx);
@@ -575,6 +645,10 @@ export function useStoneWheel(
        forever in the source; here it is cancelled on teardown. */
     function tick() {
       if (galleryOn) {
+        /* End-stops. A wrapping belt has none — `target` runs off to any
+           integer and `layout` folds it back — but a flat one does, or an
+           arrow press and a drag both walk the fan off the screen. */
+        if (!beltWrap) target = Math.min(Math.max(target, 0), SLABS.length - 1);
         current += (target - current) * SCROLL_EASE;
         if (Math.abs(target - current) < 0.0005) current = target;
         layout(current);
@@ -587,8 +661,10 @@ export function useStoneWheel(
       if (!SLABS.length) return;
       galleryOn = true;
       wheel!.classList.add('gallery');
-      showArrows(true);
-      target = current = Math.min(LAND, SLABS.length - 1);
+      /* One stone is the whole collection: there is nowhere for an arrow to
+         go, so it is not offered. */
+      showArrows(SLABS.length > 1);
+      target = current = landIdx();
       layout(current);
       slabReadout(idx);
       if (pendingIdx != null) {
@@ -600,7 +676,7 @@ export function useStoneWheel(
        The entrance. Everything stacked at the centre slot, invisible. */
     function primeWheel() {
       showArrows(false);
-      const L = Math.min(LAND, nodes.length - 1);
+      const L = landIdx();
       nodes.forEach((el, i) => {
         el.classList.remove('center');
         if (i === L) {
@@ -626,12 +702,14 @@ export function useStoneWheel(
      */
     function fanOut() {
       const n = SLABS.length;
-      const { step, H, R } = metrics();
-      const L = Math.min(LAND, n - 1);
+      const { step, H, R, wrap } = metrics();
+      const L = landIdx();
       nodes.forEach((el, i) => {
         let off = i - L;
-        if (off > n / 2) off -= n;
-        if (off < -n / 2) off += n;
+        if (wrap) {
+          if (off > n / 2) off -= n;
+          if (off < -n / 2) off += n;
+        }
         const x = off * step;
         const ax = Math.min(Math.abs(x), H);
         const arc = R - Math.sqrt(Math.max(R * R - ax * ax, 0));
@@ -647,7 +725,7 @@ export function useStoneWheel(
           stepsOut <= 3 ? 1 - 0.22 * stepsOut : Math.max(0.18, 0.34 - 0.16 * (stepsOut - 3)),
         );
         const fade =
-          n % 2 === 0
+          wrap && n % 2 === 0
             ? Math.max(0, Math.min(1, (n * step / 2 - step * 0.5 - Math.abs(x)) / (step * 0.5)))
             : 1;
         el.style.transform = `translate3d(${x.toFixed(1)}px,${(arc + lift).toFixed(1)}px,0) rotate(${rot.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
@@ -670,7 +748,7 @@ export function useStoneWheel(
     function playAnim() {
       clearAnim();
       wheel!.classList.add('entering');
-      const c = nodes[Math.min(LAND, nodes.length - 1)];
+      const c = nodes[landIdx()];
       if (!c) return;
       c.style.transform = 'translate3d(0,0,0) scale(0.86)';
       c.style.opacity = '1';
@@ -709,7 +787,7 @@ export function useStoneWheel(
       }
       restoreStoneActions();
       buildNodes();
-      target = current = Math.min(LAND, SLABS.length - 1);
+      target = current = landIdx();
       primeWheel();
       /* Two nested rAFs, not one: the first lets the browser commit the
          primed transforms, the second starts the animation from them so the

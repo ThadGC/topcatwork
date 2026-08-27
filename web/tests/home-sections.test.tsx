@@ -614,13 +614,22 @@ describe('Estimator', () => {
     );
   });
 
-  it('renders both upload widgets, one of them the compact variant', () => {
+  it('ships the calculator\u2019s compact uploader, and only that one', () => {
     // index.html has two `[data-up]` mount points in this section — one in
-    // #estCalc and one in the priced-by-hand panel. <TcUpload/> replaces the
-    // tcform.js mount, so the assertion is on the widget, not the attribute.
+    // #estCalc and one in the priced-by-hand panel. The second moved on
+    // 27 Aug: it now lives inside <EstimateEnquiry/>, which the board renders
+    // only once the engine is mounted AND the stone is priced by hand, so at
+    // first paint the calculator's is the only one. See EstimateEnquiry.tsx.
     const { container } = render(<Estimator />);
-    expect(container.querySelectorAll('.tc-up')).toHaveLength(2);
+    expect(container.querySelectorAll('.tc-up')).toHaveLength(1);
     expect(container.querySelectorAll('.tc-up.compact')).toHaveLength(1);
+    // And the panel it left is still the panel — copy, points, CTA row.
+    expect(container.querySelector('#estPoa .est-poa-points')).toBeTruthy();
+    expect(container.querySelector('#estPoa .est-poa-cta')).toBeTruthy();
+    // Its primary link points at the form, not at the foot of the page.
+    expect(
+      container.querySelector('#estPoa .est-poa-cta .rev-cta-primary'),
+    ).toHaveAttribute('href', '#estPoaForm');
   });
 });
 

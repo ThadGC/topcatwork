@@ -16,7 +16,12 @@ import { useReveal } from '@/hooks/useReveal';
  * up, and putting the class on the section would animate the full-bleed
  * background with it.
  */
-export default function Cta() {
+export interface CtaProps {
+  /** Passed straight to <ContactForm/>. The home page sets it; see there. */
+  stonePicker?: boolean;
+}
+
+export default function Cta({ stonePicker = false }: CtaProps = {}) {
   const ref = useReveal<HTMLElement>();
 
   return (
@@ -114,7 +119,7 @@ export default function Cta() {
           </div>
         </div>
 
-        <ContactForm />
+        <ContactForm stonePicker={stonePicker} />
       </div>
     </section>
   );

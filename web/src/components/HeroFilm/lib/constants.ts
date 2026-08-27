@@ -160,9 +160,18 @@ export const VP_H_SLOP = 140;
  * frames to cover. Desktop keeps GOP 8 and simply carries 2.5x fewer frames.
  *
  * The two mobile files come from a DIFFERENT master to the desktop one: the
- * mobile master is framed and graded for the portrait crop (mean luma
- * difference 112/255 at t=0 against the desktop master). They are not two
+ * mobile master is framed and graded for the portrait crop. They are not two
  * bitrates of one cut and must never be re-derived from each other.
+ *
+ * THE MOBILE MASTER IS PILLARBOXED — that is what the "mean luma difference
+ * 112/255 at t=0" recorded here used to be reading. It is a 1920x1080 file
+ * carrying a portrait picture at x=656, 608 wide; `cropdetect` on frame 0
+ * returns exactly `608:1080:656:0`. The tablet cut used to be `crop=864` from
+ * x=680, which ran 280px past the picture's right edge at 1264 and baked a
+ * black column down the right third of every tablet frame — the client's
+ * 27 Aug report, reproduced at 1000x850 as a film that painted only the left
+ * 68%. It is now `crop=584` from the same x=680, i.e. the picture and nothing
+ * else, and the file is named for that width like the phone one is.
  *
  * ── the `?v=` stamp ─────────────────────────────────────────────────────────
  * The three clips are stamped `v=9` together. .htaccess holds .mp4 for a week,
@@ -201,12 +210,12 @@ export const DEFAULT_SOURCES = {
 
       sha256 topcat-intro-1920-poster.webp == plates/plate-f0.webp
              345566a78915aae5041dea524cc6e03651959cb31e787f47a449709d8202907d
-      sha256 topcat-intro-864-poster.webp  == plates/tablet/plate-f0.webp
-             cad5acc4682ba5bd35b31b5198e62b2e065d7319d3f0892f72cd4c5e1d1dbc1b
+      sha256 topcat-intro-584-poster.webp  == plates/tablet/plate-f0.webp
+             (re-cut 27 Aug with the tablet crop; see the pillarbox note above)
       sha256 topcat-intro-608-poster.webp  == plates/plate-f0-phone.webp
              c544793a0d40cd2007da34504005335b9daecafd1f40441e1a789b768d070e89
 
-    scripts/encode-film.sh:174,181,186 makes them with `cp -f`, so they cannot
+    scripts/encode-film.sh makes them with `cp -f`, so they cannot
     drift. They used to be named as two different URLs, which is two cache
     keys, which is TWO DOWNLOADS of one picture: on the phone band the server
     log showed `topcat-intro-608-poster.webp?v=9` (41,906 B) arriving at 556ms
@@ -221,7 +230,7 @@ export const DEFAULT_SOURCES = {
     the `-poster` copies are simply no longer requested by the page.
   */
   poster: DEFAULT_PLATES.src,
-  srcNarrow: '/assets/video/topcat-intro-864.mp4?v=9',
+  srcNarrow: '/assets/video/topcat-intro-584.mp4?v=9',
   posterNarrow: DEFAULT_PLATES.srcNarrow,
   srcPhone: '/assets/video/topcat-intro-608.mp4?v=9',
   posterPhone: DEFAULT_PLATES.srcPhone,
@@ -239,13 +248,21 @@ export const DEFAULT_SOURCES = {
  * aspect, these numbers stay put and the reveal keeps landing on the same edge
  * in the footage.
  *
- * The tablet holds it exactly: 864:1080 and 576:720 are both 0.8. The phone
- * does not, quite. `scale=-2:'min(720,ih)'` rounds the derived width to an
- * even number, and 608:1080 = 0.56296 rounds to 406:720 = 0.56389 — 0.16%
- * wide. That is well under a pixel of drift across the reveal edge at any
- * shipping viewport, so it is left alone; it is recorded here so nobody reads
- * "preserves the aspect" as exact and builds something on top of it that
- * needs exactness.
+ * Neither mobile band holds it exactly. `scale=-2:'min(720,ih)'` rounds the
+ * derived width to an even number: 584:1080 = 0.54074 rounds to 390:720 =
+ * 0.54167 (0.17% wide) and 608:1080 = 0.56296 rounds to 406:720 = 0.56389
+ * (0.16% wide). Both are well under a pixel of drift across the reveal edge at
+ * any shipping viewport, so they are left alone; they are recorded here so
+ * nobody reads "preserves the aspect" as exact and builds something on top of
+ * it that needs exactness.
+ *
+ * THE TABLET NUMBER MOVED WITH THE CROP, 864 -> 584, AND HAD TO. The tablet
+ * reveal table (lib/reveal.ts TREV_X/TREV_S) is expressed in film-space x off
+ * the crop's LEFT edge, which is unchanged at master x=680 — so every measured
+ * value still names the same edge in the footage. What changed is how wide the
+ * frame carrying them is, and `revealFrame()` divides by exactly this constant
+ * to get px-per-film-px. Leave it at 864 against a 584-wide crop and the whole
+ * reveal lands 32% short.
  */
-export const FILM_W = { wide: 1920, tablet: 864, phone: 608 } as const;
+export const FILM_W = { wide: 1920, tablet: 584, phone: 608 } as const;
 export const FILM_H = 1080;

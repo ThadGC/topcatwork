@@ -110,7 +110,7 @@ export interface RevealFrame {
   /** the element's content-box width / height, in px */
   cw: number;
   ch: number;
-  /** the film's nominal source width for this band: 1920 / 864 / 608 */
+  /** the film's nominal source width for this band: 1920 / 584 / 608 */
   fw: number;
   ok: boolean;
 }

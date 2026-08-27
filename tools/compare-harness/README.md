@@ -34,9 +34,19 @@ Both builds must be serving before any script runs:
 | `shot-plate.mjs <w> <key>` | the media grid scrolled to the `.proj-brand` plate, both builds |
 | `check-marble.mjs` | `svg.marble` census inside `.rev-stone`, both builds |
 | `check-console.mjs` | console errors and hydration mismatches on `/` and `/projects/` |
+| `probe-film-paint.mjs <w> <h> <name>` | real Chrome: does the hero film cover the whole box, or is there a dead black column? |
+| `probe-reveal-tablet.mjs <w> <h>` | drives the runway to beat 1's own frames and photographs the reveal, both builds |
+| `probe-wheel-filter.mjs <w> <h>` | the filtered stone wheel: slab count vs match count, and duplicates |
+| `shot-wheel-filter.mjs <w> <h>` | the wheel filtered to one / three / all, as pictures |
+| `probe-stonepick.mjs <w> <h>` | the home enquiry card's optional stone picker, and its absence elsewhere |
+| `probe-poa-form.mjs <w> <h>` | the estimator's priced-by-hand form: validation and the POSTed body (fetch stubbed) |
 
 ## Rules these scripts already encode — do not undo them
 
+- **`channel: 'chrome'` for anything about the film.** Playwright's bundled Chromium has no
+  H.264 and will not decode it — `currentTime` stays 0 and every conclusion is worthless.
+  The system Chrome does decode. `probe-film-paint.mjs` and `probe-reveal-tablet.mjs` both
+  launch with it.
 - Scroll in **steps** before capturing. A `fullPage` screenshot does not fire `.rise`
   reveals, so the page captures as a black void on **both** builds.
 - Force `document.documentElement.style.scrollBehavior = 'auto'` before any programmatic

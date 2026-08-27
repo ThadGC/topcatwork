@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import EstimateEnquiry from '@/components/forms/EstimateEnquiry';
 import TcUpload from '@/components/forms/TcUpload';
 import { useCursorGlow } from '@/hooks/useCursorGlow';
 import { useEstimator } from '@/hooks/useEstimator';
@@ -484,7 +485,17 @@ export default function Estimator() {
         </div>
 
         <div className="est-grid">
-          <div className="est-panel glow-card rise" id="estPanel">
+          {/* `est-poa-on` only when the priced-by-hand panel is the one
+              showing. It pins the panel's CTA row to the foot of the
+              card, because the POA copy is much shorter than the
+              calculator it replaces and the board beside it is now
+              taller — see home-sections.css. */}
+          <div
+            className={
+              'est-panel glow-card rise' + (showEngine && !result.poaHidden ? ' est-poa-on' : '')
+            }
+            id="estPanel"
+          >
             <div className="est-block">
               <div className="est-labelrow">
                 <span className="est-k">Material</span>
@@ -795,9 +806,15 @@ export default function Estimator() {
                 </li>
                 <li>Samples come to your kitchen, and you approve your own slab from photographs before a single cut</li>
               </ul>
-              <TcUpload />
+              {/* The uploader used to sit here, with nothing under it to send
+                  it with. It now lives inside the board's own form, next to
+                  the fields it is attached to — see EstimateEnquiry.tsx. */}
               <div className="est-poa-cta">
-                <a className="rev-cta-primary" href="#cta">
+                {/* Points at the board's own form, not at `#cta` down the page.
+                    Until 27 Aug there was nothing else it could point at; now
+                    the thing it promises is in the next column (and, on a
+                    phone, directly below). */}
+                <a className="rev-cta-primary" href="#estPoaForm">
                   Get a price for this stone
                 </a>
                 <a className="rev-cta-ghost" href="tel:+448000982812">
@@ -897,6 +914,17 @@ export default function Estimator() {
                 Templating, fitting, every cut-out, drainer grooves, pencil edges and rounded corners, all included.
                 Indicative only, your itemised quote follows a free visit.
               </p>
+              {/*
+                The POA path's own enquiry form. On a priced-by-hand stone
+                there is no plan to draw and no number to show, so the board
+                keeps its details and closes with the form instead of sending
+                the visitor down the page to `#cta`. `.est-out` is
+                `margin-top:auto`, so this grows upward into exactly the gap
+                the missing cutting-plan stats leave. See EstimateEnquiry.tsx.
+              */}
+              {showEngine && !result.poaHidden ? (
+                <EstimateEnquiry stone={`${live.stone.name} · ${poaSub}`} />
+              ) : null}
               <a href="#cta" className="btn-gold" id="estCta" hidden={showEngine ? result.ctaHidden : undefined}>
                 Get your exact quote
               </a>

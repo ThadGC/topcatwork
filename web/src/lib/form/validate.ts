@@ -182,6 +182,9 @@ export function band(width: number): 'phone' | 'tablet' | 'desktop' {
 export function formKind(id: string, classNames: readonly string[]): string {
   if (id === 'ctaForm') return 'Enquiry card';
   if (id === 'tradeForm') return 'Trade account form';
+  /* Not the source's — the estimator's POA path had no form to name until
+     27 Aug. It tells the inbox the enquiry came off a priced-by-hand stone. */
+  if (id === 'estPoaForm') return 'Priced by hand';
   if (classNames.includes('qform')) return 'Quick enquiry form';
   return 'Form';
 }

@@ -13,7 +13,7 @@
 # Same length, same rate, same frame count — and NOT the same footage. Mean
 # luma differs by 112/255 at t=0. The mobile master is framed and graded for
 # the portrait crop. Verified against what was already shipped: the 1920 cut
-# comes from the desktop master (mean abs difference 2.8), and the 608 and 864
+# comes from the desktop master (mean abs difference 2.8), and the 608 and 584
 # cuts come from the mobile one (3.3 and 2.1). Encode the mobile bands from the
 # desktop master and you get a plausible-looking film with the wrong grade and
 # the subject out of frame.
@@ -31,7 +31,7 @@
 # the seek gets cheaper and the file gets smaller at the same time:
 #
 #     1920   1920x1080   24.47 -> 23.08 MB   332 -> 133 keyframes   GOP 8
-#      864    576x720     6.78 ->  5.97 MB   221 -> 266 keyframes   GOP 12 -> 4
+#      584    390x720     6.78 ->  5.97 MB   221 -> 266 keyframes   GOP 12 -> 4
 #      608    406x720      6.28 ->  6.22 MB  221 -> 266 keyframes   GOP 12 -> 4
 #
 # Read the GOP column, not the keyframe count: mobile went from a keyframe
@@ -54,14 +54,32 @@
 # sliding each shipped frame against the master and scoring mean absolute
 # difference:
 #
-#     phone    crop=608:1080:656:0     centred:  (1920 - 608) / 2 = 656
-#     tablet   crop=864:1080:680:0     NOT centred: centre is 528
+#     phone    crop=608:1080:656:0     the picture, exactly
+#     tablet   crop=584:1080:680:0     the picture from x=680 to its right edge
 #
-# The tablet crop is deliberately biased 152px to the RIGHT of centre. That is
-# a framing decision in the original cut, not a rounding artefact, and it is
-# what the tablet reveal table in lib/reveal.ts (TREV_X / TREV_S) was traced
-# against. Re-centre it and the clip-path edge uncovers the line against
-# footage 152px away from the edge it was measured on. PRESERVE THE OFFSET.
+# THE MOBILE MASTER IS PILLARBOXED. It is a 1920x1080 file carrying a PORTRAIT
+# picture: `cropdetect` on frame 0 returns 608:1080:656:0 and nothing lives
+# outside it. The phone crop is that rectangle. The tablet crop starts inside
+# it, at 680, and must stop where the picture does — at 656 + 608 = 1264, so
+# 1264 - 680 = 584 wide.
+#
+# It used to be 864 wide, which ran 280px PAST the picture and baked a black
+# column down the right third of every tablet frame. That is the client's
+# 27 Aug report ("the video is not in it correctly"): at 1000x850 the film
+# painted only the left 68% and the rest was black. The old build has the same
+# 864 crop in its mp4 and only looks right because its tablet PLATE was cut
+# from different footage — so the black appeared the moment the film moved off
+# frame 0. The width was recovered by sliding the SHIPPED frame against the
+# master, and the shipped frame already had the padding, so the padding was
+# reproduced faithfully. Measure the master, not the artefact.
+#
+# THE 680 OFFSET IS LOAD-BEARING AND IS UNCHANGED. The tablet reveal table in
+# lib/reveal.ts (TREV_X / TREV_S) was traced in film-space x off this crop's
+# left edge, and TREV_X tops out at 575.7 — inside 584. Narrowing the crop on
+# the RIGHT leaves every measured x where it was; lib/constants.ts FILM_W
+# carries the nominal width (864 -> 584) so the same numbers still map to the
+# same edge. Move the offset and the clip-path uncovers against the wrong
+# footage. PRESERVE THE OFFSET.
 #
 # ── THE FLAGS ─────────────────────────────────────────────────────────────────
 #
@@ -86,8 +104,9 @@
 # `scale=-2:'min(720,ih)'` caps the mobile height and lets the width fall out
 # of the cropped aspect, rounded to an even number. Preserving the aspect is
 # not cosmetic: lib/geometry.ts maps the reveal tables through a cover fit
-# computed from the aspect alone. 864:1080 -> 576:720 is exact; 608:1080 ->
-# 406:720 is 0.16% wide, which lib/constants.ts FILM_W records and tolerates.
+# computed from the aspect alone. 584:1080 -> 390:720 is 0.18% wide and
+# 608:1080 -> 406:720 is 0.16% wide, both of which lib/constants.ts FILM_W
+# records and tolerates.
 #
 # POSTERS AND PLATES ARE CUT FROM THE ENCODED CLIP, NEVER FROM THE MASTER. Each
 # is held on screen until the decoder paints a real frame and is then swapped
@@ -99,7 +118,7 @@
 #   bash scripts/encode-film.sh [--mobile|--desktop|--all] <desktop-master> [outdir]
 #
 #   (no flag / --all)   all three encodes + posters + plates
-#   --mobile            only 608 + 864
+#   --mobile            only 608 + 584
 #   --desktop           only 1920
 #
 # The mobile master defaults to "TC video mobile final fix.mov" beside the
@@ -151,9 +170,10 @@ encode_desktop() {
 }
 
 # ── mobile — crop the mobile master, cap height at 720, GOP 4 ─────────────────
-# $1 = filename label (608 phone / 864 tablet)
-# $2 = crop filter, offsets included — see the header, the tablet one is
-#      deliberately off-centre and must not be "fixed"
+# $1 = filename label (608 phone / 584 tablet)
+# $2 = crop filter, offsets included — see the header; both crops must stay
+#      inside the master's pillarboxed picture, and the tablet x-offset is
+#      what the reveal table was traced against
 encode_mobile() {
   local label=$1 crop=$2
   ffmpeg -v error -y -i "$SRC_MOBILE" -an \
@@ -164,8 +184,23 @@ encode_mobile() {
 }
 
 # ── posters — frame 0 of the ENCODED clip, never of the master ────────────────
+# ffmpeg is built without libwebp on some machines (this one included, 27 Aug),
+# so fall back to cwebp through a PNG rather than failing after a 20-minute
+# encode. Same frame either way — it is frame 0 of "$1" in both paths.
 poster() {
-  ffmpeg -v error -y -ss 0 -i "$1" -frames:v 1 -c:v libwebp -quality 82 "$2"
+  if ffmpeg -hide_banner -encoders 2>/dev/null | grep -q ' libwebp'; then
+    ffmpeg -v error -y -ss 0 -i "$1" -frames:v 1 -c:v libwebp -quality 82 "$2"
+    return
+  fi
+  command -v cwebp >/dev/null 2>&1 || {
+    echo "No libwebp in ffmpeg and no cwebp on PATH — cannot cut $2" >&2
+    echo "  brew install webp" >&2
+    exit 127
+  }
+  local tmp; tmp=$(mktemp -t topcat-poster).png
+  ffmpeg -v error -y -ss 0 -i "$1" -frames:v 1 "$tmp"
+  cwebp -quiet -q 82 -m 6 "$tmp" -o "$2"
+  rm -f "$tmp"
 }
 
 if [ "$DO_DESKTOP" = 1 ]; then
@@ -175,10 +210,10 @@ if [ "$DO_DESKTOP" = 1 ]; then
 fi
 
 if [ "$DO_MOBILE" = 1 ]; then
-  # tablet — 864 wide, biased 152px right of centre. See the header.
-  encode_mobile 864 "crop=864:1080:680:0"
-  poster "$OUT/topcat-intro-864.mp4" "$OUT/topcat-intro-864-poster.webp"
-  cp -f "$OUT/topcat-intro-864-poster.webp" "$OUT/plates/tablet/plate-f0.webp"
+  # tablet — from x=680 to the picture's right edge at 1264. See the header.
+  encode_mobile 584 "crop=584:1080:680:0"
+  poster "$OUT/topcat-intro-584.mp4" "$OUT/topcat-intro-584-poster.webp"
+  cp -f "$OUT/topcat-intro-584-poster.webp" "$OUT/plates/tablet/plate-f0.webp"
 
   # phone — 608 wide, centred: (1920 - 608) / 2 = 656.
   encode_mobile 608 "crop=608:1080:656:0"
