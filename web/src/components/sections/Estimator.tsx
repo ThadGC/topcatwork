@@ -820,11 +820,23 @@ export default function Estimator() {
                 <a className="rev-cta-ghost" href="tel:+448000982812">
                   Call 0800 098 2812
                 </a>
+                {/* Desktop only — see `.est-poa-mail` in home-sections.css.
+                    The phone's two-button row is the one the client signed
+                    off; on desktop the primary is dropped (the form beside it
+                    IS the primary) and the email takes its place. */}
+                <a className="rev-cta-ghost est-poa-mail" href="mailto:info@topcatworktops.co.uk">
+                  info@topcatworktops.co.uk
+                </a>
               </div>
             </div>
           </div>
 
-          <div className="est-preview glow-card rise" id="estPreview">
+          <div
+            className={
+              'est-preview glow-card rise' + (showEngine && !result.poaHidden ? ' est-poa-on' : '')
+            }
+            id="estPreview"
+          >
             <span className="est-dress" aria-hidden="true">
               <span className="est-wash" />
             </span>

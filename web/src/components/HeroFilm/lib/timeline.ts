@@ -6,9 +6,14 @@
  * `retimeStory()` read them back out of the DOM on every band change. Here
  * they are typed data and the DOM never holds them.
  *
- * The timings are per-band because the three films are different edits, not
- * three encodes of one edit. A beat that lands on a cut at 10.3s in the 1920
- * cut lands on a different shot in the 608 cut.
+ * The timings are per-band because the films are different edits, not two
+ * encodes of one edit. A beat that lands on a cut at 10.3s in the 1920 cut
+ * lands on a different shot in the 608 cut.
+ *
+ * THERE ARE TWO FILMS, NOT THREE, SINCE 27 AUG. The tablet plays the 1920 cut
+ * — the client asked for the highest-quality version on tablet rather than an
+ * upscaled portrait crop — so for anything keyed to the FOOTAGE it reads as
+ * wide. See `filmBand` below.
  */
 
 /** The three viewport bands. Both `narrow` and `phone` MQs match on a phone. */
@@ -131,10 +136,26 @@ export interface BeatWindow {
   zNear: number;
 }
 
+/**
+ * The band whose FILM this viewport plays.
+ *
+ * The tablet plays the wide cut, so everything keyed to the footage — the
+ * encode, the plate, `FILM_W`, the reveal table and the beat timings below —
+ * must read the tablet as wide, or a beat lands on a shot that is nowhere
+ * near it. Everything keyed to LAYOUT (`vposNarrow`, the CSS bands, `mode`,
+ * `zNear`) still reads it as narrow, because the tablet's page layout has not
+ * changed at all. Keeping the two apart is the whole job of this function.
+ */
+export function filmBand(band: Band): Band {
+  return band.tablet ? { ...band, narrow: false } : band;
+}
+
 /** `retimeStory()` — site.js 3160-3169. */
 export function beatWindow(beat: StoryBeat, band: Band): BeatWindow {
-  const at = Number(pickBand(band, beat.at, beat.atNarrow, beat.atPhone)) || 0;
-  const out = Number(pickBand(band, beat.out, beat.outNarrow, beat.outPhone)) || 0;
+  /* Timings off the FILM band, `zNear` off the layout band — see filmBand. */
+  const f = filmBand(band);
+  const at = Number(pickBand(f, beat.at, beat.atNarrow, beat.atPhone)) || 0;
+  const out = Number(pickBand(f, beat.out, beat.outNarrow, beat.outPhone)) || 0;
   const zNear =
     !band.narrow && beat.vposWide ? (beat.vposWide === 'high' ? 150 : 300) : 560;
   return { at, out, zNear };

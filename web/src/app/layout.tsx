@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 
+import ScrollMemory from '@/components/chrome/ScrollMemory';
 import { SiteChrome } from '@/components/chrome';
 import { ChromeScripts } from '@/components/chrome/ChromeScripts';
 
@@ -120,6 +121,12 @@ export default function RootLayout({
           never rendered anywhere, so neither had ever run.
         */}
         <ChromeScripts />
+        {/*
+          Back returns the visitor to the part of the page they left, on every
+          page. Every navigation on this site is a full document load, so this
+          is not something the router does — see lib/scrollMemory.ts.
+        */}
+        <ScrollMemory />
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>

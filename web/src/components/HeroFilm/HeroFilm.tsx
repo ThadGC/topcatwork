@@ -219,17 +219,13 @@ export function HeroFilm({
         href={plates.srcPhone}
         media="(max-width:720px) and (prefers-reduced-motion: no-preference)"
       />
-      <link
-        rel="preload"
-        as="image"
-        href={plates.srcNarrow}
-        media="(min-width:721px) and (max-width:1120px) and (prefers-reduced-motion: no-preference)"
-      />
+      {/* One link for the tablet AND the wide band: both play the 1920 cut,
+          so both want its plate. See lib/timeline.ts `filmBand`. */}
       <link
         rel="preload"
         as="image"
         href={plates.src}
-        media="(min-width:1121px) and (prefers-reduced-motion: no-preference)"
+        media="(min-width:721px) and (prefers-reduced-motion: no-preference)"
       />
 
       <section className={styles.hero} ref={hero} id="hero">
@@ -332,8 +328,8 @@ export function HeroFilm({
             effect: the film's first byte moves from t=568ms to ~t=90ms.
           */}
           <FilmMediaBoot
-            sources={[sources.src, sources.srcNarrow, sources.srcPhone]}
-            posters={[sources.poster, sources.posterNarrow, sources.posterPhone]}
+            sources={[sources.src, sources.srcPhone]}
+            posters={[sources.poster, sources.posterPhone]}
           />
 
           <div className={styles.plate} ref={plate} aria-hidden="true" />

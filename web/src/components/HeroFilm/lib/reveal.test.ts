@@ -332,9 +332,11 @@ describe('the table grid is SRCFPS, and SRCFPS is half the source rate', () => {
     expect(FPS / SRCFPS).toBe(2);
   });
 
+  /* The tablet is NOT in this list any more. It plays the wide cut since
+     27 Aug, so it starts at the WIDE beat against the WIDE table — see the
+     two assertions below this one, and lib/timeline.ts `filmBand`. */
   it.each([
     ['wide', REV_F0, band({}), 0.1],
-    ['tablet', TREV_F0, band({ wide: false, narrow: true, tablet: true, mode: 'nr' }), 0.1],
     ['phone', PREV_F0, band({ wide: false, narrow: true, phone: true, mode: 'nr' }), 0.4],
   ] as const)('starts %s at its own beat when read at 12fps', (_name, f0, b, slop) => {
     const startsAt = f0 / SRCFPS;
@@ -342,6 +344,20 @@ describe('the table grid is SRCFPS, and SRCFPS is half the source rate', () => {
     expect(Math.abs(startsAt - beatAt)).toBeLessThanOrEqual(slop);
     // And it finishes inside the beat's window rather than running past it.
     expect(startsAt).toBeLessThan(out);
+  });
+
+  it('gives the tablet the wide beat, because it plays the wide cut', () => {
+    const tablet = band({ wide: false, narrow: true, tablet: true, mode: 'nr' });
+    expect(beatWindow(reveal, tablet).at).toBe(beatWindow(reveal, band({})).at);
+    expect(beatWindow(reveal, tablet).out).toBe(beatWindow(reveal, band({})).out);
+  });
+
+  it('no longer pairs the tablet with TREV_F0 — that table is retired', () => {
+    // The 584-wide crop it was measured against does not ship. If this ever
+    // starts passing again, something has wired the old table back in without
+    // re-measuring it.
+    const tablet = band({ wide: false, narrow: true, tablet: true, mode: 'nr' });
+    expect(Math.abs(TREV_F0 / SRCFPS - beatWindow(reveal, tablet).at)).toBeGreaterThan(2);
   });
 
   it('would land nowhere near the beats if read as 24fps', () => {

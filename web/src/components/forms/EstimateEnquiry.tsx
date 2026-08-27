@@ -137,7 +137,7 @@ export default function EstimateEnquiry({ stone = '' }: EstimateEnquiryProps) {
           outright ("a link to a slab you have seen"). */}
       <TcUpload />
       <button type="submit" className="cta-send" disabled={form.sending}>
-        {form.sending ? 'Sending…' : 'Get a price for this stone'}
+        {form.sending ? 'Sending…' : 'Submit'}
       </button>
       <p
         className={

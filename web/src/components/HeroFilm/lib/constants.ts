@@ -150,7 +150,6 @@ export const VP_H_SLOP = 140;
  * the file gets smaller at the same time:
  *
  *      1920   1920x1080   24.47 -> 23.08 MB   332 -> 133 keyframes   GOP 8
- *       864    576x720     6.78 ->  5.97 MB   221 -> 266 keyframes   GOP 12 -> 4
  *       608    406x720      6.28 ->  6.22 MB  221 -> 266 keyframes   GOP 12 -> 4
  *
  * Read the GOP column, not the keyframe count: the mobile bands went from a
@@ -166,12 +165,23 @@ export const VP_H_SLOP = 140;
  * THE MOBILE MASTER IS PILLARBOXED — that is what the "mean luma difference
  * 112/255 at t=0" recorded here used to be reading. It is a 1920x1080 file
  * carrying a portrait picture at x=656, 608 wide; `cropdetect` on frame 0
- * returns exactly `608:1080:656:0`. The tablet cut used to be `crop=864` from
- * x=680, which ran 280px past the picture's right edge at 1264 and baked a
- * black column down the right third of every tablet frame — the client's
- * 27 Aug report, reproduced at 1000x850 as a film that painted only the left
- * 68%. It is now `crop=584` from the same x=680, i.e. the picture and nothing
- * else, and the file is named for that width like the phone one is.
+ * returns exactly `608:1080:656:0`. Only the phone cut comes from it.
+ *
+ * ── THERE IS NO TABLET CUT ANY MORE (27 Aug) ────────────────────────────────
+ * There used to be one, `crop=864:1080:680` of that master, which ran 280px
+ * past the picture's right edge and baked a black column down the right third
+ * of every tablet frame — the client's report of a film that painted only the
+ * left 68%. Narrowing the crop to 584 removed the black but left the tablet
+ * playing a 390x720 upscale of a PORTRAIT crop in a landscape window: sharp
+ * nowhere and cropped everywhere. His answer, and it is the right one: "make
+ * sure you have the highest quality version showing on tablet."
+ *
+ * So 721px and up all play `topcat-intro-1920.mp4`. One file, one plate, one
+ * reveal table, one set of beat timings, and the tablet gets the full frame at
+ * full resolution instead of a blown-up crop. `filmBand()` in ./timeline.ts is
+ * what keeps that separate from the tablet's own LAYOUT, which has not changed.
+ * The byte-range path in ./filmSource.ts means the larger file is not a larger
+ * download — it fetches the GOPs it scrubs.
  *
  * ── the `?v=` stamp ─────────────────────────────────────────────────────────
  * The three clips are stamped `v=9` together. .htaccess holds .mp4 for a week,
@@ -191,15 +201,14 @@ export const VP_H_SLOP = 140;
  * re-cut from the 24fps encodes and are byte-identical to that band's poster,
  * which is the same frame by the same command; `v=5` retires the ones cut from
  * the 60fps clips (and, for the two mobile bands, from the un-scaled 1080
- * crops — those plates were 864x1080 and 608x1080 against 576x720 and 406x720
- * encodes).
+ * crops — the phone plate was 608x1080 against a 406x720 encode). There are
+ * two plates now, not three: the tablet shares the wide one.
  *
  * Declared BEFORE `DEFAULT_SOURCES` because the posters below are these — see
  * the note there.
  */
 export const DEFAULT_PLATES = {
   src: '/assets/video/plates/plate-f0.webp?v=5',
-  srcNarrow: '/assets/video/plates/tablet/plate-f0.webp?v=5',
   srcPhone: '/assets/video/plates/plate-f0-phone.webp?v=5',
 } as const;
 
@@ -210,8 +219,6 @@ export const DEFAULT_SOURCES = {
 
       sha256 topcat-intro-1920-poster.webp == plates/plate-f0.webp
              345566a78915aae5041dea524cc6e03651959cb31e787f47a449709d8202907d
-      sha256 topcat-intro-584-poster.webp  == plates/tablet/plate-f0.webp
-             (re-cut 27 Aug with the tablet crop; see the pillarbox note above)
       sha256 topcat-intro-608-poster.webp  == plates/plate-f0-phone.webp
              c544793a0d40cd2007da34504005335b9daecafd1f40441e1a789b768d070e89
 
@@ -230,8 +237,6 @@ export const DEFAULT_SOURCES = {
     the `-poster` copies are simply no longer requested by the page.
   */
   poster: DEFAULT_PLATES.src,
-  srcNarrow: '/assets/video/topcat-intro-584.mp4?v=9',
-  posterNarrow: DEFAULT_PLATES.srcNarrow,
   srcPhone: '/assets/video/topcat-intro-608.mp4?v=9',
   posterPhone: DEFAULT_PLATES.srcPhone,
 } as const;
@@ -248,21 +253,17 @@ export const DEFAULT_SOURCES = {
  * aspect, these numbers stay put and the reveal keeps landing on the same edge
  * in the footage.
  *
- * Neither mobile band holds it exactly. `scale=-2:'min(720,ih)'` rounds the
- * derived width to an even number: 584:1080 = 0.54074 rounds to 390:720 =
- * 0.54167 (0.17% wide) and 608:1080 = 0.56296 rounds to 406:720 = 0.56389
- * (0.16% wide). Both are well under a pixel of drift across the reveal edge at
- * any shipping viewport, so they are left alone; they are recorded here so
- * nobody reads "preserves the aspect" as exact and builds something on top of
- * it that needs exactness.
+ * The wide one is exact; the phone is not, quite. `scale=-2:'min(720,ih)'`
+ * rounds the derived width to an even number, and 608:1080 = 0.56296 rounds to
+ * 406:720 = 0.56389 — 0.16% wide. That is well under a pixel of drift across
+ * the reveal edge at any shipping viewport, so it is left alone; it is recorded
+ * here so nobody reads "preserves the aspect" as exact and builds something on
+ * top of it that needs exactness.
  *
- * THE TABLET NUMBER MOVED WITH THE CROP, 864 -> 584, AND HAD TO. The tablet
- * reveal table (lib/reveal.ts TREV_X/TREV_S) is expressed in film-space x off
- * the crop's LEFT edge, which is unchanged at master x=680 — so every measured
- * value still names the same edge in the footage. What changed is how wide the
- * frame carrying them is, and `revealFrame()` divides by exactly this constant
- * to get px-per-film-px. Leave it at 864 against a 584-wide crop and the whole
- * reveal lands 32% short.
+ * NO `tablet` KEY. The tablet plays the wide cut, so it reads `wide` — see
+ * `filmBand()` in ./timeline.ts. lib/reveal.ts still carries TREV_X/TREV_S,
+ * the table measured against the retired 584 crop; nothing selects them any
+ * more and nothing should without re-measuring them.
  */
-export const FILM_W = { wide: 1920, tablet: 584, phone: 608 } as const;
+export const FILM_W = { wide: 1920, phone: 608 } as const;
 export const FILM_H = 1080;

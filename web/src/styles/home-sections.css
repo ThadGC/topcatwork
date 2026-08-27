@@ -1554,13 +1554,59 @@ html.proj-open .proj-close{top:92px}
    taller — so on the two-column layout the panel's buttons sit at the foot
    of the card rather than leaving it half empty. Only above 980px: below
    that `.est-grid` is one column and there is no height to fill. */
+/* Desktop only. The client saw the phone layout and signed it off as it is
+   ("mobile is perfectly fine... it's just on desktop that we need to make it
+   better"), so everything below is inside the two-column media query and the
+   phone keeps the full slab and its own "Get a price for this stone". */
+.est-poa-mail{display:none}
 @media(min-width:981px){
   .est-panel.est-poa-on{display:flex;flex-direction:column}
   /* flex, not the grid it is by default: a stretched GRID spreads the spare
      height across every row and pulls the copy apart. A flex column stacks
      identically (same gap, one column) and hands all of it to one margin. */
-  .est-panel.est-poa-on > .est-poa{display:flex;flex-direction:column;flex:1 1 auto}
-  .est-panel.est-poa-on .est-poa-cta{margin-top:auto}
+  .est-panel.est-poa-on > .est-poa{display:flex;flex-direction:column;flex:1 1 auto;
+      justify-content:space-between}
+  /* The two columns are `align-items:stretch`, so whichever is taller sets the
+     height and the other carries the slack. Spreading it between the blocks
+     reads as air; dumping it all above the buttons reads as a hole. The gap
+     is capped so a very short panel cannot pull the copy apart, which is what
+     stretching the grid used to do. */
+  .est-panel.est-poa-on > .est-poa > * + *{margin-top:0}
+  .est-panel.est-poa-on .est-poa-cta{margin-top:clamp(2px,0.8vh,8px)}
+
+  /* The panel's primary is dropped here: the form in the next column IS "get
+     a price for this stone", and two gold buttons saying it was the point of
+     the note. What is left is how to reach a person — phone and email. */
+  .est-panel.est-poa-on .est-poa-cta .rev-cta-primary{display:none}
+  .est-poa-mail{display:inline-flex;align-items:center;justify-content:center;
+      text-transform:none;letter-spacing:0.01em}
+
+  /* THE SLAB BECOMES A BAR. On a priced-by-hand stone the board has no
+     cutting plan to draw, so the photograph was filling the card with 16:10
+     of stone and pushing the form to the bottom. It is now a strip about the
+     height of the stone row in the panel opposite — enough to see which slab
+     this is — and the space goes to the form. */
+  .est-preview.est-poa-on .est-slab.est-poaslab .est-slabface{
+      aspect-ratio:auto;height:clamp(66px,8.4vh,92px)}
+  .est-preview.est-poa-on .est-slab.est-poaslab .est-slabface::before{
+      background:linear-gradient(90deg,rgba(6,6,8,0.72),rgba(6,6,8,0.12) 62%,rgba(6,6,8,0))}
+  .est-preview.est-poa-on .est-poaslab .est-plate{
+      top:0;display:flex;align-items:center;gap:10px;
+      padding:0 clamp(13px,1.6vw,18px)}
+  .est-preview.est-poa-on .est-poaslab .est-plate b{font-size:clamp(14px,1.25vw,18px)}
+  .est-preview.est-poa-on .est-poaslab .est-plate span{margin-left:auto}
+
+  /* And the whole board stacks from the top instead of pinning the outcome
+     block to the bottom — with the bar above it there is nothing to pin. */
+  .est-preview.est-poa-on .est-out{margin-top:0;padding-top:clamp(11px,1.5vh,15px)}
+  /* The bar already names the stone and its finish. */
+  .est-preview.est-poa-on .est-meta{display:none}
+  .est-preview.est-poa-on .est-form{margin-top:clamp(9px,1.3vh,13px);
+      padding-top:clamp(9px,1.3vh,13px);gap:clamp(5px,0.85vh,8px)}
+  /* Every row the form can spare, so the column opposite carries less slack. */
+  .est-preview.est-poa-on .est-form textarea{min-height:clamp(38px,4.6vh,52px)}
+  .est-preview.est-poa-on .est-form .tc-up{gap:6px}
+  .est-preview.est-poa-on .est-form .tc-up-drop{padding:clamp(8px,1.2vh,12px) 14px}
 }
 .est-slab.est-poaslab .est-slabface{aspect-ratio:16/10}
 .est-slab.est-poaslab .est-slabface::before{background:linear-gradient(180deg,rgba(6,6,8,0) 44%,rgba(6,6,8,0.66))}

@@ -40,6 +40,8 @@ Both builds must be serving before any script runs:
 | `shot-wheel-filter.mjs <w> <h>` | the wheel filtered to one / three / all, as pictures |
 | `probe-stonepick.mjs <w> <h>` | the home enquiry card's optional stone picker, and its absence elsewhere |
 | `probe-poa-form.mjs <w> <h>` | the estimator's priced-by-hand form: validation and the POSTed body (fetch stubbed) |
+| `probe-back.mjs <w> <h>` | the stone-wheel journey: does Back return to the stone section? both builds |
+| `probe-back-site.mjs <w> <h>` | ten journeys across the site: Back restores the offset, and a first visit still starts at the top |
 
 ## Rules these scripts already encode — do not undo them
 

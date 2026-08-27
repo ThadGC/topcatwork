@@ -87,6 +87,8 @@
  * cannot come back on a phone that is merely slow.
  */
 
+import { POS_KEY } from '@/lib/scrollMemory';
+
 const BOOT = `(function(){
   var lw=window.innerWidth, lh=window.innerHeight;
   window.addEventListener('resize',function(e){
@@ -100,7 +102,21 @@ const BOOT = `(function(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   if(!document.createElement('video').canPlayType('video/mp4'))return;
   document.documentElement.classList.add('cine-on');
-  if((location.hash||'').toLowerCase()==='#hero'){
+  /* A back navigation to a page whose intro was already finished must not
+     replay it — the client's 27 Aug report. This is the same state the #hero
+     deep link uses: everything the film draws stays hidden until the engine
+     has snapped to the last frame. Decided HERE, at parse, because by the
+     time React mounts the first frames are already on screen.
+     The key is lib/scrollMemory.ts's, interpolated so it cannot drift. */
+  var back=false;
+  try{
+    var nav=performance.getEntriesByType('navigation')[0];
+    if(nav&&nav.type==='back_forward'){
+      var raw=sessionStorage.getItem('${POS_KEY}'+location.pathname+location.search);
+      back = !!(raw && JSON.parse(raw).cine);
+    }
+  }catch(e){}
+  if(back || (location.hash||'').toLowerCase()==='#hero'){
     document.documentElement.classList.add('to-hero');
     if('scrollRestoration' in history) history.scrollRestoration='manual';
     setTimeout(function(){document.documentElement.classList.remove('to-hero');},3000);
@@ -172,10 +188,11 @@ export function HeroFilmBoot() {
    ────────────────────────────────────────────────────────────────────────── */
 
 export interface FilmMediaBootProps {
-  /** [wide, tablet, phone] encode URLs, in `pickBand` order. */
-  sources: readonly [string, string, string];
-  /** [wide, tablet, phone] poster URLs, in `pickBand` order. */
-  posters: readonly [string, string, string];
+  /** [wide, phone] encode URLs. The tablet plays the wide cut — see
+   *  lib/timeline.ts `filmBand`. */
+  sources: readonly [string, string];
+  /** [wide, phone] poster URLs, same order. */
+  posters: readonly [string, string];
 }
 
 function mediaBoot(props: FilmMediaBootProps): string {
@@ -192,7 +209,7 @@ function mediaBoot(props: FilmMediaBootProps): string {
     return;
   }
   var v=bg.querySelector('video'); if(!v||!window.matchMedia)return;
-  var b=matchMedia('(max-width:720px)').matches?2:matchMedia('(max-width:1120px)').matches?1:0;
+  var b=matchMedia('(max-width:720px)').matches?1:0;
   var S=${s},P=${p};
   if(P[b])v.poster=P[b];
   v.preload='auto';

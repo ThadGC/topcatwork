@@ -188,12 +188,18 @@ describe('markup', () => {
     mockMatchMedia(390);
     const html = renderToStaticMarkup(<HeroFilm />);
     const links = [...html.matchAll(/<link[^>]*rel="preload"[^>]*>/g)].map((m) => m[0]);
-    expect(links).toHaveLength(3);
+    // TWO, not three, since 27 Aug: the tablet plays the wide cut, so it wants
+    // the wide plate. See lib/timeline.ts `filmBand`.
+    expect(links).toHaveLength(2);
     for (const l of links) {
       expect(l).toContain('as="image"');
       expect(l).toContain('prefers-reduced-motion: no-preference');
     }
     expect(links.some((l) => l.includes('plate-f0-phone.webp'))).toBe(true);
+    // And the other one covers everything above the phone in ONE query.
+    const wide = links.find((l) => !l.includes('phone'))!;
+    expect(wide).toContain('(min-width:721px)');
+    expect(wide).not.toContain('max-width:1120px');
     // The still hero is NOT preloaded — it is the thing being deferred.
     expect(links.some((l) => l.includes('hero-night'))).toBe(false);
   });

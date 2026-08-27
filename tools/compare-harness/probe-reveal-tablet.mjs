@@ -6,10 +6,10 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 const W = Number(process.argv[2]||900), H = Number(process.argv[3]||900);
-const TARGETS = [12.5, 13.0, 13.6, 14.4];
+const TARGETS = (process.argv[4]||'10.4,11.2,12.0').split(',').map(Number);
 const b = await chromium.launch({ channel: 'chrome' });
 fs.mkdirSync('out',{recursive:true});
-for (const [base,label] of [['http://localhost:3000','NEW'],['http://localhost:8099','OLD']]) {
+for (const [base,label] of [['http://localhost:3000','NEW']]) {
   const ctx = await b.newContext({ viewport:{width:W,height:H} });
   const p = await ctx.newPage();
   await p.goto(base+'/',{waitUntil:'domcontentloaded'}).catch(()=>{});

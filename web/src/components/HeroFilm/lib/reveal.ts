@@ -56,7 +56,14 @@ export const REV_S: readonly number[] = [
   -0.3803, -0.3845,
 ];
 
-/* ── tablet, 721-1120px — film width 584, reveal starts at source frame 157 ── */
+/* ── RETIRED, 27 Aug: the tablet's own table ─────────────────────────────────
+   The tablet plays the wide cut now (lib/timeline.ts `filmBand`), so it uses
+   REV_X/REV_S above. These were measured against the 584-wide crop of the
+   mobile master and are kept because they are the DEFINITION of a picture the
+   client signed off, not because anything selects them. Nothing does. Do not
+   wire them back without re-measuring against whatever footage the tablet is
+   playing at the time.
+   -------------------------------------------------------------------------- */
 
 export const TREV_F0 = 157;
 export const TREV_YREF = 360;

@@ -101,6 +101,7 @@ import {
   type PaneBleed,
 } from './lib/reveal';
 import { FrameSampler } from './lib/sampler';
+import { isBackForward, posKey, readPosition } from '@/lib/scrollMemory';
 import { STORY, beatWindow, pickBand, type Band } from './lib/timeline';
 import { useCineBand, filmSupported, type CineEnv } from './useCineBand';
 import { useFilmScrub, scrubIsMobile } from './useFilmScrub';
@@ -131,15 +132,13 @@ export interface HeroFilmRefs {
 export interface HeroFilmSources {
   src: string;
   poster: string;
-  srcNarrow: string;
-  posterNarrow: string;
+
   srcPhone: string;
   posterPhone: string;
 }
 
 export interface HeroFilmPlates {
   src: string;
-  srcNarrow: string;
   srcPhone: string;
 }
 
@@ -472,9 +471,12 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     }
 
     const fr = videoFrame.frame(refs.video.current);
+    /* `tablet: false` ALWAYS. The tablet plays the wide cut since 27 Aug, so
+       the edge the reveal tracks is the one the WIDE table was measured
+       against; TREV_X/TREV_S belong to the retired 584 crop. */
     const panes = revealPanes(fr, frame, {
       phone: band.phone && !band.wide,
-      tablet: band.tablet,
+      tablet: false,
     });
     revDone.current = panes.done;
 
@@ -502,7 +504,7 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     const v = refs.video.current;
     if (v?.videoWidth) return v.videoWidth;
     const band = bandRef.current;
-    return band.phone ? FILM_W.phone : band.narrow ? FILM_W.tablet : FILM_W.wide;
+    return band.phone ? FILM_W.phone : FILM_W.wide;
   }, [refs]);
 
   /** `setFilmFrame()` — the three vars the wide-band line layout is built on. */
@@ -611,7 +613,7 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
         contentW: box.w,
         contentH: box.h,
       },
-      fw: band.phone ? FILM_W.phone : band.tablet ? FILM_W.tablet : FILM_W.wide,
+      fw: band.phone ? FILM_W.phone : FILM_W.wide,
       videoW: v?.videoWidth ?? 0,
       videoH: v?.videoHeight ?? 0,
     });
@@ -659,7 +661,7 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       const el = refs.plate.current;
       if (!el) return;
       const band = bandRef.current;
-      const url = pickBand(band, plates.src, plates.srcNarrow, plates.srcPhone);
+      const url = band.phone ? plates.srcPhone : plates.src;
       if (url && url !== plateUrl.current) {
         plateUrl.current = url;
         el.style.backgroundImage = "url('" + url + "')";
@@ -1228,8 +1230,8 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     // Compared against the HANDLE's source and not against `v.src`, because on
     // the Blob fallback path `v.src` is a `blob:` URL that matches nothing.
     const band = bandRef.current;
-    const src = pickBand(band, sources.src, sources.srcNarrow, sources.srcPhone);
-    const poster = pickBand(band, sources.poster, sources.posterNarrow, sources.posterPhone);
+    const src = band.phone ? sources.srcPhone : sources.src;
+    const poster = band.phone ? sources.posterPhone : sources.poster;
     if (source.current?.source !== src) {
       source.current?.release();
       if (poster) v.poster = poster;
@@ -1445,11 +1447,20 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     document.fonts?.ready?.then(onFonts).catch(() => {});
 
     // #hero deep link: land on the finished film with no scrub at all.
+    // AND the same for a back navigation to a page whose intro was already
+    // finished (client, 27 Aug) — the boot script has already put the document
+    // into `to-hero` for both cases, so this only has to agree with it. See
+    // lib/scrollMemory.ts.
     const heroHash = () => (location.hash || '').toLowerCase() === '#hero';
+    const backToFinished = () => {
+      if (!isBackForward()) return false;
+      const saved = readPosition(posKey(location));
+      return !!saved?.cine;
+    };
     const unveil = () => root.classList.remove('to-hero');
     let hashLoad: (() => void) | null = null;
     let hashTimer: ReturnType<typeof setTimeout> | null = null;
-    if (heroHash()) {
+    if (heroHash() || backToFinished()) {
       skipRef.current();
       const onSeeked = () => requestAnimationFrame(() => requestAnimationFrame(unveil));
       v.addEventListener('seeked', onSeeked, { once: true });
