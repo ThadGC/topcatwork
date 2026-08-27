@@ -2094,3 +2094,28 @@ html.proj-open .proj-close{top:92px}
 
 /* --- bridge: see scripts/extract-home-css.mjs, "THE ONE BRIDGE RULE" --- */
 #hero{--hTitle:clamp(72px,min(6.2vw,10.6vh),92px)}
+
+/* -------------------------------------------------------------------------
+   #reviews — lift the static in-flow content into its own paint layer.
+
+   Symptom: the section head (title + sub) and the "Like what you're reading?"
+   line did not paint at all, on Chromium AND WebKit, while every POSITIONED
+   element in the same section (.rev-stage, .rev-deck, the gold .rev-cta-go
+   anchor) painted normally. Computed style said the head was visible -
+   opacity 1, no clip, no filter, no blend, real layout boxes, and
+   checkVisibility() true - and nothing was hit-testable above it.
+
+   The one thing every casualty shared was `position: static`, and the one
+   thing every survivor shared was a position other than static. #procModal
+   sits in this stacking neighbourhood as a fixed, z-index:120 element, and
+   the section itself is z-index:1 - so the static in-flow layer is where the
+   loss happens.
+
+   Giving the head and the CTA their own positioned layer puts them in the
+   same paint pass as the deck that was always rendering correctly.
+   ------------------------------------------------------------------------- */
+#reviews .section-head,
+#reviews .rev-cta {
+  position: relative;
+  z-index: 2;
+}
