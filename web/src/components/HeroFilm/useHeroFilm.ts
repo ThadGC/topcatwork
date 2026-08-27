@@ -1460,15 +1460,47 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     const unveil = () => root.classList.remove('to-hero');
     let hashLoad: (() => void) | null = null;
     let hashTimer: ReturnType<typeof setTimeout> | null = null;
+    /*
+      ⛔ THE `load` RE-ASSERTIONS MUST NOT OUTRANK THE VISITOR.
+
+      These exist because the browser's own scroll restoration lands after the
+      hash jump and undoes it, so the end state is re-asserted once on `load`
+      and once 160ms later. But `load` waits for EVERY image, and this page has
+      573 of them behind a 24 MB film. On a cold load it can be seconds — long
+      enough for the visitor to have read the hero and scrolled down. Re-assert
+      then and `skipToEnd()` scrolls them to `top + travel`, which after the
+      lock is the top of the page.
+
+      Reported as: "finish the video, reach Surfaces worth building around,
+      scroll down to the reviews, and it jumps right back up." Reproduced with
+      one image held to push `load` to 4.1s: parked at scrollY 12000, `load`
+      fired, and 1ms later scrollTo(12000 -> 1). Twice, 160ms apart. It is
+      intermittent because a warm cache fires `load` before the visitor moves.
+
+      So: any real input gesture hands control to the visitor for good. A
+      scroll listener cannot do this job — our own scrollTo raises one too.
+      `unveil()` still runs either way, or the page stays veiled.
+    */
+    let userDrove = false;
+    const markDrive = () => {
+      userDrove = true;
+    };
+    addEventListener('wheel', markDrive, { passive: true });
+    addEventListener('touchmove', markDrive, { passive: true });
+    addEventListener('keydown', markDrive);
     if (heroHash() || backToFinished()) {
       skipRef.current();
       const onSeeked = () => requestAnimationFrame(() => requestAnimationFrame(unveil));
       v.addEventListener('seeked', onSeeked, { once: true });
       v.addEventListener('error', unveil, { once: true });
       hashLoad = () => {
+        if (userDrove) {
+          unveil();
+          return;
+        }
         skipRef.current();
         hashTimer = setTimeout(() => {
-          skipRef.current();
+          if (!userDrove) skipRef.current();
           unveil();
         }, 160);
       };
@@ -1516,6 +1548,9 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
       removeEventListener('touchstart', onFirstGesture);
       if (hashLoad) removeEventListener('load', hashLoad);
       if (hashTimer) clearTimeout(hashTimer);
+      removeEventListener('wheel', markDrive);
+      removeEventListener('touchmove', markDrive);
+      removeEventListener('keydown', markDrive);
       document.removeEventListener('click', onBrandClick);
       clearInterval(deadPoll);
       io?.disconnect();
