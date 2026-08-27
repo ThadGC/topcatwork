@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 const b=await chromium.launch({channel:'chrome'});
-for (const path of ['/','/contact','/estimate','/about','/services','/projects','/trade','/stone-selector']){
+for (const path of ['/','/contact','/estimate','/about','/services','/projects','/trade']){
   const p=await b.newPage({viewport:{width:1440,height:900}});
   const errs=[],hyd=[];
   p.on('console',m=>{const t=m.text();

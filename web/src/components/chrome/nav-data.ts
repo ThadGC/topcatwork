@@ -86,15 +86,23 @@ export const SERVICES: readonly NavLink[] = [
  * This is NOT a transcription slip — the legacy markup really does differ,
  * and the mobile sheet is the one that carries the three range anchors.
  * Reproduced as found.
+ *
+ * "Stone selector" DELIBERATELY DIVERGES FROM THE LEGACY BUILD, 27 Aug 2026.
+ * Both lists pointed at `/#stones`, an anchor into the home page — so the item
+ * dropped the visitor onto the landing page behind the cine intro instead of
+ * anywhere that reads as a destination. The client asked for "its own
+ * dedicated page ... and then obviously have some global sections below that
+ * and the estimator". That page is /stone-selector/. Do not restore the
+ * anchor to match old.
  */
 export const STONES_DESKTOP: readonly NavLink[] = [
-  { href: '/#stones', label: 'Stone selector' },
+  { href: '/stone-selector/', label: 'Stone selector' },
   { href: '/stones/', label: 'All stones' },
   { href: '/stones/compare.html', label: 'Compare stones' },
 ];
 
 export const STONES_MOBILE: readonly NavLink[] = [
-  { href: '/#stones', label: 'Stone selector' },
+  { href: '/stone-selector/', label: 'Stone selector' },
   { href: '/stones/', label: 'All stones' },
   { href: '/stones/#quartz', label: 'Quartz' },
   { href: '/stones/#marble', label: 'Marble & Quartzite' },
