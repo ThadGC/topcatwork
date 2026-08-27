@@ -25,6 +25,7 @@ import {
   type UseId,
 } from '@/lib/estimator/constants';
 import { face } from '@/lib/estimator/marble';
+import { takeQ } from '@/lib/form/journey';
 import type { Plan } from '@/lib/estimator/pack';
 
 /** The POA board's name-plate veil — see the note at its usage below. Inline
@@ -466,6 +467,71 @@ export default function Estimator() {
   /* site.js:3872-3879 — the POA board is one whole slab with a name plate. */
   const poaMat = live.stone.mat || live.mat;
   const poaSub = (MATS[poaMat as MatId] || {}).noCat ? 'Priced by hand' : poaMat;
+
+  /* ------------------------------------------------------------------
+     THE ESTIMATOR WRITES ITSELF INTO THE ENQUIRY.
+
+     Four calls in site.js were never ported, and the symptom was not in the
+     estimator at all — it was that "Their estimate" was empty in every
+     enquiry email since the rewrite, and the trail never said which stone
+     they had been pricing:
+
+       site.js:3857  jot({t:'ev', k:'Estimator stone',    v:stone.name})
+       site.js:4064  jot({t:'ev', k:'Estimator material', v:mat})
+       site.js:3918  jot({t:'est', mat, stone, poa:true})            POA path
+       site.js:3963  jot({t:'est', mat, stone, pieces, slabs,
+                          island, extras, lo, hi})                   calculator
+
+     `takeQ` was ported and has always known what to do with `{t:'est'}` —
+     it writes it to localStorage under `tc_estimate`, which payload.ts then
+     reads onto every enquiry. Nothing ever called it. See lib/form/journey.ts
+     and lib/mail/compose.ts.
+     ------------------------------------------------------------------ */
+  const lastMat = useRef<string | null>(null);
+  const lastStone = useRef<string | null>(null);
+  useEffect(() => {
+    if (!est.mounted) return;
+    /* Skip the boot render: the source only jots a CHANGE, not the default
+       the estimator opens on. */
+    if (lastMat.current !== null && lastMat.current !== live.mat) {
+      takeQ({ t: 'ev', k: 'Estimator material', v: live.mat });
+    }
+    lastMat.current = live.mat;
+    const stoneName = live.stone?.name ?? null;
+    if (lastStone.current !== null && stoneName && lastStone.current !== stoneName) {
+      takeQ({ t: 'ev', k: 'Estimator stone', v: stoneName });
+    }
+    lastStone.current = stoneName;
+  }, [est.mounted, live.mat, live.stone?.name]);
+
+  useEffect(() => {
+    if (!est.mounted) return;
+    const stoneName = live.stone?.name;
+    if (!stoneName) return;
+
+    if (!result.poaHidden) {
+      takeQ({ t: 'est', mat: live.mat, stone: stoneName, poa: true });
+      return;
+    }
+    if (result.price.type !== 'range') return;
+    /* `added` is not on the result — only the sentence built from it
+       (price.ts:232). Reversing that sentence is lossy only if an extra ever
+       contains " and ", and none does. */
+    const extras = result.adds
+      ? result.adds.replace(/^Includes\s+/, '').replace(/\.$/, '').split(' and ')
+      : [];
+    takeQ({
+      t: 'est',
+      mat: live.mat,
+      stone: stoneName,
+      pieces: live.pieces.map((p) => `${p.len}×${p.wid}×${p.th}mm ${p.use}`),
+      slabs: Number(result.stSlabs) || result.stSlabs,
+      island: est.islandOn,
+      extras,
+      lo: result.price.lo,
+      hi: result.price.hi,
+    });
+  }, [est.mounted, est.islandOn, live.mat, live.stone?.name, live.pieces, result]);
 
   const showEngine = est.mounted;
   const animate = est.animateNext.current;

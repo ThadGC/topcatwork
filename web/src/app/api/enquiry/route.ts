@@ -1,36 +1,46 @@
 /**
- * POST /api/enquiry — the enquiry endpoint.
+ * POST /api/enquiry — the enquiry endpoint. It sends the email.
  *
- * This replaces the legacy `send.php`. That file was 464 lines of PHP doing
- * `mail()` with a hand-rolled MIME multipart, and it only survived the rewrite
- * because the app was built `output: 'export'`, which forbids route handlers.
- * The export target was chosen for SiteGround's Apache host; the moment the
- * deploy target became Vercel, both the constraint and the PHP went away.
+ * ⚠️ THIS COMMENT WAS WRONG FOR MOST OF 27 Aug. It said "It does NOT send
+ * email... a serverless function has no sendmail", which stopped being true in
+ * 631744b when forwarding was added, and a handoff copied the stale claim into
+ * its launch blockers. If you change the delivery here, change this too.
  *
- * WHAT THIS DOES NOW, and what it deliberately does not.
+ * WHERE IT GOES: info@topcatworktops.co.uk, fixed. `ENQUIRY_TO` can point a
+ * staging run somewhere else; a request cannot. See lib/mail/send.ts.
  *
- * It accepts the same multipart body the forms already build (see
- * lib/form/payload.ts — unchanged, so nothing on the client had to move except
- * the URL), validates the fields the old endpoint treated as required, and
- * acknowledges. It does NOT send email.
+ * HOW IT GETS THERE, in order, first one that works:
+ *   1. SMTP from this process (nodemailer), composing the email here — the
+ *      real path, live as soon as the host environment has credentials.
+ *   2. The legacy send.php on the old host, handed the same multipart. Still
+ *      live, still mails the same inbox; the fallback so that delivery cannot
+ *      silently become nothing while (1) is unconfigured.
+ *   3. Nothing — and then the visitor is TOLD, with a 502. A form that says
+ *      "your enquiry is on its way" while dropping it is the one outcome this
+ *      route must never produce.
  *
- * That is not an oversight. Delivery needs a transport this environment does
- * not have: PHP's `mail()` worked because it ran on the same box as the mail
- * server, and a serverless function has no sendmail. Wiring it up is a matter
- * of dropping a transport in below — the shape is already here — plus a
- * mailbox credential in the host's environment. Until that exists, an enquiry
- * is validated and logged rather than silently swallowed, so a demo shows the
- * real success and failure states instead of a fake one.
- *
- * THE FIELDS, carried over from send.php verbatim so nothing downstream has to
- * change when a transport is added:
- *   name email phone postcode message   the form's own inputs
- *   page page_title form_name device screen   stamped by buildPayload()
- *   journey estimate stone stone_link service   optional context
- * Any other string field is passed through, which is how the old endpoint
- * behaved (it printed unknown fields into the email rather than dropping them).
+ * WHAT IS IN THE EMAIL — lib/mail/compose.ts, a port of send.php's builder:
+ *   name email phone postcode message service   the form's own inputs
+ *   form_name                                   WHICH form they filled in
+ *   stone stone_link                            the stone they had selected
+ *   estimate                                    material, slabs, extras, the
+ *                                               range shown, or the POA path
+ *   journey                                     what they did, step by step,
+ *                                               with pages, dwell and visits
+ *   page page_title device screen                where from, and on what
+ *   file1…fileN                                 attached, as real attachments
+ * Any other string field is passed through as its own row, which is how the
+ * old endpoint behaved.
  */
 import { NextResponse } from 'next/server';
+
+import { composeEnquiry, type Attachment } from '@/lib/mail/compose';
+import { mailTo, sendByForward, sendBySmtp, smtpConfigured } from '@/lib/mail/send';
+
+/* Buffers and a TCP socket — this cannot run on the edge runtime. */
+export const runtime = 'nodejs';
+/* An enquiry is never cached. */
+export const dynamic = 'force-dynamic';
 
 /** Mirrors send.php's `$FILE_MAX`, and TC_UP's `MAXB` on the client. */
 const FILE_MAX = 50 * 1024 * 1024;
@@ -49,6 +59,8 @@ export interface EnquiryResult {
     attachments: number;
     attachmentBytes: number;
     delivered: boolean;
+    /** 'smtp' | 'forward' | 'none' — which way it actually went out. */
+    via?: string;
   };
 }
 
@@ -99,60 +111,74 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
   }
 
   // ---------------------------------------------------------------------
-  // Delivery.
-  //
-  // The legacy endpoint IS the transport. send.php is 464 lines of tested
-  // delivery - a sender ladder, MIME multipart, the iOS no-extension case,
-  // and the large-attachment spill to a download link - and it is still
-  // live and still mails info@topcatworktops.co.uk. Re-implementing all of
-  // that here to reach the same mailbox would be a second thing to keep
-  // correct, for no gain.
-  //
-  // So this route validates, then forwards the SAME multipart body to it,
-  // server-side: no CORS, no browser involvement, and the success message
-  // the visitor sees becomes true again.
-  //
-  // Point ENQUIRY_FORWARD_URL at the production hosts own /send.php when
-  // the site moves to the live domain. Setting it to an empty string turns
-  // forwarding off and the route falls back to validate-and-log.
+  // Delivery. SMTP first, the legacy endpoint second, and an honest failure
+  // third. See the header, and lib/mail/send.ts.
   // ---------------------------------------------------------------------
   const FORWARD_URL =
     process.env.ENQUIRY_FORWARD_URL ?? 'https://thadeusg3.sg-host.com/send.php';
 
+  /* The files, read once, as real attachments. */
+  const attachments: Attachment[] = [];
+  for (const { file } of files) {
+    attachments.push({
+      /* iOS photographs arrive with no name and no extension at all — send.php
+         had a whole comment about this (D439). Give it one so the attachment
+         is openable rather than a nameless blob. */
+      filename: file.name || `attachment-${attachments.length + 1}.jpg`,
+      size: file.size,
+      contentType: file.type || 'application/octet-stream',
+      content: Buffer.from(await file.arrayBuffer()),
+    });
+  }
+
+  const mail = composeEnquiry({ fields, attachments });
+
   let delivered = false;
+  let via: string = 'none';
   let deliveryError: string | null = null;
 
-  if (FORWARD_URL) {
+  if (smtpConfigured()) {
     try {
-      const out = new FormData();
-      for (const [key, value] of Object.entries(fields)) out.append(key, value);
-      for (const { field, file } of files) out.append(field, file, file.name || field);
-
-      const upstream = await fetch(FORWARD_URL, { method: 'POST', body: out });
-      const raw = await upstream.text();
-      let parsed: { ok?: boolean; error?: string } | null = null;
-      try {
-        parsed = JSON.parse(raw) as { ok?: boolean; error?: string };
-      } catch {
-        /* send.php answers JSON; anything else is a host-level failure page. */
-      }
-
-      delivered = upstream.ok && parsed?.ok === true;
-      if (!delivered) {
-        deliveryError = parsed?.error ?? `upstream ${upstream.status}`;
-      }
+      const r = await sendBySmtp(mail, attachments);
+      delivered = r.delivered;
+      via = r.via;
+      deliveryError = r.error ?? null;
     } catch (e) {
       deliveryError = e instanceof Error ? e.message : String(e);
     }
   }
 
+  /* Not `else` — if SMTP is configured but fails on this request, the enquiry
+     is still worth more than the error. Fall through and try the old host. */
+  if (!delivered && FORWARD_URL) {
+    try {
+      const r = await sendByForward(fields, files, FORWARD_URL);
+      if (r.delivered) {
+        delivered = true;
+        via = r.via;
+        deliveryError = null;
+      } else {
+        deliveryError = [deliveryError, r.error].filter(Boolean).join('; ');
+      }
+    } catch (e) {
+      deliveryError = [deliveryError, e instanceof Error ? e.message : String(e)]
+        .filter(Boolean)
+        .join('; ');
+    }
+  }
+
   /*
-    A visitor must never be told "we have your details" when nothing was
-    sent. useEnquiryForm shows the thank-you panel on a 2xx, so a failed
-    delivery has to be a non-2xx here or the old lie comes straight back.
+    A visitor must never be told "we have your details" when nothing was sent.
+    useEnquiryForm shows the thank-you panel on a 2xx, so a failed delivery has
+    to be a non-2xx here or the old lie comes straight back.
+
+    The one case that is allowed through is local development with delivery
+    deliberately switched off (ENQUIRY_FORWARD_URL=""), so the forms can be
+    worked on without mailing anyone.
   */
-  if (FORWARD_URL && !delivered) {
-    console.error('[enquiry] delivery failed', { to: FORWARD_URL, deliveryError });
+  const deliveryOff = !smtpConfigured() && !FORWARD_URL;
+  if (!delivered && !deliveryOff) {
+    console.error('[enquiry] delivery failed', { to: mailTo(), via, deliveryError });
     return NextResponse.json(
       {
         ok: false,
@@ -164,14 +190,15 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
     );
   }
 
-  // Logged rather than dropped, so a demo enquiry is recoverable from the
-  // host's function logs and it is obvious the endpoint really ran.
   console.info('[enquiry]', {
     at: new Date().toISOString(),
+    to: mailTo(),
+    via,
     from: fields.email,
     name: fields.name,
     form: fields.form_name,
     page: fields.page,
+    stone: fields.stone,
     device: fields.device,
     attachments: files.length,
     attachmentBytes,
@@ -185,16 +212,22 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
       attachments: files.length,
       attachmentBytes,
       delivered,
+      via,
     },
   });
 }
 
 /** The old endpoint answered GET with a self-test (`?selftest=1`). */
 export async function GET(): Promise<NextResponse> {
+  const forward = process.env.ENQUIRY_FORWARD_URL ?? 'https://thadeusg3.sg-host.com/send.php';
   return NextResponse.json({
     ok: true,
     endpoint: 'enquiry',
     accepts: 'POST multipart/form-data',
-    delivery: 'not configured — validated and logged only',
+    to: mailTo(),
+    /* Reports configuration only. It does NOT send a test message — the
+       legacy `send.php?selftest=1` did, which is worth knowing before you
+       poke it. */
+    delivery: smtpConfigured() ? 'smtp' : forward ? 'forward to legacy send.php' : 'off',
   });
 }

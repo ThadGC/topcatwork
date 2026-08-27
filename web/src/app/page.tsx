@@ -1,4 +1,5 @@
 import HeroFilm from '@/components/HeroFilm';
+import JourneyTracker from '@/components/forms/JourneyTracker';
 import { JsonLd } from '@/components/chrome/JsonLd';
 import About from '@/components/sections/About';
 import Cta from '@/components/sections/Cta';
@@ -51,6 +52,12 @@ import '@/styles/home-sections.css';
 export default function HomePage() {
   return (
     <main>
+      {/* THE TRAIL STARTS HERE TOO. Every other page mounts this; the home page
+          did not, so the one page most visitors arrive on recorded nothing —
+          no "Arrived from google.com", no first page view, and an enquiry sent
+          from the home card carried no journey at all. Caught by dumping what
+          each form actually puts on the wire (probe-form-payload.mjs). */}
+      <JourneyTracker />
       {/*
         The page's structured data — one HomeAndConstructionBusiness block,
         lifted verbatim out of index.html. It is the site's primary
