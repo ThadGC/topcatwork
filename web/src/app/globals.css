@@ -198,6 +198,29 @@
     overflow-x: clip;
   }
 
+  /*
+    ...but the 172 CONTENT pages never had overflow-x on <html>.
+
+    site.css:38 sets it and service.css:21 does not, and an old content page
+    loads service.css ALONE - never site.css. Carrying the site.css html rule
+    into globals.css, which loads on all 178 pages, put overflow-x:clip on
+    every content page for the first time.
+
+    That breaks position:sticky for everything inside: a clip container on
+    <html> takes over as the sticky scroll container. Measured on
+    /services/kitchen-worktops at 1440px - .lead-aside has
+    position:sticky;top:96.5px and still scrolled clean off the top
+    (120 -> -180 -> -580 -> -1080), while the same element on the old page
+    held at 94px through every scroll position.
+
+    :has() keys off the same data-tokens="content" attribute the token roots
+    already use, so the two families stay separated by the markup rather than
+    by a second rule someone has to remember.
+  */
+  :root:has(body[data-tokens=content]) {
+    overflow-x: visible;
+  }
+
   body {
     background: var(--ink);
     color: var(--bone);
