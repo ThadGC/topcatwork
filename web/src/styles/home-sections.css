@@ -14,6 +14,12 @@
    the legacy class names, not with utilities.
    ========================================================================== */
 
+/* site.css:378. <main> must form a stacking context, or every STATIC in-flow
+   child of a section paints under the full-bleed backdrop while the
+   `position:relative` ones still show. That is why `#stones .section-head`
+   was invisible while `.stone-stage` beside it rendered. */
+main{position:relative;z-index:1;overflow-x:clip}
+
 .pg-col #gallery{--galMode:phone}
 .section{padding:clamp(30px,4.6vh,84px) clamp(20px,5vw,64px)}
 .section-head{max-width:1320px;margin:0 auto clamp(14px,2.8vh,42px);text-align:center}
@@ -210,6 +216,17 @@
           --stoneH:calc(var(--wheelH) * 0.76);
           --stoneW:min(56vw,calc(var(--wheelH) * 0.583));
           padding-bottom:clamp(22px,5vh,56px)}
+
+/* Height-band overrides, relocated from globals.css so they win here.
+   site.css keeps these in ONE sheet, immediately after the base rules they
+   override and BEFORE the max-width queries, so source order decides.
+   In the rebuild the base rules moved to this sheet, which page.tsx imports
+   AFTER globals.css -- so the globals copies lost on source order at equal
+   specificity (measured: .wy-r h3 13px on old, 13.5px here, at 375x812).
+   The globals.css copies are deliberately KEPT for the content.css pages
+   that never load this sheet; the values are identical either way. */
+@media (max-height:960px) {#stones {padding-top:20px;padding-bottom:12px;} #stones .section-head {margin-bottom:12px;} #stones .eyebrow {margin-bottom:9px;} #stones .stone-stage {margin-top:8px;} #stones .wheel-ui {margin-top:8px;} #stones .readout {--rNameFS:23px;}}
+@media (max-height:640px) {#stones .section-sub {display:none;}}
 .wheel{position:relative;z-index:1;height:var(--wheelH);margin:0 calc(clamp(20px,5vw,64px) * -1);display:flex;align-items:center;justify-content:center;touch-action:pan-y;user-select:none;overflow-x:clip;overflow-y:visible;cursor:grab}
 .wheel.dragging{cursor:grabbing}
 .wheel .slab{position:absolute;top:50%;left:50%;
@@ -1572,6 +1589,16 @@ html.proj-open .proj-close{top:92px}
 .sp-tile small{display:block;margin:3px 3px 0;font-size:9px;letter-spacing:.16em;
     text-transform:uppercase;color:var(--muted)}
 .sp-tile.on b{color:var(--gold)}
+
+/* Height-band overrides, relocated from globals.css so they win here.
+   site.css keeps these in ONE sheet, immediately after the base rules they
+   override and BEFORE the max-width queries, so source order decides.
+   In the rebuild the base rules moved to this sheet, which page.tsx imports
+   AFTER globals.css -- so the globals copies lost on source order at equal
+   specificity (measured: .wy-r h3 13px on old, 13.5px here, at 375x812).
+   The globals.css copies are deliberately KEPT for the content.css pages
+   that never load this sheet; the values are identical either way. */
+@media (max-height:780px) {.est-block + .est-block, #estCalc > .est-block:first-child, .est-poa {margin-top:clamp(6px, 1.2vh, 10px);padding-top:clamp(5px, 1.1vh, 9px);} .est-extra {padding:clamp(3px, 0.62vh, 6px) 0;} .est-tabs .mat-tab {padding:clamp(7px, 1.4vh, 10px) 8px;} .est-in, .est-sel {padding-top:6px;padding-bottom:6px;font-size:13px;} .est-xname {font-size:13px;} .est-xname small {font-size:10.5px;} .est-stonebtn {margin-top:7px;padding:4px 11px 4px 4px;} .est-swatch {width:40px;height:27px;} .est-standard {margin-top:5px;font-size:10.5px;} .est-edge {padding:8px 9px;gap:7px;}}
 #why{position:relative;z-index:1;overflow-x:clip}
 .why-mosaic{max-width:1240px;margin:0 auto;
     display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
@@ -1630,6 +1657,18 @@ html.proj-open .proj-close{top:92px}
     font-size:clamp(13.5px,1.15vw,15.5px);line-height:1.3;margin-bottom:clamp(3px,0.7vh,8px)}
 .wy-r p{color:var(--body);font-weight:300;margin:0;
     font-size:clamp(12px,1.02vw,14px);line-height:1.55}
+
+/* Height-band overrides, relocated from globals.css so they win here.
+   site.css keeps these in ONE sheet, immediately after the base rules they
+   override and BEFORE the max-width queries, so source order decides.
+   In the rebuild the base rules moved to this sheet, which page.tsx imports
+   AFTER globals.css -- so the globals copies lost on source order at equal
+   specificity (measured: .wy-r h3 13px on old, 13.5px here, at 375x812).
+   The globals.css copies are deliberately KEPT for the content.css pages
+   that never load this sheet; the values are identical either way. */
+@media (max-height:845px) {.wy-r {padding:10px 12px;} .wy-r h3 {font-size:13px;margin-bottom:3px;} .wy-r p {font-size:12px;line-height:1.45;} .wy-top {margin-bottom:4px;}}
+@media (max-height:700px) {#why .section-head {margin-bottom:clamp(10px, 1.6vh, 24px);} .why-mosaic {gap:8px;} .wy-r {padding:8px 11px;} .wy-n {font-size:9.5px;} .wy-top {margin-bottom:3px;}}
+@media (max-height:620px) {.wy-n {display:none;}}
 @media(max-width:1000px){
   .why-mosaic{grid-template-columns:repeat(6,minmax(0,1fr));
       grid-template-rows:auto;
@@ -1658,6 +1697,16 @@ html.proj-open .proj-close{top:92px}
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 .cta-line{max-width:44ch;color:var(--muted);font-size:clamp(13px,min(1.3vw,2.3vh),15.5px);
     font-weight:300;line-height:1.7}
+
+/* Height-band overrides, relocated from globals.css so they win here.
+   site.css keeps these in ONE sheet, immediately after the base rules they
+   override and BEFORE the max-width queries, so source order decides.
+   In the rebuild the base rules moved to this sheet, which page.tsx imports
+   AFTER globals.css -- so the globals copies lost on source order at equal
+   specificity (measured: .wy-r h3 13px on old, 13.5px here, at 375x812).
+   The globals.css copies are deliberately KEPT for the content.css pages
+   that never load this sheet; the values are identical either way. */
+@media (max-height:700px) {.cta-line {max-width:54ch;line-height:1.62;}}
 .cta-copy{display:flex;flex-direction:column}
 .cta-reach{margin-top:auto;padding-top:clamp(16px,2.6vh,30px)}
 .cta-lines{list-style:none;display:grid;gap:clamp(9px,1.4vh,14px);margin-top:clamp(12px,1.9vh,20px)}
@@ -1828,6 +1877,16 @@ html.proj-open .proj-close{top:92px}
 .acp-role{margin-top:3px;font-size:clamp(7.5px,calc(var(--sideW) * 0.027),10px);
     letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);opacity:0.85;
     line-height:1.3;min-height:2.6em}
+
+/* Height-band overrides, relocated from globals.css so they win here.
+   site.css keeps these in ONE sheet, immediately after the base rules they
+   override and BEFORE the max-width queries, so source order decides.
+   In the rebuild the base rules moved to this sheet, which page.tsx imports
+   AFTER globals.css -- so the globals copies lost on source order at equal
+   specificity (measured: .wy-r h3 13px on old, 13.5px here, at 375x812).
+   The globals.css copies are deliberately KEPT for the content.css pages
+   that never load this sheet; the values are identical either way. */
+@media (max-height:840px) {#about .section-sub, .weld-about .section-sub {max-width:none;line-height:1.62;}}
 @media(max-width:880px){
   .about-wrap{grid-template-columns:1fr;grid-template-areas:"collage" "copy";
       gap:clamp(24px,4vh,36px);--sideW:min(86vw,420px)}
@@ -2131,4 +2190,43 @@ html.proj-open .proj-close{top:92px}
    ------------------------------------------------------------------------- */
 #reviews .rev-cta {
   margin-top: 0;
+}
+
+/* -------------------------------------------------------------------------
+   CHANGE REQUEST #4 (26 Aug) — even spacing across the reviews CTA, the
+   divider and "Surfaces for every space". DESKTOP BAND ONLY (>=1121px);
+   NOT a port defect.
+
+   WHY IT WENT UNEVEN. Only the >=1121px block gives #reviews
+   `min-height:100vh; display:flex; justify-content:flex-start`. The CTA used
+   to carry `margin-top:auto` (:269), so the section's free space sat BETWEEN
+   the cards and the CTA. The previous change request dropped that auto push
+   to pull the CTA up to the cards — which was right — and the free space did
+   not disappear: the section is still exactly 100vh tall, so all of it fell
+   BELOW the CTA instead, on top of the 103.5px padding-bottom and the
+   divider's own 54px margin.
+
+   Measured at 1440x900, before:
+       CTA underline -> divider   241.73px   (84.23 free + 103.5 pad + 54)
+       divider -> "Surfaces" ink  164.30px   (54 + 95.8 pad + 22.5 intro pad
+                                              - 8 half-leading)
+
+   Note the padding-bottom is NOT a lever here: with min-height:100vh binding,
+   shrinking it only grows the free space by the same amount. The two levers
+   that move anything are where the free space is put, and the divider's own
+   top margin.
+
+   `justify-content:center` shares the free space above and below the
+   composition instead of dumping all of it underneath — which is what a
+   full-viewport section should do now that nothing inside it stretches — and
+   the divider's top margin takes the remainder. The CTA-to-cards distance the
+   last change request set is untouched (both are inside the same centred
+   column), and so is the divider-to-#services distance, so the divider and
+   the whole of #services simply move up toward the CTA.
+
+   After, at 1440x900:  241.73 -> 163.61 against 164.30. Even to 0.7px.
+   ------------------------------------------------------------------------- */
+@media(min-width:1121px){
+  #reviews{justify-content:center}
+  #reviews + .section-divider{margin-top:clamp(10px,2vh,26px)}
 }

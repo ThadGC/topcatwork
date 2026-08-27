@@ -382,14 +382,35 @@ describe('the eight area pages', () => {
     expect(table.querySelector('tbody th')?.getAttribute('scope')).toBe('row');
   });
 
-  it('carries the page-specific hero chips, not just the shared four', async () => {
+  /*
+    REWRITTEN FOR CHANGE REQUEST #3 (26 Aug). This test used to assert the
+    opposite — six hero chips, "CM17 to CM20" and "Dialling 01279" among them,
+    which is what the live page ships and what the port faithfully carried.
+    The client asked for the hero row to be the four standard chips only, so
+    the pair now lives in the local-coverage list further down the page. Both
+    halves are asserted here: gone from the hero, still on the page.
+  */
+  it('shows only the four standard chips in the hero (CR #3)', async () => {
     const { container } = render(await area(['essex', 'harlow']));
     const chips = [...container.querySelectorAll('.hero-chips .chip')].map((chip) =>
       chip.textContent?.replace(/\s+/g, ' ').trim(),
     );
-    expect(chips).toHaveLength(6);
-    expect(chips).toContain('CM17 to CM20');
-    expect(chips).toContain('Dialling 01279');
+    expect(chips).toHaveLength(4);
+    expect(chips[0]).toContain('Google reviews');
+    expect(chips.slice(1)).toEqual([
+      '10 year guarantee',
+      '72 hour aftercare',
+      'Free home visit',
+    ]);
+    expect(chips).not.toContain('CM17 to CM20');
+    expect(chips).not.toContain('Dialling 01279');
+
+    /* Moved, not deleted — they are the tail of the local-coverage list. */
+    const areas = [...container.querySelectorAll('ul.chips li')].map((li) =>
+      li.textContent?.trim(),
+    );
+    expect(areas.slice(-2)).toEqual(['CM17 to CM20', 'Dialling 01279']);
+
     /* The house icon paints with #tcGold, which <TcDefs> must have put in the DOM. */
     expect(container.querySelector('.chip-ico svg path')?.getAttribute('stroke')).toBe(
       'url(#tcGold)',

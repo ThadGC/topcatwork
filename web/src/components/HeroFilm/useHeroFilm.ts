@@ -84,7 +84,7 @@ import {
   veilValue,
   wipeEase,
 } from './lib/outputs';
-import { filmFrame, revealFrame, type RevealFrame } from './lib/geometry';
+import { contentBox, filmFrame, revealFrame, type RevealFrame } from './lib/geometry';
 import { promoteDeferredImage } from './lib/deferredImg';
 import { attachFilmSource, type FilmSourceHandle } from './lib/filmSource';
 import { filmMode, type FilmMode , gradeOff , revealOff } from './lib/mode';
@@ -586,13 +586,16 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     // `offsetWidth` and friends are rounded to whole pixels and that is fine
     // for the film frame, which is where the polygon lived. The panes are NOT
     // fine with it — half a pixel of error in a pane's edge is half a pixel of
-    // error in the reveal — so their four numbers come off `getComputedStyle`,
-    // whose `width`/`height` are the used CONTENT box, exact.
-    const cs = getComputedStyle(el);
-    const num = (v: string): number => {
-      const n = parseFloat(v);
-      return Number.isFinite(n) ? n : 0;
-    };
+    // error in the reveal — so their four numbers come off `getComputedStyle`.
+    //
+    // Through `contentBox()`, never straight off `cs.width`: the line is
+    // `box-sizing: border-box`, and Blink resolves `width` against box-sizing,
+    // so on this element `cs.width` is the BORDER box. In the phone band, where
+    // the line carries 27.3px of padding either side, that is 390px against a
+    // 335.406px content box — and 54.6px of error in `cw` is what opened the
+    // gap between the two panes that read as a black bar across the headline.
+    // See lib/geometry.ts.
+    const box = contentBox(getComputedStyle(el));
 
     const bg = bgRect();
     const v = refs.video.current;
@@ -603,10 +606,10 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
         top: el.offsetTop,
         width: el.offsetWidth,
         height: el.offsetHeight,
-        padLeft: num(cs.paddingLeft),
-        padTop: num(cs.paddingTop),
-        contentW: num(cs.width),
-        contentH: num(cs.height),
+        padLeft: box.pl,
+        padTop: box.pt,
+        contentW: box.w,
+        contentH: box.h,
       },
       fw: band.phone ? FILM_W.phone : band.tablet ? FILM_W.tablet : FILM_W.wide,
       videoW: v?.videoWidth ?? 0,

@@ -3,30 +3,37 @@
 import { useState } from 'react';
 
 import { useReveal } from '@/hooks/useReveal';
+import { useStoneWheel } from '@/hooks/useStoneWheel';
 
 /**
  * `section.section#stones` — index.html:3803. The materials strip.
  *
  * A draggable wheel of slabs with a material rail above it and a filter
- * drawer below. Everything except the wheel itself is here, verbatim.
+ * drawer below.
  *
- * `#wheel` IS EMPTY, and it is empty in the legacy HTML too. The slabs are
- * rendered at runtime by the procedural stone generator (site.js:706 `STONES`
- * palettes, `marble()`, `marbleFill()`), which draws each slab as an SVG from
- * a palette preset and a seed rather than loading a photograph. That renderer
- * is its own piece of work and is shared with the stone detail pages, the
- * compare tool and the review card backings — it does not belong to this
- * composition. The wheel's controls, readout and rail are all here with their
- * legacy ids so attaching it is a drop-in.
+ * `#wheel` IS RENDERED EMPTY, and it is empty in the legacy HTML too. Its 67
+ * slabs are built at runtime by `useStoneWheel`, imperatively, because the
+ * wheel is a MEASURED belt: the step between slabs is read off a slab that is
+ * already in the DOM, and the step decides how long the belt has to be. See
+ * the long note at the top of hooks/useStoneWheel.ts. Everything the hook
+ * drives is here with its legacy id — `#matTabs`, `#prev`, `#readout`,
+ * `#next`, `#stoneView`, `#stoneFilter`, `#sfSearch`, `#sfCount`, `#sfBadge`,
+ * `#sfClear`, `#stoneEst`, `#stoneAsk`.
  *
- * The filter drawer's open/closed state IS wired, because it is pure markup
- * state: `#stoneFilter` toggles `hidden` and the button's `aria-expanded`
- * follows it. The chips do not filter anything until the wheel exists to
- * filter, so they are rendered inert exactly as the source ships them —
- * `.sf-chip` with `data-f`/`data-v` for the engine to read.
+ * WHY THE STATIC CLASSNAMES BELOW ARE SAFE. The hook writes `class`, `href`,
+ * `hidden` and `textContent` on several of these elements — the `on` material
+ * tab, the badge, the count, "View this stone"'s target. React only writes a
+ * DOM attribute when the prop VALUE changes between renders, so a prop that
+ * is a literal here is never rewritten and never fights the hook. The one
+ * exception is the drawer's `hidden`, which IS component state (`filterOpen`)
+ * — and the hook correspondingly never touches it, exactly as site.js splits
+ * the two (site.js:1401-1406 owns open/close; :1407-1424 owns the chips).
  */
 export default function Stones() {
   const ref = useReveal<HTMLElement>();
+  /* The ref for `#wheel`. Reads `#stones` and everything under it by id, the
+     way site.js reads `document`. */
+  const wheelRef = useStoneWheel(ref);
   const [filterOpen, setFilterOpen] = useState(false);
 
   return (
@@ -35,9 +42,11 @@ export default function Stones() {
         <h2 className="section-title">
           Choose your <em>stone</em>
         </h2>
+        {/* Client copy change, 26 Aug 2026 — was "…the stone you'll live
+            with." Deliberately differs from the legacy build; do not restore
+            it to match old. */}
         <p className="section-sub">
-          Drag through the collection and choose the stone you&apos;ll live
-          with.
+          Drag through the collection and choose the stone for your space.
         </p>
       </div>
 
@@ -61,7 +70,13 @@ export default function Stones() {
           </a>
         </div>
 
-        <div className="wheel" id="wheel" aria-label="Slab selector" role="group" />
+        <div
+          className="wheel"
+          id="wheel"
+          ref={wheelRef}
+          aria-label="Slab selector"
+          role="group"
+        />
 
         <div className="wheel-ui">
           <button className="wbtn" id="prev" aria-label="Previous stone">
@@ -197,8 +212,10 @@ export default function Stones() {
             </span>
             <span>Filter</span>
             {/*
-              The badge counts active filters. It stays `hidden` until the
-              wheel's filter engine has something to count.
+              The badge counts active filters (site.js:1371). The hook
+              un-hides it and writes the count; `hidden` here is the pre-JS
+              state, and React never rewrites it because the prop is a
+              literal.
             */}
             <span className="sf-badge" id="sfBadge" hidden />
           </button>

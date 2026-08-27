@@ -85,10 +85,19 @@ export function SiteChrome({
   const cine = cineProp ?? isHome;
 
   /*
-    /trade/ — the one page with no mobile chrome and its own footer. See the
-    long note beside BARE_ROUTES in nav-data.ts. The header is still the lite
-    bar (flat seven links, 12px threshold), just without the burger, because
-    there is no sheet for it to open.
+    /trade/ — its own footer, and on the legacy site the one page with no
+    mobile chrome at all. See the long note beside BARE_ROUTES in nav-data.ts.
+
+    CLIENT CHANGE, 26 Aug 2026 — the burger and the sheet are now rendered
+    here too. Measured before the change, at 375px: /trade/ was the ONLY route
+    of the eight sampled with no `.nav-burger` and no `nav.mobile-nav`, on BOTH
+    builds — so this is a deliberate divergence from the source, not a port
+    fix. Do not "restore" it to match old.
+
+    The burger and <MobileNav/> go together and must stay together: a
+    `.nav-burger` carries `aria-controls="mobileNav"`, so shipping it without
+    the sheet is a button that announces a menu and then does nothing. That is
+    exactly why the source shipped neither.
 
     <KeyboardOpenWatcher/> stays: the source loads tcform.js here too, and the
     `html.kb-open` class it writes is free when there is nothing to suppress.
@@ -97,7 +106,8 @@ export function SiteChrome({
     return (
       <>
         <KeyboardOpenWatcher />
-        <SiteHeader variant="lite" burger={false} />
+        <SiteHeader variant="lite" />
+        <MobileNav variant="lite" />
         {children}
         <TradeFooter />
       </>

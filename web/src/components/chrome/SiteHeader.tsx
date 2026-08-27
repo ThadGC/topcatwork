@@ -7,7 +7,6 @@ import { setNavOpen, useNavState } from './nav-state';
 import {
   BRAND_HOME,
   BRAND_LABEL,
-  PRIMARY,
   SERVICES,
   STONES_DESKTOP,
   thresholdForVariant,
@@ -17,9 +16,13 @@ import {
 
 export interface SiteHeaderProps {
   /**
-   * 'rich' is the six site.css pages: dropdown nav, `.bar-flare`, id="siteBar".
-   * 'lite' is the other 171: a flat seven-link nav and nothing else.
+   * 'rich' is the six site.css pages: `.bar-flare`, id="siteBar", the 40px
+   * threshold. 'lite' is the other 171, which have none of them.
    * Defaults to whatever <ChromeProvider> was given.
+   *
+   * NOTE: the nav itself is NO LONGER part of this split. Both variants now
+   * render <PrimaryNav/> with the two dropdowns — see the note on that
+   * function. Everything else about the split is intact.
    */
   readonly variant?: ChromeVariant;
   /** Index only. Turns on the hero-anchored `.scrolled` and the `.preform` state. */
@@ -42,9 +45,18 @@ export interface SiteHeaderProps {
  * THE TWO VARIANTS ARE NOT COSMETIC
  * ---------------------------------------------------------------------------
  * A single header would silently rewrite 172 of the 178 pages. The rich bar
- * carries `id="siteBar"`, an `<i class="bar-flare">` sweep, and two hover
- * dropdowns; the lite bar has none of them and forms at a different scroll
- * distance. Both readings are here, chosen by `variant`.
+ * carries `id="siteBar"` and an `<i class="bar-flare">` sweep, and forms at a
+ * different scroll distance. Both readings are here, chosen by `variant`.
+ *
+ * The NAV is the one piece that has been unified, at the client's explicit
+ * request (26 Aug 2026): "on the internal pages, the Navbar should function
+ * the same way that it functions on the landing page… the services should
+ * still have a drop down and all the other drop downs." The legacy site
+ * really does ship a flat seven-link nav on the 171 content pages — measured,
+ * both builds, `probe-nav.mjs` — so this is a deliberate DIVERGENCE FROM THE
+ * SOURCE, not a restored port defect. `.bar-flare`, `#siteBar` and the 12px
+ * threshold were not part of the request and are untouched, so the content
+ * pages do not silently inherit three other behaviours along with it.
  *
  * ---------------------------------------------------------------------------
  * THE DROPDOWNS HAVE NO JAVASCRIPT AND NO ARIA — DELIBERATELY
@@ -72,10 +84,37 @@ export function SiteHeader({
     cine,
   });
 
-  // Both classes start off so the exported HTML reads `class="bar"`, which
-  // is exactly what the legacy HTML reads — the source adds them from a
-  // deferred script, after the document is already on screen.
-  const className = ['bar', scrolled && 'scrolled', preform && 'preform']
+  /*
+    `.formed` — CLIENT CHANGE, 26 Aug 2026. Not in the source.
+
+      "the nav bar should still be formed on these internal pages instead of
+       having the forming animation."
+
+    Every page EXCEPT the one running the cine film gets it, and it is written
+    during render, so it is in the exported HTML and the bar is formed at first
+    paint — a transition never runs on an initial computed value, so there is
+    nothing to catch mid-fade and no flash before hydration.
+
+    `cine` is the right hook, not `variant`. The bar's forming is the film's
+    closing beat, and `cine` is precisely "this page runs the film". Keying on
+    the rich/lite split instead would have left the five OTHER site.css pages
+    — /about/, /contact/, /estimate/, /projects/, /services/ — still forming
+    on scroll, and those are internal pages by any reading the client has.
+    Measured before this change, `dd-sweep.mjs 1440`: all five sat at ::before
+    opacity 0 at scrollY 0 exactly like /guides/ did.
+
+    `scrolled` and `preform` still start off, as the source has them: the
+    legacy HTML reads `class="bar"` because the source adds both from a
+    deferred script, after the document is already on screen.
+  */
+  const formed = !cine;
+
+  const className = [
+    'bar',
+    formed && 'formed',
+    scrolled && 'scrolled',
+    preform && 'preform',
+  ]
     .filter(Boolean)
     .join(' ');
 
@@ -95,7 +134,7 @@ export function SiteHeader({
       </a>
 
       <nav className="top" aria-label="Primary">
-        {rich ? <RichNav /> : <LiteNav />}
+        <PrimaryNav />
       </nav>
 
       <a className="bar-cta" href="/contact/">
@@ -123,25 +162,18 @@ export function SiteHeader({
   );
 }
 
-/** The seven flat links, in source order. */
-function LiteNav() {
-  return (
-    <>
-      {PRIMARY.map((link) => (
-        <a key={link.href} href={link.href}>
-          {link.label}
-        </a>
-      ))}
-    </>
-  );
-}
-
 /**
  * Services and Stones become `.nav-item` dropdowns; the other five stay flat.
  * Order is fixed by the source: Services, Projects, Stones, Estimate, About
  * us, Trade, Contact.
+ *
+ * This used to be `RichNav`, chosen against a flat `LiteNav` by `variant`.
+ * Both variants render it now — see the client request in the header note.
+ * The seven top-level hrefs and their order are identical to the flat nav's
+ * `PRIMARY`, so no content page's bar gains or loses a destination; the only
+ * change is that two of the seven grow a caret and a `.nav-menu`.
  */
-function RichNav() {
+function PrimaryNav() {
   return (
     <>
       <NavItem

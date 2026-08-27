@@ -1,9 +1,10 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useCallback, useRef, type ReactNode } from 'react';
 
 import { useCursorGlow } from '@/hooks/useCursorGlow';
 import { useReveal } from '@/hooks/useReveal';
+import { useViewSequence } from '@/hooks/useViewSequence';
 
 /**
  * `section.section#why` — index.html:4086.
@@ -107,9 +108,34 @@ const REASONS: readonly Reason[] = [
   },
 ];
 
+/**
+ * site.js:4316 — the mosaic's entrance. Each tile flies in from 640px behind
+ * the perspective plane and 40px low, fading on `e * e` (a squared ramp, so it
+ * stays dark for the first half of the travel and arrives quickly).
+ *
+ * `e > 0.999` clears the inline styles rather than writing the rest values,
+ * which is what hands `will-change` back and lets the CSS own the tile again.
+ */
+const applyWhyTile = (el: HTMLElement, e: number) => {
+  if (e > 0.999) {
+    el.style.transform = '';
+    el.style.opacity = '';
+    return;
+  }
+  el.style.transform =
+    'translateZ(' + (-(1 - e) * 640).toFixed(0) + 'px) translateY(' +
+    ((1 - e) * 40).toFixed(1) + 'px)';
+  el.style.opacity = (e * e).toFixed(3);
+};
+
 export default function Why() {
   const ref = useReveal<HTMLElement>();
+  const mosaic = useRef<HTMLDivElement>(null);
   useCursorGlow(ref, '.wy-tile');
+
+  // site.js:4316-4319 — dur 620, gap 175, threshold 0.2. The source's numbers.
+  const apply = useCallback(applyWhyTile, []);
+  useViewSequence(mosaic, '.wy-tile', apply, { dur: 620, gap: 175, threshold: 0.2 });
 
   return (
     <section className="section" id="why" ref={ref}>
@@ -124,7 +150,7 @@ export default function Why() {
         </p>
       </div>
 
-      <div className="why-mosaic" id="whyMosaic">
+      <div className="why-mosaic" id="whyMosaic" ref={mosaic}>
         <figure className="wy-tile wy-p glow-card">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

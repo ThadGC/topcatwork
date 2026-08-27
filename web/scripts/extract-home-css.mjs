@@ -182,6 +182,16 @@ const OWNED = [
   /(^|[\s,>+~])\.chip-/,
   /(^|[\s,>+~])\.g-(mark|stack|word|rating|score|stars)\b/,
   /(^|[\s,>+~])\.(hs-wide|hs-phone|nowrap|cta-long|cta-short)\b/,
+  /* site.css:378 `main{position:relative;z-index:1;overflow-x:clip}`.
+     A bare element selector matched none of the class patterns below, so it
+     was silently dropped — and without it <main> is `position:static`, forms
+     no stacking context, and the sections' STATIC in-flow content (notably
+     `#stones .section-head`) paints underneath the full-bleed backdrop while
+     their `position:relative` siblings still show. Symptom: the heading is in
+     the DOM, hit-tests correctly, reports opacity 1 — and is simply not on
+     screen. Keep this pattern first; it is an element selector, not a class. */
+  /^main$/,
+
   // shared section primitives
   /(^|[\s,>+~])\.section(-head|-title|-sub|-divider|-cta)?\b/,
   /(^|[\s,>+~])\.rise\b/,

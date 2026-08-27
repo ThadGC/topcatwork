@@ -1231,6 +1231,28 @@ header.bar {
     padding-bottom: 6px;
     font-size: 13px;
   }
+  .est-xname {
+    font-size: 13px;
+  }
+  .est-xname small {
+    font-size: 10.5px;
+  }
+  .est-stonebtn {
+    margin-top: 7px;
+    padding: 4px 11px 4px 4px;
+  }
+  .est-swatch {
+    width: 40px;
+    height: 27px;
+  }
+  .est-standard {
+    margin-top: 5px;
+    font-size: 10.5px;
+  }
+  .est-edge {
+    padding: 8px 9px;
+    gap: 7px;
+  }
 }
 
 @media (max-height: 700px) {

@@ -18,8 +18,8 @@ import AboutPage, { metadata as aboutMeta } from '@/app/about/page';
 import ContactPage, { metadata as contactMeta } from '@/app/contact/page';
 import EstimatePage, { metadata as estimateMeta } from '@/app/estimate/page';
 import ProjectsPage, { metadata as projectsMeta } from '@/app/projects/page';
-import PrivacyPage, { metadata as privacyMeta } from '@/app/(content)/privacy/page';
-import TermsPage, { metadata as termsMeta } from '@/app/(content)/terms/page';
+import PrivacyPage, { metadata as privacyMeta } from '@/app/(content)/(legal)/privacy/page';
+import TermsPage, { metadata as termsMeta } from '@/app/(content)/(legal)/terms/page';
 import TradePage, { metadata as tradeMeta } from '@/app/(content)/trade/page';
 
 beforeEach(() => {

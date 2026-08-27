@@ -51,6 +51,12 @@ const nextConfig: NextConfig = {
 
   async rewrites() {
     return [
+      /* The home page is a `.html` leaf too, and it was the one this list
+         missed. `.brand` links `/index.html#hero` on all 178 pages and the FAQ
+         jump links `/index.html#faq`, so without this the TopCat logo in the
+         header 404s everywhere — measured: /index.html was 404 here and 200 on
+         the legacy build. There are 1224 `index.html` references across src. */
+      { source: '/index.html', destination: '/' },
       { source: '/stones/compare.html', destination: '/stones/compare' },
       { source: '/stones/:slug.html', destination: '/stones/:slug' },
       { source: '/services/:slug.html', destination: '/services/:slug' },

@@ -6,6 +6,8 @@ import { PROJECTS, type Project } from '@/data/home/projects';
 import { REVIEWS } from '@/data/home/reviews';
 import { srcSet } from '@/data/home/srcset';
 import { useCursorGlow } from '@/hooks/useCursorGlow';
+import { useGalleryDoors } from '@/hooks/useGalleryDoors';
+import { HERO_N, useProjectSlideshow } from '@/hooks/useProjectSlideshow';
 
 /**
  * `section#gallery` — index.html:3741.
@@ -29,17 +31,32 @@ import { useCursorGlow } from '@/hooks/useCursorGlow';
  * is not a fallback; it is the shipped layout for every viewport under
  * 1121px, and site.css:3045/3056 tune it for 721px and 1121px up.
  *
- * The door engine is NOT ported here — it is a scroll-linked 3D rig with its
- * own gather/spread/walk phases (site.js:2019-2330). `DOOR_ENGINE` below is
- * the single switch: while it is false the section renders `gal-static` at
- * every width, which is the source's own layout with the source's own
- * numbers. Flip it to true when the engine lands and the mode logic reverts
- * to exactly what site.js does.
+ * The door engine now lives in `useGalleryDoors` (site.js:2050-2330). It owns
+ * the `gal-static` class as well: `measure()` (site.js:2095-2096) reads
+ * `--galMode` back out of CSS and toggles the class, so this component no
+ * longer decides the mode. Below 1121px the engine's own `render()` and
+ * `frame()` bail on their first line and the static layout is untouched.
  */
-const DOOR_ENGINE = false;
 
 /** site.js:2044 — the wall is built in sets of four. */
 const PER_SET = 4;
+
+/*
+ * site.css:1516-1518 and 3204. When the slideshow was cut from the port these
+ * three rules were dropped from the extracted stylesheet with it, so the five
+ * `.phb-slide`s would render as unsized, unpositioned, fully opaque divs. The
+ * rules are reinstated verbatim here rather than in `home-sections.css`
+ * because this component owns the markup they style and the stylesheet is
+ * generated. They belong back in the stylesheet next to `.proj-hero-bg`
+ * (home-sections.css:995) whenever it is next regenerated.
+ */
+const PHB_CSS = `
+.phb-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s var(--ease);will-change:opacity,transform}
+.phb-slide.active{animation:phbZoom 6s var(--ease) forwards}
+@keyframes phbZoom{from{transform:scale(1.10)}to{transform:scale(1)}}
+@media(max-width:720px){.phb-slide{will-change:opacity}}
+`;
+const PHB_STYLE = <style>{PHB_CSS}</style>;
 
 function setsOf<T>(items: readonly T[], size: number): T[][] {
   const out: T[][] = [];
@@ -48,9 +65,10 @@ function setsOf<T>(items: readonly T[], size: number): T[][] {
 }
 
 export default function Gallery() {
-  const sectionRef = useRef<HTMLElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const detailRef = useRef<HTMLDivElement | null>(null);
+  const heroBgRef = useRef<HTMLDivElement | null>(null);
 
   const [open, setOpen] = useState<Project | null>(null);
   const [gridOpen, setGridOpen] = useState(false);
@@ -59,24 +77,13 @@ export default function Gallery() {
   useCursorGlow(stageRef, '.gal-door');
   useCursorGlow(detailRef, '.proj-ph');
 
-  /* ---------------------------------------------------------- gal mode */
+  /* ------------------------------------------------- the door engine -- */
 
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    if (!DOOR_ENGINE) {
-      el.classList.add('gal-static');
-      return;
-    }
-    // site.js:2088 — the mode comes out of CSS, never out of matchMedia.
-    const sync = () => {
-      const m = getComputedStyle(el).getPropertyValue('--galMode').trim();
-      el.classList.toggle('gal-static', m === 'phone' || m === 'grid');
-    };
-    sync();
-    window.addEventListener('resize', sync);
-    return () => window.removeEventListener('resize', sync);
-  }, []);
+  // site.js:2050-2330. Also owns the `gal-static` class (site.js:2095-2096).
+  useGalleryDoors(scrollRef, stageRef);
+
+  // site.js:2338-2377 — the hero cross-fade, started by `openFocus` at 2500.
+  useProjectSlideshow(heroBgRef, open ? open.img : null, open ? open.gallery : null);
 
   /* ------------------------------------------------------ open / close */
 
@@ -136,7 +143,10 @@ export default function Gallery() {
   // single column instead of leaving an empty one.
   const hasCol = Boolean(open?.story || review);
 
-  const card = (p: Project) => {
+  // `i` is the card's index WITHIN its set of four, which is what the source
+  // uses for both the stacking order (site.js:2206) and the hinge side
+  // (site.js:2214) — not its index in PROJECTS.
+  const card = (p: Project, i: number) => {
     const responsive = srcSet(p.img, '(max-width:720px) 440px, 1160px');
     return (
       <article
@@ -148,6 +158,7 @@ export default function Gallery() {
         data-name={p.name}
         data-place={p.place}
         data-key={p.key}
+        style={{ zIndex: 10 + i }}
         onClick={() => openProject(p)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -156,7 +167,10 @@ export default function Gallery() {
           }
         }}
       >
-        <div className="gal-door glow-card">
+        <div
+          className="gal-door glow-card"
+          style={{ transformOrigin: i % 2 === 0 ? '0% 50%' : '100% 50%' }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={p.img}
@@ -178,8 +192,9 @@ export default function Gallery() {
   };
 
   return (
-    <section id="gallery" ref={sectionRef}>
-      <div className="gal-scroll" id="galScroll">
+    <section id="gallery">
+      {PHB_STYLE}
+      <div className="gal-scroll" id="galScroll" ref={scrollRef}>
         <div className="gal-pin">
           <div className="gal-stage" id="galStage" ref={stageRef}>
             <div className="gal-mid" id="galMid">
@@ -212,7 +227,7 @@ export default function Gallery() {
               // grouping costs nothing there and is exactly what the door
               // engine animates when it lands.
               <div className="gal-set" key={s}>
-                {set.map(card)}
+                {set.map((p, i) => card(p, i))}
               </div>
             ))}
           </div>
@@ -242,16 +257,16 @@ export default function Gallery() {
 
         <div className="proj-hero">
           {/*
-            The legacy hero cross-fades through the project's photographs on a
-            4.5s timer across five stacked `.phb-slide`s (site.js:2343). That
-            slideshow is not ported; the hero holds the card image the visitor
-            clicked, which is the first frame of that sequence.
+            site.js:2339 — five stacked slides, cross-faded on a 4.5s timer by
+            useProjectSlideshow. `.proj-hero-bg` itself carries no image in the
+            source (site.css:1515, `background:var(--ink)`); slide 0 is filled
+            with the clicked card's photograph in a layout effect, before paint.
           */}
-          <div
-            className="proj-hero-bg"
-            id="projHeroBg"
-            style={open ? { backgroundImage: `url("${open.img}")` } : undefined}
-          />
+          <div className="proj-hero-bg" id="projHeroBg" ref={heroBgRef}>
+            {Array.from({ length: HERO_N }, (_, i) => (
+              <div className="phb-slide" key={i} />
+            ))}
+          </div>
           <div className="proj-hero-veil" />
           <div className="proj-hero-copy">
             <span className="proj-eyebrow" id="projPlace">

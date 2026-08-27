@@ -4,7 +4,7 @@ import { useRef } from 'react';
 
 import { useFooterTail } from '@/hooks/useFooterTail';
 
-import { WhatsAppPathsSolid } from './glyphs';
+import { MailPath, PhonePath, WhatsAppPathsSolid } from './glyphs';
 import {
   EMAIL,
   EMAIL_HREF,
@@ -175,23 +175,37 @@ export function SiteFooter({ faqHref = '#faq' }: SiteFooterProps) {
           <div className="foot-c-phone">
             <span className="foot-ck">Phone</span>
             <a className="foot-cv" href={PHONE_TEL}>
+              <svg className="foot-cv-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <PhonePath />
+              </svg>
               {PHONE_DISPLAY}
             </a>
           </div>
           <div className="foot-c-email">
             <span className="foot-ck">Email</span>
             <a className="foot-cv" href={EMAIL_HREF}>
+              <svg className="foot-cv-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <MailPath />
+              </svg>
               {EMAIL}
             </a>
           </div>
           <div className="foot-c-wa">
+            {/* Below 721px the icon inside the pill names the channel, so this
+                label is hidden there (chrome.css) exactly as Phone's and
+                Email's already are. It stays in the DOM for the wider layout
+                and for assistive tech. */}
             <span className="foot-ck">WhatsApp</span>
             <a
               className="foot-cv"
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`WhatsApp ${WHATSAPP_DISPLAY}`}
             >
+              <svg className="foot-cv-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <WhatsAppPathsSolid />
+              </svg>
               {WHATSAPP_DISPLAY}
             </a>
           </div>

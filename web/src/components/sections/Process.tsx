@@ -6,6 +6,7 @@ import { PROCESS, PROC_COPY, PROC_DETAIL } from '@/data/home/process';
 import { srcSet } from '@/data/home/srcset';
 import { useCursorGlow } from '@/hooks/useCursorGlow';
 import { useReveal } from '@/hooks/useReveal';
+import { useWeld } from '@/hooks/useWeld';
 
 /**
  * `section.section#process` — index.html:4033, with `#procFlow` built from
@@ -43,6 +44,20 @@ export default function Process() {
   const lastFocus = useRef<Element | null>(null);
 
   useCursorGlow(flowRef, '.ptile');
+
+  /*
+    THE WELD — assets/site.js:4441-4573, ported in `useWeld`.
+
+    It lives here rather than in <About/> because the source's IIFE is anchored
+    on `#process`: it pins this section, measures its height, and observes it.
+    The hook looks both sections up by id exactly as the source does, so
+    <About/> needs no change and `useAboutHinge` is untouched.
+
+    Desktop-only (>=1121px) and a no-op under reduced motion; both gates are
+    inside the hook, matching the media queries the ported CSS already uses
+    (src/styles/home-sections.css:1899).
+  */
+  useWeld();
 
   /* --------------------------------------------------- flow + arrows */
 

@@ -1372,6 +1372,13 @@ footer.site {
   color: var(--faint);
 }
 
+/* The contact-pill icons. The pills themselves are a <=720px treatment
+   (see the max-width:720px block below), so the icons are hidden above it —
+   the wider footer keeps its label/value rows unchanged. */
+.foot-cv-ico {
+  display: none;
+}
+
 .foot-cv {
   font-size: 14.5px;
   color: var(--bone);
@@ -1533,26 +1540,35 @@ a.foot-cv:hover {
     display: none;
   }
 
-  #footer .foot-c-phone {
-    grid-area: phone;
-    margin-top: clamp(20px, 3vh, 30px);
+  /* The three contact pills are one evenly-spaced stack. Their gaps used to be
+     set by three different rules and came out at 34px then 9px, because the
+     WhatsApp row carried its own top margin on top of the phone row's bottom
+     margin. One variable now owns every gap between them; only the leading
+     margin above the first pill is separate. */
+  #footer .foot-contact {
+    --footPillGap: 14px;
   }
 
-  #footer .foot-c-email {
-    grid-area: email;
-    margin-bottom: 0;
+  #footer .foot-c-phone {
+    grid-area: phone;
+    margin: clamp(20px, 3vh, 30px) 0 0;
   }
 
   #footer .foot-c-wa {
     grid-area: wa;
     align-items: center;
-    margin: 9px 0 0;
+    margin: var(--footPillGap) 0 0;
   }
 
+  #footer .foot-c-email {
+    grid-area: email;
+    margin: var(--footPillGap) 0 0;
+  }
+
+  /* The pill's icon now names the channel, so this label goes the same way
+     as Phone's and Email's above. */
   #footer .foot-c-wa .foot-ck {
-    font-size: 9.5px;
-    letter-spacing: 0.24em;
-    margin-bottom: 5px;
+    display: none;
   }
 
   #footer .foot-c-phone,
@@ -1573,6 +1589,7 @@ a.foot-cv:hover {
     background: rgba(9, 9, 11, 0.55);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
+    gap: 9px;
     font-size: 13px;
     color: var(--bone);
     white-space: nowrap;
@@ -1581,8 +1598,21 @@ a.foot-cv:hover {
       color 0.35s var(--ease);
   }
 
-  #footer .foot-c-email .foot-cv {
-    margin-top: 9px;
+  #footer .foot-c-phone .foot-cv-ico,
+  #footer .foot-c-email .foot-cv-ico,
+  #footer .foot-c-wa .foot-cv-ico {
+    display: block;
+    flex: none;
+    width: 15px;
+    height: 15px;
+    color: var(--gold);
+    transition: color 0.35s var(--ease);
+  }
+
+  #footer .foot-c-phone .foot-cv,
+  #footer .foot-c-email .foot-cv,
+  #footer .foot-c-wa .foot-cv {
+    margin-top: 0;
   }
 
   #footer a.foot-cv:hover {
@@ -1689,7 +1719,76 @@ header.bar:not(#siteBar) .brand {
 }
 
 /* nav links: a fixed 11px -> a --uipx-scaled 11. Identical below 1121px,
-   where --uipx is 1px; they part company on desktop. */
-header.bar:not(#siteBar) nav.top a {
+   where --uipx is 1px; they part company on desktop.
+
+   SCOPED TO THE TOP-LEVEL LINKS ONLY. It used to read `nav.top a`, which was
+   harmless while the lite nav was seven flat anchors — but the lite bar now
+   carries the two dropdowns (see §13), and `header.bar:not(#siteBar) nav.top a`
+   is (1,1,2), so it beat `nav.top .nav-menu a` (0,2,2) and re-sized every row
+   inside the panel from 10.5 to 11. The two selectors below name exactly the
+   anchors service.css was ever describing: the bare links, and the anchor that
+   opens a dropdown. Nothing inside `.nav-menu` matches. */
+header.bar:not(#siteBar) nav.top > a,
+header.bar:not(#siteBar) nav.top .nav-item > a {
   font-size: calc(11 * var(--uipx));
+}
+
+/* ==========================================================================
+   13. CLIENT DIVERGENCES FROM THE SOURCE
+   --------------------------------------------------------------------------
+   §12 above is transcription: every rule there is a place service.css really
+   disagrees with site.css. THIS section is not. Everything below is a change
+   the client asked for on 26 Aug 2026 that the legacy site does not do, kept
+   apart so a later reader can tell a port decision from a client decision.
+
+   These are keyed on `.formed`, NOT on the rich/lite split — `.formed` means
+   "this page is not running the cine film", which is every page but the
+   index, rich and lite alike. See SiteHeader.tsx.
+   ========================================================================== */
+
+/* THE INNER-PAGE BAR ARRIVES ALREADY FORMED.
+   Client, verbatim: "the nav bar should still be formed on these internal
+   pages instead of having the forming animation."
+
+   MEASURED, both builds, `bar-state.mjs 1440` on /services/kitchen-worktops:
+   at scrollY 0 the bar reads `class="bar"`, ::before opacity 0, ::after
+   opacity 0 / scaleX(0); past the 12px threshold it becomes `bar scrolled`,
+   opacity 1 / scaleX(1) — and the plate fades in over .6s while the hairline
+   sweeps open over .76s. That fade IS the "forming animation" he is seeing.
+
+   `.formed` is written during render on every page that is not running the
+   cine film (see SiteHeader.tsx), so these are the bar's FIRST-PAINT values,
+   not a state it transitions into: a transition never runs on an initial
+   computed value, so there is no fade to catch, no flash before hydration and
+   no dependence on a scroll listener that has not fired yet. `.scrolled` is
+   still toggled by the hook and now simply re-states values the bar already
+   has — a no-op.
+
+   THE LANDING PAGE NEVER GETS `.formed`, so its cine-intro forming sequence
+   and `.preform` (index-only) are untouched. Verified: `dd-post-skip.mjs`
+   reads bar/preform -> bar scrolled -> bar preform on OLD and NEW alike. */
+header.bar.formed::before {
+  opacity: 1;
+}
+
+header.bar.formed::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ...and no light sweep on a bar that never formed.
+
+   `.bar-flare` is a 0.76s glint along the bottom edge, keyed on `.scrolled`
+   being added — it exists to accompany the forming. On the five rich inner
+   pages (/about/, /contact/, /estimate/, /projects/, /services/) the bar is
+   now already formed at scrollY 0, so leaving the flare armed would fire an
+   unexplained streak of light across a finished bar on the first 40px of
+   scroll, which is the same complaint in a shorter form. Suppressed on
+   `.formed` only; the index still flares as the film hands the bar over, and
+   the lite bar never had a `.bar-flare` element to begin with. */
+header.bar.formed .bar-flare,
+header.bar.formed .bar-flare::before,
+header.bar.formed .bar-flare::after {
+  animation: none;
+  opacity: 0;
 }

@@ -140,6 +140,24 @@
   padding:6px 11px;border-radius:2px;border:1px solid var(--hair-soft)}
 .stp-copy .eyebrow{display:inline-block;font-family:var(--brand);font-size:10px;letter-spacing:0.32em;
   text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+/* CLIENT CHANGE, 26 Aug 2026 — DELIBERATE DIVERGENCE FROM THE LEGACY BUILD.
+   Do not "restore" this to match the old site.
+
+   The material line above the stone name ("Quartz · Polished") is
+   `span.eyebrow.stp-kicker`, but it is a GRID SIBLING of `.stp-copy`, not a
+   descendant, so the `.stp-copy .eyebrow` rule directly above has never
+   matched it — on the legacy build either. It therefore inherited plain 16px
+   bone body text and, with `.stp-grid{gap:0 …}`, sat with a measured 0px gap
+   against the <h1>. Client asked for (a) more air between the two and (b) the
+   material in gold.
+
+   Named explicitly rather than folded into the `.stp-copy .eyebrow` selector:
+   that rule would also drop it to 10px uppercase 0.32em, which is a bigger
+   change than was asked for. Only colour and spacing move here.
+
+   14px is stone.css's own eyebrow-to-heading rhythm (`.st-hero .eyebrow` and
+   `.stp-copy .eyebrow` both use it). Gold comes from the --gold token. */
+.stp-kicker{color:var(--gold);margin-bottom:14px}
 .stp-copy h1{font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:0.01em;
   font-size:clamp(30px,4vw,50px);line-height:1.06}
 .stp-copy .lede{margin-top:16px;max-width:56ch;font-size:clamp(14.5px,1.25vw,16.5px);color:var(--body);line-height:1.7}

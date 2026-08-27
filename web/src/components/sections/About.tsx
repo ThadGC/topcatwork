@@ -1,8 +1,10 @@
 'use client';
 
 import { srcSet } from '@/data/home/srcset';
+import { useAboutHinge } from '@/hooks/useAboutHinge';
 import { useCursorGlow } from '@/hooks/useCursorGlow';
 import { useReveal } from '@/hooks/useReveal';
+import { useRef } from 'react';
 
 /**
  * `section.section#about` — index.html:4048.
@@ -23,9 +25,11 @@ import { useReveal } from '@/hooks/useReveal';
  * would fire a request for the page itself, so an absent attribute is
  * correct, not lazy.
  *
- * NOT PORTED: the hinge animation. `scrollSequence` (site.js:4432) swings each
- * tile in on an X or Y hinge as the section scrolls past, with a different
- * timing profile when the weld door is live. The tiles render at rest here.
+ * THE HINGE lives in `useAboutHinge` (site.js:4411-4441 + `scrollSequence`,
+ * site.js:4244-4278). It needs its own ref because it queries and writes the
+ * six `.ac-tile`s directly and measures `#aboutCollage`'s rect, not the
+ * section's — the section is a full-height two-column block and its top
+ * crosses the trigger line long before the collage does.
  */
 
 /** site.js:4413 — index-aligned with the six `.ac-tile`s; nulls are deliberate. */
@@ -49,7 +53,9 @@ const COLLAGE_ALT = [
 
 export default function About() {
   const ref = useReveal<HTMLElement>();
+  const collageRef = useRef<HTMLDivElement>(null);
   useCursorGlow(ref, '.ac-tile');
+  useAboutHinge(collageRef);
 
   return (
     <section className="section" id="about" ref={ref}>
@@ -93,7 +99,7 @@ export default function About() {
           </div>
         </div>
 
-        <div className="about-collage" id="aboutCollage">
+        <div className="about-collage" id="aboutCollage" ref={collageRef}>
           <figure className="ac-tile ac-w1 ac-plate glow-card">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

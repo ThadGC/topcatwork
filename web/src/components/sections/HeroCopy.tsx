@@ -32,6 +32,24 @@ import { HeroChips } from '@/components/sections/HeroChips';
  * `.hl` stays: it is `display:block; overflow:hidden` and is what puts the
  * two title lines on their own rows.
  *
+ * THE `{' '}` BETWEEN THE TWO `.hl` SPANS IS LOAD-BEARING (D461). Source
+ * markup puts the spans on separate lines (index.html:3695-3696); HTML
+ * collapses that newline, so the h1's text is "Surfaces worth building
+ * around". JSX strips whitespace between adjacent elements, which welded the
+ * lines into "Surfaces worthbuilding around" — measured, not guessed:
+ *
+ *   textContent  old "Surfaces worth building around" / new (broken) "…worthbuilding…"
+ *   selection    same, so copy-paste and any crawler reading text lost the space
+ *   innerText    "Surfaces worth\nbuilding around" on both — unaffected
+ *   accName      "Surfaces worth building around" on both — also unaffected,
+ *                because Chrome's AX tree separates block-level descendants
+ *
+ * So this is a text/SEO/selection bug, NOT a screen-reader one, and it is
+ * invisible on screen because `.hl` is `display:block` and already breaks the
+ * rows. That same `display:block` is why the space costs nothing in layout:
+ * a whitespace-only text node between two block boxes is discarded, and the
+ * h1 measures 873.6x167.961 either way. Do not delete it.
+ *
  * THE TWO LEDES AND THE TWO CTA LABELS are both always in the markup. CSS
  * picks one — `.hs-wide` / `.hs-phone` and `.cta-long` / `.cta-short` — and
  * the short forms are separately written copy, not the long ones truncated.
@@ -100,7 +118,7 @@ export default function HeroCopy() {
           <span className="hero-el" style={{ '--hd': '180ms' } as CSSProperties}>
             Surfaces worth
           </span>
-        </span>
+        </span>{' '}
         <span className="hl">
           <span className="hero-el" style={{ '--hd': '340ms' } as CSSProperties}>
             <em>building around</em>

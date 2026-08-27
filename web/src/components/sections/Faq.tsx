@@ -81,7 +81,7 @@ export default function Faq() {
   useEffect(() => {
     // site.js:2717 — shut on phones, question 0 everywhere else. This has to
     // run after mount because it reads a computed custom property.
-    if (faqPhone()) setCur(-1);
+    if (faqPhone()) { setCur(-1); shown.current = null; }
     const onResize = () => {
       if (!faqPhone()) setCur((c) => (c < 0 ? 0 : c));
     };
@@ -217,7 +217,18 @@ export default function Faq() {
     tabRefs.current[k]?.focus();
   };
 
-  const f = cur >= 0 ? FAQS[cur] : null;
+  /*
+    site.js only ever WRITES into the plate (`select()` sets tagEl/qEl/aEl); it
+    never clears it. So on a phone, closing the accordion leaves the last
+    answer's text sitting in the hidden plate, and before anything has been
+    opened the plate is empty. Rendering `cur < 0 ? '' : ...` would blank it on
+    close instead, which is a different DOM. `shown` reproduces the source: it
+    latches on real selections only, so the phone's shut-on-load state is still
+    empty.
+  */
+  const shown = useRef<(typeof FAQS)[number] | null>(null);
+  if (cur >= 0) shown.current = FAQS[cur];
+  const f = cur >= 0 ? FAQS[cur] : shown.current;
 
   const plate = (
     <div
@@ -306,8 +317,18 @@ export default function Faq() {
           ))}
         </div>
 
-        {/* The wide position: plate as the second column of .faq-body. */}
-        {!narrow ? plate : null}
+        {/*
+          The wide position: plate as the second column of .faq-body — and also
+          where the plate parks while the phone accordion is shut. site.js:2650
+          `place()` is `if (narrow && cur >= 0) tabs[cur].after(panel); else
+          faqBody.appendChild(panel)`, so the plate is NEVER removed from the
+          document: with nothing selected it goes back to .faq-body and
+          `#faq.faq-shut .faq-plate{display:none}` (index.html:3166) hides it.
+          Rendering `!narrow` alone dropped #faqPanel, .fp-tag, .fp-q, .fp-rule
+          and .fp-a out of the DOM at every width ≤720px, where the accordion
+          starts shut.
+        */}
+        {!narrow || cur < 0 ? plate : null}
       </div>
 
       <p className="faq-foot">

@@ -64,6 +64,22 @@ export function PhonePath() {
 }
 
 /**
+ * The envelope. Authored here rather than lifted from the legacy markup —
+ * the old footer never showed an email icon, so there is no source glyph to
+ * copy. Drawn filled, on the same 24x24 box and the same optical weight as
+ * `PhonePath` and the WhatsApp marks, so the three read as one set inside the
+ * footer's contact pills.
+ */
+export function MailPath() {
+  return (
+    <>
+      <path d="M3.6 5h16.8c.88 0 1.6.72 1.6 1.6v.55l-10 5.9-10-5.9V6.6C2 5.72 2.72 5 3.6 5Z" />
+      <path d="M2 8.83v8.57C2 18.28 2.72 19 3.6 19h16.8c.88 0 1.6-.72 1.6-1.6V8.83l-9.49 5.6a1.4 1.4 0 0 1-1.42 0L2 8.83Z" />
+    </>
+  );
+}
+
+/**
  * The caret. Three sites, two readings:
  *
  *   nav.top Services trigger   strokeWidth 1.6, linecap only

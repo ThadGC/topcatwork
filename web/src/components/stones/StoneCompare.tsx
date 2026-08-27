@@ -47,6 +47,21 @@ export function StoneCompare({ data }: { data: CompareRecord[] }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [pickOpen, setPickOpen] = useState(false);
+  /**
+   * Has the picker ever been opened?
+   *
+   * The legacy script fills `#cmpPickGrid` from `paint()`, and `paint()` is
+   * only ever called from `openPick()`, a material tab click, a search
+   * keystroke, or a tile click — never at load. So the source page ships an
+   * EMPTY grid: 2 images and 12 buttons on first paint, all of them chrome
+   * plus the four material tabs (which the source DOES write eagerly, at
+   * compare.html:396). Rendering the 132 tiles declaratively took NEW to 134
+   * images and 144 buttons before a single interaction.
+   *
+   * `closePick()` does not clear the grid in the source either — the markup
+   * stays in the DOM once painted — so this is a one-way latch, not `pickOpen`.
+   */
+  const [pickPainted, setPickPainted] = useState(false);
   const [pickMat, setPickMat] = useState('All');
   const [pickQuery, setPickQuery] = useState('');
   const [shareLabel, setShareLabel] = useState('Copy link');
@@ -102,6 +117,7 @@ export function StoneCompare({ data }: { data: CompareRecord[] }) {
 
   const openPick = useCallback(() => {
     lastFocus.current = document.activeElement;
+    setPickPainted(true);
     setPickOpen(true);
     // The 80ms is the source's. The sheet slides in first; focusing before it
     // has laid out scrolls the panel to the top on iOS.
@@ -384,12 +400,15 @@ export function StoneCompare({ data }: { data: CompareRecord[] }) {
             ))}
           </div>
 
+          {/* Empty until the first `paint()`, exactly as the source ships it. */}
           <p className="cmp-pick-count" id="cmpPickCount">
-            {`Showing ${pickResults.length}${pickResults.length === 1 ? ' stone' : ' stones'}`}
+            {pickPainted
+              ? `Showing ${pickResults.length}${pickResults.length === 1 ? ' stone' : ' stones'}`
+              : ''}
           </p>
 
           <div className="cmp-pick-grid" id="cmpPickGrid">
-            {pickResults.map((stone) => {
+            {(pickPainted ? pickResults : []).map((stone) => {
               const on = selected.includes(stone.slug);
               return (
                 <button
@@ -423,7 +442,12 @@ export function StoneCompare({ data }: { data: CompareRecord[] }) {
             })}
           </div>
 
-          <p className="cmp-pick-empty" id="cmpPickEmpty" hidden={pickResults.length > 0}>
+          {/* `hidden` in the source markup and only unhidden by `paint()`. */}
+          <p
+            className="cmp-pick-empty"
+            id="cmpPickEmpty"
+            hidden={!pickPainted || pickResults.length > 0}
+          >
             No stone by that name in the collection.
           </p>
         </div>

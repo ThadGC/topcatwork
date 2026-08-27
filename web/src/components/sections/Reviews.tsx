@@ -24,7 +24,7 @@ import { useReviewDeck } from '@/hooks/useReviewDeck';
  * hole.
  */
 export default function Reviews() {
-  const { sectionRef, deckRef, page, pagerDisabled, toggleExpand } =
+  const { sectionRef, stageRef, deckRef, page, pagerDisabled, toggleExpand } =
     useReviewDeck(REVIEWS.length);
   const revealRef = useReveal<HTMLElement>();
   useCursorGlow(deckRef, '.rev');
@@ -48,7 +48,13 @@ export default function Reviews() {
         </p>
       </div>
 
-      <div className="rev-stage" id="revStage">
+      {/*
+        `.rev-stage` is where the solo drag binds (site.js:1802), not the
+        deck: the stage is the wider hit area a thumb actually lands on, and
+        `#reviews.rev-solo .rev-stage{touch-action:none}` is declared on this
+        element so a horizontal swipe is not stolen by the page scroll.
+      */}
+      <div className="rev-stage" id="revStage" ref={stageRef}>
         <div className="rev-deck" id="revDeck" ref={deckRef}>
           {REVIEWS.map((r, i) => (
             <article
@@ -63,6 +69,14 @@ export default function Reviews() {
                 attribute and not only in the paragraph.
               */
               data-full={r.q}
+              /*
+                No onClick here on purpose. The card's click and Enter/Space
+                handling is a single delegated listener on `.rev-deck`
+                (site.js:1833-1847, ported in useReviewDeck) because in the
+                solo carousel a click on a NEIGHBOUR pages to it rather than
+                expanding it, and a click that ends a drag has to be swallowed
+                — both of which need the deck's state, not the card's.
+              */
             >
               <div className="rev-inner">
                 <div className="rev-face front">

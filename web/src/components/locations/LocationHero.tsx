@@ -16,6 +16,14 @@
  *      here has a plain `.chip-legacy` line where <HeroChips/> bolds the stars,
  *      which is the source's own difference between the two chromes.
  *
+ *      CHANGE REQUEST #3 (26 Aug): those local chips no longer reach this
+ *      component. app/worktops/[...slug]/page.tsx filters `hero.chips` down to
+ *      the standard four before it gets here and appends the postcode and
+ *      dialling strings to the local-coverage `<ul class="chips">` further down
+ *      the page. This file still renders whatever it is handed — the data
+ *      shape, and the difference above, are unchanged. Do NOT "fix" the row
+ *      back to what the live pages serve; the difference is the request.
+ *
  * The breadcrumb sits INSIDE the hero on this archetype (it is outside <main>
  * on the hub), so <Breadcrumb/> is rendered here rather than by the page.
  */

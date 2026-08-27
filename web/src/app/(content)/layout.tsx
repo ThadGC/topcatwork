@@ -19,9 +19,13 @@
  *
  *   /services/service.css -> /assets/footer.css -> /assets/nav.css
  *
- * ⚠️ Unlike /stones/, there is no fourth sheet here. /trade/ carries one page
- * -specific block (its hero plate at three widths) and keeps it inline in the
- * page, exactly as the source does.
+ * ⚠️ The three routes do NOT all stop there. /privacy/ and /terms/ link a
+ * fourth sheet, /seo.css, and /trade/ does not — so seo.css is imported one
+ * level down, by (legal)/layout.tsx, and never reaches /trade/. Do not move
+ * that import up here.
+ *
+ * /trade/ carries one page-specific block (its hero plate at three widths)
+ * and keeps it inline in the page, exactly as the source does.
  *
  * ---------------------------------------------------------------------------
  * 2. The content token root

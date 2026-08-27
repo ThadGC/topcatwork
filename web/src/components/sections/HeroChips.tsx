@@ -21,6 +21,29 @@
  * `#hero` or a `.svc-hero` it is clipped to a screen-reader line, which is
  * why difference 2 is invisible on nearly every page that has it — invisible,
  * but still a difference from what the host serves, so it is reproduced.
+ *
+ * ---------------------------------------------------------------------------
+ * CHANGE REQUEST #3 (26 Aug) — CHECKED HERE, NOTHING TO DO
+ * ---------------------------------------------------------------------------
+ * The request is that the hero chip row be these four and only these four:
+ *
+ *     Google reviews · 10 year guarantee · 72 hour aftercare · Free home visit
+ *
+ * That is already exactly what this component emits, and it is why nothing in
+ * it changed. Counting nodes in the rendered hero gives SIX `<span>` inside
+ * `.hero-chips`, and the two extras are NOT chips:
+ *
+ *     `.g-stack > .g-word`  the visible "Google reviews" line, and
+ *     `.chip-legacy`        the same rating as one screen-reader line,
+ *                           clipped to 1px by the `#hero`/`.svc-hero` rule.
+ *
+ * Both live INSIDE the single `.chip-google`. Deleting either one to make the
+ * count read "four" would either blank the visible chip or strip the only
+ * accessible text the rating has. Four chips, six spans, all correct.
+ *
+ * The chips the request is actually about — "Dialling 020", "EN1 to EN3, and
+ * N9 to N21" — never came through here. They are per-page data on the eight
+ * /worktops/ pages and are handled in app/worktops/[...slug]/page.tsx.
  */
 import type { CSSProperties } from 'react';
 

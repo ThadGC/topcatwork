@@ -193,3 +193,56 @@ export function sampleRect(args: {
     sh: Math.max(1, rect.height * sc),
   };
 }
+
+/**
+ * An element's exact CONTENT box, and the padding that offsets it.
+ *
+ * `getComputedStyle().width` is NOT the content box. Blink resolves it against
+ * the element's own `box-sizing`, so on a `border-box` element it comes back as
+ * the BORDER box. The reveal line is `border-box`, and in the phone band it
+ * carries 27.3px of horizontal padding: measured at 390x844, `cs.width` reads
+ * 390px while the line's content box is 335.406px.
+ *
+ * That difference is not cosmetic. `wedgePane()` places the wedge's clip edge
+ * by subtracting `cw + bleed.r` from the slant's intercept, so a `cw` that is
+ * 54.6px too large parks the wedge's edge 54.6px BEHIND the slant — while
+ * `cornerPane()`, which is placed off the bleed alone, keeps the strip's edge
+ * on it. The two panes stop tiling: a 53.85px band between them is uncovered by
+ * neither, for the whole sweep. That is the black bar down the middle of the
+ * headline the client reported, and it is phone-only for two independent
+ * reasons — the phone band is the only one whose reveal line has horizontal
+ * padding (`cs.width` is exact where padding is 0), and the only one with a
+ * second pane for a gap to open against.
+ *
+ * Returned unrounded: half a pixel of error in a pane's edge is half a pixel of
+ * error in the reveal, which is why these four numbers come off the computed
+ * style rather than off `offsetWidth`.
+ */
+export function contentBox(cs: {
+  boxSizing: string;
+  width: string;
+  height: string;
+  paddingLeft: string;
+  paddingRight: string;
+  paddingTop: string;
+  paddingBottom: string;
+  borderLeftWidth: string;
+  borderRightWidth: string;
+  borderTopWidth: string;
+  borderBottomWidth: string;
+}): { w: number; h: number; pl: number; pt: number } {
+  const num = (v: string): number => {
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : 0;
+  };
+  const pl = num(cs.paddingLeft);
+  const pt = num(cs.paddingTop);
+  const w = num(cs.width);
+  const h = num(cs.height);
+  if (cs.boxSizing !== 'border-box') return { w, h, pl, pt };
+  const insetX =
+    pl + num(cs.paddingRight) + num(cs.borderLeftWidth) + num(cs.borderRightWidth);
+  const insetY =
+    pt + num(cs.paddingBottom) + num(cs.borderTopWidth) + num(cs.borderBottomWidth);
+  return { w: Math.max(0, w - insetX), h: Math.max(0, h - insetY), pl, pt };
+}
