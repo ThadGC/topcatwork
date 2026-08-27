@@ -149,9 +149,18 @@
    actually decoded, which is a quarry shot, under the hero copy. Measured:
    currentTime 44.25 of a 44.25s film, quarry on screen.
 
-   The still IS the film's last frame (hero-night-2752.webp — the night
-   kitchen), so revealing it here is what the shot was always meant to be; it
-   just no longer depends on the network. The <img> precedes the <video> in
+   ⚠️ MEASURED 27 Aug: THE STILL IS NOT ACTUALLY THE FILM'S LAST FRAME. It is
+   the same scene from a near-identical camera, but a different render:
+   hero-night-2752.webp scores 22.9dB against the desktop master's final frame
+   and NO zoom reconciles them (a scale sweep peaks at 1.00x and only falls,
+   so the .bgImg transform below is not secretly correcting it). The client's
+   `f7 desktop fixed.png` IS that frame — 37.4dB — which is why he supplied it.
+   It is not swapped in yet because it is 1672x940 against this slot's
+   2752x1536, and taking a 1.65x resolution cut at the payoff line would trade
+   the jump for a blur. Needs a >=2752-wide render of the film's true final
+   frame; the master itself is only 1920 wide, so it cannot come from there.
+   Revealing the still here is still right, and no longer depends on the
+   network. The <img> precedes the <video> in
    the markup, so it sits underneath and the 0.5s fade below uncovers it with
    nothing showing through. */
 :global(html.cine-on.cine-done) .cine .bgImg {
