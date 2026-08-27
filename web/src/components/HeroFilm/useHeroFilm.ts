@@ -986,6 +986,30 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     transport.snap(dur.current, dur.current);
     compose(dur.current);
 
+    /*
+      Promote the deferred still at the handoff.
+
+      Measured, legacy vs rebuild, at the moment the hero copy reaches
+      opacity 1 on a scroll-driven run:
+
+        OLD  html="cine-on skip-live"  img.src=hero-night-2752.webp
+        NEW  html="cine-on cine-done"  img.src=(none)
+
+      The legacy page always has a real hero picture loaded behind the copy;
+      the rebuild had none, because `promoteDeferredImage` was wired only into
+      `fail()` and the boot script's film-is-OFF branch — never into the
+      SUCCESSFUL handoff. So from `cine-done` onwards the only thing behind
+      "Surfaces worth building around" was the film's frozen last frame, and
+      anything that collapsed the <video> left bare background instead.
+
+      This does not undo the 151,604-byte saving deferredImg.ts exists for:
+      the fetch still does not happen at parse, only once the visitor has
+      actually reached the end of the film. Nor does it change what is on
+      screen — `html.cine-on .cine .bgImg{opacity:0}` still holds the still at
+      zero — it just guarantees the image is there to be shown.
+    */
+    promoteDeferredImage(refs.bg.current?.querySelector('img[data-src]'));
+
     measure();
     const drop = travel.current;
     document.documentElement.classList.add('cine-done');
@@ -995,7 +1019,7 @@ export function useHeroFilm(opts: UseHeroFilmOptions): HeroFilmApi {
     window.scrollTo({ top: Math.max(0, Math.round(window.scrollY - drop)), behavior: 'instant' });
     dropHeroHash();
     dispatchEvent(new Event('resize'));
-  }, [transport, compose, measure, dropHeroHash]);
+  }, [transport, compose, measure, dropHeroHash, refs]);
 
   const armSettle = useCallback(() => {
     if (locked.current) return;

@@ -34,9 +34,17 @@ export interface TcUploadProps {
   compact?: boolean;
 }
 
+const EMPTY_FILES: never[] = [];
+const getFilesServer = () => EMPTY_FILES;
+const getLinkServer = () => '';
+
 export default function TcUpload({ compact = false }: TcUploadProps) {
-  const files = useSyncExternalStore(subscribe, getFiles, () => []);
-  const link = useSyncExternalStore(subscribe, getLink, () => '');
+  /* getServerSnapshot must return a STABLE reference. An inline `() => []`
+     builds a new array per call, which React detects as a changed snapshot and
+     warns "The result of getServerSnapshot should be cached to avoid an
+     infinite loop". Module-level constants below. */
+  const files = useSyncExternalStore(subscribe, getFiles, getFilesServer);
+  const link = useSyncExternalStore(subscribe, getLink, getLinkServer);
   const [errors, setErrors] = useState<string[]>([]);
   const [over, setOver] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);

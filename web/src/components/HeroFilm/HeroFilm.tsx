@@ -302,14 +302,21 @@ export function HeroFilm({
             ref={video}
             playsInline
             muted
+            /* Markup ships `none`; HeroFilmBoot rewrites it to `auto` at parse
+               time (HeroFilmBoot.tsx:198) so the film starts loading before
+               hydration. React saw server `auto` vs client `none` and reported
+               a mismatch it "won't patch up" — suppressed here because the
+               attribute is owned by the boot script. */
+            suppressHydrationWarning
             preload="none"
             width={1920}
             height={1080}
             aria-hidden="true"
             tabIndex={-1}
             disablePictureInPicture
-            // React has no prop for this one; it is a real HTML attribute.
-            {...{ disableremoteplayback: 'true' }}
+            /* React 19 does know this one, camelCased — the lowercase spread
+               produced "Invalid DOM property `disableremoteplayback`". */
+            disableRemotePlayback
           />
 
           {/*

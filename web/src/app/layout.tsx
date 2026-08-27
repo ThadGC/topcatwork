@@ -63,7 +63,15 @@ export default function RootLayout({
       <html> element, so that one override is applied to out/index.html by
       scripts/postexport.mjs, alongside the directory-URL copies.
     */
-    <html lang="en-GB">
+    /* suppressHydrationWarning: <HeroFilmBoot/> adds `cine-on` to this element
+       during PARSE, before React hydrates — deliberately, because setting it
+       from an effect lands after first paint and the film gate misses.
+       React reported that as an unpatched mismatch, and an unpatched mismatch
+       on THIS class is dangerous: `cine-on` is what holds the hero copy at
+       opacity 0, so a reconcile that drops it paints "Surfaces worth building
+       around" over a film frame. The warning is suppressed because the class
+       is owned by the boot script, not by React. */
+    <html lang="en-GB" suppressHydrationWarning>
       <head>
         {/*
           The two self-hosted variable faces are preloaded on every legacy
