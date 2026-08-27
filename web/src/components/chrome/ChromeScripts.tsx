@@ -1,5 +1,6 @@
 'use client';
 
+import { useDividerShine } from '@/hooks/useDividerShine';
 import { useKeyboardOpen } from '@/hooks/useKeyboardOpen';
 
 /**
@@ -28,6 +29,8 @@ import { useKeyboardOpen } from '@/hooks/useKeyboardOpen';
  */
 export function ChromeScripts() {
   useKeyboardOpen();
+  /* site.js:2792 — the travelling flash on every .section-divider. */
+  useDividerShine();
   return null;
 }
 

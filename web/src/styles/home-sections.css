@@ -2119,3 +2119,16 @@ html.proj-open .proj-close{top:92px}
   position: relative;
   z-index: 2;
 }
+
+/* -------------------------------------------------------------------------
+   CHANGE REQUEST (26 Aug) — pull the reviews CTA up toward the cards.
+
+   NOT a port defect. Measured at 1440px, old and new were identical:
+   gap 84px, margin-top 84.21px (the `margin-top:auto` at :269 pushing the CTA
+   to the bottom of the flex column), padding-top 45px. The client asked for it
+   closer to the review cards, so the auto push-down is dropped and the CTA
+   sits on its own padding.
+   ------------------------------------------------------------------------- */
+#reviews .rev-cta {
+  margin-top: 0;
+}

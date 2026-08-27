@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 
 import { SiteChrome } from '@/components/chrome';
+import { ChromeScripts } from '@/components/chrome/ChromeScripts';
 
 import './globals.css';
 // Imported AFTER globals.css so the cascade matches the legacy load order:
@@ -104,6 +105,13 @@ export default function RootLayout({
         it on the other 171 — see the note in SiteChrome.tsx.
       */}
       <body>
+        {/*
+          Document-level chrome behaviours that belong to no single element:
+          the soft-keyboard watcher (html.kb-open) and the travelling flash on
+          every .section-divider (site.js:2792). The component existed but was
+          never rendered anywhere, so neither had ever run.
+        */}
+        <ChromeScripts />
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
