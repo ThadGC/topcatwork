@@ -176,7 +176,7 @@ export default function Reviews() {
         <p className="rev-cta-line">
           Like what you&apos;re reading?
           <a className="rev-cta-go" href="#cta">
-            Tell us about your kitchen
+            Let us bring your vision to life
             <svg
               viewBox="0 0 24 24"
               fill="none"
