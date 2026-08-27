@@ -22,10 +22,11 @@
    islands happen to be on the page.
    ========================================================================== */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { MATERIALS, matLabel, type MatKey } from '@/data/home/stoneWheel';
+import { type WheelStone } from '@/data/home/stoneWheel';
 import { appendUploads, clearUploads, getFiles, getLink, subscribe } from '@/lib/form/uploads';
+import StonePickerModal from './StonePickerModal';
 import TcUpload from './TcUpload';
 import { badProps, useEnquiryForm } from './useEnquiryForm';
 
@@ -39,9 +40,6 @@ interface StoneDetail {
 }
 
 const CLASSES = ['cta-form'] as const;
-
-/** The three material tabs, in the wheel's own order. */
-const PICK_MATS: MatKey[] = ['Quartz', 'Marble', 'Granite'];
 
 export interface ContactFormProps {
   /**
@@ -64,6 +62,8 @@ export default function ContactForm({ stonePicker = false }: ContactFormProps = 
   const [stone, setStone] = useState<string>('');
   const [upOpen, setUpOpen] = useState(false);
   const [upCount, setUpCount] = useState('');
+  /* The stone popup — see StonePickerModal.tsx. */
+  const [pickOpen, setPickOpen] = useState(false);
 
   const form = useEnquiryForm({
     id: 'ctaForm',
@@ -130,39 +130,22 @@ export default function ContactForm({ stonePicker = false }: ContactFormProps = 
     return subscribe(sync);
   }, []);
 
-  /* The wheel's own three lists, flattened into <optgroup>s. Derived, not
-     copied: `MATERIALS` is itself derived from data/stones.json. */
-  const pickGroups = useMemo(
-    () =>
-      PICK_MATS.map((m) => ({
-        key: m,
-        label: matLabel(m),
-        stones: MATERIALS[m],
-      })),
-    [],
-  );
-
   /* Choosing here dispatches the SAME event the wheel dispatches, so the
-     chip, the payload and any other listener are fed by one path. */
-  const onPick = (slug: string) => {
-    if (!slug) return;
-    for (const m of PICK_MATS) {
-      const hit = MATERIALS[m].find((x) => x.slug === slug);
-      if (!hit) continue;
-      document.dispatchEvent(
-        new CustomEvent('topcat:stone', {
-          detail: {
-            name: hit.name,
-            mat: hit.mat,
-            kind: hit.kind,
-            stone: hit.stone,
-            seed: hit.seed,
-            slug: hit.slug,
-          },
-        }),
-      );
-      return;
-    }
+     chip, the payload and any other listener are fed by one path. The picker
+     hands over the record itself, so there is no slug to look back up. */
+  const onPick = (hit: WheelStone) => {
+    document.dispatchEvent(
+      new CustomEvent('topcat:stone', {
+        detail: {
+          name: hit.name,
+          mat: hit.mat,
+          kind: hit.kind,
+          stone: hit.stone,
+          seed: hit.seed,
+          slug: hit.slug,
+        },
+      }),
+    );
   };
 
   const note = form.note;
@@ -209,26 +192,34 @@ export default function ContactForm({ stonePicker = false }: ContactFormProps = 
         />
       </div>
       {/* The picker and the chip are one slot: pick a stone and the chip
-          replaces the select, clear the chip and the select comes back. */}
+          replaces the trigger, clear the chip and the trigger comes back.
+
+          This was a bare `<select>` of 132 names until 27 Aug. The client:
+          "it only has the names. The choose your stone should create a pop up
+          window where it takes them to the all stone section, and they can
+          just choose their stone" — and, separately, that any dropdown here
+          must be custom-coded rather than the device's own. The trigger wears
+          the uploader's dashed row so the two optional additions to an
+          enquiry read as a pair, and it is a fraction of the height the
+          select box was. */}
       {stonePicker && !stone ? (
-        <select
-          id="ctaStonePick"
-          className="cta-stonepick"
-          value=""
-          onChange={(e) => onPick(e.target.value)}
-          aria-label="Choose your stone — optional"
-        >
-          <option value="">Choose your stone (optional)</option>
-          {pickGroups.map((g) => (
-            <optgroup key={g.key} label={g.label}>
-              {g.stones.map((x) => (
-                <option key={x.slug} value={x.slug}>
-                  {x.name}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
+        <>
+          <button
+            type="button"
+            id="ctaStonePick"
+            className="cta-up-t cta-stonet"
+            aria-haspopup="dialog"
+            aria-expanded={pickOpen}
+            onClick={() => setPickOpen(true)}
+          >
+            <span className="cs-mk" aria-hidden="true" />
+            <span>Choose your stone (optional)</span>
+            <span className="cs-more" aria-hidden="true">
+              Browse
+            </span>
+          </button>
+          <StonePickerModal open={pickOpen} onClose={() => setPickOpen(false)} onPick={onPick} />
+        </>
       ) : null}
       <div className="cta-stone" id="ctaStone" hidden={!stone}>
         <span className="cs-label">Your stone</span>

@@ -1520,3 +1520,122 @@ html.cine-on #hero:not(.loaded) .hero-el {
     transform: none !important;
   }
 }
+
+/* ------------------------------------------------------------------ TcSelect
+   A CUSTOM-CODED DROPDOWN. The client, 27 Aug: "when you do create dropdowns,
+   they have to be custom coded dropdowns, not, uh, like the device's default
+   dropdown." A native `<select>` can be styled as far as its box and no
+   further — the list is drawn by the OS, so it arrives as a grey iOS wheel or
+   a macOS system popup in the middle of this. See TcSelect.tsx; the value
+   still reaches the payload through a hidden input.
+
+   These live in globals.css because the component is form-generic rather than
+   home-page furniture. Nothing else claims `.tc-sel*`, so there is no
+   equal-specificity tie for this file to lose.
+
+   EVERY SELECTOR IS DOUBLED (`.tc-sel .tc-sel-t`, not `.tc-sel-t`) ON PURPOSE.
+   The trigger is a `<button>`, and content.css styles `.qform button` as the
+   gold uppercase SUBMIT — (0,1,1) beats a lone class, so the dropdown first
+   rendered as a gold "COMMERCIAL" bar. Do not flatten these back. */
+.tc-sel {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.tc-sel .tc-sel-t {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  background: rgba(244, 241, 234, 0.03);
+  border: 1px solid var(--hair);
+  border-radius: 5px;
+  padding: 12px 14px;
+  color: var(--bone);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 300;
+  /* `.qform button` also sets these two, and it is the only rule that does —
+     without them the trigger read "COMMERCIAL" in tracked-out caps while the
+     list under it read "Commercial". */
+  text-transform: none;
+  letter-spacing: normal;
+  transition: border-color 0.35s var(--ease), background 0.35s var(--ease);
+}
+.tc-sel .tc-sel-t:hover {
+  border-color: var(--gold);
+}
+.tc-sel .tc-sel-t:focus-visible {
+  outline: none;
+  border-color: var(--gold);
+  background: rgba(244, 241, 234, 0.05);
+}
+.tc-sel .tc-sel-v {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tc-sel .tc-sel-c {
+  flex: none;
+  width: 11px;
+  height: 7px;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transition: transform 0.3s var(--ease);
+}
+.tc-sel.open .tc-sel .tc-sel-c {
+  transform: rotate(180deg);
+}
+/* The list is the whole point: it is ours, so it can be dark, rounded and
+   scrolled like everything else on the page. */
+.tc-sel .tc-sel-list {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 264px;
+  overflow-y: auto;
+  padding: 5px;
+  background: #15151a;
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+}
+.tc-sel .tc-sel-list[hidden] {
+  display: none;
+}
+.tc-sel .tc-sel-o {
+  padding: 10px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 300;
+  color: var(--bone);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+.tc-sel .tc-sel-o.act {
+  background: rgba(198, 166, 100, 0.12);
+}
+.tc-sel .tc-sel-o.on {
+  color: var(--gold);
+}
+.tc-sel .tc-sel-o.on::after {
+  content: '✓';
+  float: right;
+  opacity: 0.8;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc-sel-c,
+  .tc-sel-t,
+  .tc-sel .tc-sel-o {
+    transition: none;
+  }
+}

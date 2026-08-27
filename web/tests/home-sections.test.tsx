@@ -626,10 +626,12 @@ describe('Estimator', () => {
     // And the panel it left is still the panel — copy, points, CTA row.
     expect(container.querySelector('#estPoa .est-poa-points')).toBeTruthy();
     expect(container.querySelector('#estPoa .est-poa-cta')).toBeTruthy();
-    // Its primary link points at the form, not at the foot of the page.
-    expect(
-      container.querySelector('#estPoa .est-poa-cta .rev-cta-primary'),
-    ).toHaveAttribute('href', '#estPoaForm');
+    // The foot was restructured on 27 Aug: the primary moved OUT of
+    // `.est-poa-cta` (which now holds only the two ways to reach a person,
+    // stacked) and up into `.est-poa-foot` as `.est-poa-get`, above the
+    // labelled hairline. Same link, same target — a different wrapper.
+    expect(container.querySelector('#estPoa .est-poa-foot')).toBeTruthy();
+    expect(container.querySelector('#estPoa .est-poa-get')).toHaveAttribute('href', '#estPoaForm');
   });
 });
 

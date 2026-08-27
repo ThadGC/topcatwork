@@ -20,6 +20,7 @@
    rule entirely rather than treating an absent field as an empty one.
    ========================================================================== */
 
+import TcSelect from './TcSelect';
 import { badProps, useEnquiryForm } from './useEnquiryForm';
 
 const CLASSES = ['qform'] as const;
@@ -104,14 +105,16 @@ export default function QuickForm({ defaultService = 'Commercial' }: QuickFormPr
           autoComplete="tel"
           {...badProps(form.bad, 'phone')}
         />
-        <label className="sr-only" htmlFor="qfService">
-          What do you need
-        </label>
-        <select id="qfService" name="service" defaultValue={defaultService}>
-          {SERVICES.map((s) => (
-            <option key={s}>{s}</option>
-          ))}
-        </select>
+        {/* Custom-coded, not the device's own list — see TcSelect.tsx. The
+            hidden input keeps `service` in the payload exactly as the
+            `<select>` put it there. */}
+        <TcSelect
+          id="qfService"
+          name="service"
+          options={SERVICES}
+          defaultValue={defaultService}
+          ariaLabel="What do you need"
+        />
         <button type="submit" disabled={form.sending}>
           {form.sending ? 'Sending…' : 'Send my enquiry'}
         </button>
