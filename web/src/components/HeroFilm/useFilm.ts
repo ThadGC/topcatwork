@@ -185,13 +185,16 @@ const SEEK_EPS = 0.5 / FILM_FPS;
  * over the ... the slab you choose is unique text ... it's extra thick. It's
  * completely broken."
  *
- * Past this much lag the mask follows the scroll instead. The picture is still
- * catching up, but the mask and the words it is masking agree with each other,
- * which reads as the reveal running rather than as a bar stuck over the text.
- * Four frames: comfortably more than the half-frame deadband and the one seek
- * in flight, comfortably less than the gap a flick opens up.
+ * The driving time is CLAMPED to within this of the scroll's own time — never
+ * switched to it. A switch is a cliff, and on a real phone the decode lag sits
+ * near the threshold and oscillates, so the mask jumped between two frames on
+ * consecutive ticks and the reveal tore. Clamping is continuous: exact while
+ * the decoder keeps up, sliding with the scroll when it does not.
+ *
+ * Two frames, not four: it is a bound on how wrong the mask may be, and the
+ * seek deadband is already half a frame.
  */
-const REVEAL_MAX_LAG = 4 / FILM_FPS;
+const REVEAL_MAX_LAG = 2 / FILM_FPS;
 
 /** The scrim floor, and where it starts ramping to full. Film seconds. */
 const VEIL_MIN = 0.2;
@@ -695,7 +698,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       if (window.scrollY !== land) {
         window.scrollTo({ top: land, left: 0, behavior: 'instant' });
         quiet = 0;
-      } else if (++quiet > 8) {
+      } else if (++quiet > 3) {
         release();
         return;
       }
@@ -704,10 +707,24 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     window.addEventListener('wheel', onInput, { passive: true });
     window.addEventListener('touchstart', onInput, { passive: true });
     window.addEventListener('keydown', onInput);
-    /* A backstop now that the quiet exit actually works, not the primary path:
-       long enough to outlast a hard fling, short enough that no failure mode
-       leaves anyone pinned. */
-    capId = window.setTimeout(release, 900);
+    /*
+      ⛔ SHORT. THE VISITOR MUST NOT FEEL THIS.
+
+      The client, on the end of the film: "there's a flash or some sort of
+      glitch where it just settles in, and then you can access the rest of the
+      site ... it should just smoothly stop, have that text come in, and
+      seamlessly then just have its dead scroll and go through."
+
+      That was this guard. At 900ms, with a fling that arrives without any
+      further input to release it, the page was held long enough to read as a
+      stall rather than as settling.
+
+      What it actually has to survive is one frame: the stale scroll animation
+      the collapse orphans, which re-targets immediately or not at all. Three
+      quiet frames catches that, and 350ms is the outside edge of a backstop
+      rather than a hold anybody notices.
+    */
+    capId = window.setTimeout(release, 350);
     requestAnimationFrame(pin);
 
     cancelAnimationFrame(raf.current);
@@ -967,7 +984,26 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
             that constant for why a stale frame index is so much worse here
             than a stale picture.
           */
-          paintReveal(Math.abs(shown.current - t) > REVEAL_MAX_LAG ? t : shown.current);
+          /*
+            ⛔ CLAMPED, NOT SWITCHED. This briefly chose between `shown` and
+            `t` on a threshold, and a threshold is a cliff: on a real phone the
+            decode lag sits near it and oscillates, so the mask jumped between
+            two different frames from one tick to the next. The client saw the
+            headline fully up with a hard horizontal cut through the glyphs and
+            the stone nowhere near it — the mask drawn for one frame over a
+            picture showing another. Reversing made it worse because a backward
+            seek re-decodes from the previous keyframe, so `shown` goes stale
+            fastest exactly there.
+
+            Clamping is continuous. When the decoder is keeping up this is
+            `shown` exactly, so the edge still tracks the real edge in the
+            footage frame for frame. When it falls behind, the value slides
+            with `t` instead of snapping to it, so the mask keeps moving
+            smoothly and can never be more than two frames from the picture.
+          */
+          const lo = t - REVEAL_MAX_LAG;
+          const hi = t + REVEAL_MAX_LAG;
+          paintReveal(shown.current < lo ? lo : shown.current > hi ? hi : shown.current);
         }
 
         // Beat 3 — hard on and off, slides in and back out to the left.
