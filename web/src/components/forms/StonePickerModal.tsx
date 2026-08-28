@@ -48,6 +48,7 @@ export default function StonePickerModal({
   const [q, setQ] = useState('');
   const cardRef = useRef<HTMLDivElement | null>(null);
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
   /** Whatever opened it, so focus can go back there on close. */
   const opener = useRef<HTMLElement | null>(null);
 
@@ -56,8 +57,23 @@ export default function StonePickerModal({
   useEffect(() => {
     if (!open) return;
     opener.current = document.activeElement as HTMLElement | null;
-    // The list is long; the search is what a visitor wants first.
-    const t = window.setTimeout(() => searchRef.current?.focus(), 40);
+    /*
+      ⛔ FOCUS THE PANEL, NOT THE SEARCH BOX.
+
+      This used to focus the input, on the reasoning that the list is long and
+      the search is what a visitor wants first. On a phone that is not a
+      convenience, it is an ambush: focusing a text field opens the on-screen
+      keyboard the instant the picker appears, which covers most of the stones
+      the picker exists to show. The client: "it doesn't automatically have to
+      bring up their keyboard ... only when they tap on that section should it
+      bring up their keyboard."
+
+      Focusing the dialog itself keeps everything the focus was for — the
+      gesture starts inside the modal, Escape works, and a keyboard visitor
+      tabs into the panel rather than the page behind it — without summoning a
+      keyboard nobody asked for.
+    */
+    const t = window.setTimeout(() => panelRef.current?.focus(), 40);
     // A fixed panel over a scrolling page scrolls the page behind it.
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -89,6 +105,10 @@ export default function StonePickerModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="ctaStoneModalTitle"
+      ref={panelRef}
+      /* Focusable only programmatically: it takes the focus when the picker
+         opens, and never appears in the tab order itself. */
+      tabIndex={-1}
       hidden={!open}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
@@ -132,11 +152,27 @@ export default function StonePickerModal({
                 <circle cx="7" cy="7" r="5" />
                 <path d="M10.6 10.6 14 14" />
               </svg>
+              {/*
+                ⛔ THE AUTOFILL HINTS ARE NOT DECORATION.
+
+                Left unclassified, iOS cannot tell what this field wants and
+                offers the lot: the key, the card and the location icons above
+                the keyboard, on a box that searches worktop names. Naming it,
+                turning autofill off and telling the keyboard it is a search
+                gives Safari enough to stop guessing. `enterKeyHint` also turns
+                the return key into Search rather than Go.
+              */}
               <input
                 ref={searchRef}
                 type="search"
+                name="stone-search"
                 placeholder="Try white, matt, marble effect"
                 aria-label="Search stones by name"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                enterKeyHint="search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />

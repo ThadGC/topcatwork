@@ -1528,3 +1528,36 @@ header.bar {
     transition: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ⛔ 16px MINIMUM ON ANYTHING A PHONE CAN TYPE INTO.
+
+   iOS Safari zooms the whole page in when a focused form control has a
+   font-size below 16px, and it does not zoom back out afterwards. The client,
+   on opening the stone picker: "the back part is automatically zooming in,
+   which is not correct. I had to zoom out."
+
+   Its search box was 12.5px, and several form fields around the site are 14,
+   so this is not one control's problem. The alternative cure is
+   `maximum-scale=1` on the viewport, which fixes it by taking pinch-zoom away
+   from everybody, including people who need it. Sizing the text properly costs
+   nothing and takes nothing away.
+
+   Phone only, and deliberately last in the cascade: it is a floor, so it has
+   to outrank the per-component sizes it is protecting. The `:not()` list keeps
+   it off controls whose font-size means nothing — a checkbox has no text.
+
+   ⚠️ THE `:not()`s ON textarea AND select ARE THERE FOR SPECIFICITY, not for
+   what they exclude. A bare `textarea` is (0,0,1) and loses to
+   `.cta-form textarea`, so the textareas stayed at 14px and went on zooming
+   while every input around them was fixed. Two of them puts this at (0,2,1),
+   which clears the component rules. A tie would not do it: globals.css loses
+   every equal-specificity tie to home-sections.css.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']):not([type='color']),
+  textarea:not([readonly]):not([disabled]),
+  select:not([multiple]):not([disabled]) {
+    font-size: 16px;
+  }
+}

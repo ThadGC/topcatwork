@@ -400,6 +400,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   /* The timestamp of the first tick at p = 1, so the lock can wait a bounded
      time for the closing seek to land instead of forever. */
   const completeAt = useRef(0);
+  /** The last scroll position the tick saw, and when it last actually moved. */
+  const restY = useRef(-1);
+  const restAt = useRef(0);
   const raf = useRef(0);
   const lastWrite = useRef(0);
   const armed = useRef(false);
@@ -686,29 +689,20 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       the middle of the page having never seen the hero.
     */
     /*
-      ⛔ THE FLING IS CANCELLED BEFORE THE RUNWAY MOVES, AND `overflow: hidden`
-      IS THE ONLY THING THAT DOES IT.
+      A running scroll animation is cancelled before the ground moves.
 
-      A fling is not a velocity the page carries; it is an ANIMATION WITH A
-      TARGET, and the target is a document offset chosen while the runway was
-      still eight viewports tall. Collapse the runway under it and the
-      animation keeps going to that number in a document that is now 5,800px
-      shorter. The client: "I swiped a bit too quickly, so it just jumped me
-      straight to the get a quote part."
+      Making the scroller briefly non-scrollable is the only thing that does
+      cancel one: `behavior:'instant'` re-targets and carries on, and pinning
+      the scroll holds a fling that then resumes at full speed. On the normal
+      path this is a no-op, because the lock now waits for the visitor to come
+      to rest and there is nothing left running. It earns its place on the two
+      backstop paths, where the film can end while they are still moving.
 
-      Neither of the two obvious answers works. `behavior: 'instant'` does not
-      cancel a running compositor scroll -- measured, it re-targets and carries
-      on. Pinning the scroll for a few frames is worse: the browser keeps the
-      velocity, so the page holds still, lets go, and the fling resumes at full
-      speed. That was the lurch he reported next.
+      One frame, restored on the next. It is NOT held, and the landing is NOT
+      re-asserted afterwards: holding it and then snapping the scroll back is
+      what the client saw as a trip down to the estimator and a jerk back up.
 
-      Making the scroller briefly non-scrollable DOES cancel it, because there
-      is no longer a scroll range to animate into. One frame is enough, and it
-      is restored on the next, so nothing is ever locked. The scroll offset
-      survives it in every engine that matters; the correction below runs
-      inside the same frame anyway.
-
-      `scrollbarGutter` is held stable across the frame so a desktop scrollbar
+      `scrollbarGutter` is pinned across the frame so a desktop scrollbar
       cannot vanish and shift the layout sideways while overflow is off.
     */
     const de = document.documentElement;
@@ -724,66 +718,11 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const afterTop = space.getBoundingClientRect().top;
     if (afterTop) window.scrollBy({ top: afterTop, left: 0, behavior: 'instant' });
 
-    /*
-      ⛔ AND IT IS HELD FOR THE REST OF THE GESTURE, NOT ONE FRAME.
-
-      One frame cancels the animation but not the INPUT still arriving. A hard
-      swipe is a burst of events, and the film ends part way through it: the
-      remainder lands on a page that is now only 15,000px tall and takes the
-      visitor to the bottom of it. Measured with a scripted burst, that is
-      exactly the reported fault -- y=7,200 in the estimator on a fast fling,
-      and the very foot of the document on a hard one.
-
-      While overflow is off there is no scroll range, so those events do
-      nothing AND no velocity accumulates from them. That is the whole reason
-      this works where pinning did not: pinning fought a fling that was still
-      alive and released it intact, whereas this leaves nothing to release.
-
-      The client: "the user has to scroll from the surfaces worth building
-      around section, then they see the review section. They cannot jump
-      between sections."
-
-      280ms is the tail of a flick and well under the ~700ms a deliberate
-      second gesture takes to arrive, so nobody meets it. It is unconditional
-      rather than input-driven precisely so there is no release to lurch on.
-    */
-    const landed = window.scrollY;
-    const give = () => {
+    requestAnimationFrame(() => {
       de.style.overflow = prevOverflow;
       de.style.scrollbarGutter = prevGutter;
-      if (window.scrollY !== landed) {
-        window.scrollTo({ top: landed, left: 0, behavior: 'instant' });
-      }
-    };
-    window.setTimeout(give, 280);
+    });
 
-    /*
-      ⛔ NOTHING PINS THE SCROLL AFTER THIS, AND THAT IS DELIBERATE.
-
-      A momentum guard used to sit here: it held the landing for a few frames
-      so a fling could not carry the visitor past the hero. It was wrong twice
-      over, and the second way is worse than the fault it was added for.
-
-      A held fling is not a cancelled one. The browser keeps the velocity on
-      the compositor, so the guard would hold the page still, let go, and the
-      fling would RESUME at full speed — one lurch, straight down the page. The
-      client: "as I kept swiping through that dead scroll, there was another
-      glitch ... the previous time before that glitch, it took me all the way
-      down to the what would it cost section." That is the release, not the
-      collapse.
-
-      And a scripted wheel sweep cannot show it: driven at 260px a step through
-      the lock and on down the page, every step moves exactly 260 and the only
-      discontinuity is the intended collapse. It needs a real fling on a real
-      phone, which is exactly the instrument this project keeps not having.
-
-      So the correction above stands on its own. It is instantaneous and fights
-      nothing: the runway collapses and the same distance comes off the scroll
-      in the same frame, which lands the visitor on the hero. Whatever momentum
-      they still have then carries them down the page at their own speed, which
-      is what a flick is supposed to do and reads as scrolling rather than as a
-      glitch.
-    */
     cancelAnimationFrame(raf.current);
     raf.current = 0;
   }, [refs]);
@@ -806,6 +745,12 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
       const y = window.scrollY - g.top;
       const past = y >= g.runPx;
+      /* Stillness, for the lock below. `restAt` is the last moment the scroll
+         actually changed, so `now - restAt` is how long they have been still. */
+      if (y !== restY.current) {
+        restY.current = y;
+        restAt.current = now;
+      }
       const before = y < -1;
 
       /*
@@ -1200,20 +1145,42 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         reads it as a hang.
       */
       /*
-        ⛔ THE LOCK WAITS FOR THE END OF THE RUNWAY, NOT THE END OF THE FILM.
+        ⛔ THE LOCK WAITS FOR THE VISITOR TO STOP, NOT FOR A POSITION.
 
-        `complete` is the picture: the film has played out and everything below
-        has been painted at p = 1. `past` is the scroll: they have come through
-        the tail as well. Locking on `complete` is what let a fling that
-        overshot the film's last frame carry on into a document that was about
-        to lose 5,800px. Waiting for `past` means the overshoot is spent inside
-        the tail, with the stage still pinned on the final frame and the hero
-        copy already over it. See HOLD.
+        Two faults came from locking on a position, and they pull in opposite
+        directions.
+
+        Locking the moment the FILM ended threw anyone still moving into a
+        document that was about to lose several viewports, which is the jump to
+        the estimator. Locking only once they were PAST THE WHOLE RUNWAY fixed
+        that and created the other one: somebody reading carefully reaches the
+        end of the film, and then has to scroll a whole further screen through a
+        held picture before anything happens. The client: "they'll just be
+        swiping and nothing is happening, and they think something's wrong ...
+        maybe two swipes, and then they give up."
+
+        Rest satisfies both. Somebody careful arrives at the end, stops, and the
+        film locks within a sixth of a second — there is no dead scroll to
+        fight, because the tail is only ever crossed by someone still moving.
+        Somebody flinging keeps travelling through the tail with the stage still
+        pinned over the viewport, so they see the held frame and nothing else,
+        and the collapse happens once they have come to rest. Since they are
+        already stopped, nothing carries on afterwards and there is no
+        correction to see. That round trip — down to the estimator and snapped
+        back — was the visible half of this.
+
+        The backstop is for a trackpad, whose wheel events can mean the scroll
+        never stands perfectly still; the previous build removed a settle timer
+        for exactly that reason and lost the rest condition with it. `past` is
+        kept as a second backstop: whatever else happens, running out of runway
+        ends the film.
       */
-      if (complete && past) {
+      if (complete) {
         if (!completeAt.current) completeAt.current = now;
-        const landed = !v || !seeks(mode) || !v.seeking;
-        if (landed || now - completeAt.current > 400) lockFilm();
+        const decoded = !v || !seeks(mode) || !v.seeking;
+        const atRest = restAt.current > 0 && now - restAt.current > 160;
+        const giveUp = now - completeAt.current > 1500;
+        if (decoded && (atRest || past || giveUp)) lockFilm();
       }
     },
     [refs, mode, paintReveal, lockFilm],
