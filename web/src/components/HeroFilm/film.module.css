@@ -1256,10 +1256,37 @@
    past, it jumps straight down to the project gallery section, which is wrong.
    Nothing should ever just jump to the project gallery section."
 
-   40vh, the number the note already named. It is empty on purpose — the whole
-   point is that there is nothing there to arrive at. */
+   ⛔ IT IS PER BAND, NOT A FLAT 40vh. The arbiter's hold, measured live, is
+   1.49 / 1.60 / 1.32 viewport-heights on phone / tablet / wide — three to four
+   times the 40vh the note guessed at. Ported literally that would put a wholly
+   empty screen in front of a slow scroller, because the hold sits below a
+   100vh hero and the first blank viewport arrives the moment it reaches 100vh.
+   So the ratio between the bands is kept exactly and scaled by 0.4, the
+   largest factor at which no band reaches 100vh with margin: 60 / 64 / 53vh.
+   At the worst scroll position there is still 40% of the hero or the top of
+   the next section on screen, and the hold itself paints the site's own marble
+   floor rather than a void.
+
+   It is empty on purpose — the whole point is that there is nothing there to
+   arrive at. */
 .heroHold {
-  height: 40vh;
+  /* Wide. The old build's hold here is 0.1387 of an 8550px travel = 1186px,
+     which is 1.32 viewport-heights. */
+  height: 53vh;
+}
+
+@media (max-width: 1120px) {
+  /* Tablet: 0.2 of 8000px = 1600px = 1.60 viewport-heights. */
+  .heroHold {
+    height: 64vh;
+  }
+}
+
+@media (max-width: 720px) {
+  /* Phone: 0.2125 of 5908px = 1255px = 1.49 viewport-heights. */
+  .heroHold {
+    height: 60vh;
+  }
 }
 
 /* ── the copy ───────────────────────────────────────────────────────────────

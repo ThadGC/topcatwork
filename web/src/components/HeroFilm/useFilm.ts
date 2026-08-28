@@ -653,9 +653,11 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const lockedAt = performance.now();
     let free = false;
     let quiet = 0;
+    let capId = 0;
     const release = () => {
       if (free) return;
       free = true;
+      window.clearTimeout(capId);
       window.removeEventListener('wheel', onInput);
       window.removeEventListener('touchstart', onInput);
       window.removeEventListener('keydown', onInput);
@@ -676,13 +678,24 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       was tried first and it expired mid-fling: a 1600px throw was still being
       animated when the guard let go, and the visitor finished 1600px past the
       hero regardless. The release condition is quiet instead — eight frames in
-      which nothing tried to move the page — with a two second hard cap so no
-      failure mode can strand anybody.
+      which nothing tried to move the page — with a hard cap behind it.
+
+      ⛔ AND `behavior: 'instant'` IS NOT OPTIONAL. `html` carries
+      `scroll-behavior: smooth` (content.css, globals.css), so the one-argument
+      `window.scrollTo(x, y)` form ANIMATES. Measured with it: from y=1775 a
+      re-issued `scrollTo(0, 0)` walked 1802, 1800, 1792, 1779, 1756, 1723,
+      1674 … so `scrollY` never equalled `land` on any frame, `quiet` never
+      reached 8, the release below was DEAD CODE, and the guard became a flat
+      two second freeze — which is the "page apparently frozen" fault this
+      whole design exists to avoid. Worse, it fired a fresh scroll ANIMATION
+      every frame into a live fling, which is precisely the cross-thread fight
+      this file's header forbids and the documented shape of the phone shake.
+      With the options form it snaps in one frame and releases in about eight.
     */
     const pin = () => {
       if (free) return;
       if (window.scrollY !== land) {
-        window.scrollTo(0, land);
+        window.scrollTo({ top: land, left: 0, behavior: 'instant' });
         quiet = 0;
       } else if (++quiet > 8) {
         release();
@@ -693,7 +706,10 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     window.addEventListener('wheel', onInput, { passive: true });
     window.addEventListener('touchstart', onInput, { passive: true });
     window.addEventListener('keydown', onInput);
-    window.setTimeout(release, 2000);
+    /* A backstop now that the quiet exit actually works, not the primary path:
+       long enough to outlast a hard fling, short enough that no failure mode
+       leaves anyone pinned. */
+    capId = window.setTimeout(release, 900);
     requestAnimationFrame(pin);
 
     cancelAnimationFrame(raf.current);
