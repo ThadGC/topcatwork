@@ -598,6 +598,79 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const afterTop = space.getBoundingClientRect().top;
     if (afterTop) window.scrollBy({ top: afterTop, left: 0, behavior: 'instant' });
 
+    /*
+      ⛔ AND THE MOMENTUM THEY ARRIVED WITH IS ABSORBED.
+
+      A comment above claims "the correction still always lands on the hero, so
+      an overshoot is absorbed rather than carried into the page." Measured at
+      390, it does not. The correction itself is right — a slow finish lands at
+      scrollY 0 with the hero exactly filling the viewport — but a FLICK is
+      still being animated by the browser when the runway collapses underneath
+      it, and that animation then carries on into a document that is now five to
+      eight viewports shorter. Measured: at the lock, scrollY 0 and the hero at
+      top 0; 2.5 seconds later, scrollY 1600 and the hero 1600px above the
+      viewport, with the middle of the screen in the services section. A real
+      phone flick carries much further than a scripted one.
+
+      The client, 28 Aug: "if I swipe past, it jumps straight down to the
+      project gallery section, which is wrong."
+
+      So the landing is held until the visitor asks for something new. A flick's
+      momentum arrives with no further input — the finger has already lifted —
+      so it is absorbed and they stop on the hero. A deliberate second gesture
+      fires `wheel`, `touchstart` or `keydown` and releases immediately, so
+      nobody is ever held against their will. 700ms is the backstop.
+
+      This is the same fault `skipToEnd` fixed with `behavior:'instant'`; what
+      was missed is that a real visitor's own momentum does it too.
+    */
+    const land = window.scrollY;
+    const lockedAt = performance.now();
+    let free = false;
+    let quiet = 0;
+    const release = () => {
+      if (free) return;
+      free = true;
+      window.removeEventListener('wheel', onInput);
+      window.removeEventListener('touchstart', onInput);
+      window.removeEventListener('keydown', onInput);
+    };
+    /*
+      ⛔ 150ms OF GRACE, OR THE GESTURE THAT ENDED THE FILM RELEASES THE GUARD
+      IT JUST TRIGGERED. The lock runs inside a rAF tick, and the wheel or touch
+      that pushed the scroll past the end is often delivered to the window
+      AFTER it — so without this the guard was armed and released in the same
+      breath, and the fling went straight through. A second, deliberate gesture
+      is always later than this.
+    */
+    const onInput = () => {
+      if (performance.now() - lockedAt > 150) release();
+    };
+    /*
+      ⛔ IT LETS GO WHEN THE FLING STOPS, NOT ON A TIMER. A fixed 700ms backstop
+      was tried first and it expired mid-fling: a 1600px throw was still being
+      animated when the guard let go, and the visitor finished 1600px past the
+      hero regardless. The release condition is quiet instead — eight frames in
+      which nothing tried to move the page — with a two second hard cap so no
+      failure mode can strand anybody.
+    */
+    const pin = () => {
+      if (free) return;
+      if (window.scrollY !== land) {
+        window.scrollTo(0, land);
+        quiet = 0;
+      } else if (++quiet > 8) {
+        release();
+        return;
+      }
+      requestAnimationFrame(pin);
+    };
+    window.addEventListener('wheel', onInput, { passive: true });
+    window.addEventListener('touchstart', onInput, { passive: true });
+    window.addEventListener('keydown', onInput);
+    window.setTimeout(release, 2000);
+    requestAnimationFrame(pin);
+
     cancelAnimationFrame(raf.current);
     raf.current = 0;
   }, [refs]);

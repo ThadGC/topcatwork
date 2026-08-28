@@ -1241,6 +1241,27 @@
   height: 100vh;
 }
 
+/* ⛔ THE DEAD SCROLL AFTER THE HERO. IT WAS IN THE MARKUP WITH NO CSS.
+
+   `<div className={css.heroHold}>` has been rendered since the rebuild, with a
+   comment saying "a beat after the hero before the page starts, so reaching the
+   end of the film does not run straight on into the next section" — and a
+   second comment in useFilm.ts calling it "the 40vh hold BELOW the hero". No
+   rule for it was ever written, so `css.heroHold` resolved to undefined and the
+   div has been zero pixels tall this whole time. The port's usual fault: the
+   half that was described, dropped.
+
+   The client, 28 Aug: "if I swipe past the surfaces worth building around
+   section, there needs to be another dead scroll. Because right now, if I swipe
+   past, it jumps straight down to the project gallery section, which is wrong.
+   Nothing should ever just jump to the project gallery section."
+
+   40vh, the number the note already named. It is empty on purpose — the whole
+   point is that there is nothing there to arrive at. */
+.heroHold {
+  height: 40vh;
+}
+
 /* ── the copy ───────────────────────────────────────────────────────────────
    Released at 93% of the film — while the picture is still settling, not after
    it has stopped. The client, 28 Aug: "shortly before its end, as the kitchen
