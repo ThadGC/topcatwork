@@ -447,8 +447,33 @@ export function HeroFilm({
         */}
         <div className={css.heroSpace} ref={heroSpace} aria-hidden="true" />
 
-        {/* A beat after the hero before the page starts, so reaching the end
-            of the film does not run straight on into the next section. */}
+        {/*
+          THE BEAT BETWEEN THE HERO AND THE FIRST SECTION.
+
+          Its size is not a matter of taste — it is solved. The client, 28 Aug:
+          "the spacing between [the closing line] and the border below it, the
+          spacing should be the same as hear it from your neighbours from the
+          divider above that. So make that spacing equal."
+
+          Measured on the reviews section, which is what follows the hero: the
+          gap from the closing link's underline down to the divider beneath it
+          is 89px on a phone, 106 on a tablet and 164 on the desktop. The gap
+          above the section's heading is this spacer plus the section's own top
+          padding, which is 39 / 46 / 164. So the spacer is the difference —
+          and on the desktop it is already equal, which is why it is zero there.
+
+          ⛔ IT HAS BEEN WRONG IN BOTH DIRECTIONS. It first shipped with no CSS
+          rule at all, so it was 0px while two comments claimed 40vh. Then it
+          was given the old build's own hold, 60vh, and read as a broken empty
+          screen — "one gigantic gap" — because the hold sits below a 100vh
+          hero whose copy is centred, so the hero's bottom half is already dark.
+          Then it was removed entirely, which made the heading sit too close.
+          These three numbers are measured against the section below, so if that
+          section's padding changes, re-measure rather than guess.
+
+          It is NOT what protects the handoff from a hard flick. That is the
+          momentum guard in `lockFilm`.
+        */}
         <div className={css.heroHold} aria-hidden="true" />
 
         {/* Above the stage in paint order so the page slides up over the film.

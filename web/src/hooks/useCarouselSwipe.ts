@@ -398,7 +398,23 @@ export function attachCarouselSwipe(
         }
       }
       if (axis > 0) {
-        if (e.cancelable) e.preventDefault();
+        /*
+          ⛔ A TOUCH GESTURE IS NEVER preventDefault()ED WHEN THE BROWSER OWNS
+          THE AXES.
+
+          `releaseOnVertical` ships with `touch-action: pan-y` on the element,
+          and that is already an absolute contract: the browser will pan
+          vertically and will NOT pan horizontally, whatever this code does. So
+          there is no default action left to prevent — and calling it anyway is
+          what lets a gesture the browser has decided is a vertical pan be
+          fought by a handler that decided it was horizontal. That fight is
+          what the client sees as the page jumping up and down under his thumb,
+          and it is exactly the kind of thing that reproduces on a real phone
+          and not in a synthetic pointer sequence.
+
+          A mouse drag has no touch-action contract, so it still needs this.
+        */
+        if (e.cancelable && !(touch && opts.releaseOnVertical)) e.preventDefault();
         /* The velocity EMA: 0.6 of the new sample, 0.4 of the old.
            site.js:43-45. */
         const nx = e.timeStamp || now();
@@ -410,7 +426,12 @@ export function attachCarouselSwipe(
         return;
       }
       /* Vertical, on a touch: the element swallowed the gesture, so it hands
-         the page its scroll back by hand. site.js:48-53. */
+         the page its scroll back by hand. site.js:48-53.
+
+         ⛔ UNREACHABLE WHEN `releaseOnVertical` IS SET, and that is the point:
+         a vertical verdict has already set `on = false` above, so this
+         hand-rolled scroll and the fling below never run for that caller. The
+         browser does the panning, on the compositor, with its own momentum. */
       if (!touch) return;
       freeScroll();
       const nowT = e.timeStamp || now();

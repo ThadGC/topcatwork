@@ -1468,62 +1468,25 @@
   height: 100vh;
 }
 
-/* ⛔ THE DEAD SCROLL AFTER THE HERO. IT WAS IN THE MARKUP WITH NO CSS.
-
-   `<div className={css.heroHold}>` has been rendered since the rebuild, with a
-   comment saying "a beat after the hero before the page starts, so reaching the
-   end of the film does not run straight on into the next section" — and a
-   second comment in useFilm.ts calling it "the 40vh hold BELOW the hero". No
-   rule for it was ever written, so `css.heroHold` resolved to undefined and the
-   div has been zero pixels tall this whole time. The port's usual fault: the
-   half that was described, dropped.
-
-   The client, 28 Aug: "if I swipe past the surfaces worth building around
-   section, there needs to be another dead scroll. Because right now, if I swipe
-   past, it jumps straight down to the project gallery section, which is wrong.
-   Nothing should ever just jump to the project gallery section."
-
-   ⛔ IT IS PER BAND, NOT A FLAT 40vh. The arbiter's hold, measured live, is
-   1.49 / 1.60 / 1.32 viewport-heights on phone / tablet / wide — three to four
-   times the 40vh the note guessed at. Ported literally that would put a wholly
-   empty screen in front of a slow scroller, because the hold sits below a
-   100vh hero and the first blank viewport arrives the moment it reaches 100vh.
-   So the ratio between the bands is kept exactly and scaled by 0.4, the
-   largest factor at which no band reaches 100vh with margin: 60 / 64 / 53vh.
-   At the worst scroll position there is still 40% of the hero or the top of
-   the next section on screen, and the hold itself paints the site's own marble
-   floor rather than a void.
-
-   It is empty on purpose — the whole point is that there is nothing there to
-   arrive at. */
+/* The beat between the hero and the section below it. Solved, not chosen —
+   see the note at its call site in index.tsx. The gap above the next section's
+   heading is this plus that section's own top padding; the target is the gap
+   from its closing line down to the divider beneath it, measured at 89 / 106 /
+   164. Its own padding already supplies 39 / 46 / 164, so this is the
+   remainder, and the desktop needs none. */
 .heroHold {
-  /* ⛔ A BREATH, NOT THE ARBITER'S FULL HOLD.
-
-     This was 53/64/60vh — the old build's own per-band hold, scaled. On paper
-     that was right; on screen it was a fault. The client, on seeing it: "you
-     broke the review section ... it's one gigantic gap."
-
-     The reason the arithmetic lied: the hold sits below a 100vh hero whose
-     copy is centred, so the hero's own bottom half is already dark and
-     contentless. Adding 506px to that gave a phone a full screen with nothing
-     on it between the hero and the reviews — measured, hero ended at 844 and
-     reviews did not start until 1350.
-
-     The old build could afford its hold because there the film was STILL ON
-     SCREEN through it, pinned and holding its last frame. Here the stage has
-     already become the hero and scrolled away, so the same distance is empty
-     floor rather than a held picture. The number was portable; the meaning was
-     not.
-
-     What actually stops the gallery arriving abruptly is the momentum guard in
-     lockFilm — that is measured and it holds for a slow finish, a brisk one and
-     a hard flick. This is now only the beat between two sections. */
-  height: 14vh;
+  height: 0;
 }
 
 @media (max-width: 1120px) {
   .heroHold {
-    height: 16vh;
+    height: 60px;
+  }
+}
+
+@media (max-width: 720px) {
+  .heroHold {
+    height: 50px;
   }
 }
 
