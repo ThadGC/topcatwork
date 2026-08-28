@@ -105,6 +105,21 @@ export function SiteChrome({
         <SiteHeader variant="lite" />
         <MobileNav variant="lite" />
         {children}
+        {/*
+          The client, 28 Aug: "on the inner pages, like in the gallery, there
+          should still be the sticky bottom bar... it stays there from the get
+          go." Every other route already does. /trade/ was the one page on the
+          site with no bar at all, because this branch never rendered one.
+
+          After {children} and before the footer, which is the lite branch's
+          DOM order and the source's for every non-rich page. `mode="always"`
+          takes `useStickyBar`'s no-anchor path: `html.bar-always`, on from
+          mount, no scroll listener. No <ContactFabs> here — /trade/ ships none
+          and `html.bar-always` would hide them anyway; rendering them is what
+          would newly arm the `.mbar.on ~ .wa-fab` coupling that has bitten
+          this build before.
+        */}
+        <StickyContactBar mode="always" />
         <TradeFooter />
       </>
     );
@@ -120,14 +135,35 @@ export function SiteChrome({
         <StickyContactBar
           mode={isHome ? 'scroll' : 'always'}
           /*
-            The film's runway, not `.hero-ctas`. The hero's CTAs are pinned
-            inside the film stage now, so their rect never leaves the viewport
-            and a bar keyed on them would never reveal. The runway is the right
-            anchor anyway: it means "the intro is behind you", which is exactly
-            when the bar should arrive. Falls back to `.hero-ctas` on any page
-            with no runway.
+            ⛔ `.hero-ctas` ON EVERY PAGE, INCLUDING THE HOME PAGE.
+
+            This used to key the home page on `#filmRunway`, on the reasoning
+            that the hero's CTAs are pinned inside the film stage so their rect
+            never leaves the viewport. That is true only WHILE THE FILM RUNS,
+            which is exactly when the bar should be down; the moment the film
+            locks, the stage becomes `position:absolute` and the hero scrolls
+            away like any other section, so its CTAs do leave.
+
+            Keying on the runway broke the client's rule in the other
+            direction. `#filmRunway` SHIPS AT ZERO HEIGHT and is the first
+            thing in <main>, so on the very first read its bottom is ~0, which
+            is already "behind the header" — the bar latched ON at mount and
+            `useStickyBar` only re-reads on scroll and resize, so nothing ever
+            unlatched it. It was only invisible because `html.film-running
+            .mbar{opacity:0}` was hiding it, and it appeared the instant the
+            film locked.
+
+            The client, 28 Aug: "as soon as the Get A Free Quote button is
+            starting to go out of sight, then the sticky bottom bar pops up.
+            It's not automatically there. This is just for the landing page.
+            On the other pages, it stays there from the get go."
+
+            `.hero-ctas` is that button's own row (HeroCopy.tsx:137). Measured
+            at 390x844: bar down through the film and still down at the lock,
+            up at scrollY 480 as the CTA's bottom passes behind the 80px
+            header. Every other page passes mode="always" and never reads this.
           */
-          revealAnchorSelector={isHome ? '#filmRunway' : '.hero-ctas'}
+          revealAnchorSelector=".hero-ctas"
         />
         <ContactFabs />
         {children}
