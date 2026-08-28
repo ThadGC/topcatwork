@@ -90,7 +90,7 @@ describe('the enquiry card stylesheet extracted for the stone pages', () => {
     // The whole reason the extract is safe on a stone page: no selector in it
     // can reach that page's own layout.
     const FAMILY =
-      /(^|[\s,>+~])(#cta|\.cta-|\.cs-|\.cu-|\.r-(txt|src|score)|\.tc-up|\.ic-wa)/;
+      /(^|[\s,>+~])(#cta|\.cta-|\.cs-|\.cu-|\.cn-|\.r-(txt|src|score)|\.tc-up|\.ic-wa)/;
     const strays = rules(extract)
       .map((r) => r.slice(0, r.indexOf('{')))
       .flatMap((head) => head.split(','))
@@ -101,7 +101,14 @@ describe('the enquiry card stylesheet extracted for the stone pages', () => {
 
   it('has not drifted from home-sections.css', () => {
     const origins = new Set(rules(origin));
-    const drifted = rules(extract).filter((r) => !origins.has(r));
+    /* `.cta-row` is emitted scoped as `.cta-form .cta-row`, because that class
+       name means something else on the stone pages — see the extractor. Strip
+       the scope back off before comparing, so the scoping does not read as
+       drift while a real edit still does. */
+    const unscope = (r: string) => r.replace(/(^|,\s*)\.cta-form (\.cta-row)/g, '$1$2');
+    const drifted = rules(extract).filter(
+      (r) => !origins.has(r) && !origins.has(unscope(r)),
+    );
     expect(
       drifted,
       'These rules no longer match home-sections.css. Change the card THERE and ' +

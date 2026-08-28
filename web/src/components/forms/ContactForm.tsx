@@ -42,6 +42,39 @@ interface StoneDetail {
 
 const CLASSES = ['cta-form'] as const;
 
+/**
+ * The three steps that follow an enquiry.
+ *
+ * It used to be the last thing inside the form, under the send button. The
+ * client, 28 Aug, looking at a stone page: "move the What Happens Next into
+ * the Make It Yours space underneath the subtitle. And then put the Reply
+ * Within One Working Day underneath to Send My Enquiry. And that way we can
+ * even out the spacing and make this whole form look better."
+ *
+ * He is right about the shape of the problem. `.cta-copy` is a flex column
+ * with `.cta-reach{margin-top:auto}`, so whatever the copy does not fill opens
+ * as a hole above the phone numbers: measured at 1440, 112px on the home page
+ * and /contact/, and 242px on a stone page, whose lede is shorter. Meanwhile
+ * the form column carried an extra ~116px block that made it the taller of the
+ * two. Moving the block across fills the hole and shortens the form in one go,
+ * which is what buys the room to space the fields out.
+ *
+ * Exported rather than inlined into <Cta/> so the copy stays with the form it
+ * describes.
+ */
+export function WhatHappensNext() {
+  return (
+    <div className="cta-next">
+      <span className="cn-k">What happens next</span>
+      <ol className="cn-list">
+        <li>We call you back to talk it through, no pressure.</li>
+        <li>A free home visit with samples, at a time that suits you.</li>
+        <li>A fixed, itemised price in writing, before anything is cut.</li>
+      </ol>
+    </div>
+  );
+}
+
 export interface ContactFormProps {
   /**
    * Offer a stone picker when no stone has been chosen.
@@ -328,14 +361,9 @@ export default function ContactForm({
       <button type="submit" className="cta-send" disabled={form.sending}>
         {form.sending ? 'Sending…' : 'Send my enquiry'}
       </button>
-      <div className="cta-next">
-        <span className="cn-k">What happens next</span>
-        <ol className="cn-list">
-          <li>We call you back to talk it through, no pressure.</li>
-          <li>A free home visit with samples, at a time that suits you.</li>
-          <li>A fixed, itemised price in writing, before anything is cut.</li>
-        </ol>
-      </div>
+      {/* "What happens next" used to sit here, under the button. It now lives
+          in the copy column — see <Cta/> and WhatHappensNext below. The reply
+          line stays, directly under the send button where the client put it. */}
       <p
         className={
           'cta-reply' + (note?.kind === 'bad' ? ' tc-bad' : note?.kind === 'ok' ? ' tc-ok' : '')

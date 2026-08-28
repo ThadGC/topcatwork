@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 
-import ContactForm from '@/components/forms/ContactForm';
+import ContactForm, { WhatHappensNext } from '@/components/forms/ContactForm';
 import { useReveal } from '@/hooks/useReveal';
 
 /**
@@ -75,6 +75,7 @@ export default function Cta({
               </>
             )}
           </p>
+          <WhatHappensNext />
           <div className="cta-reach">
             <div className="cta-or">Or reach us directly</div>
             <ul className="cta-lines">

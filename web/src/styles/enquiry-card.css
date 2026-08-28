@@ -1,29 +1,25 @@
 /* =========================================================================
-   THE ENQUIRY CARD — a scoped extract of the rules in home-sections.css.
+   THE ENQUIRY CARD — GENERATED. DO NOT EDIT BY HAND.
    -------------------------------------------------------------------------
-   WHY THIS FILE EXISTS. The client asked for the full enquiry form to appear
-   on all 132 individual stone pages. Those pages are on the OTHER stylesheet
-   family (content.css + stone.css); the card is styled in home-sections.css,
-   which they do not load.
+   Rebuild with:  node scripts/extract-enquiry-card-css.mjs
+   Source of truth: src/styles/home-sections.css
 
-   ⛔ IMPORTING home-sections.css INTO THE STONE ROUTE DOES NOT WORK. Measured
-   with a full-page pixel diff at 390 / 900 / 1440: hundreds of rows change,
-   including 575 consecutive rows of the hero at 1440. The two sheets disagree
-   on shared class names at EQUAL specificity — `.btn-gold` letter-spacing is
-   0.22em in content.css and 0.2em in home-sections.css, which alone took the
-   CTA buttons from 368px to 361px — so whichever loads last silently rewrites
-   the other's pages.
+   The 132 stone pages carry the same enquiry card as the home page and
+   /contact/, but they load content.css + stone.css and CANNOT load
+   home-sections.css — measured, importing it there changes hundreds of rows on
+   every stone page, including 575 consecutive rows of the hero at 1440px,
+   because the two sheets disagree on shared class names at equal specificity.
 
-   So only the card's own rules travel. Every selector here is inside the
-   enquiry-card family (#cta*, .cta-*, .cs-*, .cu-*, .r-*, .tc-up, .ic-wa), so
-   nothing in it can touch a stone page's existing layout.
+   So only the card's own rules are copied here, and `.cta-row` — which means
+   the form's two-up field row in one sheet and the stone page's button row in
+   the other — is scoped under `.cta-form` so it cannot reach the buttons.
 
-   ⚠️ THIS IS A COPY, AND home-sections.css IS STILL THE ORIGINAL. A change to
-   the card must be made there and re-extracted, or the home page and the stone
-   pages will drift apart. `tests/enquiry-card-css.test.ts` fails if they do.
+   tests/enquiry-card-css.test.ts fails if this file drifts from its source or
+   if a selector outside the enquiry-card family gets into it.
    ========================================================================= */
 
 .est-form .cta-send{margin-top:2px}
+.est-form .cta-reply{margin-top:1px;font-size:11.5px;line-height:1.5;color:var(--muted)}
 .tc-up{display:grid;gap:9px}
 .tc-up-drop{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;
     padding:clamp(10px,1.6vh,15px) 14px;border:1px solid rgba(198,166,100,0.3);border-radius:12px;
@@ -76,7 +72,7 @@
 .tc-up.compact .tc-up-txt b{font-size:12.5px}
 .tc-up.compact .tc-up-link{display:none}
 .tc-up.compact .tc-up-link.show{display:grid}
-@media(min-width:981px){
+@media(min-width:981px) {
 .est-preview.est-poa-on .est-form .tc-up{gap:6px}
 .est-preview.est-poa-on .est-form .tc-up-drop{padding:clamp(8px,1.2vh,12px) 14px}
 }
@@ -93,6 +89,9 @@
 .cta-title em{font-style:normal;color:var(--gold-soft,#F6D269)}
 .cta-line{max-width:44ch;color:var(--muted);font-size:clamp(13px,min(1.3vw,2.3vh),15.5px);
     font-weight:300;line-height:1.7}
+@media (max-height:700px) {
+.cta-line{max-width:54ch;line-height:1.62;}
+}
 .cta-copy{display:flex;flex-direction:column}
 .cta-reach{margin-top:auto;padding-top:clamp(16px,2.6vh,30px)}
 .cta-lines{list-style:none;display:grid;gap:clamp(9px,1.4vh,14px);margin-top:clamp(12px,1.9vh,20px)}
@@ -114,7 +113,8 @@
 .cta-rate .r-txt{display:flex;flex-direction:column;line-height:1.3}
 .cta-rate .r-src{font-size:12.5px;color:var(--bone)}
 .cta-rate .r-score{font-size:12px;color:var(--gold);letter-spacing:0.08em}
-.cta-form{display:grid;gap:clamp(7px,1.2vh,11px);align-content:start;--cnIndent:22px}
+.cta-form{display:grid;gap:clamp(11px,2vh,18px);align-content:start;--cnIndent:22px}
+.cta-form .cta-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .cta-form input,.cta-form textarea,.cta-form select{width:100%;font:inherit;font-size:14px;font-weight:300;color:var(--bone);
     background:rgba(255,255,255,0.045);border:1px solid var(--hair-soft);border-radius:11px;
     padding:clamp(9px,1.5vh,12px) 15px;transition:border-color .35s var(--ease),background .35s var(--ease);}
@@ -128,6 +128,7 @@
     background-repeat:no-repeat;background-position:right 15px center;background-size:10px 6px;}
 .cta-form select option{background:#15151A;color:var(--bone)}
 .cta-form select:invalid,.cta-form select option[value=""]{color:rgba(244,241,234,0.38)}
+.cta-stonet{justify-content:flex-start}
 .cta-stonet .cs-mk{flex:none;width:15px;height:15px;border-radius:3px;overflow:hidden;
     border:1px solid var(--hair);background:linear-gradient(135deg,#cfc6b6,#8d8375 60%,#b9b0a0)}
 .cta-stonet .cs-more{margin-left:auto;color:var(--gold);font-size:11px;letter-spacing:.14em;
@@ -144,6 +145,18 @@
     background:var(--gold);color:#141007;
     transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease)}
 .cta-send:hover{background:var(--gold-hi);border-color:var(--gold-hi);transform:translateY(-1px)}
+.cta-reply{text-align:left;font-size:11.5px;color:var(--gold);margin-top:2px}
+.cta-next{--cnIndent:22px;margin-bottom:auto;margin-top:clamp(2px,1.1vh,16px);padding-top:clamp(9px,1.8vh,20px);
+    border-top:1px solid var(--hair-soft);}
+.cn-k{display:block;font-family:var(--brand);font-size:9.5px;letter-spacing:0.28em;
+    text-transform:uppercase;color:var(--gold);margin-bottom:clamp(5px,1.1vh,12px)}
+.cn-list{list-style:none;display:grid;gap:clamp(3px,0.85vh,10px);counter-reset:cn}
+.cn-list li{counter-increment:cn;position:relative;padding-left:var(--cnIndent);
+    font-size:clamp(11.5px,min(0.95vw,1.6vh),14px);line-height:1.45;
+    color:var(--body);font-weight:300;}
+.cn-list li::before{content:counter(cn,decimal-leading-zero);position:absolute;left:0;top:1px;
+    font-family:var(--serif);font-size:10.5px;letter-spacing:0.08em;
+    color:var(--gold);opacity:0.72;}
 .cta-or{display:flex;align-items:center;gap:14px;
     font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:var(--faint)}
 .cta-or::before,.cta-or::after{content:"";flex:1;height:1px;background:var(--hair-soft)}
@@ -167,11 +180,14 @@
 .cta-up-in{overflow:hidden;min-height:0;visibility:hidden;transition:visibility 0s .48s}
 .cta-up.open .cta-up-in{visibility:visible;transition:visibility 0s 0s}
 .cta-up-in > .tc-up{padding-top:11px}
-@media(max-width:900px){
+@media(max-width:900px) {
 .cta-card{grid-template-columns:1fr;gap:26px}
 .cta-reach{margin-top:clamp(18px,3vh,28px)}
 }
-@media(min-width:721px) and (max-width:1120px){
+@media(max-width:560px) {
+.cta-form .cta-row{grid-template-columns:1fr}
+}
+@media(min-width:721px) and (max-width:1120px) {
 .cta-card{justify-items:center;text-align:center}
 .cta-copy{align-items:center;width:min(100%,520px)}
 .cta-form{width:min(100%,520px);text-align:left}
