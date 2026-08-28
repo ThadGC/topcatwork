@@ -411,6 +411,40 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const vh = window.innerHeight;
     const plan = RUNWAY[key];
 
+    /*
+      ⛔ THE FILM IS MEASURED AGAINST THE STAGE, NOT AGAINST `innerHeight`.
+      THIS IS THE PHONE-ONLY REVEAL TEAR.
+
+      The video paints into `.stage`, and the stage is `height: 100vh`. On a
+      phone `100vh` is the LARGE viewport — the height with the URL bar
+      collapsed — and it deliberately does not change as the bar comes and
+      goes; film.module.css's header says so in as many words, because sizing
+      the stage to the visual viewport would resize the whole film under the
+      visitor's finger on the first flick.
+
+      `window.innerHeight` is the OTHER one: the viewport as it is right now,
+      with the bar showing. So on a phone the two differ by the height of the
+      browser chrome — measured, 844 against 758, about 11% — and every number
+      below was being solved for a box 11% shorter than the one the video
+      actually covers.
+
+      The reveal is what shows it. Its panes are mapped from the film's own
+      pixel grid into screen space through this fit, so an 11% vertical error
+      puts the strip pane's horizontal edge about a line of type out of place:
+      the client's screenshot is the headline's second line cut clean through
+      the middle of the glyphs with the stone nowhere near the cut. It cannot
+      reproduce on a desktop, where `innerHeight` and the stage are the same
+      number, which is why it survived three rounds of fixes.
+
+      The width goes the same way: `innerWidth` includes a classic scrollbar
+      and the stage does not.
+
+      Measured off the element, so it is whatever was actually laid out.
+    */
+    const sr = stage.getBoundingClientRect();
+    const stageW = sr.width || window.innerWidth;
+    const stageH = sr.height || vh;
+
     // The runway's height is written exactly twice in a page's life: here, when
     // the film arms, and again at the lock. Never during a scroll.
     runway.style.setProperty('--runway', `${plan}vh`);
@@ -450,15 +484,15 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const v = refs.video.current;
     const fw = v?.videoWidth || (filmBand(band).phone ? 608 : 1920);
     const fh = v?.videoHeight || 1080;
-    const sc = Math.max(window.innerWidth / fw, vh / fh);
+    const sc = Math.max(stageW / fw, stageH / fh);
     stage.style.setProperty('--filmU', `${Math.round(sc * 1e5) / 1e5}px`);
     stage.style.setProperty(
       '--filmX',
-      `${Math.round(((window.innerWidth - fw * sc) / 2) * 100) / 100}px`,
+      `${Math.round(((stageW - fw * sc) / 2) * 100) / 100}px`,
     );
     stage.style.setProperty(
       '--filmY',
-      `${Math.round(((vh - fh * sc) / 2) * 100) / 100}px`,
+      `${Math.round(((stageH - fh * sc) / 2) * 100) / 100}px`,
     );
 
     // The reveal line's pane frame.
@@ -467,7 +501,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     if (line) {
       boxPanes(line);
       const cb = contentBox(line);
-      const fit = coverFit(window.innerWidth, vh, fw / fh, 1);
+      const fit = coverFit(stageW, stageH, fw / fh, 1);
       rv = {
         sc: fit.dw / fw,
         dx: fit.dx,
@@ -498,8 +532,8 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     */
     if (hcEl && !band.wide) {
       const r = hcEl.getBoundingClientRect();
-      hcEl.style.transformOrigin = `${Math.round((0.26 * window.innerWidth - r.left) * 100) / 100}px ${
-        Math.round((0.5 * vh - r.top) * 100) / 100
+      hcEl.style.transformOrigin = `${Math.round((0.26 * stageW - r.left) * 100) / 100}px ${
+        Math.round((0.5 * stageH - r.top) * 100) / 100
       }px`;
     } else if (hcEl) {
       hcEl.style.removeProperty('transform-origin');
