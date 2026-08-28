@@ -54,7 +54,24 @@
  */
 
 /** Film-space bleed subtracted from the reveal edge so it never hairlines. */
-export const REV_PAD = 3;
+/*
+   ⛔ 1, NOT 3. This is how far the mask's edge is pulled BACK from the slab
+   edge measured in the footage — a deliberate bias so the mask can only ever
+   TRAIL the slab, never lead it. A mask that leads shows a glyph uncovering
+   before the slab has reached it, which is the worse fault of the two.
+
+   At 3 it trails by 3px on the slant AND, on the phone, by another 3px on the
+   horizontal edge — so the words are held back from the stone on two sides at
+   once. On a 3x phone that is nine device pixels of black between the slab and
+   the first glyph, constantly, for the whole reveal. The client, 28 Aug: "the
+   slab isn't perfectly tracking to reveal the words. There's, like, a little
+   black bar around the slab, which is not good."
+
+   1 keeps the bias — the mask still cannot lead — while closing two thirds of
+   the gap. Verified across the reveal that no glyph uncovers ahead of the
+   stone at any frame. If it ever needs to go lower, check that first.
+*/
+export const REV_PAD = 1;
 
 /* ── wide, >=721px — film width 1920, reveal starts at grid frame 124 ─────── */
 
