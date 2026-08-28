@@ -952,17 +952,51 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   /* ── mount ────────────────────────────────────────────────────────────── */
 
   useEffect(() => {
-    if (!mounts(mode)) return;
     const stage = refs.stage.current;
     const video = refs.video.current;
     if (!stage || !video) return;
 
-    // Reduced motion, or no MP4 decoder: never start. The still hero and a one
-    // viewport runway are already what is on screen.
+    /*
+      ⛔ NO FILM WILL RUN ON THIS PAGE LOAD.
+
+      Every give-up path ends here, and every one of them used to end at a bare
+      `data-film = 'off'` that did nothing about the film's own furniture. The
+      client, 28 Aug: "it shows the surfaces worth building around as an overlay
+      above the your worktop starts here ... it's showing both text at the same
+      time ... it should not show on the first frame ever."
+
+      Three things have to happen together, and only one of them was:
+        - `data-hero` takes the plate, the story, the opening copy, the trust
+          chips and the Skip button off the stage. `data-film='off'` cannot do
+          that job, because `off` is ALSO the server-rendered value on a normal
+          cold load, where the plate IS the intended first paint.
+        - the deadline in index.tsx is stood down, so it cannot ink the page
+          hero a second time on top of what is already there.
+        - the page hero is inked HERE instead, immediately, because with no film
+          coming there is nothing left to wait for.
+    */
+    const landed = () => {
+      stage.dataset.film = 'off';
+      stage.dataset.hero = 'landed';
+      const ph = refs.pageHero.current;
+      if (!ph) return;
+      ph.removeAttribute('data-film-pending');
+      ph.setAttribute('data-ink', '');
+      ph.classList.add('loaded');
+    };
+
+    // `?film=off` and friends. Returning without a word left the stage at its
+    // SSR `off` with nothing hidden, which is the stacked-hero fault above.
+    if (!mounts(mode)) {
+      landed();
+      return;
+    }
+
+    // Reduced motion, or no MP4 decoder: never start. The still is the hero.
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canPlay = !!video.canPlayType?.('video/mp4; codecs="avc1.42E01E"');
     if (reduce || !canPlay) {
-      stage.dataset.film = 'off';
+      landed();
       return;
     }
 
@@ -970,21 +1004,39 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     // that might shake on a phone nobody here can test on.
     const safe = pinIsSafe(stage);
     if (!safe.ok) {
-      stage.dataset.film = 'off';
+      landed();
       // eslint-disable-next-line no-console
       console.error('[hero film] refusing to mount — ' + safe.why);
       return;
     }
 
     /*
-      The film IS going to run, so say so now rather than when the blob lands.
-      `data-film` ships as `off`, which is the correct no-JavaScript state — the
-      still as the hero at the top of the page — but leaving it there for the
-      seconds the fetch takes would show the visitor the night kitchen and then
-      swap it for the quarry. Flipping here puts the plate on screen as the
-      first paint, which is what it is for.
+      ⛔ `data-film` STAYS `off` UNTIL THE FILM IS ACTUALLY ARMED.
+
+      It used to flip to `on` here, before the fetch. In `on` the stage is
+      `position: fixed`, opaque, and covering the viewport — and the runway is
+      still 0, because `--runway` is only ever written by `measure()`, which
+      runs from `arm()`, which does not run until the whole cut has been fetched
+      as a blob. 6.8MB on the phone, 17.8MB on the wide. So for the entire
+      download the visitor scrolled and NOTHING MOVED.
+
+      Raising the runway here instead does not fix it: the loop is not running
+      either, so a taller runway still paints nothing, and the film then arms at
+      whatever point they have scrolled to and starts mid-film.
+
+      In `off` the stage is `position: absolute; top: 0` — a real, scrollable
+      page. The plate is still the first paint (`.plate` is opaque in every
+      state) and its bytes are already paid by the preload links in index.tsx,
+      so nothing about the opening picture changes and arming is not delayed.
+
+      ⛔ AND THE PAGE HERO IS MARKED PENDING. The deadline in index.tsx exists
+      to give a visitor words to read if no film ever comes. While one IS
+      coming, the film's own opening line is already on screen, so letting the
+      deadline fire painted the page's h1 on top of it — the client's stacked
+      hero. `data-film-pending` stands the deadline down; `arm()` clears it, and
+      so does `landed()`.
     */
-    stage.dataset.film = 'on';
+    refs.pageHero.current?.setAttribute('data-film-pending', '');
 
     let cancelled = false;
     let objectUrl = '';
@@ -1015,6 +1067,33 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
     const arm = () => {
       if (cancelled) return;
+      /*
+        ⛔ THE FILM ONLY EVER STARTS FROM THE TOP OF THE PAGE.
+
+        The stage now stays `off` while the blob is in flight, which means the
+        visitor has a real, scrollable page in front of them the whole time. If
+        they have used it, arming would raise the runway by five to eight
+        viewports ABOVE where they are standing and pin an opaque fixed stage
+        over the viewport in the same frame: they would be thrown from wherever
+        they were reading back to frame 0 of the film.
+
+        The film is never abandoned for being SLOW — it waits, which is the
+        client's own decision — only for the visitor having got on with it. A
+        refresh is what plays it, which is his rule for the end of the film
+        applied to the start.
+
+        4px of slack rather than 0: the old build's own idiom, index.html:3457.
+      */
+      if (window.scrollY > 4) {
+        landed();
+        video.removeAttribute('src');
+        video.load();
+        if (objectUrl) {
+          URL.revokeObjectURL(objectUrl);
+          objectUrl = '';
+        }
+        return;
+      }
       armed.current = true;
       setLive(true);
       const rv = video as HTMLVideoElement & {
@@ -1029,13 +1108,41 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         shown.current = 0;
       }
       document.documentElement.classList.add('film-running');
-      // The stage is `visibility: hidden` until this says otherwise, so it has
-      // to be set here and not only from inside the loop — `?film=frozen`
-      // never starts the loop and must still show the film.
+      /*
+        THE ONE PLACE THE FILM TAKES THE PAGE OVER.
+
+        Until this line the stage is `off` — absolute at the document top,
+        scrolling away like any other hero. This is what makes it
+        `position: fixed`, and `measure()` below is what raises the runway
+        underneath it. BOTH HAPPEN IN THE SAME SYNCHRONOUS BLOCK, in this
+        order, so there is never a frame with a fixed stage over a runway of
+        zero. Do not separate them.
+
+        (A comment here used to say the stage was `visibility: hidden` until
+        this ran. There is no `visibility` declaration in film.module.css and
+        there never was. Nothing covers the plate before this point.)
+
+        `?film=frozen` never starts the loop and this is still what shows it.
+      */
       stage.dataset.film = 'on';
-      // The component releases the page hero on a timer if the film never
-      // arms; this is what stands that down. See the note at its call site.
-      refs.pageHero.current?.setAttribute('data-film-armed', '');
+      /*
+        THE PAGE HERO GOES BACK UNDER THE FILM'S CONTROL.
+
+        `data-film-pending` stands the deadline down before it fires. These two
+        removals undo it if it somehow fired anyway — a slow first paint, a
+        backgrounded tab, a resumed bfcache page. Without them the page's h1 and
+        CTAs stay painted on top of the film's opening line for the whole 44
+        seconds, and the loop cannot undo it: its handoff only writes on a
+        CHANGE and `memo.ink` is already false. `memo.ink` stays false here, so
+        the real handoff at 93% still re-asserts both.
+      */
+      const ph = refs.pageHero.current;
+      if (ph) {
+        ph.setAttribute('data-film-armed', '');
+        ph.removeAttribute('data-film-pending');
+        ph.removeAttribute('data-ink');
+        ph.classList.remove('loaded');
+      }
       // `?film=notext` hides the story from here, not by rendering different
       // markup — see the note at the call site in index.tsx.
       if (!showsText(mode)) stage.dataset.text = 'off';
@@ -1122,9 +1229,17 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
           else video.addEventListener('loadeddata', arm, { once: true });
         })
         .catch(() => {
-          // The film could not be fetched. The plate is already on screen and
-          // the runway is still one viewport: the visitor gets the still hero.
-          if (!cancelled) stage.dataset.film = 'off';
+          /*
+            The film could not be fetched.
+
+            ⛔ `data-film = 'off'` ALONE IS NOT ENOUGH, and the comment that
+            used to sit here asserted the opposite twice. The plate stays at
+            opacity 1 ABOVE the still, so this stranded the visitor on the
+            quarry with the film's opening line and SKIP INTRO over it — not on
+            the still hero. And the runway does not ship at one viewport; it
+            ships at zero.
+          */
+          if (!cancelled) landed();
         });
     }
 

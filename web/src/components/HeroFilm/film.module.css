@@ -171,6 +171,58 @@
   opacity: 0;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   NO FILM WILL RUN ON THIS PAGE LOAD — `data-hero='landed'`.
+
+   Reached six ways, and none of them used to tidy the stage: reduced motion, a
+   browser with no H.264, `?film=off`, an unsafe pin, a failed fetch, and a
+   visitor who scrolled before the blob landed. In every one of them no film
+   ever runs, so nothing ever writes the styles that would have taken this
+   furniture away, and it was all left painted at its opening values ON TOP OF
+   the page's own hero: the film's "Your worktop starts here." and its SCROLL TO
+   BEGIN over the h1, a SKIP INTRO button on a page with no intro, and the
+   quarry plate covering the night-kitchen still that is meant to be the
+   picture.
+
+   The client, 28 Aug: "it's showing both text at the same time. It's very
+   messy, and the surfaces worth building around should not show on the first
+   frame ever, and it should not show on that first stone quarry background."
+
+   ⛔ IT IS NOT KEYED ON `data-film='off'`, AND THAT IS DELIBERATE. `off` is
+   also the server-rendered value on a normal cold load, where the plate IS the
+   intended first paint and the film's opening copy is the hero. Hiding them
+   there would open the site on the night kitchen and then swap it for the
+   quarry. `data-hero` is only ever written once the engine has decided.
+
+   This is the old build's rule put back: every film element was `display: none`
+   in the base stylesheet and only `html.cine-on` brought it back —
+   `.cine-plate{display:none}`, `.cine-story,.cine-cue,.cine-skip{display:none}`,
+   `.cine-edge{display:none}`, `.hero-navgrade{display:none}`. The port
+   inverted the default to visible and the off-state half was never written.
+
+   `.heroCue` is not listed because it is a CHILD of `.heroCopy`.
+   ══════════════════════════════════════════════════════════════════════════ */
+.stage[data-hero='landed'] .plate,
+.stage[data-hero='landed'] .story,
+.stage[data-hero='landed'] .heroCopy,
+.stage[data-hero='landed'] .trust,
+.stage[data-hero='landed'] .skip {
+  display: none;
+}
+
+/* …and the scrims are re-graded for the still, which is a different picture
+   from the film's frame 0. These are the old build's static-hero values: the
+   shade opaque, and no vignette or nav grade at all — the shade's own last
+   layer is `--navScrim`, so the header still has something to sit on. */
+.stage[data-hero='landed'] .shade {
+  opacity: 1;
+}
+
+.stage[data-hero='landed'] .edge,
+.stage[data-hero='landed'] .navGrade {
+  display: none;
+}
+
 /* Everything below the runway.
 
    ⛔ NO BACKGROUND. THIS IS NOT AN OVERSIGHT — IT IS A FIX.

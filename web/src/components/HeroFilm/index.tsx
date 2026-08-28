@@ -167,20 +167,41 @@ export function HeroFilm({
   const { skipToEnd } = useFilm(refs.current, sources.current);
 
   /*
-    With no JavaScript — or with the film off, or its fetch failed — nothing
-    ever writes `data-ink`, and the hero would sit at opacity 0 over a still
-    frame. So it is released here on mount as the baseline, and the engine
-    takes over the timing only once it has actually armed. The film's own
-    `ink()` at 93% then re-asserts it; adding a class twice is free.
+    THE DEADLINE ON THE PAGE'S OWN HERO COPY — A BACKSTOP, NOT A SCHEDULE.
+
+    If nothing ever writes `data-ink` the hero sits at opacity 0 over a still
+    frame, so something has to release it when no film is coming.
+
+    ⛔ IT MUST NOT FIRE WHILE A FILM IS STILL COMING. It used to check only
+    `data-film-armed`, which useFilm sets after the whole cut has downloaded —
+    seconds, on any real connection. So on essentially every visit the deadline
+    won the race and painted the page's h1 and CTAs on top of the film's own
+    opening line, and nothing ever took it back off.
+
+    The client, 28 Aug: "it shows the surfaces worth building around as an
+    overlay above the your worktop starts here ... it's showing both text at the
+    same time ... it should not show on the first frame ever." He also noticed
+    it clears on a refresh, which is the race: a warm film wins, a cold one
+    loses.
+
+    `data-film-pending` is written synchronously by useFilm's mount effect the
+    moment it commits to fetching, and that effect runs before this one. So by
+    the time this fires the answer is already known: pending means the film's
+    own opening copy is on screen and there is nothing to release; armed means
+    the film has it. Every path where no film will run — reduced motion, no
+    H.264, `?film=off`, an unsafe pin, a failed fetch, a visitor who scrolled —
+    inks the hero itself, immediately, and does not wait for this at all.
+
+    The film's own `ink()` at 93% then re-asserts it; adding a class twice is
+    free.
   */
   useEffect(() => {
     const el = heroOut.current;
     if (el && !el.hasAttribute('data-ink')) {
       const id = window.setTimeout(() => {
-        if (!el.hasAttribute('data-film-armed')) {
-          el.setAttribute('data-ink', '');
-          el.classList.add('loaded');
-        }
+        if (el.hasAttribute('data-film-armed') || el.hasAttribute('data-film-pending')) return;
+        el.setAttribute('data-ink', '');
+        el.classList.add('loaded');
       }, 1200);
       return () => window.clearTimeout(id);
     }
