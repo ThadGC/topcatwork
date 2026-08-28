@@ -659,108 +659,32 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     if (afterTop) window.scrollBy({ top: afterTop, left: 0, behavior: 'instant' });
 
     /*
-      ⛔ AND THE MOMENTUM THEY ARRIVED WITH IS ABSORBED.
+      ⛔ NOTHING PINS THE SCROLL AFTER THIS, AND THAT IS DELIBERATE.
 
-      A comment above claims "the correction still always lands on the hero, so
-      an overshoot is absorbed rather than carried into the page." Measured at
-      390, it does not. The correction itself is right — a slow finish lands at
-      scrollY 0 with the hero exactly filling the viewport — but a FLICK is
-      still being animated by the browser when the runway collapses underneath
-      it, and that animation then carries on into a document that is now five to
-      eight viewports shorter. Measured: at the lock, scrollY 0 and the hero at
-      top 0; 2.5 seconds later, scrollY 1600 and the hero 1600px above the
-      viewport, with the middle of the screen in the services section. A real
-      phone flick carries much further than a scripted one.
+      A momentum guard used to sit here: it held the landing for a few frames
+      so a fling could not carry the visitor past the hero. It was wrong twice
+      over, and the second way is worse than the fault it was added for.
 
-      The client, 28 Aug: "if I swipe past, it jumps straight down to the
-      project gallery section, which is wrong."
+      A held fling is not a cancelled one. The browser keeps the velocity on
+      the compositor, so the guard would hold the page still, let go, and the
+      fling would RESUME at full speed — one lurch, straight down the page. The
+      client: "as I kept swiping through that dead scroll, there was another
+      glitch ... the previous time before that glitch, it took me all the way
+      down to the what would it cost section." That is the release, not the
+      collapse.
 
-      So the landing is held until the visitor asks for something new. A flick's
-      momentum arrives with no further input — the finger has already lifted —
-      so it is absorbed and they stop on the hero. A deliberate second gesture
-      fires `wheel`, `touchstart` or `keydown` and releases immediately, so
-      nobody is ever held against their will. 700ms is the backstop.
+      And a scripted wheel sweep cannot show it: driven at 260px a step through
+      the lock and on down the page, every step moves exactly 260 and the only
+      discontinuity is the intended collapse. It needs a real fling on a real
+      phone, which is exactly the instrument this project keeps not having.
 
-      This is the same fault `skipToEnd` fixed with `behavior:'instant'`; what
-      was missed is that a real visitor's own momentum does it too.
+      So the correction above stands on its own. It is instantaneous and fights
+      nothing: the runway collapses and the same distance comes off the scroll
+      in the same frame, which lands the visitor on the hero. Whatever momentum
+      they still have then carries them down the page at their own speed, which
+      is what a flick is supposed to do and reads as scrolling rather than as a
+      glitch.
     */
-    const land = window.scrollY;
-    const lockedAt = performance.now();
-    let free = false;
-    let quiet = 0;
-    let capId = 0;
-    const release = () => {
-      if (free) return;
-      free = true;
-      window.clearTimeout(capId);
-      window.removeEventListener('wheel', onInput);
-      window.removeEventListener('touchstart', onInput);
-      window.removeEventListener('keydown', onInput);
-    };
-    /*
-      ⛔ 150ms OF GRACE, OR THE GESTURE THAT ENDED THE FILM RELEASES THE GUARD
-      IT JUST TRIGGERED. The lock runs inside a rAF tick, and the wheel or touch
-      that pushed the scroll past the end is often delivered to the window
-      AFTER it — so without this the guard was armed and released in the same
-      breath, and the fling went straight through. A second, deliberate gesture
-      is always later than this.
-    */
-    const onInput = () => {
-      if (performance.now() - lockedAt > 150) release();
-    };
-    /*
-      ⛔ IT LETS GO WHEN THE FLING STOPS, NOT ON A TIMER. A fixed 700ms backstop
-      was tried first and it expired mid-fling: a 1600px throw was still being
-      animated when the guard let go, and the visitor finished 1600px past the
-      hero regardless. The release condition is quiet instead — eight frames in
-      which nothing tried to move the page — with a hard cap behind it.
-
-      ⛔ AND `behavior: 'instant'` IS NOT OPTIONAL. `html` carries
-      `scroll-behavior: smooth` (content.css, globals.css), so the one-argument
-      `window.scrollTo(x, y)` form ANIMATES. Measured with it: from y=1775 a
-      re-issued `scrollTo(0, 0)` walked 1802, 1800, 1792, 1779, 1756, 1723,
-      1674 … so `scrollY` never equalled `land` on any frame, `quiet` never
-      reached 8, the release below was DEAD CODE, and the guard became a flat
-      two second freeze — which is the "page apparently frozen" fault this
-      whole design exists to avoid. Worse, it fired a fresh scroll ANIMATION
-      every frame into a live fling, which is precisely the cross-thread fight
-      this file's header forbids and the documented shape of the phone shake.
-      With the options form it snaps in one frame and releases in about eight.
-    */
-    const pin = () => {
-      if (free) return;
-      if (window.scrollY !== land) {
-        window.scrollTo({ top: land, left: 0, behavior: 'instant' });
-        quiet = 0;
-      } else if (++quiet > 3) {
-        release();
-        return;
-      }
-      requestAnimationFrame(pin);
-    };
-    window.addEventListener('wheel', onInput, { passive: true });
-    window.addEventListener('touchstart', onInput, { passive: true });
-    window.addEventListener('keydown', onInput);
-    /*
-      ⛔ SHORT. THE VISITOR MUST NOT FEEL THIS.
-
-      The client, on the end of the film: "there's a flash or some sort of
-      glitch where it just settles in, and then you can access the rest of the
-      site ... it should just smoothly stop, have that text come in, and
-      seamlessly then just have its dead scroll and go through."
-
-      That was this guard. At 900ms, with a fling that arrives without any
-      further input to release it, the page was held long enough to read as a
-      stall rather than as settling.
-
-      What it actually has to survive is one frame: the stale scroll animation
-      the collapse orphans, which re-targets immediately or not at all. Three
-      quiet frames catches that, and 350ms is the outside edge of a backstop
-      rather than a hold anybody notices.
-    */
-    capId = window.setTimeout(release, 350);
-    requestAnimationFrame(pin);
-
     cancelAnimationFrame(raf.current);
     raf.current = 0;
   }, [refs]);
