@@ -966,12 +966,32 @@
   outline-offset: 3px;
 }
 
+/* ⛔ `100vh - 100dvh` IS WHAT KEEPS SKIP OFF THE BROWSER'S BOTTOM BAR.
+
+   The client, 28 Aug: "the skip intro button isn't staying above the user's
+   Chrome bottom bar ... only when they start swiping does the skip intro button
+   pop up. It should already be there always in line with the WhatsApp and the
+   phone icon."
+
+   `.skip` is `position: absolute` inside `.stage`, and the stage is
+   `height: 100vh` — the LARGE viewport, measured as though the browser's URL
+   bar were already retracted. So on a phone the stage's bottom edge is one
+   bar-height BELOW the visible area, and anything positioned from it goes with
+   it. The FABs do not have the problem because they are `position: fixed`, so
+   they answer to the visual viewport. That is also why Skip "popped up" as soon
+   as he swiped: scrolling retracts the bar and the two viewports converge.
+
+   `100dvh` is the CURRENT viewport, so `100vh - 100dvh` is exactly the height
+   of whatever chrome is presently overlapping — the bar height while it is
+   showing, and zero once it is gone. Adding it lifts Skip onto the same line as
+   the FABs and keeps it there as the bar comes and goes, without touching
+   `.stage`'s own height, which the runway geometry is measured against. */
 @media (max-width: 1120px) {
   .skip {
     right: auto;
     left: 50%;
     margin-left: -87px;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px + (100vh - 100dvh));
     height: 46px;
     padding-top: 0;
     padding-bottom: 0;
@@ -990,7 +1010,8 @@
     height: 54px;
     width: 196px;
     margin-left: -98px;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 27px);
+    /* Same browser-chrome correction as the phone rule above. */
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 27px + (100vh - 100dvh));
     font-size: 13px;
     gap: 13px;
   }

@@ -131,9 +131,32 @@ export const REVEAL_FPS = 12;
  * which expressed the same thing as a total height plus a fractional tail
  * `hold`: phone 800vh at hold 0.2125, tablet 900vh at 0.2, wide 1050vh at
  * 0.1387. Multiplying those out gives 551 / 640 / 818 viewport-heights of
- * actual film, which is what is reproduced here.
+ * actual film, which is what these were.
+ *
+ * ⛔ THE TOUCH BANDS ARE NOW A QUARTER LONGER THAN THAT, ON PURPOSE.
+ *
+ * The client, 28 Aug, on his phone: "the video that is tied to the user swipe
+ * might be slightly too quick. So for instance, they can swipe through it too
+ * fast by accident ... if they do one big swipe, they can switch past things
+ * that they didn't mean to." And, on the third beat: "the stone sets the tone
+ * of the room comes in too quickly."
+ *
+ * A longer runway is fewer seconds of film per pixel of scroll, so one flick
+ * covers less of it. That is the only lever that does not break the strict
+ * scroll-to-film coupling the whole engine is built on — rate-limiting the
+ * film time instead would let the picture drift away from the scroll position
+ * and put the lock's `p >= 1` behind a catch-up animation.
+ *
+ * It also takes pressure off the decoder, which is what the reverse-scrub
+ * glitching is made of: fewer film-seconds per gesture is fewer seeks per
+ * gesture. See REVEAL_MAX_LAG.
+ *
+ * ⚠️ WIDE IS DELIBERATELY UNCHANGED at the signed-off 818. The client on the
+ * same day: "so far, the desktop version seems to be working perfectly. I
+ * don't see any errors with the desktop version." A mouse wheel and a trackpad
+ * do not produce the flick that caused this.
  */
-const RUNWAY = { phone: 550, tablet: 640, wide: 820 } as const;
+const RUNWAY = { phone: 690, tablet: 800, wide: 820 } as const;
 
 /**
  * How long the scroll must be still before the film locks.
@@ -149,6 +172,35 @@ const SETTLE_MS = 220;
 /** Seek deadband: half a film frame. Closer than this and the seek is a no-op
  *  that costs a decode and returns the same picture. */
 const SEEK_EPS = 0.5 / FILM_FPS;
+
+/**
+ * How far the PICTURE may lag the SCROLL before the reveal stops following it.
+ *
+ * The reveal's mask is driven by the frame actually on screen rather than by
+ * the scroll target, because it tracks a real moving edge in the footage and
+ * half a frame of lead shows as a sliver of headline uncovering early. That is
+ * right while the decoder is keeping up.
+ *
+ * It is badly wrong when it is not. The scrub allows one seek in flight, so a
+ * fast drag — and above all a REVERSE one, where every backward seek re-decodes
+ * from the previous keyframe — leaves `shown` seconds behind `t`. The mask is
+ * then computed from a frame index below the reveal's own table, `phonePanes`
+ * clamps to the table's first entry, and the first entry is the mask at its
+ * THICKEST: a black bar sitting over a headline that the scroll has already
+ * faded to full opacity.
+ *
+ * The client, 28 Aug: "if I were to reverse the video by swiping back ... the
+ * video glitches all over the place, the black bar that is supposed to go back
+ * over the ... the slab you choose is unique text ... it's extra thick. It's
+ * completely broken."
+ *
+ * Past this much lag the mask follows the scroll instead. The picture is still
+ * catching up, but the mask and the words it is masking agree with each other,
+ * which reads as the reveal running rather than as a bar stuck over the text.
+ * Four frames: comfortably more than the half-frame deadband and the one seek
+ * in flight, comfortably less than the gap a flick opens up.
+ */
+const REVEAL_MAX_LAG = 4 / FILM_FPS;
 
 /** The scrim floor, and where it starts ramping to full. Film seconds. */
 const VEIL_MIN = 0.2;
@@ -799,11 +851,13 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
             a value the transport has already set.
           */
           /*
-            The frame on screen, not the one that has been asked for. See
-            `shown` above — this is the whole reason the reveal tracks the edge
-            in the footage instead of running ahead of it.
+            The frame on screen, not the one that has been asked for — while
+            the decoder is close enough to it to be worth following. Past
+            REVEAL_MAX_LAG the mask follows the scroll instead; see the note on
+            that constant for why a stale frame index is so much worse here
+            than a stale picture.
           */
-          paintReveal(shown.current);
+          paintReveal(Math.abs(shown.current - t) > REVEAL_MAX_LAG ? t : shown.current);
         }
 
         // Beat 3 — hard on and off, slides in and back out to the left.
