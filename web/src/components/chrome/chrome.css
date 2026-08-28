@@ -1161,6 +1161,33 @@ html.nav-open .mobile-nav > .mn-sub {
     transform: translateY(8px);
   }
 
+  /*
+    ⛔ THE FABS BELONG TO THE FILM AND TO NOTHING ELSE.
+
+    The client, 28 Aug: "you brought the phone and the WhatsApp icons back.
+    Don't do that. There don't have to be a phone and WhatsApp icon in the hero
+    section... as the Get A Free Quote button goes past the nav bar, then the
+    sticky bottom bar pops up. But we don't have to have the floating phone and
+    WhatsApp icon."
+
+    They were never meant to survive the film. They used to be hidden by
+    `.mbar.on ~` above, which only fires once the BAR is up — and the bar now
+    correctly waits for the hero's CTAs to leave, so between the lock and that
+    moment nothing was hiding them and they reappeared over the hero.
+
+    Keying them off `html.film-running` instead of off the bar makes the rule
+    say what it means: the pair flanks Skip while the film runs, and the moment
+    it locks they are gone for good. The bar takes over on its own schedule and
+    the two never overlap. Every non-home page already hides them through
+    `html.bar-always` below, so this only ever bites on the landing page.
+  */
+  html:not(.film-running) .wa-fab,
+  html:not(.film-running) .call-fab {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+  }
+
   html.bar-always .wa-fab,
   html.bar-always .call-fab {
     display: none;

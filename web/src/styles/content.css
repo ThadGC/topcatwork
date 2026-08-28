@@ -265,6 +265,14 @@ section.faq:not(.block){padding:clamp(46px,7vh,86px) 0;position:relative}
   border:1px solid var(--hair-soft);border-radius:14px;background:var(--ink-2);
   transition:border-color .4s var(--ease),background .4s var(--ease);
 }
+/* THE TRADE PAGE LISTS ITS QUESTIONS DIRECTLY INSIDE `.wrap`, not in a
+   `.faq-grid`, so the `gap:12px` above never reached them and the six rows sat
+   flush against each other as one stacked slab. The client, 28 Aug: "on the
+   trade page, space these out a little bit. So they're not just stacked right
+   on top of each other." Same 12px the grid uses, so the two FAQ layouts read
+   identically. `+` rather than a margin on every row, so the block keeps its
+   existing spacing to the heading above and to whatever follows. */
+.faq .wrap > details + details{margin-top:12px}
 .faq details[open]{border-color:var(--hair);background:var(--ink-3)}
 .faq details:hover{border-color:rgba(198,166,100,0.22)}
 .faq summary{list-style:none;cursor:pointer;padding:18px 46px 18px 20px;position:relative;

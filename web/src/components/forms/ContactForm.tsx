@@ -46,20 +46,24 @@ export interface ContactFormProps {
   /**
    * Offer a stone picker when no stone has been chosen.
    *
-   * OFF EVERYWHERE EXCEPT THE HOME PAGE, and that is the client's line
-   * (27 Aug): "on the home page, the get in touch form, if someone hasn't
-   * selected a stone, they should be able to choose... but it has to say
-   * that it's optional. It doesn't have to be on the inner contact forms."
+   * ⛔ REVERSED, 28 Aug. It used to default OFF, on his 27 Aug line: "on the
+   * home page, the get in touch form, if someone hasn't selected a stone, they
+   * should be able to choose... but it has to say that it's optional. It
+   * doesn't have to be on the inner contact forms."
    *
-   * The home page is the one page where the enquiry card sits below the
-   * stone wheel, so it is the one page where arriving at the form without a
-   * stone reads as something the visitor missed rather than something the
-   * page never offered.
+   * He changed his mind on 28 Aug, having seen it: "the contact form currently
+   * doesn't have the choose your stone option like the other form has. So make
+   * sure that all the major contact forms are correct." So it now defaults ON
+   * and every form that renders this component offers it.
+   *
+   * The prop is kept rather than deleted: it is still the switch for any form
+   * where the question would not make sense, and the argument for turning it
+   * off somewhere is the same argument as before.
    */
   stonePicker?: boolean;
 }
 
-export default function ContactForm({ stonePicker = false }: ContactFormProps = {}) {
+export default function ContactForm({ stonePicker = true }: ContactFormProps = {}) {
   const [stone, setStone] = useState<string>('');
   const [upOpen, setUpOpen] = useState(false);
   const [upCount, setUpCount] = useState('');
@@ -240,6 +244,7 @@ export default function ContactForm({ stonePicker = false }: ContactFormProps = 
           the uploader's dashed row so the two optional additions to an
           enquiry read as a pair, and it is a fraction of the height the
           select box was. */}
+      <textarea name="message" placeholder="Message" />
       {stonePicker && !stone ? (
         <>
           <button
@@ -276,7 +281,6 @@ export default function ContactForm({ stonePicker = false }: ContactFormProps = 
           ×
         </button>
       </div>
-      <textarea name="message" placeholder="Message" />
       <div className={upOpen ? 'cta-up open' : 'cta-up'} id="ctaUp">
         <button
           type="button"

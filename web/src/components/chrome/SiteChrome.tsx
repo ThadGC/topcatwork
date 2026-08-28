@@ -9,7 +9,6 @@ import { MobileNav } from './MobileNav';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 import { StickyContactBar } from './StickyContactBar';
-import { TradeFooter } from './TradeFooter';
 import { isBarePath, variantForPath, type ChromeVariant } from './nav-data';
 
 export interface SiteChromeProps {
@@ -120,7 +119,31 @@ export function SiteChrome({
           this build before.
         */}
         <StickyContactBar mode="always" />
-        <TradeFooter />
+        {/*
+          ⛔ THE SHARED FOOTER, NOT /trade/'s OWN. REVERSED 28 Aug.
+
+          The source gives /trade/ a deliberately different footer — its own
+          tagline, no guarantee pill, no social row, no WhatsApp line, no
+          `.foot-tail`, and a three-link bottom bar reading "Get a quote / FAQ /
+          Sitemap" instead of "Sitemap / Privacy / Terms / Cookies". <TradeFooter>
+          reproduced that faithfully and carries a note saying not to unify it.
+
+          The client overruled it, 28 Aug: "on the inner pages, at least on the
+          trade page, the footer doesn't look like the correct footer. So you're
+          going to have to fix that. All the footers have to be consistent
+          across." Consistency beats source fidelity here because it is his call
+          on his own site, so /trade/ now takes the same footer as the other 177
+          pages.
+
+          `faqHref` points at /trade/'s OWN `#faq` (its "Trade questions" block)
+          rather than the home page's, so the link still lands where a trade
+          visitor expects.
+
+          <TradeFooter> is kept in the tree, unused, with its own tests: it is
+          the record of what the source does, and this is a preference that has
+          already changed once.
+        */}
+        <SiteFooter faqHref="#faq" />
       </>
     );
   }

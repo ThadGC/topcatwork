@@ -17,11 +17,17 @@ import { useReveal } from '@/hooks/useReveal';
  * background with it.
  */
 export interface CtaProps {
-  /** Passed straight to <ContactForm/>. The home page sets it; see there. */
+  /**
+   * Passed straight to <ContactForm/>; see the reasoning there.
+   *
+   * Defaults ON since 28 Aug — "make sure that all the major contact forms are
+   * correct" — so /contact/, /about/, /estimate/ and /projects/ now offer the
+   * picker exactly as the home page does.
+   */
   stonePicker?: boolean;
 }
 
-export default function Cta({ stonePicker = false }: CtaProps = {}) {
+export default function Cta({ stonePicker = true }: CtaProps = {}) {
   const ref = useReveal<HTMLElement>();
 
   return (

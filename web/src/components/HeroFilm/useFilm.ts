@@ -933,9 +933,20 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   const skipToEnd = useCallback(() => {
     const g = geom.current;
     if (!g) return;
-    // The one place a scroll is written, and it is a direct response to a tap,
-    // never something the engine decides to do while the visitor is scrolling.
-    window.scrollTo({ top: g.top + g.runPx + 2, behavior: 'auto' });
+    /*
+      The one place a scroll is written, and it is a direct response to a tap,
+      never something the engine decides to do while the visitor is scrolling.
+
+      ⛔ `instant`, NOT `auto`. `auto` defers to the CSS, and `html` carries
+      `scroll-behavior: smooth`, so this was an ANIMATED scroll — still in
+      flight when the film reached its end. The lock then collapsed the runway
+      under it, the browser clamped the scroll to the shrunken document, and
+      the animation carried on to its original target: measured, the visitor
+      ended at scrollY 4644 with the hero 4644px above the viewport, on both
+      the Skip button and the brand logo. It never showed in a probe because
+      every probe disables smooth scrolling before it measures.
+    */
+    window.scrollTo({ top: g.top + g.runPx + 2, behavior: 'instant' });
   }, []);
 
   /* ── mount ────────────────────────────────────────────────────────────── */
@@ -1029,6 +1040,46 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       // markup — see the note at the call site in index.tsx.
       if (!showsText(mode)) stage.dataset.text = 'off';
       measure();
+
+      /*
+        ⛔ ARRIVING ON `/#hero` NEVER PLAYS THE FILM.
+
+        The client, 28 Aug, having said it more than once: "if someone clicks on
+        the TopCat logo, it only takes them back to the Surfaces Worth Building
+        Around. No matter what inner page they're on or whatever they're doing,
+        it never goes back to the start of the video... The only way they ever
+        get back to the start of the video is if they refresh their browser."
+
+        `BRAND_HOME` is `/#hero` on all 178 pages. From the landing page itself
+        the capture-phase handler below catches the click, but from an INNER
+        page the logo is a real navigation: the home page loads cold, the film
+        mounts, and it played from the quarry every time. The comment on that
+        handler claimed this case was "handled at arm time below" and no such
+        code was ever written — the same dropped-block fault this port keeps
+        producing.
+
+        So the hash is honoured here, once, at the moment the scrub arms:
+        `skipToEnd` puts the scroll past the end of the runway and the first
+        tick paints the whole ending and locks. The visitor lands on the hero
+        having never seen the film, which is exactly what he asked for.
+
+        A bare `/` is untouched, so a refresh still plays it from the top.
+      */
+      if (typeof location !== 'undefined' && location.hash === '#hero') {
+        /*
+          ⛔ THE HASH IS TAKEN OFF THE URL BEFORE THE JUMP.
+
+          Chrome's fragment scroll is deferred and re-attempted as the page
+          finishes loading, so leaving `#hero` in place put it in a fight with
+          the lock's own correction: measured, the visitor ended at scrollY
+          4644 with the hero 4644px above the viewport. Dropping the hash the
+          moment we take responsibility for it settles that — replaceState, so
+          the back button still returns to the page they came from.
+        */
+        history.replaceState(null, '', location.pathname + location.search);
+        skipToEnd();
+      }
+
       if (animates(mode)) {
         lastWrite.current = 0;
         raf.current = requestAnimationFrame(tick);

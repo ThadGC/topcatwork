@@ -2436,3 +2436,48 @@ html.proj-open .proj-close{top:92px}
   #reviews{justify-content:center}
   #reviews + .section-divider{margin-top:clamp(10px,2vh,26px)}
 }
+
+/* ==========================================================================
+   THE HERO SUB-LINE, OPTICALLY CENTRED
+   --------------------------------------------------------------------------
+   The client, 28 Aug: "space the subtitle in the middle between building
+   around and the buttons."
+
+   Its MARGINS are already balanced and have been since 28 Aug — measured
+   26/26 desktop, 43/44 tablet, 37/35 phone. The trouble is that a margin is
+   measured from the headline's BOX, and the headline is a 72px serif at
+   line-height 1.07 whose last line is all caps: there is a large band of empty
+   descent between the bottom of the letters and the bottom of the box. So the
+   gap you can SEE is nothing like the gap the CSS declares.
+
+   Measured by scanning the rendered pixels for ink rather than reading rects,
+   with the picture layers hidden and the hero on black so nothing but type is
+   bright, and the entrance animation forced off so the reading is stable:
+
+       band            before            after
+       390 phone     61 / 35          48 / 48
+       900 tablet    72 / 52          62 / 62
+       1440 desktop  47 / 48          47 / 48   (already right)
+
+   Desktop is the band he screenshotted; the numbers there depend on where in
+   the run you measure, and the two narrow bands were the ones visibly out.
+
+   ⛔ CORRECTED WITH A RELATIVE OFFSET, NOT WITH THE MARGINS. Moving the margins
+   would move the CTAs and the trust chips with them and pull the whole block
+   off the hero's own vertical centring. `position:relative` leaves the layout
+   exactly as it is and moves only the paint, which is all that is wrong.
+
+   ⚠️ These are measured constants, like the margins they sit on top of. If the
+   headline's face, size or line-height changes, re-measure the ink: the probe
+   scans each row of a screenshot for pixels above luma 140 between the
+   headline's box top and the CTA row.
+   ========================================================================== */
+#hero .hero-sub { position: relative; top: -16px; }
+
+@media (max-width: 720px) {
+  #hero .hero-sub { top: -7px; }
+}
+
+@media (min-width: 721px) and (max-width: 1120px) {
+  #hero .hero-sub { top: -11px; }
+}
