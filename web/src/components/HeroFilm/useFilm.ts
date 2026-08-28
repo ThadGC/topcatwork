@@ -305,7 +305,6 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   const raf = useRef(0);
   const lastWrite = useRef(0);
   const armed = useRef(false);
-  const doneFlag = useRef<boolean | null>(null);
   const memo = useRef({
     plate: -1,
     veil: -1,
@@ -530,21 +529,26 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       const past = y >= g.runPx;
       const before = y < -1;
 
-      // Release. A single attribute, written only when it changes.
+      /*
+        ⛔ NOTHING HERE WRITES `data-film`. ONLY `lockFilm` DOES.
+
+        This used to set it to 'done' the moment the scroll passed the end of
+        the runway, which was correct when 'done' meant "hide the stage". It
+        does not mean that any more: 'done' switches the stage from `fixed` to
+        `absolute` at the document top, i.e. it turns the stage into the hero.
+        Doing that while the runway is still several viewports tall throws the
+        stage thousands of pixels above the viewport and leaves the visitor
+        staring at empty runway until the lock catches up.
+
+        That is exactly the reported fault. Traced frame by frame at 1440x900:
+        at t=4860ms the stage went `absolute` with the runway still 7380px and
+        the stage's own top at -7480 — a black screen — and it stayed that way
+        for 1.1 seconds until `lockFilm` collapsed the runway and snapped back.
+
+        The stage stays fixed and on screen right up to the lock. `done` below
+        is only whether there is anything left to paint.
+      */
       const done = past || before;
-      if (done !== doneFlag.current) {
-        doneFlag.current = done;
-        stage.dataset.film = done ? 'done' : 'on';
-        /*
-          The header has no chrome of its own while the film is running — the
-          bar forming is the film's closing beat. This is a ROOT class, which
-          is normally forbidden in this loop because an unregistered custom
-          property on the root invalidates style for the whole document. It is
-          allowed here because it is written ONLY on a transition: twice in a
-          visit, not sixty times a second. See SiteHeader.tsx.
-        */
-        document.documentElement.classList.toggle('film-running', !done);
-      }
 
       const p = clamp01(y / g.filmPx);
 
@@ -857,7 +861,6 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       // to be set here and not only from inside the loop — `?film=frozen`
       // never starts the loop and must still show the film.
       stage.dataset.film = 'on';
-      doneFlag.current = false;
       // The component releases the page hero on a timer if the film never
       // arms; this is what stands that down. See the note at its call site.
       refs.pageHero.current?.setAttribute('data-film-armed', '');
