@@ -121,11 +121,10 @@ export const REVEAL_FPS = 12;
 /**
  * The runway, per band, in viewport heights.
  *
- *   film   the distance over which the film actually plays
- *   tail   ONE VIEWPORT of hold at the final frame. This is not padding: it is
- *          exactly the height of `.heroOut`, so the page's own hero rises over
- *          a film that has stopped rather than over one still moving.
- *   +100   the viewport itself
+ * This is the film's scroll distance and nothing else. The hero section that
+ * follows it is a real 100vh box in normal flow, so at the end of the runway
+ * the hero is exactly filling the viewport — which is what makes the handoff
+ * free of any movement at all.
  *
  * Derived to preserve the scroll feel of the build the client signed off,
  * which expressed the same thing as a total height plus a fractional tail
@@ -133,11 +132,18 @@ export const REVEAL_FPS = 12;
  * 0.1387. Multiplying those out gives 551 / 640 / 818 viewport-heights of
  * actual film, which is what is reproduced here.
  */
-const RUNWAY = {
-  phone: { film: 550, tail: 100 },
-  tablet: { film: 640, tail: 100 },
-  wide: { film: 820, tail: 100 },
-} as const;
+const RUNWAY = { phone: 550, tablet: 640, wide: 820 } as const;
+
+/**
+ * How long the scroll must be still before the film locks.
+ *
+ * The lock changes the document's height by several viewports and corrects the
+ * scroll by the same amount in the same frame. Doing that into a live momentum
+ * animation is a cross-thread fight — the scrolling thread keeps applying
+ * momentum to the old offset while the main thread has already re-laid-out for
+ * the new one. So it waits until the visitor has actually stopped.
+ */
+const SETTLE_MS = 220;
 
 /** Seek deadband: half a film frame. Closer than this and the seek is a no-op
  *  that costs a decode and returns the same picture. */
@@ -277,6 +283,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   const [live, setLive] = useState(false);
 
   const geom = useRef<Geom | null>(null);
+  const locked = useRef(false);
+  const stillSince = useRef(0);
+  const lastY = useRef(-1);
   const raf = useRef(0);
   const lastWrite = useRef(0);
   const armed = useRef(false);
@@ -302,18 +311,19 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   const measure = useCallback(() => {
     const runway = refs.runway.current;
     const stage = refs.stage.current;
-    if (!runway || !stage) return;
+    if (!runway || !stage || locked.current) return;
 
     const band = bandFor(window.innerWidth);
     const key = band.phone ? 'phone' : band.tablet ? 'tablet' : 'wide';
     const vh = window.innerHeight;
     const plan = RUNWAY[key];
 
-    // The ONE height write, and it happens on resize, never during a scroll.
-    runway.style.setProperty('--runway', `${plan.film + plan.tail + 100}vh`);
+    // The runway's height is written exactly twice in a page's life: here, when
+    // the film arms, and again at the lock. Never during a scroll.
+    runway.style.setProperty('--runway', `${plan}vh`);
 
-    const filmPx = (plan.film / 100) * vh;
-    const runPx = ((plan.film + plan.tail) / 100) * vh;
+    const filmPx = (plan / 100) * vh;
+    const runPx = filmPx;
     const top = runway.getBoundingClientRect().top + window.scrollY;
 
     // The film frame, for the wide band's film-space line layout. Written on
@@ -423,6 +433,43 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     [refs],
   );
 
+  /**
+   * THE LOCK — the end of the film, and it is one-way.
+   *
+   * The client, 28 Aug: "once users reach this point, they cannot scroll
+   * through the video again. They have to refresh."
+   *
+   * The runway collapses to nothing and the same distance comes off the scroll
+   * IN THE SAME FRAME, so nothing on screen moves a pixel and everything below
+   * rises by exactly the runway's length. The hero is already filling the
+   * viewport at this moment — it is the box immediately after the runway — so
+   * after the collapse it is simply the top of the page, and there is no longer
+   * anything above it to scroll back into.
+   *
+   * Latched. It happens once per page load and the loop stops with it.
+   */
+  const lockFilm = useCallback(() => {
+    const g = geom.current;
+    const runway = refs.runway.current;
+    const stage = refs.stage.current;
+    if (locked.current || !g || !runway || !stage) return;
+    locked.current = true;
+
+    const drop = Math.round(g.filmPx);
+    // Hide the film first, in the same frame, so the collapse happens behind
+    // an already-released stage and cannot be seen.
+    stage.dataset.film = 'done';
+    document.documentElement.classList.remove('film-running');
+    runway.style.setProperty('--runway', '0px');
+    window.scrollTo({
+      top: Math.max(0, Math.round(window.scrollY - drop)),
+      behavior: 'instant',
+    });
+
+    cancelAnimationFrame(raf.current);
+    raf.current = 0;
+  }, [refs]);
+
   /* ── the loop ─────────────────────────────────────────────────────────── */
 
   const tick = useCallback(
@@ -440,7 +487,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       if (!g || !stage) return;
 
       const y = window.scrollY - g.top;
-      const past = y > g.runPx;
+      const past = y >= g.runPx;
       const before = y < -1;
 
       // Release. A single attribute, written only when it changes.
@@ -458,9 +505,63 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         */
         document.documentElement.classList.toggle('film-running', !done);
       }
-      if (done) return;
 
       const p = clamp01(y / g.filmPx);
+
+      /*
+        THE HANDOFF AND THE LOCK COME BEFORE THE EARLY RETURN.
+
+        They used to sit further down, after `if (done) return`, which meant
+        that the moment the film released neither of them ever ran: the hero
+        never inked and the runway never collapsed. Reaching the end simply
+        left the stage hidden and the film still scrollable. Caught by driving
+        the scroll PAST the end of the runway rather than to 99.9% of it — at
+        99.9% everything looks right, which is exactly why it was missed.
+      */
+      const ink = p >= 1;
+      if (ink !== memo.current.ink) {
+        memo.current.ink = ink;
+        const ph = refs.pageHero.current;
+        if (ph) {
+          /*
+            BOTH, and both are needed. `data-ink` is what film.module.css uses
+            to settle the block as a whole; `loaded` is what globals.css's
+            entrance stagger is keyed on — `#hero .hero-el {opacity:0}` /
+            `#hero.loaded .hero-el {opacity:1}`, with a per-element `--hd`
+            delay of 180/340/560/720/880ms.
+
+            Writing only `data-ink` faded the block in with every element
+            inside it still at zero, so the hero arrived as a headline alone,
+            with no lede, no CTAs and no trust chips.
+          */
+          if (ink) {
+            ph.setAttribute('data-ink', '');
+            ph.classList.add('loaded');
+          } else {
+            ph.removeAttribute('data-ink');
+            ph.classList.remove('loaded');
+          }
+        }
+      }
+
+      if (ink) {
+        // Complete, and then still for SETTLE_MS. The collapse changes the
+        // document height by several viewports and corrects the scroll by the
+        // same amount in one frame; it must not land inside a momentum scroll.
+        const yNow = Math.round(window.scrollY);
+        if (yNow !== lastY.current) {
+          lastY.current = yNow;
+          stillSince.current = now;
+        } else if (now - stillSince.current >= SETTLE_MS) {
+          lockFilm();
+          return;
+        }
+      } else {
+        stillSince.current = now;
+        lastY.current = -1;
+      }
+
+      if (done) return;
       const v = refs.video.current;
       const dur = v && isFinite(v.duration) && v.duration > 1 ? v.duration : DUR;
       const t = p * dur;
@@ -591,21 +692,6 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         entrance stagger is keyed on, and `data-ink` is what film.module.css
         uses; both are written once, on the transition.
       */
-      const ink = p >= 0.93;
-      if (ink !== m.ink) {
-        m.ink = ink;
-        const ph = refs.pageHero.current;
-        if (ph) {
-          if (ink) {
-            ph.setAttribute('data-ink', '');
-            ph.classList.add('loaded');
-          } else {
-            ph.removeAttribute('data-ink');
-            ph.classList.remove('loaded');
-          }
-        }
-      }
-
       const skip = refs.skip.current;
       if (skip) {
         const gone = p > 0.985;
@@ -616,7 +702,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         }
       }
     },
-    [refs, mode, paintReveal],
+    [refs, mode, paintReveal, lockFilm],
   );
 
   /* ── skip ─────────────────────────────────────────────────────────────── */

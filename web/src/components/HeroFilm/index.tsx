@@ -306,27 +306,6 @@ export function HeroFilm({
           {skipLabel}
         </button>
 
-        {/*
-          THE PAGE'S OWN HERO — pinned with the film, arriving in place over
-          its final frame. NOT in the runway: in flow it slid up from the
-          bottom over the site's marble floor, which is not the shot it belongs
-          on. See the note on `.pageHero` in film.module.css.
-
-          `id="hero"` lives here, so every `#hero …` rule in globals.css — the
-          entrance stagger, `.hero-ctas`, `.hero-chips` — keeps working with no
-          edit at all. The engine adds `loaded` and `data-ink` together at 93%.
-        */}
-        <section className={css.pageHero} id="hero" ref={heroOut}>
-          {/*
-            The two gold gradients, first child of `#hero`, where the source
-            puts them (index.html:4) and where tests/smoke.test.tsx pins them.
-            `.wbtn svg` fills with `url(#tcGoldSolid)` and the hero's "Free home
-            visit" chip strokes with `url(#tcGold)`; a `url(#id)` paint resolves
-            against the document, so with no <defs> the icon disappears.
-          */}
-          <TcDefs />
-          <div className={css.heroOutInner}>{hero}</div>
-        </section>
       </div>
 
       <main>
@@ -339,7 +318,57 @@ export function HeroFilm({
 
           Transparent, so the fixed stage behind it is what you see.
         */}
+        {/*
+          THE RUNWAY. A plain box whose only job is to be tall. Nothing is ever
+          written to it except its height, twice: once on mount when the film
+          arms, and once at the lock. It ships at zero, so with no JavaScript
+          the hero below is simply the top of the page.
+        */}
         <div className={css.runway} id="filmRunway" ref={runway} />
+
+        {/*
+          THE HERO — a REAL SECTION IN NORMAL FLOW, and the end of the film.
+
+          The client, 28 Aug: "when I see the surfaces worth building around,
+          that should mark the end of the video … then this becomes a new hero
+          section, and then it scrolls down from here like a regular website."
+
+          It sits immediately after the runway, so it is exactly filling the
+          viewport at the moment the film reaches its last frame. Until then it
+          rises into view BEHIND the stage, which is opaque and fixed and
+          covers it completely — so it is never seen sliding up. The instant the
+          film ends the stage is released and this is already in place, and the
+          copy settles onto it.
+
+          Then `lockFilm()` collapses the runway to nothing and subtracts the
+          same distance from the scroll in the same frame. Nothing moves, and
+          the film is gone: there is no longer any runway above this to scroll
+          back through. Reaching the end is one-way, and a refresh is what
+          replays it — which is the behaviour the client asked for.
+        */}
+        <section className={css.hero} id="hero" ref={heroOut}>
+          <img
+            className={css.heroStill}
+            src={STILL.src}
+            srcSet={STILL.srcSet}
+            sizes={STILL.sizes}
+            width={2752}
+            height={1536}
+            alt=""
+            draggable={false}
+            decoding="async"
+            aria-hidden="true"
+          />
+          <div className={css.heroShade} aria-hidden="true" />
+          {/*
+            The two gold gradients, first child of the hero as the source has
+            them. `.wbtn svg` fills with `url(#tcGoldSolid)` and the "Free home
+            visit" chip strokes with `url(#tcGold)`; a `url(#id)` paint resolves
+            against the document, so with no <defs> the icon disappears.
+          */}
+          <TcDefs />
+          <div className={css.heroInner}>{hero}</div>
+        </section>
 
         {/* Opaque, and above the stage in paint order, so the page slides up
             over the film rather than the film showing through it. */}

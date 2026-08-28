@@ -65,13 +65,19 @@
    same distance from scrollY in the same frame, which is a programmatic scroll
    fired into a live momentum animation. That is gone.
 
-   It ships at one viewport and the engine raises it once, on mount, only if
-   the film is actually going to run. So with no JavaScript, no MP4 decoder or
-   reduced motion, the hero is exactly one screen tall and the page is normal.
+   ⛔ IT SHIPS AT ZERO. The hero below it is its own 100vh section in normal
+   flow, so a runway of one viewport would make the no-JavaScript page two
+   screens of hero with a blank one on top. The engine raises this once, on
+   mount, and only once it has the film in memory and has satisfied itself the
+   pin is safe — so with no JavaScript, no MP4 decoder, reduced motion or a
+   failed fetch, this box is not there at all and the hero simply is the top of
+   the page.
+
+   It is also what the lock collapses back to zero. See useFilm.ts.
    -------------------------------------------------------------------------- */
 .runway {
   position: relative;
-  height: var(--runway, 100vh);
+  height: var(--runway, 0px);
 }
 
 /* ── the stage ──────────────────────────────────────────────────────────── */
@@ -82,7 +88,17 @@
   left: 0;
   width: 100%;
   height: 100vh;
-  z-index: 0;
+  /*
+    ABOVE the hero section (z-index 1) and below every piece of site chrome —
+    header.bar is 50, the mobile nav 60, the FABs 38-40.
+
+    Being above the hero is load-bearing, not tidiness. The hero is a real box
+    in normal flow immediately after the runway, so it RISES INTO VIEW over the
+    last viewport of the film. The stage is what hides it while it does: opaque,
+    fixed, covering the viewport. Drop below it and the hero is seen sliding up
+    from the bottom, which is exactly what the client rejected.
+  */
+  z-index: 2;
   overflow: hidden;
   /* No background. The film covers the stage edge to edge, and behind it is the
      site's own marble floor (`body::before`) rather than a flat colour — which
@@ -751,27 +767,108 @@
   }
 }
 
-/* ── the page's own hero — PINNED WITH THE FILM, arriving in place ──────────
-   ⛔ IT MUST NOT SCROLL UP FROM THE BOTTOM. The client, 28 Aug: "That animates
-   in from the middle and settles on that back image as it currently is. Right
-   now, it's swiping up from the bottom with the stone background behind it,
-   which is incorrect because it should be over the image of the kitchen."
+/* ══════════════════════════════════════════════════════════════════════════
+   THE HERO — a real section, in normal flow, and the end of the film.
 
-   It was briefly in normal flow at the end of the runway, which put it over the
-   marble floor and slid it up into view. It belongs inside the stage, over the
-   film's final frame, fading and scaling up in place — 0.84 -> 1 — exactly as
-   the old build released it at 93%.
+   The client, 28 Aug: "when I see the surfaces worth building around, that
+   should mark the end of the video … then this becomes a new hero section, and
+   then it scrolls down from here like a regular website."
 
-   `id="hero"` is on this block, so every `#hero …` rule in globals.css (the
-   entrance stagger, `.hero-ctas`, `.hero-chips`) keeps working untouched.
-   -------------------------------------------------------------------------- */
-.pageHero {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
+   It is NOT pinned and it is NOT in the stage. It sits immediately after the
+   runway, so at the film's last frame it is exactly filling the viewport. Up to
+   that point it rises into view BEHIND the stage — which is fixed, opaque and
+   covers the viewport — so it is never seen sliding up from the bottom. When
+   the film releases it is already in place, and only the copy animates: it
+   settles onto the picture rather than arriving with it.
+
+   After the lock the runway is gone and this is simply the top of the page.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
   display: flex;
   align-items: center;
+  overflow: hidden;
+  /* The curve and the hairline below read off this. */
+  --curveR: 48px;
+  --curveOut: 14px;
+}
+
+.heroStill {
+  position: absolute;
+  inset: 0;
+  left: calc(-1 * var(--curveOut));
+  right: calc(-1 * var(--curveOut));
+  width: calc(100% + 2 * var(--curveOut));
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% 50%;
+  display: block;
+  z-index: 0;
+  transform: scale(1.08);
+  clip-path: inset(0 round 0 0 var(--curveR) var(--curveR));
+}
+
+.heroShade {
+  position: absolute;
+  inset: 0;
+  left: calc(-1 * var(--curveOut));
+  right: calc(-1 * var(--curveOut));
+  z-index: 1;
   pointer-events: none;
+  clip-path: inset(0 round 0 0 var(--curveR) var(--curveR));
+  background:
+    radial-gradient(
+      70% 66% at 50% 42%,
+      rgba(7, 7, 9, 0.7) 0%,
+      rgba(7, 7, 9, 0.36) 62%,
+      rgba(7, 7, 9, 0) 100%
+    ),
+    linear-gradient(to top, rgba(7, 7, 9, 0.9) 2%, rgba(7, 7, 9, 0) 32%),
+    var(--navScrim);
+}
+
+/* ⛔ THE DIVIDER. The client, 28 Aug: "the divider that used to be, or the
+   border of the hero section, is no longer there … there should be a divider
+   between that and the hearing from your neighbours section."
+
+   It is the hero's own bottom edge: two rounded corners and a hairline, the
+   same shape the nav bar carries. The old build drove the radius from
+   JavaScript over the last 10% of the film; it is static here, because a
+   per-frame write to `border-radius` is a property the compositor cannot
+   animate and it has to be repainted every frame. Nothing about it needed to
+   move. */
+.hero::after {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--curveOut));
+  right: calc(-1 * var(--curveOut));
+  bottom: 0;
+  height: calc(var(--curveR) + 1px);
+  border: 0 solid var(--hair);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-bottom-left-radius: var(--curveR);
+  border-bottom-right-radius: var(--curveR);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  --heroPadB: clamp(72px, 10.8vh, 132px);
+  padding: max(72px, calc(var(--heroPadB) - var(--hTitle, 72px) * 0.1234))
+    clamp(20px, 5vw, 64px) var(--heroPadB);
+  /* The settle. Only the COPY moves — the picture is already there, which is
+     what "settles on that back image" means. Released by `data-ink`, written
+     once, when the film reaches its last frame. */
   opacity: 0;
   transform: scale(0.84);
   transition:
@@ -779,15 +876,13 @@
     transform 1.05s var(--ease) 180ms;
 }
 
-/* Written by the engine at 93% of the film. A single attribute, once. */
-.pageHero[data-ink] {
+.hero[data-ink] .heroInner {
   opacity: 1;
   transform: none;
-  pointer-events: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pageHero {
+  .heroInner {
     transition: none;
   }
 }
