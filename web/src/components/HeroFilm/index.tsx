@@ -141,6 +141,7 @@ export function HeroFilm({
     reveal,
     kit,
     heroCopy,
+    pageHero: heroOut,
     skip,
   });
   const sources = useRef<FilmSources>({ ...DEFAULT_SOURCES, ...srcProp });
@@ -148,32 +149,23 @@ export function HeroFilm({
   const { skipToEnd } = useFilm(refs.current, sources.current);
 
   /*
-    The page hero's entrance stagger is gated on `#hero.loaded` (globals.css).
-    An IntersectionObserver, not the film's loop: it fires a handful of times
-    in the page's life rather than sixty times a second, and it means the copy
-    animates in when it actually arrives rather than at a hard-coded percentage
-    of a runway the visitor may have skipped.
+    With no JavaScript — or with the film off, or its fetch failed — nothing
+    ever writes `data-ink`, and the hero would sit at opacity 0 over a still
+    frame. So it is released here on mount as the baseline, and the engine
+    takes over the timing only once it has actually armed. The film's own
+    `ink()` at 93% then re-asserts it; adding a class twice is free.
   */
   useEffect(() => {
     const el = heroOut.current;
-    if (!el) return;
-    if (!('IntersectionObserver' in window)) {
-      el.classList.add('loaded');
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            el.classList.add('loaded');
-            io.disconnect();
-          }
+    if (el && !el.hasAttribute('data-ink')) {
+      const id = window.setTimeout(() => {
+        if (!el.hasAttribute('data-film-armed')) {
+          el.setAttribute('data-ink', '');
+          el.classList.add('loaded');
         }
-      },
-      { threshold: 0.25 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
+      }, 1200);
+      return () => window.clearTimeout(id);
+    }
   }, []);
 
   return (
@@ -204,8 +196,19 @@ export function HeroFilm({
         media="(min-width:721px) and (prefers-reduced-motion: no-preference)"
       />
 
-      <div className={css.stage} ref={stage} data-film="off" aria-hidden="true">
-        <div className={css.frame}>
+      {/*
+        ⛔ THE STAGE IS NOT `aria-hidden`. It was, while it held only the film —
+        and then the page's own hero moved into it, which put the site's <h1>
+        inside an aria-hidden subtree and took the main heading of the whole
+        site out of the accessibility tree. Caught by tests/smoke.test.tsx,
+        which could no longer find a heading at all.
+
+        Only the PICTURE is hidden, on `.frame` below. The story beats and the
+        film's opening line are real text and are read, exactly as they were in
+        the build before this one.
+      */}
+      <div className={css.stage} ref={stage} data-film="off">
+        <div className={css.frame} aria-hidden="true">
           {/* The end-state still. Also the no-JS and reduced-motion hero, which
               is why it carries a real src rather than a data attribute. */}
           <img
@@ -293,7 +296,7 @@ export function HeroFilm({
             <em>{HERO_COPY.emphasis}</em>
           </p>
           <p className={css.heroSub}>{HERO_COPY.sub}</p>
-          <div className={css.heroCue}>
+          <div className={css.heroCue} aria-hidden="true">
             <span>{HERO_COPY.cue}</span>
             <CueArrow />
           </div>
@@ -302,6 +305,28 @@ export function HeroFilm({
         <button type="button" className={css.skip} ref={skip} onClick={skipToEnd}>
           {skipLabel}
         </button>
+
+        {/*
+          THE PAGE'S OWN HERO — pinned with the film, arriving in place over
+          its final frame. NOT in the runway: in flow it slid up from the
+          bottom over the site's marble floor, which is not the shot it belongs
+          on. See the note on `.pageHero` in film.module.css.
+
+          `id="hero"` lives here, so every `#hero …` rule in globals.css — the
+          entrance stagger, `.hero-ctas`, `.hero-chips` — keeps working with no
+          edit at all. The engine adds `loaded` and `data-ink` together at 93%.
+        */}
+        <section className={css.pageHero} id="hero" ref={heroOut}>
+          {/*
+            The two gold gradients, first child of `#hero`, where the source
+            puts them (index.html:4) and where tests/smoke.test.tsx pins them.
+            `.wbtn svg` fills with `url(#tcGoldSolid)` and the hero's "Free home
+            visit" chip strokes with `url(#tcGold)`; a `url(#id)` paint resolves
+            against the document, so with no <defs> the icon disappears.
+          */}
+          <TcDefs />
+          <div className={css.heroOutInner}>{hero}</div>
+        </section>
       </div>
 
       <main>
@@ -314,28 +339,7 @@ export function HeroFilm({
 
           Transparent, so the fixed stage behind it is what you see.
         */}
-        <div className={css.runway} ref={runway}>
-          <section className={css.heroOut} id="hero" ref={heroOut}>
-            {/*
-              The two gold gradients, as the first child of `#hero` — which is
-              where the source puts them (index.html:4) and what
-              tests/smoke.test.tsx pins.
-
-              They are NOT decoration that could live anywhere. `.wbtn svg`
-              fills with `url(#tcGoldSolid)` and the hero's "Free home visit"
-              chip strokes with `url(#tcGold)`, and a `url(#id)` paint resolves
-              against the document — with no <defs> in the DOM the stroke
-              resolves to nothing and the icon disappears.
-
-              Deliberately here and not in the stage: the stage goes
-              `visibility: hidden` the moment the film releases, and a paint
-              server the whole page depends on should not live inside something
-              that gets hidden.
-            */}
-            <TcDefs />
-            <div className={css.heroOutInner}>{hero}</div>
-          </section>
-        </div>
+        <div className={css.runway} id="filmRunway" ref={runway} />
 
         {/* Opaque, and above the stage in paint order, so the page slides up
             over the film rather than the film showing through it. */}

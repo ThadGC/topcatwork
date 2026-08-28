@@ -119,7 +119,15 @@ export function SiteChrome({
         {/* .mbar must precede the FABs — general sibling combinator. */}
         <StickyContactBar
           mode={isHome ? 'scroll' : 'always'}
-          revealAnchorSelector=".hero-ctas"
+          /*
+            The film's runway, not `.hero-ctas`. The hero's CTAs are pinned
+            inside the film stage now, so their rect never leaves the viewport
+            and a bar keyed on them would never reveal. The runway is the right
+            anchor anyway: it means "the intro is behind you", which is exactly
+            when the bar should arrive. Falls back to `.hero-ctas` on any page
+            with no runway.
+          */
+          revealAnchorSelector={isHome ? '#filmRunway' : '.hero-ctas'}
         />
         <ContactFabs />
         {children}

@@ -16,7 +16,10 @@ const GW = 48, GH = 8;
 function sample(file, crop, gh) {
   return new Promise((res, rej) => {
     const ff = spawn('ffmpeg', ['-v','error','-i',file,'-vf',
-      `crop=${crop},scale=${GW}:${gh},format=gray`,'-f','rawvideo','-']);
+      // fps=12 is NOT the encode rate — the cuts are 24fps. It is the grid the
+      // tables are INDEXED on (useFilm.ts REVEAL_FPS), so it must stay 12 here
+      // whatever the film is encoded at, or every index shifts.
+      `crop=${crop},fps=12,scale=${GW}:${gh},format=gray`,'-f','rawvideo','-']);
     const chunks = [];
     ff.stdout.on('data', (c) => chunks.push(c));
     ff.stderr.on('data', (c) => process.stderr.write(c));

@@ -97,9 +97,26 @@ import {
   type FilmMode,
 } from './lib/mode';
 
-/** The film's own frame rate. Both cuts are encoded at 12fps, and the reveal
- *  tables were measured on a 12fps grid, so a table index IS a film frame. */
-export const FPS = 12;
+/**
+ * TWO FRAME RATES, AND THEY ARE NOT THE SAME NUMBER.
+ *
+ * `FILM_FPS` is the encode rate — the rate the masters were actually shot at.
+ * It sets the seek deadband and the plate's frame-0 test.
+ *
+ * ⛔ IT IS 24 BECAUSE 12 WAS NOT SMOOTH. The cuts were briefly encoded at 12fps
+ * to keep them small enough to hold in memory. The client, 28 Aug: "if I scroll
+ * very slowly, it just jumps between frames, and it doesn't feel like a smooth
+ * experience." He is right and it is arithmetic — half the frames means each
+ * one is held twice as long under a slow scrub. The film now ships every frame
+ * the camera shot. Do not trade this back for file size.
+ *
+ * `REVEAL_FPS` is the grid the reveal tables were MEASURED on, which is every
+ * second frame of a 24fps master. It is a property of the measurement, not of
+ * the encode, so it stays at 12 whatever the cuts are re-encoded at — the
+ * tables are indexed by `filmSeconds * REVEAL_FPS`, never by a frame count.
+ */
+export const FILM_FPS = 24;
+export const REVEAL_FPS = 12;
 
 /**
  * The runway, per band, in viewport heights.
@@ -124,7 +141,7 @@ const RUNWAY = {
 
 /** Seek deadband: half a film frame. Closer than this and the seek is a no-op
  *  that costs a decode and returns the same picture. */
-const SEEK_EPS = 0.5 / FPS;
+const SEEK_EPS = 0.5 / FILM_FPS;
 
 /** The scrim floor, and where it starts ramping to full. Film seconds. */
 const VEIL_MIN = 0.2;
@@ -139,6 +156,8 @@ export interface FilmRefs {
   reveal: React.RefObject<HTMLParagraphElement | null>;
   kit: React.RefObject<HTMLParagraphElement | null>;
   heroCopy: React.RefObject<HTMLDivElement | null>;
+  /** The PAGE's hero — the h1, the CTAs, the chips. Released at 93%. */
+  pageHero: React.RefObject<HTMLElement | null>;
   skip: React.RefObject<HTMLButtonElement | null>;
 }
 
@@ -275,6 +294,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     heroA: -1,
     heroX: NaN as number,
     open: false,
+    ink: false,
   });
 
   /* ── measurement: ONCE per resize, never in the loop ──────────────────── */
@@ -386,7 +406,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       const line = refs.reveal.current;
       const g = geom.current;
       if (!line || !g || !g.rv) return;
-      const panes = revealPanes(filmSeconds * FPS, g.rv, filmBand(g.band));
+      const panes = revealPanes(filmSeconds * REVEAL_FPS, g.rv, filmBand(g.band));
       if (panes.done !== memo.current.open) {
         memo.current.open = panes.done;
         if (panes.done) line.setAttribute('data-open', '');
@@ -457,7 +477,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
       const m = memo.current;
 
-      const plate = plateOpacity(t, FPS);
+      const plate = plateOpacity(t, FILM_FPS);
       if (plate !== m.plate) {
         m.plate = plate;
         const el = refs.plate.current;
@@ -477,7 +497,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         phone and one that does not.
       */
       const grade = filmBand(g.band).phone ? PHONE_GRADE : WIDE_GRADE;
-      const frame = t * FPS;
+      const frame = t * REVEAL_FPS;
       const nav = r2(gradeAt(grade.nav, frame));
       if (nav !== m.nav) {
         m.nav = nav;
@@ -564,6 +584,28 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         }
       }
 
+      /*
+        `ink` — the handoff. At 93% of the film the page's own hero fades and
+        scales up in place over the final frame; the CSS transition does the
+        movement, this only decides when. `loaded` is what globals.css's
+        entrance stagger is keyed on, and `data-ink` is what film.module.css
+        uses; both are written once, on the transition.
+      */
+      const ink = p >= 0.93;
+      if (ink !== m.ink) {
+        m.ink = ink;
+        const ph = refs.pageHero.current;
+        if (ph) {
+          if (ink) {
+            ph.setAttribute('data-ink', '');
+            ph.classList.add('loaded');
+          } else {
+            ph.removeAttribute('data-ink');
+            ph.classList.remove('loaded');
+          }
+        }
+      }
+
       const skip = refs.skip.current;
       if (skip) {
         const gone = p > 0.985;
@@ -630,6 +672,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       // never starts the loop and must still show the film.
       stage.dataset.film = 'on';
       doneFlag.current = false;
+      // The component releases the page hero on a timer if the film never
+      // arms; this is what stands that down. See the note at its call site.
+      refs.pageHero.current?.setAttribute('data-film-armed', '');
       // `?film=notext` hides the story from here, not by rendering different
       // markup — see the note at the call site in index.tsx.
       if (!showsText(mode)) stage.dataset.text = 'off';

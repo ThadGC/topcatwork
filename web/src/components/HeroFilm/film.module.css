@@ -84,7 +84,9 @@
   height: 100vh;
   z-index: 0;
   overflow: hidden;
-  background: var(--ink, #0b0b0d);
+  /* No background. The film covers the stage edge to edge, and behind it is the
+     site's own marble floor (`body::before`) rather than a flat colour — which
+     is what shows for the moment before the first frame decodes. */
   /* The page below scrolls over the top of this. Nothing here is interactive
      except the Skip button, which re-enables pointer events on itself. */
   pointer-events: none;
@@ -98,22 +100,28 @@
   visibility: hidden;
 }
 
-/* The page scrolls over the top of the film. Everything below the runway
-   lives in here: opaque, so the film cannot show through it, and above the
-   stage in paint order.
+/* Everything below the runway.
 
-   The rounded top corners are the film's sign-off. The old build rounded the
-   BOTTOM corners of its hero as the page rose behind it; here the page rises
-   IN FRONT, so the same gesture belongs on the leading edge of the page. It is
-   static CSS — the old one drove a radius from JavaScript over the last 10% of
-   the film, which is a per-frame write to a property that cannot be
-   composited. */
+   ⛔ NO BACKGROUND. THIS IS NOT AN OVERSIGHT — IT IS A FIX.
+
+   The whole site is already built on a fixed backdrop: `body::before` is a
+   `position: fixed; inset: 0` marble floor (globals.css §5, `--marbleBG`), and
+   every section on every page is transparent over it. Painting a flat colour
+   here to stop the film showing through covers that floor for the entire rest
+   of the page, and the result is a plain dark background site-wide. The client
+   reported exactly that, in one pass, the first time he looked.
+
+   Nothing is needed. The film is released the instant the runway's bottom edge
+   reaches the bottom of the viewport, which is the same instant the first
+   section below it starts to enter — so there is no frame in which both are on
+   screen and nothing to hide. `z-index` alone covers the sub-pixel case.
+
+   The stage sits above `body::before` for the same reason it needs no z-index
+   fight: both are fixed children of <body> at z-index 0, and the stage comes
+   later in the DOM. */
 .overFilm {
   position: relative;
   z-index: 1;
-  background: var(--ink, #0b0b0d);
-  border-top-left-radius: 48px;
-  border-top-right-radius: 48px;
 }
 
 /* ── the picture ────────────────────────────────────────────────────────── */
@@ -743,21 +751,45 @@
   }
 }
 
-/* ── the page's own hero, in flow at the end of the runway ──────────────────
-   Not in the stage. The h1 stays inside <main>, `#hero` stays a real scroll
-   target for the brand-logo link, and `.hero-ctas` still scrolls out of view
-   so <StickyContactBar> reveals on time. It occupies the last viewport of the
-   runway, so it rises over the film's final frame while the film holds it —
-   which is what the old build's 93% handoff did with JavaScript.
+/* ── the page's own hero — PINNED WITH THE FILM, arriving in place ──────────
+   ⛔ IT MUST NOT SCROLL UP FROM THE BOTTOM. The client, 28 Aug: "That animates
+   in from the middle and settles on that back image as it currently is. Right
+   now, it's swiping up from the bottom with the stone background behind it,
+   which is incorrect because it should be over the image of the kitchen."
+
+   It was briefly in normal flow at the end of the runway, which put it over the
+   marble floor and slid it up into view. It belongs inside the stage, over the
+   film's final frame, fading and scaling up in place — 0.84 -> 1 — exactly as
+   the old build released it at 93%.
+
+   `id="hero"` is on this block, so every `#hero …` rule in globals.css (the
+   entrance stagger, `.hero-ctas`, `.hero-chips`) keeps working untouched.
    -------------------------------------------------------------------------- */
-.heroOut {
+.pageHero {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  min-height: 100vh;
+  inset: 0;
+  z-index: 5;
   display: flex;
   align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.84);
+  transition:
+    opacity 1.05s var(--ease) 180ms,
+    transform 1.05s var(--ease) 180ms;
+}
+
+/* Written by the engine at 93% of the film. A single attribute, once. */
+.pageHero[data-ink] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pageHero {
+    transition: none;
+  }
 }
 
 .heroOutInner {
