@@ -145,7 +145,21 @@ em{font-style:normal;color:var(--gold-soft)}
 @media(max-width:720px){
   .cta-long{display:none}
   .cta-short{display:inline}
-  .cta-row{flex-direction:column;align-items:stretch;flex-wrap:nowrap;
+  /* ⛔ `:not(.cta-form *)` IS LOAD-BEARING.
+
+     `.cta-row` means two different things. Here it is a row of CTA BUTTONS,
+     which on a phone stacks into a column. In the enquiry card it is a row of
+     FORM FIELDS, which enquiry-card.css lays out as a grid.
+
+     `.cta-form .cta-row` (0,2,0) already wins `display` and
+     `grid-template-columns` from this rule, but it declares no `width`, so the
+     `width:76%` below reached straight through to the form and made the name,
+     email, phone and postcode fields 228px inside a 300px column while the
+     message box stayed 300. The client, 28 Aug: "the your name, email,
+     address, phone number, postcode is ... the field is smaller than the
+     message field and the rest of the fields. So it doesn't look like the
+     other forms." Measured at 390: 300 x 0.76 = 228, exactly. */
+  .cta-row:not(.cta-form *){flex-direction:column;align-items:stretch;flex-wrap:nowrap;
     gap:10px;width:76%;margin-left:auto;margin-right:auto}
   .cta-row .btn-gold,.cta-row .btn-ghost{
     justify-content:center;text-align:center;
@@ -251,8 +265,20 @@ article>section.block:first-child::before,
 .cta-inline .cta-row{display:flex;gap:10px;flex-wrap:wrap;flex:0 0 auto;margin:0}
 @media(max-width:640px){
   .cta-inline{display:block}
-  .cta-inline .cta-row{margin-top:18px;flex-direction:column;align-items:stretch}
-  .cta-inline .cta-row a{justify-content:center}
+  /* ⛔ FULL WIDTH AND CENTRED, NOT 76% AND LEFT.
+
+     The client, 28 Aug, on this block: "those a free quote and give us a call
+     has to be in the center of that button ... just the buttons itself should
+     be center, and take up most of the size, almost from side to side."
+
+     Two rules were fighting over it. `.cta-inline .cta-row` above sets
+     `margin:0`, which beat the generic phone rule's `margin-inline:auto` — but
+     that rule's `width:76%` still applied, because nothing here overrode it. So
+     the pair came out three-quarters wide AND hard against the left edge of the
+     card. Stating both here settles it. */
+  .cta-inline .cta-row{margin-top:18px;flex-direction:column;align-items:stretch;
+    width:100%;margin-left:auto;margin-right:auto}
+  .cta-inline .cta-row a{justify-content:center;text-align:center}
 }
 section.cta-inline-wrap{padding:0 0 clamp(46px,7vh,86px);position:static}
 section.cta-inline-wrap::before{content:none}

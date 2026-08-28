@@ -2027,9 +2027,29 @@ html.proj-open .proj-close{top:92px}
 .cta-up.open .cu-mk::after{transform:translate(-50%,-50%) rotate(90deg)}
 .cu-txt{flex:1 1 auto}
 .cu-count{flex:none;font-size:11px;letter-spacing:0.06em;color:var(--gold)}
-.cta-up-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+/* ⛔ THE COLUMN IS CONSTRAINED, AND THAT IS WHAT KEEPS A LONG FILE NAME INSIDE
+   THE CARD. The client, 28 Aug: "when I add a file that has a long file name,
+   it completely breaks through the border. So we need to add a dot dot dot at
+   the end to save space instead of showing the whole file name." And: "where it
+   says add measurements, it also just goes off of screen."
+
+   `.tc-up-name` has always carried `text-overflow:ellipsis` and `min-width:0`.
+   It never fired, because this element is a grid with ONE IMPLICIT COLUMN sized
+   `auto` — which resolves to max-content. An unbreakable 60-character file name
+   is max-content, so the column grew to fit it and took the dropzone, the file
+   row, the "Add another file" row and the link field out past the card's border
+   with it: measured at 390, the block ran to x=595 in a 350px card. Nothing
+   inside a container that has already grown can shrink itself.
+
+   `minmax(0, 1fr)` pins the column to the space actually available, so the
+   ellipsis finally has a boundary to bite on. The `min-width:0` below is the
+   same argument one level down: a grid item's automatic minimum size is its
+   content, so without it `.cta-up` would push the form open instead. */
+.cta-up-body{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:0fr;
+    transition:grid-template-rows .5s var(--ease)}
+.cta-up,.cta-up-in > .tc-up,.tc-up-item{min-width:0}
 .cta-up.open .cta-up-body{grid-template-rows:1fr}
-.cta-up-in{overflow:hidden;min-height:0;visibility:hidden;transition:visibility 0s .48s}
+.cta-up-in{overflow:hidden;min-width:0;min-height:0;visibility:hidden;transition:visibility 0s .48s}
 .cta-up.open .cta-up-in{visibility:visible;transition:visibility 0s 0s}
 .cta-up-in > .tc-up{padding-top:11px}
 @media(max-width:900px){
