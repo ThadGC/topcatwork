@@ -414,7 +414,32 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     // the film arms, and again at the lock. Never during a scroll.
     runway.style.setProperty('--runway', `${plan}vh`);
 
-    const filmPx = (plan / 100) * vh;
+    /*
+      ⛔ THE RUNWAY'S OWN LAID-OUT HEIGHT, NOT A SUM FROM `innerHeight`.
+
+      This used to be `(plan / 100) * vh`. The scrub is `p = y / filmPx`, so
+      filmPx was a function of the live viewport height — and on a phone the
+      address bar retracting or returning changes that mid-scroll. The same
+      scrollY then mapped to a different p and the film JUMPED.
+
+      Measured at 390 with scrollY held constant, 844 -> 758 (an 86px bar):
+      p=0.60 jumps 3.01s, p=0.80 jumps 4.02s, and from p >= 0.898 the re-map
+      pushes p past 1 and ENDS THE FILM OUTRIGHT. The client, 28 Aug: "as soon
+      as I got to the stone sets the tone of the room, it just glitched
+      straight through to the surfaces for every space. But then when I swiped
+      back and did it again, it now did it the right way" — non-deterministic
+      because it depends on whether the bar happened to move.
+
+      The runway has no padding, no border and `box-sizing: border-box`, so its
+      border-box height IS the film's length, and it is whatever was actually
+      laid out rather than a number recomputed from a viewport that moves. It
+      is numerically identical on desktop and correct on iOS, where `vh` is the
+      large viewport.
+
+      ⚠️ The `--runway` write above must stay ABOVE this line so the rect is
+      read after the height has been applied.
+    */
+    const filmPx = runway.getBoundingClientRect().height || (plan / 100) * vh;
     const runPx = filmPx;
     const top = runway.getBoundingClientRect().top + window.scrollY;
 
@@ -1416,20 +1441,54 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     document.addEventListener('click', onLogo, true);
 
     let rz = 0;
-    const onResize = () => {
+    let lw = window.innerWidth;
+    let lh = window.innerHeight;
+    const remeasure = () => {
       window.clearTimeout(rz);
       rz = window.setTimeout(() => {
         if (armed.current) measure();
       }, 150);
     };
+    /*
+      ⛔ A PHONE'S ADDRESS BAR IS NOT A RESIZE. THE OLD BUILD KNEW THIS AND THE
+      PORT DROPPED THE GUARD.
+
+      index.html:3450-3454, verbatim, in a capture-phase listener installed
+      before anything else:
+
+          if(w===lw && w<=1120 && Math.abs(h-lh)<=140){ e.stopImmediatePropagation(); return; }
+
+      Same width, a narrow screen, and a height change small enough to be
+      browser chrome: that is the bar moving, not the window changing, and
+      re-measuring on it re-maps the scroll under the visitor. Even with the
+      film length now read off the laid-out runway, re-measuring mid-scroll is
+      work with nothing to gain.
+
+      `orientationchange` is deliberately NOT filtered — a real rotation is
+      exactly the case that must always re-measure, and it can look like a
+      height-only change on a square-ish viewport.
+    */
+    const onResize = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (w === lw && w <= 1120 && Math.abs(h - lh) <= 140) return;
+      lw = w;
+      lh = h;
+      remeasure();
+    };
+    const onOrient = () => {
+      lw = window.innerWidth;
+      lh = window.innerHeight;
+      remeasure();
+    };
     window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', onResize);
+    window.addEventListener('orientationchange', onOrient);
 
     return () => {
       cancelled = true;
       window.clearTimeout(rz);
       window.removeEventListener('resize', onResize);
-      window.removeEventListener('orientationchange', onResize);
+      window.removeEventListener('orientationchange', onOrient);
       document.removeEventListener('click', onLogo, true);
       cancelAnimationFrame(raf.current);
       if (vfc) {
