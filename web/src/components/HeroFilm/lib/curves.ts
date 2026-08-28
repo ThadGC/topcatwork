@@ -30,9 +30,16 @@
  *     a synchronous glyph repaint that re-snaps subpixel positions — a shiver
  *     in the text independent of anything else on screen.
  *
- * So the film loses nothing visible and sheds its single worst text-rendering
- * hazard. Do not reintroduce `perspective` to "restore the depth": there was
- * no visible depth to restore.
+ * So the STORY BEATS lose nothing visible and the film sheds its worst
+ * text-rendering hazard. Do not reintroduce `perspective` to "restore" their
+ * depth: there was no visible depth to restore.
+ *
+ * ⚠️ THE HERO COPY IS THE EXCEPTION, and the distinction is the whole point.
+ * On phone and tablet it really does fly at the camera as it leaves, and that
+ * IS visible — the client spotted it missing. `heroNarrowScale` below brings it
+ * back as a plain `scale`, which is mathematically the same picture, because a
+ * pure translateZ under perspective is exactly a uniform scale about the
+ * perspective origin. The look is restored; the 3D rendering context is not.
  */
 
 export const clamp01 = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
@@ -114,6 +121,30 @@ export function heroNarrowAlpha(t: number): number {
   const p = clamp01(t / 4.8);
   const a = p >= 1 ? 0 : Math.min(1, (1 - p) / 0.26);
   return r2(smoothstep(a));
+}
+
+/**
+ * The phone and tablet hero copy does not just fade — it flies AT THE CAMERA.
+ *
+ * The original expressed this as `translateZ(380p²)` under a
+ * `perspective: 1000px` ancestor. This build has no perspective anywhere, and
+ * deliberately: a perspective ancestor stops text flattening into its parent's
+ * layer and makes every frame a new raster scale on live glyphs, which is a
+ * shiver of its own. Losing it also lost the movement, and the client caught
+ * that the mobile copy was not animating like the desktop one.
+ *
+ * It comes back as a plain `scale`, and that is not an approximation: a pure
+ * translateZ under perspective IS a uniform scale about the perspective origin,
+ * exactly `d / (d − z)`. Feed it the same z and give the element a
+ * transform-origin at the projected perspective origin — which useFilm.ts
+ * measures — and the two are the same picture, without a 3D rendering context.
+ *
+ * At the end of the ramp z is 380, so the copy reaches 1000/620 = 1.61x.
+ */
+export function heroNarrowScale(t: number): number {
+  const p = clamp01(t / 4.8);
+  const z = 380 * p * p;
+  return r3(1000 / (1000 - z));
 }
 
 /**

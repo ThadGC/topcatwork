@@ -56,6 +56,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   clamp01,
   heroNarrowAlpha,
+  heroNarrowScale,
   kitOffset,
   plateOpacity,
   r2,
@@ -318,6 +319,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     heroA: -1,
     heroX: NaN as number,
     edge: -1,
+    heroSc: -1,
     trustGone: null as boolean | null,
     open: false,
     ink: false,
@@ -385,6 +387,24 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const kitEl = refs.kit.current;
     const hcEl = refs.heroCopy.current;
     const trEl = refs.trust.current;
+
+    /*
+      The transform-origin the narrow band's hero copy scales about.
+      
+      The original's perspective origin was `26% 50%` of the story plane, which
+      is the viewport. A translateZ under perspective scales about that point,
+      so reproducing it as a `scale` needs the same point expressed relative to
+      the copy's own box. Measured here, once, rather than guessed at — it moves
+      with the viewport and with the copy's position.
+    */
+    if (hcEl && !band.wide) {
+      const r = hcEl.getBoundingClientRect();
+      hcEl.style.transformOrigin = `${Math.round((0.26 * window.innerWidth - r.left) * 100) / 100}px ${
+        Math.round((0.5 * vh - r.top) * 100) / 100
+      }px`;
+    } else if (hcEl) {
+      hcEl.style.removeProperty('transform-origin');
+    }
     geom.current = {
       top,
       filmPx: Math.max(1, filmPx),
@@ -703,7 +723,25 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
               rvEl.style.setProperty('--lsc', String(s));
             }
           }
-          paintReveal(fb.phone ? t : t);
+          /*
+            ⛔ DRIVEN BY THE FRAME THAT IS ON SCREEN, NOT BY THE SCROLL TARGET.
+
+            The edge is tracked against a real moving edge in the footage, so it
+            has to be computed for the picture the visitor is actually looking
+            at. Driving it from `t` put it a consistent 0.46 frames ahead —
+            measured across the whole sweep — because the scrub holds a
+            half-frame deadband before it seeks. Half a frame on a slanted edge
+            is a sliver of the headline uncovering just before the slab reaches
+            it, every frame, for the length of the reveal.
+
+            Quantised to the film's own frame grid, so the edge lands exactly on
+            the frame boundary the decoder is showing rather than somewhere
+            between two of them. This is NOT `requestVideoFrameCallback`, which
+            while scrubbing fires on the network's clock — it is a free read of
+            a value the transport has already set.
+          */
+          const vt = v ? Math.floor(v.currentTime * FILM_FPS) / FILM_FPS : t;
+          paintReveal(vt);
         }
 
         // Beat 3 — hard on and off, slides in and back out to the left.
@@ -782,6 +820,12 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
             hero.style.opacity = String(a);
             hero.style.visibility = a ? 'visible' : 'hidden';
             stage.style.setProperty('--cineEdge', String(a));
+          }
+          // Flies at the camera as it goes. See heroNarrowScale.
+          const sc = heroNarrowScale(t);
+          if (sc !== m.heroSc) {
+            m.heroSc = sc;
+            hero.style.setProperty('--hsc', String(sc));
           }
         }
       }

@@ -1188,27 +1188,48 @@ html.nav-open .mobile-nav > .mn-sub {
 }
 
 /* ── the FABs over the hero film ───────────────────────────────────────────
-   The WhatsApp and phone buttons are hidden for as long as the film is
-   running, and arrive with the page. Without this they sit on the bottom edge
-   either side of the Skip button and the three of them read as one cluttered
-   row — visible in a side-by-side against the build the client signed off,
-   where the bottom edge carries Skip alone.
+   ⛔ THEY ARE VISIBLE DURING THE FILM ON MOBILE, flanking the Skip button —
+   WhatsApp to its left, the phone to its right. They were hidden here on the
+   assumption that the old build hid them; measured on the old build at 390x844
+   they are `opacity: 1` throughout, at x=31 and x=313 with Skip centred at
+   x=108. The client caught it: "the phone button on the right of the skip intro
+   and the WhatsApp button on the left of the skip intro is not there."
 
-   The old build expressed this as `html.cine-on:not(.skip-live)` plus a set of
-   translateX values that slid them back in from the edges once Skip was
-   pressed. Only the hide is carried: the slide-in was choreography for a
-   handoff that no longer exists, since the page now scrolls over the film
-   rather than the film collapsing out from under it. The original rules are in
-   ~/Documents/TOPCAT-FILM-SPEC/code-snapshot/film-css-outside-the-module.css.
+   The translateX values are the old build's own, verbatim, and they are what
+   pushes the pair out to the edges to make room for Skip between them. At 390px
+   they resolve to -299.2 and +39.2, which is exactly where the old build puts
+   them.
 
-   `backdrop-filter` off while they are over footage: it is a compositing layer
-   over a playing video and costs more than the effect is worth. */
+   Above 1120px the FABs are `display: none` on their own, so this needs no
+   desktop branch.
+
+   `backdrop-filter` off while they are over footage: a compositing layer over a
+   playing video costs more than the effect is worth, and the old build removed
+   it here too. */
 html.film-running .wa-fab,
 html.film-running .call-fab {
-  opacity: 0;
-  pointer-events: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+  background: rgba(8, 8, 11, 0.78);
+}
+
+@media (max-width: 720px) {
+  html.film-running .wa-fab {
+    transform: translateX(calc(-6.7px - 75vw));
+  }
+  html.film-running .call-fab {
+    transform: translateX(calc(136.7px - 25vw));
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1120px) {
+  html.film-running .call-fab {
+    display: flex;
+    transform: translateX(calc(-97.4px - 50vw));
+  }
+  html.film-running .wa-fab {
+    transform: translateX(calc(179.4px - 50vw));
+  }
 }
 
 /* -------------------------------------------------------------------------
