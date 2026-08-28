@@ -48,6 +48,7 @@
  */
 
 import { useEffect, useRef, type ReactNode } from 'react';
+import { CineTrust } from '@/components/sections/HeroCopy';
 import { TcDefs } from '@/components/sections/TcDefs';
 import css from './film.module.css';
 import { HERO_COPY, STORY } from './lib/timeline';
@@ -80,11 +81,24 @@ export interface HeroFilmProps {
   skipLabel?: string;
 }
 
+/**
+ * The scroll cue's arrow, with a band of light that travels down it.
+ *
+ * `<b>` carries a mask cut to the arrow's own outline and `<span>` inside it is
+ * the light. The two are not decoration that could be collapsed into the SVG: a
+ * mask is what confines the glare to the stroke, and a separate element is what
+ * lets it be animated with a transform rather than by repainting a gradient.
+ */
 function CueArrow() {
   return (
-    <svg viewBox="0 0 32 96" focusable="false" aria-hidden="true">
-      <path d="M16 1.25V94.75M1.25 80L16 94.75 30.75 80" />
-    </svg>
+    <i>
+      <svg viewBox="0 0 32 96" focusable="false" aria-hidden="true">
+        <path d="M16 1.25V94.75M1.25 80L16 94.75 30.75 80" />
+      </svg>
+      <b>
+        <span />
+      </b>
+    </i>
   );
 }
 
@@ -127,6 +141,7 @@ export function HeroFilm({
   const reveal = useRef<HTMLParagraphElement>(null);
   const kit = useRef<HTMLParagraphElement>(null);
   const heroCopy = useRef<HTMLDivElement>(null);
+  const trustRef = useRef<HTMLDivElement>(null);
   const skip = useRef<HTMLButtonElement>(null);
   const heroOut = useRef<HTMLElement>(null);
 
@@ -141,6 +156,7 @@ export function HeroFilm({
     reveal,
     kit,
     heroCopy,
+    trust: trustRef,
     pageHero: heroOut,
     skip,
   });
@@ -247,6 +263,9 @@ export function HeroFilm({
           <div className={css.plate} ref={plate} />
           <div className={css.shade} ref={shade} />
           <div className={css.navGrade} />
+          {/* The edge vignette. Its opacity tracks how much of the opening
+              copy is still on screen — see film.module.css. */}
+          <div className={css.edge} />
         </div>
 
         {/*
@@ -300,6 +319,11 @@ export function HeroFilm({
             <span>{HERO_COPY.cue}</span>
             <CueArrow />
           </div>
+        </div>
+
+        {/* The two chips that ride the wipe out with the opening line. */}
+        <div className={css.trust} ref={trustRef} aria-hidden="true">
+          <CineTrust />
         </div>
 
         <button type="button" className={css.skip} ref={skip} onClick={skipToEnd}>
@@ -390,8 +414,12 @@ export function HeroFilm({
           <div className={css.heroInner}>{hero}</div>
         </section>
 
-        {/* Opaque, and above the stage in paint order, so the page slides up
-            over the film rather than the film showing through it. */}
+        {/* A beat after the hero before the page starts, so reaching the end
+            of the film does not run straight on into the next section. */}
+        <div className={css.heroHold} aria-hidden="true" />
+
+        {/* Above the stage in paint order so the page slides up over the film.
+            Deliberately no background — see the note in film.module.css. */}
         <div className={css.overFilm}>{children}</div>
       </main>
     </>

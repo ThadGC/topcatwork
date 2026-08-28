@@ -162,6 +162,8 @@ export interface FilmRefs {
   reveal: React.RefObject<HTMLParagraphElement | null>;
   kit: React.RefObject<HTMLParagraphElement | null>;
   heroCopy: React.RefObject<HTMLDivElement | null>;
+  /** The two chips that ride the wide band's wipe alongside the opening line. */
+  trust: React.RefObject<HTMLDivElement | null>;
   /** The PAGE's hero — the h1, the CTAs, the chips. Released at 93%. */
   pageHero: React.RefObject<HTMLElement | null>;
   skip: React.RefObject<HTMLButtonElement | null>;
@@ -277,6 +279,17 @@ interface Geom {
   rv: RevealMetrics | null;
   /** the kit line's right edge, for its slide */
   kitX1: number;
+  /**
+   * The opening copy's right edge, and the trust row's.
+   *
+   * The wide band's wipe is `-x1 * wipeEase(p)`, so the copy travels exactly
+   * its own extent and is fully clear of the screen at p=1, whatever the
+   * viewport. Driving it off the viewport width instead — which is what this
+   * did before — moves it nearly twice as far, and the headline was already
+   * cut off at its left edge one second into a six second wipe.
+   */
+  heroX1: number;
+  trustX1: number;
 }
 
 export function useFilm(refs: FilmRefs, sources: FilmSources) {
@@ -303,6 +316,8 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     kitX: NaN as number,
     heroA: -1,
     heroX: NaN as number,
+    edge: -1,
+    trustGone: null as boolean | null,
     open: false,
     ink: false,
   });
@@ -367,6 +382,8 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     }
 
     const kitEl = refs.kit.current;
+    const hcEl = refs.heroCopy.current;
+    const trEl = refs.trust.current;
     geom.current = {
       top,
       filmPx: Math.max(1, filmPx),
@@ -374,6 +391,8 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       band,
       rv,
       kitX1: kitEl ? kitEl.offsetLeft + kitEl.offsetWidth : 0,
+      heroX1: hcEl ? hcEl.offsetLeft + hcEl.offsetWidth : 0,
+      trustX1: trEl ? trEl.offsetLeft + trEl.offsetWidth : 0,
     };
   }, [refs]);
 
@@ -700,37 +719,63 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         }
       }
 
-      // The hero block. Taken off the screen by the film, not faded politely.
+      /*
+        THE OPENING COPY, taken off the screen by the film.
+
+        Wide: it slides out to the left by exactly its own extent and does NOT
+        fade — opacity is a hard 1 until the wipe is over, then 0. The trust
+        chips ride the same offset and are hidden the moment they clear the
+        left edge, rather than compositing an off-screen row for the rest of
+        the wipe.
+
+        The edge vignette's opacity is how much of the copy is still on screen,
+        so the two move together. All four numbers below were read frame by
+        frame off the old build and match it to 2dp.
+      */
       const hero = refs.heroCopy.current;
+      const trust = refs.trust.current;
       if (hero) {
         if (g.band.wide) {
           const q = clamp01(t / 6);
-          const a = q >= 1 ? 0 : r2(1 - q);
-          const x = -Math.round(wipeEase(q) * (window.innerWidth * 0.9));
-          if (a !== m.heroA) {
-            m.heroA = a;
-            hero.style.opacity = String(a);
+          const tx = r2(-g.heroX1 * wipeEase(q));
+          const on = q >= 1 ? 0 : 1;
+          if (tx !== m.heroX) {
+            m.heroX = tx;
+            hero.style.setProperty('--hx', String(tx));
+            trust?.style.setProperty('--hx', String(tx));
           }
-          if (x !== m.heroX) {
-            m.heroX = x;
-            hero.style.setProperty('--hx', String(x));
+          if (on !== m.heroA) {
+            m.heroA = on;
+            hero.style.opacity = String(on);
+            hero.style.visibility = on ? 'visible' : 'hidden';
+            if (trust) {
+              trust.style.opacity = String(on);
+              trust.style.visibility = on ? 'visible' : 'hidden';
+            }
+          }
+          if (on && trust && g.trustX1 > 0) {
+            const gone = g.trustX1 + tx <= 0;
+            if (gone !== m.trustGone) {
+              m.trustGone = gone;
+              trust.style.visibility = gone ? 'hidden' : 'visible';
+            }
+          }
+          const e = g.heroX1 > 0 ? r2(clamp01((g.heroX1 + tx) / g.heroX1)) : 0;
+          if (e !== m.edge) {
+            m.edge = e;
+            stage.style.setProperty('--cineEdge', String(e));
           }
         } else {
           const a = heroNarrowAlpha(t);
           if (a !== m.heroA) {
             m.heroA = a;
             hero.style.opacity = String(a);
+            hero.style.visibility = a ? 'visible' : 'hidden';
+            stage.style.setProperty('--cineEdge', String(a));
           }
         }
       }
 
-      /*
-        `ink` — the handoff. At 93% of the film the page's own hero fades and
-        scales up in place over the final frame; the CSS transition does the
-        movement, this only decides when. `loaded` is what globals.css's
-        entrance stagger is keyed on, and `data-ink` is what film.module.css
-        uses; both are written once, on the transition.
-      */
       const skip = refs.skip.current;
       if (skip) {
         const gone = p > 0.985;
@@ -852,6 +897,38 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         });
     }
 
+    /*
+      THE BRAND LOGO JUMPS STRAIGHT TO THE HERO.
+
+      The client, 28 Aug: "when the user clicks on the Topcat Worktops logo
+      icon, it shouldn't play through the video and stop at the surfaces worth
+      building around section. It should immediately just go straight there as
+      if that is the only hero section that the site has."
+
+      `BRAND_HOME` is `/#hero`, so the native anchor already lands on the right
+      element — but landing there means arriving at the film's last frame with
+      the whole runway still above you, which then has to complete and lock.
+      Locking first collapses the runway out of the way and puts the hero at the
+      top in one step, which is what "as if that is the only hero section" means.
+
+      Capture phase, so it runs before the browser's own hash handling, and
+      `preventDefault` so the two do not both try to move the page.
+
+      A visitor arriving directly on `/#hero` is the same case and is handled at
+      arm time below.
+    */
+    const onLogo = (e: MouseEvent) => {
+      if (locked.current || e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element | null)?.closest?.('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (!/(^|\/)#hero$/.test(href)) return;
+      e.preventDefault();
+      lockFilm();
+    };
+    document.addEventListener('click', onLogo, true);
+
     let rz = 0;
     const onResize = () => {
       window.clearTimeout(rz);
@@ -867,11 +944,12 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       window.clearTimeout(rz);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('orientationchange', onResize);
+      document.removeEventListener('click', onLogo, true);
       cancelAnimationFrame(raf.current);
       document.documentElement.classList.remove('film-running');
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [mode, refs, sources, measure, tick]);
+  }, [mode, refs, sources, measure, tick, lockFilm]);
 
   return { mode, live, skipToEnd, showsText: showsText(mode) };
 }

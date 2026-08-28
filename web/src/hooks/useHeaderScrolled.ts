@@ -16,6 +16,23 @@ export interface HeaderScrollState {
 
 export interface UseHeaderScrolledOptions {
   /**
+   * The landing page, where the bar is anchored to the HERO rather than to a
+   * scroll threshold.
+   *
+   * On that page the bar has no chrome of its own over the film and over the
+   * hero, and forms only once the hero has gone by — the forming IS the film's
+   * closing beat. Measured on the old build: at the locked hero it reads
+   * `class="bar preform"`, never `formed`.
+   *
+   * Deliberately NOT a `getBoundingClientRect()` on the hero, which is what the
+   * old build did: that is a layout read on every scroll event, on the same
+   * main thread the film is being scrubbed on. The hero is one viewport tall
+   * and sits at the top of the document once the film has locked, so the same
+   * answer comes out of arithmetic — and while the film is still running the
+   * root class it writes says so.
+   */
+  readonly heroAnchored?: boolean;
+  /**
    * Where `.scrolled` latches. The source uses two different numbers:
    * 40 on the six site.css pages, 12 on the 171 service.css pages. Both are
    * carried; see `thresholdForVariant`.
@@ -54,6 +71,7 @@ export interface UseHeaderScrolledOptions {
  */
 export function useHeaderScrolled({
   threshold,
+  heroAnchored = false,
 }: UseHeaderScrolledOptions): HeaderScrollState {
   const [state, setState] = useState<HeaderScrollState>({
     scrolled: false,
@@ -61,10 +79,16 @@ export function useHeaderScrolled({
   });
 
   useEffect(() => {
-    const read = (): HeaderScrollState => ({
-      scrolled: window.scrollY > threshold,
-      preform: false,
-    });
+    const read = (): HeaderScrollState => {
+      if (heroAnchored) {
+        const film = document.documentElement.classList.contains('film-running');
+        // Past the hero once a viewport of it has gone by, less the 40px the
+        // source uses. While the film runs, nothing has gone by at all.
+        const scrolled = !film && window.scrollY > window.innerHeight - 40;
+        return { scrolled, preform: !scrolled };
+      }
+      return { scrolled: window.scrollY > threshold, preform: false };
+    };
 
     const on = () => {
       const next = read();
@@ -78,7 +102,7 @@ export function useHeaderScrolled({
     on();
     window.addEventListener('scroll', on, { passive: true });
     return () => window.removeEventListener('scroll', on);
-  }, [threshold]);
+  }, [threshold, heroAnchored]);
 
   return state;
 }

@@ -114,7 +114,7 @@ export function SiteChrome({
     return (
       <>
         <KeyboardOpenWatcher />
-        <SiteHeader variant="rich" />
+        <SiteHeader variant="rich" heroAnchored={isHome} />
         <MobileNav variant="rich" />
         {/* .mbar must precede the FABs — general sibling combinator. */}
         <StickyContactBar

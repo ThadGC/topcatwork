@@ -197,13 +197,22 @@
 /* ── scrims ─────────────────────────────────────────────────────────────── */
 
 .stage {
+  /* ⛔ ALL TWELVE STOPS. Five intermediate ones were trimmed as redundant and
+     they are not: the curve is convex, so interpolating linearly between the
+     survivors sits ABOVE it and the whole scrim comes out darker. Measured as
+     part of a 12% brightness gap against the old build at the locked hero. */
   --navScrim: linear-gradient(
     to bottom,
     rgba(7, 7, 9, 0.6) 0%,
+    rgba(7, 7, 9, 0.555) 2.4%,
     rgba(7, 7, 9, 0.474) 5.1%,
+    rgba(7, 7, 9, 0.378) 7.5%,
     rgba(7, 7, 9, 0.282) 10.2%,
+    rgba(7, 7, 9, 0.198) 12.6%,
     rgba(7, 7, 9, 0.126) 15%,
+    rgba(7, 7, 9, 0.078) 17.4%,
     rgba(7, 7, 9, 0.042) 20.1%,
+    rgba(7, 7, 9, 0.018) 22.5%,
     rgba(7, 7, 9, 0.006) 25.2%,
     rgba(7, 7, 9, 0) 30%
   );
@@ -258,6 +267,157 @@
   pointer-events: none;
   opacity: var(--navGrade, 0.2);
   background: var(--navScrim), var(--navScrim);
+}
+
+/* ── the edge vignette ──────────────────────────────────────────────────────
+   ⛔ THIS WAS MISSING AND IT IS WHY THE OPENING LOOKED WRONG.
+
+   Measured against the old build at 1600x1000: the opening frame came out 29%
+   BRIGHTER than the reference (mean luma 118.8 against 92.0), and the white
+   headline sat on a bright blue sky with almost no contrast. This is what was
+   holding the left third of the quarry down.
+
+   Its opacity is not a constant and not the copy's alpha — it is how much of
+   the hero copy is still on screen: `(x1 + tx) / x1`, so it fades in exact step
+   with the copy sliding out and reaches 0 as the last of it leaves. Read off
+   the old build frame by frame: 0.97 at t=0.4, 0.90 at t=1.2, 0.65 at t=3.0,
+   0.13 at t=5.5, 0 once the wipe is done.
+   -------------------------------------------------------------------------- */
+.edge {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: var(--cineEdge, 0);
+}
+
+@media (min-width: 1121px) {
+  .edge {
+    background:
+      radial-gradient(
+        62% 58% at 0% 10%,
+        rgba(6, 6, 9, 0.72) 0%,
+        rgba(6, 6, 9, 0.331) 52%,
+        rgba(6, 6, 9, 0) 100%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(6, 6, 9, 0.88) 0%,
+        rgba(6, 6, 9, 0.82) 15%,
+        rgba(6, 6, 9, 0.64) 30%,
+        rgba(6, 6, 9, 0.42) 42%,
+        rgba(6, 6, 9, 0.2) 50%,
+        rgba(6, 6, 9, 0.08) 58%,
+        rgba(6, 6, 9, 0.02) 66%,
+        rgba(6, 6, 9, 0) 72%
+      );
+  }
+}
+
+@media (max-width: 1120px) {
+  .edge {
+    background:
+      radial-gradient(
+        120% 85% at 0% 30%,
+        rgba(6, 6, 9, 0.57) 0%,
+        rgba(6, 6, 9, 0.27) 55%,
+        rgba(6, 6, 9, 0) 85%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(6, 6, 9, 0.74) 0%,
+        rgba(6, 6, 9, 0.68) 26%,
+        rgba(6, 6, 9, 0.46) 45%,
+        rgba(6, 6, 9, 0.2) 60%,
+        rgba(6, 6, 9, 0.06) 70%,
+        rgba(6, 6, 9, 0) 78%
+      );
+  }
+}
+
+/* ── the trust row that rides the wipe ──────────────────────────────────────
+   Two chips at the bottom left of the opening frame, sliding out to the left on
+   the same `--hx` as the copy. Dropped with the film and not put back with it;
+   the client caught it against the old site.
+   -------------------------------------------------------------------------- */
+.trust {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  left: clamp(20px, 7vw, 132px);
+  bottom: 35px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  opacity: 0;
+  transform: translate3d(calc(var(--hx, 0) * 1px), 0, 0);
+  will-change: transform, opacity;
+}
+
+@media (max-width: 1120px) {
+  .trust {
+    display: none;
+  }
+}
+
+/* The Google chip's internals.
+
+   ⛔ home-sections.css keys these on `#hero .g-mark`, `#hero .g-stack` and so
+   on, and in the old build the trust row lived inside the element carrying that
+   id. Here `#hero` is the in-flow hero section at the end of the runway and this
+   row is in the stage, so none of them reached it: the "G" mark collapsed to
+   nothing and the two lines ran together as "Google reviews5.0★★★★★".
+
+   Copied rather than re-keyed, so the 172 pages that also use `#hero`-scoped
+   chips are not touched. Values are verbatim from home-sections.css:1194. */
+.trust :global(.chip-google) {
+  align-items: center;
+}
+.trust :global(.g-mark) {
+  display: block;
+  flex: none;
+  width: 26px;
+  height: 26px;
+}
+.trust :global(.g-stack) {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 26px;
+  line-height: 1;
+  text-align: left;
+}
+.trust :global(.g-word) {
+  font-family: var(--brand);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+.trust :global(.g-rating) {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.trust :global(.g-stars) {
+  color: var(--gold);
+  font-size: 9px;
+  letter-spacing: 1.1px;
+}
+.trust :global(.g-score) {
+  font-family: var(--brand);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+.trust :global(.chip-legacy) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* ── the story ──────────────────────────────────────────────────────────────
@@ -337,11 +497,26 @@
   opacity: var(--lg, 0);
 }
 
-.line em {
+/* ⛔ `text-shadow: none` IS LOAD-BEARING ON EVERY GOLD RUN.
+
+   `.line` and `.hl` both carry `0 2px 30px rgba(6,6,8,.66), 0 1px 4px
+   rgba(6,6,8,.5)`, which is right for white type on footage. Inherited by a run
+   that is `background-clip: text` with a transparent fill, it paints a dark
+   halo tight around every glyph edge and the gold comes out muddy and several
+   shades darker — the client put the two side by side: "the darker one is
+   wrong, it needs to be the lighter one."
+
+   The depth comes from `drop-shadow` instead, which filters the rendered glyph
+   rather than drawing behind it. The one exception is the wide band's reveal
+   line, where the clip edge is hard and a drop-shadow on top of it shows the
+   seam; that rule sets `filter: none` and lives with the band overrides. */
+.line em,
+.hl em {
   font-style: normal;
   font-weight: 600;
   color: #c6a664;
   text-shadow: none;
+  filter: drop-shadow(0 2px 12px rgba(6, 6, 9, 0.55));
   background: linear-gradient(180deg, #e4cd92 0%, #c6a664 62%, #bc9a54 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -451,15 +626,6 @@
     0 1px 4px rgba(6, 6, 8, 0.5);
 }
 
-.hl em {
-  font-style: normal;
-  font-weight: 600;
-  background: linear-gradient(180deg, #e4cd92 0%, #c6a664 62%, #bc9a54 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
 .heroSub {
   font-weight: 400;
   font-family: var(--brand);
@@ -485,23 +651,85 @@
     0 1px 3px rgba(6, 6, 8, 0.8);
 }
 
-.heroCue svg {
+/* ── the arrow, and its travelling glare ────────────────────────────────────
+   The client, 28 Aug: "the downwards pointing arrow has to have a glare
+   animation travelling from the top to the bottom, and as that glare reaches
+   the bottom, the arrow pushes down and then the animation restarts."
+
+   Two elements and two keyframes on one 1.8s clock. `<b>` carries a mask cut to
+   the arrow's own outline; `<span>` inside it is a 56px band of light that
+   travels the full height. The dip is timed against it: the glare lands at 62%
+   and the arrow pushes down at 55%, so the push reads as the consequence of the
+   light arriving rather than as a separate tic.
+
+   Both animate `transform` only, so they run on the compositor and never touch
+   the main thread — which is why they are allowed to exist at all while the
+   film is being scrubbed beneath them. */
+.heroCue i {
+  display: block;
+  position: relative;
+  width: 32px;
+  height: 96px;
+  filter: drop-shadow(0 2px 9px rgba(6, 6, 8, 0.8));
+  will-change: transform;
+  animation: cueDip 1.8s cubic-bezier(0.33, 0, 0.16, 1) infinite;
+}
+
+.heroCue i > svg {
   display: block;
   width: 32px;
   height: 96px;
-  color: rgba(198, 166, 100, 0.72);
+  color: rgba(198, 166, 100, 0.62);
   fill: none;
   stroke: currentColor;
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 2px 9px rgba(6, 6, 8, 0.8));
-  animation: cueDip 1.8s cubic-bezier(0.33, 0, 0.16, 1) infinite;
 }
 
-/* A transform-only keyframe animation on one small element. This runs on the
-   compositor and never touches the main thread, which is why it is allowed to
-   exist while the film is scrubbing. */
+.heroCue i b {
+  position: absolute;
+  inset: 0;
+  display: block;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  -webkit-mask-size: 32px 96px;
+  mask-size: 32px 96px;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.heroCue i b span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 56px;
+  display: block;
+  background: linear-gradient(
+    to bottom,
+    rgba(228, 205, 146, 0) 0%,
+    #efd9a4 26%,
+    #ffffff 42%,
+    #ffffff 54%,
+    #efd9a4 70%,
+    rgba(228, 205, 146, 0) 100%
+  );
+  will-change: transform;
+  animation: cueSheen 1.8s linear infinite;
+}
+
+@keyframes cueSheen {
+  0%,
+  6% {
+    transform: translateY(-56px);
+  }
+  62%,
+  100% {
+    transform: translateY(96px);
+  }
+}
+
 @keyframes cueDip {
   0%,
   46% {
@@ -517,8 +745,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .heroCue svg {
+  .heroCue i,
+  .heroCue i b span {
     animation: none;
+  }
+  .heroCue i b span {
+    transform: translateY(20px);
+    height: 96px;
   }
 }
 
@@ -705,9 +938,29 @@
   .heroCue span {
     font-size: 15px;
   }
-  .heroCue svg {
+  .heroCue i,
+  .heroCue i > svg {
     width: 40px;
     height: 120px;
+  }
+  .heroCue i b {
+    -webkit-mask-size: 40px 120px;
+    mask-size: 40px 120px;
+  }
+  .heroCue i b span {
+    height: 70px;
+    animation-name: cueSheenT;
+  }
+}
+
+@keyframes cueSheenT {
+  0%,
+  6% {
+    transform: translateY(-70px);
+  }
+  62%,
+  100% {
+    transform: translateY(120px);
   }
 }
 
@@ -823,13 +1076,22 @@
   scroll-margin-top: -86px;
   --curveR: 48px;
   --curveOut: 14px;
+  /* ⛔ ALL TWELVE STOPS. Five intermediate ones were trimmed as redundant and
+     they are not: the curve is convex, so interpolating linearly between the
+     survivors sits ABOVE it and the whole scrim comes out darker. Measured as
+     part of a 12% brightness gap against the old build at the locked hero. */
   --navScrim: linear-gradient(
     to bottom,
     rgba(7, 7, 9, 0.6) 0%,
+    rgba(7, 7, 9, 0.555) 2.4%,
     rgba(7, 7, 9, 0.474) 5.1%,
+    rgba(7, 7, 9, 0.378) 7.5%,
     rgba(7, 7, 9, 0.282) 10.2%,
+    rgba(7, 7, 9, 0.198) 12.6%,
     rgba(7, 7, 9, 0.126) 15%,
+    rgba(7, 7, 9, 0.078) 17.4%,
     rgba(7, 7, 9, 0.042) 20.1%,
+    rgba(7, 7, 9, 0.018) 22.5%,
     rgba(7, 7, 9, 0.006) 25.2%,
     rgba(7, 7, 9, 0) 30%
   );
@@ -903,7 +1165,9 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  opacity: 0.75;
+  /* 0.71, read straight off the old build in its locked state, not guessed:
+     `.hero-navgrade` computed opacity at `cine-done`. */
+  opacity: 0.71;
   background: var(--navScrim), var(--navScrim);
 }
 
@@ -942,6 +1206,26 @@
   border-bottom-left-radius: var(--curveR);
   border-bottom-right-radius: var(--curveR);
   z-index: 4;
+  pointer-events: none;
+}
+
+/* ── the hold after the hero ────────────────────────────────────────────────
+   The client, 28 Aug: "add a dead scroll on the surfaces worth building around
+   section so that it doesn't just skip right past and go down."
+
+   ⚠️ THIS IS NEW, NOT A RESTORATION. Measured on the old build at 1600x1000:
+   its hero is exactly one viewport and the reviews start at the very next
+   pixel, gap 0. So this is a deliberate addition, and it is the reason the
+   number is a round 40vh rather than something recovered from anywhere.
+
+   It sits AFTER the hero's own box, on the site's marble floor, so the curve
+   divider stays on the picture's bottom edge where it belongs and the hero
+   still hands its geometry to the film unchanged.
+   -------------------------------------------------------------------------- */
+.heroHold {
+  position: relative;
+  z-index: 1;
+  height: 40vh;
   pointer-events: none;
 }
 
