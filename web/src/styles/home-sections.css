@@ -178,6 +178,20 @@ main{position:relative;z-index:1;overflow-x:clip}
     -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
     box-shadow:0 30px 70px -30px rgba(0,0,0,0.9);}
 .stone-filter[hidden]{display:none}
+.sf-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-2px 0 12px}
+.sf-title{font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold)}
+/* The visible box stays small so the panel does not gain a heavy corner; the
+   ::before carries a 44x44 press target over the top of it, which costs no
+   layout. */
+.sf-close{position:relative;display:inline-flex;align-items:center;justify-content:center;
+    width:22px;height:22px;margin:-5px -5px -5px 0;padding:0;border:none;border-radius:2px;
+    background:none;color:var(--muted);cursor:pointer;
+    transition:color .35s var(--ease)}
+.sf-close::before{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:44px;height:44px}
+.sf-close:hover{color:var(--gold-hi)}
+.sf-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.5;
+    stroke-linecap:round}
 .sf-search input{width:100%;padding:10px 12px;margin-bottom:14px;border-radius:2px;
     border:1px solid var(--hair);background:rgba(244,241,234,0.04);color:var(--bone);
     font-family:var(--sans);font-size:13px;font-weight:300;outline:none;

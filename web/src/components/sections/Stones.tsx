@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useReveal } from '@/hooks/useReveal';
 import { useStoneWheel } from '@/hooks/useStoneWheel';
@@ -35,6 +35,52 @@ export default function Stones() {
      way site.js reads `document`. */
   const wheelRef = useStoneWheel(ref);
   const [filterOpen, setFilterOpen] = useState(false);
+  const drawer = useRef<HTMLDivElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
+
+  /*
+    THE DRAWER CLOSES ON ANYTHING THAT MEANS "I AM DONE HERE".
+
+    The client, 28 Aug: "when a user clicks on the filter, they currently have
+    to click on the filter button again for the filter to minimize. There has
+    to be a small x next to it, or if they tap anywhere or click anywhere
+    outside of the filter, it should close the filter."
+
+    So: an outside press, Escape, or the drawer's own close button — on top of
+    the toggle, which still works as a toggle.
+
+    ⛔ THE TOGGLE IS EXCLUDED FROM THE OUTSIDE-PRESS TEST. Without that, a press
+    on it closes the drawer here on `pointerdown` and its own `onClick` then
+    reads `filterOpen === false` and reopens it, so the button stops closing
+    anything.
+
+    `pointerdown`, not `click`, so a drag that starts on the wheel puts the
+    drawer away before the wheel moves under it. Capture phase, so a handler
+    that stops propagation cannot keep the drawer open.
+  */
+  useEffect(() => {
+    if (!filterOpen) return;
+
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as Node | null;
+      if (!t) return;
+      if (drawer.current?.contains(t)) return;
+      if (toggle.current?.contains(t)) return;
+      setFilterOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setFilterOpen(false);
+      toggle.current?.focus();
+    };
+
+    document.addEventListener('pointerdown', onDown, true);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onDown, true);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [filterOpen]);
 
   return (
     <section className="section" id="stones" ref={ref}>
@@ -93,7 +139,26 @@ export default function Stones() {
         </div>
 
         <div className="stone-rail rail-actions wheel-actions">
-          <div className="stone-filter" id="stoneFilter" hidden={!filterOpen}>
+          <div className="stone-filter" id="stoneFilter" hidden={!filterOpen} ref={drawer}>
+            {/* The drawer's own close. `sf-title` is the same gold rubric as
+                every `sf-label` below it, so the row reads as part of the
+                panel rather than bolted onto it. */}
+            <div className="sf-head">
+              <span className="sf-title">Filter</span>
+              <button
+                className="sf-close"
+                type="button"
+                aria-label="Close filter"
+                onClick={() => {
+                  setFilterOpen(false);
+                  toggle.current?.focus();
+                }}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
             <div className="sf-search">
               <input
                 type="search"
@@ -201,6 +266,7 @@ export default function Stones() {
             className="rev-cta-ghost sf-toggle"
             id="stoneFilterBtn"
             type="button"
+            ref={toggle}
             aria-expanded={filterOpen}
             aria-controls="stoneFilter"
             onClick={() => setFilterOpen((v) => !v)}
