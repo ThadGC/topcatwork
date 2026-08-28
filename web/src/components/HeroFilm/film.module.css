@@ -1,0 +1,772 @@
+/* ==========================================================================
+   HERO FILM — the stylesheet.
+
+   ⛔ READ THIS BEFORE CHANGING ANY POSITIONING RULE IN THIS FILE.
+
+   The previous film shook on mobile for many sessions and was never fixed. The
+   client's report is precise and it is the whole reason this file is shaped the
+   way it is:
+
+     - the video, the story text and the Skip button SHOOK
+     - the header logo, the hamburger, the WhatsApp button and the phone button
+       DID NOT
+     - the movement was UP AND DOWN ONLY, never side to side
+     - it never reproduced on localhost or in a device emulator, only on a real
+       phone hitting a real deployment
+
+   Everything that shook was painted inside `section.hero`, which was
+   `position: sticky` inside a runway 800-1050vh tall. Everything that did not
+   shake is `position: fixed` and a DIRECT CHILD OF <body>. The Skip button
+   settles it: it was itself `position: fixed`, exactly like the WhatsApp
+   button, and it still shook — because it sat inside an ancestor that both
+   clipped and scrolled, which costs a fixed element its viewport anchoring.
+
+   Vertical-only movement, on the axis you scroll, means one thing: the pin was
+   recomputing its offset against a scroll position that lagged the compositor's
+   real one. So:
+
+     THE PIN IS `position: fixed`, AND NO JAVASCRIPT EVER WRITES A POSITIONAL
+     PROPERTY OF IT. A fixed element has no scroll-dependent offset to compute,
+     so there is nothing that can fall behind. If the network stalls a seek the
+     PICTURE freezes for a moment — and nothing moves.
+
+   ── the three rules that must not be broken ─────────────────────────────────
+
+   1. `.stage` is `position: fixed` and a DIRECT CHILD OF <body>. Not inside
+      <main>, not inside any wrapper. useFilm.ts asserts this at runtime and
+      refuses to mount the film if it is ever violated.
+
+   2. NO ANCESTOR OF `.stage` MAY BOTH CLIP AND SCROLL. Note the precise rule:
+      `overflow: hidden` ON THE STAGE ITSELF is fine and is required — its clip
+      rectangle is static in viewport space, so it costs nothing. It is a
+      clipping ancestor that MOVES WITH SCROLL that is fatal. <main> carries
+      `overflow-x: clip`, which is exactly why the stage must not live inside it.
+
+   3. NO `transform`, `filter`, `backdrop-filter`, `perspective`, `contain` or
+      `will-change` ON ANY ANCESTOR of the stage. Each of those makes that
+      ancestor the containing block for fixed descendants, and `inset: 0` then
+      resolves against it instead of the viewport — so the stage silently
+      becomes the wrong size AND scrolls away with the page. Nothing throws and
+      it looks perfect locally.
+
+   ── height, deliberately not `inset: 0` ─────────────────────────────────────
+   `height: 100vh`, not `bottom: 0`. On a phone `100vh` is the LARGE viewport —
+   the height with the URL bar collapsed — and it does not change as the bar
+   comes and goes. `bottom: 0` would size the stage to the VISUAL viewport,
+   which does change, so the whole film would resize under the visitor's finger
+   on the first flick. Overflowing the bottom of the small viewport is the
+   cheaper mistake by a wide margin.
+   ========================================================================== */
+
+/* ── the runway ─────────────────────────────────────────────────────────────
+   A plain box in normal flow whose only job is to be tall. NOTHING is ever
+   written to it at runtime: no height change, no transform, no scroll write.
+   The old build collapsed its runway at the end of the film and subtracted the
+   same distance from scrollY in the same frame, which is a programmatic scroll
+   fired into a live momentum animation. That is gone.
+
+   It ships at one viewport and the engine raises it once, on mount, only if
+   the film is actually going to run. So with no JavaScript, no MP4 decoder or
+   reduced motion, the hero is exactly one screen tall and the page is normal.
+   -------------------------------------------------------------------------- */
+.runway {
+  position: relative;
+  height: var(--runway, 100vh);
+}
+
+/* ── the stage ──────────────────────────────────────────────────────────── */
+
+.stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--ink, #0b0b0d);
+  /* The page below scrolls over the top of this. Nothing here is interactive
+     except the Skip button, which re-enables pointer events on itself. */
+  pointer-events: none;
+}
+
+/* Released: the film is over, or it never started. The stage stops painting
+   entirely rather than sitting behind the page decoding a video nobody can
+   see. `visibility` and not `display` so there is no layout work either way. */
+.stage[data-film='done'],
+.stage[data-film='off'] {
+  visibility: hidden;
+}
+
+/* The page scrolls over the top of the film. Everything below the runway
+   lives in here: opaque, so the film cannot show through it, and above the
+   stage in paint order.
+
+   The rounded top corners are the film's sign-off. The old build rounded the
+   BOTTOM corners of its hero as the page rose behind it; here the page rises
+   IN FRONT, so the same gesture belongs on the leading edge of the page. It is
+   static CSS — the old one drove a radius from JavaScript over the last 10% of
+   the film, which is a per-frame write to a property that cannot be
+   composited. */
+.overFilm {
+  position: relative;
+  z-index: 1;
+  background: var(--ink, #0b0b0d);
+  border-top-left-radius: 48px;
+  border-top-right-radius: 48px;
+}
+
+/* ── the picture ────────────────────────────────────────────────────────── */
+
+.frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.vid,
+.still,
+.plate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 50%;
+  pointer-events: none;
+}
+
+/* The frame-0 still, over the film at full opacity until the film moves.
+
+   The client, 28 Aug: "you overlay that frame, and then that frame goes
+   immediately away … as the user starts scrolling." It is cut from his own
+   high-resolution render of frame 0, NOT from the encode — the encode's own
+   loss is exactly what he reported as blur on arrival. `cover` and centre are
+   shared with the video, so the geometry is identical and only sharpness
+   changes at the handover. */
+.plate {
+  /* Band-selected in CSS, not from JavaScript. The preload links in index.tsx
+     carry the same two URLs behind the same two media queries, so the preload
+     scanner starts the right one before any script has run and the plate is on
+     screen at first paint. */
+  background-image: url('/assets/video/plate-wide.webp?v=1');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 1;
+  z-index: 2;
+}
+
+.vid {
+  z-index: 1;
+}
+
+/* The end-state still. Also the no-JS hero and the reduced-motion hero, which
+   is why it carries a real `src` and is the SSR output. */
+.still {
+  object-position: 72% 50%;
+  transform: scale(1.08);
+  z-index: 0;
+}
+
+/* ── scrims ─────────────────────────────────────────────────────────────── */
+
+.stage {
+  --navScrim: linear-gradient(
+    to bottom,
+    rgba(7, 7, 9, 0.6) 0%,
+    rgba(7, 7, 9, 0.474) 5.1%,
+    rgba(7, 7, 9, 0.282) 10.2%,
+    rgba(7, 7, 9, 0.126) 15%,
+    rgba(7, 7, 9, 0.042) 20.1%,
+    rgba(7, 7, 9, 0.006) 25.2%,
+    rgba(7, 7, 9, 0) 30%
+  );
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: var(--veil, 1);
+  background:
+    radial-gradient(
+      70% 66% at 50% 42%,
+      rgba(7, 7, 9, 0.7) 0%,
+      rgba(7, 7, 9, 0.36) 62%,
+      rgba(7, 7, 9, 0) 100%
+    ),
+    radial-gradient(280px 220px at 96% 93%, rgba(7, 7, 9, 0.92), transparent 72%),
+    linear-gradient(
+      90deg,
+      rgba(7, 7, 9, 0.26) 0%,
+      rgba(7, 7, 9, 0.3) 40%,
+      rgba(7, 7, 9, 0.46) 100%
+    ),
+    linear-gradient(to top, rgba(7, 7, 9, 0.9) 2%, rgba(7, 7, 9, 0) 32%),
+    var(--navScrim);
+}
+
+/* A second, static copy of the top scrim so the header always has something to
+   sit on.
+
+   ⛔ THIS USED TO BE SAMPLED FROM THE FOOTAGE. The old build drew the <video>
+   into a 48x4 canvas and called getImageData() every frame to grade the nav
+   against whatever the film was showing. On a phone the decoded frame is owned
+   by another process, so that readback is a cross-process surface acquire plus
+   a colour conversion — measured at ~8.3ms, against a 16.7ms frame budget, or
+   8.3ms on a 120Hz phone. It is the single most expensive thing the old loop
+   did, and a colleague's build that did NOT shake was distinguished by having a
+   flat dark nav bar, which is precisely the signature of this being removed.
+
+   ⛔ SO IT IS SAMPLED OFFLINE INSTEAD, not dropped. The client rejected a build
+   whose nav was a flat dark bar — "it has a dark navball where it is not
+   supposed to have" — so a fixed value is not an option either. lib/grade.ts
+   holds the brightness of every frame of both cuts, measured at build time by
+   scripts/grade-film.mjs using the old build's exact rule. The engine indexes
+   it. Runtime cost: one array lookup. */
+.navGrade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: var(--navGrade, 0.2);
+  background: var(--navScrim), var(--navScrim);
+}
+
+/* ── the story ──────────────────────────────────────────────────────────────
+   ⛔ NO `perspective` HERE, AND IT MUST NOT COME BACK.
+
+   The old build set `perspective: 1000px` on this container and pushed each
+   line through a per-frame `translateZ`. Two costs. First, a perspective
+   ancestor establishes a 3D rendering context, so the lines cannot flatten into
+   the stage's layer and each becomes its own committed layer. Second, the
+   projection factor 1000/(1000 - z) swept 0.87 -> 2.27 across the Z range,
+   which is a continuous raster-scale change on live text: every threshold
+   crossing is a synchronous glyph repaint that re-snaps subpixel positions.
+   That is a shiver in the text on its own, distinct from anything the video is
+   doing.
+
+   It cost NOTHING to remove, which is the part worth knowing: the Z rush was
+   only ever applied to beat 1, and beat 1 is `display: none` in every band. The
+   depth was computed sixty times a second for an element nobody could see.
+   -------------------------------------------------------------------------- */
+
+.story {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* `?film=notext`. An attribute, not conditional markup: the mode is read from
+   the URL at mount and the server cannot know it, so anything that changes what
+   is RENDERED is a hydration mismatch. See lib/mode.ts. */
+.stage[data-text='off'] .story {
+  display: none;
+}
+
+.line {
+  position: absolute;
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.004em;
+  color: var(--bone);
+  text-wrap: balance;
+  opacity: 0;
+  /* The ONLY two properties the loop writes on a line, and both are composited.
+     `--lx` is the kit line's slide; `--lsc` is the reveal line's exit shrink. */
+  transform: translate3d(calc(var(--lx, 0) * 1px), 0, 0) scale(var(--lsc, 1));
+  /* Set once, at mount, and never toggled. A `will-change` that flips on and
+     off is worse than none: each flip is a layer create and destroy. */
+  will-change: transform, opacity;
+  text-shadow:
+    0 2px 30px rgba(6, 6, 8, 0.66),
+    0 1px 4px rgba(6, 6, 8, 0.5);
+}
+
+/* The per-line scrim. Zero by default, raised only where the film is bright
+   under this line — from the offline table, for the same reason .navGrade is.
+
+   ⚠️ THE DEFAULT OF 0 IS LOAD-BEARING. Leaving this at full strength puts a
+   soft dark box behind the headline over every shot, including the dark ones,
+   and it is plainly visible in a side-by-side against the build the client
+   signed off. Over most of the film the correct answer is nothing at all. */
+.line::before {
+  content: '';
+  position: absolute;
+  inset: -1.15em -2.4em;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    farthest-side at 50% 50%,
+    rgba(6, 6, 9, 0.62) 0%,
+    rgba(6, 6, 9, 0.58) 38%,
+    rgba(6, 6, 9, 0.36) 60%,
+    rgba(6, 6, 9, 0.14) 80%,
+    rgba(6, 6, 9, 0) 100%
+  );
+  opacity: var(--lg, 0);
+}
+
+.line em {
+  font-style: normal;
+  font-weight: 600;
+  color: #c6a664;
+  text-shadow: none;
+  background: linear-gradient(180deg, #e4cd92 0%, #c6a664 62%, #bc9a54 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sub {
+  display: block;
+  font: 400 19px/1.6 var(--brand);
+  letter-spacing: 0.014em;
+  color: #fff;
+  text-wrap: balance;
+  text-shadow: 0 2px 22px rgba(6, 6, 8, 0.82);
+}
+
+/* ── the reveal's clip panes ────────────────────────────────────────────────
+   Beat 2 is uncovered by an edge tracked against the footage. Each pane clips
+   with its own overflow and carries the edge on a transform; the inner span
+   carries the exact inverse, so the clip edge moves while the glyphs do not.
+   Only `transform` changes and neither layer is ever repainted. See
+   lib/reveal.ts for the geometry.
+
+   The line is a single-cell GRID so the two panes can occupy the same box
+   without stacking: absolutely positioning the second would need the line's own
+   padding restated, and a second in-flow pane would double the line's height.
+   `minmax(0, 1fr)` and not a bare `auto` track — an auto track sizes to
+   max-content, which would stop the headline wrapping.
+   -------------------------------------------------------------------------- */
+
+.rvLine {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+}
+
+.pane {
+  grid-area: 1 / 1;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  /* Both halves of a pair MUST share this origin or the inverse stops
+     cancelling and the glyphs drift. The engine rewrites it the moment it
+     gives a pane its bleed; 0 0 is only correct while the pane is unboxed,
+     which is the state it ships in. */
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* `clip` clips at the same edge as `hidden` without making the pane a scroll
+   container — and the inner is counter-transformed a couple of thousand pixels
+   out of that box, which is a scrollable overflow nothing should ever be able
+   to reach. Written as base + @supports rather than two declarations in one
+   rule because a CSS minifier drops the losing half of a duplicate property,
+   which would take the fallback with it. */
+@supports (overflow: clip) {
+  .pane {
+    overflow: clip;
+  }
+}
+
+.paneInner {
+  display: block;
+  margin: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* The sweep is over. The clip comes off, because a pane clips to the copy's
+   content box plus its bleed — fine while the sweep runs, a trap if it is left
+   there for the rest of the page's life. `will-change` goes with it: pinned, it
+   holds a full-resolution text layer in memory at devicePixelRatio 3. */
+.rvLine[data-open] .pane,
+.rvLine[data-open] .paneInner {
+  overflow: visible;
+  will-change: auto;
+}
+
+/* The strip pane only exists for the phone's second, horizontal edge. Above
+   720px there is no such edge, so the second copy is not rendered at all. */
+@media (min-width: 721px) {
+  .strip {
+    display: none;
+  }
+}
+
+/* ── the hero block ─────────────────────────────────────────────────────── */
+
+.heroCopy {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 1;
+  transform: translate3d(calc(var(--hx, 0) * 1px), 0, 0);
+  will-change: transform, opacity;
+}
+
+.hl {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.004em;
+  color: var(--bone);
+  text-wrap: balance;
+  text-shadow:
+    0 2px 30px rgba(6, 6, 8, 0.66),
+    0 1px 4px rgba(6, 6, 8, 0.5);
+}
+
+.hl em {
+  font-style: normal;
+  font-weight: 600;
+  background: linear-gradient(180deg, #e4cd92 0%, #c6a664 62%, #bc9a54 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSub {
+  font-weight: 400;
+  font-family: var(--brand);
+  letter-spacing: 0.014em;
+  color: #fff;
+  text-wrap: balance;
+  text-shadow: 0 2px 20px rgba(6, 6, 8, 0.85);
+}
+
+.heroCue {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.heroCue span {
+  font: 500 14px/1 var(--brand);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bone);
+  text-shadow:
+    0 1px 16px rgba(6, 6, 8, 0.9),
+    0 1px 3px rgba(6, 6, 8, 0.8);
+}
+
+.heroCue svg {
+  display: block;
+  width: 32px;
+  height: 96px;
+  color: rgba(198, 166, 100, 0.72);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 9px rgba(6, 6, 8, 0.8));
+  animation: cueDip 1.8s cubic-bezier(0.33, 0, 0.16, 1) infinite;
+}
+
+/* A transform-only keyframe animation on one small element. This runs on the
+   compositor and never touches the main thread, which is why it is allowed to
+   exist while the film is scrubbing. */
+@keyframes cueDip {
+  0%,
+  46% {
+    transform: translateY(0);
+  }
+  55% {
+    transform: translateY(3px);
+  }
+  74%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroCue svg {
+    animation: none;
+  }
+}
+
+/* ── Skip ───────────────────────────────────────────────────────────────────
+   A DIRECT CHILD OF THE STAGE. In the old build this button was
+   `position: fixed` and yet it shook, because it was a DOM child of the sticky,
+   clipping hero — and a fixed element inside a clipping, scroll-positioned
+   ancestor loses its viewport anchoring and is painted with that ancestor
+   instead. Here it is a plain absolutely-positioned child of a stage that is
+   itself viewport-anchored, which is strictly safer than making it fixed again.
+   -------------------------------------------------------------------------- */
+
+.skip {
+  position: absolute;
+  z-index: 6;
+  right: clamp(18px, 3.4vw, 46px);
+  bottom: clamp(20px, 4vh, 42px);
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 26px;
+  pointer-events: auto;
+  /* No backdrop-filter. Over a playing video it costs more than the effect is
+     worth, and the old build had already removed it here for the same reason. */
+  background: rgba(8, 8, 11, 0.78);
+  border: 1px solid rgba(198, 166, 100, 0.72);
+  border-radius: 999px;
+  color: var(--bone);
+  font-family: var(--brand, inherit);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 26px rgba(4, 4, 6, 0.5);
+  cursor: pointer;
+}
+
+.skip::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-right: 2px solid #c6a664;
+  border-bottom: 2px solid #c6a664;
+  transform: translateX(-2px) rotate(-45deg);
+}
+
+.skip:focus-visible {
+  outline: 2px solid #c6a664;
+  outline-offset: 3px;
+}
+
+@media (max-width: 1120px) {
+  .skip {
+    right: auto;
+    left: 50%;
+    margin-left: -87px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+    height: 46px;
+    padding-top: 0;
+    padding-bottom: 0;
+    box-sizing: border-box;
+    justify-content: center;
+    width: 174px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BAND LAYOUT
+
+   Transcribed from ~/Documents/TOPCAT-FILM-SPEC/FILM-SPEC.md §3, which was
+   measured off the build the client signed off. Bands are 720 / 721 / 1120 /
+   1121. Test at 375, 900 and 1440.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── wide, >=1121px: the lines are positioned in FILM units ─────────────────
+   Not in viewport units. `--filmU` is px per film pixel and `--filmX`/`--filmY`
+   are the film's origin, so a line sits on the same spot of the same shot at
+   every window size. The engine writes those three ON THE STAGE — never on
+   :root — and only when the viewport changes, never per frame.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1121px) {
+  .line {
+    left: calc(var(--filmX, 0px) + 200.16 * var(--filmU, 1px));
+    width: calc(898.56 * var(--filmU, 1px));
+    font-size: calc(86.4 * var(--filmU, 1px));
+    line-height: 1.06;
+    text-align: left;
+  }
+  .rvLine {
+    top: calc(var(--filmY, 0px) + 237.6 * var(--filmU, 1px));
+  }
+  .kitLine {
+    top: calc(var(--filmY, 0px) + 207 * var(--filmU, 1px));
+    font-size: calc(82.94 * var(--filmU, 1px));
+  }
+  .sub {
+    font-size: calc(22.8 * var(--filmU, 1px));
+    margin: calc(28.8 * var(--filmU, 1px)) 0 0;
+    max-width: calc(720 * var(--filmU, 1px));
+  }
+  /* These two are not the same number and never were. */
+  .rvLine .sub {
+    margin-left: calc(15.845 * var(--filmU, 1px));
+  }
+  .kitLine .sub {
+    margin-left: calc(16.106 * var(--filmU, 1px));
+  }
+  /* The reveal's clip edge is hard; a drop-shadow on top of it shows the seam. */
+  .rvLine em {
+    filter: none;
+  }
+
+  .heroCopy {
+    left: clamp(20px, 7vw, 132px);
+    top: calc(var(--filmY, 0px) + 237.6 * var(--filmU, 1px));
+    width: 660px;
+  }
+  .hl {
+    font-size: 72px;
+  }
+  .heroSub {
+    margin: 28px 0 0;
+    font-size: 19px;
+    line-height: 1.62;
+    max-width: 525px;
+  }
+  .heroCue {
+    margin: 36px 0 0;
+    gap: 26px;
+  }
+}
+
+/* ── tablet, 721-1120px ─────────────────────────────────────────────────── */
+
+@media (min-width: 721px) and (max-width: 1120px) {
+  .line {
+    left: clamp(20px, 7vw, 54px);
+    width: clamp(320px, 52vw, 560px);
+    text-align: left;
+    font-size: clamp(38px, 5.6vw, 54px);
+    font-weight: 600;
+  }
+  .rvLine {
+    top: 15vh;
+  }
+  .kitLine {
+    top: 20vh;
+    width: clamp(360px, 62vw, 640px);
+    font-size: clamp(40px, 5.9vw, 56px);
+  }
+  .sub {
+    margin: 16px 0 0;
+    font-size: 17px;
+    max-width: none;
+  }
+  .kitLine .sub {
+    font-size: 20px;
+  }
+  .kitLine::before {
+    inset: -1.15em -2.4em -1.75em;
+  }
+
+  .heroCopy {
+    left: 0;
+    right: 0;
+    top: 22vh;
+    padding: 0 clamp(40px, 8vw, 120px);
+    text-align: center;
+  }
+  .hl {
+    font-size: clamp(54px, 7.6vw, 76px);
+  }
+  .heroSub {
+    margin: 24px auto 0;
+    font-size: 19px;
+    max-width: 52ch;
+  }
+  .heroCue {
+    margin: 30px auto 0;
+    align-items: center;
+  }
+  .heroCue span {
+    font-size: 15px;
+  }
+  .heroCue svg {
+    width: 40px;
+    height: 120px;
+  }
+}
+
+/* ── phone, <=720px ─────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  .line {
+    left: 0;
+    right: 0;
+    width: auto;
+    padding: 0 clamp(20px, 7vw, 54px);
+    text-align: center;
+    font-size: clamp(29px, 8.7vw, 44px);
+    font-weight: 600;
+  }
+  .rvLine {
+    top: 14.5vh;
+  }
+  .kitLine {
+    top: 25.6vh;
+  }
+  .sub {
+    margin: 14px auto 0;
+    font-size: 16px;
+    max-width: none;
+  }
+
+  .heroCopy {
+    left: 0;
+    right: clamp(16px, 6vw, 40px);
+    top: 22vh;
+    padding-left: clamp(20px, 7vw, 54px);
+    text-align: left;
+  }
+  .hl {
+    font-size: clamp(40px, 11vw, 54px);
+    line-height: 1.08;
+  }
+  .heroSub {
+    margin: 20px 0 0;
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 30ch;
+  }
+  .heroCue {
+    margin: 28px 0 0;
+    gap: 20px;
+  }
+  .heroCue span {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 720px) {
+  .plate {
+    background-image: url('/assets/video/plate-phone.webp?v=1');
+  }
+}
+
+/* ── the page's own hero, in flow at the end of the runway ──────────────────
+   Not in the stage. The h1 stays inside <main>, `#hero` stays a real scroll
+   target for the brand-logo link, and `.hero-ctas` still scrolls out of view
+   so <StickyContactBar> reveals on time. It occupies the last viewport of the
+   runway, so it rises over the film's final frame while the film holds it —
+   which is what the old build's 93% handoff did with JavaScript.
+   -------------------------------------------------------------------------- */
+.heroOut {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.heroOutInner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  --heroPadB: clamp(72px, 10.8vh, 132px);
+  padding: max(72px, calc(var(--heroPadB) - var(--hTitle, 72px) * 0.1234))
+    clamp(20px, 5vw, 64px) var(--heroPadB);
+}

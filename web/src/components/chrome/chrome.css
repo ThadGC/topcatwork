@@ -137,6 +137,40 @@ header.bar.preform .brand-logo {
   filter: drop-shadow(0 1px 2px rgba(6, 6, 8, 0.55));
 }
 
+/* ── the bar over the hero film (28 Aug 2026, the film rebuild) ─────────────
+   THE BAR'S FORMING IS THE FILM'S CLOSING BEAT. On the landing page it has no
+   chrome of its own for as long as the film is running, then forms as the page
+   arrives — that is a client decision from the original design, not a port
+   artefact, and losing it was a visible regression the moment the film came
+   back: a dark rounded plate with a gold hairline sitting over the footage.
+
+   Keyed on a ROOT CLASS the film writes, rather than on the `cine` prop the old
+   build threaded down through <SiteChrome> and <SiteHeader>. The class is
+   written twice in a visit — when the film arms and when it releases — never
+   during a scroll, so it costs nothing; and this way the header component does
+   not have to know a film exists at all. See useFilm.ts.
+
+   `.formed` is still written during render, so with no JavaScript the bar is
+   formed from first paint exactly as it is on every other page. This only ever
+   takes it away, and only while a film is actually running. */
+html.film-running header.bar.formed::before {
+  opacity: 0;
+}
+
+html.film-running header.bar.formed::after {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+html.film-running header.bar.formed nav.top a {
+  color: var(--bone);
+  text-shadow: 0 1px 2px rgba(6, 6, 8, 0.7);
+}
+
+html.film-running header.bar.formed .brand-logo {
+  filter: drop-shadow(0 1px 2px rgba(6, 6, 8, 0.55));
+}
+
 @media (min-width: 1121px) {
   header.bar {
     padding-top: calc(11 * var(--uipx));
@@ -183,6 +217,11 @@ header.bar.preform .brand-logo {
     index opened with a formed navbar instead of the logo floating on the
     footage. Restoring the source behaviour needs the ID on .preform too.
   */
+  html.film-running header.bar#siteBar.formed::before,
+  html.film-running header.bar#siteBar.formed::after {
+    opacity: 0;
+  }
+
   header.bar#siteBar.preform::before {
     opacity: 0;
   }
@@ -1148,10 +1187,29 @@ html.nav-open .mobile-nav > .mn-sub {
   }
 }
 
-/* The film's own FAB choreography lived here — it hid the two FABs behind the
-   intro and slid them back in once Skip was pressed. ⛔ STRIPPED 28 Aug 2026
-   with the film; archived verbatim in
-   ~/Documents/TOPCAT-FILM-SPEC/code-snapshot/film-css-outside-the-module.css. */
+/* ── the FABs over the hero film ───────────────────────────────────────────
+   The WhatsApp and phone buttons are hidden for as long as the film is
+   running, and arrive with the page. Without this they sit on the bottom edge
+   either side of the Skip button and the three of them read as one cluttered
+   row — visible in a side-by-side against the build the client signed off,
+   where the bottom edge carries Skip alone.
+
+   The old build expressed this as `html.cine-on:not(.skip-live)` plus a set of
+   translateX values that slid them back in from the edges once Skip was
+   pressed. Only the hide is carried: the slide-in was choreography for a
+   handoff that no longer exists, since the page now scrolls over the film
+   rather than the film collapsing out from under it. The original rules are in
+   ~/Documents/TOPCAT-FILM-SPEC/code-snapshot/film-css-outside-the-module.css.
+
+   `backdrop-filter` off while they are over footage: it is a compositing layer
+   over a playing video and costs more than the effect is worth. */
+html.film-running .wa-fab,
+html.film-running .call-fab {
+  opacity: 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
 
 /* -------------------------------------------------------------------------
    10. html.proj-open — the projects lightbox lifts the chrome

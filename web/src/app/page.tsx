@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import HeroStill from '@/components/sections/HeroStill';
+import HeroFilm from '@/components/HeroFilm';
 import JourneyTracker from '@/components/forms/JourneyTracker';
 import { JsonLd } from '@/components/chrome/JsonLd';
 import About from '@/components/sections/About';
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <main>
+    <HeroFilm hero={<HeroCopy />}>
       {/* THE TRAIL STARTS HERE TOO. Every other page mounts this; the home page
           did not, so the one page most visitors arrive on recorded nothing —
           no "Arrived from google.com", no first page view, and an enquiry sent
@@ -86,18 +86,6 @@ export default function HomePage() {
       */}
       <JsonLd data={HOME_LD} />
 
-      {/*
-        ⛔ THE FILM WAS STRIPPED OUT ON 28 AUG 2026 and is being rebuilt from
-        scratch. <HeroStill> is the state <HeroFilm> rendered on the server —
-        the same hero a reduced-motion visitor already saw. The film's own two
-        trust chips went with it: they existed to ride the wide band's wipe,
-        and there is no wipe to ride. The complete specification, a snapshot of
-        the deleted code and 160 reference frames are in
-        ~/Documents/TOPCAT-FILM-SPEC — read FILM-SPEC.md before rebuilding.
-      */}
-      <HeroStill>
-        <HeroCopy />
-      </HeroStill>
 
       <Reviews />
 
@@ -147,6 +135,6 @@ export default function HomePage() {
         branches of <SiteChrome> and add it before this comment on every
         page that owns a <main>.
       */}
-    </main>
+    </HeroFilm>
   );
 }
