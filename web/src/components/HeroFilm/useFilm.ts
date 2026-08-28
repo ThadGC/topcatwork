@@ -300,6 +300,24 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   const [live, setLive] = useState(false);
 
   const geom = useRef<Geom | null>(null);
+  /**
+   * The media time of the frame ACTUALLY ON SCREEN.
+   *
+   * ⛔ `video.currentTime` IS NOT THIS. Assigning to it returns the REQUESTED
+   * time immediately, while the decoder is still fetching and decoding the
+   * frame — so during a fast scrub `currentTime` runs ahead of the picture by
+   * however long the seek takes. Driving the reveal from it put the clip edge
+   * ahead of the slab it is supposed to be tracking, and on a fast scroll the
+   * gap opened wide enough to read as a black bar across half the headline.
+   * The client photographed exactly that.
+   *
+   * `requestVideoFrameCallback` reports the frame that has been PRESENTED, so
+   * this is the only value the reveal can honestly be computed from. It was
+   * avoided because while scrubbing it fires on the network's clock — but that
+   * argument died with byte-range loading: the film is memory-resident before
+   * the scrub arms, so a seek is a decode, not a round trip.
+   */
+  const shown = useRef(0);
   const locked = useRef(false);
   const stillSince = useRef(0);
   const lastY = useRef(-1);
@@ -626,27 +644,28 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       }
 
       /*
-        Complete, and then still for SETTLE_MS.
+        ⛔ FIRES THE MOMENT THE FILM COMPLETES. NO SETTLE WAIT.
 
-        Firing on the first complete frame instead was tried and is worse: the
-        collapse lands inside the flick, and every pixel of scroll still to be
-        delivered afterwards is then spent travelling down the page from the
-        hero. Waiting for the visitor to stop costs a fifth of a second and
-        means the correction happens exactly once, against a scroll position
-        that has finished moving.
+        It used to wait for the scroll to stand still for 220ms, so that the
+        collapse would not land inside a momentum scroll. The cost of that is
+        worse than the thing it avoided: the stage covers the viewport until the
+        lock, so a visitor who keeps scrolling gets NOTHING — the client counted
+        about fifteen full-speed scrolls on a trackpad with the page apparently
+        frozen, because a trackpad delivers wheel events continuously and the
+        scroll never stands still long enough to qualify.
+
+        There is no dead region to protect: the runway ends exactly where the
+        film does, so completion and the end of the runway are the same point.
+        Firing here means the collapse happens at the instant there is nothing
+        left to scroll through. The correction still always lands on the hero,
+        so an overshoot is absorbed rather than carried into the page.
+
+        The dead scroll the client asked for is the 40vh hold BELOW the hero —
+        real page, real movement — not a stall.
       */
       if (complete) {
-        const yNow = Math.round(window.scrollY);
-        if (yNow !== lastY.current) {
-          lastY.current = yNow;
-          stillSince.current = now;
-        } else if (now - stillSince.current >= SETTLE_MS) {
-          lockFilm();
-          return;
-        }
-      } else {
-        stillSince.current = now;
-        lastY.current = -1;
+        lockFilm();
+        return;
       }
 
       if (done) return;
@@ -656,6 +675,16 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
       // The picture. One seek in flight at a time, with a half-frame deadband.
       // The file is in memory by now, so this cannot touch the network.
+      // Fallback only: with no rVFC there is nothing else to go on.
+      // (`in` would narrow `v` to never — lib.dom declares the method.)
+      if (
+        v &&
+        typeof (v as { requestVideoFrameCallback?: unknown }).requestVideoFrameCallback !==
+          'function'
+      ) {
+        shown.current = v.currentTime;
+      }
+
       if (v && seeks(mode) && !v.seeking && Math.abs(v.currentTime - t) > SEEK_EPS) {
         try {
           v.currentTime = t;
@@ -740,8 +769,12 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
             while scrubbing fires on the network's clock — it is a free read of
             a value the transport has already set.
           */
-          const vt = v ? Math.floor(v.currentTime * FILM_FPS) / FILM_FPS : t;
-          paintReveal(vt);
+          /*
+            The frame on screen, not the one that has been asked for. See
+            `shown` above — this is the whole reason the reveal tracks the edge
+            in the footage instead of running ahead of it.
+          */
+          paintReveal(shown.current);
         }
 
         // Beat 3 — hard on and off, slides in and back out to the left.
@@ -896,10 +929,42 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const band = bandFor(window.innerWidth);
     const src = filmBand(band).phone ? sources.phone : sources.wide;
 
+    /*
+      Track the presented frame. `mediaTime` is the media timestamp of the frame
+      that has just been composited, which is exactly what the reveal needs.
+
+      Nothing is written to the DOM from here — it only records a number the rAF
+      loop reads. That distinction matters: the old build wrote the reveal's
+      clip-path from inside this callback, so the edge stepped at whatever rate
+      frames arrived. Here the writing stays on the display clock and only the
+      VALUE comes from the decoder.
+    */
+    let vfc = 0;
+    const onFrame = (_now: number, meta: { mediaTime: number }) => {
+      shown.current = meta.mediaTime;
+      const rv = video as HTMLVideoElement & {
+        requestVideoFrameCallback?: (cb: typeof onFrame) => number;
+      };
+      if (!cancelled && rv.requestVideoFrameCallback) {
+        vfc = rv.requestVideoFrameCallback(onFrame);
+      }
+    };
+
     const arm = () => {
       if (cancelled) return;
       armed.current = true;
       setLive(true);
+      const rv = video as HTMLVideoElement & {
+        requestVideoFrameCallback?: (cb: typeof onFrame) => number;
+      };
+      if (rv.requestVideoFrameCallback) {
+        vfc = rv.requestVideoFrameCallback(onFrame);
+      } else {
+        // No rVFC: fall back to the requested time. The reveal can lead the
+        // picture on a slow decode, which is the fault this replaces — but a
+        // reveal that leads is better than one that never moves.
+        shown.current = 0;
+      }
       document.documentElement.classList.add('film-running');
       // The stage is `visibility: hidden` until this says otherwise, so it has
       // to be set here and not only from inside the loop — `?film=frozen`
@@ -1009,6 +1074,10 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       window.removeEventListener('orientationchange', onResize);
       document.removeEventListener('click', onLogo, true);
       cancelAnimationFrame(raf.current);
+      if (vfc) {
+        const rv = video as HTMLVideoElement & { cancelVideoFrameCallback?: (h: number) => void };
+        rv.cancelVideoFrameCallback?.(vfc);
+      }
       document.documentElement.classList.remove('film-running');
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };

@@ -73,9 +73,25 @@ export function useHeaderScrolled({
   threshold,
   heroAnchored = false,
 }: UseHeaderScrolledOptions): HeaderScrollState {
+  /*
+    ⛔ THE LANDING PAGE SHIPS ALREADY IN `preform`, AND IT HAS TO.
+
+    Below 1120px the rich bar paints its plate permanently —
+    `header.bar#siteBar::before { opacity: 1 }` (chrome.css) — and only
+    `.preform` takes it away. `preform` used to start false and arrive from the
+    effect after hydration, so the bar rendered SOLID at first paint and then
+    faded out over its 0.6s transition. Traced on a phone: `class="bar"` with
+    ::before at 1 at 40ms, `preform` at 246ms, fully clear at 843ms. That is the
+    flash the client reported on load.
+
+    Seeding it from `heroAnchored` is safe for hydration because the value is
+    deterministic on both sides — it is a prop, not a measurement — and it is
+    also the correct no-JavaScript state: with no film the hero is still the top
+    of the page and the bar still belongs clean over it.
+  */
   const [state, setState] = useState<HeaderScrollState>({
     scrolled: false,
-    preform: false,
+    preform: heroAnchored,
   });
 
   useEffect(() => {

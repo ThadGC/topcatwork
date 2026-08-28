@@ -874,6 +874,21 @@
   }
 }
 
+/* The tablet's chrome is a size up — the client asked for it, and at 900px wide
+   a 46px control reads small against the type around it. The bottom offset and
+   the height here are what the FAB rules in chrome.css line themselves up
+   against; change one and change the other. */
+@media (min-width: 721px) and (max-width: 1120px) {
+  .skip {
+    height: 54px;
+    width: 196px;
+    margin-left: -98px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 27px);
+    font-size: 13px;
+    gap: 13px;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    BAND LAYOUT
 
@@ -989,6 +1004,14 @@
   .heroCue {
     margin: 30px auto 0;
     align-items: center;
+    /*
+      ⛔ THE GAP HAS TO BE SET HERE. The base `.heroCue` has none and the 20px
+      lives in the phone block, so on the tablet it resolved to `normal` — zero
+      — and the arrow sat directly against the word above it. Measured: label
+      bottom 491, arrow top 491. The old build has 20px; this is a little more
+      because the client asked for the arrow to sit lower still.
+    */
+    gap: 26px;
   }
   .heroCue span {
     font-size: 15px;
@@ -1152,6 +1175,51 @@
   opacity: 1 !important;
   transform: none !important;
   transition: none !important;
+}
+
+/* ── the sub-line, centred between the headline and the CTAs ────────────────
+   The client, 28 Aug: "space the subtitle perfectly between the word around and
+   the block that says get a free quote."
+
+   Measured at the settled hero, gap above / gap below: desktop 23/38, tablet
+   36/58, phone 36/36. Only the phone was already even. The totals are left
+   alone — 61 and 94 — so the block's height does not change and nothing else
+   moves; the space is simply shared equally.
+
+   home-sections.css sets the bottom margin from `#hero .hero-sub`, which
+   carries the ID, so a class selector here cannot outrank it. */
+/* Set on BOTH SIDES, and the top one on the h1 rather than on the sub-line:
+   adjacent siblings' vertical margins collapse to the larger of the two, so a
+   `margin-top` on the sub-line smaller than the headline's `margin-bottom` does
+   nothing at all. Adding 7.5px there moved the gap from 23 to 22. */
+/* ⚠️ THE TWO NUMBERS IN EACH PAIR ARE NOT EQUAL, AND THAT IS THE POINT.
+
+   The headline's rendered gap comes out consistently smaller than its declared
+   margin — 8.5px on desktop, 6px on tablet — because the h1's border box ends
+   below its last line box. Setting both margins to the same value therefore
+   does NOT produce two equal gaps; it produced 22 above and 31 below.
+
+   These are solved for the MEASURED result. Verified at the settled hero:
+   desktop 27/27, tablet 44/44. If the headline's type or line-height changes,
+   re-measure — do not assume the pairs should match. */
+@media (min-width: 1121px) {
+  .heroInner :global(h1) {
+    margin-bottom: 35px !important;
+  }
+  .heroInner :global(.hero-sub) {
+    margin-top: 0 !important;
+    margin-bottom: 26.5px !important;
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1120px) {
+  .heroInner :global(h1) {
+    margin-bottom: 50px !important;
+  }
+  .heroInner :global(.hero-sub) {
+    margin-top: 0 !important;
+    margin-bottom: 44px !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

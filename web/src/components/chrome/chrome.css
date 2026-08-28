@@ -1213,22 +1213,75 @@ html.film-running .call-fab {
   background: rgba(8, 8, 11, 0.78);
 }
 
+/*
+  ⛔ THE STICKY CONTACT BAR DOES NOT BELONG OVER THE FILM, and leaving it there
+  was breaking the FABs rather than just looking wrong.
+
+  `.mbar` is shown on the landing page once its anchor has been scrolled past.
+  Its anchor is the film's runway, which SHIPS AT ZERO HEIGHT and only grows
+  when the film arms — so for the second or two before that, the bar thinks the
+  runway is behind the visitor and turns itself on. Then
+  `.mbar.on ~ .wa-fab { opacity: 0; transform: translateY(8px) }` fires, and the
+  FABs are pushed 8px down and faded out for as long as the class sticks.
+  Measured on the tablet: the pair sat 8px below Skip and never took the
+  translateX that puts them either side of it.
+
+  Two rules, and both are needed: hide the bar for the film's duration, and beat
+  the sibling rule outright. The sibling selector is (0,2,0) and so is
+  `html.film-running .wa-fab`, so source order alone decided it — qualifying
+  with `.mbar` takes it to (0,3,0) and settles it whatever gets appended later.
+*/
+html.film-running .mbar {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.film-running .mbar ~ .wa-fab,
+html.film-running .mbar ~ .call-fab {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 @media (max-width: 720px) {
-  html.film-running .wa-fab {
+  html.film-running .mbar ~ .wa-fab {
     transform: translateX(calc(-6.7px - 75vw));
   }
-  html.film-running .call-fab {
+  html.film-running .mbar ~ .call-fab {
     transform: translateX(calc(136.7px - 25vw));
   }
 }
 
 @media (min-width: 721px) and (max-width: 1120px) {
-  html.film-running .call-fab {
+  html.film-running .mbar ~ .call-fab {
     display: flex;
     transform: translateX(calc(-97.4px - 50vw));
   }
-  html.film-running .wa-fab {
+  html.film-running .mbar ~ .wa-fab {
     transform: translateX(calc(179.4px - 50vw));
+  }
+
+  /*
+    ⛔ IN LINE WITH SKIP, AND BIGGER. The client, 28 Aug: "on the tablet
+    version, the phone and WhatsApp icon needs to be exactly in line with the
+    skip intro button, and you can make all of those slightly bigger on tablet."
+
+    They were 2px low against Skip (the old build is 3px low, so this is not a
+    port fault, it is a thing worth fixing while here). Both are pinned to the
+    same bottom as Skip, which sits at `env(safe-area-inset-bottom) + 27px` and
+    is 54px tall here — so a 54px control on that same baseline lines up exactly
+    whatever the safe-area inset resolves to.
+  */
+  html.film-running .mbar ~ .wa-fab,
+  html.film-running .mbar ~ .call-fab {
+    width: 54px;
+    height: 54px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 27px);
+  }
+
+  html.film-running .mbar ~ .wa-fab svg,
+  html.film-running .mbar ~ .call-fab svg {
+    width: 25px;
+    height: 25px;
   }
 }
 
