@@ -116,7 +116,7 @@ header.bar.scrolled::after {
   transform: scaleX(1);
 }
 
-/* The index-only pre-form state: over the cine film the bar has no chrome at
+/* The index-only pre-form state: over the hero film the bar had no chrome at
    all, and the nav has to survive on top of moving footage.  site.css:2113 */
 header.bar.preform::before {
   opacity: 0;
@@ -173,7 +173,7 @@ header.bar.preform .brand-logo {
   }
 
   /*
-    ...but NOT while the cine film is still running.
+    ...but NOT while the hero film is still running.
 
     site.css:110-112 writes the rule above as `header.bar::before`, which is
     specificity (0,1,1) and therefore LOSES to `header.bar.preform::before`
@@ -1033,7 +1033,7 @@ html.nav-open .mobile-nav > .mn-sub {
    9. .wa-fab / .call-fab                                 site.css:1737-1764
    -------------------------------------------------------------------------
    Zero JS. Every hide below is CSS, driven by `.mbar.on ~`, html.bar-always,
-   html.nav-open, html.kb-open and html.cine-on. The sibling combinator is
+   html.nav-open and html.kb-open. The sibling combinator is
    why <StickyContactBar> must render BEFORE <ContactFabs>.
    ------------------------------------------------------------------------- */
 .wa-fab,
@@ -1148,43 +1148,10 @@ html.nav-open .mobile-nav > .mn-sub {
   }
 }
 
-/* The cine-film choreography. The film itself is a later job; these rules
-   are carried now so the FABs behave the instant html.cine-on appears. */
-html.cine-on .wa-fab,
-html.cine-on .call-fab {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  background: rgba(8, 8, 11, 0.78);
-}
-
-@media (max-width: 720px) {
-  html.cine-on:not(.skip-live) .wa-fab,
-  html.cine-on:not(.skip-live) .call-fab {
-    display: none;
-  }
-
-  html.cine-on.skip-live .call-fab {
-    transform: translateX(calc(136.7px - 25vw));
-  }
-
-  html.cine-on.skip-live .wa-fab {
-    transform: translateX(calc(-6.7px - 75vw));
-  }
-}
-
-@media (min-width: 721px) and (max-width: 1120px) {
-  html.cine-on.skip-live .call-fab {
-    display: flex;
-  }
-
-  html.cine-on.skip-live .wa-fab {
-    transform: translateX(calc(179.4px - 50vw));
-  }
-
-  html.cine-on.skip-live .call-fab {
-    transform: translateX(calc(-97.4px - 50vw));
-  }
-}
+/* The film's own FAB choreography lived here — it hid the two FABs behind the
+   intro and slid them back in once Skip was pressed. ⛔ STRIPPED 28 Aug 2026
+   with the film; archived verbatim in
+   ~/Documents/TOPCAT-FILM-SPEC/code-snapshot/film-css-outside-the-module.css. */
 
 /* -------------------------------------------------------------------------
    10. html.proj-open — the projects lightbox lifts the chrome
@@ -1741,9 +1708,10 @@ header.bar:not(#siteBar) nav.top .nav-item > a {
    the client asked for on 26 Aug 2026 that the legacy site does not do, kept
    apart so a later reader can tell a port decision from a client decision.
 
-   These are keyed on `.formed`, NOT on the rich/lite split — `.formed` means
-   "this page is not running the cine film", which is every page but the
-   index, rich and lite alike. See SiteHeader.tsx.
+   These are keyed on `.formed`, NOT on the rich/lite split — `.formed` meant
+   "this page is not running the cine film", which was every page but the
+   index. ⛔ THE FILM WAS STRIPPED OUT 28 Aug 2026, so every page including the
+   index is `.formed` now. See SiteHeader.tsx.
    ========================================================================== */
 
 /* THE INNER-PAGE BAR ARRIVES ALREADY FORMED.
@@ -1756,17 +1724,18 @@ header.bar:not(#siteBar) nav.top .nav-item > a {
    opacity 1 / scaleX(1) — and the plate fades in over .6s while the hairline
    sweeps open over .76s. That fade IS the "forming animation" he is seeing.
 
-   `.formed` is written during render on every page that is not running the
-   cine film (see SiteHeader.tsx), so these are the bar's FIRST-PAINT values,
+   `.formed` is written during render (see SiteHeader.tsx), so these are the
+   bar's FIRST-PAINT values,
    not a state it transitions into: a transition never runs on an initial
    computed value, so there is no fade to catch, no flash before hydration and
    no dependence on a scroll listener that has not fired yet. `.scrolled` is
    still toggled by the hook and now simply re-states values the bar already
    has — a no-op.
 
-   THE LANDING PAGE NEVER GETS `.formed`, so its cine-intro forming sequence
-   and `.preform` (index-only) are untouched. Verified: `dd-post-skip.mjs`
-   reads bar/preform -> bar scrolled -> bar preform on OLD and NEW alike. */
+   THE LANDING PAGE USED NOT TO GET `.formed`, so its intro forming sequence
+   and `.preform` were untouched. With the film stripped out it gets `.formed`
+   like every other page; when the film is rebuilt, `cine` on <SiteHeader/> is
+   the switch that takes it away again. */
 header.bar.formed::before {
   opacity: 1;
 }

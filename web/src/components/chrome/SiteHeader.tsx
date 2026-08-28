@@ -25,8 +25,6 @@ export interface SiteHeaderProps {
    * function. Everything else about the split is intact.
    */
   readonly variant?: ChromeVariant;
-  /** Index only. Turns on the hero-anchored `.scrolled` and the `.preform` state. */
-  readonly cine?: boolean;
   /** Override the measured 40 / 12. For tests and for the client's decision. */
   readonly scrollThreshold?: number;
   /**
@@ -71,7 +69,6 @@ export interface SiteHeaderProps {
  */
 export function SiteHeader({
   variant: variantProp,
-  cine = false,
   scrollThreshold,
   burger = true,
 }: SiteHeaderProps) {
@@ -81,7 +78,6 @@ export function SiteHeader({
 
   const { scrolled, preform } = useHeaderScrolled({
     threshold: scrollThreshold ?? thresholdForVariant(variant),
-    cine,
   });
 
   /*
@@ -90,24 +86,27 @@ export function SiteHeader({
       "the nav bar should still be formed on these internal pages instead of
        having the forming animation."
 
-    Every page EXCEPT the one running the cine film gets it, and it is written
-    during render, so it is in the exported HTML and the bar is formed at first
-    paint — a transition never runs on an initial computed value, so there is
-    nothing to catch mid-fade and no flash before hydration.
+    Every page EXCEPT the one running the hero film got it, written during
+    render, so it is in the exported HTML and the bar is formed at first paint
+    — a transition never runs on an initial computed value, so there is nothing
+    to catch mid-fade and no flash before hydration.
 
-    `cine` is the right hook, not `variant`. The bar's forming is the film's
-    closing beat, and `cine` is precisely "this page runs the film". Keying on
-    the rich/lite split instead would have left the five OTHER site.css pages
-    — /about/, /contact/, /estimate/, /projects/, /services/ — still forming
-    on scroll, and those are internal pages by any reading the client has.
-    Measured before this change, `dd-sweep.mjs 1440`: all five sat at ::before
-    opacity 0 at scrollY 0 exactly like /guides/ did.
+    ⛔ THE FILM WAS STRIPPED OUT 28 Aug 2026, so EVERY page is formed now,
+    including the landing page. The switch that used to take it away was a
+    `cine` prop meaning "this page runs the film", threaded from <SiteChrome/>;
+    it also drove the hero-anchored `.scrolled` reading and the `.preform`
+    state in useHeaderScrolled. All three went with the film and have to come
+    back with it — the bar's forming IS the film's closing beat. It was keyed
+    on `cine` rather than on the rich/lite split deliberately: keying on the
+    split would have left /about/, /contact/, /estimate/, /projects/ and
+    /services/ still forming on scroll, and those are internal pages by any
+    reading the client has.
 
     `scrolled` and `preform` still start off, as the source has them: the
     legacy HTML reads `class="bar"` because the source adds both from a
     deferred script, after the document is already on screen.
   */
-  const formed = !cine;
+  const formed = true;
 
   const className = [
     'bar',

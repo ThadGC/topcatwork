@@ -16,8 +16,6 @@ export interface SiteChromeProps {
   readonly children: ReactNode;
   /** Omit to resolve from the route. Pass to force a variant (tests, previews). */
   readonly variant?: ChromeVariant;
-  /** Omit to enable on '/' only. */
-  readonly cine?: boolean;
   /** Passed through to <SiteFooter>. */
   readonly faqHref?: string;
 }
@@ -76,13 +74,11 @@ export interface SiteChromeProps {
 export function SiteChrome({
   children,
   variant: variantProp,
-  cine: cineProp,
   faqHref,
 }: SiteChromeProps) {
   const pathname = usePathname();
   const variant = variantProp ?? variantForPath(pathname);
   const isHome = pathname === '/' || pathname === '';
-  const cine = cineProp ?? isHome;
 
   /*
     /trade/ — its own footer, and on the legacy site the one page with no
@@ -118,7 +114,7 @@ export function SiteChrome({
     return (
       <>
         <KeyboardOpenWatcher />
-        <SiteHeader variant="rich" cine={cine} />
+        <SiteHeader variant="rich" />
         <MobileNav variant="rich" />
         {/* .mbar must precede the FABs — general sibling combinator. */}
         <StickyContactBar

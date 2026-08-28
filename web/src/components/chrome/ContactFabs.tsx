@@ -16,7 +16,6 @@ import {
  *   html.bar-always ...   this page's bar is always up          (display:none)
  *   html.nav-open ...     the menu sheet is open                (<=720px)
  *   html.kb-open ...      a soft keyboard is up                 (<=1120px)
- *   html.cine-on ...      the film is running                   (index only)
  *
  * `.call-fab` is `display:none` by default and only becomes `display:flex`
  * (at right:70px, beside the WhatsApp button) below 720px. Both vanish

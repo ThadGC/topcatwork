@@ -34,8 +34,8 @@ export default function ScrollMemory() {
   useEffect(() => {
     const key = posKey(location);
 
-    /* Take the job off the browser. Chrome's own restoration fights the
-       runway collapse and loses — see lib/scrollMemory.ts. */
+    /* Take the job off the browser. Chrome's own restoration fought the hero
+       film's runway collapse and lost — see lib/scrollMemory.ts. */
     const previousMode = history.scrollRestoration;
     try {
       history.scrollRestoration = 'manual';
@@ -45,10 +45,7 @@ export default function ScrollMemory() {
 
     /* ── remember ──────────────────────────────────────────────────────── */
     const save = () => {
-      writePosition(key, {
-        y: Math.round(window.scrollY),
-        cine: document.documentElement.classList.contains('cine-done'),
-      });
+      writePosition(key, { y: Math.round(window.scrollY) });
     };
     /* `pagehide` fires for a real unload AND for a bfcache freeze, which is
        every way this page can be left. `visibilitychange` is the backstop for

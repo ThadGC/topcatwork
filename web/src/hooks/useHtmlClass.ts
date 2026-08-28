@@ -6,7 +6,7 @@ import { useEffect } from 'react';
  * Mirrors a boolean onto a class on `<html>`.
  *
  * The legacy chrome coordinates through five classes on the root element —
- * `nav-open`, `bar-always`, `kb-open`, `cine-on`, `proj-open` — because the
+ * `nav-open`, `bar-always`, `kb-open`, `proj-open` — because the
  * CSS that reacts to them lives above the component that owns the state
  * (`html.nav-open{overflow-y:hidden}` is the obvious one). React cannot
  * render an attribute onto an ancestor of the root, so the class is written

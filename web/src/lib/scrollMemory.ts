@@ -11,10 +11,12 @@
    slab with `location.href` (site.js:1058, ported in useStoneWheel), and the
    collection tiles and the nav are plain `<a href>`. So going back is a fresh
    document, and Chrome's automatic restoration has to guess a scroll offset
-   for a page whose height is still moving: `#cine` is an 800vh runway at parse
-   time, grows again as the sections below hydrate, and then COLLAPSES to one
-   viewport the moment the film locks (`html.cine-done`, useHeroFilm's
-   `lockFilm`). Measured on this build, back from a stone page: Chrome restored
+   for a page whose height is still moving: the home page's hero film was an
+   800vh runway at parse time that grew again as the sections below hydrated
+   and then COLLAPSED to one viewport the moment the film locked. ⛔ The film
+   was stripped out 28 Aug 2026, but the page still grows as it hydrates, and
+   whatever replaces the film will have its own settle point — see `settled()`.
+   Measured on the build that still had it, back from a stone page: Chrome restored
    16408 at t=241ms and had lost it again by t=522ms, and on the next run never
    restored at all. The old build's own restoration works only because its
    height happens to settle sooner. Racy either way.
@@ -26,17 +28,16 @@
         intro had already finished.
      2. On the way back, `takeRestore()` reports the saved offset for exactly
         this URL, and only for a `back_forward` navigation.
-     3. Nothing is restored until the page has stopped changing height. On the
-        home page that means waiting for `cine-done`, because `lockFilm()`
-        collapses the runway AND subtracts the same distance from `scrollY` in
-        the same frame — restore before it and the subtraction eats the offset.
+     3. Nothing is restored until the page has stopped changing height.
 
-   ── and the film must not replay ───────────────────────────────────────────
-   Restoring the offset is only half of it. The saved `cine` flag is read at
-   PARSE time by the boot script in components/HeroFilm/HeroFilmBoot.tsx, which
-   puts the document into `to-hero` — the same state the `/#hero` deep link
-   uses — so the engine snaps to the last frame and the visitor never sees a
-   frame of the intro replaying.
+   ⛔ WHAT WENT WITH THE FILM, AND HAS TO COME BACK WITH IT. Restoring the
+   offset was only half the job. The film also saved whether the intro had
+   already finished, and its boot script read that flag at PARSE time to put
+   the document straight into its end state — otherwise pressing Back replayed
+   the intro from frame 0 under the visitor. And `settled()` had to wait for
+   the runway's collapse, because that collapse subtracted from `scrollY` in
+   the same frame; restoring before it meant the subtraction ate the offset.
+   Both halves are needed again by whatever pins the hero next.
    ========================================================================== */
 
 /** sessionStorage prefix. The boot script builds the same key inline — if this
@@ -46,8 +47,6 @@ export const POS_KEY = 'tc:pos:';
 export interface SavedPosition {
   /** `window.scrollY` when the page was left. */
   y: number;
-  /** Was `html.cine-done` set — i.e. had the intro already finished? */
-  cine: boolean;
 }
 
 /** The URL this position belongs to. Hash excluded: `/#hero` and `/` are the
@@ -74,7 +73,7 @@ export function readPosition(key: string): SavedPosition | null {
     if (!raw) return null;
     const v = JSON.parse(raw) as Partial<SavedPosition>;
     if (typeof v?.y !== 'number' || !isFinite(v.y)) return null;
-    return { y: Math.max(0, Math.round(v.y)), cine: !!v.cine };
+    return { y: Math.max(0, Math.round(v.y)) };
   } catch {
     return null;
   }
@@ -99,16 +98,17 @@ export function clearPosition(key: string): void {
 /**
  * Is the page's height finally settled enough to trust an offset?
  *
- * Two gates, and both matter:
- *  - if the film is running, nothing is settled until it has locked, because
- *    `lockFilm()` collapses the runway and subtracts from `scrollY` together;
- *  - the document has to be tall enough to hold the offset at all, or the
- *    browser clamps the scroll and the offset is lost silently.
+ * The document has to be tall enough to hold the offset at all, or the browser
+ * clamps the scroll and the offset is lost silently.
+ *
+ * ⛔ THERE WAS A SECOND GATE AND IT WAS LOAD-BEARING: while the hero film was
+ * running nothing counted as settled until it had locked, because the lock
+ * collapsed the runway and subtracted the same distance from `scrollY` in the
+ * same frame. Restore before that and the subtraction ate the offset. The film
+ * was stripped out 28 Aug 2026; anything that pins the hero again needs its own
+ * version of that gate here.
  */
 export function settled(y: number): boolean {
   const root = document.documentElement;
-  if (root.classList.contains('cine-on') && !root.classList.contains('cine-done')) {
-    return false;
-  }
   return root.scrollHeight - window.innerHeight >= y - 2;
 }

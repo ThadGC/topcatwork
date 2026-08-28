@@ -326,7 +326,6 @@ body[data-tokens='content']::before {
 
    Every consumer in the source reads them as `var(--x, fallback)`. THE
    FALLBACK IS THE PRE-JS / JS-OFF STATE AND IS LOAD-BEARING: fail() at
-   site.js:2911 calls removeProperty('--cineVeil') and
    removeProperty('--navGrade') precisely so the fallbacks take over when the
    film cannot start. Copy the `var(--x, fallback)` form byte-for-byte into
    every rule you write.
@@ -354,14 +353,8 @@ body[data-tokens='content']::before {
   --filmY: 0px; /* (bg.height - fh*sc) / 2 */
 
   /* --- film grade channels --------------------------------------------- */
-  --cineVeil: 1; /* site.js:2984  removed by fail() -> back to 1 */
   --navGrade: 0; /* site.js:3014  removed by fail() -> back to 0 */
 
-  /* --- the .cine-line gold gradient. NEVER written by JS; the source only
-         ever resolves the fallback. Keep the var() form in consumers. --- */
-  --cineGoldTop: #e4cd92;
-  --cineGoldMid: #c6a664;
-  --cineGoldLow: #bc9a54;
 
   /* --- services fit (site.js:403/406/415) ------------------------------ */
   --svcFit: 1;
@@ -370,39 +363,7 @@ body[data-tokens='content']::before {
 /*
   THE FULL RUNTIME INVENTORY. Consumers must use exactly these fallbacks.
 
-  --- film / cine, the hot path -----------------------------------------
-  --filmU        html  1px      font-size:calc(86.4*var(--filmU,1px)),
-                                calc(82.94*…), calc(22.8*…),
-                                width:calc(898.56*…), max-width:calc(720*…),
-                                margin-top:calc(28.8*…),
-                                margin-left:calc(15.845*…) / calc(16.106*…),
-                                left:calc(var(--filmX,0px) + 200.16*var(--filmU,1px))
-  --filmX        html  0px      .cine-line[data-vpos-wide] left
-  --filmY        html  0px      top:calc(var(--filmY,0px) + 237.6*var(--filmU,1px))
-                                top:calc(var(--filmY,0px) + 207*var(--filmU,1px))
-  --cineVeil     html  1        html.cine-on .cine .hero-shade{opacity:var(--cineVeil,1)}
-  --navGrade     html  0        html.cine-on .cine .hero-navgrade{opacity:var(--navGrade,0)}
-  --cineCurve    .cine 1        .hero{--curveR:calc(48px * var(--cineCurve,1))}
-                                .hero::after{opacity:var(--cineCurve,1)}
-  --cineEdge     .cine 0        @media(min-width:1121px) .cine-edge{opacity:var(--cineEdge,0)}
 
-  --- per .cine-line ------------------------------------------------------
-  --lz           -150           translateZ(calc(var(--lz,-150) * 1px))
-  --lx           0              translateX(calc(var(--lx,0) * 1px))
-  --lyp          0              NOT written by JS; authored/legacy
-  --lsc          1              scale(var(--lsc,1)); JS removes when === 1
-  --lg           0              .cine-line::before{opacity:var(--lg,0)}
-  --hz           0              .cine-hero translate3d z
-  --tx           0              .cine-hero, .cine-trust translate3d x
-  --heroScale    1              .cine-hero scale(var(--heroScale,1))
-
-  The full .cine-line transform, verbatim:
-    transform:translateX(calc(var(--lx,0) * 1px))
-              translateY(calc(var(--ly) + (var(--lyp,0) * 1px)))
-              translateZ(calc(var(--lz,-150) * 1px))
-              scale(var(--lsc,1));
-  blur is set on .style.filter directly, not via a custom property:
-    b = p > 0.72 ? round(((p - 0.72) / 0.28) * 9) / 2 : 0
 
   --- everything else -----------------------------------------------------
   --d            .svc          0ms
@@ -470,7 +431,7 @@ body[data-tokens='content']::before {
 
       DONE, and not the way this note originally proposed. The fix that ships
       is the one from VDM Digital's scroll-scrub engine, ported wholesale into
-      src/components/HeroFilm/lib/scrub.ts: one seek in flight at a time (no
+      the hero film's scrub (stripped 28 Aug 2026): one seek in flight (no
       queue, no pending flag, no stall timer), an epsilon deadband, and a
       20%-per-frame lerp between the scroll and the decoder. Half of the win is
       in the encode rather than the code — see scripts/encode-film.sh.
@@ -507,59 +468,11 @@ body[data-tokens='content']::before {
    so they MUST stay custom properties declared exactly here.
    ------------------------------------------------------------------------- */
 
-/* --- cine film geometry. site.js validates: 0 < cineHold < 0.9,
-       0 <= cineVeilAt < dur, 0 <= cineVeilMin <= 1. ---------------------- */
-html.cine-on .cine {
-  --cineH: 1050vh;
-  --cineHold: 0.1387;
-  --cineVeilAt: 38; /* seconds into the 44.25s film */
-  --cineVeilMin: 0.2;
-}
-
-@media (max-width: 1120px) {
-  html.cine-on .cine {
-    --cineH: 900vh;
-    --cineHold: 0.2;
-  }
-}
-
-@media (max-width: 720px) {
-  html.cine-on .cine {
-    --cineH: 800vh;
-    --cineHold: 0.2125;
-  }
-}
-
-html.cine-on.cine-done .cine {
-  --cineH: 100vh;
-}
-
-@media (min-width: 1121px) {
-  html.cine-on .cine-story {
-    --edgeFade: calc(clamp(20px, 7vw, 132px) * 0.5);
-  }
-}
-
-/* --ly: the cine line's vertical anchor. Not a runtime property — media
-   queries and data attributes own it. --lyp (never written) is added to it
-   inside the transform. */
-html.cine-on .cine-line {
-  --ly: -50%;
-}
-
-@media (min-width: 1121px) {
-  html.cine-on .cine-line[data-vpos-wide] {
-    --ly: 0px;
-  }
-}
-
-@media (max-width: 1120px) {
-  html.cine-on .cine-line[data-vpos='top'],
-  html.cine-on .cine-line[data-vpos='low'],
-  html.cine-on .cine-line[data-vpos-narrow='top'] {
-    --ly: 0%;
-  }
-}
+/* --- the hero film's geometry and line placement lived here.
+       ⛔ STRIPPED 28 Aug 2026, deliberately; the film is being rebuilt from
+       scratch. The rules are archived verbatim in
+       ~/Documents/TOPCAT-FILM-SPEC/code-snapshot/film-css-outside-the-module.css
+       and the full specification is in that folder's FILM-SPEC.md. --------- */
 
 /* --- gallery render mode: phone | grid | door ------------------------- */
 .pg-col #gallery {
@@ -1302,8 +1215,9 @@ header.bar {
 /* -------------------------------------------------------------------------
    9. prefers-reduced-motion — THE 13 SOURCE BLOCKS  (§6.7)
    -------------------------------------------------------------------------
-   Block 8 is the global nuke. NOTE: it does NOT disable the cine film. The
-   film is gated in JavaScript, not CSS. Preserve that contract.
+   Block 8 is the global nuke. It did NOT disable the hero film, which was
+   gated in JavaScript rather than in CSS; the film was stripped out on
+   28 Aug 2026 and that contract has to be re-established when it comes back.
    ------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   /* 1 */
@@ -1378,10 +1292,6 @@ header.bar {
   }
 
   /* 9 */
-  html.cine-on .cine-cue i {
-    animation: none;
-    opacity: 0.8;
-  }
 
   /* 10 */
   .est-piece {
@@ -1422,8 +1332,8 @@ header.bar {
    -------------------------------------------------------------------------
    One canonical recipe, repeated verbatim in the source. It is a four-property
    compound with two -webkit- prefixed members; @apply cannot express it.
-   .cine-line em uses the tokenised form with the identical values, and keeps
-   the var() shape because --cineGoldTop/Mid/Low are only ever the fallback.
+   The film's story lines used a tokenised form of the same values; that went
+   with the film on 28 Aug 2026, and so did --cineGoldTop/Mid/Low.
    ------------------------------------------------------------------------- */
 .hero-title em,
 .section-title em,
@@ -1436,17 +1346,6 @@ header.bar {
   -webkit-text-fill-color: transparent;
 }
 
-.cine-line em {
-  background: linear-gradient(
-    180deg,
-    var(--cineGoldTop, #e4cd92) 0%,
-    var(--cineGoldMid, #c6a664) 62%,
-    var(--cineGoldLow, #bc9a54) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
 
 /* .bar-cta uses the same stops as a real background, not as text. */
 .bar-cta {
@@ -1480,14 +1379,14 @@ header.bar {
 
    Restored from the legacy site, re-keyed. The originals gate on
    `.hero.loaded`; the ported section is styled by a CSS module and carries
-   only `id="hero"`, but the film still toggles the GLOBAL `loaded` class on
-   that same element (useHeroFilm.ts), so `#hero.loaded` is the same gate.
+   only `id="hero"`, so the rules are re-keyed onto `#hero.loaded`.
 
-   Note what this does NOT do: on the film path it changes nothing. Live
-   suppresses its own stagger while the film runs -- the `html.cine-on` rule
-   below, carried over verbatim -- so the copy still arrives as one object at
-   the 93% handoff. The cascade only plays when the film is off: reduced
-   motion, no MP4 support, or a failed load. That was the path losing it.
+   ⛔ WITH THE FILM STRIPPED OUT (28 Aug 2026) THIS IS THE ONLY ENTRANCE THE
+   HERO COPY HAS, and <HeroStill> is what adds `loaded`. Take that away and
+   the copy sits at opacity 0 and the page looks empty. The film used to add
+   the same class at 93% of its runway and suppressed this stagger while it
+   ran, so that both paths delivered the copy once, not twice; whatever
+   replaces the film has to do one or the other.
    --------------------------------------------------------------------------- */
 #hero .hero-el {
   opacity: 0;
@@ -1507,11 +1406,6 @@ header.bar {
 }
 #hero.loaded .hl > .hero-el {
   transform: none;
-}
-html.cine-on #hero:not(.loaded) .hero-el {
-  opacity: 1;
-  transform: none;
-  transition: none;
 }
 @media (prefers-reduced-motion: reduce) {
   #hero .hero-el,

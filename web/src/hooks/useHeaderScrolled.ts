@@ -5,7 +5,12 @@ import { useEffect, useState } from 'react';
 export interface HeaderScrollState {
   /** `header.bar.scrolled` — the bar has formed. */
   readonly scrolled: boolean;
-  /** `header.bar.preform` — index only, over the cine film, before it forms. */
+  /**
+   * `header.bar.preform` — the bar had no chrome at all over the hero film,
+   * before the film's closing beat formed it. ⛔ The film was stripped out
+   * 28 Aug 2026, so this is permanently false; it stays in the shape because
+   * the CSS state still exists and the rebuild needs it back.
+   */
   readonly preform: boolean;
 }
 
@@ -16,16 +21,6 @@ export interface UseHeaderScrolledOptions {
    * carried; see `thresholdForVariant`.
    */
   readonly threshold: number;
-  /**
-   * Index only. Enables the hero-anchored reading and the `.preform` state.
-   * Even with this on, the film branch is taken only while `html.cine-on` is
-   * actually set — the film removes that class when it bails on reduced
-   * motion or a missing codec, and the bar must fall straight back to the
-   * plain scrollY reading when it does.
-   */
-  readonly cine?: boolean;
-  /** The element the film measures against. `#hero` in the source. */
-  readonly heroSelector?: string;
 }
 
 /**
@@ -40,6 +35,12 @@ export interface UseHeaderScrolledOptions {
  *     bar.classList.toggle('preform', !!film && !formed);
  *   };
  *
+ * ⛔ THE FILM BRANCH IS GONE (28 Aug 2026, stripped with the film). The bar
+ * anchored its forming to the HERO's position rather than to a scroll
+ * threshold while the film was running, and sat in `.preform` until then.
+ * Only the `window.scrollY > threshold` half is left. Both halves are in the
+ * source above; put the film half back when the film comes back.
+ *
  * Two things are deliberate.
  *
  * FIRST, nothing runs during render. Both classes start off, so the exported
@@ -53,8 +54,6 @@ export interface UseHeaderScrolledOptions {
  */
 export function useHeaderScrolled({
   threshold,
-  cine = false,
-  heroSelector = '#hero',
 }: UseHeaderScrolledOptions): HeaderScrollState {
   const [state, setState] = useState<HeaderScrollState>({
     scrolled: false,
@@ -62,18 +61,10 @@ export function useHeaderScrolled({
   });
 
   useEffect(() => {
-    const root = document.documentElement;
-    const hero = cine
-      ? (document.querySelector<HTMLElement>(heroSelector) ?? null)
-      : null;
-
-    const read = (): HeaderScrollState => {
-      const film = !!hero && root.classList.contains('cine-on');
-      const formed = film
-        ? hero.getBoundingClientRect().top <= -40
-        : window.scrollY > threshold;
-      return { scrolled: formed, preform: film && !formed };
-    };
+    const read = (): HeaderScrollState => ({
+      scrolled: window.scrollY > threshold,
+      preform: false,
+    });
 
     const on = () => {
       const next = read();
@@ -87,7 +78,7 @@ export function useHeaderScrolled({
     on();
     window.addEventListener('scroll', on, { passive: true });
     return () => window.removeEventListener('scroll', on);
-  }, [threshold, cine, heroSelector]);
+  }, [threshold]);
 
   return state;
 }

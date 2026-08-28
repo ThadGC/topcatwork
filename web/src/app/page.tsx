@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import HeroFilm from '@/components/HeroFilm';
+import HeroStill from '@/components/sections/HeroStill';
 import JourneyTracker from '@/components/forms/JourneyTracker';
 import { JsonLd } from '@/components/chrome/JsonLd';
 import About from '@/components/sections/About';
@@ -8,7 +8,7 @@ import Cta from '@/components/sections/Cta';
 import Estimator from '@/components/sections/Estimator';
 import Faq from '@/components/sections/Faq';
 import Gallery from '@/components/sections/Gallery';
-import HeroCopy, { CineTrust } from '@/components/sections/HeroCopy';
+import HeroCopy from '@/components/sections/HeroCopy';
 import Process from '@/components/sections/Process';
 import Reviews from '@/components/sections/Reviews';
 import SectionDivider from '@/components/sections/SectionDivider';
@@ -87,14 +87,17 @@ export default function HomePage() {
       <JsonLd data={HOME_LD} />
 
       {/*
-        The film is another agent's; the words inside it are this page's.
-        <HeroFilm> renders `children` into its `.inner` slot and `trust` into
-        the band that wipes alongside the story beats — that split is the
-        film's own API, so passing them here is the caller doing its half.
+        ⛔ THE FILM WAS STRIPPED OUT ON 28 AUG 2026 and is being rebuilt from
+        scratch. <HeroStill> is the state <HeroFilm> rendered on the server —
+        the same hero a reduced-motion visitor already saw. The film's own two
+        trust chips went with it: they existed to ride the wide band's wipe,
+        and there is no wipe to ride. The complete specification, a snapshot of
+        the deleted code and 160 reference frames are in
+        ~/Documents/TOPCAT-FILM-SPEC — read FILM-SPEC.md before rebuilding.
       */}
-      <HeroFilm trust={<CineTrust />}>
+      <HeroStill>
         <HeroCopy />
-      </HeroFilm>
+      </HeroStill>
 
       <Reviews />
 
