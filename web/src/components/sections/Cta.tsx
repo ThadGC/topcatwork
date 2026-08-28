@@ -45,6 +45,11 @@ export interface CtaProps {
   /** Seeded straight into the form's stone chip. See <ContactForm/>. */
   initialStone?: { name: string; mat?: string; slug?: string };
   /**
+   * Seeded straight into the form's service chip and its hidden `service`
+   * field. The nine service pages pass it; see <ContactForm/>.
+   */
+  service?: string;
+  /**
    * Fade the card up on scroll — the `.rise` one-way door in hooks/useReveal.ts.
    *
    * ON everywhere by default. The home page, /about, /estimate, /projects,
@@ -71,6 +76,7 @@ export default function Cta({
   heading,
   lede,
   initialStone,
+  service,
   reveal = true,
 }: CtaProps = {}) {
   const ref = useReveal<HTMLElement>();
@@ -183,7 +189,11 @@ export default function Cta({
           </div>
         </div>
 
-        <ContactForm stonePicker={stonePicker} initialStone={initialStone} />
+        <ContactForm
+          stonePicker={stonePicker}
+          initialStone={initialStone}
+          service={service}
+        />
       </div>
     </section>
   );

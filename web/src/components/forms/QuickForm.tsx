@@ -20,27 +20,20 @@
    rule entirely rather than treating an absent field as an empty one.
    ========================================================================== */
 
+import { SERVICE_OPTIONS, type ServiceOption } from '@/lib/form/serviceOptions';
 import TcSelect from './TcSelect';
 import { badProps, useEnquiryForm } from './useEnquiryForm';
 
 const CLASSES = ['qform'] as const;
 
-/** The nine options, in source order (trade/index.html). */
-const SERVICES = [
-  'Kitchen worktops',
-  'Kitchen islands',
-  'Splashbacks',
-  'Bathrooms and vanity tops',
-  'Outdoor kitchens',
-  'Fireplaces',
-  'Dining tables',
-  'Commercial',
-  'Something else',
-] as const;
+/* The nine options moved to lib/form/serviceOptions.ts on 28 Aug so the nine
+   service pages could seed this select with the page they are on and still be
+   checked by the compiler. Same list, same order. */
+const SERVICES = SERVICE_OPTIONS;
 
 export interface QuickFormProps {
   /** /trade/ pre-selects "Commercial"; other hosts pick their own. */
-  defaultService?: (typeof SERVICES)[number];
+  defaultService?: ServiceOption;
 }
 
 export default function QuickForm({ defaultService = 'Commercial' }: QuickFormProps) {

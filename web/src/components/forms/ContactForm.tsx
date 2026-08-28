@@ -100,11 +100,27 @@ export interface ContactFormProps {
    * so the enquiry arrives with it attached and they never have to say it.
    */
   initialStone?: { name: string; mat?: string; slug?: string };
+  /**
+   * Seed the enquiry with the service the visitor is standing on, so it
+   * arrives named without them having to say it.
+   *
+   * The nine service pages pass it. The client, 28 Aug: "the form with the
+   * service that they've selected and what they are looking for... this also
+   * helps TopCat track where people enquired from."
+   *
+   * It rides in a hidden input under `name="service"` — the SAME field the
+   * aside's `#qfService` select writes — so send.php and the enquiry route
+   * need no change and the inbox reads one vocabulary. The chip above it is
+   * the visitor's proof of what they are asking about; it is not a control,
+   * because the page they are on is the answer.
+   */
+  service?: string;
 }
 
 export default function ContactForm({
   stonePicker = true,
   initialStone,
+  service,
 }: ContactFormProps = {}) {
   /* Seeded, not set in an effect: the chip is correct on the very first paint,
      so there is no frame where the form looks like it has forgotten which
@@ -297,6 +313,26 @@ export default function ContactForm({
           enquiry read as a pair, and it is a fraction of the height the
           select box was. */}
       <textarea name="message" placeholder="Message" />
+      {/*
+          The service chip. Same `.cta-stone` dress as the stone chip below it,
+          so the two read as one row of context, but with no remove button: the
+          stone is optional and this is not, it is the page itself.
+
+          The hidden input is what actually travels. `new FormData(form)` in
+          buildPayload picks up every successful control the form owns, so
+          nothing downstream needs teaching about it.
+      */}
+      {service ? (
+        <>
+          <div className="cta-stone" id="ctaService">
+            <span className="cs-label">Service</span>
+            <span className="cs-name" id="ctaServiceName">
+              {service}
+            </span>
+          </div>
+          <input type="hidden" name="service" value={service} />
+        </>
+      ) : null}
       {stonePicker && !stone ? (
         <>
           <button

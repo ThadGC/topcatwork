@@ -40,6 +40,7 @@
  */
 import raw from '@data/services.json';
 
+import type { ServiceOption } from './form/serviceOptions';
 import type { Breadcrumbs, Cta, Heading, RichText, Seo } from './stones';
 
 export type { Breadcrumbs, Cta, Heading, RichText, Seo };
@@ -267,4 +268,73 @@ export function servicesIndexLede(): string {
     throw new Error('services.json: the /services/ page-head lost its paragraph');
   }
   return paragraph.text;
+}
+
+/* -------------------------------------------------------------------------
+   THE ENQUIRY THAT STAYS ON THE PAGE
+   -------------------------------------------------------------------------
+   The client, 28 Aug, on the nine service pages: "instead of having a call to
+   action above the footer, I want it to be an actual form. The form with the
+   service that they've selected and what they are looking for. This also helps
+   TopCat track where people enquired from. And all the CTAs that talk about
+   getting an estimate on those individual pages go to the bottom of the page
+   to that form instead of the individual contact page."
+
+   This is the same move the 132 stone pages made earlier the same day, so it
+   is deliberately the same shape: `serviceCtaHref` here is the sibling of
+   `stoneCtaHref` in ./stones, and the page swaps `section.cta-band` for the
+   shared <Cta/> card.
+   ------------------------------------------------------------------------- */
+
+/**
+ * The label this page's enquiry travels under.
+ *
+ * The values are NOT invented: they are the nine options of the aside's own
+ * `#qfService` select (`enquiryForm.select.options`), so a service-page
+ * enquiry reads in TopCat's inbox exactly like every other one and the field
+ * stays sortable. That is why "Outdoor Spaces" sends as "Outdoor kitchens"
+ * and why the two bathroom pages share a label.
+ *
+ * ⚠️ Two slugs map to one label on purpose — /services/vanity-tops and
+ * /services/bathroom-worktops are both "Bathrooms and vanity tops". They are
+ * still told apart in the email by `page`, which buildPayload sends as
+ * location.pathname on every submission.
+ */
+const ENQUIRY_LABELS: Record<string, ServiceOption> = {
+  'kitchen-worktops': 'Kitchen worktops',
+  'kitchen-islands': 'Kitchen islands',
+  splashbacks: 'Splashbacks',
+  'vanity-tops': 'Bathrooms and vanity tops',
+  'bathroom-worktops': 'Bathrooms and vanity tops',
+  'outdoor-kitchens': 'Outdoor kitchens',
+  fireplaces: 'Fireplaces',
+  'dining-tables': 'Dining tables',
+  'commercial-worktops': 'Commercial',
+};
+
+/**
+ * `undefined` rather than a guess for an unknown slug: an enquiry with no
+ * service is a small loss, one carrying the wrong service is a real one.
+ */
+export function serviceEnquiryLabel(slug: string): ServiceOption | undefined {
+  return ENQUIRY_LABELS[slug];
+}
+
+/**
+ * Re-point one CTA at the form now standing at the foot of the page.
+ *
+ * ⛔ ONLY `/contact/`. Each of the four enquiry CTAs on these pages ships as
+ * `<a href="/contact/">Get your free quote</a>` and is paired with a
+ * `tel:+448000982812` button; the body also links sibling services, `/stones/`
+ * and `/materials/porcelain-worktops.html`. Re-pointing anything but the
+ * quote button would strand the visitor on the page they are already reading,
+ * so everything else falls through untouched.
+ */
+export function serviceCtaHref(cta: Cta): string {
+  return cta.href === '/contact/' ? '#cta' : cta.href;
+}
+
+/** The same rewrite across a whole row. */
+export function serviceCtas(ctas: Cta[]): Cta[] {
+  return ctas.map((cta) => ({ ...cta, href: serviceCtaHref(cta) }));
 }

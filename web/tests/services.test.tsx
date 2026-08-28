@@ -267,8 +267,16 @@ describe('the detail template', () => {
       service.faq.items.length,
     );
 
-    /* 5 — the closing band. */
-    expect(container.querySelector('section.cta-band .cta-row')).toBeTruthy();
+    /* 5 — the closing ask, which is now the enquiry card itself. The old
+       `section.cta-band` and its pair of buttons are gone: the client asked
+       for the form to stand here instead, so the section that used to send
+       the visitor to /contact/ now IS the place they were being sent to. */
+    expect(container.querySelector('section.cta-band')).toBeNull();
+    const closing = container.querySelector('section#cta');
+    expect(closing).toBeTruthy();
+    expect(closing!.querySelector('form.cta-form')).toBeTruthy();
+    /* The band's own copy survives as the card's heading and lede. */
+    expect(closing!.querySelector('.cta-title')?.textContent).toBeTruthy();
   });
 
   it('puts the cross-sell OUTSIDE the lead grid, where the source does', async () => {
@@ -345,8 +353,12 @@ describe('the detail template', () => {
       // opacity:0 and only `.rise.in` is visible, so a section whose wrap
       // lost the class would still animate — one that never had it renders,
       // but out of step with everything around it.
-      const sections = container.querySelectorAll('section.block, section.cta-band');
-      expect(sections.length).toBe(service.body.length + 2); // + faq + cta-band
+      /* `section.cta-band` is no longer emitted — the enquiry card replaced
+         it — so the run is the body sections plus the FAQ. The card carries
+         its own reveal on `.cta-card`, not on a `.wrap`, so it is deliberately
+         outside this sweep. */
+      const sections = container.querySelectorAll('section.block');
+      expect(sections.length).toBe(service.body.length + 1); // + faq
       for (const section of sections) {
         expect(section.querySelector(':scope > .wrap')).toHaveClass('rise');
       }
