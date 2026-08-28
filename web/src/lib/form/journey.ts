@@ -24,7 +24,25 @@
 
 /** tcform.js:7 */
 export const J_KEY = 'tc_journey';
-export const E_KEY = 'tc_estimate';
+/**
+ * ⛔ THE KEY IS VERSIONED, AND THAT IS NOT TIDINESS.
+ *
+ * Until today the estimator wrote its state to storage on MOUNT, with whatever
+ * it opens on. Every device that has ever loaded the estimate page is
+ * therefore carrying a full, confident estimate for a stone its owner never
+ * chose, and `buildPayload` attaches it to every enquiry from that device for
+ * as long as the entry survives. Fixing the writer does nothing for them.
+ *
+ * The client, on an enquiry that still carried one after the writer was fixed:
+ * "it's still sending the estimator's details, which are currently autofilled
+ * ... we have to be very sure if someone actually interacted with the
+ * estimator or not."
+ *
+ * A new key abandons every one of those in place. `LEGACY_E_KEY` is then
+ * cleared on boot so the dead entry does not sit in storage for ever.
+ */
+export const E_KEY = 'tc_estimate_v2';
+export const LEGACY_E_KEY = 'tc_estimate';
 
 /** tcform.js:8 — the trail is capped, oldest first. */
 export const J_MAX = 120;
@@ -113,7 +131,11 @@ export function takeQ(o: unknown): void {
     const ls = storage();
     if (!ls) return;
     try {
-      ls.setItem(E_KEY, JSON.stringify(o));
+      /* `used` is written here and nowhere else, and buildPayload refuses an
+         estimate without it. Only a real interaction reaches this line — see
+         the guard in Estimator.tsx — so the flag cannot be forged by a stale
+         entry or by a shape that merely looks like an estimate. */
+      ls.setItem(E_KEY, JSON.stringify({ ...(o as object), used: true }));
     } catch {
       /* ignore */
     }
@@ -151,6 +173,13 @@ declare global {
  * Returns a teardown so a React effect can undo it.
  */
 export function journeyBoot(): () => void {
+  /* Clear the pre-versioning estimate. See E_KEY: every device that ever
+     loaded the estimate page is carrying one it never asked for. */
+  try {
+    storage()?.removeItem(LEGACY_E_KEY);
+  } catch {
+    /* ignore */
+  }
   const j = jload();
   if (!j.ev.length) {
     const src: JourneyEvent = {

@@ -351,6 +351,22 @@ export default function Estimator() {
     if (!est.mounted) return;
     const el = priceEl.current;
     if (!el) return;
+    /*
+      ⛔ NO PRICE UNTIL THEY HAVE CHOSEN A STONE. The engine always has a
+      working default to compute against, but showing its number would be
+      quoting a stone nobody picked — which is what put a stone the customer
+      had never seen into an enquiry email. See `stoneChosen`.
+    */
+    if (!est.stoneChosen) {
+      el.classList.add('txt');
+      el.textContent = 'Choose a stone';
+      if (raf.current !== null) {
+        cancelAnimationFrame(raf.current);
+        raf.current = null;
+      }
+      lowS.current = null;
+      return;
+    }
     if (result.price.type === 'range') {
       /* site.js:3820-3825 `showRange` — the FIRST call snaps, because lowS is
          still null; every call after it eases at 0.14 a frame. */
@@ -634,17 +650,29 @@ export default function Estimator() {
                 hidden={showEngine ? est.stoneBtnHidden : undefined}
                 onClick={(e) => openModalFrom('stone', e.currentTarget)}
               >
-                <span className="est-swatch" id="estSwatch" aria-hidden="true" style={bg ? { backgroundImage: bg } : undefined} />
+                {/* No swatch before a choice: an image of a stone reads as
+                    the stone they have got. */}
+                <span
+                  className="est-swatch"
+                  id="estSwatch"
+                  aria-hidden="true"
+                  style={bg && showEngine && est.stoneChosen ? { backgroundImage: bg } : undefined}
+                />
                 <span className="est-stonetxt">
-                  <b id="estStoneName">{showEngine ? live.stone.name : '–'}</b>
+                  <b id="estStoneName">
+                    {!showEngine ? '–' : est.stoneChosen ? live.stone.name : 'Choose your stone'}
+                  </b>
                   <small id="estStoneSup">
-                    {showEngine
-                      ? (live.stone.kind || live.stone.mat || live.mat) + (live.stone.finish ? ' · ' + live.stone.finish : '')
-                      : '–'}
+                    {!showEngine
+                      ? '–'
+                      : est.stoneChosen
+                        ? (live.stone.kind || live.stone.mat || live.mat) +
+                          (live.stone.finish ? ' · ' + live.stone.finish : '')
+                        : 'Browse the collection'}
                   </small>
                 </span>
                 <span className="est-change" aria-hidden="true">
-                  Change
+                  {showEngine && !est.stoneChosen ? 'Browse' : 'Change'}
                 </span>
               </button>
             </div>
@@ -1046,7 +1074,11 @@ export default function Estimator() {
                   : ''}
               </span>
               <div className="est-meta" id="estMeta">
-                {showEngine ? (result.meta ?? '') : 'Quartz · 2 pieces · 1 slab'}
+                {!showEngine
+                  ? 'Quartz · 2 pieces · 1 slab'
+                  : est.stoneChosen
+                    ? (result.meta ?? '')
+                    : 'Pick a stone and this fills in'}
               </div>
               <p className="est-adds" id="estAdds" hidden={showEngine ? result.addsHidden : true}>
                 {showEngine ? (result.adds ?? '') : ''}

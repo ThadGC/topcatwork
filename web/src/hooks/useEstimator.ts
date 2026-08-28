@@ -61,6 +61,26 @@ export function useEstimator() {
   const [live, setLive] = useState<EngineState>(initial);
   const [committed, setCommitted] = useState<EngineState>(initial);
   /** site.js:3701 — which quick-start chip is lit, or none. */
+  /**
+   * ⛔ HAS THE VISITOR ACTUALLY CHOSEN A STONE?
+   *
+   * The engine has always opened on a real stone — `bestFor('Quartz')`, which
+   * is Azul Shimmer — because every piece of it, the board, the slab count and
+   * the price, needs one to compute against. That default then read as a
+   * CHOICE: the board showed a stone nobody picked, priced it, and the enquiry
+   * email carried it as the customer's own.
+   *
+   * The client: "make sure that the estimator is completely empty until
+   * someone has chosen a stone from the stone selector ... otherwise they can
+   * say browse or choose your stone."
+   *
+   * So the state keeps its working default and the SCREEN does not present it.
+   * Until this latches, the stone button invites them to choose one and the
+   * board shows no price. It latches on picking a stone or on changing the
+   * material, both of which are the visitor saying what they want.
+   */
+  const [stoneChosen, setStoneChosen] = useState(false);
+
   const [shapeChip, setShapeChip] = useState<string | null>(null);
   /** site.js:3701 — the next board render animates its pieces in. */
   const animateNext = useRef(true);
@@ -202,6 +222,8 @@ export function useEstimator() {
   /** site.js:3826-3843. Announcing re-broadcasts to the rest of the page. */
   const setStone = useCallback(
     (entry: CatalogueStone, announce: boolean) => {
+      /* They have named a stone. See stoneChosen. */
+      setStoneChosen(true);
       animateNext.current = true;
       const mat = entry.mat && MATS[entry.mat as MatId] && entry.mat !== live.mat ? (entry.mat as MatId) : live.mat;
       commit({ ...live, mat, stone: entry });
@@ -230,6 +252,9 @@ export function useEstimator() {
   const setMat = useCallback(
     (m: MatId) => {
       if (m === live.mat) return;
+      /* Switching material is also a choice: it lands on that bucket's stone
+         and the visitor asked for it. See stoneChosen. */
+      setStoneChosen(true);
       animateNext.current = true;
       commit({ ...live, mat: m, stone: bestFor(m) });
     },
@@ -313,6 +338,7 @@ export function useEstimator() {
     live,
     result,
     shapeChip,
+    stoneChosen,
     islandOn,
     addDisabled,
     animateNext,

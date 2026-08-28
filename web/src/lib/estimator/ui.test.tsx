@@ -68,6 +68,20 @@ async function settle() {
   }
 }
 
+/**
+ * The panel no longer PRESENTS a stone until the visitor names one, because a
+ * default that looks chosen ended up in enquiry emails as the customer's own
+ * choice. The engine still has a working default underneath, so this puts the
+ * panel into the state it used to open in: away to another material and back,
+ * which lands on Quartz's own stone and counts as a choice.
+ */
+async function chooseLandingStone(settleFn: () => Promise<void>) {
+  fireEvent.click(chip('Granite'));
+  await settleFn();
+  fireEvent.click(chip('Quartz'));
+  await settleFn();
+}
+
 describe('the panel wakes up', () => {
   it('keeps every id the ported CSS depends on', async () => {
     render(<Estimator />);
@@ -75,10 +89,21 @@ describe('the panel wakes up', () => {
     for (const id of IDS) expect(document.getElementById(id), id).not.toBeNull();
   });
 
-  it('opens on one row, quartz, and its own landing stone', async () => {
+  it('opens on one row and NO chosen stone, and quotes nothing', async () => {
     render(<Estimator />);
     await settle();
     expect($('estRows').querySelectorAll('.est-row')).toHaveLength(1);
+    /* The engine has a landing stone to compute against; the screen must not
+       present it as the visitor's. */
+    expect($('estStoneName').textContent).toBe('Choose your stone');
+    expect($('estPrice').textContent).toBe('Choose a stone');
+    expect($('estMeta').textContent).toBe('Pick a stone and this fills in');
+  });
+
+  it('fills in once a stone is actually chosen', async () => {
+    render(<Estimator />);
+    await settle();
+    await chooseLandingStone(settle);
     expect($('estStoneName').textContent).toBe('Azul Shimmer');
     expect($('estMeta').textContent).toBe('Azul Shimmer · 1 piece · 1 slab');
     expect($('stSlabs').textContent).toBe('1');
@@ -90,6 +115,7 @@ describe('+ Island', () => {
   it('presses in, and switches the bracket COLUMN rather than adding a slab', async () => {
     render(<Estimator />);
     await settle();
+    await chooseLandingStone(settle);
     fireEvent.click(chip('U-shape'));
     await settle();
     expect($('estPrice').textContent).toBe('£3,000 – £3,600');
@@ -210,6 +236,7 @@ describe('the extras', () => {
   it('removal adds a flat £200 to both ends', async () => {
     render(<Estimator />);
     await settle();
+    await chooseLandingStone(settle);
     fireEvent.click($('exRemoval'));
     await settle();
     expect($('estPrice').textContent).toBe('£2,200 – £2,700');
@@ -220,6 +247,7 @@ describe('the extras', () => {
   it('detailed edging opens its picker, then its metres box, then charges', async () => {
     render(<Estimator />);
     await settle();
+    await chooseLandingStone(settle);
     expect($('estEdgePanel').hasAttribute('hidden')).toBe(true);
 
     fireEvent.click($('exEdge'));

@@ -81,8 +81,25 @@ export function buildPayload(
   try {
     const j = jload();
     if (j.ev.length) fd.append('journey', JSON.stringify(j));
+    /*
+      ⛔ ONLY AN ESTIMATE THE VISITOR ACTUALLY MADE.
+
+      `used` is written by takeQ and by nothing else, and takeQ is only reached
+      once the estimator's state differs from the one it opened on. Anything in
+      storage without it is either a pre-versioning leftover or a shape that
+      merely looks like an estimate, and neither belongs in an email that
+      TopCat reads as a statement of what the customer chose.
+    */
     const est = localStorage.getItem(E_KEY);
-    if (est) fd.append('estimate', est);
+    if (est) {
+      let used = false;
+      try {
+        used = (JSON.parse(est) as { used?: boolean })?.used === true;
+      } catch {
+        used = false;
+      }
+      if (used) fd.append('estimate', est);
+    }
   } catch {
     /* tcform.js:130 swallows this too: no trail must ever block an enquiry. */
   }
