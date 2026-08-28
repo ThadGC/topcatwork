@@ -148,7 +148,48 @@ describe('the email carries everything the client asked for', () => {
     expect(mail.html).toContain('3000 × 600');
     expect(mail.html).toContain('with island');
     expect(mail.html).toContain('Drainer grooves');
-    expect(mail.html).toContain('£3,200 – £3,900');
+    /* "to", not an en dash: the client's copy rule applies to the email too. */
+    expect(mail.html).toContain('£3,200 to £3,900');
+  });
+
+  /*
+    The two stones are different facts. TopCat reads this email in a hurry and
+    must never have to work out which stone the customer actually wants.
+  */
+  it('names the enquiry stone and the priced stone differently', () => {
+    expect(mail.html).toContain('Stone they asked about');
+    expect(mail.html).toContain('Stone priced');
+  });
+
+  it('says outright when the stone they priced is not the one they asked about', () => {
+    const other = composeEnquiry({
+      fields: fields({
+        stone: 'Astoria',
+        estimate: JSON.stringify({ mat: 'Quartz', stone: 'Azul Shimmer', slabs: 1, lo: 2000, hi: 2500 }),
+      }),
+    });
+    expect(other.html).toContain('different stone from the one their enquiry names');
+    expect(other.html).toContain('Stone priced (not the one above)');
+  });
+
+  it('does not flag a mismatch when they are the same stone', () => {
+    const same = composeEnquiry({
+      fields: fields({
+        stone: 'Astoria',
+        estimate: JSON.stringify({ mat: 'Granite', stone: 'Astoria', slabs: 1, lo: 2000, hi: 2500 }),
+      }),
+    });
+    expect(same.html).not.toContain('different stone from the one their enquiry names');
+  });
+
+  /*
+    An enquiry from someone who never touched the estimator used to arrive
+    carrying a full estimate for the stone the estimator happens to open on.
+  */
+  it('says plainly when the estimator was not used, and carries no estimate', () => {
+    const none = composeEnquiry({ fields: fields({ estimate: '' }) });
+    expect(none.html).toContain('Did not use it');
+    expect(none.html).not.toContain('Their estimate');
   });
 
   it('marks a priced-by-hand enquiry as one', () => {

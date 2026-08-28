@@ -160,6 +160,35 @@ export const REVEAL_FPS = 12;
  */
 const RUNWAY = { phone: 690, tablet: 800, wide: 820 } as const;
 
+/**
+ * THE TAIL, in viewport heights: runway that exists AFTER the film has ended.
+ *
+ * ⛔ THIS IS WHAT STOPS A HARD SWIPE JUMPING SECTIONS, and the port had removed
+ * it — `measure()` set `runPx = filmPx`, so the film finished at the exact
+ * pixel the runway did.
+ *
+ * A fling is an animation with a TARGET, chosen while the runway was still
+ * eight viewports tall. If the film ends where the runway ends, any overshoot
+ * lands OUTSIDE the runway, the collapse then removes 5,800px underneath it,
+ * and the visitor is left wherever that arithmetic dropped them. The client:
+ * "I swiped a bit too quickly, so it just jumped me straight to the get a
+ * quote part ... they cannot jump between sections."
+ *
+ * With a tail the overshoot lands INSIDE the runway instead, where the stage is
+ * still pinned and holding the film's last frame — and the page's own hero copy
+ * has been inked since 93%, so what they are looking at IS the hero. Nothing
+ * moves, nothing jumps, and the collapse happens once they have come to rest.
+ *
+ * ⚠️ It is not a blank hold. An earlier build had a long tail with no copy over
+ * it and the client reported "about fifteen full-speed scrolls with the page
+ * apparently frozen". One screen, with the hero on it, is a beat; five screens
+ * of nothing is a hang.
+ *
+ * The old build expressed the same thing as a fraction of a taller runway:
+ * phone 0.2125, tablet 0.2, wide 0.1387.
+ */
+const HOLD = { phone: 100, tablet: 100, wide: 80 } as const;
+
 /** Seek deadband: half a film frame. Closer than this and the seek is a no-op
  *  that costs a decode and returns the same picture. */
 const SEEK_EPS = 0.5 / FILM_FPS;
@@ -445,9 +474,8 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const stageW = sr.width || window.innerWidth;
     const stageH = sr.height || vh;
 
-    // The runway's height is written exactly twice in a page's life: here, when
-    // the film arms, and again at the lock. Never during a scroll.
-    runway.style.setProperty('--runway', `${plan}vh`);
+    // The runway's height is written exactly twice in a page's life: below,
+    // when the film arms, and again at the lock. Never during a scroll.
 
     /*
       ⛔ THE RUNWAY'S OWN LAID-OUT HEIGHT, NOT A SUM FROM `innerHeight`.
@@ -474,8 +502,14 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       ⚠️ The `--runway` write above must stay ABOVE this line so the rect is
       read after the height has been applied.
     */
-    const filmPx = runway.getBoundingClientRect().height || (plan / 100) * vh;
-    const runPx = filmPx;
+    /* The runway is the film PLUS the tail; `p` is measured against the film
+       alone, so the film completes with `hold` viewport-heights still to
+       scroll. See HOLD. */
+    const hold = HOLD[key];
+    const totalVh = plan + hold;
+    runway.style.setProperty('--runway', `${totalVh}vh`);
+    const runPx = runway.getBoundingClientRect().height || (totalVh / 100) * stageH;
+    const filmPx = runPx * (plan / totalVh);
     const top = runway.getBoundingClientRect().top + window.scrollY;
 
     // The film frame, for the wide band's film-space line layout. Written on
@@ -651,12 +685,77 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       preserving — honour an overshoot and a hard flick drops the visitor into
       the middle of the page having never seen the hero.
     */
+    /*
+      ⛔ THE FLING IS CANCELLED BEFORE THE RUNWAY MOVES, AND `overflow: hidden`
+      IS THE ONLY THING THAT DOES IT.
+
+      A fling is not a velocity the page carries; it is an ANIMATION WITH A
+      TARGET, and the target is a document offset chosen while the runway was
+      still eight viewports tall. Collapse the runway under it and the
+      animation keeps going to that number in a document that is now 5,800px
+      shorter. The client: "I swiped a bit too quickly, so it just jumped me
+      straight to the get a quote part."
+
+      Neither of the two obvious answers works. `behavior: 'instant'` does not
+      cancel a running compositor scroll -- measured, it re-targets and carries
+      on. Pinning the scroll for a few frames is worse: the browser keeps the
+      velocity, so the page holds still, lets go, and the fling resumes at full
+      speed. That was the lurch he reported next.
+
+      Making the scroller briefly non-scrollable DOES cancel it, because there
+      is no longer a scroll range to animate into. One frame is enough, and it
+      is restored on the next, so nothing is ever locked. The scroll offset
+      survives it in every engine that matters; the correction below runs
+      inside the same frame anyway.
+
+      `scrollbarGutter` is held stable across the frame so a desktop scrollbar
+      cannot vanish and shift the layout sideways while overflow is off.
+    */
+    const de = document.documentElement;
+    const prevOverflow = de.style.overflow;
+    const prevGutter = de.style.scrollbarGutter;
+    de.style.scrollbarGutter = 'stable';
+    de.style.overflow = 'hidden';
+
     stage.dataset.film = 'done';
     document.documentElement.classList.remove('film-running');
     runway.style.setProperty('--runway', '0px');
 
     const afterTop = space.getBoundingClientRect().top;
     if (afterTop) window.scrollBy({ top: afterTop, left: 0, behavior: 'instant' });
+
+    /*
+      ⛔ AND IT IS HELD FOR THE REST OF THE GESTURE, NOT ONE FRAME.
+
+      One frame cancels the animation but not the INPUT still arriving. A hard
+      swipe is a burst of events, and the film ends part way through it: the
+      remainder lands on a page that is now only 15,000px tall and takes the
+      visitor to the bottom of it. Measured with a scripted burst, that is
+      exactly the reported fault -- y=7,200 in the estimator on a fast fling,
+      and the very foot of the document on a hard one.
+
+      While overflow is off there is no scroll range, so those events do
+      nothing AND no velocity accumulates from them. That is the whole reason
+      this works where pinning did not: pinning fought a fling that was still
+      alive and released it intact, whereas this leaves nothing to release.
+
+      The client: "the user has to scroll from the surfaces worth building
+      around section, then they see the review section. They cannot jump
+      between sections."
+
+      280ms is the tail of a flick and well under the ~700ms a deliberate
+      second gesture takes to arrive, so nobody meets it. It is unconditional
+      rather than input-driven precisely so there is no release to lurch on.
+    */
+    const landed = window.scrollY;
+    const give = () => {
+      de.style.overflow = prevOverflow;
+      de.style.scrollbarGutter = prevGutter;
+      if (window.scrollY !== landed) {
+        window.scrollTo({ top: landed, left: 0, behavior: 'instant' });
+      }
+    };
+    window.setTimeout(give, 280);
 
     /*
       ⛔ NOTHING PINS THE SCROLL AFTER THIS, AND THAT IS DELIBERATE.
@@ -728,9 +827,6 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         The stage stays fixed and on screen right up to the lock. `done` below
         is only whether there is anything left to paint.
       */
-      /* `past` is still read by `complete` below; the old combined `done`
-         flag has gone with the early return it guarded. */
-      void past;
 
       const p = clamp01(y / g.filmPx);
 
@@ -1103,7 +1199,18 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         far longer than a seek from memory needs and short enough that nobody
         reads it as a hang.
       */
-      if (complete) {
+      /*
+        ⛔ THE LOCK WAITS FOR THE END OF THE RUNWAY, NOT THE END OF THE FILM.
+
+        `complete` is the picture: the film has played out and everything below
+        has been painted at p = 1. `past` is the scroll: they have come through
+        the tail as well. Locking on `complete` is what let a fling that
+        overshot the film's last frame carry on into a document that was about
+        to lose 5,800px. Waiting for `past` means the overshoot is spent inside
+        the tail, with the stage still pinned on the final frame and the hero
+        copy already over it. See HOLD.
+      */
+      if (complete && past) {
         if (!completeAt.current) completeAt.current = now;
         const landed = !v || !seeks(mode) || !v.seeking;
         if (landed || now - completeAt.current > 400) lockFilm();

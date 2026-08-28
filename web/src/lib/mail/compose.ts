@@ -274,7 +274,9 @@ export function composeEnquiry(opts: {
     rows += row('Phone', `<a href="tel:${h(phone.replace(/[^0-9+]/g, ''))}" style="color:${LINK}">${h(phone)}</a>`);
   if (postcode) rows += row('Postcode', h(postcode));
   if (service) rows += row('Service', h(service));
-  if (stone) rows += row('Stone', h(stone));
+  /* Named, not just 'Stone'. There can be a second stone further down — the
+     one they priced in the estimator — and the two are different facts. */
+  if (stone) rows += row('Stone they asked about', h(stone));
   if (stoneLink) rows += row('Stone link', `<a href="${h(stoneLink)}" style="color:${LINK}">${h(stoneLink)}</a>`);
 
   /* Which form, and where from — the client asked for this by name. It was
@@ -295,9 +297,31 @@ export function composeEnquiry(opts: {
   }
 
   if (estimate && estimate.stone) {
+    /*
+      ⛔ THE TWO STONES ARE DIFFERENT FACTS AND THE EMAIL MUST SAY SO.
+
+      The stone at the top is the one the enquiry is about. The stone here is
+      the one they ran through the estimator, which may well be another. Left
+      as two rows both labelled "Stone" it reads as a contradiction, and the
+      client's first question on seeing one was which of them the customer
+      actually wanted.
+
+      This section only exists at all when they really used the estimator —
+      see the guard in Estimator.tsx. No section means they did not touch it.
+    */
+    const priced = estimate.stone.trim();
+    const asked = stone.trim();
+    const same = !asked || priced.toLowerCase() === asked.toLowerCase();
     rows += section('Their estimate');
+    if (!same) {
+      rows += wide(
+        `<span style="color:${MUTE}">They priced a different stone from the one their enquiry names. ` +
+          `The enquiry is about <b style="color:${INK}">${h(asked)}</b>; the figures below are for ` +
+          `<b style="color:${INK}">${h(priced)}</b>.</span>`,
+      );
+    }
     rows += row('Material', h(estimate.mat ?? ''));
-    rows += row('Stone', h(estimate.stone));
+    rows += row(same ? 'Stone priced' : 'Stone priced (not the one above)', h(estimate.stone));
     if (estimate.poa) {
       rows += row('Price', 'Priced by hand (POA path)');
     } else {
@@ -310,7 +334,7 @@ export function composeEnquiry(opts: {
       if (typeof estimate.lo === 'number' && typeof estimate.hi === 'number')
         rows += row(
           'Range shown',
-          `<b>£${Math.round(estimate.lo).toLocaleString('en-GB')} – £${Math.round(estimate.hi).toLocaleString('en-GB')}</b>`,
+          `<b>£${Math.round(estimate.lo).toLocaleString('en-GB')} to £${Math.round(estimate.hi).toLocaleString('en-GB')}</b>`,
         );
     }
   }
@@ -322,6 +346,13 @@ export function composeEnquiry(opts: {
 
   if (j.events.length) {
     rows += section('Their visit at a glance');
+    /* Stated either way, so its absence is never read as data missing. */
+    rows += row(
+      'Estimator',
+      estimate && estimate.stone
+        ? 'Used it' + (estimate.stone ? ', on ' + h(estimate.stone) : '')
+        : 'Did not use it',
+    );
     if (device) rows += row('Device', device.replace(/^./, (c) => c.toUpperCase()) + (screen ? ' · ' + h(screen) : ''));
     if (j.firstSeen) rows += row('First seen', h(j.firstSeen));
     rows += row('Visits', j.visits + (j.visits === 1 ? ' visit' : ' visits'));

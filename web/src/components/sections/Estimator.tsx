@@ -504,10 +504,49 @@ export default function Estimator() {
     lastStone.current = stoneName;
   }, [est.mounted, live.mat, live.stone?.name]);
 
+  /*
+    ⛔ NOTHING IS RECORDED UNTIL THE VISITOR ACTUALLY USES THE ESTIMATOR.
+
+    This effect used to fire on mount, with whatever the estimator opens on —
+    Quartz, Azul Shimmer, one 3000x620x20mm run, one slab, £2,000 to £2,500 —
+    and `takeQ` wrote it straight to localStorage, where payload.ts puts it on
+    every enquiry from then on. So an enquiry from someone who never touched
+    the estimator arrived carrying a full, confident estimate for a stone they
+    had never seen.
+
+    The client, on exactly that email: "I never used the estimator, so on the
+    form it shows that the stone that I chose was Azul Shimmer, but it's not
+    true ... TopCat cannot get confused when they get this email."
+
+    The sibling effect above already skips the boot render for the same reason —
+    "the source only jots a CHANGE, not the default the estimator opens on" —
+    and this one was written without the guard.
+
+    `openedOn` is the state the estimator was born with; `touched` latches the
+    first time anything differs from it. A visitor who opens the page, scrolls
+    past and never touches a control records nothing at all, so the email
+    simply has no estimate section and TopCat reads it as what it is.
+  */
+  const openedOn = useRef<string | null>(null);
+  const touched = useRef(false);
+
   useEffect(() => {
     if (!est.mounted) return;
     const stoneName = live.stone?.name;
     if (!stoneName) return;
+
+    const signature = JSON.stringify({
+      mat: live.mat,
+      stone: stoneName,
+      island: est.islandOn,
+      pieces: live.pieces.map((p) => `${p.len}x${p.wid}x${p.th}${p.use}`),
+    });
+    if (openedOn.current === null) {
+      openedOn.current = signature;
+      return;
+    }
+    if (signature !== openedOn.current) touched.current = true;
+    if (!touched.current) return;
 
     if (!result.poaHidden) {
       takeQ({ t: 'est', mat: live.mat, stone: stoneName, poa: true });
