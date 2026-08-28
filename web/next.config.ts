@@ -58,6 +58,54 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
+  /*
+    THE LEGACY STONE DEEP LINKS.
+
+    The 132 stone pages ship `/index.html?stone=…&mat=…&p=…&s=…&slug=…#estimator`
+    in their extracted data, and those URLs are in the live site's HTML today,
+    so they are indexable and may be linked from outside. They cannot work on
+    the home page any more: the film's runway goes up under the in-flight
+    fragment scroll and `lockFilm` absorbs the overshoot onto the hero, which
+    is what the client reported as landing on "a random section". The stone
+    pages themselves are re-pointed in `stoneEnquiryHref`; this catches
+    everything already out in the world.
+
+    ⛔ THE `has` GUARD IS LOAD-BEARING. `/index.html#hero` is the brand logo's
+    href on all 178 pages, and `/index.html#faq` is the footer's. Without the
+    query condition this rule would swallow both and send the whole site to the
+    contact form. Redirects run BEFORE rewrites, so only the `?stone=` case is
+    diverted and the bare `/index.html` rewrite below still stands.
+
+    The fragment never reaches the server, so `#estimator` and `#cta` cannot be
+    told apart here. Both land on the contact form, which is the client's own
+    decision: "It should go straight to the contact form with that stone
+    preselected."
+
+    307 rather than 308 while the domain is still unsettled — a permanent
+    redirect is cached by the browser and is painful to take back.
+  */
+  async redirects() {
+    return [
+      {
+        source: '/index.html',
+        has: [
+          { type: 'query', key: 'stone', value: '(?<stone>.*)' },
+          { type: 'query', key: 'mat', value: '(?<mat>.*)' },
+          { type: 'query', key: 'slug', value: '(?<slug>.*)' },
+        ],
+        destination: '/contact/?stone=:stone&mat=:mat&slug=:slug#ctaForm',
+        permanent: false,
+      },
+      /* The same link with only the stone name on it. */
+      {
+        source: '/index.html',
+        has: [{ type: 'query', key: 'stone', value: '(?<stone>.*)' }],
+        destination: '/contact/?stone=:stone#ctaForm',
+        permanent: false,
+      },
+    ];
+  },
+
   async rewrites() {
     return [
       /* The home page is a `.html` leaf too, and it was the one this list

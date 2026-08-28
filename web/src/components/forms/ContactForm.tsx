@@ -25,6 +25,7 @@
 import { useEffect, useState } from 'react';
 
 import { type WheelStone } from '@/data/home/stoneWheel';
+import { chipKind, chipLabel, readStoneLink } from '@/lib/form/stoneDeepLink';
 import { appendUploads, clearUploads, getFiles, getLink, subscribe } from '@/lib/form/uploads';
 import StonePickerModal from './StonePickerModal';
 import TcUpload from './TcUpload';
@@ -92,10 +93,47 @@ export default function ContactForm({ stonePicker = false }: ContactFormProps = 
         setStone('');
         return;
       }
-      setStone(d.mat ? `${d.name} · ${d.kind ?? d.mat}` : d.name);
+      /* `kind` is the DISPLAY family and `mat` is the PRICING bucket, and they
+         differ for 27 of the 132 stones — every quartzite and the travertine
+         sit in the "Marble" bucket. The wheel sends no `kind` at all
+         (site.js:1431 dispatches name/mat/stone/seed/slug/sup), so without the
+         catalogue lookup those 27 read "· Marble" where the live site reads
+         "· Quartzite". `chipKind` is site.js:4362-4365. */
+      setStone(d.mat ? `${d.name} · ${d.kind ?? chipKind(d) ?? d.mat}` : d.name);
     };
     document.addEventListener('topcat:stone', onStone);
     return () => document.removeEventListener('topcat:stone', onStone);
+  }, []);
+
+  /*
+    THE `?stone=` DEEP LINK — site.js:4585-4603, which the port dropped.
+
+    Every stone page's "Get an estimate for this stone" arrives here carrying
+    the stone in the query string. See lib/form/stoneDeepLink.ts for why this
+    sets state directly rather than dispatching an event and listening for it:
+    a sibling component's effect runs BEFORE the listener above is attached, so
+    the event would land with nobody listening.
+
+    The re-broadcast on a zero timeout is only for the OTHER listener — the
+    estimator's, at useEstimator.ts:254 — which matters on the pages where
+    <Estimator/> and <Cta/> are both mounted. By then every effect has run.
+
+    `location.search`, not `useSearchParams()`: the hook forces the route into
+    a Suspense boundary under `output: 'export'`. StoneCompare.tsx:71-79 makes
+    the same call for the same reason.
+  */
+  useEffect(() => {
+    const d = readStoneLink(window.location.search);
+    if (!d) return;
+    setStone(chipLabel(d));
+    const id = window.setTimeout(() => {
+      document.dispatchEvent(
+        new CustomEvent('topcat:stone', {
+          detail: { name: d.name, mat: d.mat, kind: chipKind(d), slug: d.slug },
+        }),
+      );
+    }, 0);
+    return () => window.clearTimeout(id);
   }, []);
 
   /* site.js:4366–4372 — the hook the payload builder calls.

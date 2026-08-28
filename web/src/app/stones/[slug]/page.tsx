@@ -26,7 +26,15 @@ import { SlabImage } from '@/components/stones/SlabImage';
 import { RelatedStoneTile } from '@/components/stones/StoneTile';
 import { CompareRects } from '@/components/stones/icons';
 import { metadataFromSeo } from '@/lib/seo';
-import { getStone, stoneSlugs, type Cta } from '@/lib/stones';
+import {
+  getStone,
+  isLegacyStoneHref,
+  rewriteStoneLinks,
+  stoneEnquiryHref,
+  stoneSlugs,
+  type Cta,
+  type StoneRecord,
+} from '@/lib/stones';
 
 /**
  * All 132 slugs, so `output: 'export'` emits all 132 files. Nothing is
@@ -54,15 +62,23 @@ export async function generateMetadata({
   return metadataFromSeo(getStone(slug).seo);
 }
 
-/** `.cta-row` — `.btn-gold` / `.btn-ghost`, in data order. */
-function CtaRow({ ctas }: { ctas: Cta[] }) {
+/**
+ * `.cta-row` — `.btn-gold` / `.btn-ghost`, in data order.
+ *
+ * Every enquiry CTA on these 132 pages ships in the dataset as
+ * `/index.html?stone=…#estimator` or `…#cta`, which lands on the home page
+ * behind the hero film and is absorbed onto the hero by `lockFilm`. They are
+ * re-pointed at the contact form here — see `stoneEnquiryHref`. The `tel:`
+ * CTA that sits beside them falls through untouched.
+ */
+function CtaRow({ ctas, stone }: { ctas: Cta[]; stone: StoneRecord }) {
   return (
     <div className="cta-row">
       {ctas.map((cta) => (
         <a
           key={`${cta.variant}:${cta.href}`}
           className={cta.variant === 'gold' ? 'btn-gold' : 'btn-ghost'}
-          href={cta.href}
+          href={isLegacyStoneHref(cta.href) ? stoneEnquiryHref(stone) : cta.href}
         >
           {cta.label}
         </a>
@@ -143,7 +159,7 @@ export default async function StonePage({
                   </li>
                 ))}
               </ul>
-              <CtaRow ctas={stone.ctas} />
+              <CtaRow ctas={stone.ctas} stone={stone} />
               {/*
                 The third trust item contains a link, the first contains a
                 <b> of stars; both are carried as html by the extractor.
@@ -170,7 +186,7 @@ export default async function StonePage({
           <div className="wrap rise">
             <Rich as="h2" value={sections.homeVisit.heading} />
             <Rich as="p" className="sub" value={sections.homeVisit.sub} />
-            <CtaRow ctas={sections.homeVisit.ctas} />
+            <CtaRow ctas={sections.homeVisit.ctas} stone={stone} />
           </div>
         </section>
 
@@ -189,7 +205,17 @@ export default async function StonePage({
                 <RelatedStoneTile key={related.slug} stone={related} />
               ))}
             </div>
-            <Rich as="p" className="st-source" value={sections.related.sourceNote} />
+            <Rich
+              as="p"
+              className="st-source"
+              value={{
+                ...sections.related.sourceNote,
+                html: rewriteStoneLinks(
+                  sections.related.sourceNote.html ?? sections.related.sourceNote.text,
+                  stone,
+                ),
+              }}
+            />
           </div>
         </section>
 
@@ -199,7 +225,7 @@ export default async function StonePage({
             {sections.ctaBand.paragraphs.map((p) => (
               <Rich key={p.text} as="p" value={p} />
             ))}
-            <CtaRow ctas={sections.ctaBand.ctas} />
+            <CtaRow ctas={sections.ctaBand.ctas} stone={stone} />
           </div>
         </section>
       {/*

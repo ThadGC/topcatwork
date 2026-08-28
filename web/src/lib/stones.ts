@@ -319,6 +319,68 @@ export function stoneSlugs(): string[] {
 }
 
 /* -------------------------------------------------------------------------
+   The enquiry hand-off
+   ------------------------------------------------------------------------- */
+
+/**
+ * WHERE "GET AN ESTIMATE FOR THIS STONE" GOES.
+ *
+ * The client, 28 Aug: "when someone goes to an individual stone page and they
+ * click get an estimate for this stone, it's currently completely fucked. It's
+ * supposed to go straight to the contact form with the stone preselected."
+ *
+ * The dataset carries the legacy destination — `/index.html?stone=&mat=&p=&s=
+ * &slug=#estimator` — which cannot work in this build for two separate
+ * reasons, both measured:
+ *
+ *   1. It lands on the home page, where the film's runway goes up UNDER the
+ *      in-flight fragment scroll and `lockFilm` then absorbs the overshoot
+ *      onto the hero. Final scrollY was 0 in every armed run. The lock is
+ *      latched, one-way and deliberate (useFilm.ts:534), so no fragment below
+ *      the film can survive it. That is the "random section" he is seeing.
+ *   2. Nothing reads `?stone=` any more. The old build's dispatcher
+ *      (assets/site.js:4585-4603) was dropped in the port while BOTH its
+ *      consumers survived, so the parameters arrive and are ignored.
+ *
+ * `/contact/` has no film, no runway and no scrub, and the enquiry card is the
+ * point of the page. `#ctaForm` rather than `#cta` because he asked for the
+ * form: `#cta` puts the copy column on screen and leaves the fields below the
+ * fold on a phone.
+ *
+ * `p` and `s` are dropped: both lookups this feeds (`chipKind` and the
+ * estimator's `findStone`) resolve on slug then name, and neither reads them.
+ * `mat` and `slug` stay because both are keys.
+ *
+ * ⛔ Built here rather than edited into `stones.json` — that file is machine
+ * extracted and carries "must not be hand-edited", so a re-run of the
+ * extractor would put all 792 legacy hrefs straight back.
+ */
+export function stoneEnquiryHref(stone: Pick<StoneRecord, 'name' | 'slug' | 'estimator'>): string {
+  const q = new URLSearchParams({
+    stone: stone.name,
+    mat: stone.estimator.mat,
+    slug: stone.slug,
+  });
+  return `/contact/?${q}#ctaForm`;
+}
+
+/** True for any legacy `/index.html?stone=…` deep link, whatever its hash. */
+export function isLegacyStoneHref(href: string): boolean {
+  return href.startsWith('/index.html?stone=');
+}
+
+/**
+ * The same rewrite for links carried inside a rich-text blob rather than a
+ * `Cta` record — `sections.related.sourceNote` is the one that does.
+ */
+export function rewriteStoneLinks(
+  html: string,
+  stone: Pick<StoneRecord, 'name' | 'slug' | 'estimator'>,
+): string {
+  return html.replace(/\/index\.html\?stone=[^"']*/g, stoneEnquiryHref(stone));
+}
+
+/* -------------------------------------------------------------------------
    The client-side search vocabulary
    -------------------------------------------------------------------------
    Both the collection filter (stones/index.html:280) and the compare picker
