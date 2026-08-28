@@ -801,6 +801,26 @@
   display: flex;
   align-items: center;
   overflow: hidden;
+  /*
+    THE BRAND LOGO LINKS HERE. The client, 28 Aug: "at any point if someone
+    clicks the Topcat Worktops logo icon, it should just take them to the
+    surfaces worth building around section, because that is technically the real
+    hero section of the website." `BRAND_HOME` is `/#hero` (nav-data.ts) and
+    this section carries that id, so it already does — with one correction.
+
+    globals.css puts `scroll-padding-top: 86px` on <html> so the fixed bar never
+    covers the thing you jumped to. That is right for a section in a page and
+    wrong for a hero that IS the viewport: it landed the visitor 86px short of
+    the film's end, which on a 7380px runway is 98.8% — so the film never
+    reached 1, never inked and never locked, and the logo left you stranded just
+    before the end with a runway still above you.
+
+    Cancelling it exactly puts the anchor on the hero's own top. Before the lock
+    that is the film's last frame, which completes it and hands off properly;
+    after the lock the hero is the top of the document and this resolves to 0.
+    Keep the two numbers equal.
+  */
+  scroll-margin-top: -86px;
   --curveR: 48px;
   --curveOut: 14px;
   --navScrim: linear-gradient(

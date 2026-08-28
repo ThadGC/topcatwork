@@ -137,13 +137,13 @@ const RUNWAY = { phone: 550, tablet: 640, wide: 820 } as const;
 /**
  * How long the scroll must be still before the film locks.
  *
- * The lock changes the document's height by several viewports and corrects the
- * scroll by the same amount in the same frame. Doing that into a live momentum
- * animation is a cross-thread fight — the scrolling thread keeps applying
- * momentum to the old offset while the main thread has already re-laid-out for
- * the new one. So it waits until the visitor has actually stopped.
+ * The collapse changes the document height by several viewports. Doing that
+ * inside a live momentum scroll is a cross-thread fight, so it waits for the
+ * visitor to actually stop. What it does NOT do any more is honour where they
+ * stopped — see `lockFilm`.
  */
 const SETTLE_MS = 220;
+
 
 /** Seek deadband: half a film frame. Closer than this and the seek is a no-op
  *  that costs a decode and returns the same picture. */
@@ -453,19 +453,50 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const g = geom.current;
     const runway = refs.runway.current;
     const stage = refs.stage.current;
-    if (locked.current || !g || !runway || !stage) return;
+    const hero = refs.pageHero.current;
+    if (locked.current || !g || !runway || !stage || !hero) return;
     locked.current = true;
 
-    const drop = Math.round(g.filmPx);
-    // Hide the film first, in the same frame, so the collapse happens behind
-    // an already-released stage and cannot be seen.
+    /*
+      ⛔ THE CORRECTION IS MEASURED OFF THE HERO, NOT COMPUTED FROM THE RUNWAY.
+
+      It used to subtract a cached runway height from `window.scrollY`, which
+      preserves the visitor's CONTENT position. That is the wrong thing to
+      preserve, and it produced the worst bug of the rebuild: flick hard at the
+      end of the film and you overshoot the runway by a couple of thousand
+      pixels, the collapse faithfully carries that overshoot into the page, and
+      you land in the middle of the stone selector having never seen the hero.
+      Reproduced at 390x844: the hero ended up 2700px above the viewport.
+
+      The scrolling done during the film is SCRUBBING, not travelling. There is
+      no content position to preserve — there is only "how far through the film"
+      — so an overshoot at the end must be absorbed, not honoured.
+
+      Both branches read the hero's real rect AFTER the collapse rather than
+      predicting it. That is deliberate: browsers do their own scroll anchoring
+      when content above the viewport changes size, and measuring afterwards
+      accounts for whatever the browser already did instead of fighting it or
+      double-counting it.
+    */
+    const beforeTop = hero.getBoundingClientRect().top;
+
     stage.dataset.film = 'done';
     document.documentElement.classList.remove('film-running');
     runway.style.setProperty('--runway', '0px');
-    window.scrollTo({
-      top: Math.max(0, Math.round(window.scrollY - drop)),
-      behavior: 'instant',
-    });
+
+    // One forced layout, once in the page's life. This is the read that makes
+    // the correction exact.
+    const afterTop = hero.getBoundingClientRect().top;
+
+    // ALWAYS the hero, never wherever they happened to stop.
+    //
+    // The runway is film from end to end — there is no content inside it, so
+    // there is no content position worth preserving. Overshoot it by three
+    // thousand pixels on a hard flick and preserving that overshoot drops you
+    // into the middle of the stone selector having never seen the hero, which
+    // is exactly the fault this replaces. Reaching the end of the film means
+    // landing on the hero, and it means that however you got there.
+    if (afterTop) window.scrollBy({ top: afterTop, left: 0, behavior: 'instant' });
 
     cancelAnimationFrame(raf.current);
     raf.current = 0;
@@ -545,10 +576,17 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         }
       }
 
+      /*
+        Complete, and then still for SETTLE_MS.
+
+        Firing on the first complete frame instead was tried and is worse: the
+        collapse lands inside the flick, and every pixel of scroll still to be
+        delivered afterwards is then spent travelling down the page from the
+        hero. Waiting for the visitor to stop costs a fifth of a second and
+        means the correction happens exactly once, against a scroll position
+        that has finished moving.
+      */
       if (ink) {
-        // Complete, and then still for SETTLE_MS. The collapse changes the
-        // document height by several viewports and corrects the scroll by the
-        // same amount in one frame; it must not land inside a momentum scroll.
         const yNow = Math.round(window.scrollY);
         if (yNow !== lastY.current) {
           lastY.current = yNow;
