@@ -278,7 +278,28 @@
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  opacity: var(--veil, 1);
+  /* ⛔ THE FALLBACK IS VEIL_MIN, NOT 1, AND ALL FOUR OF THESE FALLBACKS ARE
+     THE ENGINE'S OWN t=0 VALUES.
+
+     `--veil` is written in one place, useFilm.ts:737, inside the rAF loop —
+     and the loop does not start until `arm()`, which does not run until the
+     whole cut has been fetched as a blob. The frame-0 plate is on screen from
+     first paint. So every scrim spent the entire fetch at a fallback that had
+     nothing to do with the picture underneath it, and then all of them snapped
+     to their real values in a single frame.
+
+     At 1 this scrim is right-weighted BY DESIGN: the 0.92-black blob at
+     96% 93% below, and the 90deg ramp that ends at 0.46 on the right. With
+     `.edge` — the left vignette — still at ITS old fallback of 0, the whole
+     dark mass sat in the bottom right and then jumped to the top left.
+
+     The client, 28 Aug: "the gradient over the image seems to jump from the
+     right to the left side very quickly ... It should automatically start in
+     the top left corner and not in the bottom right corner like it is now."
+
+     `veilValue(0, dur, VEIL_AT, VEIL_MIN)` is exactly VEIL_MIN, because
+     k clamps to 0 below VEIL_AT. Keep this in step with useFilm.ts:154. */
+  opacity: var(--veil, 0.2);
   background:
     radial-gradient(
       70% 66% at 50% 42%,
@@ -320,8 +341,21 @@
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  opacity: var(--navGrade, 0.2);
+  /* The table's own frame 0, not an arbitrary 0.2. `--navGrade` is written
+     only from inside the loop (useFilm.ts:751) as `gradeAt(grade.nav, 0)`, and
+     WIDE_GRADE.nav[0] is 100. Keep in step with lib/grade.ts. */
+  opacity: var(--navGrade, 1);
   background: var(--navScrim), var(--navScrim);
+}
+
+/* The phone plays its own cut and its own grade table: PHONE_GRADE.nav[0] is
+   68. `filmBand()` reads a TABLET as wide, so this must stay at 720 and must
+   never be widened to 1120 — the tablet is on WIDE_GRADE. Equal specificity to
+   the rule above, so the order is load-bearing: this one comes second. */
+@media (max-width: 720px) {
+  .navGrade {
+    opacity: var(--navGrade, 0.68);
+  }
 }
 
 /* ── the edge vignette ──────────────────────────────────────────────────────
@@ -343,7 +377,24 @@
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  opacity: var(--cineEdge, 0);
+  /* ⛔ 1, NOT 0 — THIS IS THE LEFT-HAND HALF OF THE CLIENT'S REPORTED JUMP.
+
+     The engine's value at t=0 is 1 in both branches: wide is
+     `clamp01((x1 + tx) / x1)` with `wipeEase(0) === 0`, narrow is
+     `heroNarrowAlpha(0)`. The old build agrees — its `HERO_EDGE` is 1
+     (index.html:7595). So 1 IS the first frame, and the first PAINTED frame
+     now matches the first DRIVEN one.
+
+     Nothing gets stuck on: the loop writes 0 the moment the wipe ends, an
+     inline custom property beats a stylesheet fallback, and the `done` rule
+     below holds it at 0 from the lock onwards whether the loop ran or not. */
+  opacity: var(--cineEdge, 1);
+}
+
+/* Once the film has locked the stage IS the hero and the vignette is over.
+   Specificity 0-3-0 against `.edge`'s 0-1-0, so this wins wherever it sits. */
+.stage[data-film='done'] .edge {
+  opacity: 0;
 }
 
 @media (min-width: 1121px) {
@@ -404,7 +455,11 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  opacity: 0;
+  /* Part of the t=0 composition, riding out on `--hx` with the opening copy,
+     so 1 is the first frame. At 0 the chips were absent for the whole fetch
+     and popped in on the same tick as the vignette. The loop writes 0 back
+     when the wipe ends (useFilm.ts:862). Wide only; `display:none` below. */
+  opacity: 1;
   transform: translate3d(calc(var(--hx, 0) * 1px), 0, 0) scale(var(--hsc, 1));
   will-change: transform, opacity;
 }
