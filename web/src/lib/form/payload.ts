@@ -134,5 +134,33 @@ export async function postEnquiry(fd: FormData): Promise<void> {
     body: fd,
     headers: { Accept: 'application/json' },
   });
-  if (!r.ok) throw new Error(String(r.status));
+  if (r.ok) return;
+
+  /*
+    ⛔ THE REASON IS READ, NOT DISCARDED.
+
+    This used to be `if (!r.ok) throw new Error(String(r.status))`, so the whole
+    of the route's `errors` array was thrown away and every failure reached the
+    visitor as the same generic "something went wrong, please phone us". A
+    visitor who simply left the name blank was told the site was broken, and a
+    genuinely broken send looked identical to a typo — which is exactly what
+    made the phone-only rejection invisible in the field for as long as it was.
+
+    A 4xx is the visitor's to fix, so its messages are shown. A 5xx is ours, so
+    the caller keeps its own wording and the phone number.
+  */
+  let reasons: string[] = [];
+  if (r.status >= 400 && r.status < 500) {
+    try {
+      const body = (await r.json()) as { errors?: unknown };
+      if (Array.isArray(body?.errors)) {
+        reasons = body.errors.filter((x): x is string => typeof x === 'string' && !!x.trim());
+      }
+    } catch {
+      /* not JSON, or an empty body: fall through to the generic message */
+    }
+  }
+  const err = new Error(String(r.status)) as Error & { reasons?: string[] };
+  if (reasons.length) err.reasons = reasons;
+  throw err;
 }

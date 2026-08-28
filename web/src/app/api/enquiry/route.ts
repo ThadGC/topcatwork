@@ -46,8 +46,20 @@ export const dynamic = 'force-dynamic';
 const FILE_MAX = 50 * 1024 * 1024;
 const TOTAL_MAX = 50 * 1024 * 1024;
 
-/** What the old endpoint refused to send without. */
-const REQUIRED = ['name', 'email'] as const;
+/**
+ * What the old endpoint refused to send without — AND IT IS NOT name+email.
+ *
+ * send.php:120, verbatim:
+ *
+ *     if (mb_strlen($name) < 2 || ($email === '' && $phone === '')) { 422 }
+ *
+ * A name of at least two characters, and AT LEAST ONE WAY TO REPLY. This port
+ * required `name` and `email`, so every enquiry left with only a phone number
+ * was refused — on a site whose own form offers a phone field and whose live
+ * predecessor accepts exactly that. Those are real leads, and they were being
+ * turned away with a validation error.
+ */
+const MIN_NAME = 2;
 
 export interface EnquiryResult {
   ok: boolean;
@@ -96,10 +108,19 @@ export async function POST(request: Request): Promise<NextResponse<EnquiryResult
     files.push({ field: key, file: value });
   }
 
-  for (const key of REQUIRED) {
-    if (!fields[key] || !fields[key].trim()) errors.push(`Missing: ${key}.`);
+  /* send.php:120's rule, in the same order, with messages a visitor can act
+     on rather than the old `Missing: name.` */
+  const name = (fields.name || '').trim();
+  const email = (fields.email || '').trim();
+  const phone = (fields.phone || '').trim();
+  if (name.length < MIN_NAME) {
+    errors.push('Please tell us your name.');
   }
-  if (fields.email && !EMAIL.test(fields.email.trim())) {
+  if (!email && !phone) {
+    errors.push('Please leave an email address or a phone number so we can reply.');
+  }
+  /* Only when they actually gave one. A phone-only enquiry never reaches this. */
+  if (email && !EMAIL.test(email)) {
     errors.push('That email address does not look right.');
   }
   if (attachmentBytes > TOTAL_MAX) {

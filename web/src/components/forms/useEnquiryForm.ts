@@ -126,8 +126,14 @@ export function useEnquiryForm(opts: UseEnquiryFormOptions): EnquiryForm {
           form.reset();
           opts.onSent?.();
         })
-        .catch(() => {
-          setNote({ message: MSG.failed, kind: 'bad' });
+        .catch((e: unknown) => {
+          /* The route says WHICH detail it could not accept; show that rather
+             than the generic failure. See postEnquiry in lib/form/payload.ts. */
+          const reasons = (e as { reasons?: string[] } | null)?.reasons;
+          setNote({
+            message: reasons && reasons.length ? reasons.join(' ') : MSG.failed,
+            kind: 'bad',
+          });
         })
         .then(() => {
           setSending(false);
