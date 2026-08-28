@@ -144,6 +144,7 @@ export function HeroFilm({
   const trustRef = useRef<HTMLDivElement>(null);
   const skip = useRef<HTMLButtonElement>(null);
   const heroOut = useRef<HTMLElement>(null);
+  const heroSpace = useRef<HTMLDivElement>(null);
 
   // One stable object — a new identity per render would tear the film down and
   // rebuild it on every parent render.
@@ -158,6 +159,7 @@ export function HeroFilm({
     heroCopy,
     trust: trustRef,
     pageHero: heroOut,
+    heroSpace,
     skip,
   });
   const sources = useRef<FilmSources>({ ...DEFAULT_SOURCES, ...srcProp });
@@ -330,6 +332,21 @@ export function HeroFilm({
           {skipLabel}
         </button>
 
+        {/*
+          THE PAGE'S OWN HERO — inside the stage, and released at 93% of the
+          film so it is already in place before the picture settles.
+
+          `id="hero"` is here, so every `#hero …` rule in globals.css keeps
+          working. There is no separate overlay image: the client asked for it
+          to go — "the end of the video is just what it is for the hero
+          section" — so what is behind this copy is the film's own final frame,
+          still on screen, which is why there is nothing left to jump.
+        */}
+        <section className={css.pageHero} id="hero" ref={heroOut}>
+          <TcDefs />
+          <div className={css.heroInner}>{hero}</div>
+        </section>
+
       </div>
 
       <main>
@@ -370,49 +387,22 @@ export function HeroFilm({
           back through. Reaching the end is one-way, and a refresh is what
           replays it — which is the behaviour the client asked for.
         */}
-        <section className={css.hero} id="hero" ref={heroOut}>
-          <div className={css.heroBg} aria-hidden="true">
-            {/*
-              THE END OVERLAY. The client, 28 Aug: "the end does have an overlay
-              image, which you have left there, which is correct … the new
-              overlay image at the end marks the end of the video and the start
-              of the animation."
+        {/*
+          THE SPACE THE HERO OCCUPIES IN FLOW.
 
-              So it is DELIBERATE that the picture changes here — it is the cue
-              that the film is over. What must not change is the grade: the
-              scrims below hold it at exactly the darkness the film's veil
-              reaches on its last frame.
+          Empty. The hero's picture and copy are inside the stage, which is what
+          lets the copy arrive OVER the film before it has finished — the client,
+          28 Aug: "shortly before its end, as the kitchen is almost settling into
+          its final position, the surfaces worth building around should have come
+          up already." A block that only exists after the film cannot do that.
 
-              WORTH KNOWING, because it was measured and is easy to misread as a
-              bug later: this still is a DIFFERENT RENDER from the film's own
-              final frame, not an export of it — 26.6dB against the last frame
-              of the shipped encode, the same scene from a near-identical
-              camera. If a seamless picture handoff is ever wanted instead of a
-              marked one, cut the frame straight out of the encode.
-            */}
-            <img
-              className={css.heroPic}
-              src={STILL.src}
-              srcSet={STILL.srcSet}
-              sizes={STILL.sizes}
-              width={2752}
-              height={1536}
-              alt=""
-              draggable={false}
-              decoding="async"
-            />
-            <div className={css.heroShade} />
-            <div className={css.heroNav} />
-          </div>
-          {/*
-            The two gold gradients, first child of the hero as the source has
-            them. `.wbtn svg` fills with `url(#tcGoldSolid)` and the "Free home
-            visit" chip strokes with `url(#tcGold)`; a `url(#id)` paint resolves
-            against the document, so with no <defs> the icon disappears.
-          */}
-          <TcDefs />
-          <div className={css.heroInner}>{hero}</div>
-        </section>
+          So the stage IS the hero. It is `position: fixed` while the film runs
+          and becomes `position: absolute` at the lock, at which moment the
+          scroll is already at the top of this box — so the two render
+          identically and nothing moves. After that it scrolls away like any
+          other section. This reserves its one viewport in the document.
+        */}
+        <div className={css.heroSpace} ref={heroSpace} aria-hidden="true" />
 
         {/* A beat after the hero before the page starts, so reaching the end
             of the film does not run straight on into the next section. */}

@@ -100,6 +100,8 @@
   */
   z-index: 2;
   overflow: hidden;
+  --curveR: 48px;
+  --curveOut: 14px;
   /* No background. The film covers the stage edge to edge, and behind it is the
      site's own marble floor (`body::before`) rather than a flat colour — which
      is what shows for the moment before the first frame decodes. */
@@ -108,12 +110,65 @@
   pointer-events: none;
 }
 
-/* Released: the film is over, or it never started. The stage stops painting
-   entirely rather than sitting behind the page decoding a video nobody can
-   see. `visibility` and not `display` so there is no layout work either way. */
+/* ⛔ THE STAGE STOPS BEING FIXED AT THE LOCK. IT DOES NOT DISAPPEAR.
+
+   It IS the hero. While the film runs it is pinned to the viewport; the moment
+   the film locks, the runway collapses, the scroll lands on the top of the
+   hero's reserved space, and this becomes `position: absolute` at the document
+   top. At scroll 0 a fixed box at top 0 and an absolute box at document top 0
+   render at exactly the same place, so the switch is invisible — and from then
+   on it scrolls away like any other section.
+
+   That is the only arrangement that satisfies both halves of what the client
+   asked for: the copy has to arrive OVER the film before it settles, which
+   needs it pinned; and afterwards "this becomes a new hero section, and then it
+   scrolls down from here like a regular website", which needs it not to be.
+
+   `off` is the same geometry: no film ever ran, so the still is the hero and it
+   sits at the top of the page. */
 .stage[data-film='done'],
 .stage[data-film='off'] {
-  visibility: hidden;
+  position: absolute;
+  top: 0;
+}
+
+/* The curve divider belongs to the hero, so it appears when the stage becomes
+   one. During the film the stage is the whole viewport and has no bottom edge
+   to draw. */
+.stage[data-film='done']::after,
+.stage[data-film='off']::after {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--curveOut, 14px));
+  right: calc(-1 * var(--curveOut, 14px));
+  bottom: 0;
+  height: calc(var(--curveR, 48px) + 1px);
+  border: 0 solid var(--hair);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-bottom-left-radius: var(--curveR, 48px);
+  border-bottom-right-radius: var(--curveR, 48px);
+  z-index: 7;
+  pointer-events: none;
+}
+
+/* …and the picture is clipped to the same arc. Expanded sideways with NEGATIVE
+   insets so the clip widens without the picture's box changing — widening the
+   box would change its cover fit and move the frame at the very moment it must
+   not move. */
+.stage[data-film='done'] .frame,
+.stage[data-film='off'] .frame {
+  clip-path: inset(
+    0 calc(-1 * var(--curveOut, 14px)) 0 calc(-1 * var(--curveOut, 14px))
+      round 0 0 var(--curveR, 48px) var(--curveR, 48px)
+  );
+}
+
+/* The still is the hero only when no film ever ran. */
+.stage[data-film='on'] .still,
+.stage[data-film='done'] .still {
+  opacity: 0;
 }
 
 /* Everything below the runway.
@@ -1021,247 +1076,65 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   THE HERO — a real section, in normal flow, and the end of the film.
+   THE HERO
 
-   It is NOT pinned and it is NOT in the stage. It sits immediately after the
-   runway, so at the film's last frame it is exactly filling the viewport. Up to
-   that point it rises into view BEHIND the stage — fixed, opaque, covering the
-   viewport — so it is never seen sliding up. When the film releases it is
-   already in place and only the copy animates: it settles onto the picture
-   rather than arriving with it.
-
-   ── the grade must NOT change at the handoff ────────────────────────────────
-   The picture DOES change here, and that is deliberate: the end overlay is the
-   cue that the film is over. The client, 28 Aug: "the end does have an overlay
-   image, which you have left there, which is correct … but the gradient should
-   not change. Even on that overlay image, the gradient must still be there."
-
-   So the scrims below are not this section's own design. They are the FILM'S,
-   copied at the values it reaches on its last frame: `.heroShade` is the
-   stage's `.shade` stack at the opacity its veil ramps to by the end (1), and
-   `.heroNav` is its nav scrim at the value the offline grade table holds for
-   the final frame — 0.75 wide, 0.20 phone.
-
-   Get either wrong and the screen brightens as the film releases, which is
-   what "it is glitching into the lighter picture" was. If the film's veil, its
-   ramp (VEIL_AT) or the grade table ever move, these two move with them.
+   The stage is the hero — see the note on `[data-film='done']` above. What is
+   here is the one viewport of document the hero occupies, the copy block inside
+   the stage, and the beat it arrives on.
    ══════════════════════════════════════════════════════════════════════════ */
 
-.hero {
+/* The space the hero takes up in normal flow. Empty: the picture and the copy
+   are in the stage, which overlays this exactly once the film has locked. */
+.heroSpace {
   position: relative;
-  z-index: 1;
-  min-height: 100vh;
+  height: 100vh;
+}
+
+/* ── the copy ───────────────────────────────────────────────────────────────
+   Released at 93% of the film — while the picture is still settling, not after
+   it has stopped. The client, 28 Aug: "shortly before its end, as the kitchen
+   is almost settling into its final position, then the surfaces worth building
+   around should have come up already just before it settles in. And then it's
+   already there."
+
+   That is the old build's `INK_AT` of 0.93, and it is the reason the copy has
+   to live in the stage rather than in a section below it: a block that only
+   exists after the film cannot appear during it.
+   -------------------------------------------------------------------------- */
+.pageHero {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  /*
-    THE BRAND LOGO LINKS HERE. The client, 28 Aug: "at any point if someone
-    clicks the Topcat Worktops logo icon, it should just take them to the
-    surfaces worth building around section, because that is technically the real
-    hero section of the website." `BRAND_HOME` is `/#hero` (nav-data.ts) and
-    this section carries that id, so it already does — with one correction.
-
-    globals.css puts `scroll-padding-top: 86px` on <html> so the fixed bar never
-    covers the thing you jumped to. That is right for a section in a page and
-    wrong for a hero that IS the viewport: it landed the visitor 86px short of
-    the film's end, which on a 7380px runway is 98.8% — so the film never
-    reached 1, never inked and never locked, and the logo left you stranded just
-    before the end with a runway still above you.
-
-    Cancelling it exactly puts the anchor on the hero's own top. Before the lock
-    that is the film's last frame, which completes it and hands off properly;
-    after the lock the hero is the top of the document and this resolves to 0.
-    Keep the two numbers equal.
-  */
-  scroll-margin-top: -86px;
-  --curveR: 48px;
-  --curveOut: 14px;
-  /* ⛔ ALL TWELVE STOPS. Five intermediate ones were trimmed as redundant and
-     they are not: the curve is convex, so interpolating linearly between the
-     survivors sits ABOVE it and the whole scrim comes out darker. Measured as
-     part of a 12% brightness gap against the old build at the locked hero. */
-  --navScrim: linear-gradient(
-    to bottom,
-    rgba(7, 7, 9, 0.6) 0%,
-    rgba(7, 7, 9, 0.555) 2.4%,
-    rgba(7, 7, 9, 0.474) 5.1%,
-    rgba(7, 7, 9, 0.378) 7.5%,
-    rgba(7, 7, 9, 0.282) 10.2%,
-    rgba(7, 7, 9, 0.198) 12.6%,
-    rgba(7, 7, 9, 0.126) 15%,
-    rgba(7, 7, 9, 0.078) 17.4%,
-    rgba(7, 7, 9, 0.042) 20.1%,
-    rgba(7, 7, 9, 0.018) 22.5%,
-    rgba(7, 7, 9, 0.006) 25.2%,
-    rgba(7, 7, 9, 0) 30%
-  );
-}
-
-/* ── the curve ──────────────────────────────────────────────────────────────
-   ⛔ THE CLIP IS EXPANDED SIDEWAYS BY NEGATIVE INSETS, and the picture box is
-   NOT. That distinction is the whole fix.
-
-   The original made the background box itself 2 x --curveOut wider than the
-   hero and rounded that, so the curve's corners start outside the viewport and
-   only part of the arc is visible — a shallower, wider sweep than a plain 48px
-   radius. Reproducing it by widening the box here would ALSO change the
-   picture's cover fit by ~2% against the film's, which is a visible jump at
-   the handoff on the one frame that must not have one.
-
-   `inset()` takes negative values, so the clip region can be pushed out past
-   the box while the box stays exactly the viewport. Same arc, same picture.
-   -------------------------------------------------------------------------- */
-.heroBg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  clip-path: inset(
-    0 calc(-1 * var(--curveOut)) 0 calc(-1 * var(--curveOut))
-      round 0 0 var(--curveR) var(--curveR)
-  );
-}
-
-/* The end overlay's own framing, as the design has always had it: pushed right
-   so the island sits under the copy, at the 1.08 scale the still hero carries
-   everywhere else on the site. */
-.heroPic {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: 72% 50%;
-  transform: scale(1.08);
-}
-
-.heroShade {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
   pointer-events: none;
-  background:
-    radial-gradient(
-      70% 66% at 50% 42%,
-      rgba(7, 7, 9, 0.7) 0%,
-      rgba(7, 7, 9, 0.36) 62%,
-      rgba(7, 7, 9, 0) 100%
-    ),
-    radial-gradient(280px 220px at 96% 93%, rgba(7, 7, 9, 0.92), transparent 72%),
-    linear-gradient(
-      90deg,
-      rgba(7, 7, 9, 0.26) 0%,
-      rgba(7, 7, 9, 0.3) 40%,
-      rgba(7, 7, 9, 0.46) 100%
-    ),
-    linear-gradient(to top, rgba(7, 7, 9, 0.9) 2%, rgba(7, 7, 9, 0) 32%),
-    var(--navScrim);
+  opacity: 0;
 }
 
-/* The nav scrim at the value the grade table holds for the film's last frame. */
-.heroNav {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  /* 0.71, read straight off the old build in its locked state, not guessed:
-     `.hero-navgrade` computed opacity at `cine-done`. */
-  opacity: 0.71;
-  background: var(--navScrim), var(--navScrim);
+.pageHero[data-ink] {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-@media (max-width: 720px) {
-  .heroNav {
-    opacity: 0.2;
-  }
-}
-
-/* ⛔ THE DIVIDER. The client, 28 Aug: "the divider that used to be, or the
-   border of the hero section, is no longer there … there should be a divider
-   between that and the hearing from your neighbours section", and then: "the
-   hero section's divider is currently broken. It should follow that curve as
-   it used to."
-
-   It is the hero's own bottom edge: two rounded corners and a hairline, the
-   same shape the nav bar carries. It reaches --curveOut past the hero on each
-   side so its arc is the same arc the clip above cuts — the two have to be
-   drawn from the same geometry or the hairline sits off the edge it is
-   supposed to trace, which is what "broken" looked like.
-
-   Static. The old build drove the radius from JavaScript over the last 10% of
-   the film, which is a per-frame write to a property the compositor cannot
-   animate, and nothing about it ever needed to move. */
-.hero::after {
-  content: '';
-  position: absolute;
-  left: calc(-1 * var(--curveOut));
-  right: calc(-1 * var(--curveOut));
-  bottom: 0;
-  height: calc(var(--curveR) + 1px);
-  border: 0 solid var(--hair);
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-bottom-left-radius: var(--curveR);
-  border-bottom-right-radius: var(--curveR);
-  z-index: 4;
-  pointer-events: none;
-}
-
-/* ── the hold after the hero ────────────────────────────────────────────────
-   The client, 28 Aug: "add a dead scroll on the surfaces worth building around
-   section so that it doesn't just skip right past and go down."
-
-   ⚠️ THIS IS NEW, NOT A RESTORATION. Measured on the old build at 1600x1000:
-   its hero is exactly one viewport and the reviews start at the very next
-   pixel, gap 0. So this is a deliberate addition, and it is the reason the
-   number is a round 40vh rather than something recovered from anywhere.
-
-   It sits AFTER the hero's own box, on the site's marble floor, so the curve
-   divider stays on the picture's bottom edge where it belongs and the hero
-   still hands its geometry to the film unchanged.
-   -------------------------------------------------------------------------- */
-.heroHold {
-  position: relative;
-  z-index: 1;
-  height: 40vh;
-  pointer-events: none;
-}
-
-/* ── the copy, arriving as ONE OBJECT ───────────────────────────────────────
-   The client, 28 Aug: "the surfaces worth building around and chosen from the
-   slab you approve, and the buttons and everything must animate in together as
-   if they are growing from the center quite quickly, but not too quickly."
-
-   So the whole block fades and grows from 0.88 to 1, once, and the per-element
-   stagger below is suppressed. `globals.css` gives every `.hero-el` its own
-   `--hd` delay of 180/340/560/720/880ms, which is right when the hero is the
-   first thing on a page and wrong here — it made the parts click into place
-   one after another instead of the block settling as a whole. The old build
-   suppressed it over the film for exactly this reason.
-
-   The delay is the beat between the picture landing and the words arriving:
-   "the image must settle, and then the words must animate in."
-   -------------------------------------------------------------------------- */
 .heroInner {
   position: relative;
-  z-index: 3;
+  z-index: 1;
   width: 100%;
   max-width: 1320px;
   margin: 0 auto;
   --heroPadB: clamp(72px, 10.8vh, 132px);
   padding: max(72px, calc(var(--heroPadB) - var(--hTitle, 72px) * 0.1234))
     clamp(20px, 5vw, 64px) var(--heroPadB);
+  /* Grows from the centre, as one object. */
   opacity: 0;
   transform: scale(0.88);
   transform-origin: center center;
   transition:
-    opacity 0.72s var(--ease) 260ms,
-    transform 0.72s var(--ease) 260ms;
+    opacity 0.72s var(--ease),
+    transform 0.72s var(--ease);
 }
 
-.hero[data-ink] .heroInner {
+.pageHero[data-ink] .heroInner {
   opacity: 1;
   transform: none;
 }
@@ -1270,11 +1143,10 @@
 
    ⛔ `!important`, DELIBERATELY. globals.css keys the per-element entrance on
    `#hero .hero-el` (1,0,1) and `#hero.loaded .hl > .hero-el` (1,3,0) — both
-   carry the ID, so no class selector written here can outrank them. Without
-   the override the block faded in while its children were still running their
-   own 180/340/560/720/880ms cascade, and the hero arrived as a headline first
-   and everything else afterwards. The same file already uses `!important` on
-   these two selectors for the reduced-motion case, for the same reason. */
+   carry the ID, so no class selector written here can outrank them. Without the
+   override the block faded in while its children were still running their own
+   180/340/560/720/880ms cascade, and the hero arrived as a headline first and
+   everything else afterwards. */
 .heroInner :global(.hero-el),
 .heroInner :global(.hl) > :global(.hero-el) {
   opacity: 1 !important;

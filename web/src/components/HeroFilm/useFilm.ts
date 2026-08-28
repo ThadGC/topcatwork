@@ -166,6 +166,8 @@ export interface FilmRefs {
   trust: React.RefObject<HTMLDivElement | null>;
   /** The PAGE's hero — the h1, the CTAs, the chips. Released at 93%. */
   pageHero: React.RefObject<HTMLElement | null>;
+  /** The one viewport the hero occupies in normal flow. The lock's anchor. */
+  heroSpace: React.RefObject<HTMLDivElement | null>;
   skip: React.RefObject<HTMLButtonElement | null>;
 }
 
@@ -472,49 +474,36 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const g = geom.current;
     const runway = refs.runway.current;
     const stage = refs.stage.current;
-    const hero = refs.pageHero.current;
-    if (locked.current || !g || !runway || !stage || !hero) return;
+    const space = refs.heroSpace.current;
+    if (locked.current || !g || !runway || !stage || !space) return;
     locked.current = true;
 
     /*
-      ⛔ THE CORRECTION IS MEASURED OFF THE HERO, NOT COMPUTED FROM THE RUNWAY.
+      THE STAGE STOPS BEING FIXED AND BECOMES THE HERO.
 
-      It used to subtract a cached runway height from `window.scrollY`, which
-      preserves the visitor's CONTENT position. That is the wrong thing to
-      preserve, and it produced the worst bug of the rebuild: flick hard at the
-      end of the film and you overshoot the runway by a couple of thousand
-      pixels, the collapse faithfully carries that overshoot into the page, and
-      you land in the middle of the stone selector having never seen the hero.
-      Reproduced at 390x844: the hero ended up 2700px above the viewport.
+      `data-film="done"` switches it to `position: absolute; top: 0` and gives
+      it the curve. The runway collapses to nothing in the same frame, and the
+      scroll lands on the top of the hero's reserved space — which, with the
+      runway gone, is the top of the document. A fixed box at top 0 and an
+      absolute box at document top 0 with the scroll at 0 are the same place, so
+      there is nothing to see. From here it scrolls away like any other section.
 
-      The scrolling done during the film is SCRUBBING, not travelling. There is
-      no content position to preserve — there is only "how far through the film"
-      — so an overshoot at the end must be absorbed, not honoured.
-
-      Both branches read the hero's real rect AFTER the collapse rather than
-      predicting it. That is deliberate: browsers do their own scroll anchoring
-      when content above the viewport changes size, and measuring afterwards
-      accounts for whatever the browser already did instead of fighting it or
+      The correction is measured off the reserved space AFTER the collapse
+      rather than computed from a cached height: browsers do their own scroll
+      anchoring when content above the viewport changes size, and measuring
+      afterwards accounts for whatever the browser already did instead of
       double-counting it.
-    */
-    const beforeTop = hero.getBoundingClientRect().top;
 
+      ALWAYS the hero, never wherever they happened to stop. The runway is film
+      from end to end, so there is no content position inside it worth
+      preserving — honour an overshoot and a hard flick drops the visitor into
+      the middle of the page having never seen the hero.
+    */
     stage.dataset.film = 'done';
     document.documentElement.classList.remove('film-running');
     runway.style.setProperty('--runway', '0px');
 
-    // One forced layout, once in the page's life. This is the read that makes
-    // the correction exact.
-    const afterTop = hero.getBoundingClientRect().top;
-
-    // ALWAYS the hero, never wherever they happened to stop.
-    //
-    // The runway is film from end to end — there is no content inside it, so
-    // there is no content position worth preserving. Overshoot it by three
-    // thousand pixels on a hard flick and preserving that overshoot drops you
-    // into the middle of the stone selector having never seen the hero, which
-    // is exactly the fault this replaces. Reaching the end of the film means
-    // landing on the hero, and it means that however you got there.
+    const afterTop = space.getBoundingClientRect().top;
     if (afterTop) window.scrollBy({ top: afterTop, left: 0, behavior: 'instant' });
 
     cancelAnimationFrame(raf.current);
@@ -569,7 +558,24 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         the scroll PAST the end of the runway rather than to 99.9% of it — at
         99.9% everything looks right, which is exactly why it was missed.
       */
-      const ink = p >= 1;
+      /*
+        ⛔ TWO DIFFERENT MOMENTS, AND THEY ARE NOT THE SAME NUMBER.
+
+        `ink` is when the copy arrives: 93%, while the picture is still
+        settling. The client, 28 Aug: "shortly before its end, as the kitchen is
+        almost settling into its final position, then the surfaces worth
+        building around should have come up already just before it settles in.
+        And then it's already there." That is the old build's INK_AT, and it is
+        why the copy lives inside the stage — at 0.93 the film is still moving,
+        so the copy has to be pinned over it. Releasing it at 1 instead made the
+        hero appear only once everything had stopped, which reads as a jump.
+
+        `complete` is when the film is over and the runway may collapse. Both
+        were one variable and the lock fired at whatever the copy's threshold
+        was; separating them is what lets the copy lead the ending.
+      */
+      const ink = p >= 0.93;
+      const complete = p >= 1;
       if (ink !== memo.current.ink) {
         memo.current.ink = ink;
         const ph = refs.pageHero.current;
@@ -605,7 +611,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         means the correction happens exactly once, against a scroll position
         that has finished moving.
       */
-      if (ink) {
+      if (complete) {
         const yNow = Math.round(window.scrollY);
         if (yNow !== lastY.current) {
           lastY.current = yNow;
@@ -825,6 +831,16 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       console.error('[hero film] refusing to mount — ' + safe.why);
       return;
     }
+
+    /*
+      The film IS going to run, so say so now rather than when the blob lands.
+      `data-film` ships as `off`, which is the correct no-JavaScript state — the
+      still as the hero at the top of the page — but leaving it there for the
+      seconds the fetch takes would show the visitor the night kitchen and then
+      swap it for the quarry. Flipping here puts the plate on screen as the
+      first paint, which is what it is for.
+    */
+    stage.dataset.film = 'on';
 
     let cancelled = false;
     let objectUrl = '';
