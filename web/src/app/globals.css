@@ -176,10 +176,6 @@
   }
 }
 
-:root {
-  --heroScale: 1;
-}
-
 /* -------------------------------------------------------------------------
    2. RESET + DOCUMENT BASE  (§1.4)
    ------------------------------------------------------------------------- */
@@ -322,13 +318,13 @@ body[data-tokens='content']::before {
    assets/site.js writes 54 custom properties via element.style.setProperty(),
    most of them on every animation frame. They CANNOT become Tailwind
    utilities — a class name cannot be rewritten 60 times a second, and
-   `calc(86.4 * var(--filmU,1px))` is not expressible with @apply.
+   `calc(86.4 * var(--filmU,1px))` was not expressible with @apply.
 
    Every consumer in the source reads them as `var(--x, fallback)`. THE
-   FALLBACK IS THE PRE-JS / JS-OFF STATE AND IS LOAD-BEARING: fail() at
-   removeProperty('--navGrade') precisely so the fallbacks take over when the
-   film cannot start. Copy the `var(--x, fallback)` form byte-for-byte into
-   every rule you write.
+   FALLBACK IS THE PRE-JS / JS-OFF STATE AND IS LOAD-BEARING: the film's own
+   fail() path called removeProperty() precisely so the fallbacks took over
+   when it could not start. Copy the `var(--x, fallback)` form byte-for-byte
+   into every rule you write.
 
    Declared below: the document-level properties whose fallback is a single
    unambiguous value. Declaring them here is behaviour-identical to the
@@ -347,14 +343,13 @@ body[data-tokens='content']::before {
                    load-bearing. Do not invent a declaration.
    ------------------------------------------------------------------------- */
 :root {
-  /* --- film unit + framing (site.js:2892-2894) ------------------------- */
-  --filmU: 1px; /* max(bg.w/fw, bg.h/fh); drives 12 declarations */
-  --filmX: 0px; /* (bg.width  - fw*sc) / 2 */
-  --filmY: 0px; /* (bg.height - fh*sc) / 2 */
-
-  /* --- film grade channels --------------------------------------------- */
-  --navGrade: 0; /* site.js:3014  removed by fail() -> back to 0 */
-
+  /* --- the hero film's channels lived here -----------------------------
+     --filmU / --filmX / --filmY (the film unit and framing, site.js:2892-2894),
+     --navGrade, --cineVeil, --cineCurve, --cineEdge and the per-line
+     --lz/--lx/--lg/--lsc/--hz/--tx. ⛔ ALL STRIPPED 28 Aug 2026 with the film.
+     Their declarations and what each one drove are recorded in
+     ~/Documents/TOPCAT-FILM-SPEC/FILM-SPEC.md §4 and in the CSS archived at
+     code-snapshot/film-css-outside-the-module.css. ------------------------ */
 
   /* --- services fit (site.js:403/406/415) ------------------------------ */
   --svcFit: 1;

@@ -183,10 +183,11 @@ describe('globals.css — the two token roots', () => {
 
 describe('globals.css — CSS -> JS channel properties', () => {
   it('declares every property site.js reads back with getComputedStyle', () => {
+    // ⛔ --cineHold / --cineVeilAt / --cineVeilMin were on this list until the
+    // hero film was stripped out on 28 Aug 2026. They are read back with
+    // getComputedStyle by whatever drives the film, so they belong here again
+    // the moment it returns — see ~/Documents/TOPCAT-FILM-SPEC/FILM-SPEC.md §6.
     for (const prop of [
-      '--cineHold',
-      '--cineVeilAt',
-      '--cineVeilMin',
       '--galMode',
       '--svcMode',
       '--faqMode',
@@ -226,20 +227,34 @@ describe('globals.css — CSS -> JS channel properties', () => {
 });
 
 describe('globals.css — runtime-written properties', () => {
-  it('declares the document-level ones at their CSS fallback value', () => {
-    expect(GLOBALS_CODE).toContain('--filmU: 1px');
-    expect(GLOBALS_CODE).toContain('--filmX: 0px');
-    expect(GLOBALS_CODE).toContain('--filmY: 0px');
-    // fail() removeProperty()s these two; the declarations must equal the
-    // fallbacks or the film-off state changes.
-    expect(GLOBALS_CODE).toContain('--cineVeil: 1');
-    expect(GLOBALS_CODE).toContain('--navGrade: 0');
-  });
+  /*
+    ⛔ THE HERO FILM'S CHANNELS WERE ASSERTED HERE AND WERE STRIPPED OUT ON
+    28 Aug 2026 WITH THE FILM:
 
-  it('keeps --cineGoldTop/Mid/Low, which JS never writes', () => {
-    expect(GLOBALS_CODE).toContain('--cineGoldTop: #e4cd92');
-    expect(GLOBALS_CODE).toContain('--cineGoldMid: #c6a664');
-    expect(GLOBALS_CODE).toContain('--cineGoldLow: #bc9a54');
+      --filmU: 1px  --filmX: 0px  --filmY: 0px   the film unit and framing
+      --cineVeil: 1   --navGrade: 0              removed by fail(), so the
+                                                 declarations had to equal the
+                                                 fallbacks or the film-off
+                                                 state changed
+      --cineGoldTop/Mid/Low                      the story lines' gold, never
+                                                 written by JS
+
+    All five rules are recorded in ~/Documents/TOPCAT-FILM-SPEC/FILM-SPEC.md.
+    Re-assert them here when the film comes back; the reason they were pinned
+    (a removeProperty() must land back on the same value the fallback gives)
+    has not changed.
+  */
+  it('still leaves the element-scoped channels off :root', () => {
+    // These were always element-scoped, film or no film, and a :root
+    // declaration would shadow the per-element fallbacks.
+    const rootBlocks = [...GLOBALS_CODE.matchAll(/:root\s*\{([^}]*)\}/g)].map(
+      (m) => m[1],
+    );
+    expect(rootBlocks.length).toBeGreaterThan(0);
+    for (const block of rootBlocks) {
+      expect(block).not.toMatch(/--lz\s*:/);
+      expect(block).not.toMatch(/--lsc\s*:/);
+    }
   });
 });
 
