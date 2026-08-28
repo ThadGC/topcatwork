@@ -423,17 +423,37 @@ describe('Process', () => {
     }
   });
 
-  it('opens the step modal with that step’s detail copy', () => {
-    const { container } = render(<Process />);
-    const modal = container.querySelector('#procModal') as HTMLElement;
+  /**
+   * ⛔ QUERIED OFF `baseElement`, NOT `container`, AND THAT IS THE POINT.
+   *
+   * The modal is portalled to <body> — the port of site.js:279's
+   * `document.body.appendChild(modal)`, which the film rebuild had dropped.
+   * Rendered inside `section#process` it was trapped in that section's
+   * stacking context (`z-index:1`), so its own `z-index:120` counted for
+   * nothing against the rest of the page: the section divider's `width:100vw`
+   * hairline and travelling sheen painted straight across the open card, and
+   * the fixed header and sticky bar painted over its ends — the close button
+   * was not merely clipped, the pixel under it belonged to the nav burger.
+   *
+   * So the parent is asserted here. If anyone moves this back inside the
+   * section, this test fails rather than the client finding it again.
+   */
+  it('opens the step modal with that step’s detail copy, portalled to <body>', () => {
+    const { container, baseElement } = render(<Process />);
+    const modal = baseElement.querySelector('#procModal') as HTMLElement;
+    expect(modal).toBeTruthy();
+    expect(modal.parentElement).toBe(document.body);
+    expect(container.querySelector('#procModal')).toBeNull();
     expect(modal.hidden).toBe(true);
 
     fireEvent.click(container.querySelector('.pt-a')!);
     expect(modal.hidden).toBe(false);
-    expect(container.querySelector('#pmTitle')?.textContent).toBe(
+    expect(baseElement.querySelector('#pmTitle')?.textContent).toBe(
       PROCESS[0].t,
     );
-    expect(container.querySelectorAll('#pmPoints li')).toHaveLength(3);
+    expect(baseElement.querySelectorAll('#pmPoints li')).toHaveLength(3);
+    // The scroller the close button now sits outside of.
+    expect(modal.querySelector('.pm-scroll')).toBeTruthy();
   });
 
   it('does not make the aftercare banner a button', () => {

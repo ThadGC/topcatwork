@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { PROCESS, PROC_COPY, PROC_DETAIL } from '@/data/home/process';
 import { srcSet } from '@/data/home/srcset';
@@ -41,6 +42,13 @@ export default function Process() {
   const sectionRef = useReveal<HTMLElement>();
   const flowRef = useRef<HTMLDivElement | null>(null);
   const [detail, setDetail] = useState<number | null>(null);
+  /* The modal is portalled to <body>, so it can only render once there IS a
+     body to portal into. The old build has the same shape for the same
+     reason: site.js builds the element at runtime and appends it, so it is
+     absent from the served HTML too, and rendering it on the server here
+     would be a guaranteed hydration mismatch. */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const lastFocus = useRef<Element | null>(null);
 
   useCursorGlow(flowRef, '.ptile');
@@ -203,7 +211,7 @@ export default function Process() {
   const d = detail === null ? null : PROC_DETAIL[detail];
   const p = detail === null ? null : PROCESS[detail];
 
-  return (
+  const section = (
     <section className="section" id="process" ref={sectionRef}>
       <div className="section-head rise">
         <h2 className="section-title">
@@ -294,30 +302,70 @@ export default function Process() {
         </div>
       </div>
 
-      {/* ---------------------------------------------------- the modal */}
+    </section>
+  );
+
+  /*
+    ⛔ PORTALLED TO <body>. THIS IS THE PORT OF assets/site.js:279,
+    `document.body.appendChild(modal)`, WHICH THE REBUILD DROPPED.
+
+    Rendered in place, the modal sits inside `section#process`, and that
+    section is `position:relative;z-index:1` (home-sections.css:638), so it
+    opens a stacking context. `.pmodal`'s own `z-index:120` is then resolved
+    INSIDE it, and against the rest of the page the entire modal is worth
+    exactly 1. Two visible faults follow, both reported by the client:
+
+      - `.section-divider` is a SIBLING of #process at `z-index:2`
+        (home-sections.css:435) and is `width:100vw`, so its gold hairline and
+        its travelling `.sd-line::after` sheen paint straight across the open
+        card, edge to edge. That is "there's not supposed to be a line going
+        through these cards".
+      - `header.bar` (z 50) and `.mbar` (z 39) are direct children of <body> in
+        the ROOT stacking context, so BOTH paint over the card and its veil.
+        That is why the close button reads as half cut and why the last
+        paragraph runs under the sticky bar. Measured: the pixel under the
+        "x" belonged to `button#navBurger`, so tapping close opened the nav.
+
+    <body> is `position:static;z-index:auto` and makes no stacking context, so
+    once the modal is a child of it the existing 120 competes at the root and
+    beats all three. No CSS changes hands. Every other overlay in this port
+    already does this — StonePickerModal.tsx:86, Gallery.tsx:666 — and
+    Estimator.tsx:1078 keeps its modal outside the section for the same reason.
+
+    A portal keeps the React tree, so `detail`, the handlers and the focus ref
+    below are unaffected; only the DOM parent moves.
+  */
+  const modal = (
       <div
-        className={'pmodal' + (detail !== null ? ' open' : '')}
-        id="procModal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="pmTitle"
-        hidden={detail === null}
-      >
-        <div className="pmodal-veil" onClick={() => setDetail(null)} />
-        <div className="pmodal-card">
-          <button
-            type="button"
-            className="pm-x"
-            aria-label="Close"
-            onClick={() => setDetail(null)}
-            /* site.js:299 — focus moves to the close button on open. */
-            ref={(node) => {
-              if (node && detail !== null) node.focus();
-            }}
-          >
-            &times;
-          </button>
-          <div className="pm-shot">
+      className={'pmodal' + (detail !== null ? ' open' : '')}
+      id="procModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pmTitle"
+      hidden={detail === null}
+    >
+      <div className="pmodal-veil" onClick={() => setDetail(null)} />
+      <div className="pmodal-card">
+        <button
+          type="button"
+          className="pm-x"
+          aria-label="Close"
+          onClick={() => setDetail(null)}
+          /* site.js:299 — focus moves to the close button on open. */
+          ref={(node) => {
+            if (node && detail !== null) node.focus();
+          }}
+        >
+          &times;
+        </button>
+        {/* THE SCROLLER, and the close button is deliberately OUTSIDE it.
+            `.pm-x` is `position:absolute` against the card; while the card
+            itself was the scroll container the button scrolled away with the
+            content, so on a phone it left the screen the moment you moved.
+            Splitting the scroller out pins it to the card and lets the body
+            scroll under it. */}
+        <div className="pm-scroll">
+            <div className="pm-shot">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {/* Rendered only when a card is open. It used to be here always,
                 with `src={undefined}` — a src-less <img> sitting in the DOM of
@@ -353,6 +401,13 @@ export default function Process() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  );
+
+  return (
+    <>
+      {section}
+      {mounted ? createPortal(modal, document.body) : null}
+    </>
   );
 }
