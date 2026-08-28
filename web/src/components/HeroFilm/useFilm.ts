@@ -320,6 +320,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   const shown = useRef(0);
   const locked = useRef(false);
   const stillSince = useRef(0);
+  /* The timestamp of the first tick at p = 1, so the lock can wait a bounded
+     time for the closing seek to land instead of forever. */
+  const completeAt = useRef(0);
   const lastY = useRef(-1);
   const raf = useRef(0);
   const lastWrite = useRef(0);
@@ -586,7 +589,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         The stage stays fixed and on screen right up to the lock. `done` below
         is only whether there is anything left to paint.
       */
-      const done = past || before;
+      /* `past` is still read by `complete` below; the old combined `done`
+         flag has gone with the early return it guarded. */
+      void past;
 
       const p = clamp01(y / g.filmPx);
 
@@ -663,15 +668,39 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         The dead scroll the client asked for is the 40vh hold BELOW the hero —
         real page, real movement — not a stall.
       */
-      if (complete) {
-        lockFilm();
-        return;
-      }
+      /*
+        ⛔ THE ENDING IS PAINTED BEFORE THE LOCK, NOT INSTEAD OF IT.
 
-      if (done) return;
+        This used to read `if (complete) { lockFilm(); return; }`, which
+        returned BEFORE the seek and before every write below it. On the
+        natural path that was invisible, because the loop had been seeking all
+        the way up the runway and the picture was already almost home. But any
+        path that arrives at the end WITHOUT scrubbing through it locked the
+        stage as the hero with the video still on whatever frame it happened to
+        be showing — frame 0, the quarry.
+
+        Measured at 390x844: click the brand logo on a fresh load and the film
+        locks with `video.currentTime = 0`, against 41.94 on the natural path.
+        That is the client's report — "it's supposed to take you to the
+        surfaces worth building around hero section, but instead it loads the
+        site in completely below this" — and his screenshot is the quarry, the
+        opening story line, SCROLL TO BEGIN and SKIP INTRO all frozen in place
+        as the hero. THE SKIP BUTTON HAD THE SAME FAULT and nobody had
+        reported it yet.
+
+        So `complete` now falls through and every write below runs at p = 1:
+        the seek to the last frame, the veil, the scrims, the story lines
+        retiring, the cue, the skip. The lock happens at the foot of the tick.
+      */
+      if (before) return;
+
       const v = refs.video.current;
       const dur = v && isFinite(v.duration) && v.duration > 1 ? v.duration : DUR;
-      const t = p * dur;
+      /* ⛔ CLAMPED INSIDE THE LAST FRAME. At p = 1 this is exactly `dur`, and
+         seeking a video to its own duration is the one seek a browser is
+         entitled to refuse — it can clamp, fire `ended`, or land on nothing.
+         Half a frame back is unambiguously the final picture. */
+      const t = Math.min(p * dur, dur - 0.5 / FILM_FPS);
 
       // The picture. One seek in flight at a time, with a half-frame deadband.
       // The file is in memory by now, so this cannot touch the network.
@@ -872,6 +901,29 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
           skip.style.pointerEvents = gone ? 'none' : 'auto';
         }
       }
+
+      /*
+        THE LOCK, LAST — after everything above has been written at p = 1.
+
+        It waits for the seek to actually land. `video.currentTime = t` is a
+        REQUEST: it returns immediately with the decoder still working, and
+        that asynchrony has already cost this build one bug (the reveal edge
+        running ahead of the slab, §5.13 of the rebuild log). Locking in the
+        same frame as a jump-seek would hand the visitor the hero with the
+        previous frame still on screen for as long as the decode takes — a
+        flash of the quarry behind "Surfaces worth building around".
+
+        `!v.seeking` is the decoder saying it has arrived. The deadline is the
+        backstop: a decoder that never reports, or a mode that never seeks at
+        all, must not strand the visitor on a film that will not end. 400ms is
+        far longer than a seek from memory needs and short enough that nobody
+        reads it as a hang.
+      */
+      if (complete) {
+        if (!completeAt.current) completeAt.current = now;
+        const landed = !v || !seeks(mode) || !v.seeking;
+        if (landed || now - completeAt.current > 400) lockFilm();
+      }
     },
     [refs, mode, paintReveal, lockFilm],
   );
@@ -1053,7 +1105,20 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       const href = a.getAttribute('href') || '';
       if (!/(^|\/)#hero$/.test(href)) return;
       e.preventDefault();
-      lockFilm();
+      /*
+        ⛔ `skipToEnd()`, NOT `lockFilm()`.
+        This used to lock the film outright, on the reasoning that locking is
+        instant while scrolling to the end would scrub. Locking cold is what
+        produced the fault the client reported: the stage became the hero with
+        the video still on frame 0, so clicking the logo handed him the quarry,
+        the opening story line and SCROLL TO BEGIN as his hero section.
+
+        `skipToEnd` puts the scroll past the end of the runway and the very
+        next tick paints the whole ending at p = 1 and then locks. There is no
+        scrub to see: it is one jump, one paint, in a single frame. Same path
+        as the Skip button, which had the same fault for the same reason.
+      */
+      skipToEnd();
     };
     document.addEventListener('click', onLogo, true);
 
@@ -1081,7 +1146,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       document.documentElement.classList.remove('film-running');
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [mode, refs, sources, measure, tick, lockFilm]);
+  }, [mode, refs, sources, measure, tick, lockFilm, skipToEnd]);
 
   return { mode, live, skipToEnd, showsText: showsText(mode) };
 }
