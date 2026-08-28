@@ -384,6 +384,11 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   const raf = useRef(0);
   const lastWrite = useRef(0);
   const armed = useRef(false);
+  /**
+   * This page load arrived on `/#hero` — the brand logo, from an inner page.
+   * The film is never mounted at all on such a load; the effect below owns it.
+   */
+  const direct = useRef(false);
   const memo = useRef({
     plate: -1,
     veil: -1,
@@ -1149,6 +1154,75 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     window.scrollTo({ top: g.top + g.runPx + 2, behavior: 'instant' });
   }, []);
 
+  /* ── arriving on `/#hero` ─────────────────────────────────────────────── */
+
+  /**
+   * ⛔ THE BRAND LOGO NEVER PLAYS A FRAME OF THE FILM.
+   *
+   * The client, 28 Aug: "when I'm still on the inner pages, when I click on the
+   * Topcat logo, it glitches to the 'your worktop starts here' screen, and then
+   * it quickly glitches back into the surfaces worth building around."
+   *
+   * `BRAND_HOME` is `/#hero`, so from an inner page the logo is a REAL
+   * NAVIGATION and the home page loads cold. Answering the hash at ARM time, as
+   * this file did, is seconds too late: the stage puts the plate — the client's
+   * own render of FRAME 0, the quarry — and the film's opening line on screen
+   * for the whole of the fetch, and only then jumps to the end.
+   *
+   * So it is answered HERE, before the mount effect runs at all, and the film
+   * is never mounted on this page load. This is the old build's `to-hero`
+   * block, which the port dropped: index.html:3462 sets the class from a
+   * blocking head script and index.html:399-401 makes the plate, the story, the
+   * cue, the opening copy, Skip AND the video `opacity: 0` for the duration.
+   *
+   * ⛔ AND THE DECISION IS MADE DURING PARSE, NOT HERE. The plate and the
+   * opening line are in the SERVER-RENDERED markup, so they paint before React
+   * hydrates and no effect can get in front of them — measured, 120ms after the
+   * click both were still at opacity 1 with this effect already written. The
+   * blocking script in the root layout sets `html[data-to-hero]` instead, and
+   * film.module.css hangs the whole composition off that. By the time this runs
+   * the screen is already correct; all it does is drop the hash and release the
+   * page's own copy.
+   *
+   * ⚠️ THE PICTURE IS THE STILL, NOT THE FILM'S LAST FRAME. They are not quite
+   * the same: same room and camera, but the still is a warmer, brighter grade,
+   * measured at 11.5/255 mean difference. Its FRAMING is matched in the CSS, so
+   * only the grade differs. Seeking the real last frame was tried and abandoned
+   * — `preload="metadata"` plus one seek fetched the WHOLE cut (6.6MB on the
+   * phone, 17.4MB on the wide, both measured), so it bought a multi-megabyte
+   * download for a visitor who will never scrub a frame, against the standing
+   * rule that only one film is ever fetched. If the grade difference is ever
+   * raised, the answer is a still cut from the film's own last frame, not a
+   * range request.
+   */
+  useEffect(() => {
+    if (typeof location === 'undefined' || location.hash !== '#hero') return;
+    const stage = refs.stage.current;
+    if (!stage) return;
+
+    direct.current = true;
+    locked.current = true;
+
+    /* Chrome re-attempts a fragment scroll as the page finishes loading, so the
+       hash is dropped the moment we take responsibility for it — otherwise it
+       fights whatever we do next. replaceState, so the back button still
+       returns to the page they came from. */
+    history.replaceState(null, '', location.pathname + location.search);
+
+    /* The picture and the geometry are already right: `html[data-to-hero]` was
+       set during parse, so nothing of the film has ever been painted, and
+       `data-film` is still its server-rendered `off` — the stage absolute at
+       the document top, with the curve, which IS the hero. All that is left is
+       to release the page's own copy over it. */
+    const ph = refs.pageHero.current;
+    if (ph) {
+      ph.setAttribute('data-film-pending', '');
+      ph.setAttribute('data-ink', '');
+      ph.classList.add('loaded');
+    }
+    if (window.scrollY) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [refs]);
+
   /* ── mount ────────────────────────────────────────────────────────────── */
 
   useEffect(() => {
@@ -1191,6 +1265,12 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       landed();
       return;
     }
+
+    /* ⛔ ARRIVED ON `/#hero`. The effect above owns this page load and the film
+       is not mounted at all — which is what keeps `data-film` off `on`, the
+       runway at 0, `film-running` off <html> (so the FABs stay down and the
+       sticky bar keeps its own schedule), and the plate off the screen. */
+    if (direct.current) return;
 
     // Reduced motion, or no MP4 decoder: never start. The still is the hero.
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1372,20 +1452,11 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
         A bare `/` is untouched, so a refresh still plays it from the top.
       */
-      if (typeof location !== 'undefined' && location.hash === '#hero') {
-        /*
-          ⛔ THE HASH IS TAKEN OFF THE URL BEFORE THE JUMP.
-
-          Chrome's fragment scroll is deferred and re-attempted as the page
-          finishes loading, so leaving `#hero` in place put it in a fight with
-          the lock's own correction: measured, the visitor ended at scrollY
-          4644 with the hero 4644px above the viewport. Dropping the hash the
-          moment we take responsibility for it settles that — replaceState, so
-          the back button still returns to the page they came from.
-        */
-        history.replaceState(null, '', location.pathname + location.search);
-        skipToEnd();
-      }
+      /* Arriving on `/#hero` is NOT handled here any more. See the effect
+         above `── mount ──`: the film is never mounted on that page load, so
+         this point is never reached on it. Answering it here was seconds too
+         late — the plate had already been the first paint for the whole fetch,
+         which is the flash the client reported twice. */
 
       if (animates(mode)) {
         lastWrite.current = 0;

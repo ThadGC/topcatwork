@@ -118,6 +118,31 @@ export default function RootLayout({
       */}
       <body>
         {/*
+          ⛔ THE BRAND-LOGO ARRIVAL IS DECIDED DURING PARSE, NOT IN AN EFFECT.
+
+          `BRAND_HOME` is `/#hero`, so from any inner page the logo is a real
+          navigation and the home page loads cold. The film's frame-0 plate and
+          its opening line "Your worktop starts here." are in the SERVER-RENDERED
+          markup, so they paint before React has hydrated — an effect cannot get
+          in front of them. The client, twice: "when I click on the Topcat logo,
+          it glitches to the 'your worktop starts here' screen, and then it
+          quickly glitches back into the surfaces worth building around."
+
+          So the same decision the old build made in a blocking head script
+          (index.html:3462, `html.to-hero`) is made here, before the stage below
+          is parsed. film.module.css hangs the whole no-film composition off this
+          attribute, so the film's furniture is never painted even once.
+
+          A bare `/` is untouched, which is why a refresh still plays the film
+          from the top — his rule.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(location.hash==='#hero')document.documentElement.setAttribute('data-to-hero','')}catch(e){}",
+          }}
+        />
+        {/*
           Document-level chrome behaviours that belong to no single element:
           the soft-keyboard watcher (html.kb-open) and the travelling flash on
           every .section-divider (site.js:2792). The component existed but was

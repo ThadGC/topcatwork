@@ -206,8 +206,61 @@
 .stage[data-hero='landed'] .story,
 .stage[data-hero='landed'] .heroCopy,
 .stage[data-hero='landed'] .trust,
-.stage[data-hero='landed'] .skip {
+.stage[data-hero='landed'] .skip,
+.stage[data-hero='waiting'] .plate,
+.stage[data-hero='waiting'] .story,
+.stage[data-hero='waiting'] .heroCopy,
+.stage[data-hero='waiting'] .trust,
+.stage[data-hero='waiting'] .skip {
   display: none;
+}
+
+/* ⛔ `waiting` ALSO HIDES THE STILL, and that is the difference between it and
+   `landed`.
+
+   It is the brand logo's arrival from an inner page: no film will be scrubbed,
+   but the hero picture must still be the film's REAL last frame, because the
+   still is a different grade at a different framing and landing here on it
+   would give two visibly different heroes for the same page depending on how
+   you got to it. So the video is seeked once to its end and revealed when it
+   lands — until then the backdrop is the site's own marble floor with the
+   page's hero copy over it, which is exactly what the old build did under
+   `html.to-hero`. `landed` is the give-up path and puts the still back. */
+/* ⛔ AND THE SAME COMPOSITION, DECIDED DURING PARSE.
+
+   `html[data-to-hero]` is set by a blocking script in the root layout when the
+   URL carries `#hero` — the brand logo, arriving from an inner page. It has to
+   be a pre-paint decision rather than an effect, because the plate and the
+   film's opening line are in the SERVER-RENDERED markup and paint before React
+   hydrates. Hanging the rules off `data-hero` alone still showed them for a
+   frame; measured at 120ms after the click, plate and opening copy both at
+   opacity 1. This is the old build's `html.to-hero` put back.
+
+   `:global()` because the attribute is on <html>, outside this module. */
+:global(html[data-to-hero]) .plate,
+:global(html[data-to-hero]) .story,
+:global(html[data-to-hero]) .heroCopy,
+:global(html[data-to-hero]) .trust,
+:global(html[data-to-hero]) .skip,
+:global(html[data-to-hero]) .keepCue,
+:global(html[data-to-hero]) .edge,
+:global(html[data-to-hero]) .navGrade {
+  display: none;
+}
+
+:global(html[data-to-hero]) .shade {
+  opacity: 1;
+}
+
+/* The still carries the FILM's framing here, not its own. It is the reduced
+   motion hero elsewhere and is framed for that — `object-position: 72% 50%` at
+   `scale(1.08)` against the film's `50% 50%` at 1 — so left alone it would give
+   a visibly different hero for the same page depending on how you arrived.
+   Matching the framing removes that; only the grade still differs. */
+:global(html[data-to-hero]) .still {
+  object-position: 50% 50%;
+  transform: none;
+  opacity: 1;
 }
 
 /* …and the scrims are re-graded for the still, which is a different picture
@@ -1065,10 +1118,19 @@
   --kcW: 22px;
   --kcH: 66px;
   --kcBand: 39px;
-  /* Centred on Skip: its right inset plus half its width, less half of this. */
-  right: calc(clamp(18px, 3.4vw, 46px) + 74.9px);
-  /* Skip's own bottom offset, + Skip's height, + a 24px gap. */
-  bottom: calc(clamp(20px, 4vh, 42px) + 67px);
+  /* ⛔ CENTRE RIGHT, ON EVERY BAND. It first sat directly above whichever
+     control was below it — the phone FAB on a phone, WhatsApp on the tablet,
+     Skip on the desktop. The client, on seeing it: "that's currently just
+     pointing at the phone icon, which is wrong ... put it on the center right
+     of the screen for video, on all devices."
+
+     So it is anchored to the viewport's own middle instead, clear of the
+     bottom row entirely and clear of the film's copy, which lives in the upper
+     third on every band. One rule for all three; only the arrow's size still
+     changes per band below. */
+  right: clamp(14px, 3.2vw, 40px);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* ⛔ IT EXISTS ONLY WHILE A FILM IS ACTUALLY RUNNING.
@@ -1171,10 +1233,6 @@
     --kcW: 20px;
     --kcH: 60px;
     --kcBand: 35px;
-    /* Centred on the CALL FAB — "right above the phone button". */
-    right: calc(25vw - 53.7px);
-    /* Skip's own offset, + Skip's height, + a 22px gap. */
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px + (100vh - 100dvh) + 68px);
   }
 }
 
@@ -1183,10 +1241,6 @@
     --kcW: 24px;
     --kcH: 72px;
     --kcBand: 42px;
-    /* Centred on the WHATSAPP FAB, the right-hand control in this band — the
-       phone sits to Skip's left here. */
-    right: calc(50vw - 146.4px);
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 27px + (100vh - 100dvh) + 78px);
   }
 }
 
@@ -1443,22 +1497,33 @@
    It is empty on purpose — the whole point is that there is nothing there to
    arrive at. */
 .heroHold {
-  /* Wide. The old build's hold here is 0.1387 of an 8550px travel = 1186px,
-     which is 1.32 viewport-heights. */
-  height: 53vh;
+  /* ⛔ A BREATH, NOT THE ARBITER'S FULL HOLD.
+
+     This was 53/64/60vh — the old build's own per-band hold, scaled. On paper
+     that was right; on screen it was a fault. The client, on seeing it: "you
+     broke the review section ... it's one gigantic gap."
+
+     The reason the arithmetic lied: the hold sits below a 100vh hero whose
+     copy is centred, so the hero's own bottom half is already dark and
+     contentless. Adding 506px to that gave a phone a full screen with nothing
+     on it between the hero and the reviews — measured, hero ended at 844 and
+     reviews did not start until 1350.
+
+     The old build could afford its hold because there the film was STILL ON
+     SCREEN through it, pinned and holding its last frame. Here the stage has
+     already become the hero and scrolled away, so the same distance is empty
+     floor rather than a held picture. The number was portable; the meaning was
+     not.
+
+     What actually stops the gallery arriving abruptly is the momentum guard in
+     lockFilm — that is measured and it holds for a slow finish, a brisk one and
+     a hard flick. This is now only the beat between two sections. */
+  height: 14vh;
 }
 
 @media (max-width: 1120px) {
-  /* Tablet: 0.2 of 8000px = 1600px = 1.60 viewport-heights. */
   .heroHold {
-    height: 64vh;
-  }
-}
-
-@media (max-width: 720px) {
-  /* Phone: 0.2125 of 5908px = 1255px = 1.49 viewport-heights. */
-  .heroHold {
-    height: 60vh;
+    height: 16vh;
   }
 }
 
