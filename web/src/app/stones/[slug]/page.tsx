@@ -21,16 +21,18 @@ import type { Metadata } from 'next';
 import { Breadcrumb } from '@/components/chrome/Breadcrumb';
 import { JsonLd } from '@/components/chrome/JsonLd';
 import { Rich } from '@/components/chrome/Rich';
+import CtaSection from '@/components/sections/Cta';
 import { RiseObserver } from '@/components/sections/RiseObserver';
 import { SlabImage } from '@/components/stones/SlabImage';
 import { RelatedStoneTile } from '@/components/stones/StoneTile';
 import { CompareRects } from '@/components/stones/icons';
 import { metadataFromSeo } from '@/lib/seo';
+
+import '@/styles/enquiry-card.css';
 import {
   getStone,
-  isLegacyStoneHref,
   rewriteStoneLinks,
-  stoneEnquiryHref,
+  stoneCtaHref,
   stoneSlugs,
   type Cta,
   type StoneRecord,
@@ -68,8 +70,9 @@ export async function generateMetadata({
  * Every enquiry CTA on these 132 pages ships in the dataset as
  * `/index.html?stone=…#estimator` or `…#cta`, which lands on the home page
  * behind the hero film and is absorbed onto the hero by `lockFilm`. They are
- * re-pointed at the contact form here — see `stoneEnquiryHref`. The `tel:`
- * CTA that sits beside them falls through untouched.
+ * re-pointed by `stoneCtaHref`: anything asking about THIS stone drops to the
+ * `#cta` form now carried on the page, and "Get in touch" goes to /contact/.
+ * The `tel:` CTA that sits beside them falls through untouched.
  */
 function CtaRow({ ctas, stone }: { ctas: Cta[]; stone: StoneRecord }) {
   return (
@@ -78,7 +81,7 @@ function CtaRow({ ctas, stone }: { ctas: Cta[]; stone: StoneRecord }) {
         <a
           key={`${cta.variant}:${cta.href}`}
           className={cta.variant === 'gold' ? 'btn-gold' : 'btn-ghost'}
-          href={isLegacyStoneHref(cta.href) ? stoneEnquiryHref(stone) : cta.href}
+          href={stoneCtaHref(cta, stone)}
         >
           {cta.label}
         </a>
@@ -219,15 +222,41 @@ export default async function StonePage({
           </div>
         </section>
 
-        <section className="cta-band">
-          <div className="wrap rise">
-            <Rich as="h2" value={sections.ctaBand.heading} />
-            {sections.ctaBand.paragraphs.map((p) => (
-              <Rich key={p.text} as="p" value={p} />
-            ))}
-            <CtaRow ctas={sections.ctaBand.ctas} stone={stone} />
-          </div>
-        </section>
+        {/*
+          THE FULL ENQUIRY CARD, ON THE STONE'S OWN PAGE.
+
+          The client, 28 Aug: "take the full form that's on the landing page and
+          also on the contact page, and add that as a global section into every
+          single individual stone page. So if someone goes into the individual
+          stone page and they click Get An Estimate For The Stone, it'll take
+          them right down to where it will say Make It Yours with the same
+          details, but just in the other format so they can fill out their
+          details right here on this page. So they don't have to go to another
+          page to do that."
+
+          This replaces the old `section.cta-band`, which was a heading, two
+          paragraphs and a pair of buttons that sent the visitor away. The
+          heading and the paragraphs are the SAME extracted copy — "Make it
+          yours" and the stone's own two lines — so nothing is lost; only the
+          buttons are gone, because the thing they pointed at is now here.
+
+          `initialStone` seeds the chip, so the enquiry arrives carrying the
+          stone without the visitor having to name it. `stonePicker={false}`
+          for the same reason: offering "Choose your stone" underneath a stone
+          that is already filled in would read as a question nobody asked.
+        */}
+        <CtaSection
+          heading={<Rich as="span" value={sections.ctaBand.heading} />}
+          lede={
+            <>
+              {sections.ctaBand.paragraphs.map((p) => (
+                <Rich key={p.text} as="span" className="stp-ctaline" value={p} />
+              ))}
+            </>
+          }
+          stonePicker={false}
+          initialStone={{ name: stone.name, mat: stone.estimator.mat, slug: stone.slug }}
+        />
       {/*
         threshold 0.12, not site.js's 0.25 — the stone pages carry the inline
         observer, and it is the looser of the two.

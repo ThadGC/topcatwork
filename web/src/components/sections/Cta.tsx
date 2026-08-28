@@ -1,5 +1,7 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 import ContactForm from '@/components/forms/ContactForm';
 import { useReveal } from '@/hooks/useReveal';
 
@@ -25,9 +27,31 @@ export interface CtaProps {
    * picker exactly as the home page does.
    */
   stonePicker?: boolean;
+  /**
+   * Replace the heading and the opening paragraph.
+   *
+   * The 132 stone pages use this. The client, 28 Aug: "take the full form
+   * that's on the landing page and also on the contact page, and add that as a
+   * global section into every single individual stone page... it'll take them
+   * right down to where it will say Make It Yours with the same details, but
+   * just in the other format so they can fill out their details right here on
+   * this page... you only have to just change the text."
+   *
+   * So the CARD is the same card everywhere — same fields, same contact lines,
+   * same trust row — and only the two lines of copy above it change.
+   */
+  heading?: ReactNode;
+  lede?: ReactNode;
+  /** Seeded straight into the form's stone chip. See <ContactForm/>. */
+  initialStone?: { name: string; mat?: string; slug?: string };
 }
 
-export default function Cta({ stonePicker = true }: CtaProps = {}) {
+export default function Cta({
+  stonePicker = true,
+  heading,
+  lede,
+  initialStone,
+}: CtaProps = {}) {
   const ref = useReveal<HTMLElement>();
 
   return (
@@ -35,13 +59,21 @@ export default function Cta({ stonePicker = true }: CtaProps = {}) {
       <div className="cta-card rise">
         <div className="cta-copy">
           <h2 className="cta-title">
-            Get in touch with <em>Topcat</em>
+            {heading ?? (
+              <>
+                Get in touch with <em>Topcat</em>
+              </>
+            )}
           </h2>
           <p className="cta-line">
-            Tell us about your kitchen and we&apos;ll come and measure it. A
-            free home visit across our service area, a fixed itemised quote, and
-            a ten-year guarantee on every install. Prefer to talk it through?
-            Ask for Nick.
+            {lede ?? (
+              <>
+                Tell us about your kitchen and we&apos;ll come and measure it. A
+                free home visit across our service area, a fixed itemised quote,
+                and a ten-year guarantee on every install. Prefer to talk it
+                through? Ask for Nick.
+              </>
+            )}
           </p>
           <div className="cta-reach">
             <div className="cta-or">Or reach us directly</div>
@@ -125,7 +157,7 @@ export default function Cta({ stonePicker = true }: CtaProps = {}) {
           </div>
         </div>
 
-        <ContactForm stonePicker={stonePicker} />
+        <ContactForm stonePicker={stonePicker} initialStone={initialStone} />
       </div>
     </section>
   );

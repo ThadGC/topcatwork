@@ -61,10 +61,25 @@ export interface ContactFormProps {
    * off somewhere is the same argument as before.
    */
   stonePicker?: boolean;
+  /**
+   * Seed the stone chip from the page itself, rather than from the URL or the
+   * wheel. The stone pages use it: the visitor is already looking at the stone,
+   * so the enquiry arrives with it attached and they never have to say it.
+   */
+  initialStone?: { name: string; mat?: string; slug?: string };
 }
 
-export default function ContactForm({ stonePicker = true }: ContactFormProps = {}) {
-  const [stone, setStone] = useState<string>('');
+export default function ContactForm({
+  stonePicker = true,
+  initialStone,
+}: ContactFormProps = {}) {
+  /* Seeded, not set in an effect: the chip is correct on the very first paint,
+     so there is no frame where the form looks like it has forgotten which
+     stone the visitor is standing on. `chipLabel` is the same formatter the
+     wheel and the deep link go through, so all three read identically. */
+  const [stone, setStone] = useState<string>(() =>
+    initialStone ? chipLabel(initialStone) : '',
+  );
   const [upOpen, setUpOpen] = useState(false);
   const [upCount, setUpCount] = useState('');
   /* The stone popup — see StonePickerModal.tsx. */
@@ -127,6 +142,10 @@ export default function ContactForm({ stonePicker = true }: ContactFormProps = {
     the same call for the same reason.
   */
   useEffect(() => {
+    /* A stone handed in by the page wins: on a stone page the URL carries no
+       stone and there is nothing to read, and if it ever did it would be the
+       same one. */
+    if (initialStone) return;
     const d = readStoneLink(window.location.search);
     if (!d) return;
     setStone(chipLabel(d));
@@ -138,7 +157,7 @@ export default function ContactForm({ stonePicker = true }: ContactFormProps = {
       );
     }, 0);
     return () => window.clearTimeout(id);
-  }, []);
+  }, [initialStone]);
 
   /* site.js:4366–4372 — the hook the payload builder calls.
 

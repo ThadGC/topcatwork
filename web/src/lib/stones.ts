@@ -355,6 +355,28 @@ export function stoneSlugs(): string[] {
  * extracted and carries "must not be hand-edited", so a re-run of the
  * extractor would put all 792 legacy hrefs straight back.
  */
+/**
+ * WHERE EACH STONE-PAGE CTA GOES, now that the page carries the form itself.
+ *
+ * The client, 28 Aug: "make sure that the Get An Estimate For The Stone button
+ * goes to that one. And if they hit the Get In Touch button, then it goes to
+ * the contact page."
+ *
+ * So the two enquiry routes split by intent, and the labels split cleanly:
+ * across all 132 stones the only labels on a legacy stone deep link are
+ * "Get an estimate for this stone" (132), "Get an estimate" (132), "Book a
+ * free home visit" (132) and "Get in touch" (264). Everything that is asking
+ * about THIS STONE stays on the page and drops to the form; only "Get in
+ * touch" leaves, which is the general enquiry and belongs on /contact/.
+ */
+export function stoneCtaHref(
+  cta: { href: string; label: string },
+  stone: Pick<StoneRecord, 'name' | 'slug' | 'estimator'>,
+): string {
+  if (!isLegacyStoneHref(cta.href)) return cta.href;
+  return /get in touch/i.test(cta.label) ? stoneEnquiryHref(stone) : '#cta';
+}
+
 export function stoneEnquiryHref(stone: Pick<StoneRecord, 'name' | 'slug' | 'estimator'>): string {
   const q = new URLSearchParams({
     stone: stone.name,
