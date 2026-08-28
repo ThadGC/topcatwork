@@ -263,8 +263,26 @@ main{position:relative;z-index:1;overflow-x:clip}
 .wheel .slab{position:absolute;top:50%;left:50%;
     width:var(--stoneW);height:var(--stoneH);
     margin:calc(var(--stoneH)/-2) 0 0 calc(var(--stoneW)/-2);
-    border-radius:0;overflow:hidden;border:1px solid var(--hair-soft);
-    box-shadow:0 40px 70px -40px rgba(0,0,0,0.9);
+    /* ⛔ AN INSET RING, NOT A BORDER. THE BORDER WAS THE WHITE LINE.
+       `--hair-soft` is rgba(244,241,234,0.10), i.e. 90% transparent, and
+       `overflow:hidden` clips the photo to the PADDING box — so the photo can
+       never cover the 1px border ring and you look straight through it to the
+       slab behind. The centre slab's own halo (`0 0 78px 16px` black, below)
+       is an OUTER shadow, so it is clipped to outside the border box and
+       darkens everything except that ring. The ring is therefore the one place
+       on screen showing the neighbouring slab at full brightness.
+       Measured at 390 DPR3 with Azalai Negro centred, luminance across the
+       left edge: 108/103 outside, 175/177/177 IN THE RING, 35 inside. The
+       client, 28 Aug: "on the side of the Azalai Negro slab, it has this white
+       line on the left side from the next slab."
+       With the border gone the border box equals the padding box, the photo
+       covers the whole card, and the hairline is painted OVER it — which is
+       what the border was for. `.slab.center` and `.slab.peek` must keep
+       winning on box-shadow, so no !important; both already carry their own
+       inset hairline. The opaque background means a slab whose photo has not
+       decoded yet reads as a card rather than a hole. */
+    border-radius:0;overflow:hidden;border:0;background:#0e0e12;
+    box-shadow:0 40px 70px -40px rgba(0,0,0,0.9),0 0 0 1px var(--hair-soft) inset;
     transition:transform .8s var(--ease),opacity .8s var(--ease),filter .8s var(--ease);
     will-change:transform,opacity;cursor:pointer;opacity:0;backface-visibility:hidden;}
 .wheel.gallery .slab{transition:box-shadow .55s var(--ease)}

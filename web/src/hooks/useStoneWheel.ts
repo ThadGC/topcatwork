@@ -442,6 +442,44 @@ export function useStoneWheel(
       });
     }
 
+    /*
+      THE SLABS THE VISITOR IS ABOUT TO SEE ARE FETCHED FIRST.
+
+      Every slab ships `loading="lazy" fetchpriority="low"`, which is right for
+      the 60-odd that are off screen. It is wrong for the handful the fan opens
+      onto: `primeWheel()` stacks all of them at the wheel's centre point, so
+      Chrome's lazy heuristic trips for ALL of them in one burst, and the five
+      the visitor actually sees are queued behind sixty they never will.
+      Measured at 390: 67 requests in a single burst, and with the slab assets
+      alone delayed, the fan opened five transparent rectangles and the photos
+      landed a second later. The client, 28 Aug: "the stone images loaded
+      slightly slowly — it wasn't there for a second, and then it popped in."
+
+      The window is computed with the wheel's OWN visibility test — the same
+      `|x| <= H * 1.3` that `layout()` and `fanOut()` use — plus one slab
+      either side so the first arrow press does not pop. That is 7 on a phone,
+      11 at tablet and 17 at desktop, and it re-derives itself after a filter
+      or a material change instead of hardcoding a band.
+    */
+    function primeVisible() {
+      if (!nodes.length) return;
+      const L = landIdx();
+      const { step, H } = metrics();
+      const half = SLABS.length / 2;
+      nodes.forEach((el, i) => {
+        let off = i - L;
+        if (beltWrap) {
+          if (off > half) off -= SLABS.length;
+          if (off < -half) off += SLABS.length;
+        }
+        if (Math.abs(off * step) > H * 1.3 + step) return;
+        const img = el.querySelector('img');
+        if (!img) return;
+        img.setAttribute('fetchpriority', 'high');
+        img.loading = 'eager';
+      });
+    }
+
     /* ------------------------------------------------- site.js:1066-1072 */
     function slabReadout(i: number) {
       const s = SLABS[i];
@@ -789,6 +827,8 @@ export function useStoneWheel(
       buildNodes();
       target = current = landIdx();
       primeWheel();
+      /* the belt was rebuilt: re-mark its own visible window */
+      primeVisible();
       /* Two nested rAFs, not one: the first lets the browser commit the
          primed transforms, the second starts the animation from them so the
          entrance transition has something to interpolate FROM. */
@@ -925,6 +965,8 @@ export function useStoneWheel(
         wheel!.classList.remove('gallery');
         startGallery();
       } else primeWheel();
+      /* the belt was rebuilt: re-mark its own visible window */
+      primeVisible();
     }
 
     /* site.js:1399-1400 */
@@ -1123,6 +1165,20 @@ export function useStoneWheel(
           },
           { threshold: 0.55 },
         );
+        /* A viewport and a half of head start on the window's images, so they
+           are decoded before the entrance above reveals them. Priority only —
+           it never touches the choreography. */
+        const warmIO = new IntersectionObserver(
+          (es) => {
+            if (es.some((e) => e.isIntersecting)) {
+              primeVisible();
+              warmIO.disconnect();
+            }
+          },
+          { rootMargin: '1400px 0px' },
+        );
+        warmIO.observe(wheel);
+        cleanups.push(() => warmIO.disconnect());
         wheelIO.observe(wheel);
       }
     }

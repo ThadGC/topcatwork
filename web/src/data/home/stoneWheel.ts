@@ -195,7 +195,7 @@ export function stoneMarkup(s: WheelStone): string {
     s.img800 +
     ' 800w, ' +
     relative1600 +
-    ' 1600w" sizes="(max-width:700px) 60vw, 300px" alt="" loading="lazy" decoding="async">'
+    ' 1600w" sizes="(max-width:700px) 60vw, 300px" alt="" loading="lazy" fetchpriority="low" decoding="async">'
   );
 }
 
