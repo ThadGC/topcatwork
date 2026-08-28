@@ -82,9 +82,24 @@ export function useHeaderScrolled({
     const read = (): HeaderScrollState => {
       if (heroAnchored) {
         const film = document.documentElement.classList.contains('film-running');
-        // Past the hero once a viewport of it has gone by, less the 40px the
-        // source uses. While the film runs, nothing has gone by at all.
-        const scrolled = !film && window.scrollY > window.innerHeight - 40;
+        /*
+          ⛔ 40px PAST THE TOP OF THE HERO, NOT A VIEWPORT PAST IT.
+
+          The source rule is `hero.getBoundingClientRect().top <= -40`, and once
+          the film has locked the hero sits at the document top — so that is
+          simply `scrollY > 40`. The bar starts forming the moment the visitor
+          moves, which is the point: the forming is the film handing the page
+          over, and it should be finished by the time they are through the hold
+          below the hero.
+
+          This read `window.innerHeight - 40` and formed a whole viewport late.
+          Measured against the old build at 1440x900: it forms at y=40 there and
+          was forming at y=900 here.
+
+          While the film is running nothing has gone by at all, whatever the
+          scroll says — the runway is several viewports of film.
+        */
+        const scrolled = !film && window.scrollY >= 40;
         return { scrolled, preform: !scrolled };
       }
       return { scrolled: window.scrollY > threshold, preform: false };
