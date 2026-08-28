@@ -143,6 +143,7 @@ export function HeroFilm({
   const heroCopy = useRef<HTMLDivElement>(null);
   const trustRef = useRef<HTMLDivElement>(null);
   const skip = useRef<HTMLButtonElement>(null);
+  const keepCue = useRef<HTMLDivElement>(null);
   const heroOut = useRef<HTMLElement>(null);
   const heroSpace = useRef<HTMLDivElement>(null);
 
@@ -161,6 +162,7 @@ export function HeroFilm({
     pageHero: heroOut,
     heroSpace,
     skip,
+    keepCue,
   });
   const sources = useRef<FilmSources>({ ...DEFAULT_SOURCES, ...srcProp });
 
@@ -352,6 +354,26 @@ export function HeroFilm({
         <button type="button" className={css.skip} ref={skip} onClick={skipToEnd}>
           {skipLabel}
         </button>
+
+
+        {/*
+          THE KEEP-SCROLLING CUE. The client, 28 Aug: "once the user starts
+          scrolling and the first wave of text goes away ... right above the
+          phone button ... we need to still have a small arrow showing that
+          they need to continue swiping, because the owner of the company was
+          confused that the video just stopped when he didn't know that he
+          needs continuous swiping ... And that is non-intrusive."
+
+          ⛔ A DIRECT CHILD OF THE STAGE, and it has to be. The first-load cue
+          lives inside `.heroCopy`, which is the block the film wipes off the
+          screen — the engine writes that block's opacity, visibility and
+          transform, so anything inside it leaves when it leaves. This is the
+          same <CueArrow/>, in a box the film does not take away, with its own
+          opacity written by the loop.
+        */}
+        <div className={css.keepCue} ref={keepCue} aria-hidden="true">
+          <CueArrow />
+        </div>
 
         {/*
           THE PAGE'S OWN HERO — inside the stage, and released at 93% of the

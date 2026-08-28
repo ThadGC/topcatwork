@@ -1017,6 +1017,179 @@
   }
 }
 
+
+/* ── the keep-scrolling cue ─────────────────────────────────────────────────
+   A SECOND, SMALLER ARROW that takes over from `.heroCue` when the opening copy
+   leaves, and is gone by the time the page's own hero inks.
+
+   The client, 28 Aug: "once the user starts scrolling and the first wave of
+   text goes away, I think right above the phone button or in the top corner
+   below the top cat icon, we need to still have a small arrow showing that they
+   need to continue swiping, because the owner of the company was confused that
+   the video just stopped when he didn't know that he needs continuous swiping
+   ... And that is non-intrusive."
+
+   ⛔ IT IS A SECOND ELEMENT, NOT `.heroCue` MOVED. `.heroCue` is a child of
+   `.heroCopy`, and `.heroCopy` is the block the film wipes off the screen — the
+   engine writes its opacity, its visibility, its `--hx` and its `--hsc`, so
+   anything inside it leaves when it leaves, by construction. Reparenting it
+   would also take the first-load cue out of the copy block it is laid out
+   inside, and the whole opening frame is measured against that layout. Same
+   arrow markup, second box, its own opacity.
+
+   IT SITS IN THE BOTTOM-RIGHT CORNER, CENTRED ON WHATEVER CONTROL IS BELOW IT:
+   the phone FAB on a phone — his own words — the WhatsApp FAB on the tablet,
+   where the phone sits to Skip's LEFT, and Skip on the desktop, where there are
+   no FABs at all. The `bottom` values mirror `.skip`'s own offsets exactly,
+   browser-chrome correction included, so the arrow rides up and down WITH the
+   row rather than drifting across it.
+
+   THE SIZES ARE CUSTOM PROPERTIES, NOT A THIRD KEYFRAME SET. `--kcH` and
+   `--kcBand` are read inside `@keyframes keepCueSheen`, where a custom property
+   resolves against the element being animated — so one pair of keyframes serves
+   all three bands, where `.heroCue` needs two.
+
+   And it is DIMMER and thinner than the first-load arrow, because
+   non-intrusive is his word.
+   -------------------------------------------------------------------------- */
+
+.keepCue {
+  position: absolute;
+  z-index: 6;
+  display: block;
+  pointer-events: none;
+  /* The engine owns these two. Off until it says otherwise — which is also what
+     keeps the arrow off the server-rendered first paint. */
+  opacity: 0;
+  visibility: hidden;
+  --kcW: 22px;
+  --kcH: 66px;
+  --kcBand: 39px;
+  /* Centred on Skip: its right inset plus half its width, less half of this. */
+  right: calc(clamp(18px, 3.4vw, 46px) + 74.9px);
+  /* Skip's own bottom offset, + Skip's height, + a 24px gap. */
+  bottom: calc(clamp(20px, 4vh, 42px) + 67px);
+}
+
+/* ⛔ IT EXISTS ONLY WHILE A FILM IS ACTUALLY RUNNING.
+
+   `data-film` is only ever `off` → `on` → `done`. `off` is the server-rendered
+   value AND the value every give-up path lands on — reduced motion, no H.264,
+   `?film=off`, an unsafe pin, a failed fetch, a visitor who scrolled first.
+   `done` is the locked hero. So this one rule covers every state in which there
+   is nothing left to keep scrolling through, the cold first paint included.
+   Inner pages have no such element at all. */
+.stage:not([data-film='on']) .keepCue {
+  display: none;
+}
+
+.keepCue i {
+  display: block;
+  position: relative;
+  width: var(--kcW);
+  height: var(--kcH);
+  filter: drop-shadow(0 2px 7px rgba(6, 6, 8, 0.78));
+  will-change: transform;
+  /* The first-load arrow's own dip, reused deliberately — he asked for "the
+     same arrow that's animating when they first load in". */
+  animation: cueDip 1.8s cubic-bezier(0.33, 0, 0.16, 1) infinite;
+}
+
+.keepCue i > svg {
+  display: block;
+  width: var(--kcW);
+  height: var(--kcH);
+  color: rgba(198, 166, 100, 0.55);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.keepCue i b {
+  position: absolute;
+  inset: 0;
+  display: block;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 96'%3E%3Cpath d='M16 1.25V94.75M1.25 80L16 94.75 30.75 80' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  -webkit-mask-size: var(--kcW) var(--kcH);
+  mask-size: var(--kcW) var(--kcH);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.keepCue i b span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--kcBand);
+  display: block;
+  background: linear-gradient(
+    to bottom,
+    rgba(228, 205, 146, 0) 0%,
+    #e2c98f 28%,
+    #f6e6bd 46%,
+    #f6e6bd 56%,
+    #e2c98f 72%,
+    rgba(228, 205, 146, 0) 100%
+  );
+  will-change: transform;
+  animation: keepCueSheen 1.8s linear infinite;
+}
+
+/* One set for all three bands — the `var()`s resolve against the element being
+   animated. The phasing is the big arrow's: the light lands at 62% and the dip
+   at 55%, so the push reads as the consequence of the light arriving. */
+@keyframes keepCueSheen {
+  0%,
+  6% {
+    transform: translateY(calc(-1 * var(--kcBand)));
+  }
+  62%,
+  100% {
+    transform: translateY(var(--kcH));
+  }
+}
+
+/* Belt and braces: under reduced motion no film runs at all, so the
+   `:not([data-film='on'])` rule above has already taken this off the page. */
+@media (prefers-reduced-motion: reduce) {
+  .keepCue i,
+  .keepCue i b span {
+    animation: none;
+  }
+  .keepCue i b span {
+    transform: translateY(calc(var(--kcH) * 0.21));
+    height: var(--kcH);
+  }
+}
+
+@media (max-width: 720px) {
+  .keepCue {
+    --kcW: 20px;
+    --kcH: 60px;
+    --kcBand: 35px;
+    /* Centred on the CALL FAB — "right above the phone button". */
+    right: calc(25vw - 53.7px);
+    /* Skip's own offset, + Skip's height, + a 22px gap. */
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px + (100vh - 100dvh) + 68px);
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1120px) {
+  .keepCue {
+    --kcW: 24px;
+    --kcH: 72px;
+    --kcBand: 42px;
+    /* Centred on the WHATSAPP FAB, the right-hand control in this band — the
+       phone sits to Skip's left here. */
+    right: calc(50vw - 146.4px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 27px + (100vh - 100dvh) + 78px);
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    BAND LAYOUT
 

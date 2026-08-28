@@ -57,6 +57,7 @@ import {
   clamp01,
   heroNarrowAlpha,
   heroNarrowScale,
+  keepCueAlpha,
   kitOffset,
   plateOpacity,
   r2,
@@ -81,6 +82,7 @@ import {
 import { PHONE_GRADE, WIDE_GRADE, gradeAt } from './lib/grade';
 import {
   DUR,
+  HERO_INK,
   STORY,
   bandFor,
   beatWindow,
@@ -222,6 +224,9 @@ export interface FilmRefs {
   /** The one viewport the hero occupies in normal flow. The lock's anchor. */
   heroSpace: React.RefObject<HTMLDivElement | null>;
   skip: React.RefObject<HTMLButtonElement | null>;
+  /** The small arrow that carries the swipe on once the opening copy has gone.
+   *  A direct child of the stage, not of `.heroCopy` — see index.tsx. */
+  keepCue: React.RefObject<HTMLDivElement | null>;
 }
 
 export interface FilmSources {
@@ -394,6 +399,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     edge: -1,
     heroSc: -1,
     trustGone: null as boolean | null,
+    keepCue: -1,
     open: false,
     ink: false,
   });
@@ -787,7 +793,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         were one variable and the lock fired at whatever the copy's threshold
         was; separating them is what lets the copy lead the ending.
       */
-      const ink = p >= 0.93;
+      const ink = p >= HERO_INK;
       const complete = p >= 1;
       if (ink !== memo.current.ink) {
         memo.current.ink = ink;
@@ -1057,6 +1063,32 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
             m.heroSc = sc;
             hero.style.setProperty('--hsc', String(sc));
           }
+        }
+      }
+
+      /*
+        THE KEEP-SCROLLING CUE — the small arrow that carries the swipe on after
+        the opening copy has gone. The fault report is the company's own owner:
+        "the video just stopped when he didn't know that he needs continuous
+        swiping".
+
+        WRITTEN HERE, immediately after the block that takes the opening copy
+        off the screen, because it is that block's handover: `keepCueAlpha`
+        starts exactly where `.heroCopy` finishes leaving, which is why the
+        curve has to know the band. `g.band` is the LAYOUT band, so `wide` is
+        1121 and up and the else-branch — phone and tablet together — is the
+        one the narrow curve belongs to.
+
+        `visibility` as well as `opacity`, for the same reason the hero copy
+        carries both: a fully transparent element is still a composited layer.
+      */
+      const keep = refs.keepCue.current;
+      if (keep) {
+        const a = keepCueAlpha(t, HERO_INK * dur, g.band.wide);
+        if (a !== m.keepCue) {
+          m.keepCue = a;
+          keep.style.opacity = String(a);
+          keep.style.visibility = a ? 'visible' : 'hidden';
         }
       }
 

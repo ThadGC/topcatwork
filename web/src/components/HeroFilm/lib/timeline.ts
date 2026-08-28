@@ -145,3 +145,11 @@ export function filmBand(band: Band): Band {
 
 /** The film's nominal duration. Replaced by `video.duration` once it is real. */
 export const DUR = 44.25;
+
+/**
+ * WHERE THE PAGE'S OWN HERO IS RELEASED, as film progress. It was a bare 0.93
+ * in useFilm's tick; it is named here because a second thing is now timed
+ * against it — the keep-scrolling cue is solved to reach zero AT this point,
+ * not after it. Move one and you move both, which is the intent.
+ */
+export const HERO_INK = 0.93;

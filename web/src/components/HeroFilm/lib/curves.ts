@@ -148,6 +148,30 @@ export function heroNarrowScale(t: number): number {
 }
 
 /**
+ * THE KEEP-SCROLLING CUE. A handover, not a fade.
+ *
+ * The rise starts at the film second the OPENING COPY has finished leaving — 6
+ * on the wide band, where `.heroCopy` slides out over `t / 6`, and 4.8 on phone
+ * and tablet, where `heroNarrowAlpha` reaches zero. So the small arrow picks up
+ * exactly where the big one goes and the visitor never sees two at once.
+ *
+ * `out` is the film second it must be GONE by, and the caller passes
+ * `HERO_INK * dur` — the same 93% at which the page's own hero is released. The
+ * client, 28 Aug: "as soon as the surfaces worth building around text and stuff
+ * animates in, then that arrow goes away." It reaches zero AT the ink rather
+ * than after it, so none of the film's furniture is still fading while the h1
+ * arrives.
+ *
+ * `min` of the two, not a product: a visitor who flicks straight through 93%
+ * gets one clean disappearance instead of a fade-in immediately undone.
+ */
+export function keepCueAlpha(t: number, out: number, wide: boolean): number {
+  const rise = clamp01((t - (wide ? 6 : 4.8)) / 1.2);
+  const fall = clamp01((out - t) / 1.4);
+  return r2(smoothstep(Math.min(rise, fall)));
+}
+
+/**
  * The scrim over the footage.
  *
  * Held at `veilMin` for the whole film so the picture reads, then ramped to
