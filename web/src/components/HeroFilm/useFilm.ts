@@ -170,6 +170,7 @@ export interface FilmRefs {
 export interface FilmSources {
   wide: string;
   phone: string;
+  /** The client's high-resolution render of frame 0, over the film until it moves. */
   plateWide: string;
   platePhone: string;
 }

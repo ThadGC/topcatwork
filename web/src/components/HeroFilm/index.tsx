@@ -347,19 +347,39 @@ export function HeroFilm({
           replays it — which is the behaviour the client asked for.
         */}
         <section className={css.hero} id="hero" ref={heroOut}>
-          <img
-            className={css.heroStill}
-            src={STILL.src}
-            srcSet={STILL.srcSet}
-            sizes={STILL.sizes}
-            width={2752}
-            height={1536}
-            alt=""
-            draggable={false}
-            decoding="async"
-            aria-hidden="true"
-          />
-          <div className={css.heroShade} aria-hidden="true" />
+          <div className={css.heroBg} aria-hidden="true">
+            {/*
+              THE END OVERLAY. The client, 28 Aug: "the end does have an overlay
+              image, which you have left there, which is correct … the new
+              overlay image at the end marks the end of the video and the start
+              of the animation."
+
+              So it is DELIBERATE that the picture changes here — it is the cue
+              that the film is over. What must not change is the grade: the
+              scrims below hold it at exactly the darkness the film's veil
+              reaches on its last frame.
+
+              WORTH KNOWING, because it was measured and is easy to misread as a
+              bug later: this still is a DIFFERENT RENDER from the film's own
+              final frame, not an export of it — 26.6dB against the last frame
+              of the shipped encode, the same scene from a near-identical
+              camera. If a seamless picture handoff is ever wanted instead of a
+              marked one, cut the frame straight out of the encode.
+            */}
+            <img
+              className={css.heroPic}
+              src={STILL.src}
+              srcSet={STILL.srcSet}
+              sizes={STILL.sizes}
+              width={2752}
+              height={1536}
+              alt=""
+              draggable={false}
+              decoding="async"
+            />
+            <div className={css.heroShade} />
+            <div className={css.heroNav} />
+          </div>
           {/*
             The two gold gradients, first child of the hero as the source has
             them. `.wbtn svg` fills with `url(#tcGoldSolid)` and the "Free home
