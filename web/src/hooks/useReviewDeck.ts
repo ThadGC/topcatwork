@@ -605,7 +605,7 @@ export function useReviewDeck(count: number): ReviewDeck {
       gridPage = (gridPage + d + pages) % pages;
       revEntered = true;
       if (pageRecycleT) clearTimeout(pageRecycleT);
-      revNodes.forEach((el, i) => {
+      revNodes.forEach((_el, i) => {
         const page = cardPage(i);
         if (page === gridPage) {
           parkGridCard(i, d > 0 ? 1 : -1, true);

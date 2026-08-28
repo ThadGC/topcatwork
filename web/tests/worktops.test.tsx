@@ -30,7 +30,6 @@ import {
   allLocations,
   getHub,
   getLocation,
-  locationPaths,
   locationUrls,
 } from '@/lib/locations';
 

@@ -160,17 +160,6 @@ export const REVEAL_FPS = 12;
  */
 const RUNWAY = { phone: 690, tablet: 800, wide: 820 } as const;
 
-/**
- * How long the scroll must be still before the film locks.
- *
- * The collapse changes the document height by several viewports. Doing that
- * inside a live momentum scroll is a cross-thread fight, so it waits for the
- * visitor to actually stop. What it does NOT do any more is honour where they
- * stopped — see `lockFilm`.
- */
-const SETTLE_MS = 220;
-
-
 /** Seek deadband: half a film frame. Closer than this and the seek is a no-op
  *  that costs a decode and returns the same picture. */
 const SEEK_EPS = 0.5 / FILM_FPS;
@@ -376,11 +365,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
    */
   const shown = useRef(0);
   const locked = useRef(false);
-  const stillSince = useRef(0);
   /* The timestamp of the first tick at p = 1, so the lock can wait a bounded
      time for the closing seek to land instead of forever. */
   const completeAt = useRef(0);
-  const lastY = useRef(-1);
   const raf = useRef(0);
   const lastWrite = useRef(0);
   const armed = useRef(false);
@@ -929,8 +916,6 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       }
 
       if (showsText(mode)) {
-        const fb = filmBand(g.band);
-
         // Beat 2 — uncovered by the reveal, faded only on the way out.
         const rvEl = refs.reveal.current;
         if (rvEl) {
