@@ -1146,6 +1146,13 @@ export function useReviewDeck(count: number): ReviewDeck {
      a trackpad deltaX. He reviews the mobile layout on a MacBook. */
   useCarouselSwipe(stageRef, {
     drag: 'pointer',
+    /* The client, 28 Aug, verbatim: "if someone places their thumb on the
+       review card and swipes up, currently the whole site is glitching and
+       jumping everywhere ... it should just scroll down. It should not
+       interact with the review card itself." A vertical verdict hands the
+       gesture back to the browser entirely. Ships with `touch-action: pan-y`
+       on `.rev-stage`; neither works without the other. */
+    releaseOnVertical: true,
     enabled: () => engineRef.current?.revSolo() ?? false,
     /* site.js:1808 — never start a drag on the pager buttons. */
     ignore: (t) => {

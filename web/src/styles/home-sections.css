@@ -377,7 +377,14 @@ main{position:relative;z-index:1;overflow-x:clip}
 #reviews.rev-solo .rev-page svg{width:17px;height:17px}
 #reviews.rev-solo .rev-page,#reviews.rev-solo .rev-more,#reviews.rev-solo .rev-cta-go{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 #reviews.rev-solo .rev-cta{margin-top:clamp(30px,5.6vh,54px)}
-#reviews.rev-solo .rev-stage{touch-action:none}
+/* ⛔ pan-y, NOT the source's `none`. `none` blocks the browser's own vertical
+   pan, which is the only reason the swipe helper hand-rolled a scroll takeover
+   and a fling in the first place — and that takeover moved 491px for 170px of
+   finger against 333px native, which is what the client sees as the page
+   jumping. pan-y leaves vertical to the compositor and horizontal to the deck.
+   MUST ship with `releaseOnVertical: true` in useReviewDeck: pan-y on its own
+   lets the native pan and the JS takeover both run, measured at 659px. */
+#reviews.rev-solo .rev-stage{touch-action:pan-y}
 #reviews.rev-solo{--revRoll:.72s cubic-bezier(.45,.05,.2,1)}
 #reviews.rev-solo .rev-deck{perspective:1000px;perspective-origin:50% 50%}
 #reviews.rev-solo .rev,#reviews.rev-solo .rev.entering,#reviews.rev-solo .rev.leaving{transition:transform var(--revRoll),opacity var(--revRoll)}
@@ -1610,6 +1617,16 @@ html.proj-open .proj-close{top:92px}
 .est-readmore a:hover{color:var(--gold-hi);border-color:var(--gold-hi)}
 .est-help-cta .rev-cta-primary,.est-help-cta .rev-cta-ghost{min-width:168px;text-align:center}
 @media(max-width:640px){
+  /* The board's own CTA matches the "Talk to our team" button below it. The
+     client, 28 Aug: "make that go across as the same size as the talk to our
+     team button." `.btn-gold` is inline-flex and nothing gave #estCta a width,
+     so it sat at its intrinsic 270px while the help card's button ran the full
+     316px at 390. Bound to THIS query rather than a copy of it, so the two can
+     never drift apart again. Deliberately not widened to the 720px band: from
+     641 up the talk button reverts to its inline 226px, so a wider query would
+     put a 543px gold bar above a 226px one — a new mismatch in place of the
+     old. */
+  .est-out .btn-gold{width:100%}
   .est-help-cta{width:100%}
   .est-help-cta .rev-cta-primary,.est-help-cta .rev-cta-ghost{flex:1 1 100%}
 }

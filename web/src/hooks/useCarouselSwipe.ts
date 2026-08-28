@@ -131,6 +131,25 @@ export interface CarouselSwipeOptions {
    */
   preventDefaultMouseDown?: 'always' | 'when-enabled';
 
+  /**
+   * 'pointer' mode only. A DELIBERATE DEPARTURE FROM THE SOURCE, asked for by
+   * name: "if someone places their thumb on the review card and swipes up ...
+   * it should just scroll down. It should not interact with the review card
+   * itself."
+   *
+   * With this set, the moment the axis resolves vertical the gesture is
+   * released for its whole duration — nothing is preventDefaulted, the page
+   * scroll is not taken over, and no fling is armed. The browser does the
+   * scrolling natively, on the compositor, with its own momentum.
+   *
+   * ⛔ THE ELEMENT MUST ALSO CARRY `touch-action: pan-y`, or the browser will
+   * not scroll and neither will anything else. And that CSS must not ship
+   * without this flag: with `pan-y` alone the native pan AND the old JS
+   * takeover both run, measured at 659px of scroll for 170px of finger
+   * against 333px native.
+   */
+  releaseOnVertical?: boolean;
+
   /** A drag began. site.js `cfg.onStart` / `pointerDown` / `hxDown`. */
   onDragStart?: () => void;
   /** Continuous drag delta in px from the press point — the mode the stone
@@ -160,6 +179,11 @@ export interface CarouselSwipeOptions {
 /* attachSwipe's own constants, site.js:6 and :10-11. */
 const SLOP = 5;
 const VY_WIN = 70;
+
+/* Horizontal must be twice the vertical travel before it may claim a gesture,
+   the same 2:1 dominance the trackpad gate already uses. Only consulted when
+   `releaseOnVertical` is set. */
+const HORIZ_BIAS = 2;
 
 /**
  * The imperative core. Returns a teardown that removes every listener,
@@ -330,7 +354,40 @@ export function attachCarouselSwipe(
         /* 5px of slop before the axis commits, then it is locked for the
            whole gesture. site.js:35-38. */
         if (Math.abs(dx) < SLOP && Math.abs(dy) < SLOP) return;
-        axis = Math.abs(dx) >= Math.abs(dy) ? 1 : -1;
+        if (opts.releaseOnVertical) {
+          /*
+            ⛔ THE SOURCE COIN-FLIPS ON THE FIRST 5px AND BREAKS TIES TOWARDS
+            HORIZONTAL, WHICH IS HOW A THUMB FLICK GOT EATEN.
+
+            Six pixels of thumb arc was enough: driven in real Chrome, a 160px
+            up-flick whose first delivered move was dx=+6 / dy=-4 locked to the
+            carousel for the entire gesture — every later move came back
+            defaultPrevented, the deck dragged and sprang back, and the page
+            moved 0px for 160px of finger.
+
+            So vertical wins ties and needs only its own 5px, while horizontal
+            must be HORIZ_BIAS times the vertical travel before it may claim
+            the gesture. Neither satisfied means the gesture is still genuinely
+            ambiguous, so NO verdict is taken and the next move decides. It
+            cannot stall: any move with |dy| >= 5 resolves vertical, any move
+            with |dx| >= 2|dy| resolves horizontal.
+          */
+          if (Math.abs(dy) >= SLOP && Math.abs(dy) >= Math.abs(dx)) axis = -1;
+          else if (Math.abs(dx) >= SLOP && Math.abs(dx) >= Math.abs(dy) * HORIZ_BIAS) axis = 1;
+          else return;
+          if (axis < 0) {
+            /* RELEASED FOR THE REST OF THE GESTURE. `on = false` makes every
+               later pointermove and pointerup for this pointer a no-op, and
+               the next pointerdown re-arms it. The browser owns the pan from
+               here, via `touch-action: pan-y`. */
+            on = false;
+            axis = 0;
+            restoreScroll();
+            return;
+          }
+        } else {
+          axis = Math.abs(dx) >= Math.abs(dy) ? 1 : -1;
+        }
         if (axis > 0) {
           try {
             if (pid !== null) el.setPointerCapture(pid);
@@ -515,6 +572,7 @@ export function useCarouselSwipe(
      read live through optsRef, hence the narrow dep list. */
   const mode = options.drag ?? 'none';
   const wheelOn = options.wheel ? options.wheel : false;
+  const releaseVertical = options.releaseOnVertical ?? false;
 
   useEffect(() => {
     const el = ref.current;
@@ -522,6 +580,7 @@ export function useCarouselSwipe(
     return attachCarouselSwipe(el, {
       drag: mode,
       wheel: wheelOn,
+      releaseOnVertical: releaseVertical,
       dragClass: optsRef.current.dragClass,
       preventDefaultMouseDown: optsRef.current.preventDefaultMouseDown,
       enabled: () => (optsRef.current.enabled ? optsRef.current.enabled() : true),
@@ -534,5 +593,5 @@ export function useCarouselSwipe(
     });
     /* wheelOn is a config object; callers pass a module-level constant
        (WHEEL_STONE_WHEEL etc.) or false, so its identity is stable. */
-  }, [ref, mode, wheelOn]);
+  }, [ref, mode, wheelOn, releaseVertical]);
 }

@@ -44,6 +44,26 @@ export interface CtaProps {
   lede?: ReactNode;
   /** Seeded straight into the form's stone chip. See <ContactForm/>. */
   initialStone?: { name: string; mat?: string; slug?: string };
+  /**
+   * Fade the card up on scroll — the `.rise` one-way door in hooks/useReveal.ts.
+   *
+   * ON everywhere by default. The home page, /about, /estimate, /projects,
+   * /services, /stone-selector and the 132 stone pages all keep it, and the
+   * client has never objected to any of them.
+   *
+   * OFF on /contact. The client, 28 Aug: "on the contact form, the form is
+   * currently animating in. It should just already be there. Don't animate the
+   * form in, on the contact page." There the card IS the page rather than its
+   * sign-off, and it sits directly under <PageHead/>, so the entrance plays
+   * while the page is still arriving.
+   *
+   * ⛔ AND ON A PHONE IT WAS FAILING SHUT, NOT JUST ANIMATING. The card is
+   * 1226px tall at 390 and its top sits at 548 in an 844px viewport, so only
+   * 24.1% of it is ever on screen — under useReveal's 0.25 threshold. Measured
+   * over 3.2s: opacity stayed 0 and `.in` was never added. The contact form was
+   * INVISIBLE on arrival until the visitor happened to scroll.
+   */
+  reveal?: boolean;
 }
 
 export default function Cta({
@@ -51,12 +71,17 @@ export default function Cta({
   heading,
   lede,
   initialStone,
+  reveal = true,
 }: CtaProps = {}) {
   const ref = useReveal<HTMLElement>();
 
   return (
     <section id="cta" ref={ref}>
-      <div className="cta-card rise">
+      {/* No `.rise` means nothing to reveal: `.cta-card` declares neither
+          opacity nor transform, so the card is settled in the SSR HTML, at
+          first paint, and with JavaScript off. `useReveal` above stays
+          unconditional (rules of hooks) and simply observes nothing. */}
+      <div className={reveal ? 'cta-card rise' : 'cta-card'}>
         <div className="cta-copy">
           <h2 className="cta-title">
             {heading ?? (

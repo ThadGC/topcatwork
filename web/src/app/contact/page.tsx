@@ -66,7 +66,10 @@ export default function ContactPage() {
         title="Contact"
         lede="Send us the room, the rough sizes or just a photograph, and we will come back to you with what it takes. The home visit is free, we bring the samples to your kitchen, and nothing is charged until you have said yes."
       />
-      <Cta />
+      {/* The one page that ships the card already settled — see <Cta/>'s
+          `reveal` prop. Every other <Cta/> on the site keeps the reveal,
+          including the home page's own #cta. */}
+      <Cta reveal={false} />
       <SectionDivider />
       <Reviews inner />
       <SectionDivider />
