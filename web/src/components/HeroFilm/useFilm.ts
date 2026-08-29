@@ -1190,7 +1190,39 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
   const skipToEnd = useCallback(() => {
     const g = geom.current;
-    if (!g) return;
+    /*
+      ⛔ SKIP HAS TO WORK BEFORE THE FILM HAS ARMED, TOO.
+
+      `geom` is written by `measure()`, which does not run until the blob has
+      landed — so while the film downloads this used to `return` and the button
+      did nothing at all. That is dead for the two to three seconds the wide cut
+      takes on a fast connection, and longer on a real one. The client:
+      "the skip intro button has to work."
+
+      With nothing measured there is no runway to scroll to the end of, so Skip
+      means the same thing every other give-up path means: no film, the still is
+      the hero, and the reserved runway goes back. `data-hero='landed'` is the
+      same state `landed()` produces inside the mount effect; it is written here
+      rather than shared because that closure is not reachable from this
+      callback and duplicating four attribute writes is cheaper than lifting the
+      whole engine's scope out for it.
+    */
+    if (!g) {
+      const stage = refs.stage.current;
+      if (stage) {
+        stage.dataset.film = 'off';
+        stage.dataset.hero = 'landed';
+      }
+      refs.runway.current?.style.setProperty('--runway', '0px');
+      const ph = refs.pageHero.current;
+      if (ph) {
+        ph.removeAttribute('data-film-pending');
+        ph.setAttribute('data-ink', '');
+        ph.classList.add('loaded');
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
+    }
     /*
       The one place a scroll is written, and it is a direct response to a tap,
       never something the engine decides to do while the visitor is scrolling.
@@ -1205,7 +1237,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       every probe disables smooth scrolling before it measures.
     */
     window.scrollTo({ top: g.top + g.runPx + 2, behavior: 'instant' });
-  }, []);
+  }, [refs]);
 
   /* ── arriving on `/#hero` ─────────────────────────────────────────────── */
 
@@ -1305,6 +1337,17 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const landed = () => {
       stage.dataset.film = 'off';
       stage.dataset.hero = 'landed';
+      /*
+        ⛔ AND IT GIVES THE RESERVED RUNWAY BACK.
+
+        `reserveRunway()` below raises the runway BEFORE the blob arrives, so a
+        visitor cannot fall through the film into the site while it downloads.
+        Every give-up path therefore has to collapse it again, or a failed
+        fetch would leave eight viewports of empty scroll above a hero that is
+        supposed to be the top of the page. `measure()` re-raises it when a
+        film really does arm.
+      */
+      refs.runway.current?.style.setProperty('--runway', '0px');
       const ph = refs.pageHero.current;
       if (!ph) return;
       ph.removeAttribute('data-film-pending');
@@ -1378,6 +1421,65 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const src = filmBand(band).phone ? sources.phone : sources.wide;
 
     /*
+      ⛔ THE RUNWAY IS RESERVED BEFORE THE BLOB ARRIVES.
+
+      The client, on desktop: "the site loads with 'your worktop starts here'
+      and doesn't scroll through the video, it just goes down to the rest of the
+      site. Then only after a while it glitches and goes to the correct hero
+      section and skips the video completely."
+
+      Measured on the live build at 1440x900: for the first two to three
+      seconds `data-film` was `off`, `--runway` was 0px, and the whole 14,554px
+      document was scrollable. The wide cut is 17MB, so on his connection that
+      window is longer still. Anyone who scrolled in it was past the film, and
+      `arm()` then threw the film away outright — the "glitch" is `landed()`
+      inking the page hero underneath them.
+
+      The note above this block is right that raising the runway ALONE does not
+      work: with the stage still `off` it is absolute, so a taller runway is
+      just empty scroll under a hero that has scrolled away. What it missed is
+      that the two must move together. Leaving `data-film` at its neutral value
+      keeps the stage `position: fixed` (only `done` and `off` unpin it), so the
+      plate holds the viewport while the runway holds the distance, and there is
+      nowhere to fall through to. The plate is already the first paint and its
+      bytes are already paid for by the preload links, so nothing about the
+      opening picture changes.
+
+      The keep-scrolling cue stays hidden — `film.module.css:1144` shows it only
+      under `on` — so the page does not invite a scroll it cannot yet answer.
+
+      ⚠️ PHONE IS DELIBERATELY EXCLUDED. The client: "leave mobile alone
+      completely, mobile is working." The phone cut is 6.5MB against the wide
+      17MB, so its window is a fraction as long, and this project has broken the
+      phone from a desktop before. Tablet takes the wide cut and therefore has
+      the desktop's exact bug, so tablet is included.
+    */
+    const reserveKey = band.tablet ? 'tablet' : 'wide';
+    const reserved = !band.phone;
+    if (reserved) {
+      /*
+        BOTH HALVES, IN ONE BLOCK. The runway holds the distance and
+        `data-film='loading'` holds the viewport: only `done` and `off` unpin
+        the stage (film.module.css:129-133), so any other value leaves it
+        `position: fixed` and the plate covers the screen. Raising the runway
+        without this would be the empty scroll the note above warns about; this
+        without the runway would pin a stage over a page that still ends four
+        hundred pixels down.
+
+        `loading` is a new fourth value for an attribute whose own comment says
+        it "is only ever off -> on -> done". Nothing in the engine reads it back
+        — the three writes are 'done', 'off' and 'on' — and no CSS rule keys on
+        `off` for anything the film needs while it is loading, so the new value
+        inherits exactly the running film's geometry, which is what it wants.
+      */
+      stage.dataset.film = 'loading';
+      refs.runway.current?.style.setProperty(
+        '--runway',
+        `${RUNWAY[reserveKey] + HOLD[reserveKey]}vh`,
+      );
+    }
+
+    /*
       Track the presented frame. `mediaTime` is the media timestamp of the frame
       that has just been composited, which is exactly what the reveal needs.
 
@@ -1417,15 +1519,49 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
         4px of slack rather than 0: the old build's own idiom, index.html:3457.
       */
+      /*
+        ⛔ A SCROLL DURING THE DOWNLOAD NO LONGER THROWS THE FILM AWAY — WHERE
+        THE RUNWAY WAS RESERVED.
+
+        This used to be an unconditional `landed()`, and it is the second half
+        of the client's desktop report. The reasoning was sound while the page
+        was genuinely scrollable underneath: arming would have raised eight
+        viewports above a visitor who had got on with reading, and thrown them
+        back to frame 0.
+
+        With the runway reserved that visitor cannot exist above the fold. The
+        only place they can be is inside the film's OWN runway, where the fixed
+        stage has been showing them a static plate the whole time. They have
+        read nothing, so taking them to the top is not an interruption — it is
+        the film starting, which is what the client is asking for: "it has to
+        play through the video first."
+
+        `scrollTo` rather than arming in place, because the film must open at
+        frame 0. Arming where they stand would start it mid-shot, which is the
+        objection the original comment raised and it still stands.
+
+        ⚠️ THE OLD BEHAVIOUR SURVIVES AS THE SAFETY NET. If the reserve did not
+        happen — the phone, which is deliberately excluded, or any path where
+        the runway is still 0 — then a scrolled visitor really is somewhere in
+        the site and must be left there. `landed()` is still the answer, and it
+        now collapses the runway on its way out.
+
+        4px of slack rather than 0: the old build's own idiom, index.html:3457.
+      */
       if (window.scrollY > 4) {
-        landed();
-        video.removeAttribute('src');
-        video.load();
-        if (objectUrl) {
-          URL.revokeObjectURL(objectUrl);
-          objectUrl = '';
+        const runwayH = refs.runway.current?.getBoundingClientRect().height ?? 0;
+        if (reserved && window.scrollY <= runwayH) {
+          window.scrollTo(0, 0);
+        } else {
+          landed();
+          video.removeAttribute('src');
+          video.load();
+          if (objectUrl) {
+            URL.revokeObjectURL(objectUrl);
+            objectUrl = '';
+          }
+          return;
         }
-        return;
       }
       armed.current = true;
       setLive(true);
