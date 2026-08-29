@@ -155,13 +155,24 @@ export default function Process() {
     let armed = false;
     let io: IntersectionObserver | null = null;
 
+    /* rAF-batched: `check()` reads a rect and writes a class, so one pass per
+       painted frame is both sufficient and all the browser can show. */
+    let raf = 0;
+    const request = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        check();
+      });
+    };
+
     const arm = () => {
       if (armed) return;
       armed = true;
       io?.disconnect();
       io = null;
       boot();
-      window.addEventListener('scroll', check, { passive: true });
+      window.addEventListener('scroll', request, { passive: true });
       window.addEventListener('resize', onResize);
     };
 
@@ -180,7 +191,8 @@ export default function Process() {
     return () => {
       io?.disconnect();
       clearTimeout(timer);
-      window.removeEventListener('scroll', check);
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', request);
       window.removeEventListener('resize', onResize);
     };
   }, []);

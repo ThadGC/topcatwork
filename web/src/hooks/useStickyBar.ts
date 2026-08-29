@@ -55,10 +55,42 @@ export function useStickyBar({
       };
     }
 
-    const read = () =>
-      anchor.getBoundingClientRect().bottom <
-      (document.querySelector<HTMLElement>('header.bar')?.offsetHeight || 76);
+    /*
+      The bar element is looked up once and MEMOISED ON SUCCESS, not on every
+      scroll event. The old form ran `document.querySelector('header.bar')`
+      inside `read()`, so a selector match happened on every one of the hundreds
+      of scroll events in a slow drag.
 
+      ⚠️ Memoised lazily rather than latched at setup. Latching a single query
+      here would cache `null` forever on any page where the header is not yet in
+      the DOM when this effect runs, and the fallback 76 would then stand in for
+      a real 80px bar for the life of the page — a 4px error in the threshold,
+      permanently, and invisible. `??=` only remembers a hit, so a late header is
+      still picked up on the next scroll event, while `|| 76` still covers the
+      lite pages that genuinely ship no bar.
+    */
+    let bar: HTMLElement | null = null;
+    const barH = () =>
+      (bar ??= document.querySelector<HTMLElement>('header.bar'))?.offsetHeight || 76;
+
+    const read = () => anchor.getBoundingClientRect().bottom < barH();
+
+    /*
+      ⛔ DELIBERATELY NOT rAF-BATCHED, unlike the other scroll handlers touched
+      in this round.
+
+      Batching it deferred the class by one frame, which broke
+      tests/chrome.test.tsx:294 ("stays down until the anchor clears the header,
+      then comes up") — it dispatches a scroll inside act() and asserts
+      synchronously. That test is asserting the real affordance, not an
+      implementation detail.
+
+      And there was nothing to win. `read()` is now one getBoundingClientRect
+      plus a memoised offsetHeight; the whole site's scroll-handler cost
+      measured 0.013ms per event before any of this work, so batching this one
+      would trade a visible affordance's responsiveness for nothing measurable.
+      The expensive path here was the per-event querySelector, and that is gone.
+    */
     const handle = () => {
       const past = read();
       setOn((prev) => (prev === past ? prev : past));

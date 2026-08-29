@@ -143,6 +143,57 @@ export default function RootLayout({
           }}
         />
         {/*
+          ⛔ A PHONE'S ADDRESS BAR IS NOT A RESIZE, AND THE GUARD AGAINST IT IS
+          GLOBAL. THE PORT MADE IT LOCAL, WHICH LEFT SIXTEEN LISTENERS EXPOSED.
+
+          The old build, index.html:3448-3455, a blocking head script installed
+          before anything else:
+
+              window.addEventListener('resize',function(e){
+                var w=innerWidth,h=innerHeight;
+                if(w===lw && w<=1120 && Math.abs(h-lh)<=140){
+                  e.stopImmediatePropagation(); return; }
+                lw=w; lh=h;
+              }, true);
+
+          `stopImmediatePropagation()` from the FIRST-REGISTERED listener is the
+          whole mechanism: it cancels the event for every other listener on the
+          page. useFilm.ts:1643 ported the CONDITION but not the cancellation —
+          it just returns, so it silences itself and nothing else. Its own
+          comment quotes the line above, `stopImmediatePropagation()` included,
+          which is how the loss stayed invisible: the comment describes the
+          global guard, the code implements a local one.
+
+          Seventeen listeners take window 'resize' on the home page. One was
+          guarded. On iOS Safari the bar moves constantly during a slow scroll —
+          32 times in 38 seconds in the client's own recording — and each step
+          re-ran the other sixteen. Two of them are expensive enough to drop
+          frames on their own: Services.tsx:145 clears `transition` and forces a
+          reflow per card, which also CANCELS any entrance mid-flight and snaps
+          eight tiles to their end state; useReviewDeck.ts:254 re-runs a binary
+          search over every quote, reading scrollHeight each iteration.
+
+          The client: "if the Chrome bar comes up and down, it doesn't cause any
+          problems, things just have to work perfectly smooth."
+
+          ⚠️ WHAT IT DELIBERATELY DOES NOT SWALLOW. A width change of any size,
+          so a rotation and a desktop window drag both pass. Anything above 1120
+          wide, so no desktop resize is ever eaten. A height change over 140px,
+          which is larger than any phone's chrome (measured 86px here) and
+          smaller than a rotation. And `orientationchange`, which is a separate
+          event this never sees. The soft keyboard is unaffected too: it is
+          watched on visualViewport, not on window — see useKeyboardOpen.ts:38.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var lw=innerWidth,lh=innerHeight;" +
+              "addEventListener('resize',function(e){var w=innerWidth,h=innerHeight;" +
+              "if(w===lw&&w<=1120&&Math.abs(h-lh)<=140){e.stopImmediatePropagation();return}" +
+              "lw=w;lh=h},true)}catch(e){}})()",
+          }}
+        />
+        {/*
           Document-level chrome behaviours that belong to no single element:
           the soft-keyboard watcher (html.kb-open) and the travelling flash on
           every .section-divider (site.js:2792). The component existed but was

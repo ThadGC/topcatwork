@@ -172,6 +172,19 @@ function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
       }
     };
 
+    /* rAF-batched so a burst of scroll events costs ONE forced layout per
+       frame instead of one per event. `check()` reads getBoundingClientRect
+       and then writes a class, which is the read-then-write pattern that makes
+       the browser recalculate the document synchronously. */
+    let raf = 0;
+    const request = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        check();
+      });
+    };
+
     const onResize = () => {
       measure();
       check();
@@ -225,7 +238,7 @@ function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
       dress();
       measure();
       check();
-      window.addEventListener('scroll', check, { passive: true });
+      window.addEventListener('scroll', request, { passive: true });
       window.addEventListener('resize', onResize);
     };
 
@@ -246,7 +259,8 @@ function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
 
     return () => {
       io?.disconnect();
-      window.removeEventListener('scroll', check);
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', request);
       window.removeEventListener('resize', onResize);
     };
   }, [gridRef]);
