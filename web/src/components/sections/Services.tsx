@@ -7,6 +7,7 @@ import { srcSet } from '@/data/home/srcset';
 import { useCursorGlow } from '@/hooks/useCursorGlow';
 import { useReveal } from '@/hooks/useReveal';
 import { useServiceHelix } from '@/hooks/useServiceHelix';
+import { viewportHeight } from '@/lib/viewportHeight';
 
 /**
  * `section.section#services` — index.html:3717.
@@ -161,8 +162,9 @@ function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
 
     let shown = false;
     const check = () => {
-      const topFrac =
-        grid.getBoundingClientRect().top / (window.innerHeight || 1);
+      /* Layout viewport: a chrome-driven innerHeight step is ~10% of the
+         viewport and can cross this latch's threshold on its own. */
+      const topFrac = grid.getBoundingClientRect().top / viewportHeight();
       if (!shown && topFrac < SVC_ON) {
         shown = true;
         cards.forEach((el) => el.classList.add('revealed'));

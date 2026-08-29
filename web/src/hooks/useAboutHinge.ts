@@ -2,6 +2,7 @@
 
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import type { RefObject } from 'react';
+import { viewportHeight } from '@/lib/viewportHeight';
 
 /**
  * The About collage hinge — a port of `scrollSequence` (assets/site.js:4244-4278)
@@ -98,7 +99,11 @@ export function attachScrollSequence(
 
   /* site.js:4256-4259 */
   function read(): number {
-    const vh = window.innerHeight || 1;
+    /* The LAYOUT viewport, not the visual one: this runs every frame from
+       tick()'s rAF loop, so it never sees a resize event and the global
+       address-bar guard in layout.tsx cannot help it. Reading innerHeight here
+       swung all six collage tiles on every toolbar step. */
+    const vh = viewportHeight();
     const top = el0.getBoundingClientRect().top / vh;
     return Math.max(0, Math.min(1, (START - top) / (START - END)));
   }

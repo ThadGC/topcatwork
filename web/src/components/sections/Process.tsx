@@ -8,6 +8,7 @@ import { srcSet } from '@/data/home/srcset';
 import { useCursorGlow } from '@/hooks/useCursorGlow';
 import { useReveal } from '@/hooks/useReveal';
 import { useWeld } from '@/hooks/useWeld';
+import { viewportHeight } from '@/lib/viewportHeight';
 
 /**
  * `section.section#process` — index.html:4033, with `#procFlow` built from
@@ -102,8 +103,8 @@ export default function Process() {
 
     let on = false;
     const check = () => {
-      const topFrac =
-        flow.getBoundingClientRect().top / (window.innerHeight || 1);
+      /* Layout viewport — see Services.tsx and lib/viewportHeight.ts. */
+      const topFrac = flow.getBoundingClientRect().top / viewportHeight();
       if (!on && topFrac < PR_ON) {
         on = true;
         flow.classList.add('flow');

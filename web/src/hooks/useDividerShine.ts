@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { viewportHeight } from '@/lib/viewportHeight';
 
 /**
  * `.section-divider` — the travelling flash.
@@ -58,7 +59,9 @@ export function useDividerShine() {
     let raf = 0;
     const shine = () => {
       raf = 0;
-      const vh = window.innerHeight || 1;
+      /* The layout viewport — the same number the `vh` in the stylesheet
+         resolves against, so the shine does not slide when the bar moves. */
+      const vh = viewportHeight();
       /* Phase 1: read every rect while layout is clean. */
       const cs = divs.map((d) => {
         const r = d.getBoundingClientRect();
