@@ -426,6 +426,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     edge: -1,
     heroSc: -1,
     trustGone: null as boolean | null,
+    /* Skip and the two FABs leave together; this is the write-once guard so
+       the class is only touched when the threshold is actually crossed. */
+    fabsGone: null as boolean | null,
     keepCue: -1,
     open: false,
     ink: false,
@@ -713,6 +716,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
     stage.dataset.film = 'done';
     document.documentElement.classList.remove('film-running');
+    /* Skip is `display:none` from this same frame; `film-done` takes the two
+       FABs with it, also by `display`, so nothing can fade out behind it. */
+    document.documentElement.classList.add('film-done');
     runway.style.setProperty('--runway', '0px');
 
     const afterTop = space.getBoundingClientRect().top;
@@ -1117,14 +1123,34 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         }
       }
 
+      /*
+        ⛔ SKIP AND THE TWO FABS LEAVE ON THE SAME LINE, DELIBERATELY.
+
+        Skip goes here, at p > 0.985 — BEFORE the lock. The FABs used to go at
+        the lock, four frames later, and the client saw the difference: "the
+        WhatsApp and phone icon should also go away when the skip intro button
+        goes away. Right now it's just staying a little bit too long."
+
+        Measured before this: Skip gone on frame 3, the FABs on frame 7.
+
+        So the class is toggled from inside this same block rather than from the
+        lock. `toggle`, not `add`: scrubbing back up above the threshold brings
+        Skip back — the line below restores its opacity — and the pair has to
+        come back with it. The lock and every give-up path still `add` it
+        permanently, which is what makes it stick once the film is really over.
+      */
       const skip = refs.skip.current;
+      const gone = p > 0.985;
       if (skip) {
-        const gone = p > 0.985;
         const o = gone ? '0' : '1';
         if (skip.style.opacity !== o) {
           skip.style.opacity = o;
           skip.style.pointerEvents = gone ? 'none' : 'auto';
         }
+      }
+      if (m.fabsGone !== gone) {
+        m.fabsGone = gone;
+        document.documentElement.classList.toggle('film-done', gone);
       }
 
       /*
@@ -1213,6 +1239,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         stage.dataset.film = 'off';
         stage.dataset.hero = 'landed';
       }
+      document.documentElement.classList.add('film-done');
       refs.runway.current?.style.setProperty('--runway', '0px');
       const ph = refs.pageHero.current;
       if (ph) {
@@ -1361,6 +1388,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     const landed = () => {
       stage.dataset.film = 'off';
       stage.dataset.hero = 'landed';
+      /* No film is coming, so the hero IS the page and the FABs must not sit
+         over it — the client's rule since 28 Aug. Same class as the lock. */
+      document.documentElement.classList.add('film-done');
       /*
         ⛔ AND IT GIVES THE RESERVED RUNWAY BACK.
 

@@ -1140,12 +1140,29 @@ html.nav-open .mobile-nav > .mn-sub {
     width: 46px;
     height: 46px;
     box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.85);
+    /*
+      ⛔ NEITHER `opacity` NOR `transform` IS IN THIS LIST ANY MORE, AND THE
+      SECOND ONE IS WHAT THE CLIENT WAS ACTUALLY LOOKING AT.
+
+      `opacity` faded the pair in when the film armed. `transform` did something
+      more visible: the film pushes the two out to the screen edges to make room
+      for Skip between them (the translateX block below), and with a 0.35s
+      transition on it they SLID into place on every load. Measured at 375px:
+      translateX(-327.6) at 40ms, -337.9 at 120ms, settling at -339.1 by 300ms.
+      That slide is the "animating in" — not a fade.
+
+      The client: "the phone and WhatsApp icon are still animating in, which
+      they shouldn't. It should just immediately be there as the website loads."
+
+      `bottom` stays — that is the soft-keyboard shuffle, which should glide —
+      and the colour pair are hover states. The `transform` hover lift is lost
+      below 1120px, which is the only place this block applies, and hover is not
+      a gesture that exists there.
+    */
     transition:
       bottom 0.5s var(--ease),
       border-color 0.35s var(--ease),
-      color 0.35s var(--ease),
-      opacity 0.3s var(--ease),
-      transform 0.35s var(--ease);
+      color 0.35s var(--ease);
   }
 
   .wa-fab svg,
@@ -1181,11 +1198,32 @@ html.nav-open .mobile-nav > .mn-sub {
     the two never overlap. Every non-home page already hides them through
     `html.bar-always` below, so this only ever bites on the landing page.
   */
-  html:not(.film-running) .wa-fab,
-  html:not(.film-running) .call-fab {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(8px);
+  /*
+    ⛔ THEY GO AT THE SAME INSTANT SKIP DOES, AND THEY NEVER ANIMATE.
+
+    This was `html:not(.film-running)`, which is TWO different moments wearing
+    one selector, and both were wrong:
+
+      before the film arms — `film-running` is not set yet, so the pair sat at
+        opacity 0 and then FADED IN over the 0.3s transition once it was. The
+        client: "the phone and WhatsApp icon are still animating in, which they
+        shouldn't. It should just immediately be there as the website loads in."
+
+      after the lock — `film-running` comes off, and the same 0.3s carried them
+        out while Skip, which is `display:none`, was gone in the same frame.
+        The client: "the WhatsApp and phone icon should also go away when the
+        skip intro button goes away. Right now it's just staying a little bit
+        too long."
+
+    So the default is now VISIBLE — they are part of the page as it loads, not
+    something the film brings in — and `html.film-done` takes them away with
+    `display:none`, which cannot be transitioned and therefore lands in the same
+    frame as Skip. `film-done` is written at the lock and on every give-up path;
+    see useFilm.ts.
+  */
+  html.film-done .wa-fab,
+  html.film-done .call-fab {
+    display: none;
   }
 
   html.bar-always .wa-fab,

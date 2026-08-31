@@ -200,8 +200,11 @@ export default function RootLayout({
               /* `#hero` is still honoured. It is not emitted any more, but it
                  is in the legacy site's HTML, in the JSON-LD breadcrumbs and
                  possibly in somebody's bookmark, and it costs one comparison. */
-              "if(location.hash==='#hero'||flagged)",
+              "if(location.hash==='#hero'||flagged){",
               "document.documentElement.setAttribute('data-to-hero','');",
+              /* No film will run, so the FABs must not appear over the hero even
+                 for one frame. Same class the lock and every give-up path write. */
+              "document.documentElement.classList.add('film-done')}",
               /* Capture phase, and registered here so it exists before React
                  hydrates — the logo is clickable from first paint. */
               "addEventListener('click',function(e){",
