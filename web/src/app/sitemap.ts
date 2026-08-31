@@ -21,7 +21,7 @@ import { stoneSlugs } from '@/lib/stones';
  *   /                              the origin, no trailing segment
  *   /about/ /contact/ …            directory form, trailing slash
  *   /stones/<slug>.html            a leaf, from the legacy export
- *   /services/<slug>.html          a leaf
+ *   /services/<slug>               CLEAN since 29 Aug — see below
  *   /guides/<slug>.html            a leaf
  *   /materials/<slug>.html         a leaf
  *   /worktops/<county>/            directory form
@@ -61,7 +61,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     at('/stones/compare.html', 0.6, 'monthly'),
 
     /* The SEO surface. */
-    ...serviceSlugs().map((s) => at(`/services/${s}.html`, 0.8, 'monthly')),
+    /* ⛔ CLEAN, NOT `.html` — the only family in this list that is. The nine
+       service canonicals were changed on 29 Aug at the client's request, and a
+       sitemap must advertise the canonical URL. Left as a leaf it would send
+       every crawler to a 308 and disagree with the <link rel="canonical"> on
+       the page it points at. The other four families keep their leaves because
+       their canonicals still are leaves. */
+    ...serviceSlugs().map((s) => at(`/services/${s}`, 0.8, 'monthly')),
     ...materialSlugs().map((s) => at(`/materials/${s}.html`, 0.8, 'monthly')),
     ...locationPaths().map((p) => at(`/worktops/${p.join('/')}/`, 0.7, 'monthly')),
     ...guideSlugs().map((s) => at(`/guides/${s}.html`, 0.6, 'monthly')),
