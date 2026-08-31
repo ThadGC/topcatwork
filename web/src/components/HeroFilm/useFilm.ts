@@ -93,7 +93,6 @@ import {
   animates,
   mounts,
   readFilmMode,
-  residentLoad,
   scalesReveal,
   seeks,
   showsText,
@@ -1625,9 +1624,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       */
       if (window.scrollY > 4) {
         const runwayH = refs.runway.current?.getBoundingClientRect().height ?? 0;
-        if (reserved && window.scrollY <= runwayH) {
-          window.scrollTo(0, 0);
-        } else {
+        if (!reserved || window.scrollY > runwayH) {
+          /* No runway was reserved, or they are genuinely past it: they really
+             are somewhere in the site and must be left there. */
           landed();
           video.removeAttribute('src');
           video.load();
@@ -1637,6 +1636,24 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
           }
           return;
         }
+        /*
+          ⛔ AND OTHERWISE IT ARMS WHERE THEY STAND. NO SCROLL IS WRITTEN.
+
+          This used to be `window.scrollTo(0, 0)`, and it is the "glitch" the
+          client reported: "the scroll goes down, and then it glitches to that
+          section and then restarts the video again." He scrolled while the cut
+          was still downloading, nothing moved because the film was not armed
+          yet, and then arming yanked him back to the top and started the film
+          from frame 0.
+
+          The reset was written when the runway was NOT reserved, where a
+          scrolled visitor was somewhere in the site and frame 0 was the only
+          sane place to put them. That is no longer true: the runway now goes up
+          at its full final height before the fetch even starts, so a scroll
+          inside it ALREADY maps onto a film time. Arming in place makes the
+          first tick scrub to exactly the frame their position asks for — no
+          jump, no restart, and no lost progress.
+        */
       }
       armed.current = true;
       setLive(true);
@@ -1746,37 +1763,66 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       re-rasterises every story line at a new metric, on the main thread, which
       is precisely the text-only shiver this rebuild is trying to remove.
     */
-    if (!residentLoad(mode)) {
+    /*
+      ⛔ THE FILM ARMS ON THE FIRST DECODABLE FRAME, NOT ON THE LAST BYTE.
+
+      MEASURED on the live build, desktop: the wide cut is 17,788,307 bytes and
+      took 6,606ms to download, starting at 203ms. So the scrub could not arm
+      until 6.8 SECONDS after the page opened. For all of that the visitor had a
+      still plate, a Skip button, and a scroll that moved nothing.
+
+      The client: "when I refresh the page, the video doesn't even play... the
+      video has to start immediately. If the user scrolls, it should play like
+      it's supposed to be. On every device. Mobile and tablet are just not
+      starting the video immediately."
+
+      Waiting for the whole file is indefensible against that, whatever it buys.
+      What it bought is written below and is real — once the cut is resident, no
+      seek can touch the network — but it was paid for with six seconds of dead
+      page, and a seek that occasionally waits on a range request is a smaller
+      fault than a film that has not started.
+
+      So the source is attached directly and `loadeddata` arms it: the browser
+      needs the first frames, not all 17MB. `preload='auto'` then lets it buffer
+      ahead of the scrub rather than fetching only on demand. The cuts are
+      encoded with a keyframe every half second, which is what makes seeking
+      into a partially buffered file cheap enough to do this.
+
+      ⚠️ AND `document.fonts.ready` IS OFF THE GATE. It was ANDed with the fetch
+      so a web font could not arrive mid-film and re-rasterise the story lines.
+      That reasoning still holds, but it was holding the film hostage to the
+      slower of the two — and a font that lands late now costs one re-layout of
+      the copy, where before it could cost seconds of black. If the text shiver
+      ever comes back, the answer is to preload the two faces harder, not to
+      stop the film starting.
+
+      `residentLoad` in lib/mode.ts is now unreferenced — nothing chooses the
+      resident path any more. It is left in that module rather than deleted so
+      the `?film=range` vocabulary still reads coherently, but it no longer has
+      a caller and must not grow one without revisiting the six seconds above.
+    */
+    {
+      video.preload = 'auto';
       video.src = src;
       video.load();
-      video.addEventListener('loadeddata', arm, { once: true });
-    } else {
-      Promise.all([
-        fetch(src, { cache: 'force-cache' }).then((r) => r.blob()),
-        document.fonts?.ready ?? Promise.resolve(),
-      ])
-        .then(([blob]) => {
-          if (cancelled) return;
-          objectUrl = URL.createObjectURL(blob as Blob);
-          video.src = objectUrl;
-          video.load();
-          if (video.readyState >= 2) arm();
-          else video.addEventListener('loadeddata', arm, { once: true });
-        })
-        .catch(() => {
-          /*
-            The film could not be fetched.
-
-            ⛔ `data-film = 'off'` ALONE IS NOT ENOUGH, and the comment that
-            used to sit here asserted the opposite twice. The plate stays at
-            opacity 1 ABOVE the still, so this stranded the visitor on the
-            quarry with the film's opening line and SKIP INTRO over it — not on
-            the still hero. And the runway does not ship at one viewport; it
-            ships at zero.
-          */
+      if (video.readyState >= 2) arm();
+      else video.addEventListener('loadeddata', arm, { once: true });
+      video.addEventListener(
+        'error',
+        () => {
           if (!cancelled) landed();
-        });
+        },
+        { once: true },
+      );
     }
+    /*
+      ⛔ THE `error` LISTENER ABOVE IS THE OLD `.catch()`, AND IT STILL MATTERS.
+      The film failing to load is not `data-film='off'` on its own: the plate
+      sits at opacity 1 ABOVE the still, so without `landed()` the visitor is
+      stranded on the quarry with the opening line and SKIP INTRO over it, on a
+      runway that is now eight viewports tall. `landed()` collapses the runway,
+      drops `film-running` and inks the page hero.
+    */
 
     /*
       THE BRAND LOGO JUMPS STRAIGHT TO THE HERO.
