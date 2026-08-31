@@ -48,7 +48,7 @@ export function TradeFooter() {
         <div className="foot-brand">
           <a
             className="brand brand-stack"
-            href="/index.html#hero"
+            href="/"
             aria-label="Topcat Worktops home"
           >
             <img

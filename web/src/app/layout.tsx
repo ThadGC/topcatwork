@@ -176,13 +176,48 @@ export default function RootLayout({
           is parsed. film.module.css hangs the whole no-film composition off this
           attribute, so the film's furniture is never painted even once.
 
-          A bare `/` is untouched, which is why a refresh still plays the film
-          from the top — his rule.
+          ⛔ THE SIGNAL IS NO LONGER IN THE URL. It used to be `#hero`, and the
+          client asked for that gone: "when someone clicks on the Topcat logo the
+          URL changes to say #hero. Don't do that unless it's completely needed."
+
+          It was not needed. The fragment never scrolled anything — on this path
+          the film does not run, so the runway stays 0px and `#hero` is already
+          at document top. It was pure signalling, and sessionStorage carries a
+          signal without writing to the address bar.
+
+          A bare `/` with no flag is untouched, which is why a refresh still
+          plays the film from the top — his rule, and the reason the flag is
+          removed the instant it is read.
         */}
         <script
           dangerouslySetInnerHTML={{
-            __html:
-              "try{if(location.hash==='#hero')document.documentElement.setAttribute('data-to-hero','')}catch(e){}",
+            __html: [
+              '(function(){try{',
+              "var K='tc:to-hero',flagged=false;",
+              /* Consumed on read, ALWAYS. This is what makes a refresh replay
+                 the film: reload the page and there is nothing left to find. */
+              "try{flagged=sessionStorage.getItem(K)==='1';sessionStorage.removeItem(K)}catch(e){}",
+              /* `#hero` is still honoured. It is not emitted any more, but it
+                 is in the legacy site's HTML, in the JSON-LD breadcrumbs and
+                 possibly in somebody's bookmark, and it costs one comparison. */
+              "if(location.hash==='#hero'||flagged)",
+              "document.documentElement.setAttribute('data-to-hero','');",
+              /* Capture phase, and registered here so it exists before React
+                 hydrates — the logo is clickable from first paint. */
+              "addEventListener('click',function(e){",
+              'if(e.defaultPrevented||e.button!==0)return;',
+              'if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;',
+              'var t=e.target,a=t&&t.closest?t.closest("a.brand"):null;if(!a)return;',
+              /* ⛔ NOT ON THE HOME PAGE ITSELF. There the click never navigates
+                 — useFilm's own handler preventDefaults it and runs skipToEnd —
+                 so a flag set here would never be consumed by this load and
+                 would silently suppress the film on the NEXT one, including a
+                 refresh. That is the one rule the client states outright. */
+              'var p=location.pathname;if(p==="/"||p==="/index.html")return;',
+              "try{sessionStorage.setItem(K,'1')}catch(e){}",
+              '},true);',
+              '}catch(e){}})()',
+            ].join(''),
           }}
         />
         {/*

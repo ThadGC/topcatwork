@@ -1281,18 +1281,42 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
    * range request.
    */
   useEffect(() => {
-    if (typeof location === 'undefined' || location.hash !== '#hero') return;
+    /*
+      ⛔ GATED ON THE ATTRIBUTE, NOT ON THE HASH.
+
+      This test was `location.hash !== '#hero'`, and it is the line that
+      actually stops the film mounting — everything else about the to-hero path
+      is presentation. When the client asked for `#hero` out of the address bar
+      and `BRAND_HOME` became a bare `/`, this gate stopped matching: the
+      attribute was set during parse and the stage looked right, but the film
+      mounted underneath it and raised a six-thousand-pixel runway under a
+      "hero" that was supposed to be the whole page. Measured before the fix:
+      data-to-hero true, data-film 'on', runway 6414px, document 21,385px
+      against the 14,971px it should be.
+
+      `html[data-to-hero]` is the one thing both routes into this state agree
+      on — the blocking script in the root layout sets it from the
+      sessionStorage flag the logo leaves, and still from a literal `#hero` for
+      any legacy link. Reading it here means this gate cannot drift from that
+      decision again.
+    */
+    if (typeof document === 'undefined') return;
+    if (!document.documentElement.hasAttribute('data-to-hero')) return;
     const stage = refs.stage.current;
     if (!stage) return;
 
     direct.current = true;
     locked.current = true;
 
-    /* Chrome re-attempts a fragment scroll as the page finishes loading, so the
+    /* Chrome re-attempts a fragment scroll as the page finishes loading, so a
        hash is dropped the moment we take responsibility for it — otherwise it
        fights whatever we do next. replaceState, so the back button still
-       returns to the page they came from. */
-    history.replaceState(null, '', location.pathname + location.search);
+       returns to the page they came from. Only when there IS one: the logo no
+       longer sends a fragment, and rewriting the URL to itself would push a
+       pointless history entry on the common path. */
+    if (location.hash) {
+      history.replaceState(null, '', location.pathname + location.search);
+    }
 
     /* The picture and the geometry are already right: `html[data-to-hero]` was
        set during parse, so nothing of the film has ever been painted, and
@@ -1711,17 +1735,30 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       building around section. It should immediately just go straight there as
       if that is the only hero section that the site has."
 
-      `BRAND_HOME` is `/#hero`, so the native anchor already lands on the right
-      element — but landing there means arriving at the film's last frame with
-      the whole runway still above you, which then has to complete and lock.
-      Locking first collapses the runway out of the way and puts the hero at the
-      top in one step, which is what "as if that is the only hero section" means.
+      ⛔ MATCHED BY CLASS, NOT BY `#hero` — THE HREF NO LONGER CARRIES IT.
+      `BRAND_HOME` is a bare `/` since the client asked for the fragment out of
+      the address bar. This test used to be `/(^|\/)#hero$/` on the href, and
+      left as it was it would have stopped matching the moment the hash went:
+      the click would fall through to the anchor, `/` is a real navigation, and
+      the home page would RELOAD AND REPLAY THE FILM. That is the exact
+      behaviour the logo exists to avoid, and it would have looked like a
+      regression in the film rather than in the link.
 
-      Capture phase, so it runs before the browser's own hash handling, and
+      `a.brand` is what both logos already carry — the header's and the
+      footer's — so this now covers the footer one too, which previously fell
+      through to a plain `/` and did replay the film. The `#hero` form is still
+      accepted for any legacy link still pointing at it.
+
+      Landing on the hero means arriving at the film's last frame with the whole
+      runway still above you, which then has to complete and lock. Locking first
+      collapses the runway out of the way and puts the hero at the top in one
+      step, which is what "as if that is the only hero section" means.
+
+      Capture phase, so it runs before the browser's own navigation, and
       `preventDefault` so the two do not both try to move the page.
 
-      A visitor arriving directly on `/#hero` is the same case and is handled at
-      arm time below.
+      A visitor arriving from an inner page is the same case, carried by the
+      sessionStorage flag the root layout sets, and is handled at arm time.
     */
     const onLogo = (e: MouseEvent) => {
       if (locked.current || e.defaultPrevented || e.button !== 0) return;
@@ -1729,7 +1766,8 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       const a = (e.target as Element | null)?.closest?.('a[href]');
       if (!a) return;
       const href = a.getAttribute('href') || '';
-      if (!/(^|\/)#hero$/.test(href)) return;
+      const isBrand = a.classList.contains('brand') || /(^|\/)#hero$/.test(href);
+      if (!isBrand) return;
       e.preventDefault();
       /*
         ⛔ `skipToEnd()`, NOT `lockFilm()`.

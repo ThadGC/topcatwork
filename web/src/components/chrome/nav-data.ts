@@ -46,7 +46,23 @@ export const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61577924849
 export const INSTAGRAM_URL = 'https://www.instagram.com/topcatworktops/';
 export const LINKEDIN_URL = 'https://www.linkedin.com/company/topcat-worktops/';
 
-export const BRAND_HOME = '/#hero';
+/*
+  ⛔ NO `#hero` ANY MORE. The client: "when someone clicks on the Topcat logo
+  the URL changes to say #hero. Don't do that unless it's completely needed."
+
+  It was never needed for SCROLLING — measured on the live build, arriving at
+  `/#hero` leaves scrollY at 0 and `#hero` itself is at document top, because
+  the film never runs on that path so the runway stays 0px. The fragment was
+  only ever a SIGNAL to the blocking script in layout.tsx, telling it to dress
+  the stage as a static hero before first paint.
+
+  That signal now travels in sessionStorage instead, set by the same script on
+  a plain left-click of any `a.brand`. The behaviour the client asks about
+  repeatedly is unchanged: the logo lands on the hero and never replays the
+  film, and only a refresh returns to the start — the flag is consumed on read,
+  so a reload has nothing to find.
+*/
+export const BRAND_HOME = '/';
 export const BRAND_LABEL = 'Topcat Worktops, home';
 
 export const WA_FAB_LABEL = 'Message Topcat Worktops on WhatsApp';
