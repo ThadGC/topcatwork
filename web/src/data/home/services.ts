@@ -21,49 +21,49 @@ export const SERVICES: readonly Service[] = [
   {
     "t": "Kitchen Worktops",
     "long": "Worktops cut from a single slab where the run allows, islands with mitred waterfall ends that fold the stone to the floor, templated to the millimetre and fitted by our own team.",
-    "href": "/services/kitchen-worktops.html",
+    "href": "/services/kitchen-worktops",
     "img": "/assets/site/service-worktops-quartz-2400.webp"
   },
   {
     "t": "Splashbacks",
     "long": "The same stone carried up the wall, cut around sockets and hobs, with no grout lines and no visual break above the worktop.",
-    "href": "/services/splashbacks.html",
+    "href": "/services/splashbacks",
     "img": "/assets/site/service-splash-hob-1200.webp"
   },
   {
     "t": "Bathrooms",
     "long": "Shower surrounds, thresholds and window sills cut from one stone, so the room reads as a single material rather than a set of parts.",
-    "href": "/services/bathroom-worktops.html",
+    "href": "/services/bathroom-worktops",
     "img": "/assets/site/service-bathrooms-2400.webp"
   },
   {
     "t": "Outdoor Spaces",
     "long": "Weatherproof stone for garden kitchens, barbecue runs and outdoor bars, cut to fit around sinks, hobs and built-in appliances.",
-    "href": "/services/outdoor-kitchens.html",
+    "href": "/services/outdoor-kitchens",
     "img": "/assets/site/service-outdoor-2400.webp"
   },
   {
     "t": "Fireplaces",
     "long": "Hearths, surrounds and mantels cut to your opening and finished by hand, in the same stone as the rest of the house if you want the rooms to tie together.",
-    "href": "/services/fireplaces.html",
+    "href": "/services/fireplaces",
     "img": "/assets/site/service-fireplaces-1550.webp"
   },
   {
     "t": "Dining Tables",
     "long": "Table and console tops cut to your shape and edge profile, in the same stone as the kitchen, so the piece reads as part of the room rather than as furniture bought separately.",
-    "href": "/services/dining-tables.html",
+    "href": "/services/dining-tables",
     "img": "/assets/site/service-dining-2400.webp"
   },
   {
     "t": "Vanity Tops",
     "long": "Basin tops cut for undermount or countertop basins, with the tap holes exactly where you want them and the edges finished to match.",
-    "href": "/services/vanity-tops.html",
+    "href": "/services/vanity-tops",
     "img": "/assets/site/service-vanity-2400.webp"
   },
   {
     "t": "Commercial",
     "long": "Reception desks, counters and washroom surfaces for offices, bars and shops, fitted to your programme by one team.",
-    "href": "/services/commercial-worktops.html",
+    "href": "/services/commercial-worktops",
     "img": "/assets/site/service-commercial-bar-2400.webp"
   }
 ];

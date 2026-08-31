@@ -1,7 +1,7 @@
 /**
  * THE SERVICE DETAIL PAGE. Nine routes, one template.
  *
- * `/services/kitchen-worktops.html` and its eight siblings — the pages that
+ * `/services/kitchen-worktops` and its eight siblings — the pages that
  * carry the site's commercial search terms, so their `<head>` is mapped
  * straight through from the extraction rather than templated. Every title,
  * description, canonical and JSON-LD graph below is the live page's, byte for
@@ -176,7 +176,7 @@ export default async function ServicePage({
 
               The source leaves `#qfService` with no `selected` option on all
               nine pages, so the browser default was the first one — "Kitchen
-              worktops" — even on /services/fireplaces.html. It was ported as
+              worktops" — even on /services/fireplaces. It was ported as
               found, on the reasoning that changing it would change what lands
               in the client's inbox.
 

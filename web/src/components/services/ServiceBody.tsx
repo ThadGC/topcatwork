@@ -72,9 +72,9 @@ function Node({ node }: { node: ContentNode }) {
       /*
         `.mats` carries two different link shapes and both are the source's:
         the material chips point at absolute URLs (`/stones/`), the
-        cross-sell chips at bare filenames (`kitchen-islands.html`). The
+        cross-sell chips at bare filenames (`kitchen-islands`). The
         relative ones resolve against `/services/<slug>.html`, i.e. to
-        `/services/kitchen-islands.html`, which is the exported path under
+        `/services/kitchen-islands`, which is the exported path under
         `trailingSlash: false`. Left exactly as found — rewriting them to
         absolute would be a change with no upside and one more thing to get
         wrong.

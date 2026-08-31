@@ -47,7 +47,22 @@ describe('/sitemap.html', () => {
     const rendered = [...container.querySelectorAll('main li a')].map(
       (a): [string, string] => [a.getAttribute('href')!, a.textContent!],
     );
-    expect(rendered).toEqual(sourceLinks());
+    /*
+      ⛔ THE NINE SERVICE LEAVES ARE A DELIBERATE DIVERGENCE. They are clean
+      URLs since 29 Aug at the client's request, so a byte-comparison against
+      the legacy list would now fail on nine of 178 rows for the one reason we
+      already know about.
+
+      The legacy side is normalised rather than the rendered side, so the test
+      still fails if OUR list drops a page, reorders one, or renames a label —
+      which is the whole point of it. Only the extension is forgiven, and only
+      under /services/.
+      */
+    const clean = ([href, label]: [string, string]): [string, string] => [
+      href.replace(/^(\/services\/[a-z-]+)\.html$/, '$1'),
+      label,
+    ];
+    expect(rendered).toEqual(sourceLinks().map(clean));
     // 178, i.e. every page on the site — the guard against a group being
     // dropped wholesale, which an order-insensitive check would miss.
     expect(rendered).toHaveLength(178);

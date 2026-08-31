@@ -31,7 +31,7 @@
  * ---------------------------------------------------------------------------
  * The nine detail URLs are `.html` leaves and the hub is a directory URL:
  *
- *   /services/kitchen-worktops.html      exported directly (trailingSlash:false)
+ *   /services/kitchen-worktops      exported directly (trailingSlash:false)
  *   /services/                           out/services.html -> out/services/index.html
  *                                        by scripts/postexport.mjs
  *

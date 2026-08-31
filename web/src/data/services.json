@@ -871,18 +871,18 @@
     {
       "slug": "bathroom-worktops",
       "source": "services/bathroom-worktops.html",
-      "url": "/services/bathroom-worktops.html",
+      "url": "/services/bathroom-worktops",
       "seo": {
         "title": "Bathroom Worktops & Shower Surrounds in Stone | Topcat Worktops",
         "description": "Stone shower surrounds, thresholds, window sills and bath surrounds cut from one material and fitted by our own team. Free home visit across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/bathroom-worktops.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/bathroom-worktops",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Bathroom Worktops & Shower Surrounds in Stone | Topcat Worktops",
           "description": "Stone shower surrounds, thresholds, window sills and bath surrounds cut from one material and fitted by our own team. Free home visit across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-          "url": "https://www.topcatworktops.co.uk/services/bathroom-worktops.html",
+          "url": "https://www.topcatworktops.co.uk/services/bathroom-worktops",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -931,7 +931,7 @@
               "name": "Bathrooms",
               "serviceType": "Bathrooms",
               "description": "Stone shower surrounds, thresholds, window sills and bath surrounds cut from one material and fitted by our own team. Free home visit across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-              "url": "https://www.topcatworktops.co.uk/services/bathroom-worktops.html",
+              "url": "https://www.topcatworktops.co.uk/services/bathroom-worktops",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -967,7 +967,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Bathrooms",
-                  "item": "https://www.topcatworktops.co.uk/services/bathroom-worktops.html"
+                  "item": "https://www.topcatworktops.co.uk/services/bathroom-worktops"
                 }
               ]
             },
@@ -1520,35 +1520,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -1992,35 +1992,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -2070,18 +2070,18 @@
     {
       "slug": "commercial-worktops",
       "source": "services/commercial-worktops.html",
-      "url": "/services/commercial-worktops.html",
+      "url": "/services/commercial-worktops",
       "seo": {
         "title": "Commercial Worktops & Stone Surfaces | Topcat Worktops",
         "description": "Hard-wearing stone worktops and surfaces for offices, bars, restaurants and shops, fitted to your programme by one team from template to install. Serving London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/commercial-worktops.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/commercial-worktops",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Commercial Worktops & Stone Surfaces | Topcat Worktops",
           "description": "Hard-wearing stone worktops and surfaces for offices, bars, restaurants and shops, fitted to your programme by one team from template to install. Serving London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-          "url": "https://www.topcatworktops.co.uk/services/commercial-worktops.html",
+          "url": "https://www.topcatworktops.co.uk/services/commercial-worktops",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -2130,7 +2130,7 @@
               "name": "Commercial",
               "serviceType": "Commercial",
               "description": "Hard-wearing stone worktops and surfaces for offices, bars, restaurants and shops, fitted to your programme by one team from template to install. Serving London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-              "url": "https://www.topcatworktops.co.uk/services/commercial-worktops.html",
+              "url": "https://www.topcatworktops.co.uk/services/commercial-worktops",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -2166,7 +2166,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Commercial",
-                  "item": "https://www.topcatworktops.co.uk/services/commercial-worktops.html"
+                  "item": "https://www.topcatworktops.co.uk/services/commercial-worktops"
                 }
               ]
             },
@@ -2711,35 +2711,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -3175,35 +3175,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -3253,18 +3253,18 @@
     {
       "slug": "dining-tables",
       "source": "services/dining-tables.html",
-      "url": "/services/dining-tables.html",
+      "url": "/services/dining-tables",
       "seo": {
         "title": "Stone Dining Table & Console Tops | Quartz, Granite & Marble | Topcat Worktops",
         "description": "Dining table and console tops cut from quartz, granite or marble to your shape and edge profile, on your own base or one being made for you. Free home visit across London and the Home Counties.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/dining-tables.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/dining-tables",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Stone Dining Table & Console Tops | Quartz, Granite & Marble | Topcat Worktops",
           "description": "Dining table and console tops cut from quartz, granite or marble to your shape and edge profile, on your own base or one being made for you. Free home visit across London and the Home Counties.",
-          "url": "https://www.topcatworktops.co.uk/services/dining-tables.html",
+          "url": "https://www.topcatworktops.co.uk/services/dining-tables",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -3313,7 +3313,7 @@
               "name": "Dining Tables",
               "serviceType": "Dining Tables",
               "description": "Dining table and console tops cut from quartz, granite or marble to your shape and edge profile, on your own base or one being made for you. Free home visit across London and the Home Counties.",
-              "url": "https://www.topcatworktops.co.uk/services/dining-tables.html",
+              "url": "https://www.topcatworktops.co.uk/services/dining-tables",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -3349,7 +3349,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Dining Tables",
-                  "item": "https://www.topcatworktops.co.uk/services/dining-tables.html"
+                  "item": "https://www.topcatworktops.co.uk/services/dining-tables"
                 }
               ]
             },
@@ -3904,35 +3904,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 }
               ]
             }
@@ -4377,35 +4377,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 }
               ]
             }
@@ -4455,18 +4455,18 @@
     {
       "slug": "fireplaces",
       "source": "services/fireplaces.html",
-      "url": "/services/fireplaces.html",
+      "url": "/services/fireplaces",
       "seo": {
         "title": "Stone Fireplace Surrounds, Hearths & Mantels | Topcat Worktops",
         "description": "Fireplace hearths, surrounds and mantel shelves cut from granite, marble or quartz to your opening, templated by hand and fitted by our own team across London and the Home Counties.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/fireplaces.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/fireplaces",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Stone Fireplace Surrounds, Hearths & Mantels | Topcat Worktops",
           "description": "Fireplace hearths, surrounds and mantel shelves cut from granite, marble or quartz to your opening, templated by hand and fitted by our own team across London and the Home Counties.",
-          "url": "https://www.topcatworktops.co.uk/services/fireplaces.html",
+          "url": "https://www.topcatworktops.co.uk/services/fireplaces",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -4515,7 +4515,7 @@
               "name": "Fireplaces",
               "serviceType": "Fireplaces",
               "description": "Fireplace hearths, surrounds and mantel shelves cut from granite, marble or quartz to your opening, templated by hand and fitted by our own team across London and the Home Counties.",
-              "url": "https://www.topcatworktops.co.uk/services/fireplaces.html",
+              "url": "https://www.topcatworktops.co.uk/services/fireplaces",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -4551,7 +4551,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Fireplaces",
-                  "item": "https://www.topcatworktops.co.uk/services/fireplaces.html"
+                  "item": "https://www.topcatworktops.co.uk/services/fireplaces"
                 }
               ]
             },
@@ -5104,35 +5104,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -5576,35 +5576,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -5654,18 +5654,18 @@
     {
       "slug": "kitchen-islands",
       "source": "services/kitchen-islands.html",
-      "url": "/services/kitchen-islands.html",
+      "url": "/services/kitchen-islands",
       "seo": {
         "title": "Kitchen Island Worktops & Waterfall Ends | Topcat Worktops",
         "description": "Stone kitchen islands with mitred waterfall ends, vein-matched around every corner and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/kitchen-islands.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/kitchen-islands",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Kitchen Island Worktops & Waterfall Ends | Topcat Worktops",
           "description": "Stone kitchen islands with mitred waterfall ends, vein-matched around every corner and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-          "url": "https://www.topcatworktops.co.uk/services/kitchen-islands.html",
+          "url": "https://www.topcatworktops.co.uk/services/kitchen-islands",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -5714,7 +5714,7 @@
               "name": "Kitchen Islands",
               "serviceType": "Kitchen Islands",
               "description": "Stone kitchen islands with mitred waterfall ends, vein-matched around every corner and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-              "url": "https://www.topcatworktops.co.uk/services/kitchen-islands.html",
+              "url": "https://www.topcatworktops.co.uk/services/kitchen-islands",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -5750,7 +5750,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Kitchen Islands",
-                  "item": "https://www.topcatworktops.co.uk/services/kitchen-islands.html"
+                  "item": "https://www.topcatworktops.co.uk/services/kitchen-islands"
                 }
               ]
             },
@@ -6297,35 +6297,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -6762,35 +6762,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -6840,18 +6840,18 @@
     {
       "slug": "kitchen-worktops",
       "source": "services/kitchen-worktops.html",
-      "url": "/services/kitchen-worktops.html",
+      "url": "/services/kitchen-worktops",
       "seo": {
         "title": "Kitchen Worktops | Supplied & Fitted Across London & the Home Counties | Topcat Worktops",
         "description": "Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/kitchen-worktops.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/kitchen-worktops",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Kitchen Worktops | Supplied & Fitted Across London & the Home Counties | Topcat Worktops",
           "description": "Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-          "url": "https://www.topcatworktops.co.uk/services/kitchen-worktops.html",
+          "url": "https://www.topcatworktops.co.uk/services/kitchen-worktops",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -6900,7 +6900,7 @@
               "name": "Kitchen Worktops",
               "serviceType": "Kitchen Worktops",
               "description": "Bespoke quartz, granite and marble kitchen worktops, cut from a single slab, templated to the millimetre and fitted by our own team. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-              "url": "https://www.topcatworktops.co.uk/services/kitchen-worktops.html",
+              "url": "https://www.topcatworktops.co.uk/services/kitchen-worktops",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -6936,7 +6936,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Kitchen Worktops",
-                  "item": "https://www.topcatworktops.co.uk/services/kitchen-worktops.html"
+                  "item": "https://www.topcatworktops.co.uk/services/kitchen-worktops"
                 }
               ]
             },
@@ -7483,35 +7483,35 @@
               "items": [
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -7948,35 +7948,35 @@
               "items": [
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -8026,18 +8026,18 @@
     {
       "slug": "outdoor-kitchens",
       "source": "services/outdoor-kitchens.html",
-      "url": "/services/outdoor-kitchens.html",
+      "url": "/services/outdoor-kitchens",
       "seo": {
         "title": "Outdoor Kitchen Worktops in Stone | Topcat Worktops",
         "description": "Weatherproof stone worktops for garden kitchens and barbecue runs, chosen to hold colour outdoors and cut around sinks, hobs and appliances. Serving London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/outdoor-kitchens.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/outdoor-kitchens",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Outdoor Kitchen Worktops in Stone | Topcat Worktops",
           "description": "Weatherproof stone worktops for garden kitchens and barbecue runs, chosen to hold colour outdoors and cut around sinks, hobs and appliances. Serving London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-          "url": "https://www.topcatworktops.co.uk/services/outdoor-kitchens.html",
+          "url": "https://www.topcatworktops.co.uk/services/outdoor-kitchens",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -8086,7 +8086,7 @@
               "name": "Outdoor Spaces",
               "serviceType": "Outdoor Spaces",
               "description": "Weatherproof stone worktops for garden kitchens and barbecue runs, chosen to hold colour outdoors and cut around sinks, hobs and appliances. Serving London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-              "url": "https://www.topcatworktops.co.uk/services/outdoor-kitchens.html",
+              "url": "https://www.topcatworktops.co.uk/services/outdoor-kitchens",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -8122,7 +8122,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Outdoor Spaces",
-                  "item": "https://www.topcatworktops.co.uk/services/outdoor-kitchens.html"
+                  "item": "https://www.topcatworktops.co.uk/services/outdoor-kitchens"
                 }
               ]
             },
@@ -8669,35 +8669,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -9134,35 +9134,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -9212,18 +9212,18 @@
     {
       "slug": "splashbacks",
       "source": "services/splashbacks.html",
-      "url": "/services/splashbacks.html",
+      "url": "/services/splashbacks",
       "seo": {
         "title": "Stone Splashbacks & Upstands | Quartz, Granite & Marble | Topcat Worktops",
         "description": "Vein-matched stone splashbacks and upstands cut to fit around sockets and hobs, with no grout lines. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/splashbacks.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/splashbacks",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Stone Splashbacks & Upstands | Quartz, Granite & Marble | Topcat Worktops",
           "description": "Vein-matched stone splashbacks and upstands cut to fit around sockets and hobs, with no grout lines. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-          "url": "https://www.topcatworktops.co.uk/services/splashbacks.html",
+          "url": "https://www.topcatworktops.co.uk/services/splashbacks",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -9272,7 +9272,7 @@
               "name": "Splashbacks",
               "serviceType": "Splashbacks",
               "description": "Vein-matched stone splashbacks and upstands cut to fit around sockets and hobs, with no grout lines. Free home visit and a ten-year guarantee across London, Hertfordshire, Essex, Berkshire, Buckinghamshire, Surrey, Oxfordshire & Bedfordshire.",
-              "url": "https://www.topcatworktops.co.uk/services/splashbacks.html",
+              "url": "https://www.topcatworktops.co.uk/services/splashbacks",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -9308,7 +9308,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Splashbacks",
-                  "item": "https://www.topcatworktops.co.uk/services/splashbacks.html"
+                  "item": "https://www.topcatworktops.co.uk/services/splashbacks"
                 }
               ]
             },
@@ -9853,35 +9853,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -10317,35 +10317,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Vanity Tops",
-                  "href": "vanity-tops.html"
+                  "href": "vanity-tops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -10395,18 +10395,18 @@
     {
       "slug": "vanity-tops",
       "source": "services/vanity-tops.html",
-      "url": "/services/vanity-tops.html",
+      "url": "/services/vanity-tops",
       "seo": {
         "title": "Stone Vanity Tops for Undermount & Countertop Basins | Topcat Worktops",
         "description": "Vanity tops cut in quartz, granite or marble for undermount and countertop basins, with the tap holes where you want them. Templated by hand and fitted by our own team across London and the Home Counties.",
         "robots": "index, follow",
-        "canonical": "https://www.topcatworktops.co.uk/services/vanity-tops.html",
+        "canonical": "https://www.topcatworktops.co.uk/services/vanity-tops",
         "lang": "en-GB",
         "og": {
           "type": "website",
           "title": "Stone Vanity Tops for Undermount & Countertop Basins | Topcat Worktops",
           "description": "Vanity tops cut in quartz, granite or marble for undermount and countertop basins, with the tap holes where you want them. Templated by hand and fitted by our own team across London and the Home Counties.",
-          "url": "https://www.topcatworktops.co.uk/services/vanity-tops.html",
+          "url": "https://www.topcatworktops.co.uk/services/vanity-tops",
           "siteName": "Topcat Worktops",
           "image": "https://www.topcatworktops.co.uk/assets/site/og-cover.jpg",
           "imageWidth": "1200",
@@ -10455,7 +10455,7 @@
               "name": "Vanity Tops",
               "serviceType": "Vanity Tops",
               "description": "Vanity tops cut in quartz, granite or marble for undermount and countertop basins, with the tap holes where you want them. Templated by hand and fitted by our own team across London and the Home Counties.",
-              "url": "https://www.topcatworktops.co.uk/services/vanity-tops.html",
+              "url": "https://www.topcatworktops.co.uk/services/vanity-tops",
               "provider": {
                 "@type": "LocalBusiness",
                 "name": "Topcat Worktops",
@@ -10491,7 +10491,7 @@
                   "@type": "ListItem",
                   "position": 3,
                   "name": "Vanity Tops",
-                  "item": "https://www.topcatworktops.co.uk/services/vanity-tops.html"
+                  "item": "https://www.topcatworktops.co.uk/services/vanity-tops"
                 }
               ]
             },
@@ -11046,35 +11046,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }
@@ -11519,35 +11519,35 @@
               "items": [
                 {
                   "label": "Kitchen Worktops",
-                  "href": "kitchen-worktops.html"
+                  "href": "kitchen-worktops"
                 },
                 {
                   "label": "Kitchen Islands",
-                  "href": "kitchen-islands.html"
+                  "href": "kitchen-islands"
                 },
                 {
                   "label": "Splashbacks",
-                  "href": "splashbacks.html"
+                  "href": "splashbacks"
                 },
                 {
                   "label": "Bathrooms",
-                  "href": "bathroom-worktops.html"
+                  "href": "bathroom-worktops"
                 },
                 {
                   "label": "Commercial",
-                  "href": "commercial-worktops.html"
+                  "href": "commercial-worktops"
                 },
                 {
                   "label": "Outdoor Spaces",
-                  "href": "outdoor-kitchens.html"
+                  "href": "outdoor-kitchens"
                 },
                 {
                   "label": "Fireplaces",
-                  "href": "fireplaces.html"
+                  "href": "fireplaces"
                 },
                 {
                   "label": "Dining Tables",
-                  "href": "dining-tables.html"
+                  "href": "dining-tables"
                 }
               ]
             }

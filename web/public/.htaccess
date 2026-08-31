@@ -1,0 +1,121 @@
+# ============================================================================
+# Topcat Worktops — Apache rules for the SiteGround host (29 August 2026)
+#
+# ⛔ THIS FILE IS THE ONLY PART OF THE FIX THAT REACHES THE LIVE SITE.
+#
+# topcatworktops.co.uk is a STATIC SNAPSHOT of this build, uploaded to
+# SiteGround by hand. Vercel is where the app runs; SiteGround is where the
+# customer lands. Apache knows nothing about next.config.ts, so the redirects
+# and rewrites declared there fix the Vercel copy and NOTHING on the live
+# domain. These rules are their Apache equivalent and must be uploaded WITH
+# the site files, at the web root, or the two problems below come straight
+# back.
+#
+# ---------------------------------------------------------------------------
+# PROBLEM 1 — every extensionless URL returned 403 on the live host
+# ---------------------------------------------------------------------------
+# Measured 29 Aug, live domain against the Vercel copy:
+#
+#   /stone-selector           403   (Vercel 200)
+#   /stones/compare           403   (Vercel 200)
+#   /services/outdoor-kitchens 403  (Vercel 200)
+#   /stone-selector.html      200
+#   /estimate                 200   ← the exception, and it is the clue
+#
+# The export writes most routes as a FLAT file — `stone-selector.html` — and a
+# few as a DIRECTORY with an index inside. Apache serves the directory ones
+# from their index and has nothing to answer with for the flat ones, so the
+# clean URL fails. It fails 403 rather than 404 because directory indexing is
+# refused on this host; the page is not forbidden, it was never found.
+#
+# The rewrite below tries `<path>.html` for any request that is not already a
+# real file or directory, which makes every flat-exported route answer at its
+# clean URL. That is the whole of the /stone-selector fix.
+#
+# ---------------------------------------------------------------------------
+# PROBLEM 2 — the service pages still resolved at .html
+# ---------------------------------------------------------------------------
+# The client: "/services/outdoor-kitchens.html should become
+# /services/outdoor-kitchens ... and make sure the old .html URLs redirect to
+# the new ones rather than 404ing."
+#
+# ⚠️ ORDER IS LOAD-BEARING. The redirect must come BEFORE the rewrite. Put it
+# after and the rewrite answers `/services/x` from `x.html` internally, the
+# redirect then matches that rewritten path, and Apache loops until it gives
+# up with a 500.
+#
+# ⛔ AND IT IS SCOPED TO /services/ ONLY. The 132 stone pages, the 9 guides and
+# the 5 material pages still declare `.html` canonicals, so redirecting them
+# here would advertise one URL and serve another. Those families are a separate
+# change; see the handover.
+# ============================================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # -- 1. the nine service pages: .html is retired, 301 to the clean URL ------
+  # THE_REQUEST is matched, not REQUEST_URI, so this fires only on a real
+  # browser request and never on an internal rewrite — belt and braces beside
+  # the ordering above.
+  RewriteCond %{THE_REQUEST} \s/+services/([a-z-]+)\.html[\s?] [NC]
+  RewriteRule ^ /services/%1? [R=301,L]
+
+  # -- 2. serve every flat-exported route at its clean URL -------------------
+  # Only when the request is not already a real file or directory, so existing
+  # assets, directory-index routes and send.php are untouched.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.*)$ $1.html [L]
+</IfModule>
+
+# ============================================================================
+# Cache and compression, carried over from the previous build's .htaccess.
+# The reasoning there still holds: the HTML must never be served stale because
+# it is what carries the new ?v= stamps for everything else.
+# ============================================================================
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+    Header unset Pragma
+  </FilesMatch>
+
+  # Next writes content-hashed filenames under /_next/static, so these are
+  # genuinely immutable.
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # ⛔ NOT `immutable`. Slab tiles and portraits are named for their subject,
+  # not their contents, and rely on a hand-bumped ?v=. An hour is a forgotten
+  # bump that heals itself; a year is one that is invisible for twelve months.
+  <FilesMatch "\.(webp|jpg|jpeg|png|svg|ico)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
+  <FilesMatch "\.woff2$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # The film is 17MB on the wide cut and is the first thing a desktop visitor
+  # fetches. A week, and it carries a hand-bumped ?v=.
+  <FilesMatch "\.(mp4|webm)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType video/mp4 .mp4
+  AddType image/svg+xml .svg
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
+                                application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml \
+                                        application/javascript application/json image/svg+xml
+</IfModule>

@@ -129,13 +129,29 @@ describe('the dataset', () => {
     expect(() => getService('worktops')).toThrow(/No service with slug/);
   });
 
-  it('keeps the nine URLs as .html leaves and the hub as a directory', () => {
-    // The whole `trailingSlash: false` decision rests on this: these nine
-    // export straight to out/services/<slug>.html, which IS the live URL, so
-    // the canonicals stay true and nothing needs a redirect. The hub goes the
-    // other way and is restored by scripts/postexport.mjs.
+  it('keeps the nine URLs clean, and the hub a directory', () => {
+    /*
+      ⛔ THESE WERE `.html` LEAVES UNTIL 29 AUG. The client: "all the individual
+      service pages are still resolving with a .html extension. We want clean
+      URLs instead." So `/services/outdoor-kitchens.html` is now
+      `/services/outdoor-kitchens`, here and in `seo.canonical`, `og.url`, and
+      every inbound link across locations.json, materials.json, nav-data.ts and
+      sitemap.ts.
+
+      The old leaves are not abandoned: next.config.ts 308-redirects them, and
+      public/.htaccess does the same on the Apache host the live domain is
+      actually served from.
+
+      ⚠️ THE OTHER FAMILIES STILL END IN `.html` ON PURPOSE — 132 stone pages,
+      9 guides, 5 materials. Their canonicals still say `.html`, so they still
+      REWRITE rather than redirect. Changing one family without its canonicals
+      would advertise one URL and serve another.
+    */
     for (const service of services) {
-      expect(service.url).toBe(`/services/${service.slug}.html`);
+      expect(service.url).toBe(`/services/${service.slug}`);
+      expect(service.seo.canonical).toMatch(
+        new RegExp(`/services/${service.slug}$`),
+      );
     }
     expect(servicesIndex.url).toBe('/services/');
   });
@@ -299,8 +315,10 @@ describe('the detail template', () => {
       const crossSell = [...container.querySelectorAll('.mats')].at(-1)!;
       expect(leadMain.contains(crossSell)).toBe(false);
       // …and every chip in it points at another service page.
+      // Relative, and now extensionless: from /services/<slug> a bare
+      // `kitchen-islands` resolves to /services/kitchen-islands.
       for (const link of crossSell.querySelectorAll('a')) {
-        expect(link.getAttribute('href')).toMatch(/^[a-z-]+\.html$/);
+        expect(link.getAttribute('href')).toMatch(/^[a-z-]+$/);
       }
     }
   });
@@ -462,8 +480,8 @@ describe('the chrome links into this family', () => {
       NAV_SERVICES.map((link) => link.href.replace(/\/$/, '')),
     );
     for (const link of NAV_SERVICES) {
-      expect(link.href).toMatch(/^\/services\/[a-z-]+\.html$/);
-      const slug = link.href.slice('/services/'.length, -'.html'.length);
+      expect(link.href).toMatch(/^\/services\/[a-z-]+$/);
+      const slug = link.href.slice('/services/'.length);
       expect(serviceSlugs()).toContain(slug);
     }
     expect(NAV_SERVICES).toHaveLength(9);
@@ -472,16 +490,24 @@ describe('the chrome links into this family', () => {
     // "Bathrooms" links to bathroom-worktops.html, "Outdoor spaces" to
     // outdoor-kitchens.html. Carried as found.
     const bathrooms = NAV_SERVICES.find((l) => l.label === 'Bathrooms');
-    expect(bathrooms?.href).toBe('/services/bathroom-worktops.html');
+    expect(bathrooms?.href).toBe('/services/bathroom-worktops');
   });
 
-  it('matches the hrefs the live nav ships', () => {
+  it('names the same nine pages the live nav does, now without the .html', () => {
+    /*
+      ⛔ THIS IS A DELIBERATE DIVERGENCE FROM THE LEGACY BUILD, and it is the
+      only one in this file. It used to assert the ported href appeared
+      VERBATIM in the old nav. The client has since asked for clean service
+      URLs, so byte-parity is now the wrong test — what must still hold is that
+      we point at the same nine pages, and that we have not invented, dropped or
+      renamed one while stripping the extension.
+    */
     const html = legacyHtml('kitchen-worktops.html');
-    const inNav = [
-      ...html.matchAll(/href="(\/services\/[a-z-]+\.html)"/g),
+    const legacySlugs = [
+      ...html.matchAll(/href="\/services\/([a-z-]+)\.html"/g),
     ].map((m) => m[1]);
     for (const link of NAV_SERVICES) {
-      expect(inNav).toContain(link.href);
+      expect(legacySlugs).toContain(link.href.slice('/services/'.length));
     }
   });
 });

@@ -6,7 +6,7 @@
  * ---------------------------------------------------------------------------
  * next.config.ts pins `output: 'export'` + `trailingSlash: FALSE`, so a leaf
  * route exports to the legacy URL unchanged: `app/services/[slug]/page.tsx`
- * emits `out/services/kitchen-worktops.html`. The `.html` link shapes below
+ * emits `out/services/kitchen-worktops`. The `.html` link shapes below
  * are therefore the real exported paths and must stay as the source writes
  * them — rewriting one to a directory URL is a dead link, not a redirect,
  * because postexport.mjs only creates directory forms for urls that END in a
@@ -74,15 +74,15 @@ export const PRIMARY: readonly NavLink[] = [
 /* --- the nine service pages, desktop dropdown and mobile sub alike ------ */
 
 export const SERVICES: readonly NavLink[] = [
-  { href: '/services/kitchen-worktops.html', label: 'Kitchen worktops' },
-  { href: '/services/kitchen-islands.html', label: 'Kitchen islands' },
-  { href: '/services/splashbacks.html', label: 'Splashbacks' },
-  { href: '/services/bathroom-worktops.html', label: 'Bathrooms' },
-  { href: '/services/outdoor-kitchens.html', label: 'Outdoor spaces' },
-  { href: '/services/fireplaces.html', label: 'Fireplaces' },
-  { href: '/services/dining-tables.html', label: 'Dining tables' },
-  { href: '/services/vanity-tops.html', label: 'Vanity tops' },
-  { href: '/services/commercial-worktops.html', label: 'Commercial' },
+  { href: '/services/kitchen-worktops', label: 'Kitchen worktops' },
+  { href: '/services/kitchen-islands', label: 'Kitchen islands' },
+  { href: '/services/splashbacks', label: 'Splashbacks' },
+  { href: '/services/bathroom-worktops', label: 'Bathrooms' },
+  { href: '/services/outdoor-kitchens', label: 'Outdoor spaces' },
+  { href: '/services/fireplaces', label: 'Fireplaces' },
+  { href: '/services/dining-tables', label: 'Dining tables' },
+  { href: '/services/vanity-tops', label: 'Vanity tops' },
+  { href: '/services/commercial-worktops', label: 'Commercial' },
 ];
 
 /**

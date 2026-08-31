@@ -103,6 +103,42 @@ const nextConfig: NextConfig = {
         destination: '/contact/?stone=:stone#ctaForm',
         permanent: false,
       },
+      /*
+        ⛔ THE NINE SERVICE PAGES ARE A REDIRECT, NOT A REWRITE — AND THEY ARE
+        THE ONLY FAMILY THAT IS.
+
+        The client: "all the individual service pages are still resolving with a
+        .html extension. We want clean URLs instead, so
+        /services/outdoor-kitchens.html should become /services/outdoor-kitchens
+        ... and make sure the old .html URLs redirect to the new ones rather
+        than 404ing."
+
+        The rewrite that used to sit in `rewrites()` below served the page at
+        the `.html` URL and left it in the address bar, which is exactly what he
+        is looking at. It was right while every canonical in services.json still
+        pointed at a `.html` leaf — a redirect then would have moved the visitor
+        off the URL the page declared as its own. Those 455 references are now
+        clean (`url`, `seo.canonical` and `og.url` on all nine, plus every
+        inbound link in locations.json, materials.json, nav-data.ts, sitemap.ts
+        and the sibling links inside the pages themselves), so the redirect is
+        now the truthful answer and the rewrite would be the lie.
+
+        308, not 307: this shape is settled and the old leaves should stop being
+        fetched. The two stone deep-links above stay 307 for their own stated
+        reason — the domain, not the path shape, is what is unsettled there.
+
+        ⚠️ THE OTHER FAMILIES ARE DELIBERATELY UNTOUCHED. /stones/ (132),
+        /guides/ (9), /materials/ (5), /sitemap.html and /index.html still
+        rewrite, because their canonicals are still `.html` leaves. Converting
+        one family without its canonicals would advertise one URL and serve
+        another. He asked for the service pages; the rest is a separate,
+        larger change and is listed as such in the handover.
+      */
+      {
+        source: '/services/:slug.html',
+        destination: '/services/:slug',
+        permanent: true,
+      },
     ];
   },
 
@@ -116,7 +152,6 @@ const nextConfig: NextConfig = {
       { source: '/index.html', destination: '/' },
       { source: '/stones/compare.html', destination: '/stones/compare' },
       { source: '/stones/:slug.html', destination: '/stones/:slug' },
-      { source: '/services/:slug.html', destination: '/services/:slug' },
       { source: '/guides/:slug.html', destination: '/guides/:slug' },
       { source: '/materials/:slug.html', destination: '/materials/:slug' },
       { source: '/sitemap.html', destination: '/sitemap' },

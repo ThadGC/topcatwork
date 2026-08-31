@@ -60,10 +60,21 @@ describe('services strip', () => {
     for (const s of SERVICES) expect(inSource(s.long), s.t).toBe(true);
   });
 
-  it('points every card at an existing legacy .html leaf', () => {
+  it('points every card at a page the legacy site really has', () => {
+    /*
+      ⛔ THE HREFS ARE CLEAN SINCE 29 AUG — `/services/kitchen-worktops`, not
+      `…​.html`. The client asked for it, and next.config.ts plus
+      public/.htaccess 308-redirect the old leaves.
+
+      So the href itself is no longer in the legacy HTML and cannot be looked up
+      verbatim. What this test is actually for is unchanged and still worth
+      having: every card must point at a service page that EXISTS. The legacy
+      leaf is therefore rebuilt from the clean href and looked up in the source,
+      which still catches an invented or misspelled slug.
+    */
     for (const s of SERVICES) {
-      expect(s.href).toMatch(/^\/services\/[a-z-]+\.html$/);
-      expect(inSource(s.href)).toBe(true);
+      expect(s.href).toMatch(/^\/services\/[a-z-]+$/);
+      expect(inSource(`${s.href}.html`)).toBe(true);
     }
   });
 });
