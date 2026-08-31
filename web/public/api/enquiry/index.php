@@ -1,0 +1,384 @@
+<?php
+/* ==========================================================================
+   THE ENQUIRY ENDPOINT — `POST /api/enquiry`, multipart/form-data.
+
+   WHY IT IS PHP. The site is a Next application, but the LIVE one is a static
+   export on SiteGround's Apache. `app/api/enquiry/route.ts` is a Node route
+   handler and there is no Node on that box, so every form on the live domain
+   was posting into thin air. This file is that route's Apache twin: same URL,
+   same field names, same JSON contract, so the client-side code in
+   `src/lib/form/payload.ts` needs no change and does not know which one
+   answered.
+
+   ⚠️ KEEP THE TWO IN STEP. If the validation rules or the JSON shape change in
+   route.ts, change them here in the same edit, or the live site and the Vercel
+   copy will disagree about what a valid enquiry is.
+
+   THE NOTIFICATION EMAIL IS DELIBERATELY THE ONE THE CLIENT ALREADY READS —
+   same palette, same label column, same row order as the legacy `send.php`
+   (still at ~/Documents/TOPCAT WORKTOPS/send.php) and as `src/lib/mail/
+   compose.ts`, which is itself a port of it. The autoreply is `composeAutoReply`
+   from that file, rendered in PHP.
+
+   ⛔ CREDENTIALS LIVE IN `config.php`, WHICH IS NOT IN THE REPOSITORY.
+   See config.example.php for why. This file holds no secrets and is safe to
+   commit; that one is not.
+   ========================================================================== */
+
+declare(strict_types=1);
+
+header('Content-Type: application/json; charset=utf-8');
+header('X-Content-Type-Options: nosniff');
+
+/* --- the JSON contract, in one place ------------------------------------- */
+function tc_out(int $code, array $payload): void {
+  http_response_code($code);
+  echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+  exit;
+}
+/** The one wording the visitor sees when delivery fails. Matches route.ts. */
+const TC_FAIL = 'We could not send that just now. Please call 0800 098 2812 and we will take it down.';
+function tc_fail(): void { tc_out(502, ['ok' => false, 'errors' => [TC_FAIL]]); }
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+  tc_out(405, ['ok' => false, 'errors' => ['This endpoint takes a POST.']]);
+}
+
+/* --- configuration -------------------------------------------------------
+   A missing or unfilled config is a DELIVERY failure, not a validation one:
+   the visitor did nothing wrong, and telling them to phone is the honest
+   answer. It is never a PHP warning — those would print above the JSON and
+   break the response for the form's `r.json()`.                            */
+$CFG = @include __DIR__ . '/config.php';
+if (!is_array($CFG) || empty($CFG['pass']) || $CFG['pass'] === 'PUT-THE-APP-PASSWORD-HERE') {
+  error_log('[topcat] api/enquiry: config.php missing or still holding the placeholder password');
+  tc_fail();
+}
+$SMTP_HOST = $CFG['host']      ?? 'smtp.gmail.com';
+$SMTP_PORT = (int)($CFG['port'] ?? 465);
+$SMTP_USER = $CFG['user']      ?? 'noreply@topcatworktops.co.uk';
+$SMTP_PASS = $CFG['pass'];
+$TO        = $CFG['to']        ?? 'info@topcatworktops.co.uk';
+$FROM      = $CFG['from']      ?? 'noreply@topcatworktops.co.uk';
+$FROM_NAME = $CFG['from_name'] ?? 'Topcat Worktops';
+
+/* --- limits, matching route.ts and the client's own uploader -------------- */
+$FILE_MAX  = 50 * 1024 * 1024;   // per file, route.ts FILE_MAX
+$TOTAL_MAX = 100 * 1024 * 1024;  // all files together
+$MIN_NAME  = 2;                  // route.ts MIN_NAME
+
+/* --- the palette is the site's own (send.php:44-51) ---------------------- */
+$INK = '#0B0B0E'; $BONE = '#F4F1EA'; $SEAM = '#E3DCCB'; $ROWLN = '#EFEAE0';
+$GOLD = '#C6A664'; $TEXT = '#1B1B18'; $MUTE = '#8A857A'; $LINK = '#8A6D3B';
+
+/* --- helpers, ported from send.php --------------------------------------- */
+function h($s): string { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+function fld(string $k, int $max = 4000): string {
+  $v = isset($_POST[$k]) && is_string($_POST[$k]) ? trim($_POST[$k]) : '';
+  return mb_substr(str_replace(["\r", "\n"], ' ', $v), 0, $max);
+}
+function human_bytes(int $n): string {
+  if ($n < 1024) return $n . ' B';
+  if ($n < 1024 * 1024) return round($n / 1024) . ' KB';
+  return round($n / 1048576, 1) . ' MB';
+}
+/** send.php:126 — which page family the form sat on, in the client's words. */
+function page_label(string $p): string {
+  if ($p === '/' || $p === '/index.html') return 'Home page';
+  $exact = ['/contact/' => 'Contact page', '/trade/' => 'Trade page', '/about/' => 'About page',
+            '/projects/' => 'Projects page', '/estimate/' => 'Estimate page'];
+  foreach ($exact as $k => $v) if (strpos($p, $k) === 0) return $v;
+  foreach (['/services/' => 'Service page', '/stones/' => 'Stone page',
+            '/materials/' => 'Materials page', '/guides/' => 'Guide page',
+            '/worktops/' => 'Area page'] as $k => $v) if (strpos($p, $k) === 0) return $v;
+  return $p !== '' ? $p : 'the website';
+}
+
+/* --- the fields ---------------------------------------------------------- */
+$name     = fld('name', 120);
+$email    = fld('email', 200);
+$phone    = fld('phone', 60);
+$postcode = fld('postcode', 20);
+$service  = fld('service', 120);
+$stone    = fld('stone', 160);
+$stoneLnk = fld('stone_link', 300);
+$formName = fld('form_name', 40);
+$page     = fld('page', 200);
+$pageTtl  = fld('page_title', 90);
+$device   = fld('device', 12);
+$screen   = fld('screen', 16);
+$message  = isset($_POST['message']) && is_string($_POST['message'])
+          ? mb_substr(trim($_POST['message']), 0, 8000) : '';
+
+/* --- the files ----------------------------------------------------------- */
+$attach = [];
+$fileErrors = [];
+$totalBytes = 0;
+foreach ($_FILES as $field => $f) {
+  if (!is_array($f) || !isset($f['name'])) continue;
+  /* Both shapes: file1, file2 … one each, and file[] arrays. */
+  $names = is_array($f['name']) ? $f['name'] : [$f['name']];
+  $tmps  = is_array($f['tmp_name']) ? $f['tmp_name'] : [$f['tmp_name']];
+  $sizes = is_array($f['size']) ? $f['size'] : [$f['size']];
+  $errs  = is_array($f['error']) ? $f['error'] : [$f['error']];
+  foreach ($names as $i => $n) {
+    $err = (int)($errs[$i] ?? UPLOAD_ERR_NO_FILE);
+    if ($err === UPLOAD_ERR_NO_FILE || $n === '') continue;
+    if ($err === UPLOAD_ERR_INI_SIZE || $err === UPLOAD_ERR_FORM_SIZE) {
+      $fileErrors[] = ($n ?: 'A file') . ' is larger than the server accepts.';
+      continue;
+    }
+    if ($err !== UPLOAD_ERR_OK) { $fileErrors[] = ($n ?: 'A file') . ' did not upload cleanly.'; continue; }
+    $size = (int)($sizes[$i] ?? 0);
+    if ($size > $FILE_MAX) { $fileErrors[] = ($n ?: 'A file') . ' is larger than 50 MB.'; continue; }
+    $tmp = (string)($tmps[$i] ?? '');
+    if ($tmp === '' || !is_uploaded_file($tmp)) continue;
+    $totalBytes += $size;
+    /* iOS photographs arrive with no extension at all (send.php, D439).
+       Nothing here depends on the name, so it is carried as sent. */
+    $attach[] = ['name' => basename((string)$n), 'tmp' => $tmp, 'size' => $size];
+  }
+}
+
+/* --- validation, in route.ts's order and wording ------------------------- */
+$errors = $fileErrors;
+if (mb_strlen($name) < $MIN_NAME) {
+  $errors[] = 'Please tell us your name.';
+}
+if ($email === '' && $phone === '') {
+  $errors[] = 'Please leave an email address or a phone number so we can reply.';
+}
+/* Only when they actually gave one. A phone-only enquiry never reaches this —
+   rejecting those was real lead loss once (commit 53ebd4c). */
+$emailOK = ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) ? $email : '';
+if ($email !== '' && $emailOK === '') {
+  $errors[] = 'That email address does not look right.';
+}
+if ($totalBytes > $TOTAL_MAX) {
+  $errors[] = 'Those files come to more than 100 MB in total.';
+}
+if ($errors) tc_out(422, ['ok' => false, 'errors' => array_values($errors)]);
+
+/* --- the notification email ---------------------------------------------- */
+function row(string $label, string $value): string {
+  global $BONE, $SEAM, $ROWLN, $TEXT, $MUTE;
+  return '<tr><td style="padding:13px 18px;background:' . $BONE . ';border-right:1px solid ' . $SEAM
+    . ';border-bottom:1px solid ' . $ROWLN . ';color:' . $MUTE
+    . ';font:600 10.5px/1.6 Arial,Helvetica,sans-serif;letter-spacing:0.1em;text-transform:uppercase;width:31%;vertical-align:top">'
+    . h($label) . '</td><td style="padding:13px 18px;background:#FFFFFF;border-bottom:1px solid ' . $ROWLN
+    . ';color:' . $TEXT . ';font:400 14.5px/1.6 Arial,Helvetica,sans-serif;vertical-align:top">' . $value . '</td></tr>';
+}
+function section(string $t): string {
+  global $GOLD, $ROWLN;
+  return '<tr><td colspan="2" style="padding:30px 18px 10px;background:#FFFFFF;border-bottom:1px solid '
+    . $ROWLN . ';color:' . $GOLD
+    . ';font:700 12px/1.4 Arial,Helvetica,sans-serif;letter-spacing:0.18em;text-transform:uppercase">'
+    . h($t) . '</td></tr>';
+}
+function wide(string $html_): string {
+  global $TEXT;
+  return '<tr><td colspan="2" style="padding:14px 18px 18px;background:#FFFFFF;color:' . $TEXT
+    . ';font:400 14.5px/1.7 Arial,Helvetica,sans-serif">' . $html_ . '</td></tr>';
+}
+
+$rows = row('Name', h($name));
+if ($email)    $rows .= row('Email', '<a href="mailto:' . h($email) . '" style="color:' . $LINK . '">' . h($email) . '</a>');
+if ($phone)    $rows .= row('Phone', '<a href="tel:' . h(preg_replace('/[^0-9+]/', '', $phone)) . '" style="color:' . $LINK . '">' . h($phone) . '</a>');
+if ($postcode) $rows .= row('Postcode', h($postcode));
+if ($service)  $rows .= row('Service', h($service));
+if ($stone)    $rows .= row('Stone', h($stone));
+if ($stoneLnk) $rows .= row('Stone link', '<a href="' . h($stoneLnk) . '" style="color:' . $LINK . '">' . h($stoneLnk) . '</a>');
+
+/* ⛔ EVERY OTHER FIELD IS PRINTED TOO, exactly as send.php:286-291 did. A field
+   added to a form therefore needs no change here — which is the whole reason
+   the client's inbox has never silently dropped one. */
+$known = ['name','email','phone','postcode','service','stone','stone_link','message','page',
+          'page_title','form_name','device','screen','journey','estimate','sent_at'];
+foreach ($_POST as $k => $v) {
+  if (in_array($k, $known, true) || !is_string($v) || trim($v) === '') continue;
+  $rows .= row(ucfirst(str_replace('_', ' ', mb_substr($k, 0, 40))), h(mb_substr(trim($v), 0, 500)));
+}
+
+if ($message !== '') { $rows .= section('Message'); $rows .= wide(nl2br(h($message))); }
+
+/* The estimator's own state, when the visitor actually built one. */
+$estimate = null;
+if (isset($_POST['estimate']) && is_string($_POST['estimate']) && $_POST['estimate'] !== '') {
+  $estimate = json_decode($_POST['estimate'], true);
+}
+if (is_array($estimate) && !empty($estimate['stone'])) {
+  $rows .= section('Their estimate');
+  foreach (['mat' => 'Material', 'stone' => 'Stone', 'pieces' => 'Pieces', 'slabs' => 'Slabs',
+            'extras' => 'Extras', 'range' => 'Range', 'area' => 'Area'] as $k => $label) {
+    if (isset($estimate[$k]) && $estimate[$k] !== '' && !is_array($estimate[$k])) {
+      $rows .= row($label, h((string)$estimate[$k]));
+    }
+  }
+}
+
+if ($attach) {
+  $rows .= section(count($attach) === 1 ? 'Their file' : 'Their files');
+  $list = [];
+  foreach ($attach as $f) $list[] = h($f['name']) . ' <span style="color:' . $MUTE . '">' . human_bytes($f['size']) . '</span>';
+  $rows .= wide(implode('<br>', $list));
+}
+
+/* Where they were, and on what. */
+$whereLine = page_label($page) . ($pageTtl ? ' — ' . $pageTtl : '');
+$rows .= section('Where they sent it from');
+$rows .= row('Page', h($whereLine));
+if ($page)     $rows .= row('Path', h($page));
+if ($formName) $rows .= row('Form', h($formName));
+if ($device)   $rows .= row('Device', h($device) . ($screen ? ' (' . h($screen) . ')' : ''));
+
+/* The visit trail, as sent. Rendered compactly rather than reproducing
+   compose.ts's full summary: everything is present, nothing is invented. */
+$journey = null;
+if (isset($_POST['journey']) && is_string($_POST['journey']) && $_POST['journey'] !== '') {
+  $journey = json_decode($_POST['journey'], true);
+}
+if (is_array($journey) && !empty($journey['ev']) && is_array($journey['ev'])) {
+  $ev = array_slice($journey['ev'], -60);
+  $lines = [];
+  foreach ($ev as $e) {
+    if (!is_array($e)) continue;
+    $when = isset($e['at']) ? date('H:i', (int)((int)$e['at'] / 1000)) : '';
+    $what = trim(($e['k'] ?? '') . ' ' . ($e['v'] ?? $e['p'] ?? $e['s'] ?? ''));
+    if ($what === '') continue;
+    $lines[] = '<span style="color:' . $MUTE . '">' . h($when) . '</span>&nbsp;&nbsp;' . h($what);
+  }
+  if ($lines) { $rows .= section('What they did'); $rows .= wide(implode('<br>', $lines)); }
+}
+
+$html = '<!doctype html><html><body style="margin:0;padding:24px 0;background:' . $INK . '">'
+  . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:' . $INK . '"><tr><td align="center">'
+  . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="width:640px;max-width:96%;background:#FFFFFF;border-radius:4px;overflow:hidden">'
+  . '<tr><td colspan="2" style="padding:22px 18px;background:' . $INK . ';color:' . $GOLD
+  . ';font:700 13px/1.4 Arial,Helvetica,sans-serif;letter-spacing:0.22em;text-transform:uppercase">Topcat Worktops</td></tr>'
+  . $rows . '</table></td></tr></table></body></html>';
+
+$plain = "NEW ENQUIRY\n\n" . $whereLine . ($device ? " · $device" : '') . "\n\n"
+  . "Name: $name\n" . ($email ? "Email: $email\n" : '') . ($phone ? "Phone: $phone\n" : '')
+  . ($postcode ? "Postcode: $postcode\n" : '') . ($service ? "Service: $service\n" : '')
+  . ($stone ? "Stone: $stone\n" : '')
+  . ($message !== '' ? "\nMESSAGE\n$message\n" : '');
+foreach ($attach as $f) $plain .= "\nFile: " . $f['name'] . ' (' . human_bytes($f['size']) . ')';
+
+$subject = 'New enquiry — ' . $name . ($postcode ? ' (' . $postcode . ')' : '')
+         . ' · ' . page_label($page) . ($device ? ' · ' . $device : '');
+
+/* --- the autoreply — composeAutoReply() from src/lib/mail/compose.ts ------ */
+$first = trim(explode(' ', trim($name))[0] ?? '');
+$detail = [];
+if ($name)     $detail[] = ['Name', $name];
+if ($email)    $detail[] = ['Email', $email];
+if ($phone)    $detail[] = ['Phone', $phone];
+if ($postcode) $detail[] = ['Postcode', $postcode];
+if ($service)  $detail[] = ['What you need', $service];
+if ($stone)    $detail[] = ['Stone', $stone];
+if ($message !== '') $detail[] = ['Your message', $message];
+if ($attach) {
+  $ns = array_map(static fn($f) => $f['name'], $attach);
+  $detail[] = [count($attach) === 1 ? 'File attached' : 'Files attached', implode(', ', $ns)];
+}
+$arRows = '';
+foreach ($detail as [$k, $v]) {
+  $arRows .= '<tr><td style="padding:11px 18px;background:' . $BONE . ';border-right:1px solid ' . $SEAM
+    . ';border-bottom:1px solid ' . $ROWLN . ';color:' . $MUTE
+    . ';font:600 10.5px/1.6 Arial,Helvetica,sans-serif;letter-spacing:0.1em;text-transform:uppercase;width:34%;vertical-align:top">'
+    . h($k) . '</td><td style="padding:11px 18px;background:#FFFFFF;border-bottom:1px solid ' . $ROWLN
+    . ';color:' . $TEXT . ';font:400 14.5px/1.6 Arial,Helvetica,sans-serif;vertical-align:top">'
+    . nl2br(h($v)) . '</td></tr>';
+}
+$arSubject = 'Thank you for contacting Topcat Worktops';
+$arHtml = '<!doctype html><html><body style="margin:0;padding:24px 0;background:' . $INK . '">'
+  . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:' . $INK . '"><tr><td align="center">'
+  . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:96%;background:#FFFFFF;border-radius:4px;overflow:hidden">'
+  . '<tr><td style="padding:22px 18px;background:' . $INK . ';color:' . $GOLD
+  . ';font:700 13px/1.4 Arial,Helvetica,sans-serif;letter-spacing:0.22em;text-transform:uppercase">Topcat Worktops</td></tr>'
+  . '<tr><td style="padding:26px 18px 6px;background:#FFFFFF;color:' . $TEXT . ';font:400 15px/1.7 Arial,Helvetica,sans-serif">'
+  . ($first !== '' ? '<p style="margin:0 0 14px">Hi ' . h($first) . ',</p>' : '')
+  . '<p style="margin:0 0 14px">Thank you for contacting Topcat Worktops. We have received your enquiry and someone from our team will get back to you shortly, always within one working day.</p>'
+  . '<p style="margin:0 0 4px">These are the details you sent us.</p></td></tr>'
+  . ($arRows ? '<tr><td style="padding:14px 0 0"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' . $arRows . '</table></td></tr>' : '')
+  . '<tr><td style="padding:22px 18px 26px;background:#FFFFFF;color:' . $TEXT . ';font:400 15px/1.7 Arial,Helvetica,sans-serif">'
+  . '<p style="margin:0 0 14px">If anything above is not right, reply to this email and we will put it straight. If it is urgent, call us free on <a href="tel:+448000982812" style="color:' . $LINK . '">0800 098 2812</a>.</p>'
+  . '<p style="margin:0">Thank you again,<br>Topcat Worktops</p></td></tr>'
+  . '<tr><td style="padding:16px 18px;background:' . $BONE . ';color:' . $MUTE . ';font:400 11.5px/1.7 Arial,Helvetica,sans-serif">'
+  . '0800 098 2812 &nbsp;&middot;&nbsp; <a href="mailto:info@topcatworktops.co.uk" style="color:' . $LINK . '">info@topcatworktops.co.uk</a><br>'
+  . 'This is an automatic confirmation. You do not need to do anything else.</td></tr>'
+  . '</table></td></tr></table></body></html>';
+
+$arText = ($first !== '' ? "Hi $first,\n\n" : '')
+  . "Thank you for contacting Topcat Worktops. We have received your enquiry and someone from our team will get back to you shortly, always within one working day.\n\n";
+if ($detail) {
+  $arText .= "These are the details you sent us.\n\n";
+  foreach ($detail as [$k, $v]) $arText .= "$k: $v\n";
+  $arText .= "\n";
+}
+$arText .= "If anything above is not right, reply to this email and we will put it straight. If it is urgent, call us free on 0800 098 2812.\n\n"
+  . "Thank you again,\nTopcat Worktops\n0800 098 2812\ninfo@topcatworktops.co.uk";
+
+/* --- delivery ------------------------------------------------------------ */
+require_once __DIR__ . '/PHPMailer/Exception.php';
+require_once __DIR__ . '/PHPMailer/PHPMailer.php';
+require_once __DIR__ . '/PHPMailer/SMTP.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception as MailException;
+
+function tc_mailer(string $host, int $port, string $user, string $pass): PHPMailer {
+  $m = new PHPMailer(true);
+  $m->isSMTP();
+  $m->Host       = $host;
+  $m->SMTPAuth   = true;
+  $m->Username   = $user;
+  $m->Password   = $pass;
+  /* 465 is implicit TLS (SMTPS); 587 is STARTTLS. Choosing on the port rather
+     than hard-coding one means a move to 587 needs only a config edit. */
+  $m->SMTPSecure = $port === 465 ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
+  $m->Port       = $port;
+  $m->CharSet    = 'UTF-8';
+  $m->Timeout    = 20;
+  return $m;
+}
+
+/* ⛔ THE NOTIFICATION IS THE ONE THAT DECIDES THE RESPONSE. If it fails the
+   visitor is told to phone; the autoreply is a courtesy and its failure must
+   never turn a delivered enquiry into an error. */
+try {
+  $m = tc_mailer($SMTP_HOST, $SMTP_PORT, $SMTP_USER, $SMTP_PASS);
+  $m->setFrom($FROM, $FROM_NAME);
+  $m->addAddress($TO);
+  /* So the client can hit reply and reach the customer, not the noreply box. */
+  if ($emailOK !== '') $m->addReplyTo($emailOK, $name !== '' ? $name : $emailOK);
+  foreach ($attach as $f) $m->addAttachment($f['tmp'], $f['name']);
+  $m->isHTML(true);
+  $m->Subject = $subject;
+  $m->Body    = $html;
+  $m->AltBody = $plain;
+  $m->send();
+} catch (MailException|Throwable $e) {
+  error_log('[topcat] api/enquiry notification failed: ' . $e->getMessage());
+  tc_fail();
+}
+
+if ($emailOK !== '') {
+  try {
+    $a = tc_mailer($SMTP_HOST, $SMTP_PORT, $SMTP_USER, $SMTP_PASS);
+    $a->setFrom($FROM, $FROM_NAME);
+    $a->addAddress($emailOK, $name !== '' ? $name : $emailOK);
+    /* A reply to the confirmation must reach a human, not the noreply box. */
+    $a->addReplyTo($TO, 'Topcat Worktops');
+    $a->isHTML(true);
+    $a->Subject = $arSubject;
+    $a->Body    = $arHtml;
+    $a->AltBody = $arText;
+    $a->send();
+  } catch (MailException|Throwable $e) {
+    /* Swallowed on purpose — see above. The enquiry IS delivered. */
+    error_log('[topcat] api/enquiry autoreply failed: ' . $e->getMessage());
+  }
+}
+
+tc_out(200, ['ok' => true]);

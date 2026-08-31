@@ -53,6 +53,16 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # -- 0. THE ENQUIRY ENDPOINT IS LEFT ALONE ---------------------------------
+  # ⛔ EVERY FORM ON THE SITE POSTS TO /api/enquiry. Rule 2 below would not
+  # touch it — `api/enquiry` is a real directory, so its `!-d` test already
+  # fails — but that is an accident of the export's shape rather than a
+  # decision, and it would stop being true the moment the endpoint moved to a
+  # bare `api/enquiry.php`. This says it outright instead, ahead of everything,
+  # so a later edit to the rules below cannot silently break every form on the
+  # site. DirectoryIndex serves api/enquiry/index.php.
+  RewriteRule ^api/ - [L]
+
   # -- 1. the nine service pages: .html is retired, 301 to the clean URL ------
   # THE_REQUEST is matched, not REQUEST_URI, so this fires only on a real
   # browser request and never on an internal rewrite — belt and braces beside
@@ -119,3 +129,14 @@
   AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml \
                                         application/javascript application/json image/svg+xml
 </IfModule>
+
+# ============================================================================
+# The enquiry endpoint's SMTP credentials. `config.php` is not in the
+# repository and is created on the server by hand — see
+# api/enquiry/config.example.php. Apache executes .php rather than serving it,
+# so this is belt and braces: if the file is ever renamed, backed up as
+# config.php.bak or left as a .txt beside it, it must still not be downloadable.
+# ============================================================================
+<FilesMatch "^config\.(php\..*|bak|txt|old|save|orig)$">
+  Require all denied
+</FilesMatch>

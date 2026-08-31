@@ -27,3 +27,11 @@ Thumbs.db
 #    be mailed. They are created ON THE HOST by real visitors — they are not
 #    part of the site and must never be committed or overwritten by an upload.
 _enquiry-files/
+
+# vercel — the CLI writes .vercel/project.json when the repo is linked.
+# Machine state, not source.
+.vercel/
+
+# SMTP credentials for the Apache enquiry endpoint — never committed.
+# See web/public/api/enquiry/config.example.php
+web/public/api/enquiry/config.php
