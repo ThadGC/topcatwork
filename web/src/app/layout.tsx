@@ -78,6 +78,49 @@ export default function RootLayout({
     <html lang="en-GB" suppressHydrationWarning>
       <head>
         {/*
+          ⛔ THE GOOGLE ADS TAG — AW-18420008774. Client-supplied, 31 Aug 2026,
+          with Google's own instruction: "copy and paste it in the code of every
+          page of your website, immediately after the <head> element. Don't add
+          more than one Google tag to each page."
+
+          IT LIVES HERE AND NOWHERE ELSE. This is the root layout, so all 178
+          routes nest under it and every one of them gets the tag exactly once.
+          Adding it to any nested layout — the content group, services, stones,
+          guides — would double it on the pages that use both, which is the one
+          thing Google's note warns against. If a second tag is ever needed,
+          it belongs in this block, not in another file.
+
+          Written as raw <script> rather than next/script on purpose. The live
+          domain is a static snapshot of this build served by Apache, so the
+          tag has to be in the emitted HTML rather than injected by the Next
+          runtime after hydration. `async` is Google's own, and it is what keeps
+          this off the critical path: the film's first paint is unaffected.
+
+          ⚠️ IT CONTRADICTS THE PRIVACY POLICY AS THAT PAGE IS CURRENTLY
+          WRITTEN. src/data/legal/privacy.ts, the "Cookies and tracking"
+          section, states: "This website sets no cookies. There is no analytics
+          service, no tag manager, no advertising tag and no social media pixel
+          anywhere on it", and "No other third party receives anything about
+          your visit." The visible lede on /privacy/ says the same, and so does
+          the page's meta description. All of that is now false. This was
+          raised with the client when the tag was added; the copy is his and is
+          not edited without him.
+        */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18420008774"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: [
+              'window.dataLayer = window.dataLayer || [];',
+              'function gtag(){dataLayer.push(arguments);}',
+              "gtag('js', new Date());",
+              "gtag('config', 'AW-18420008774');",
+            ].join('\n'),
+          }}
+        />
+        {/*
           The two self-hosted variable faces are preloaded on every legacy
           page. `crossorigin` is mandatory on a font preload even same-origin,
           or the browser fetches the file twice.
