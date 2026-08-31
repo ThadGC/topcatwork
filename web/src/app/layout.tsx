@@ -205,6 +205,43 @@ export default function RootLayout({
               /* No film will run, so the FABs must not appear over the hero even
                  for one frame. Same class the lock and every give-up path write. */
               "document.documentElement.classList.add('film-done')}",
+              /*
+                ⛔ THE PAGE IS DRESSED FOR THE FILM DURING PARSE, NOT WHEN THE
+                FILM ARMS. THIS IS THE OLD BUILD'S `cine-on`, WHICH THE PORT
+                DROPPED, AND ITS ABSENCE IS EVERY "INTRO GLITCH" ON THE SITE.
+
+                `html.film-running` is what tells the chrome a film is on screen:
+                it pushes the two FABs out to flank Skip, turns the phone icon ON
+                at all on a tablet (`display:flex`, chrome.css:1320), takes
+                backdrop-filter off them, holds the sticky bar down and restyles
+                the nav bar. The port added it in `arm()` — AFTER the whole cut
+                had downloaded — so for the first second or two the page laid
+                itself out as though no film were coming, and then everything
+                moved at once.
+
+                The client, on three devices in one message: "on tablet when I
+                click refresh, the WhatsApp jumps into the bottom right corner,
+                and the phone icon isn't even there, and then it glitches and
+                jumps to the correct spacing... on mobile if you refresh the page
+                it's also broken and then it glitches into place... on desktop
+                when I scroll, the navbar pops up, and then it glitches back and
+                removes it. Everything currently has an intro glitch."
+
+                Every one of those is this. It was survivable while a 0.35s
+                transform transition smoothed the move into a slide; taking that
+                transition out — which he asked for, because the slide itself was
+                the complaint — turned the same fault into a visible jump.
+
+                The conditions are the old build's own, index.html:3457-3460, and
+                they are all synchronous: reduced motion, an H.264 decoder, and
+                `?film=off`. `pinIsSafe` cannot be tested before layout, so that
+                one path still corrects itself — `landed()` removes the class.
+              */
+              "if(!document.documentElement.hasAttribute('data-to-hero')",
+              "&&window.matchMedia&&!matchMedia('(prefers-reduced-motion: reduce)').matches",
+              "&&document.createElement('video').canPlayType('video/mp4')",
+              "&&new URLSearchParams(location.search).get('film')!=='off')",
+              "document.documentElement.classList.add('film-running');",
               /* Capture phase, and registered here so it exists before React
                  hydrates — the logo is clickable from first paint. */
               "addEventListener('click',function(e){",

@@ -1350,6 +1350,32 @@ html.film-running .mbar ~ .call-fab {
   }
 }
 
+/*
+  ⛔ AND `film-done` HAS TO OUT-SPECIFY THE BLOCK ABOVE, OR THE TABLET'S PHONE
+  ICON OUTLIVES SKIP.
+
+  The client: "when it gets to the surfaces worth building around, the phone
+  icon stays longer than the skip intro and the WhatsApp icon. This is on
+  tablet."
+
+  He is describing a specificity fight, not a timing one. `.call-fab` is
+  `display:none` in its base rule and is turned ON for the tablet band only by
+  `html.film-running .mbar ~ .call-fab { display: flex }` above — that is
+  (0,3,0). The plain `html.film-done .call-fab { display: none }` is (0,2,0), so
+  it lost, and the phone icon stayed up until `film-running` itself came off at
+  the lock, several frames after Skip and WhatsApp had gone. WhatsApp was
+  unaffected because nothing sets `display` on it, so the (0,2,0) rule was
+  unopposed there — which is exactly why one of the two lingered and the other
+  did not.
+
+  Matching the shape matches the specificity, and it sits after the block it has
+  to beat so a tie goes the right way too.
+*/
+html.film-done .mbar ~ .wa-fab,
+html.film-done .mbar ~ .call-fab {
+  display: none;
+}
+
 /* -------------------------------------------------------------------------
    10. html.proj-open — the projects lightbox lifts the chrome
                                           site.css:1547-1549 / nav.css:117-118

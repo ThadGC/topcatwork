@@ -1239,6 +1239,7 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         stage.dataset.film = 'off';
         stage.dataset.hero = 'landed';
       }
+      document.documentElement.classList.remove('film-running');
       document.documentElement.classList.add('film-done');
       refs.runway.current?.style.setProperty('--runway', '0px');
       const ph = refs.pageHero.current;
@@ -1389,7 +1390,14 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       stage.dataset.film = 'off';
       stage.dataset.hero = 'landed';
       /* No film is coming, so the hero IS the page and the FABs must not sit
-         over it — the client's rule since 28 Aug. Same class as the lock. */
+         over it — the client's rule since 28 Aug. Same class as the lock.
+
+         ⛔ AND `film-running` COMES OFF. The root layout now sets it during
+         parse so the chrome is dressed for the film before first paint; every
+         path that decides no film will run after all — an unsafe pin, a failed
+         fetch, a visitor who scrolled first — has to undress it again, or the
+         FABs stay flanking a Skip button that is not there. */
+      document.documentElement.classList.remove('film-running');
       document.documentElement.classList.add('film-done');
       /*
         ⛔ AND IT GIVES THE RESERVED RUNWAY BACK.
