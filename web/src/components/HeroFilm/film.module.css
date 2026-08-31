@@ -1145,7 +1145,8 @@
   display: none;
 }
 
-.keepCue i {
+.keepCue i,
+.settledCue i {
   display: block;
   position: relative;
   width: var(--kcW);
@@ -1157,7 +1158,8 @@
   animation: cueDip 1.8s cubic-bezier(0.33, 0, 0.16, 1) infinite;
 }
 
-.keepCue i > svg {
+.keepCue i > svg,
+.settledCue i > svg {
   display: block;
   width: var(--kcW);
   height: var(--kcH);
@@ -1169,7 +1171,8 @@
   stroke-linejoin: round;
 }
 
-.keepCue i b {
+.keepCue i b,
+.settledCue i b {
   position: absolute;
   inset: 0;
   display: block;
@@ -1181,7 +1184,8 @@
   mask-repeat: no-repeat;
 }
 
-.keepCue i b span {
+.keepCue i b span,
+.settledCue i b span {
   position: absolute;
   left: 0;
   right: 0;
@@ -1614,4 +1618,58 @@
   --heroPadB: clamp(72px, 10.8vh, 132px);
   padding: max(72px, calc(var(--heroPadB) - var(--hTitle, 72px) * 0.1234))
     clamp(20px, 5vw, 64px) var(--heroPadB);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE SETTLED HERO'S SCROLL CUE.
+
+   The client, looking at the hero after the film has locked: "there's a big
+   open space below that. I want you to just have a small golden arrow
+   animating the same way as in the video, just pointing down, telling people
+   to scroll down... not too bright or noticeable."
+
+   It shares `.keepCue i`'s rules and both its keyframes, joined by selector
+   above rather than copied, so a change to the film's arrow reaches this one.
+
+   ⛔ NOT `.heroCue` AND NOT `.keepCue`, THOUGH IT LOOKS LIKE BOTH. `.heroCue`
+   is the film's big first-load arrow with its SCROLL TO BEGIN label, sized in
+   fixed px; `.keepCue` is the engine's, which writes `opacity` and `visibility`
+   on it every frame and hides it entirely unless `data-film='on'`. Reusing
+   either name would have inherited machinery this element must not have. This
+   one is plain CSS inside `.pageHero`: it arrives with the hero copy the film
+   releases at 93%, scrolls away with it, and has nothing to tear down.
+   ══════════════════════════════════════════════════════════════════════════ */
+.settledCue {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Low in the open space rather than centred in it: the chips sit above the
+     middle, so the gap the client pointed at is the lower third. */
+  bottom: clamp(26px, 7vh, 76px);
+  z-index: 6;
+  pointer-events: none;
+  /* Smaller than the film's, which has a whole moving picture to carry it. */
+  --kcW: 17px;
+  --kcH: 50px;
+  --kcBand: 30px;
+}
+
+/* "Not too bright": 0.34 over a settled still, against the film arrow's 0.55
+   over footage, and a lighter shadow to match. */
+.settledCue i > svg {
+  color: rgba(198, 166, 100, 0.34);
+}
+.settledCue i {
+  filter: drop-shadow(0 2px 6px rgba(6, 6, 8, 0.55));
+  opacity: 0.85;
+}
+
+/* ⛔ IT IS DECORATION, SO IT GOES WHEN MOTION IS REFUSED. No film runs under
+   reduced motion at all, and a lone arrow pulsing on a static hero is exactly
+   what that setting is asking not to see. */
+@media (prefers-reduced-motion: reduce) {
+  .settledCue {
+    display: none;
+  }
 }

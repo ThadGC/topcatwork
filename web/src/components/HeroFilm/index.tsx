@@ -388,6 +388,27 @@ export function HeroFilm({
         <section className={css.pageHero} id="hero" ref={heroOut}>
           <TcDefs />
           <div className={css.heroInner}>{hero}</div>
+          {/*
+            THE HERO'S OWN SCROLL CUE. The client, looking at the settled hero:
+            "there's a big open space below that. I want you to just have a
+            small golden arrow animating the same way as in the video, just
+            pointing down, telling people to scroll down... not too bright or
+            noticeable."
+
+            Literally the film's own <CueArrow/>, sharing its keyframes and its
+            sheen — see `.keepCue i` in film.module.css, whose selectors this
+            joins rather than copies, so the two can never drift apart. Only the
+            size, the placement and the opacity differ: smaller, centred under
+            the chips, and dimmer, because this one sits on a settled hero
+            rather than over a moving picture.
+
+            Inside `.pageHero`, so it arrives with the hero copy at 93% of the
+            film and scrolls away with it. No engine hookup and nothing to
+            tear down.
+          */}
+          <div className={css.settledCue} aria-hidden="true">
+            <CueArrow />
+          </div>
         </section>
 
       </div>

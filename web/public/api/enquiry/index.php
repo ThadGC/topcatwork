@@ -253,8 +253,9 @@ if (is_array($journey) && !empty($journey['ev']) && is_array($journey['ev'])) {
 $html = '<!doctype html><html><body style="margin:0;padding:24px 0;background:' . $INK . '">'
   . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:' . $INK . '"><tr><td align="center">'
   . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="width:640px;max-width:96%;background:#FFFFFF;border-radius:4px;overflow:hidden">'
-  . '<tr><td colspan="2" style="padding:22px 18px;background:' . $INK . ';color:' . $GOLD
-  . ';font:700 13px/1.4 Arial,Helvetica,sans-serif;letter-spacing:0.22em;text-transform:uppercase">Topcat Worktops</td></tr>'
+  . '<tr><td colspan="2" style="padding:20px 18px;background:' . $INK . '">'
+  . '<img src="https://www.topcatworktops.co.uk/assets/brand/topcat-email.png" alt="Topcat Worktops" width="220" height="59" style="display:block;border:0;outline:none;text-decoration:none;width:220px;height:59px">'
+  . '</td></tr>'
   . $rows . '</table></td></tr></table></body></html>';
 
 $plain = "NEW ENQUIRY\n\n" . $whereLine . ($device ? " · $device" : '') . "\n\n"
@@ -294,15 +295,32 @@ $arSubject = 'Thank you for contacting Topcat Worktops';
 $arHtml = '<!doctype html><html><body style="margin:0;padding:24px 0;background:' . $INK . '">'
   . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:' . $INK . '"><tr><td align="center">'
   . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:96%;background:#FFFFFF;border-radius:4px;overflow:hidden">'
-  . '<tr><td style="padding:22px 18px;background:' . $INK . ';color:' . $GOLD
-  . ';font:700 13px/1.4 Arial,Helvetica,sans-serif;letter-spacing:0.22em;text-transform:uppercase">Topcat Worktops</td></tr>'
+  /* ⛔ THE WORDMARK IS AN IMAGE, NOT LETTER-SPACED TEXT. The client: "the top
+     bar where it says Topcat Worktops in just letters, can we not just have the
+     actual Topcat logo be at the top there." PNG, not the site's SVG, because
+     Outlook and Gmail will not render SVG; drawn at 2x and declared at 220x59
+     so it is sharp on a retina screen. `alt` carries the name for the many
+     clients that block images, and the cell keeps the ink background so a
+     blocked image still reads as the brand's header rather than a white gap. */
+  . '<tr><td style="padding:20px 18px;background:' . $INK . '">'
+  . '<img src="https://www.topcatworktops.co.uk/assets/brand/topcat-email.png" alt="Topcat Worktops" width="220" height="59" style="display:block;border:0;outline:none;text-decoration:none;width:220px;height:59px">'
+  . '</td></tr>'
   . '<tr><td style="padding:26px 18px 6px;background:#FFFFFF;color:' . $TEXT . ';font:400 15px/1.7 Arial,Helvetica,sans-serif">'
   . ($first !== '' ? '<p style="margin:0 0 14px">Hi ' . h($first) . ',</p>' : '')
   . '<p style="margin:0 0 14px">Thank you for contacting Topcat Worktops. We have received your enquiry and someone from our team will get back to you shortly, always within one working day.</p>'
   . '<p style="margin:0 0 4px">These are the details you sent us.</p></td></tr>'
   . ($arRows ? '<tr><td style="padding:14px 0 0"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' . $arRows . '</table></td></tr>' : '')
   . '<tr><td style="padding:22px 18px 26px;background:#FFFFFF;color:' . $TEXT . ';font:400 15px/1.7 Arial,Helvetica,sans-serif">'
-  . '<p style="margin:0 0 14px">If anything above is not right, reply to this email and we will put it straight. If it is urgent, call us free on <a href="tel:+448000982812" style="color:' . $LINK . '">0800 098 2812</a>.</p>'
+  /* ⛔ IT USED TO SAY "REPLY TO THIS EMAIL", AND IT COMES FROM noreply@. The
+     client: "this is coming from a no-reply email, so that doesn't make any
+     sense." A Reply-To IS set on this message, so a reply would in fact reach
+     info@ — but the address the customer SEES is noreply@, and telling someone
+     to reply to an address that announces it does not read replies is asking
+     them to distrust the instruction. So it names the routes explicitly. */
+  . '<p style="margin:0 0 14px">If anything above is not correct, please email '
+  . '<a href="mailto:info@topcatworktops.co.uk" style="color:' . $LINK . '">info@topcatworktops.co.uk</a>'
+  . ' or send us a WhatsApp on <a href="https://wa.me/447464940287" style="color:' . $LINK . '">07464 940287</a>.'
+  . ' If it is urgent, call us free on <a href="tel:+448000982812" style="color:' . $LINK . '">0800 098 2812</a>.</p>'
   . '<p style="margin:0">Thank you again,<br>Topcat Worktops</p></td></tr>'
   . '<tr><td style="padding:16px 18px;background:' . $BONE . ';color:' . $MUTE . ';font:400 11.5px/1.7 Arial,Helvetica,sans-serif">'
   . '0800 098 2812 &nbsp;&middot;&nbsp; <a href="mailto:info@topcatworktops.co.uk" style="color:' . $LINK . '">info@topcatworktops.co.uk</a><br>'
@@ -316,7 +334,7 @@ if ($detail) {
   foreach ($detail as [$k, $v]) $arText .= "$k: $v\n";
   $arText .= "\n";
 }
-$arText .= "If anything above is not right, reply to this email and we will put it straight. If it is urgent, call us free on 0800 098 2812.\n\n"
+$arText .= "If anything above is not correct, please email info@topcatworktops.co.uk or send us a WhatsApp on 07464 940287. If it is urgent, call us free on 0800 098 2812.\n\n"
   . "Thank you again,\nTopcat Worktops\n0800 098 2812\ninfo@topcatworktops.co.uk";
 
 /* --- delivery ------------------------------------------------------------ */

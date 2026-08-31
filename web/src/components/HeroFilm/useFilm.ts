@@ -1478,8 +1478,21 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       phone from a desktop before. Tablet takes the wide cut and therefore has
       the desktop's exact bug, so tablet is included.
     */
-    const reserveKey = band.tablet ? 'tablet' : 'wide';
-    const reserved = !band.phone;
+    /*
+      ⛔ EVERY BAND, PHONE INCLUDED. This was `!band.phone` for one round, on
+      the reasoning that mobile was working and the phone cut is 6.5MB against
+      the wide 17MB so its window is a fraction as long. That was wrong: a
+      window is a window, and the client hit it — "if I refresh the site and I
+      scroll down quickly, I can see the hear it from your neighbours section
+      right below... the video doesn't play at all. It's also on mobile now."
+
+      A shorter download does not make an unreserved runway safe, it only makes
+      the failure rarer and therefore harder to believe. His rule is absolute:
+      the film plays first, on every device, and the page below is not reachable
+      until it has.
+    */
+    const reserveKey = band.phone ? 'phone' : band.tablet ? 'tablet' : 'wide';
+    const reserved = true;
     if (reserved) {
       /*
         BOTH HALVES, IN ONE BLOCK. The runway holds the distance and
@@ -1761,14 +1774,36 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       sessionStorage flag the root layout sets, and is handled at arm time.
     */
     const onLogo = (e: MouseEvent) => {
-      if (locked.current || e.defaultPrevented || e.button !== 0) return;
+      if (e.defaultPrevented || e.button !== 0) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = (e.target as Element | null)?.closest?.('a[href]');
       if (!a) return;
       const href = a.getAttribute('href') || '';
       const isBrand = a.classList.contains('brand') || /(^|\/)#hero$/.test(href);
       if (!isBrand) return;
+
+      /*
+        ⛔ `locked` USED TO BAIL OUT HERE, AND IT MADE THE LOGO A TOGGLE.
+
+        The guard was `if (locked.current || …) return`. Once the film had
+        finished — which the FIRST logo click causes, via skipToEnd — the second
+        click fell straight through to the anchor. `BRAND_HOME` is a real `/`,
+        so that was a full page load, and a full page load plays the film. The
+        client: "when I click on the Topcat logo and I click on it multiple
+        times, it switches between the video and the surfaces worth building
+        around."
+
+        The logo has exactly one meaning, on every click: put me on the hero.
+        When the film is still live, `skipToEnd` gets there by ending it. When
+        it is already locked there is nothing to end and the hero IS the top of
+        the page, so the answer is simply to go there — and to keep the
+        `preventDefault`, because navigating is the thing that replays the film.
+      */
       e.preventDefault();
+      if (locked.current) {
+        window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+        return;
+      }
       /*
         ⛔ `skipToEnd()`, NOT `lockFilm()`.
         This used to lock the film outright, on the reasoning that locking is
