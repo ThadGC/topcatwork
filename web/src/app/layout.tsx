@@ -237,7 +237,44 @@ export default function RootLayout({
                 `?film=off`. `pinIsSafe` cannot be tested before layout, so that
                 one path still corrects itself — `landed()` removes the class.
               */
-              "if(!document.documentElement.hasAttribute('data-to-hero')",
+              /*
+                ⛔ THE HOME PAGE ONLY, AND THE MISSING TEST WAS THIS ONE.
+                REGRESSION FIXED 2 Sep 2026.
+
+                `film-running` dresses the page for a film. Only `app/page.tsx`
+                mounts <HeroFilm/>, and only useFilm removes the class — so on
+                the other 178 routes this added it during parse and NOTHING
+                ever took it off. It then sat there for the life of the
+                document and out-specified the chrome's own states:
+
+                  html.film-running header.bar.formed::before   (0,3,1)
+                  header.bar.scrolled::before                   (0,2,1)
+
+                so the bar's plate and hairline could never paint at ANY
+                scroll position. That is the client's report, verbatim: "the
+                Navbar doesn't form on any of the pages besides the landing
+                page." Measured on the deployed build with real Chrome at
+                1440x900: /about, /guides, /articles, /contact, /projects,
+                /trade and /stones all read ::before opacity 0 at scrollY 0,
+                700 and 2100, while the class list correctly went
+                `bar formed` -> `bar formed scrolled`. Removing this class in
+                the live DOM took ::before to 1 with nothing else changed.
+
+                Two more chrome faults came off the same line: the sticky
+                contact bar was held at opacity 0 on every inner page at
+                ≤1120px (`html.film-running .mbar`, chrome.css:1305) — which
+                contradicted the client's own 28 Aug "it stays there from the
+                get go" — and the phone FAB was forced visible and translated
+                547px off-centre on the rich inner pages (chrome.css:1325).
+
+                The file already had this exact predicate sixteen lines below,
+                inside the brand-logo handler; it simply was not applied here.
+                `/index.html` is carried because the live site is a static
+                Apache snapshot where that path is reachable.
+              */
+              "var fp=location.pathname;",
+              "if((fp==='/'||fp==='/index.html')",
+              "&&!document.documentElement.hasAttribute('data-to-hero')",
               "&&window.matchMedia&&!matchMedia('(prefers-reduced-motion: reduce)').matches",
               "&&document.createElement('video').canPlayType('video/mp4')",
               "&&new URLSearchParams(location.search).get('film')!=='off')",

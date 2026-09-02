@@ -1527,26 +1527,23 @@ header.bar.preform .brand-logo {
    during a scroll, so it costs nothing; and this way the header component does
    not have to know a film exists at all. See useFilm.ts.
 
-   `.formed` is still written during render, so with no JavaScript the bar is
-   formed from first paint exactly as it is on every other page. This only ever
-   takes it away, and only while a film is actually running. */
-html.film-running header.bar.formed::before {
-  opacity: 0;
-}
+   ⛔ THE FOUR `html.film-running header.bar.formed` RULES THAT USED TO SIT
+   HERE WERE DELETED 2 Sep 2026, and they were the whole of the client's
+   "the navbar doesn't form on the inner pages" report.
 
-html.film-running header.bar.formed::after {
-  opacity: 0;
-  transform: scaleX(0);
-}
+   They were an exact duplicate of the four `.preform` rules above — same
+   opacity, same scaleX, same bone nav links, same logo drop-shadow — keyed on
+   `.formed`, which the LANDING PAGE NEVER CARRIED (`formed = !heroAnchored`,
+   SiteHeader.tsx). So on the one page that runs a film they matched nothing,
+   and the film's clean bar was, and still is, carried entirely by `.preform`.
 
-html.film-running header.bar.formed nav.top a {
-  color: var(--bone);
-  text-shadow: 0 1px 2px rgba(6, 6, 8, 0.7);
-}
-
-html.film-running header.bar.formed .brand-logo {
-  filter: drop-shadow(0 1px 2px rgba(6, 6, 8, 0.55));
-}
+   Where they DID match was every inner page, because the root layout's
+   parse-time script added `html.film-running` on all 178 non-home routes and
+   only useFilm ever removed it. At (0,3,1) they beat `.scrolled` at (0,2,1),
+   so the plate and the gold hairline could not paint at any scroll position.
+   Both halves are fixed at source — the path guard in app/layout.tsx and the
+   removal of `.formed` in SiteHeader.tsx — and these are deleted so the
+   duplicate cannot fire again. `.preform` above is the live mechanism. */
 
 @media (min-width: 1121px) {
   header.bar {
@@ -1594,11 +1591,10 @@ html.film-running header.bar.formed .brand-logo {
     index opened with a formed navbar instead of the logo floating on the
     footage. Restoring the source behaviour needs the ID on .preform too.
   */
-  html.film-running header.bar#siteBar.formed::before,
-  html.film-running header.bar#siteBar.formed::after {
-    opacity: 0;
-  }
-
+  /* The `html.film-running header.bar#siteBar.formed` pair that stood here was
+     deleted 2 Sep 2026 with the four rules above, for the same reason: it was
+     keyed on a class the landing page never carried. `.preform` below is what
+     actually holds the bar clean over the film below 1120px. */
   header.bar#siteBar.preform::before {
     opacity: 0;
   }
@@ -3310,63 +3306,35 @@ header.bar:not(#siteBar) nav.top .nav-item > a {
    13. CLIENT DIVERGENCES FROM THE SOURCE
    --------------------------------------------------------------------------
    §12 above is transcription: every rule there is a place service.css really
-   disagrees with site.css. THIS section is not. Everything below is a change
-   the client asked for on 26 Aug 2026 that the legacy site does not do, kept
-   apart so a later reader can tell a port decision from a client decision.
+   disagrees with site.css. THIS section is not. It is where a change the
+   client asked for that the legacy site does not do would live, kept apart so
+   a later reader can tell a port decision from a client decision.
 
-   These are keyed on `.formed`, NOT on the rich/lite split — `.formed` meant
-   "this page is not running the cine film", which was every page but the
-   index. ⛔ THE FILM WAS STRIPPED OUT 28 Aug 2026, so every page including the
-   index is `.formed` now. See SiteHeader.tsx.
+   ⛔ THE ONE DIVERGENCE THAT LIVED HERE WAS REVERSED ON 2 Sep 2026 AND THE
+   SECTION IS NOW EMPTY. It was `header.bar.formed::before/::after {opacity:1}`
+   plus a `.bar-flare` suppression, added 26 Aug on his instruction: "the nav
+   bar should still be formed on these internal pages instead of having the
+   forming animation."
+
+   He reversed it on 2 Sep, on the deployed build: "As you scroll, it's
+   supposed to create the Navbar. Right now the Navbar doesn't form on any of
+   the pages besides the landing page." So the inner pages go back to the
+   source behaviour and this section holds nothing.
+
+   ⚠️ WHAT HE WAS ACTUALLY SEEING WAS NOT THIS RULE. `html.film-running` was
+   leaking onto all 178 non-home routes from the root layout's parse-time
+   script, and `html.film-running header.bar.formed::before` (0,3,1) beat both
+   `.formed` and `.scrolled` (0,2,1) — so the plate could not paint at any
+   scroll position, on any inner page. That is fixed at source in
+   app/layout.tsx. Removing `.formed` as well is what turns the bar from
+   "always plated" into "forms as you scroll", which is what he asked for.
+
+   Nothing writes `.formed` any more (SiteHeader.tsx, 2 Sep). The rules are
+   deleted rather than left dead because the eight hand-dropped files in
+   public/articles/ carry `class="bar formed"` frozen in their markup until
+   `articles:template --sync` runs, and a surviving paint rule would keep them
+   plated at rest while every React page forms correctly.
    ========================================================================== */
-
-/* THE INNER-PAGE BAR ARRIVES ALREADY FORMED.
-   Client, verbatim: "the nav bar should still be formed on these internal
-   pages instead of having the forming animation."
-
-   MEASURED, both builds, `bar-state.mjs 1440` on /services/kitchen-worktops:
-   at scrollY 0 the bar reads `class="bar"`, ::before opacity 0, ::after
-   opacity 0 / scaleX(0); past the 12px threshold it becomes `bar scrolled`,
-   opacity 1 / scaleX(1) — and the plate fades in over .6s while the hairline
-   sweeps open over .76s. That fade IS the "forming animation" he is seeing.
-
-   `.formed` is written during render (see SiteHeader.tsx), so these are the
-   bar's FIRST-PAINT values,
-   not a state it transitions into: a transition never runs on an initial
-   computed value, so there is no fade to catch, no flash before hydration and
-   no dependence on a scroll listener that has not fired yet. `.scrolled` is
-   still toggled by the hook and now simply re-states values the bar already
-   has — a no-op.
-
-   THE LANDING PAGE USED NOT TO GET `.formed`, so its intro forming sequence
-   and `.preform` were untouched. With the film stripped out it gets `.formed`
-   like every other page; when the film is rebuilt, `cine` on <SiteHeader/> is
-   the switch that takes it away again. */
-header.bar.formed::before {
-  opacity: 1;
-}
-
-header.bar.formed::after {
-  opacity: 1;
-  transform: scaleX(1);
-}
-
-/* ...and no light sweep on a bar that never formed.
-
-   `.bar-flare` is a 0.76s glint along the bottom edge, keyed on `.scrolled`
-   being added — it exists to accompany the forming. On the five rich inner
-   pages (/about/, /contact/, /estimate/, /projects/, /services/) the bar is
-   now already formed at scrollY 0, so leaving the flare armed would fire an
-   unexplained streak of light across a finished bar on the first 40px of
-   scroll, which is the same complaint in a shorter form. Suppressed on
-   `.formed` only; the index still flares as the film hands the bar over, and
-   the lite bar never had a `.bar-flare` element to begin with. */
-header.bar.formed .bar-flare,
-header.bar.formed .bar-flare::before,
-header.bar.formed .bar-flare::after {
-  animation: none;
-  opacity: 0;
-}
 
 /* -------------------------------------------------------------------------
    15. nav.top at the bottom of the desktop band     ADDED 2 Sep 2026

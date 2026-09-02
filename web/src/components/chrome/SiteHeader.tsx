@@ -27,8 +27,11 @@ export interface SiteHeaderProps {
   readonly variant?: ChromeVariant;
   /** Override the measured 40 / 12. For tests and for the client's decision. */
   /**
-   * The landing page. The bar is never `.formed` there and is anchored to the
-   * hero instead — the forming is the film's closing beat.
+   * The landing page. The bar's forming is anchored to the HERO there rather
+   * than to a plain scroll threshold — the forming is the film's closing beat
+   * — and this is what seeds `.preform`, which keeps the bar clean over the
+   * footage. It no longer has anything to do with `.formed`; that class was
+   * removed on 2 Sep 2026. See the note above `className` below.
    */
   readonly heroAnchored?: boolean;
   readonly scrollThreshold?: number;
@@ -88,40 +91,43 @@ export function SiteHeader({
   });
 
   /*
-    `.formed` — CLIENT CHANGE, 26 Aug 2026. Not in the source.
+    `.formed` IS GONE. REVERSED 2 Sep 2026, AT THE CLIENT'S REQUEST.
 
-      "the nav bar should still be formed on these internal pages instead of
-       having the forming animation."
+    26 Aug he asked for the opposite of the source: "the nav bar should still
+    be formed on these internal pages instead of having the forming animation."
+    That shipped as a render-time `.formed` class on every non-home page.
 
-    Every page EXCEPT the one running the hero film got it, written during
-    render, so it is in the exported HTML and the bar is formed at first paint
-    — a transition never runs on an initial computed value, so there is nothing
-    to catch mid-fade and no flash before hydration.
+    2 Sep he reversed it, having seen it on the deployed build: "The inner
+    pages, when I scroll on them, the nav bar no longer forms at the top. As
+    you scroll, it's supposed to create the Navbar. Right now the Navbar
+    doesn't form on any of the pages besides the landing page."
 
-    ⛔ NOT ON THE LANDING PAGE, and that is measured, not assumed: the old
-    build reads `class="bar preform"` there even after the film has locked and
-    the hero is sitting at the top of the page. The bar's forming IS the film's
-    closing beat, so it happens when the hero goes by and not before. Shipping
-    it formed put a dark plate and a gold hairline across the top of the hero,
-    which the client caught in a side-by-side.
+    ⚠️ TWO DEFECTS WERE STACKED HERE AND ONLY ONE OF THEM WAS THIS CLASS.
+    The louder one was `html.film-running` leaking onto all 178 non-home routes
+    from the root layout's parse-time script (fixed in app/layout.tsx, 2 Sep):
+    `html.film-running header.bar.formed::before` is (0,3,1) and beat both
+    `.formed` and `.scrolled` at (0,2,1), so the plate could not paint at ANY
+    scroll position. Fixing that alone would have given him a bar that is
+    always plated — the 26 Aug behaviour he has just rejected — so this class
+    had to go too. Both were measured on the deployed build in real Chrome
+    before either was touched.
 
-    Keyed on `heroAnchored` rather than on the rich/lite split deliberately:
-    keying on the split would have left /about/, /contact/, /estimate/,
-    /projects/ and /services/ still forming on scroll, and those are internal
-    pages by any reading the client has.
+    THE SOURCE AGREES WITH HIM, which is why this is a restoration and not a
+    second divergence. The arbiter has no `.formed` anywhere: `grep -rn
+    "\.formed"` over every legacy .css/.html/.js returns nothing. All 178
+    legacy pages ship plain `<header class="bar">` and add `.scrolled` at
+    runtime — 40px on the six rich pages, 12px on the other 171. Measured on
+    the reference deployment: /guides/ reads `bar` at scrollY 12 and
+    `bar scrolled` at 13, /about/ reads `bar` at 40 and `bar scrolled` at 41.
 
     `scrolled` and `preform` still start off, as the source has them: the
     legacy HTML reads `class="bar"` because the source adds both from a
-    deferred script, after the document is already on screen.
+    deferred script, after the document is already on screen. `heroAnchored`
+    no longer has anything to do with the painted state — it selects the
+    hero-anchored READ in useHeaderScrolled and seeds `.preform`, which is
+    what keeps the landing page's bar clean over the film.
   */
-  const formed = !heroAnchored;
-
-  const className = [
-    'bar',
-    formed && 'formed',
-    scrolled && 'scrolled',
-    preform && 'preform',
-  ]
+  const className = ['bar', scrolled && 'scrolled', preform && 'preform']
     .filter(Boolean)
     .join(' ');
 
