@@ -551,9 +551,6 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     keepCue: -1,
     open: false,
     ink: false,
-    /* The loading ring's fill, quantised to 5% so a filling buffer writes the
-       custom property about twenty times, not sixty times a second. */
-    load: -1,
   });
 
   /* ── measurement: ONCE per resize, never in the loop ──────────────────── */
@@ -963,29 +960,20 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         waitingAt.current = 0;
       }
       {
-        /* Waiting means either "has not started yet" or "cannot go as far as
-           the scroll is asking". Both are the same thing to a visitor: the
-           film is not moving and the reason is the network. */
+        /*
+          Waiting means either "has not started yet" or "cannot go as far as
+          the scroll is asking". Both are the same thing to a visitor: the film
+          is not moving and the reason is the network.
+
+          The only thing that reads this is one CSS rule holding the scroll cue
+          back, so the hero does not say "Scroll to begin" over a film that
+          cannot move (film.module.css). There is no loading overlay — it was
+          built and removed on 2 Sep; see the note in index.tsx.
+        */
         const flag = held || (gated && !ready.current);
         if (flag !== (stage.dataset.filmWait === '1')) {
           if (flag) stage.dataset.filmWait = '1';
           else delete stage.dataset.filmWait;
-        }
-        /*
-          HONEST PROGRESS, NOT A SPINNER THAT MEANS NOTHING. `--filmLoad` is
-          how much of the head start is actually in the buffer, 0 to 1, and the
-          loading ring reads it directly — see index.tsx and film.module.css.
-          Written only while the flag is up, so it costs nothing once the film
-          is running.
-        */
-        if (flag && vGate) {
-          const span = bufferedSpan(vGate);
-          const frac = ready.current ? 1 : Math.max(0, Math.min(1, span / SPAN_MIN));
-          const q = Math.round(frac * 20) / 20;
-          if (q !== memo.current.load) {
-            memo.current.load = q;
-            stage.style.setProperty('--filmLoad', String(q));
-          }
         }
       }
       /*

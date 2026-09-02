@@ -1675,147 +1675,42 @@
 }
 
 /* ==========================================================================
-   THE LOADING MARK                                       ADDED 2 Sep 2026
+   WAITING FOR THE FILM                          ADDED 2 Sep 2026, REVISED
    --------------------------------------------------------------------------
-   The client asked for it by name: "maybe something like the Topcat logo icon
-   spinning or a circle around it… and maybe it says loading your experience.
-   Then it'll give time for the video to load in the background."
+   There is no loading overlay. It was built and removed the same day — see the
+   note in index.tsx for why. This is what took its place, and it is the whole
+   of it.
 
-   It is the visible face of the readiness gate in useFilm.ts, not an
-   interstitial of its own, and every rule below exists to keep it that way.
+   ⛔ THE CUE MUST NOT INVITE A SCROLL THAT DOES NOTHING. While the readiness
+   gate is closed the film cannot advance, and the hero's own cue reads "Scroll
+   to begin". A visitor who takes it at its word scrolls and watches nothing
+   happen, which is the only part of a slow load that actually reads as broken
+   rather than as a held frame.
 
-   ⛔ SHOWN ONLY WHILE THE FILM GENUINELY CANNOT MOVE. The gate writes
-   `data-film-wait` on the stage; nothing else turns this on, and there is no
-   timer anywhere that could keep it up after the film is ready.
+   So the cue waits with the film. `data-film-wait` is written by the tick in
+   useFilm.ts whenever the film genuinely cannot move, and cleared the moment it
+   can; the cue fades in behind it. The plate — the client's own full-resolution
+   frame 0 — carries the wait on its own, which is the point.
 
-   ⛔ AND ALMOST NOBODY EVER SEES IT. The 0.45s delay on the fade means a
-   connection that satisfies the four-second head start quickly — which is
-   every office and most home broadband — goes from plate to film with this
-   never having reached a visible opacity. That is the intended outcome: the
-   loader is for the slow visit the client hit, not a badge on every visit.
+   ⚠️ SKIP INTRO IS NOT HIDDEN BY THIS, DELIBERATELY. It is the escape hatch and
+   it works before the film has armed. Hiding it would leave a visitor on a slow
+   connection with a still, no cue and no way past.
 
-   The ring is REAL PROGRESS: `--filmLoad` is the fraction of the head start
-   actually buffered, written by the tick. Nothing here animates the fill.
+   `.heroCue` is a child of `.heroCopy`, whose opacity the engine writes inline,
+   so this multiplies with that rather than fighting it.
    ========================================================================== */
 
-.loading {
-  position: absolute;
-  z-index: 5;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /*
-    ⛔ THE LOWER THIRD, NOT THE MIDDLE. Centred, it landed directly beside the
-    film's own opening line — "Your worktop starts here." — and the two read as
-    competing headlines. Photographed at 900kbps and moved down.
-
-    Horizontally centred, vertically in the lower third: clear of the copy
-    block, which is upper-left on the wide band and upper-centre on the phone,
-    and above the trust chips and Skip Intro, which are the bottom row.
-  */
-  justify-content: flex-end;
-  padding-bottom: clamp(96px, 20vh, 240px);
-  gap: 20px;
-  /* ⛔ NEVER INTERACTIVE. Skip Intro is z-index 6 and must stay tappable
-     through this — a loader that eats the escape hatch is a trap. */
-  pointer-events: none;
+.stage[data-film-wait='1'] .heroCue {
   opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.5s ease,
-    visibility 0s linear 0.5s;
+  pointer-events: none;
 }
 
-/* The 0.45s delay is on the way IN only. Going out is immediate, so the
-   moment the film can move the mark is gone rather than fading over the
-   first half-second of footage. */
-/* ⛔ AND NEVER OVER A FILM THAT HAS GIVEN UP OR FINISHED. `landed()` writes
-   data-film='off' and `lockFilm()` writes 'done'; neither clears the wait
-   flag, and a loading ring left spinning over a static hero would be the
-   worst version of this feature. The state is carried by data-film, so the
-   selector asks data-film. */
-.stage[data-film='loading'][data-film-wait='1'] .loading,
-.stage[data-film='on'][data-film-wait='1'] .loading {
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity 0.5s ease 0.45s,
-    visibility 0s linear 0.45s;
+.heroCue {
+  transition: opacity 0.55s ease;
 }
 
-.loadRing {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-}
-
-/* The track, and then the fill over it. `--filmLoad` defaults to 0 so a ring
-   that is somehow shown before the tick has written anything reads as empty
-   rather than as full. */
-.loadRing::before,
-.loadRing::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-
-.loadRing::before {
-  border: 2px solid rgba(198, 166, 100, 0.22);
-}
-
-.loadRing::after {
-  padding: 2px;
-  background: conic-gradient(
-    var(--brand, #c6a664) calc(var(--filmLoad, 0) * 360deg),
-    transparent 0
-  );
-  /* Punch the middle out so the gradient reads as a 2px arc, not a pie. */
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  transition: background 0.2s linear;
-}
-
-.loadRing img {
-  width: 40px;
-  height: 40px;
-  opacity: 0.92;
-  animation: filmLoadSpin 3.4s cubic-bezier(0.6, 0, 0.4, 1) infinite;
-}
-
-/* "Spinning like a wheel, faster and slower" — his words. An eased full turn
-   rather than a linear one, so it gathers pace and settles twice per cycle. */
-@keyframes filmLoadSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.loading b {
-  font-family: var(--serif, Georgia, serif);
-  font-weight: 400;
-  font-size: clamp(13px, 1.5vw, 16px);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--bone, #efe9dd);
-  text-shadow: 0 1px 3px rgba(6, 6, 8, 0.8);
-  opacity: 0.82;
-}
-
-/* Reduced motion keeps the mark and the honest ring, and drops the rotation.
-   The information is the ring; the spin is only manners. */
 @media (prefers-reduced-motion: reduce) {
-  .loadRing img {
-    animation: none;
+  .heroCue {
+    transition: none;
   }
 }

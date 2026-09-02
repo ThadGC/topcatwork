@@ -371,37 +371,31 @@ export function HeroFilm({
         </div>
 
         {/*
-          THE LOADING MARK. Added 2 Sep 2026, at the client's suggestion:
-          "maybe something like the Topcat logo icon spinning or a circle
-          around it… and maybe it says loading your experience. Then it'll
-          give time for the video to load in the background."
+          ⛔ THERE IS NO LOADING SCREEN, AND THAT IS A DECISION, NOT AN
+          OMISSION. Built 2 Sep 2026 at the client's suggestion — a spinning
+          TopCat mark and "Loading your experience" — and removed the same day,
+          his call and my recommendation.
 
-          Built as the honest face of the readiness gate rather than as an
-          interstitial, and the difference matters:
+          Three reasons it is not here. It could only ever appear on a slow
+          connection, because the readiness gate opens in a few hundred
+          milliseconds on anything decent, so it was a great deal of design
+          weight sitting on an edge case. "Loading your experience" over a
+          blurred hero reads cheaper than the rest of this site. And the page
+          already has a better holding image than any spinner: `.plate` is the
+          client's own full-resolution render of frame 0, full screen.
 
-          - IT IS NEVER A TIMER. It is shown only while the stage carries
-            `data-film-wait`, which useFilm sets when the film genuinely
-            cannot advance, and it goes the instant the film can. On a fast
-            connection the gate opens in a few hundred milliseconds and the
-            0.45s delay on the fade-in below means nobody ever sees it.
-          - THE RING IS REAL. `--filmLoad` is how much of the four-second head
-            start is actually buffered, written by the tick. A ring that fills
-            on a fixed animation while the network does something else is a
-            lie, and this site does not have a spare unit of the client's
-            trust to spend on one.
-          - IT NEVER TRAPS ANYONE. Skip Intro sits above it and still works,
-            and the gate stands itself down after STALL_LIMIT.
+          WHAT REPLACES IT IS ONE RULE, not a component: the scroll cue is held
+          back while the film is not ready (see `[data-film-wait]` in
+          film.module.css). Without that the hero says "Scroll to begin" over a
+          film that cannot move yet, which is the only part of the wait that
+          actually reads as broken. Skip Intro deliberately STAYS available
+          throughout — it is the escape hatch, and it works before the film
+          arms.
 
-          `aria-hidden` with a polite live region beside it: the mark is
-          decorative, the sentence is the part worth announcing, and it is
-          announced once rather than on every ring update.
+          `data-film-wait` is still written by the tick. It costs nothing, it
+          is what the cue rule reads, and it is the hook if a loading state is
+          ever wanted back.
         */}
-        <div className={css.loading} aria-hidden="true">
-          <i className={css.loadRing}>
-            <img src="/assets/brand/topcat-icon.svg" alt="" width={48} height={48} />
-          </i>
-          <b>Loading your experience</b>
-        </div>
 
         {/*
           ALWAYS RENDERED, never conditional on the film mode. `?film=notext`
