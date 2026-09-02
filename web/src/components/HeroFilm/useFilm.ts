@@ -228,6 +228,66 @@ const REVEAL_MAX_LAG = 2 / FILM_FPS;
 const VEIL_MIN = 0.2;
 const VEIL_AT = 38;
 
+/* ── the readiness gate ─────────────────────────────────────────────────────
+   Restored 2 Sep 2026 from the arbiter, index.html:7251-7261 and 7745. See the
+   long note on the `ready` ref in useFilm() for why it is here at all. */
+
+/** The arbiter's `SPAN_MIN`: the film may not start until this many seconds of
+ *  it are decodable in one continuous run. Its number, kept. */
+const SPAN_MIN = 4;
+
+/** How far ahead of the playhead the buffer must stay for the scrub to keep
+ *  advancing once it has started. Smaller than SPAN_MIN on purpose: the start
+ *  wants a cushion, the run only needs to not be at the edge, and a large
+ *  running margin would stall a film that is in fact keeping up. */
+const RUN_AHEAD = 0.75;
+
+/**
+ * A dead network must not pin the visitor on a fixed stage forever. If the cap
+ * has held the film back for this long with no progress, the film gives up and
+ * hands the page over. The old build had no equivalent because it waited for
+ * the whole file before arming at all.
+ */
+const STALL_LIMIT = 8000;
+
+/** Re-issue a seek that has been pending this long — the arbiter's
+ *  `SEEK_STALL` watchdog, index.html:7287, which the port also dropped. */
+const SEEK_STALL = 900;
+
+/** The longest continuous buffered run, in seconds. The arbiter's
+ *  `bufferedSpan()`, index.html:7252-7256, transcribed. */
+function bufferedSpan(v: HTMLVideoElement): number {
+  try {
+    const b = v.buffered;
+    let m = 0;
+    for (let i = 0; i < b.length; i += 1) m = Math.max(m, b.end(i) - b.start(i));
+    return m;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * The end of the buffered range that CONTAINS `t`, in seconds, or 0 when `t`
+ * is in a hole. This is the running cap: the film may be scrubbed up to here
+ * and no further, because past it there are no frames to show.
+ *
+ * Not the same question as `bufferedSpan`. A browser that has seeked around
+ * holds several ranges; what bounds the scrub is the one under the playhead,
+ * not the longest one anywhere in the file.
+ */
+function bufferedAhead(v: HTMLVideoElement, t: number): number {
+  try {
+    const b = v.buffered;
+    for (let i = 0; i < b.length; i += 1) {
+      if (t >= b.start(i) - 0.05 && t <= b.end(i) + 0.05) return b.end(i);
+    }
+    return 0;
+  } catch {
+    return 0;
+  }
+}
+
 export interface FilmRefs {
   runway: React.RefObject<HTMLDivElement | null>;
   stage: React.RefObject<HTMLDivElement | null>;
@@ -406,6 +466,66 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   const lastWrite = useRef(0);
   const armed = useRef(false);
   /**
+   * ⛔ THE READINESS LATCH. RESTORED 2 Sep 2026 — THE PORT DROPPED IT.
+   *
+   * The client, on the deployed build: "the video wouldn't play immediately,
+   * but the text of the next sections in the video would come up, but that
+   * video wouldn't move. So the video is not allowed to move until the video
+   * actually starts playing. So the text doesn't switch out or anything."
+   *
+   * The arbiter has exactly this gate and the port kept everything downstream
+   * of it and lost the gate itself — the signature bug of this port, for the
+   * sixth time. index.html:7251-7261 and 7745:
+   *
+   *     var SPAN_MIN=4, filmOK=false;
+   *     function bufferedSpan(){ … longest buffered range … }
+   *     function filmReady(){
+   *       if(filmOK)return true;
+   *       if(vid.readyState>=3 && bufferedSpan()>=SPAN_MIN){ filmOK=true; }
+   *       return filmOK;
+   *     }
+   *     // in onScroll:
+   *     target=clamp((window.scrollY-top)/travel);
+   *     if(!filmReady())target=0;
+   *
+   * One line, and because EVERY overlay curve in this engine is a pure
+   * function of that same progress value, freezing it freezes the picture and
+   * the story text together — which is the whole of what he is asking for.
+   *
+   * `ready` is the latch itself, one-way like the arbiter's `filmOK`.
+   */
+  const ready = useRef(false);
+  /**
+   * How far the picture can actually go RIGHT NOW, in film seconds, or
+   * `Infinity` once the whole cut is buffered.
+   *
+   * ⚠️ THE ARBITER'S ONE-WAY LATCH IS NOT ENOUGH ON ITS OWN HERE, and this is
+   * the part that is not a transcription. Its 4-second head start is a START
+   * condition only: once `filmOK` is true it never re-gates. Measured on this
+   * build, that is not sufficient — the wide runway is 820vh, so at a 900px
+   * viewport the film runs at 6.0ms of footage per scroll pixel and a single
+   * 1000px trackpad flick asks for 6.0 seconds of film, more than the head
+   * start. At 1.5Mbps against a 3.2Mbps encode the buffer grows at 0.46x
+   * real time, so the scrub outruns it and the text walks away from a frozen
+   * picture again, exactly as reported.
+   *
+   * So the gate also RUNS: progress is capped at what is buffered ahead of the
+   * playhead. The film waits instead of rewinding — capping to 0 mid-film,
+   * which is what the arbiter's line would do literally, would throw the
+   * visitor back to frame 0 halfway through.
+   */
+  const canReach = useRef(0);
+  /** When the cap first held the film back, so a dead network cannot pin the
+   *  page forever. 0 means "not waiting". */
+  const waitingAt = useRef(0);
+  /**
+   * Skip Intro and the brand logo write the scroll past the end of the runway
+   * and let the next tick paint p = 1. The cap would silently swallow both —
+   * "the skip intro button has to work" is a standing client rule — so they
+   * raise this and the gate stands down for the rest of the visit.
+   */
+  const bypass = useRef(false);
+  /**
    * This page load arrived on `/#hero` — the brand logo, from an inner page.
    * The film is never mounted at all on such a load; the effect below owns it.
    */
@@ -431,6 +551,9 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
     keepCue: -1,
     open: false,
     ink: false,
+    /* The loading ring's fill, quantised to 5% so a filling buffer writes the
+       custom property about twenty times, not sixty times a second. */
+    load: -1,
   });
 
   /* ── measurement: ONCE per resize, never in the loop ──────────────────── */
@@ -778,7 +901,116 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         is only whether there is anything left to paint.
       */
 
-      const p = clamp01(y / g.filmPx);
+      /*
+        ⛔ THE READINESS GATE. The scroll asks for a position; this decides how
+        much of it the picture can actually honour, and EVERYTHING downstream —
+        the seek, the story text, the veil, the nav grade, the kit line, the
+        hero copy, the cue, Skip, the FABs and the lock — is a pure function of
+        the value that comes out, so gating here gates all of them together.
+        That is the point: the client's complaint is that the text moved while
+        the picture did not, and the only way that can happen is if the two
+        read different clocks.
+
+        Three ways past it, all deliberate:
+        - `bypass` — Skip Intro and the brand logo, which jump to the end.
+        - `!seeks(mode)` — `?film=noseek` never writes currentTime, so a
+          buffer cap would pin it at frame 0 and the diagnostic ladder in
+          lib/mode.ts would stop meaning what its documentation says.
+        - no video element at all, which is the reduced-motion / no-decoder
+          path where there is nothing to wait for.
+      */
+      const vGate = refs.video.current;
+      const gated = !bypass.current && !!vGate && seeks(mode);
+
+      if (gated && vGate) {
+        /* The start latch, one-way, exactly as the arbiter has it. */
+        if (!ready.current && vGate.readyState >= 3 && bufferedSpan(vGate) >= SPAN_MIN) {
+          ready.current = true;
+        }
+        /* The running cap. `Infinity` once the tail is in, so a fully
+           buffered film never pays for any of this. */
+        if (ready.current) {
+          const end = bufferedAhead(vGate, vGate.currentTime);
+          const dur0 = isFinite(vGate.duration) && vGate.duration > 1 ? vGate.duration : DUR;
+          canReach.current = end >= dur0 - 0.05 ? Infinity : Math.max(0, end - RUN_AHEAD);
+        } else {
+          canReach.current = 0;
+        }
+      } else {
+        ready.current = true;
+        canReach.current = Infinity;
+      }
+
+      const want = clamp01(y / g.filmPx);
+      let p = want;
+      if (gated) {
+        const dur0 =
+          vGate && isFinite(vGate.duration) && vGate.duration > 1 ? vGate.duration : DUR;
+        const cap = canReach.current === Infinity ? 1 : clamp01(canReach.current / dur0);
+        p = Math.min(want, cap);
+      }
+
+      /*
+        HELD BACK, AND FOR HOW LONG. `waitingAt` is only set when the visitor
+        is actually asking for more film than exists yet; it is cleared the
+        moment the buffer catches up. `data-film-wait` on the stage is what
+        the loading indicator reads — see index.tsx. Nothing else keys on it.
+      */
+      const held = gated && p < want - 1e-4;
+      if (held) {
+        if (!waitingAt.current) waitingAt.current = now;
+      } else if (waitingAt.current) {
+        waitingAt.current = 0;
+      }
+      {
+        /* Waiting means either "has not started yet" or "cannot go as far as
+           the scroll is asking". Both are the same thing to a visitor: the
+           film is not moving and the reason is the network. */
+        const flag = held || (gated && !ready.current);
+        if (flag !== (stage.dataset.filmWait === '1')) {
+          if (flag) stage.dataset.filmWait = '1';
+          else delete stage.dataset.filmWait;
+        }
+        /*
+          HONEST PROGRESS, NOT A SPINNER THAT MEANS NOTHING. `--filmLoad` is
+          how much of the head start is actually in the buffer, 0 to 1, and the
+          loading ring reads it directly — see index.tsx and film.module.css.
+          Written only while the flag is up, so it costs nothing once the film
+          is running.
+        */
+        if (flag && vGate) {
+          const span = bufferedSpan(vGate);
+          const frac = ready.current ? 1 : Math.max(0, Math.min(1, span / SPAN_MIN));
+          const q = Math.round(frac * 20) / 20;
+          if (q !== memo.current.load) {
+            memo.current.load = q;
+            stage.style.setProperty('--filmLoad', String(q));
+          }
+        }
+      }
+      /*
+        ⛔ AND A DEAD NETWORK MUST NOT PIN THE PAGE FOREVER.
+
+        Without this the cap is a deadlock, and it is an exact one: the cap
+        blocks `complete`, `complete` is the only thing that sets `completeAt`,
+        `completeAt` arms the 1500ms give-up, and the give-up is what would
+        have lifted the cap. A visitor whose connection died mid-film would sit
+        on a fixed stage with no way down the page.
+
+        The escape LIFTS THE GATE rather than throwing the film away. Calling
+        `landed()` here would be the more dramatic answer and is wrong twice
+        over: it is scoped to the mount effect and not reachable from the tick,
+        and it would yank a visitor who is halfway through a film they can see
+        back to a static hero. Standing the gate down degrades to exactly the
+        behaviour this build shipped before today — the scrub runs ahead of the
+        picture — which is a cosmetic fault, where a pinned page is a dead one.
+      */
+      if (waitingAt.current && now - waitingAt.current > STALL_LIMIT) {
+        waitingAt.current = 0;
+        bypass.current = true;
+        delete stage.dataset.filmWait;
+        p = want;
+      }
 
       /*
         THE HANDOFF AND THE LOCK COME BEFORE THE EARLY RETURN.
@@ -1214,6 +1446,20 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
   /* ── skip ─────────────────────────────────────────────────────────────── */
 
   const skipToEnd = useCallback(() => {
+    /*
+      ⛔ SKIP AND THE BRAND LOGO STAND THE READINESS GATE DOWN. 2 Sep 2026.
+
+      Both work by writing the scroll past the end of the runway and letting
+      the next tick paint p = 1. The buffer cap added today would clamp that
+      back to whatever is buffered and Skip would appear to do nothing on the
+      one connection where a visitor most wants it — "the skip intro button
+      has to work" is a standing client rule, and this is the second time it
+      has had to be defended from a change that never mentioned it.
+
+      Set before the scroll is written, so the tick that reads the new position
+      already sees the gate open.
+    */
+    bypass.current = true;
     const g = geom.current;
     /*
       ⛔ SKIP HAS TO WORK BEFORE THE FILM HAS ARMED, TOO.
@@ -1477,6 +1723,10 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
     let cancelled = false;
     let objectUrl = '';
+    /* The stalled-seek watchdog's timer and its 'seeked' listener. Both are
+       torn down with the effect; see the note where they are installed. */
+    let seekWatch = 0;
+    let detachSeek: (() => void) | null = null;
 
     const band = bandFor(window.innerWidth);
     const src = filmBand(band).phone ? sources.phone : sources.wide;
@@ -1814,6 +2064,64 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
         },
         { once: true },
       );
+
+      /*
+        ⛔ THE STALLED-SEEK WATCHDOG, AND IT IS THE ARBITER'S. RESTORED 2 Sep.
+
+        The tick allows ONE seek in flight — `!v.seeking` at the deadband —
+        which is correct, but the port dropped both of the things that made it
+        safe. index.html:7286-7287:
+
+            vid.addEventListener('seeked',()=>{ if(pending)seek(); });
+            setInterval(()=>{ if(!locked&&live&&(pending||vid.seeking)
+              && performance.now()-seekAt>SEEK_STALL) seek(); },200);
+
+        A seek into an unbuffered region can stay pending for seconds. While it
+        is pending every new scroll position is discarded, and with nothing to
+        re-issue it the picture stays frozen even after the bytes arrive. That
+        is the difference between the client saying "the video is slow" and
+        what he actually said, which is "that video wouldn't move".
+
+        The readiness cap above makes this rare — the scrub should no longer
+        ask for frames that are not there — but "rare" is not "never": a
+        browser may evict a buffered range under memory pressure at any time.
+        This is the recovery, and it is cheap: it only fires when a seek has
+        genuinely been outstanding longer than SEEK_STALL.
+      */
+      const nudge = () => {
+        if (cancelled || locked.current) return;
+        const v = refs.video.current;
+        if (!v || !seeks(mode) || v.seeking) return;
+        const g = geom.current;
+        if (!g) return;
+        const dur = isFinite(v.duration) && v.duration > 1 ? v.duration : DUR;
+        const wantT = Math.min(
+          clamp01((window.scrollY - g.top) / g.filmPx) * dur,
+          dur - 0.5 / FILM_FPS,
+        );
+        const reach = canReach.current;
+        const okT = reach === Infinity ? wantT : Math.min(wantT, Math.max(0, reach));
+        if (Math.abs(v.currentTime - okT) > SEEK_EPS) {
+          try {
+            v.currentTime = okT;
+          } catch {
+            /* decoder gone; the plate is still on screen */
+          }
+        }
+      };
+      video.addEventListener('seeked', nudge);
+      seekWatch = window.setInterval(nudge, SEEK_STALL);
+      detachSeek = () => {
+        video.removeEventListener('seeked', nudge);
+      };
+      /*
+        ⚠️ NO 'progress'/'canplay' WAKE LISTENERS, DELIBERATELY. The arbiter
+        needs them because its loop is scheduled from the scroll; this one is a
+        continuous rAF that re-arms itself every frame from `arm()` onward
+        (see the loop above), so it is already re-reading the latch sixty times
+        a second and a visitor holding still watches the film release on its
+        own. Adding them would be four listeners that can only duplicate work.
+      */
     }
     /*
       ⛔ THE `error` LISTENER ABOVE IS THE OLD `.catch()`, AND IT STILL MATTERS.
@@ -1956,6 +2264,8 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
       window.removeEventListener('orientationchange', onOrient);
       document.removeEventListener('click', onLogo, true);
       cancelAnimationFrame(raf.current);
+      if (seekWatch) window.clearInterval(seekWatch);
+      detachSeek?.();
       if (vfc) {
         const rv = video as HTMLVideoElement & { cancelVideoFrameCallback?: (h: number) => void };
         rv.cancelVideoFrameCallback?.(vfc);

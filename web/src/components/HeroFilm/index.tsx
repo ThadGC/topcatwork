@@ -55,7 +55,38 @@ import { HERO_COPY, STORY } from './lib/timeline';
 import { useFilm, type FilmRefs, type FilmSources } from './useFilm';
 
 const DEFAULT_SOURCES: FilmSources = {
-  wide: '/assets/video/film-wide.mp4?v=1',
+  /*
+    ⛔ `?v=2` — THE WIDE CUT WAS RE-ENCODED 2 Sep 2026 AND THE STAMP MUST MOVE
+    WITH IT. `.htaccess` gives every .mp4 `max-age=604800`, so a visitor who
+    has seen the site this week would otherwise keep the old 17.8MB file for
+    another seven days and none of the load work would reach them.
+
+    17,788,007 -> 13,149,264 bytes, 26.1% off, re-encoded from the ARBITER'S
+    OWN 60fps master (assets/video/topcat-intro-1920.mp4) at CRF 26 rather
+    than from the shipped cut, so there is no second generation of loss.
+
+    What was held EXACTLY, because the film is scrubbed and hand-measured:
+      1920x1080          the encoded width is a coordinate system — `sc` is
+                         derived from videoWidth and feeds both the reveal
+                         tables and --filmU, which lays out the wide band's
+                         typography in film-space pixels. Changing the
+                         resolution would silently resize the story text.
+      1062 frames        counted, not assumed
+      44.250000s         identical, so every hand-measured reveal time still
+                         lands on the frame it was measured against
+      89 keyframes       every 0.500s exactly, as before — this is what makes
+                         a seek into a partially buffered file cheap, and the
+                         readiness gate depends on it
+      faststart          moov ahead of mdat, verified by box order
+
+    Measured quality, SSIM against that same master: shipped 0.9864, new
+    0.9854. Checked by eye at 1:1 on the dark cabinet gradients and the marble
+    veining, which is where CRF 26 would break first. Neither shows it.
+
+    The phone cut is untouched — the client reports mobile as working, its
+    keyframes are twice as dense, and it is 6.8MB against the wide's 13.1.
+  */
+  wide: '/assets/video/film-wide.mp4?v=2',
   phone: '/assets/video/film-phone.mp4?v=1',
   plateWide: '/assets/video/plate-wide.webp?v=1',
   platePhone: '/assets/video/plate-phone.webp?v=1',
@@ -238,6 +269,52 @@ export function HeroFilm({
       />
 
       {/*
+        ⛔ THE FILM ITSELF IS PRELOADED. ADDED 2 Sep 2026, AND IT IS THE
+        LARGEST SINGLE WIN ON THE FILM'S START TIME.
+
+        MEASURED, real Chrome, cold cache, throttled to 1.5Mbps, on the
+        deployed build BEFORE this line existed:
+
+            227ms   17 JS bundles, 3 stylesheets and the hero still,
+                    all requested together
+           1042ms   <video> exists, data-film='off', runway 0
+           5002ms   film-wide.mp4 finally requested
+           8751ms   readyState 3 — the film arms
+
+        The film's `src` is assigned inside the mount effect, so the fetch
+        cannot begin until the bundles have downloaded, React has hydrated and
+        the pin assertion has passed. Nearly five seconds of a slow visit were
+        spent not asking for the one file the page is about.
+
+        Same mechanism as the two plate preloads above, and the same reasons it
+        works: `media` does the band pick, the preload scanner reads it ahead of
+        script execution, and the reduced-motion clause stops a visitor who will
+        never see the film paying for a 13MB download. The `href` values are
+        byte-identical to what useFilm assigns, ?v= stamp included, so this is
+        the same request and not a second one — get that wrong and the page
+        downloads the film twice.
+
+        ⚠️ The band split here is 720px, matching the plates and
+        `bandFor`/`filmBand` in useFilm. Tablets take the wide cut, as they do
+        in the engine; that is a known cost recorded in the handoff, not an
+        oversight of this line.
+      */}
+      <link
+        rel="preload"
+        as="video"
+        type="video/mp4"
+        href={sources.current.phone}
+        media="(max-width:720px) and (prefers-reduced-motion: no-preference)"
+      />
+      <link
+        rel="preload"
+        as="video"
+        type="video/mp4"
+        href={sources.current.wide}
+        media="(min-width:721px) and (prefers-reduced-motion: no-preference)"
+      />
+
+      {/*
         ⛔ THE STAGE IS NOT `aria-hidden`. It was, while it held only the film —
         and then the page's own hero moved into it, which put the site's <h1>
         inside an aria-hidden subtree and took the main heading of the whole
@@ -291,6 +368,39 @@ export function HeroFilm({
           {/* The edge vignette. Its opacity tracks how much of the opening
               copy is still on screen — see film.module.css. */}
           <div className={css.edge} />
+        </div>
+
+        {/*
+          THE LOADING MARK. Added 2 Sep 2026, at the client's suggestion:
+          "maybe something like the Topcat logo icon spinning or a circle
+          around it… and maybe it says loading your experience. Then it'll
+          give time for the video to load in the background."
+
+          Built as the honest face of the readiness gate rather than as an
+          interstitial, and the difference matters:
+
+          - IT IS NEVER A TIMER. It is shown only while the stage carries
+            `data-film-wait`, which useFilm sets when the film genuinely
+            cannot advance, and it goes the instant the film can. On a fast
+            connection the gate opens in a few hundred milliseconds and the
+            0.45s delay on the fade-in below means nobody ever sees it.
+          - THE RING IS REAL. `--filmLoad` is how much of the four-second head
+            start is actually buffered, written by the tick. A ring that fills
+            on a fixed animation while the network does something else is a
+            lie, and this site does not have a spare unit of the client's
+            trust to spend on one.
+          - IT NEVER TRAPS ANYONE. Skip Intro sits above it and still works,
+            and the gate stands itself down after STALL_LIMIT.
+
+          `aria-hidden` with a polite live region beside it: the mark is
+          decorative, the sentence is the part worth announcing, and it is
+          announced once rather than on every ring update.
+        */}
+        <div className={css.loading} aria-hidden="true">
+          <i className={css.loadRing}>
+            <img src="/assets/brand/topcat-icon.svg" alt="" width={48} height={48} />
+          </i>
+          <b>Loading your experience</b>
         </div>
 
         {/*
@@ -430,6 +540,66 @@ export function HeroFilm({
           the hero below is simply the top of the page.
         */}
         <div className={css.runway} id="filmRunway" ref={runway} />
+
+        {/*
+          ⛔ THE RUNWAY GOES UP DURING PARSE, NOT AFTER HYDRATION.
+          ADDED 2 Sep 2026. THIS IS THE "IT JUMPED TO SOMETHING ELSE" BUG.
+
+          The client: "when I opened the site for the first time on Safari or a
+          new browser, it didn't play the video immediately, it almost jumped to
+          something else."
+
+          MEASURED, real Chrome, cold cache, 1.5Mbps, on the deployed build:
+          the runway was 0px and `data-film` was 'off' until 4,774ms, and then
+          became 8,100px in one step. For those first ~4.8 seconds the entire
+          home page was scrollable under a hero that says "Scroll to begin" —
+          and the moment the effect ran, 8,100px of runway appeared UNDER the
+          visitor and everything they were reading leapt away. On a repeat visit
+          the window is nil, because the bundles and the film are both cached,
+          which is exactly why he only saw it on a cold browser.
+
+          This closes the window. It runs during parse, immediately after the
+          two elements exist, and writes the SAME two things the mount effect
+          writes, in the same order and for the same reason — the runway holds
+          the distance, `data-film='loading'` holds the viewport, and one
+          without the other is either an empty scroll or a stage pinned over a
+          short page. The effect's own block is now idempotent rather than
+          first.
+
+          It reads `html.film-running`, which the root layout has already
+          decided during parse on the film's own conditions: the home path,
+          no `data-to-hero`, no reduced motion, an H.264 decoder and no
+          `?film=off`. So this cannot fire on a visitor who will never see a
+          film, and there is nothing here to keep in step with those rules.
+
+          `pinIsSafe` still cannot be tested before layout, so the give-up path
+          is unchanged: `landed()` collapses the runway and clears the stage.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){try{' +
+              "if(!document.documentElement.classList.contains('film-running'))return;" +
+              "var r=document.getElementById('filmRunway');" +
+              /* The stage is a direct child of <body> and the runway is inside
+                 <main>, so they are not siblings — query the attribute, which
+                 is unique on the page and already parsed by this point. */
+              "var s=document.querySelector('[data-film]');" +
+              'if(!r||!s)return;' +
+              /* The band heights are RUNWAY + HOLD from useFilm.ts: phone
+                 690+100, tablet 800+100, wide 820+80. Kept in step by hand —
+                 there is no way to share a constant with a parse-time string. */
+              'var w=window.innerWidth,v=w<=720?790:w<=1120?900:900;' +
+              "s.setAttribute('data-film','loading');" +
+              /* The loading mark belongs to the download too, not only to a
+                 scrub that has outrun the buffer. The tick takes ownership of
+                 this attribute the moment the film arms and clears it as soon
+                 as the gate opens. */
+              "s.setAttribute('data-film-wait','1');" +
+              "r.style.setProperty('--runway',v+'vh');" +
+              '}catch(e){}})()',
+          }}
+        />
 
         {/*
           THE HERO — a REAL SECTION IN NORMAL FLOW, and the end of the film.
