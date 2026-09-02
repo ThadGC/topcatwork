@@ -203,6 +203,8 @@ function PrimaryNav() {
       <a href="/estimate/">Estimate</a>
       <a href="/about/">About us</a>
       <a href="/trade/">Trade</a>
+      {/* Before Contact, so Contact stays the last item in the bar. */}
+      <a href="/articles">Articles</a>
       <a href="/contact/">Contact</a>
     </>
   );

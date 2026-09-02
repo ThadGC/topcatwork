@@ -33,14 +33,19 @@ const SUB_STONES = 'mnSubStones';
  * ---------------------------------------------------------------------------
  * THE CHILD COUNT IS LOAD-BEARING
  * ---------------------------------------------------------------------------
- * nav.css staggers the entrance with `.mobile-nav > *:nth-child(1..9)` at
- * .05/.09/.13/.17/.21/.25/.29/.33/.38s, and `.mn-row` is child ten precisely
- * so that it gets no delay. This component must render exactly ten children,
- * in this order:
+ * nav.css staggers the entrance with `.mobile-nav > *:nth-child(1..10)` at
+ * .05/.09/.13/.17/.21/.25/.29/.33/.38/.42s, and `.mn-row` is the LAST child
+ * precisely so that it gets no delay. This component must render exactly
+ * eleven children, in this order:
  *
  *   1 .mn-group Services   2 #mnSubServices   3 Projects   4 .mn-group Stones
  *   5 #mnSubStones         6 Estimate         7 About us   8 Trade
- *   9 Contact             10 .mn-row
+ *   9 Articles            10 Contact         11 .mn-row
+ *
+ * ⚠️ IT WAS TEN CHILDREN AND A 1..9 LADDER until Articles was added on
+ * 2 Sep 2026. The ladder in chrome.css grew a tenth step in the same commit —
+ * it has to, because the delays are positional: leave it at 1..9 and the new
+ * link is the one item that fades in with no delay, ahead of Contact.
  *
  * Do not wrap them, do not reorder them, do not conditionally drop one.
  *
@@ -155,13 +160,14 @@ export function MobileNav({ variant }: MobileNavProps = {}) {
         ))}
       </SubPanel>
 
-      {/* 6-9 */}
+      {/* 6-10 */}
       <a href="/estimate/">Estimate</a>
       <a href="/about/">About us</a>
       <a href="/trade/">Trade</a>
+      <a href="/articles">Articles</a>
       <a href="/contact/">Contact</a>
 
-      {/* 10 — no stagger delay, by design */}
+      {/* 11 — no stagger delay, by design */}
       <div className="mn-row">
         <a className="mn-cta" href="/contact/">
           Get a free quote

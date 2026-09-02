@@ -807,7 +807,7 @@ html.nav-open .mn-group {
   color: var(--gold);
 }
 
-/* The stagger is positional. The sheet MUST render exactly ten children in
+/* The stagger is positional. The sheet MUST render exactly eleven children in
    exactly this order or the timing silently reshuffles. */
 html.nav-open .mobile-nav > *:nth-child(1) {
   transition-delay: 0.05s;
@@ -835,6 +835,12 @@ html.nav-open .mobile-nav > *:nth-child(8) {
 }
 html.nav-open .mobile-nav > *:nth-child(9) {
   transition-delay: 0.38s;
+}
+/* Added 2 Sep 2026 with the Articles link, which made the sheet eleven
+   children. Without this step the tenth item (Contact) is the one that
+   arrives with no delay, ahead of the ninth. */
+html.nav-open .mobile-nav > *:nth-child(10) {
+  transition-delay: 0.42s;
 }
 html.nav-open .mobile-nav > .mn-sub {
   transition-delay: 0s;
@@ -1983,4 +1989,62 @@ header.bar.formed .bar-flare::before,
 header.bar.formed .bar-flare::after {
   animation: none;
   opacity: 0;
+}
+
+/* -------------------------------------------------------------------------
+   15. nav.top at the bottom of the desktop band     ADDED 2 Sep 2026
+   -------------------------------------------------------------------------
+   THE ARTICLES LINK MADE THE RICH BAR EIGHT ITEMS, AND EIGHT DO NOT FIT AT
+   1121px. Measured on /about/ at 1121x900, before and after, by removing the
+   new anchor from the live DOM and re-reading the box:
+
+     seven items   nav.top  646.0px wide,  32.5px tall   — one line
+     eight  items  nav.top  727.4px wide,  49.0px tall   — WRAPPED
+
+   `nav.top` is `flex: 0 1 auto` inside a `space-between` header, so it does
+   not overflow when it runs out of room: it SHRINKS, and the anchors wrap
+   their own text instead. The carets on Services and Stones drop to a second
+   line and "About us" splits into "About / us". Nothing overlaps and nothing
+   is clipped, which is exactly what makes it easy to miss.
+
+   The arithmetic, all measured at 1121px:
+
+     natural width of the eight anchors   568.0px   (fixed 11px type)
+     seven gaps at clamp(18px,2.2vw,30px) 172.6px   (2.2vw = 24.66px here)
+     natural total                        740.6px
+     space the header actually offers     727.4px
+     DEFICIT                               13.2px
+
+   The band is narrow and its edges are measured, not assumed: it wraps from
+   1121px (the first desktop width — below that §4's max-width:1120px rule
+   hides nav.top and the burger takes over) to 1147px, and clears from 1148px
+   upward because the header's own padding grows faster with the viewport than
+   the gaps do. 1160, 1200, 1240, 1300 and 1440 were all checked and are 32.5.
+
+   ⛔ LOWERING THE CLAMP'S FLOOR DOES NOTHING HERE. The obvious fix is to take
+   `clamp(18px, 2.2vw, 30px)` down to an 16px floor, and it is worthless: at
+   1121px the clamp is returning its MIDDLE term, 24.66px, so the floor is not
+   the value in play. Only the middle or the ceiling can move the gap here.
+
+   ⛔ AND NEITHER CAN THE MIDDLE TERM, GLOBALLY. Dropping 2.2vw to 1.9vw fixes
+   1121px and also narrows every desktop nav from 1121px to 1579px — including
+   1440px, the commonest desktop width, where the gap would go 30px -> 27.4px.
+   That is a silent restyle of all 178 existing pages to fix 27px of viewport.
+
+   So the override is scoped to exactly the failing band. 21px leaves
+   568 + 7x21 = 715px against 727.4px available: 12.4px of headroom, rather
+   than the 0.3px that landing on the theoretical 22.77px maximum would give.
+   Crossing 1148px steps the gap 21px -> 25.26px, which is only ever visible
+   while dragging a window through a 27px-wide range, and is the cheapest of
+   the available trades.
+
+   The lite bar is not at risk at any width — its links are
+   `calc(11 * var(--uipx))` rather than a fixed 11px, so they are 8.8px at
+   1121px and the row has room to spare. This rule reaches it anyway, which is
+   harmless: a slightly tighter gap in a 27px band on a bar that already fits.
+   ------------------------------------------------------------------------- */
+@media (min-width: 1121px) and (max-width: 1147px) {
+  nav.top {
+    gap: 21px;
+  }
 }

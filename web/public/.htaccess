@@ -70,6 +70,55 @@
   RewriteCond %{THE_REQUEST} \s/+services/([a-z-]+)\.html[\s?] [NC]
   RewriteRule ^ /services/%1? [R=301,L]
 
+  # -- 1b. THE ARTICLES ------------------------------------------------------
+  # Added 2 September 2026 with the /articles section.
+  #
+  # Articles are standalone HTML files dropped by hand into `articles/` at the
+  # web root. `granite-vs-quartz.html` is served at /articles/granite-vs-quartz
+  # by rule 2 below with NO change at all — that fallback already does exactly
+  # what these pages need, which is why there is no rule here to serve them.
+  #
+  # These three rules exist for the two things rule 2 cannot do.
+  #
+  # (a) RETIRE THE .html LEAF. Each article declares the clean URL as its own
+  #     canonical, so the leaf must 301 rather than answer, or one page is
+  #     live at two URLs and one of them contradicts its own canonical tag.
+  #
+  #     ⛔ THE_REQUEST, NOT REQUEST_URI, AND IT IS NOT A STYLE CHOICE.
+  #     THE_REQUEST is the immutable first line of the HTTP request, so it
+  #     matches only what the browser actually asked for and never rule 2's
+  #     internal rewrite. Written with %{REQUEST_URI} this rule is an infinite
+  #     301 loop on the CLEAN url — measured, fifty hops and curl gave up —
+  #     because rule 2 rewrites /articles/x to /articles/x.html internally and
+  #     this rule then matches its own output. Moving it above rule 2 does NOT
+  #     save you. Only THE_REQUEST does. This is the same trap the services
+  #     rule above documents, and the same defence.
+  #
+  # (b) RESCUE THE LISTING PAGE, which is the part that is easy to miss.
+  #     `articles/` is a REAL DIRECTORY here, unlike every other hub on the
+  #     site. mod_dir therefore 301s /articles to /articles/, and rule 2's
+  #     `!-d` test then refuses to serve it: measured 403 on this host, where
+  #     directory indexing is off. So the slash is turned off for that one
+  #     directory in articles/.htaccess, and the two rules below answer
+  #     /articles from the flat articles.html the export writes, and send the
+  #     slashed form back to the canonical shape.
+  #
+  #     Result, verified to match the Vercel copy hop for hop:
+  #       /articles            200, no redirect
+  #       /articles/           301 -> /articles
+  #       /articles/<slug>     200
+  #       /articles/<slug>.html 301 -> /articles/<slug>
+  #
+  # ⚠️ DO NOT UPLOAD THE LISTING PAGE WITHOUT AT LEAST ONE ARTICLE FILE. With
+  # no `articles/` directory present, rule 2 turns /articles/ and
+  # /articles/<anything> into 500s — the same PATH_INFO fault that already
+  # affects /stone-selector/x today.
+  RewriteCond %{THE_REQUEST} \s/+articles/([a-z0-9-]+)\.html[\s?] [NC]
+  RewriteRule ^ /articles/%1? [R=301,L]
+
+  RewriteRule ^articles/$ /articles [R=301,L]
+  RewriteRule ^articles$ /articles.html [L]
+
   # -- 2. serve every flat-exported route at its clean URL -------------------
   # Only when the request is not already a real file or directory, so existing
   # assets, directory-index routes and send.php are untouched.
@@ -95,6 +144,19 @@
   <FilesMatch "\.(css|js)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
+
+  # ⛔ THE ARTICLES STYLESHEET IS THE ONE .css THAT IS NOT IMMUTABLE.
+  # /_next/static/*.css is content-hashed, so a year is correct for it. The
+  # articles sheet is deliberately at a FIXED url — a hand-written article has
+  # to be able to <link> something whose name does not change between builds —
+  # so a year would freeze every returning visitor on the first version they
+  # ever downloaded, with no way out but renaming the file. It carries a ?v=
+  # stamp from scripts/build-articles-css.mjs, and an hour here means a stamp
+  # that is ever forgotten heals itself instead of lasting twelve months.
+  # This block must stay BELOW the .css rule above; last match wins.
+  <Files "topcat-articles.css">
+    Header set Cache-Control "public, max-age=3600"
+  </Files>
 
   # ⛔ NOT `immutable`. Slab tiles and portraits are named for their subject,
   # not their contents, and rely on a hand-bumped ?v=. An hour is a forgotten

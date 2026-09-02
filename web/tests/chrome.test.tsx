@@ -178,15 +178,55 @@ describe('mobile nav', () => {
     expect(document.documentElement).not.toHaveClass('nav-open');
   });
 
-  it('renders exactly ten children, because the stagger is positional', () => {
-    // nav.css targets .mobile-nav > *:nth-child(1..9); .mn-row is child ten
-    // precisely so that it gets no delay.
+  it('renders exactly eleven children, because the stagger is positional', () => {
+    // chrome.css targets .mobile-nav > *:nth-child(1..10); .mn-row is the last
+    // child precisely so that it gets no delay.
+    //
+    // ⚠️ IT WAS TEN CHILDREN AND A 1..9 LADDER until the Articles link landed
+    // on 2 Sep 2026. If you are here because this number went red again, the
+    // fix is NOT to bump it on its own: the delays are positional, so a new
+    // top-level link also needs a new step in chrome.css or it arrives with no
+    // delay, ahead of the item before it. The test below enforces that pairing.
     const { container } = render(<MobileNav />);
     const sheet = container.querySelector('#mobileNav')!;
-    expect(sheet.children).toHaveLength(10);
-    expect(sheet.children[9]).toHaveClass('mn-row');
+    expect(sheet.children).toHaveLength(11);
+    expect(sheet.children[8]).toHaveAttribute('href', '/articles');
+    expect(sheet.children[10]).toHaveClass('mn-row');
     expect(sheet.children[1]).toHaveAttribute('id', 'mnSubServices');
     expect(sheet.children[4]).toHaveAttribute('id', 'mnSubStones');
+  });
+
+  /**
+   * THE PAIRING THE PREVIOUS TEST CANNOT SEE.
+   *
+   * The sheet's entrance animation is a positional ladder in chrome.css:
+   * `.mobile-nav > *:nth-child(N){transition-delay:…}`. jsdom does not apply
+   * the stylesheet, so a component test can only ever count the markup, and
+   * the markup passing tells you nothing about whether the ladder still
+   * reaches the last link. That gap is exactly how an eleventh child would
+   * ship animating wrongly with a green suite.
+   *
+   * So this reads the stylesheet as text and asserts the two stay in step:
+   * every child except `.mn-row` must have a step. It is the only automated
+   * thing standing between a future nav item and a silently broken entrance.
+   */
+  it('has a stagger step in chrome.css for every child except .mn-row', () => {
+    const css = readFileSync(
+      resolve(__dirname, '../src/components/chrome/chrome.css'),
+      'utf8',
+    );
+    const steps = [...css.matchAll(/\.mobile-nav > \*:nth-child\((\d+)\)/g)].map((m) =>
+      Number(m[1]),
+    );
+
+    const { container } = render(<MobileNav />);
+    const sheet = container.querySelector('#mobileNav')!;
+    const needed = sheet.children.length - 1; // .mn-row is deliberately last and undelayed
+
+    // A contiguous 1..needed ladder, no gaps and no strays.
+    expect([...steps].sort((a, b) => a - b)).toEqual(
+      Array.from({ length: needed }, (_, i) => i + 1),
+    );
   });
 
   it('closes when any link inside the sheet is tapped', () => {

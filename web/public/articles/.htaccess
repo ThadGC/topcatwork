@@ -1,0 +1,27 @@
+# ============================================================================
+# Topcat Worktops — articles/ only.
+#
+# ⛔ ONE LINE, AND THE LISTING PAGE DOES NOT WORK WITHOUT IT.
+#
+# `articles/` is a real directory at the web root, which no other hub on this
+# site is. Apache's mod_dir sees it and 301s a request for /articles to
+# /articles/ before any of the root .htaccess rules get a look in. That
+# redirect is fatal rather than merely untidy: the rewrite that serves every
+# clean URL on this host is guarded by `RewriteCond %{REQUEST_FILENAME} !-d`,
+# and once the path has a trailing slash that test fails, so nothing answers.
+# Directory indexing is refused on this box, so the visitor gets a 403.
+#
+# DirectorySlash Off stops that 301. The root .htaccess then answers /articles
+# from the flat articles.html the export writes, and sends /articles/ back to
+# the slash-less canonical form.
+#
+# It is scoped to this directory ON PURPOSE. Setting it at the web root would
+# take the trailing slash away from /stones/, /guides/, /worktops/ and every
+# other directory URL on the site, all of which depend on mod_dir adding it.
+#
+# ⚠️ DirectorySlash Off without a matching rule for the slash-less form would
+# let Apache serve a directory listing. It cannot here — Options -Indexes is
+# the host default and the root rules answer /articles first — but if this
+# file is ever copied somewhere else, take that pairing with it.
+# ============================================================================
+DirectorySlash Off

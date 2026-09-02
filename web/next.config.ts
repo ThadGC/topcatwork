@@ -139,6 +139,34 @@ const nextConfig: NextConfig = {
         destination: '/services/:slug',
         permanent: true,
       },
+      /*
+        THE ARTICLES, AND THEY ARE THE SECOND FAMILY TO RETIRE ITS `.html`.
+
+        Articles are standalone HTML files hand-dropped into public/articles/.
+        Each one declares `/articles/<slug>` as its canonical, so the `.html`
+        leaf it is physically stored as must redirect rather than answer, or
+        the same page is reachable at two URLs and one of them contradicts its
+        own canonical tag.
+
+        308, like the services family: this shape is settled from the start.
+
+        ⛔ THIS PAIRS WITH THE REWRITE BELOW AND NEITHER SHIPS ALONE. On its
+        own, this redirect sends /articles/foo.html to a URL that 404s on
+        Vercel, because Next serves public/ by exact match only and has no
+        `.html` fallback. Apache does have one, so shipping half of this makes
+        the live site work and the Vercel copy the developer reviews broken.
+
+        It cannot loop with the rewrite. Next builds ONE linear route array —
+        headers, redirects, beforeFiles, the filesystem, afterFiles — and
+        walks it once; a rewrite mutates the pathname and the walk continues
+        forward, so the rewritten path never re-enters the redirect phase.
+        Measured on 16.3.3: /articles/foo.html is exactly one hop.
+      */
+      {
+        source: '/articles/:slug.html',
+        destination: '/articles/:slug',
+        permanent: true,
+      },
     ];
   },
 
@@ -155,6 +183,18 @@ const nextConfig: NextConfig = {
       { source: '/guides/:slug.html', destination: '/guides/:slug' },
       { source: '/materials/:slug.html', destination: '/materials/:slug' },
       { source: '/sitemap.html', destination: '/sitemap' },
+      /*
+        The article leaves. `public/articles/<slug>.html` is a real file, and
+        Next's public handler is an EXACT-MATCH set — `/articles/<slug>` is
+        not in it, so without this rule the clean URL 404s on Vercel while
+        Apache serves it happily from .htaccess rule 2. This is the Next-side
+        equivalent of that rule and it exists to make the two hosts agree.
+
+        afterFiles (a plain returned array), NOT beforeFiles: afterFiles runs
+        after the filesystem check, which is what leaves `/articles` itself to
+        the real route rather than swallowing it.
+      */
+      { source: '/articles/:slug', destination: '/articles/:slug.html' },
     ];
   },
 };

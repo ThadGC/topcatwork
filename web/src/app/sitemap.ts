@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 
+import { readArticles } from '@/lib/articles';
 import { guideSlugs } from '@/lib/guides';
 import { locationPaths } from '@/lib/locations';
 import { materialSlugs } from '@/lib/materials';
@@ -33,6 +34,28 @@ import { stoneSlugs } from '@/lib/stones';
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
+
+  /*
+    THE ARTICLES ARE THE ONLY FAMILY READ FROM DISK RATHER THAN FROM A MODULE.
+
+    Every other list here comes from an extracted JSON dataset, so adding a
+    page means editing the repo and the sitemap follows automatically. Articles
+    are hand-dropped HTML files in public/articles/ and there is no dataset to
+    edit, so `readArticles()` reads the folder at build time. That IS the
+    "sitemap picks up new articles by itself" requirement: drop the file, and
+    the next build lists it. Nothing else to remember.
+
+    `lastModified` is the article's own `article:modified` date, not `now` —
+    stamping every article with the build time tells Search Console that all
+    of them changed on every deploy, which is how a sitemap teaches a crawler
+    to stop trusting its dates.
+
+    ⚠️ An article uploaded to the live host AFTER a build is live and
+    reachable, but is not in THIS file until the next one. See
+    public/api/articles/index.php, which serves the same list at runtime, and
+    the note in src/lib/articles.ts.
+  */
+  const articles = readArticles();
 
   const at = (path: string, priority: number, changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly') => ({
     url: `${SITE}${path}`,
@@ -72,6 +95,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...locationPaths().map((p) => at(`/worktops/${p.join('/')}/`, 0.7, 'monthly')),
     ...guideSlugs().map((s) => at(`/guides/${s}.html`, 0.6, 'monthly')),
     ...stoneSlugs().map((s) => at(`/stones/${s}.html`, 0.5, 'monthly')),
+
+    /* The articles hub and its children.
+
+       ⛔ `/articles` HAS NO TRAILING SLASH, and it is the only hub in this
+       list without one. public/articles/ is a real directory on the live
+       host, so Apache's mod_dir 301s the slashed form and rule 2's `!-d`
+       test then refuses it. The page declares the slash-less form as its own
+       canonical, so this must match it exactly or the sitemap argues with the
+       page it points at. */
+    at('/articles', 0.7, 'weekly'),
+    ...articles.map((article) => ({
+      url: `${SITE}${article.url}`,
+      lastModified: new Date(article.published),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
 
     /* Housekeeping, last: low priority, but they should not be orphans. */
     at('/sitemap.html', 0.3, 'yearly'),

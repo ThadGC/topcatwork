@@ -84,6 +84,22 @@ export const PRIMARY: readonly NavLink[] = [
   { href: '/estimate/', label: 'Estimate' },
   { href: '/about/', label: 'About us' },
   { href: '/trade/', label: 'Trade' },
+  /*
+    ⛔ NO TRAILING SLASH, AND IT IS THE ONLY ITEM IN THIS LIST WITHOUT ONE.
+
+    `/articles` is backed by a real directory of hand-dropped HTML files at
+    `public/articles/`, which changes what Apache does with the slashed form:
+    mod_dir sees a directory, 301s `/articles` to `/articles/`, and the
+    `!-d` test in public/.htaccess rule 2 then refuses to serve the listing —
+    measured 403 on the live host's rule set. `/articles/` is 301'd back to
+    this shape by .htaccess and by next.config.ts, so the slashed form still
+    resolves; it just costs a hop that this href does not.
+
+    It is also the shape the listing page declares as its own canonical, and
+    the shape the nine service leaves already use, so it is the newer of the
+    two conventions on the site rather than a one-off.
+  */
+  { href: '/articles', label: 'Articles' },
   { href: '/contact/', label: 'Contact' },
 ];
 

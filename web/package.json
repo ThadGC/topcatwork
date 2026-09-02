@@ -17,7 +17,10 @@
     "extract": "node scripts/extract.mjs",
     "verify": "node scripts/verify.mjs",
     "extract:home-css": "node scripts/extract-home-css.mjs",
-    "extract:home-data": "node scripts/extract-home-data.mjs"
+    "extract:home-data": "node scripts/extract-home-data.mjs",
+    "articles:css": "node scripts/build-articles-css.mjs",
+    "articles:template": "node scripts/build-articles-template.mjs",
+    "articles:check": "node scripts/build-articles-template.mjs --check"
   },
   "dependencies": {
     "next": "^16.3.3",

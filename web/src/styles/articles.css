@@ -1,0 +1,79 @@
+/* ==========================================================================
+   articles.css — the ONLY new styling the articles section adds.
+
+   The listing is built almost entirely from furniture that already exists:
+   `.block` / `.wrap` / `.lede` from content.css and seo.css, and the
+   `.mgrid` / `.mcard` / `.mcard-go` card grid the /guides/ hub uses. That
+   grid is `repeat(auto-fit, minmax(280px, 1fr))`, so it is already three
+   columns on a desktop, two on a tablet and one on a phone with no media
+   query of its own — which is why there are no breakpoints in this file.
+
+   What is genuinely new is the "Load more" control and the empty state.
+   Nothing here restyles an existing selector; every rule is under a class
+   that did not exist before.
+   ========================================================================== */
+
+/*
+  ⛔ THE `hidden` ATTRIBUTE DOES NOT WORK ON A CARD WITHOUT THIS RULE.
+
+  <ArticleList> hides the cards past the current page with the `hidden`
+  attribute, which normally needs no CSS: every browser's user-agent
+  stylesheet carries `[hidden]{display:none}`. But `.mcard` in seo.css opens
+  with `display:block`, and an AUTHOR rule beats a user-agent rule no matter
+  how specific the UA selector is. So every card stayed on screen while the
+  counter underneath honestly reported "Showing 6 of 8".
+
+  It is worth knowing how this hid from a check. Reading `element.hidden` in
+  the console returns true for those cards — the attribute really is set —
+  so a probe that asks the DOM rather than the layout says the page is fine.
+  It was a screenshot that caught it. Assert on `getComputedStyle().display`
+  or on what is actually painted, never on the attribute.
+*/
+.mgrid .mcard[hidden] {
+  display: none;
+}
+
+/* The row under the grid. `.btn-ghost` (content.css) is the button itself —
+   this only positions it and the count that sits beneath it. */
+.art-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: clamp(28px, 4vh, 44px);
+}
+
+/* A <button> inheriting `.btn-ghost`, which was written for <a>. Buttons do
+   not inherit font from the page, and the shared rule sets `font-family` but
+   leans on the anchor's default for the rest of the box. */
+.art-more button.btn-ghost {
+  appearance: none;
+  font: inherit;
+  font-family: var(--brand);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* "Showing 6 of 14" — the same muted register as `.cta-note`. */
+.art-count {
+  font-family: var(--brand);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Shown when public/articles/ holds nothing yet. Deliberately quiet: it is a
+   state the client will see on the day this ships and never again. */
+.art-empty {
+  margin-top: 2rem;
+  padding: 1.6rem 1.5rem;
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  color: var(--body);
+  font-weight: 300;
+  line-height: 1.6;
+}
