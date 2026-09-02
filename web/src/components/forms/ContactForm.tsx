@@ -22,12 +22,41 @@
    islands happen to be on the page.
    ========================================================================== */
 
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
-import { type WheelStone } from '@/data/home/stoneWheel';
+import type { WheelStone } from '@/data/home/stoneWheel';
 import { chipKind, chipLabel, readStoneLink } from '@/lib/form/stoneDeepLink';
 import { appendUploads, clearUploads, getFiles, getLink, subscribe } from '@/lib/form/uploads';
-import StonePickerModal from './StonePickerModal';
+/*
+  ⛔ LAZY, AND IT IS WORTH 1.91 MB ON ROUGHLY 150 ROUTES. 2 Sep 2026.
+
+  The client: "the scrolling experience wasn't completely smooth. That could
+  just be the loading time, but that is also an issue."
+
+  MEASURED on the deployed build with real Chrome: /about pulls 2,513 KB of
+  decoded JavaScript; /guides, which has no enquiry form, pulls 469 KB. The
+  difference is almost entirely this modal's import chain —
+  StonePickerModal -> data/home/stoneWheel -> lib/stones -> stones.json, the
+  whole 132-stone catalogue, 2.8 MB on disk and 1.91 MB as a built chunk. It
+  is not merely downloaded: `MATERIALS` is built at module scope, so every one
+  of those routes also PARSES it and walks all 132 tiles on the main thread
+  during hydration, which is exactly the moment a first scroll happens.
+
+  It buys nothing before the visitor opens the picker. The modal contributes
+  ZERO server markup — `grep -c 'Choose your stone' about.html` finds only the
+  trigger button, which lives in this file — so deferring it cannot change
+  first paint, the exported HTML, or SEO.
+
+  `ssr: false` because the modal renders nothing on the server anyway, and the
+  static export must not start emitting it.
+
+  ⚠️ THE `import type` ABOVE IS PART OF THIS. A value import of `WheelStone`
+  from '@/data/home/stoneWheel' keeps the module edge alive and the bundler
+  pulls the catalogue back in through it, silently undoing the whole change.
+  It is a type and nothing else; keep it erased.
+*/
+const StonePickerModal = dynamic(() => import('./StonePickerModal'), { ssr: false });
 import TcUpload from './TcUpload';
 import { badProps, useEnquiryForm } from './useEnquiryForm';
 
@@ -133,6 +162,22 @@ export default function ContactForm({
   const [upCount, setUpCount] = useState('');
   /* The stone popup — see StonePickerModal.tsx. */
   const [pickOpen, setPickOpen] = useState(false);
+  /*
+    ⛔ AND IT IS NOT MOUNTED UNTIL IT IS FIRST OPENED. THIS IS THE HALF THAT
+    ACTUALLY SAVES THE BYTES, AND WITHOUT IT THE `dynamic()` ABOVE SAVES NONE.
+
+    Measured: with the lazy import alone, /about went from 11 scripts / 2,512 KB
+    to 13 scripts / 2,516 KB — the catalogue was merely moved into its own
+    chunk and then fetched anyway, because `next/dynamic` loads a chunk when
+    the component is RENDERED and this one was rendered unconditionally with
+    `open={false}`. The modal keeps its own markup in the DOM behind `hidden`,
+    so "rendered" and "open" were never the same thing here.
+
+    Latched rather than mirrored: once opened it stays mounted, so the close
+    and re-open transitions behave exactly as before. Only the very first open
+    pays for the chunk, and that is a click, not a page load.
+  */
+  const [pickMounted, setPickMounted] = useState(false);
 
   const form = useEnquiryForm({
     id: 'ctaForm',
@@ -341,7 +386,10 @@ export default function ContactForm({
             className="cta-up-t cta-stonet"
             aria-haspopup="dialog"
             aria-expanded={pickOpen}
-            onClick={() => setPickOpen(true)}
+            onClick={() => {
+              setPickMounted(true);
+              setPickOpen(true);
+            }}
           >
             <span className="cs-mk" aria-hidden="true" />
             <span>Choose your stone (optional)</span>
@@ -349,7 +397,9 @@ export default function ContactForm({
               Browse
             </span>
           </button>
-          <StonePickerModal open={pickOpen} onClose={() => setPickOpen(false)} onPick={onPick} />
+          {pickMounted ? (
+            <StonePickerModal open={pickOpen} onClose={() => setPickOpen(false)} onPick={onPick} />
+          ) : null}
         </>
       ) : null}
       <div className="cta-stone" id="ctaStone" hidden={!stone}>

@@ -1068,6 +1068,32 @@ export function useReviewDeck(count: number): ReviewDeck {
       gridLayout();
       checkRevSequence();
     };
+    /*
+      ⚠️ NOT rAF-GATED, AND THAT WAS TESTED RATHER THAN ASSUMED. 2 Sep 2026.
+
+      This is the one scroll handler in the app still doing layout work with no
+      frame gate, and it is mounted on every page with <Reviews/>, so it looks
+      like the obvious answer to "the scrolling experience wasn't completely
+      smooth". It was gated, on exactly the Process.tsx:170-179 pattern, and it
+      broke THREE tests that assert real behaviour, not implementation:
+
+        applyEntranceFlip > hinges the cards up on rotateX as the stage rises
+        applyEntranceFlip > settles to the flat rest layout once the stage
+                            passes REV_SETTLE_TOP
+        the deferred first layout > runs the layout itself if a scroll
+                            somehow arrives first
+
+      The third is not a test artefact — the `!ran` branch below MUST run the
+      first layout synchronously when a scroll beats the idle callback, and a
+      frame of deferral there is a real change. The first two dispatch a scroll
+      and read the cards' transforms in the same tick.
+
+      Gating it properly means first giving this file's tests the drainable rAF
+      stub that useWeld.test.ts:98-116 already has, and that is its own ticket
+      with its own risk, not something to smuggle into a round of client fixes.
+      The far larger smoothness win on these pages was the 1.91 MB stone
+      catalogue, which is fixed in ContactForm.tsx.
+    */
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
 
