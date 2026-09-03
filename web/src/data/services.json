@@ -1074,7 +1074,7 @@
         "text": "Shower surrounds, thresholds, window sills and bath panels cut from one stone, so a bathroom reads as a single material rather than a set of parts. Basin tops have a page of their own."
       },
       "hero": {
-        "background": "../assets/site/service-bathrooms-1600.webp",
+        "background": "/assets/site/service-bathrooms-1600.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -1596,7 +1596,7 @@
               ]
             }
           ],
-          "background": "../assets/site/service-bathrooms-1600.webp",
+          "background": "/assets/site/service-bathrooms-1600.webp",
           "chips": [
             {
               "kind": "chip-google",
@@ -2273,7 +2273,7 @@
         "text": "Reception desks, counters, tables and washroom surfaces for offices, bars, restaurants and shops. Hard-wearing stone, fitted to your programme by one team from template to install."
       },
       "hero": {
-        "background": "../assets/site/service-commercial-bar-1600.webp",
+        "background": "/assets/site/service-commercial-bar-1600.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -2787,7 +2787,7 @@
               ]
             }
           ],
-          "background": "../assets/site/service-commercial-bar-1600.webp",
+          "background": "/assets/site/service-commercial-bar-1600.webp",
           "chips": [
             {
               "kind": "chip-google",
@@ -3457,7 +3457,7 @@
         "text": "Table and console tops cut to your shape and your edge profile, in the same stones as the kitchen. Heavy, flat, and made to be eaten off rather than looked after."
       },
       "hero": {
-        "background": "../assets/site/service-dining-1600.webp",
+        "background": "/assets/site/service-dining-1600.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -3981,7 +3981,7 @@
               ]
             }
           ],
-          "background": "../assets/site/service-dining-1600.webp",
+          "background": "/assets/site/service-dining-1600.webp",
           "chips": [
             {
               "kind": "chip-google",
@@ -4658,7 +4658,7 @@
         "text": "Hearths, surrounds and mantel shelves cut to your opening and finished by hand. We work in the same stones as the kitchen, so one room can carry a single material from the worktop to the fire."
       },
       "hero": {
-        "background": "../assets/site/service-fireplaces-1550.webp",
+        "background": "/assets/site/service-fireplaces-1550.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -5180,7 +5180,7 @@
               ]
             }
           ],
-          "background": "../assets/site/service-fireplaces-1550.webp",
+          "background": "/assets/site/service-fireplaces-1550.webp",
           "chips": [
             {
               "kind": "chip-google",
@@ -5858,7 +5858,7 @@
         "text": "The island is the centre of the kitchen, so it earns a little more attention. We build islands with mitred waterfall ends that fold the stone to the floor, with the veining planned around every corner."
       },
       "hero": {
-        "background": "../assets/projects/harrow-1400.webp",
+        "background": "/assets/projects/harrow-1400.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -6374,7 +6374,7 @@
               ]
             }
           ],
-          "background": "../assets/projects/harrow-1400.webp",
+          "background": "/assets/projects/harrow-1400.webp",
           "chips": [
             {
               "kind": "chip-google",
@@ -7044,7 +7044,7 @@
         "text": "Quartz, granite and marble kitchen worktops, chosen from the slab you approve, cut to your kitchen and fitted by the same team that measured it. Free home visit, fixed pricing and a ten-year guarantee."
       },
       "hero": {
-        "background": "../assets/site/service-worktops-quartz-1600.webp",
+        "background": "/assets/site/service-worktops-quartz-1600.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -7560,7 +7560,7 @@
               ]
             }
           ],
-          "background": "../assets/site/service-worktops-quartz-1600.webp",
+          "background": "/assets/site/service-worktops-quartz-1600.webp",
           "chips": [
             {
               "kind": "chip-google",
@@ -8230,7 +8230,7 @@
         "text": "Weatherproof stone for garden kitchens and barbecue runs, chosen to hold its colour outdoors and cut to fit around sinks, hobs and built-in appliances."
       },
       "hero": {
-        "background": "../assets/site/service-outdoor-1600.webp",
+        "background": "/assets/site/service-outdoor-1600.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -8746,7 +8746,7 @@
               ]
             }
           ],
-          "background": "../assets/site/service-outdoor-1600.webp",
+          "background": "/assets/site/service-outdoor-1600.webp",
           "chips": [
             {
               "kind": "chip-google",
@@ -9415,7 +9415,7 @@
         "text": "Carry the same stone up the wall for a clean, vein-matched finish behind the hob and along the run. No grout lines to scrub and no visual break between the worktop and the wall."
       },
       "hero": {
-        "background": "../assets/site/service-splash-hob-1200.webp",
+        "background": "/assets/site/service-splash-hob-1200.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -9929,7 +9929,7 @@
               ]
             }
           ],
-          "background": "../assets/site/service-splash-hob-1200.webp",
+          "background": "/assets/site/service-splash-hob-1200.webp",
           "chips": [
             {
               "kind": "chip-google",
@@ -10599,7 +10599,7 @@
         "text": "Basin tops cut for the basin you have chosen, with the tap holes where you want them and the edges finished to match. One stone can carry the vanity, the sill and the shelf above the bath."
       },
       "hero": {
-        "background": "../assets/site/service-vanity-1600.webp",
+        "background": "/assets/site/service-vanity-1600.webp",
         "heading": {
           "type": "heading",
           "level": 1,
@@ -11123,7 +11123,7 @@
               ]
             }
           ],
-          "background": "../assets/site/service-vanity-1600.webp",
+          "background": "/assets/site/service-vanity-1600.webp",
           "chips": [
             {
               "kind": "chip-google",

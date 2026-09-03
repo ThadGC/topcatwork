@@ -245,7 +245,11 @@ describe('the detail template', () => {
     expect(hero.querySelector('.svc-hero-bg')?.getAttribute('style')).toContain(
       service.hero.background,
     );
-    expect(service.hero.background.startsWith('../assets/')).toBe(true);
+    /* ⛔ ABSOLUTE, NOT `../assets/`. Changed 3 Sep 2026 — the relative form was
+       the bug. See the note in src/lib/services.ts: a page served at
+       /services/<slug>/ resolves `../assets/` to /services/assets/ and every
+       hero background 404s. This assertion is what would have caught it. */
+    expect(service.hero.background.startsWith('/assets/')).toBe(true);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       service.heading.text,
     );

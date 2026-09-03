@@ -120,14 +120,26 @@ const SVC_OFF = 0.94;
  * measured with the transform cleared, or the second measurement reads the
  * first slide's offset back.
  */
-function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
+function useServicesReveal(
+  gridRef: React.RefObject<HTMLDivElement | null>,
+  /** `/services/` — the hub. No entrance; the cards are simply there. */
+  still = false,
+) {
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
     const cards = Array.from(grid.querySelectorAll<HTMLElement>('.svc'));
     if (!cards.length) return;
 
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    /* ⛔ THE HUB DOES NOT PLAY THE ENTRANCE. Client, 3 Sep 2026: "when I open
+       up on the main services tab there shouldn't be an animation … just
+       remove the intro animation from that section", and then, explicitly:
+       "they only mean that for the inner services main page, not the landing
+       page. Landing page can stay the same."
+
+       This takes the SAME path the reduced-motion branch already takes rather
+       than adding a second way to end up static — one exit, two reasons. */
+    if (still || matchMedia('(prefers-reduced-motion: reduce)').matches) {
       cards.forEach((el) => {
         el.classList.remove('enter');
         el.style.opacity = '1';
@@ -265,7 +277,7 @@ function useServicesReveal(gridRef: React.RefObject<HTMLDivElement | null>) {
       window.removeEventListener('scroll', request);
       window.removeEventListener('resize', onResize);
     };
-  }, [gridRef]);
+  }, [gridRef, still]);
 }
 
 /**
@@ -344,13 +356,28 @@ function usePhoneCardLinks(gridRef: React.RefObject<HTMLDivElement | null>) {
   }, [gridRef]);
 }
 
-export default function Services() {
+export interface ServicesProps {
+  /**
+   * `/services/` — the hub, where this section is the page's own opening and
+   * not something the visitor scrolls down to. The heading and the cards are
+   * painted in place with no entrance.
+   *
+   * The landing page passes nothing and is untouched: there the section sits
+   * below the film and the entrance is part of the page arriving.
+   *
+   * Named to match `<Reviews inner />`, which already draws the same
+   * distinction on the same pages.
+   */
+  readonly inner?: boolean;
+}
+
+export default function Services({ inner = false }: ServicesProps = {}) {
   const sectionRef = useReveal<HTMLElement>();
   const gridRef = useRef<HTMLDivElement | null>(null);
   const helixRef = useRef<HTMLDivElement | null>(null);
   const [flipped, setFlipped] = useState<ReadonlySet<number>>(new Set());
 
-  useServicesReveal(gridRef);
+  useServicesReveal(gridRef, inner);
   usePhoneCardLinks(gridRef);
   useServiceHelix(helixRef);
   useCursorGlow(gridRef, '.svc');
@@ -365,7 +392,10 @@ export default function Services() {
   return (
     <section className="section" id="services" ref={sectionRef}>
       <div className="svc-wrap">
-        <div className="section-head rise svc-intro">
+        {/* `.rise` is opacity:0 + translateY until the observer adds `.in`.
+            Dropping it on the hub is what makes the heading and the lede
+            simply present at first paint, which is what he asked for. */}
+        <div className={`section-head${inner ? '' : ' rise'} svc-intro`}>
           <h2 className="section-title">
             Surfaces for every <em>space</em>
           </h2>

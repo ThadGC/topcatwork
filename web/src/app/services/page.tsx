@@ -72,7 +72,10 @@ export default function ServicesHubPage() {
       <JourneyTracker />
       <TcDefs />
       <PageHead crumb="Services" title="Services" lede={servicesIndexLede()} />
-      <Services />
+      {/* `inner` = no entrance animation. On the hub this section IS the top
+          of the page, so an intro that fades it in reads as the page being
+          slow rather than as a reveal. The landing page keeps its own. */}
+      <Services inner />
       <SectionDivider />
       <Process />
       <SectionDivider />

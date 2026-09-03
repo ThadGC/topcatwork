@@ -148,8 +148,27 @@ export interface BodyBlock {
    ------------------------------------------------------------------------- */
 
 export interface ServiceHero {
-  /** Inline `background-image`, source-relative: `../assets/site/…webp`.
-   *  Resolves against `/services/<slug>.html`, i.e. to `/assets/site/…`. */
+  /**
+   * Inline `background-image`, ROOT-ABSOLUTE: `/assets/site/…webp`.
+   *
+   * ⛔ IT WAS `../assets/…` AND THAT WAS A LIVE BUG. Fixed 3 Sep 2026.
+   *
+   * The client: "the inner pages background images aren't loading for the
+   * services." Measured on topcatworktops.co.uk: the page is served at
+   * `/services/outdoor-kitchens/` — the trailing slash arrives from mod_dir,
+   * because an upload left an empty directory at that path — and a relative
+   * `../assets/` then resolves against `/services/outdoor-kitchens/` instead
+   * of `/services/`, giving
+   *     https://topcatworktops.co.uk/services/assets/site/service-outdoor-1600.webp
+   * which 404s. Confirmed in real Chrome: that exact request, 404, on every
+   * service page; the hero rendered as a black box.
+   *
+   * It survived on Vercel only because Vercel serves the slash-less URL, so
+   * the same string resolved one level higher and worked. A relative asset
+   * path is a bet on the URL's exact shape, and this site is served at two
+   * shapes on two hosts. Root-absolute is correct at any depth, with or
+   * without a trailing slash, on either host.
+   */
   background: string;
   heading: HeadingNode;
   lede: RichText;
