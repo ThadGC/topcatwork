@@ -48,7 +48,36 @@ const TC_FAIL = 'We could not send that just now. Please call 0800 098 2812 and 
    the form shows nothing useful at all. 503 is passed through. */
 function tc_fail(): void { tc_out(503, ['ok' => false, 'errors' => [TC_FAIL]]); }
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+/**
+ * GET /api/enquiry?selftest=1 — WHICH DELIVERY PATHS EXIST ON THIS SERVER.
+ *
+ * Added 3 Sep 2026 because we were guessing. The live host was failing every
+ * enquiry in 1.3 seconds and there was no way, from outside, to tell whether
+ * SMTP was unconfigured, cURL was missing, or the forward was being refused.
+ * The legacy send.php has carried the same `?selftest=1` idea for years.
+ *
+ * ⛔ IT REVEALS NO SECRET. Booleans and a hostname only: never the password,
+ * never the user, never the config array. `smtp` says whether a usable
+ * password is present, not what it is.
+ */
+function tc_selftest(bool $smtpReady, string $forward): void {
+  tc_out(200, [
+    'ok'       => true,
+    'endpoint' => 'enquiry',
+    'delivery' => [
+      'smtp'    => $smtpReady,
+      'curl'    => function_exists('curl_init'),
+      'forward' => $forward,
+      'mail'    => function_exists('mail'),
+    ],
+    'php'      => PHP_VERSION,
+  ]);
+}
+
+/* `?selftest=1` is the one GET this endpoint answers, and it is let through
+   here rather than earlier because it reports the config, which is not read
+   until below. Everything else that is not a POST is still refused. */
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' && !isset($_GET['selftest'])) {
   tc_out(405, ['ok' => false, 'errors' => ['This endpoint takes a POST.']]);
 }
 
@@ -80,6 +109,13 @@ $SMTP_PASS = $CFG['pass'] ?? '';
 $TO        = $CFG['to']        ?? 'info@topcatworktops.co.uk';
 $FROM      = $CFG['from']      ?? 'noreply@topcatworktops.co.uk';
 $FROM_NAME = $CFG['from_name'] ?? 'Topcat Worktops';
+/* Hoisted here from the delivery block so `?selftest=1` can report it without
+   the request having to reach the bottom of the file. */
+$FORWARD_URL = $CFG['forward'] ?? 'https://thadeusg3.sg-host.com/send.php';
+
+/* Answered before the method check below, so it is reachable with a plain GET
+   in a browser. Sends nothing and reveals no secret. */
+if (isset($_GET['selftest'])) tc_selftest($SMTP_READY, $FORWARD_URL);
 
 /* --- limits, matching route.ts and the client's own uploader -------------- */
 $FILE_MAX  = 50 * 1024 * 1024;   // per file, route.ts FILE_MAX
@@ -390,8 +426,6 @@ function tc_mailer(string $host, int $port, string $user, string $pass): PHPMail
  * Identical default to route.ts's ENQUIRY_FORWARD_URL, so both endpoints fall
  * back to the same place. Overridable from config.php without touching code.
  */
-$FORWARD_URL = $CFG['forward'] ?? 'https://thadeusg3.sg-host.com/send.php';
-
 /**
  * Hand the ORIGINAL submission to the legacy endpoint, exactly as the browser
  * sent it: same field names, same files. send.php then builds and sends both
@@ -444,6 +478,39 @@ function tc_forward(string $url): bool {
   return false;
 }
 
+/**
+ * The host's own mail transport. PHPMailer's `isMail()` hands the message to
+ * PHP's mail(), which on this host is the local MTA — so it needs NO password
+ * and NO outbound HTTP, which is exactly what the other two paths need and
+ * what this server appears not to give them.
+ *
+ * ⚠️ The envelope stays on the site's own domain (`$FROM` is
+ * noreply@topcatworktops.co.uk) because info@ is hosted here too: a message
+ * from a domain the sending host is authoritative for is the case SPF is
+ * happiest with. Do not "fix" a delivery problem by putting the visitor's
+ * address in From; that is the spoof that gets a domain blocked.
+ */
+function tc_send_by_mail(array $m): bool {
+  try {
+    $x = new PHPMailer(true);
+    $x->isMail();
+    $x->CharSet = 'UTF-8';
+    $x->setFrom($m['from'], $m['fromName']);
+    $x->addAddress($m['to']);
+    if ($m['replyTo'] !== '') $x->addReplyTo($m['replyTo'], $m['replyName']);
+    foreach ($m['attach'] as $f) $x->addAttachment($f['tmp'], $f['name']);
+    $x->isHTML(true);
+    $x->Subject = $m['subject'];
+    $x->Body    = $m['html'];
+    $x->AltBody = $m['plain'];
+    $x->send();
+    return true;
+  } catch (MailException|Throwable $e) {
+    error_log('[topcat] api/enquiry mail() failed: ' . $e->getMessage());
+    return false;
+  }
+}
+
 $delivered = false;
 
 if ($SMTP_READY) {
@@ -470,6 +537,19 @@ if ($SMTP_READY) {
    the same decision. */
 if (!$delivered) {
   $delivered = tc_forward($FORWARD_URL);
+}
+
+/* ⛔ AND THE HOST'S OWN MAIL TRANSPORT LAST. Measured on the live host: a
+   valid enquiry failed in 1.3s, far too fast for the 8s connect timeout on the
+   forward, so outbound HTTP is being refused there. That left every enquiry
+   dead with both of the paths above unavailable. mail() needs neither a
+   password nor an outbound connection. */
+if (!$delivered) {
+  $delivered = tc_send_by_mail([
+    'from' => $FROM, 'fromName' => $FROM_NAME, 'to' => $TO,
+    'replyTo' => $emailOK, 'replyName' => $name !== '' ? $name : $emailOK,
+    'attach' => $attach, 'subject' => $subject, 'html' => $html, 'plain' => $plain,
+  ]);
 }
 
 if (!$delivered) tc_fail();

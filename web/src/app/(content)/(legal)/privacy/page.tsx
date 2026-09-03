@@ -28,14 +28,14 @@ export const metadata: Metadata = {
   */
   title: { absolute: 'Privacy Policy | Topcat Worktops' },
   description:
-    'What Topcat Worktops does with the details you send through this website, how long we keep them, and your rights over them. No cookies, no tracking, no marketing lists.',
+    'What Topcat Worktops does with the details you send through this website, how long we keep them, and your rights over them. Includes the cookies this site sets and how to refuse them.',
   alternates: { canonical: 'https://www.topcatworktops.co.uk/privacy/' },
   robots: { index: true, follow: true },
   openGraph: {
     type: 'website',
     title: 'Privacy Policy | Topcat Worktops',
     description:
-      'What Topcat Worktops does with the details you send through this website, how long we keep them, and your rights over them. No cookies, no tracking, no marketing lists.',
+      'What Topcat Worktops does with the details you send through this website, how long we keep them, and your rights over them. Includes the cookies this site sets and how to refuse them.',
     url: 'https://www.topcatworktops.co.uk/privacy/',
     siteName: 'Topcat Worktops',
     images: [
@@ -64,8 +64,8 @@ export default function PrivacyPage() {
             </h1>
             <p className="legal-lede">
               What we collect when you enquire, what we do with it, and what you can ask
-              us to do about it. This site sets no cookies and carries no tracking of any
-              kind.
+              us to do about it, including the Google advertising cookies this site
+              sets and how to turn them off.
             </p>
             <div className="legal" dangerouslySetInnerHTML={{ __html: PRIVACY_HTML }} />
           </div>

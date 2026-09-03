@@ -96,15 +96,29 @@ export default function RootLayout({
           runtime after hydration. `async` is Google's own, and it is what keeps
           this off the critical path: the film's first paint is unaffected.
 
-          ⚠️ IT CONTRADICTS THE PRIVACY POLICY AS THAT PAGE IS CURRENTLY
-          WRITTEN. src/data/legal/privacy.ts, the "Cookies and tracking"
-          section, states: "This website sets no cookies. There is no analytics
-          service, no tag manager, no advertising tag and no social media pixel
-          anywhere on it", and "No other third party receives anything about
-          your visit." The visible lede on /privacy/ says the same, and so does
-          the page's meta description. All of that is now false. This was
-          raised with the client when the tag was added; the copy is his and is
-          not edited without him.
+          ⛔ THE PRIVACY POLICY NOW DESCRIBES THIS TAG. RESOLVED 3 Sep 2026.
+          It used to flatly contradict it: the "Cookies and tracking" section
+          said "This website sets no cookies... no advertising tag and no
+          social media pixel anywhere on it", and the lede and meta description
+          said the same. The client confirmed the site does set cookies and
+          asked for the page to be corrected.
+
+          What the policy now names is what was MEASURED in a real browser
+          rather than assumed, so if this tag changes the policy has to change
+          with it:
+            _gcl_au   first party, ~3 months
+            IDE       .doubleclick.net, ~13 months
+            _gcl_ls   localStorage
+          and the third parties contacted are googletagmanager.com,
+          doubleclick.net and google.com. Note the policy no longer claims
+          Google Fonts is loaded: the two typefaces are self-hosted from
+          /assets/fonts/, which that sentence had wrong as well.
+
+          ⚠️ STILL OUTSTANDING, AND NOT SOMETHING A POLICY PAGE FIXES: these
+          cookies are set on arrival with no consent asked. UK PECR wants
+          consent BEFORE an advertising cookie is set, so a banner is still
+          required. Describing them accurately is necessary and is not
+          sufficient.
         */}
         <script
           async

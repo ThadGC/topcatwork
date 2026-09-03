@@ -88,7 +88,26 @@ describe('the three content-styled pages', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Privacy Policy');
     const legal = container.querySelector('.legal');
     expect(legal).toBeTruthy();
-    expect(legal!.textContent).toContain('This website sets no cookies');
+    /*
+      ⛔ THIS ASSERTION USED TO PIN THE FALSE CLAIM. Changed 3 Sep 2026.
+
+      It read `toContain('This website sets no cookies')`, which is a promise
+      the site stopped keeping the day the Google Ads tag went in on 31 Aug:
+      measured in a real browser, the site sets `_gcl_au` and a `doubleclick.net`
+      cookie on arrival. The test was green throughout, because it was checking
+      that the sentence was present rather than that it was true. A test named
+      "keeps the promises its own copy makes" has to fail when the copy stops
+      being accurate, so it now pins the corrected wording AND refuses the old
+      sentence outright.
+    */
+    expect(legal!.textContent).toContain('advertises with Google');
+    expect(legal!.textContent).toContain('_gcl_au');
+    expect(legal!.textContent).toContain('doubleclick.net');
+    expect(legal!.textContent).not.toContain('This website sets no cookies');
+    expect(legal!.textContent).not.toContain('no advertising tag');
+    /* The fonts are self-hosted from /assets/fonts/. The old copy named Google
+       Fonts as the site's one third party, which was wrong in both directions. */
+    expect(legal!.textContent).not.toContain('Google Fonts');
     expect(legal!.textContent).toContain('Information Commissioner');
     /* The #cookies anchor is linked from the footer; losing it 404s a link. */
     expect(legal!.querySelector('#cookies')).toBeTruthy();

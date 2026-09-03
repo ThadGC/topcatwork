@@ -1629,6 +1629,39 @@ a.foot-cv:hover {
   color: var(--faint);
 }
 
+/* ── the studio credit ──────────────────────────────────────────────────────
+   The last line of the site. Sits BELOW `.foot-bar` and outside it, so it does
+   not join that row's `space-between` and get flung to one edge; it is its own
+   centred line under the rule.
+
+   Quieter than the copyright above it on purpose: it is a signature, not a
+   claim on the client's footer. `--faint` is the same token the bar uses. */
+.foot-credit {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 0 clamp(18px, 2.6vh, 26px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+  opacity: 0.85;
+}
+
+.foot-credit-heart {
+  width: 12px;
+  height: 12px;
+  /* The gold the rest of the site accents with, so the mark belongs to the
+     page rather than sitting on top of it. */
+  fill: var(--gold);
+  margin: 0 4px;
+  /* Optical centring: a heart's visual mass sits above its box's midline. */
+  transform: translateY(0.5px);
+  flex: none;
+}
+
 .foot-social {
   display: flex;
   gap: 12px;
