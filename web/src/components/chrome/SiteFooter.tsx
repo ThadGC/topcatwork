@@ -250,6 +250,42 @@ export function SiteFooter({ faqHref = '/#faq' }: SiteFooterProps) {
 
       <div className="foot-bar">
         <span>{FOOT_COPYRIGHT}</span>
+
+        {/*
+          THE STUDIO CREDIT. Added 3 September 2026, moved into this row on the
+          same day: "it has to be in line with the 2026 Topcat Worktops Ltd all
+          rights reserved and the sitemap privacy terms, not further down."
+
+          So it is the MIDDLE child of `.foot-bar`, which is a
+          `justify-content: space-between` row — copyright left, credit centre,
+          legal links right. It is inside the bar rather than below it, which is
+          what puts it on the rule's own line.
+
+          ⛔ THE HEART IS AN INLINE SVG, NOT THE ❤ EMOJI. An emoji renders in
+          the platform's own colour and shape, red on almost every device, so it
+          could never be gold. Drawn here it takes `--gold` like every other
+          accent on the page and is identical everywhere.
+
+          `aria-label` carries the sentence in words and the heart is
+          `aria-hidden`, so a screen reader says "Designed with love by Apex
+          Growth" rather than announcing a path.
+
+          Not a link yet, as asked. Wrapping it in an <a> is the whole change.
+        */}
+        <p className="foot-credit" aria-label="Designed with love by Apex Growth">
+          <span aria-hidden="true">Designed with</span>
+          <svg
+            className="foot-credit-heart"
+            viewBox="0 0 24 24"
+            role="img"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M12 21s-7.5-4.7-9.6-9A5.4 5.4 0 0 1 12 6.6a5.4 5.4 0 0 1 9.6 5.4C19.5 16.3 12 21 12 21z" />
+          </svg>
+          <span aria-hidden="true">by Apex Growth</span>
+        </p>
+
         <div className="foot-legal">
           {FOOT_LEGAL.map((link) => (
             <a key={link.href} href={link.href}>
@@ -259,36 +295,6 @@ export function SiteFooter({ faqHref = '/#faq' }: SiteFooterProps) {
         </div>
       </div>
 
-      {/*
-        THE STUDIO CREDIT. Added 3 September 2026 at Thadeus's request: the last
-        line of the site, where an agency signs its work.
-
-        ⛔ THE HEART IS AN INLINE SVG, NOT THE ❤ EMOJI. An emoji renders in the
-        platform's own colour and shape — red on almost every device, and a
-        different silhouette on each — so it could not be gold and would not
-        match the site anywhere. Drawn here it takes `--gold` like every other
-        accent on the page and is identical on every platform.
-
-        `aria-label` on the paragraph carries the sentence in words, and the
-        heart is `aria-hidden`, so a screen reader says "Designed with love by
-        Apex Growth" rather than announcing a path element.
-
-        Not a link yet — Thadeus asked for the wording now and the link later,
-        so this is a <span> and adding an <a> around it is the whole change.
-      */}
-      <p className="foot-credit" aria-label="Designed with love by Apex Growth">
-        <span aria-hidden="true">Designed with </span>
-        <svg
-          className="foot-credit-heart"
-          viewBox="0 0 24 24"
-          role="img"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path d="M12 21s-7.5-4.7-9.6-9A5.4 5.4 0 0 1 12 6.6a5.4 5.4 0 0 1 9.6 5.4C19.5 16.3 12 21 12 21z" />
-        </svg>
-        <span aria-hidden="true"> by Apex Growth</span>
-      </p>
     </footer>
   );
 }
