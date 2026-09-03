@@ -512,6 +512,9 @@ function tc_send_by_mail(array $m): bool {
 }
 
 $delivered = false;
+/* Which rung carried it, reported in the JSON so the next person can see the
+   delivery path without adding logging. send.php does the same with X-TC-Sender. */
+$VIA = 'none';
 
 if ($SMTP_READY) {
   try {
@@ -527,6 +530,7 @@ if ($SMTP_READY) {
     $m->AltBody = $plain;
     $m->send();
     $delivered = true;
+    $VIA = 'smtp';
   } catch (MailException|Throwable $e) {
     error_log('[topcat] api/enquiry notification failed: ' . $e->getMessage());
   }
@@ -535,21 +539,48 @@ if ($SMTP_READY) {
 /* ⛔ NOT `else`. If SMTP is configured but fails on THIS request, the enquiry
    is still worth more than the error — route.ts carries the same comment and
    the same decision. */
-if (!$delivered) {
-  $delivered = tc_forward($FORWARD_URL);
-}
 
-/* ⛔ AND THE HOST'S OWN MAIL TRANSPORT LAST. Measured on the live host: a
-   valid enquiry failed in 1.3s, far too fast for the 8s connect timeout on the
-   forward, so outbound HTTP is being refused there. That left every enquiry
-   dead with both of the paths above unavailable. mail() needs neither a
-   password nor an outbound connection. */
+/*
+  ⛔ THE HOST'S OWN mail() COMES BEFORE THE FORWARD, AND THE ORDER IS THE WHOLE
+  POINT. REORDERED 3 Sep 2026 after enquiries reported "sent" and never arrived.
+
+  The forward answers {"ok":true} when the FAR host's mail() QUEUES the message.
+  Queued is not delivered, and on that path it was not being delivered:
+
+    topcatworktops.co.uk  A          35.214.97.99    site and mailbox
+    thadeusg3.sg-host.com A          35.214.107.17   the forwarding host
+    SPF  v=spf1 +a +mx include:_spf.mailspamprotection.com ~all
+    MX   mx10/20/30.antispam.mailspamprotection.com
+
+  35.214.107.17 is not covered by +a, not by +mx, and not by the include, so it
+  falls through to ~all. The message therefore arrives claiming to be From an
+  address at topcatworktops.co.uk, from a server that domain does not authorise,
+  addressed to that same domain, at SiteGround's own antispam MX. That is the
+  exact shape of a spoof and it is quarantined. mail() returned true, send.php
+  answered ok, this endpoint reported delivered, and nobody received anything.
+
+  This host is 35.214.97.99 — the SAME machine that holds the mailbox. Its
+  mail() is a local handover that never crosses a network boundary and passes
+  SPF on `+a`. It is strictly the better path wherever it exists, so it is tried
+  first and the forward is kept only as the last resort for a host that has no
+  working mail() of its own.
+
+  ⚠️ DO NOT "SIMPLIFY" THIS BACK. A forward that reports success while the mail
+  is being dropped is worse than an honest failure, because it hides the fault
+  behind a thank-you message.
+*/
 if (!$delivered) {
   $delivered = tc_send_by_mail([
     'from' => $FROM, 'fromName' => $FROM_NAME, 'to' => $TO,
     'replyTo' => $emailOK, 'replyName' => $name !== '' ? $name : $emailOK,
     'attach' => $attach, 'subject' => $subject, 'html' => $html, 'plain' => $plain,
   ]);
+  if ($delivered) $VIA = 'mail';
+}
+
+if (!$delivered) {
+  $delivered = tc_forward($FORWARD_URL);
+  if ($delivered) $VIA = 'forward';
 }
 
 if (!$delivered) tc_fail();
@@ -575,4 +606,4 @@ if ($SMTP_READY && $emailOK !== '') {
   }
 }
 
-tc_out(200, ['ok' => true]);
+tc_out(200, ['ok' => true, 'via' => $VIA]);
