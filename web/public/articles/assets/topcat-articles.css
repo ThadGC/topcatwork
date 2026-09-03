@@ -1714,6 +1714,39 @@ header.bar.scrolled .bar-flare::after {
   display: block;
 }
 
+/* ⛔ THE LOGO IS A BUTTON, SO IT MUST NOT BEHAVE LIKE TEXT OR LIKE AN IMAGE.
+   ADDED 3 September 2026.
+
+   The client, on desktop: "the logo icon struggles to click, if I click it
+   starts highlighting the text."
+
+   On the home page the brand click is preventDefault'd — useFilm answers it
+   with skipToEnd instead of navigating — so the browser's default action never
+   runs, but the SELECTION the mousedown already started does. Any click with a
+   pixel or two of hand movement in it, and every double click, leaves the
+   header text highlighted and nothing else having happened. The <img> is also
+   `draggable` by default, so a slightly longer movement starts dragging the
+   logo instead.
+
+   Neither is guarded anywhere: `grep -c user-select chrome.css` returned 0
+   before this rule.
+
+   ⚠️ HONEST LIMIT: the highlight itself did not reproduce under Playwright —
+   a synthetic mouse does not begin a native selection the way a trackpad does
+   — so this is the fix for the mechanism, verified present, rather than a fix
+   verified against a reproduction. What DID reproduce on the live snapshot is
+   the other half of his sentence: a double click scrolled to the end of the
+   runway and left `data-film="on"`, so the film never locked. That half is
+   already fixed in this build and reaches him with the next upload.
+
+   Scoped to the brand only. The rest of the header stays selectable. */
+.brand,
+.brand-logo {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .brand-stack .brand-logo {
   height: 104px;
 }

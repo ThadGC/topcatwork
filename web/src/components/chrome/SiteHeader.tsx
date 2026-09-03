@@ -143,6 +143,11 @@ export function SiteHeader({
           width={1455}
           height={323}
           decoding="async"
+          /* Pairs with the `-webkit-user-drag` rule in chrome.css: on the home
+             page the brand click is preventDefault'd, so without this a click
+             that moves a few pixels drags the logo instead of doing anything.
+             The attribute is what Firefox honours; the CSS covers WebKit. */
+          draggable={false}
         />
       </a>
 
