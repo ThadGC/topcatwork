@@ -119,6 +119,72 @@
   RewriteRule ^articles/$ /articles [R=301,L]
   RewriteRule ^articles$ /articles.html [L]
 
+  # -- 1c. A STRAY EMPTY DIRECTORY MUST NOT MASK ITS OWN .html FILE ----------
+  # ⛔ ADDED 3 September 2026, AFTER THE LIVE SITE 403'd ON ELEVEN PAGES.
+  #
+  # The client, and it was every service page at once: "the inner pages like
+  # kitchen worktops and all the other sub services and some of the main pages
+  # are showing a 403 error."
+  #
+  # MEASURED on the live domain, all eleven identical:
+  #   /services/kitchen-worktops      301 -> /services/kitchen-worktops/ -> 403
+  #   /services/bathroom-worktops     301 -> ... -> 403   (and the other seven)
+  #   /stone-selector                 301 -> /stone-selector/            -> 403
+  #   /stones/compare                 301 -> /stones/compare/            -> 403
+  # while the flat files were all fine:
+  #   /services/kitchen-worktops.html 200
+  #   /stone-selector.html            200
+  # and a path with no directory behind it 404s as it should:
+  #   /services/definitely-not-a-page 404, no redirect
+  #
+  # THE CAUSE IS DEBRIS ON THE SERVER, NOT A RULE. An upload left EMPTY
+  # directories at exactly those clean-URL paths — `services/kitchen-worktops/`
+  # with no index.html inside it (verified: that URL 404s). mod_dir sees a real
+  # directory, 301s the slash on, and rule 2's `!-d` test then refuses the
+  # request because it IS now a directory. Nothing answers, directory indexing
+  # is off on this host, and Apache says 403. The 301 carries Apache's
+  # `charset=iso-8859-1` signature through SiteGround's nginx, which is how the
+  # directory was identified without shell access.
+  #
+  # This is the same mod_dir trap that `articles/` documents above, arriving
+  # from the other direction: there the directory was ours and deliberate, here
+  # it is rubbish left by an FTP client.
+  #
+  # ⛔ THE REAL FIX IS TO DELETE THOSE EMPTY DIRECTORIES. This rule is the
+  # guard so that it cannot take the site down again if they come back, and so
+  # the site is up before anyone can get to a file manager.
+  #
+  # ⚠️ ALL THREE CONDITIONS ARE LOAD-BEARING. Without the middle one this rule
+  # breaks the site far worse than the bug it fixes: /about/, /contact/,
+  # /guides/, /stones/, /projects/, /estimate/ and /worktops/ are REAL
+  # directories with a real index.html AND a flat `about.html` twin beside them
+  # (all fourteen verified 200 on the live domain). A rule that only asked
+  # "-d and .html exists" would serve the flat twin instead of the directory's
+  # own index on every one of them. Requiring that the directory has NO
+  # index.html narrows this to exactly the broken shape and nothing else.
+  # ⛔ THE TESTS ARE WRITTEN AGAINST $1, NOT %{REQUEST_FILENAME}, AND THAT IS
+  # THE WHOLE RULE. Written the obvious way — `%{REQUEST_FILENAME}.html -f` —
+  # this rule does nothing at all, because by the time Apache re-enters with
+  # the slashed form mod_dir has already added the slash and REQUEST_FILENAME
+  # is `.../services/kitchen-worktops/`, so the test asks for
+  # `.../kitchen-worktops/.html` and fails. Measured on real Apache 2.4.67:
+  # still 404, indistinguishable from having added no rule.
+  #
+  # $1 comes from the rule pattern below, which strips the optional trailing
+  # slash, so both `/services/kitchen-worktops` and the slashed form it gets
+  # redirected to resolve to the same leaf.
+  #
+  # ⚠️ mod_dir STILL WINS THE FIRST PASS, and that is measured, not assumed:
+  # the clean URL is 301 -> slashed form -> 200, one hop, not zero. mod_dir's
+  # fixup runs ahead of the per-directory rewrite, so the redirect is issued
+  # before this rule is reached and the rule then answers the slashed request.
+  # Harmless — one cached redirect, the right page, the right content — but do
+  # not write it up as hop-free. Deleting the stray directories is what
+  # actually removes the hop.
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteCond %{DOCUMENT_ROOT}/$1/index.html !-f
+  RewriteRule ^(.+?)/?$ /$1.html [L]
+
   # -- 2. serve every flat-exported route at its clean URL -------------------
   # Only when the request is not already a real file or directory, so existing
   # assets, directory-index routes and send.php are untouched.
