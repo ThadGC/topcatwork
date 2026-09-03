@@ -354,6 +354,48 @@
   z-index: 0;
 }
 
+/* ⛔ THE END-STATE STILL MUST NOT BE THE FIRST THING ANYONE SEES.
+   ADDED 3 September 2026.
+
+   The client, on a cold desktop load and again in an incognito tab: "for a
+   split second it showed the surfaces worth building around screen, and then
+   it jumped to the your worktops section."
+
+   That is EXACTLY what was happening, and it is this element. `.still` is the
+   night-kitchen hero — the LAST frame of the story, and the page you get with
+   no JavaScript — and it sits at z-index 0 beneath `.plate`, which is the
+   client's render of frame 0, the quarry. Both are downloading at once. The
+   still is smaller and carries `fetchPriority="high"`, so it wins, and it
+   paints alone until the plate arrives on top of it.
+
+   MEASURED, real Chrome, cold cache at 8Mbps, screenshots every 230ms:
+     578ms   black, with the opening line
+    1018ms   THE NIGHT KITCHEN — the end of the film, shown at the start
+    1445ms   still the night kitchen
+    1887ms   the quarry plate begins to paint over it
+    2332ms   the quarry, correct
+   So for the better part of a second the visitor is shown the destination
+   before the journey, and then it swaps under fixed text — which reads as the
+   text having moved, and is the other half of his report.
+
+   `film-running` means a film is coming, so the end frame has no business on
+   screen. It is written during parse by the root layout, on the film's own
+   conditions, and it is removed by BOTH exits — `lockFilm()` at the end of the
+   film and `landed()` on any give-up path — so the still reappears at exactly
+   the moment it becomes correct again, with nothing new to keep in step.
+
+   ⚠️ Not `display:none`, which would drop it out of layout and cost a reflow
+   when it comes back, and would stop the browser fetching it during the film
+   so the handover at the end would have nothing to show. Opacity only: it
+   still loads, still occupies its box, and is simply not painted.
+
+   ⚠️ And no transition. At the lock the video is on its final frame directly
+   above this, so the still returning is invisible; a fade would only risk
+   being caught mid-way. */
+:global(html.film-running) .still {
+  opacity: 0;
+}
+
 /* ── scrims ─────────────────────────────────────────────────────────────── */
 
 .stage {

@@ -232,9 +232,32 @@ const VEIL_AT = 38;
    Restored 2 Sep 2026 from the arbiter, index.html:7251-7261 and 7745. See the
    long note on the `ready` ref in useFilm() for why it is here at all. */
 
-/** The arbiter's `SPAN_MIN`: the film may not start until this many seconds of
- *  it are decodable in one continuous run. Its number, kept. */
-const SPAN_MIN = 4;
+/**
+ * The arbiter's `SPAN_MIN`: the film may not start until this many seconds of
+ * it are decodable in one continuous run. Its number, kept — for the wide cut.
+ *
+ * ⚠️ THE PHONE GETS HALF, AND IT IS EARNED, NOT A FUDGE. Added 3 Sep 2026.
+ *
+ * The client: "on mobile, it took a while for the scroll to begin arrow to
+ * load in." That arrow is held back by this gate — deliberately, so the hero
+ * does not say "Scroll to begin" over a film that cannot move yet — so the
+ * gate opening late IS the arrow arriving late. My change, and this is the
+ * cost of it.
+ *
+ * The head start exists to cover the seeks the scrub will ask for before the
+ * buffer catches up, and what a seek costs is set by how far back the nearest
+ * keyframe is. MEASURED on the shipped cuts: the wide cut is a keyframe every
+ * 0.500s, the phone cut every 0.250s — twice as dense. A phone seek therefore
+ * decodes at most half as many frames as a wide one, so half the cushion buys
+ * the same protection. The phone cut is also 1.22Mbps against the wide's
+ * 2.38Mbps, so two seconds of it is 305KB rather than 595KB.
+ *
+ * This does NOT weaken the gate. The running cap below is what actually stops
+ * the text outrunning the picture, and it is untouched; this only decides how
+ * long the film waits before it may begin at all.
+ */
+const SPAN_MIN_WIDE = 4;
+const SPAN_MIN_PHONE = 2;
 
 /** How far ahead of the playhead the buffer must stay for the scrub to keep
  *  advancing once it has started. Smaller than SPAN_MIN on purpose: the start
@@ -921,7 +944,8 @@ export function useFilm(refs: FilmRefs, sources: FilmSources) {
 
       if (gated && vGate) {
         /* The start latch, one-way, exactly as the arbiter has it. */
-        if (!ready.current && vGate.readyState >= 3 && bufferedSpan(vGate) >= SPAN_MIN) {
+        const spanMin = g.band.phone ? SPAN_MIN_PHONE : SPAN_MIN_WIDE;
+        if (!ready.current && vGate.readyState >= 3 && bufferedSpan(vGate) >= spanMin) {
           ready.current = true;
         }
         /* The running cap. `Infinity` once the tail is in, so a fully
