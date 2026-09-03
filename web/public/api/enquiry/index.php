@@ -38,7 +38,15 @@ function tc_out(int $code, array $payload): void {
 }
 /** The one wording the visitor sees when delivery fails. Matches route.ts. */
 const TC_FAIL = 'We could not send that just now. Please call 0800 098 2812 and we will take it down.';
-function tc_fail(): void { tc_out(502, ['ok' => false, 'errors' => [TC_FAIL]]); }
+/* ⛔ 503, NOT 502. Changed 3 Sep 2026.
+   502 is Bad Gateway — a statement that the thing IN FRONT of this script had
+   a bad answer from something behind it. That is not what happened: the script
+   ran fine and cannot deliver, which is 503 Service Unavailable. It matters
+   beyond pedantry because this site sits behind SiteGround's nginx, and a 502
+   is precisely the status a fronting proxy is entitled to replace with its own
+   error page — in which case the visitor loses the phone number in TC_FAIL and
+   the form shows nothing useful at all. 503 is passed through. */
+function tc_fail(): void { tc_out(503, ['ok' => false, 'errors' => [TC_FAIL]]); }
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
   tc_out(405, ['ok' => false, 'errors' => ['This endpoint takes a POST.']]);
@@ -50,14 +58,25 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
    answer. It is never a PHP warning — those would print above the JSON and
    break the response for the form's `r.json()`.                            */
 $CFG = @include __DIR__ . '/config.php';
-if (!is_array($CFG) || empty($CFG['pass']) || $CFG['pass'] === 'PUT-THE-APP-PASSWORD-HERE') {
-  error_log('[topcat] api/enquiry: config.php missing or still holding the placeholder password');
-  tc_fail();
+/* ⛔ A MISSING CONFIG IS NO LONGER THE END OF THE REQUEST. Changed 3 Sep 2026.
+   It used to `tc_fail()` right here, which is why every enquiry on the live
+   host died: config.php has never been created on that server, so the endpoint
+   refused before it had even read the form. The Next route at
+   src/app/api/enquiry/route.ts has ALWAYS had a second way out — SMTP first,
+   the legacy send.php second, an honest failure third — and the two endpoints
+   are meant to be the same contract on two hosts. This is that third path
+   arriving on the PHP side; see the delivery block near the end of the file. */
+$SMTP_READY = is_array($CFG)
+  && !empty($CFG['pass'])
+  && $CFG['pass'] !== 'PUT-THE-APP-PASSWORD-HERE';
+if (!$SMTP_READY) {
+  error_log('[topcat] api/enquiry: no usable config.php — will forward to the legacy endpoint');
+  if (!is_array($CFG)) $CFG = [];
 }
 $SMTP_HOST = $CFG['host']      ?? 'smtp.gmail.com';
 $SMTP_PORT = (int)($CFG['port'] ?? 465);
 $SMTP_USER = $CFG['user']      ?? 'noreply@topcatworktops.co.uk';
-$SMTP_PASS = $CFG['pass'];
+$SMTP_PASS = $CFG['pass'] ?? '';
 $TO        = $CFG['to']        ?? 'info@topcatworktops.co.uk';
 $FROM      = $CFG['from']      ?? 'noreply@topcatworktops.co.uk';
 $FROM_NAME = $CFG['from_name'] ?? 'Topcat Worktops';
@@ -364,24 +383,101 @@ function tc_mailer(string $host, int $port, string $user, string $pass): PHPMail
 /* ⛔ THE NOTIFICATION IS THE ONE THAT DECIDES THE RESPONSE. If it fails the
    visitor is told to phone; the autoreply is a courtesy and its failure must
    never turn a delivered enquiry into an error. */
-try {
-  $m = tc_mailer($SMTP_HOST, $SMTP_PORT, $SMTP_USER, $SMTP_PASS);
-  $m->setFrom($FROM, $FROM_NAME);
-  $m->addAddress($TO);
-  /* So the client can hit reply and reach the customer, not the noreply box. */
-  if ($emailOK !== '') $m->addReplyTo($emailOK, $name !== '' ? $name : $emailOK);
-  foreach ($attach as $f) $m->addAttachment($f['tmp'], $f['name']);
-  $m->isHTML(true);
-  $m->Subject = $subject;
-  $m->Body    = $html;
-  $m->AltBody = $plain;
-  $m->send();
-} catch (MailException|Throwable $e) {
-  error_log('[topcat] api/enquiry notification failed: ' . $e->getMessage());
-  tc_fail();
+/**
+ * The legacy endpoint on the client's OWN old host, which is configured and
+ * sending today — `GET send.php?selftest=1` answers
+ * {"ok":true,"via":"branded+host-envelope","to":"info@topcatworktops.co.uk"}.
+ * Identical default to route.ts's ENQUIRY_FORWARD_URL, so both endpoints fall
+ * back to the same place. Overridable from config.php without touching code.
+ */
+$FORWARD_URL = $CFG['forward'] ?? 'https://thadeusg3.sg-host.com/send.php';
+
+/**
+ * Hand the ORIGINAL submission to the legacy endpoint, exactly as the browser
+ * sent it: same field names, same files. send.php then builds and sends both
+ * emails itself, which is why nothing composed above is passed along — this is
+ * a handover, not a re-send, and it is the same thing route.ts does.
+ */
+function tc_forward(string $url): bool {
+  if ($url === '' || !function_exists('curl_init')) return false;
+  $post = [];
+  foreach ($_POST as $k => $v) { if (is_string($v)) $post[$k] = $v; }
+  foreach ($_FILES as $field => $f) {
+    $names = is_array($f['name']) ? $f['name'] : [$f['name']];
+    $tmps  = is_array($f['tmp_name']) ? $f['tmp_name'] : [$f['tmp_name']];
+    $types = is_array($f['type']) ? $f['type'] : [$f['type']];
+    foreach ($names as $i => $n) {
+      if (!isset($tmps[$i]) || !is_uploaded_file($tmps[$i])) continue;
+      $key = is_array($f['name']) ? $field . '[' . $i . ']' : $field;
+      $post[$key] = new CURLFile($tmps[$i], $types[$i] ?: 'application/octet-stream', $n ?: 'attachment');
+    }
+  }
+  $ch = curl_init($url);
+  curl_setopt_array($ch, [
+    CURLOPT_POST => true,
+    CURLOPT_POSTFIELDS => $post,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_FOLLOWLOCATION => true,
+    /* Bounded, because a visitor is waiting on this request. Long enough for
+       an upload of real photographs on a domestic connection. */
+    CURLOPT_TIMEOUT => 25,
+    CURLOPT_CONNECTTIMEOUT => 8,
+  ]);
+  $body = curl_exec($ch);
+  $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  $err  = curl_error($ch);
+  /* NO curl_close(). It is deprecated from PHP 8.5 and the notice PRINTS,
+     above the JSON, which is precisely the failure this file's header warns
+     about: the form calls r.json() on the response, and a stray <br /><b>
+     ahead of the body makes it unparseable. Caught on PHP 8.5 locally before
+     this shipped. The handle is freed when it goes out of scope, and has been
+     since PHP 8.0. */
+  if ($body === false || $code < 200 || $code >= 300) {
+    error_log('[topcat] api/enquiry forward failed: HTTP ' . $code . ' ' . $err);
+    return false;
+  }
+  /* send.php answers {"ok":true,...}. Anything else is a refusal, and a 200
+     carrying ok:false must not be read as delivered. */
+  $j = json_decode((string)$body, true);
+  if (is_array($j) && array_key_exists('ok', $j)) return $j['ok'] === true;
+  error_log('[topcat] api/enquiry forward: unreadable answer: ' . substr((string)$body, 0, 200));
+  return false;
 }
 
-if ($emailOK !== '') {
+$delivered = false;
+
+if ($SMTP_READY) {
+  try {
+    $m = tc_mailer($SMTP_HOST, $SMTP_PORT, $SMTP_USER, $SMTP_PASS);
+    $m->setFrom($FROM, $FROM_NAME);
+    $m->addAddress($TO);
+    /* So the client can hit reply and reach the customer, not the noreply box. */
+    if ($emailOK !== '') $m->addReplyTo($emailOK, $name !== '' ? $name : $emailOK);
+    foreach ($attach as $f) $m->addAttachment($f['tmp'], $f['name']);
+    $m->isHTML(true);
+    $m->Subject = $subject;
+    $m->Body    = $html;
+    $m->AltBody = $plain;
+    $m->send();
+    $delivered = true;
+  } catch (MailException|Throwable $e) {
+    error_log('[topcat] api/enquiry notification failed: ' . $e->getMessage());
+  }
+}
+
+/* ⛔ NOT `else`. If SMTP is configured but fails on THIS request, the enquiry
+   is still worth more than the error — route.ts carries the same comment and
+   the same decision. */
+if (!$delivered) {
+  $delivered = tc_forward($FORWARD_URL);
+}
+
+if (!$delivered) tc_fail();
+
+/* Only when we sent the notification ourselves. On the forwarded path send.php
+   has already sent its own confirmation, and a second one would be a duplicate
+   in the customer's inbox. */
+if ($SMTP_READY && $emailOK !== '') {
   try {
     $a = tc_mailer($SMTP_HOST, $SMTP_PORT, $SMTP_USER, $SMTP_PASS);
     $a->setFrom($FROM, $FROM_NAME);

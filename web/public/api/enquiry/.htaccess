@@ -1,0 +1,17 @@
+# ⛔ LOAD-BEARING, AND IT IS HALF OF A PAIR. Added 3 September 2026.
+#
+# `index.php` in here makes /api/enquiry a real DIRECTORY, so mod_dir 301s the
+# slash-less form. A browser answering a 301 re-issues the request as a GET and
+# DROPS THE BODY, so every form on the site posted its enquiry into a redirect
+# and the endpoint reported being called with the wrong method. That is the
+# "This endpoint takes a POST." the client photographed.
+#
+# The other half is `RewriteRule ^api/enquiry/?$ /api/enquiry/index.php [L]` in
+# the ROOT .htaccess, above rule 0. NEITHER HALF WORKS ALONE:
+#   - the rewrite alone still 301s, because mod_dir's fixup runs first;
+#   - this alone 404s, because mod_dir will not serve a DirectoryIndex for the
+#     slash-less form once the slash is off. That is the 2 Sep /api/articles
+#     result, and it is why this file must never be uploaded on its own.
+#
+# Same pairing as public/articles/.htaccess, for the same reason.
+DirectorySlash Off

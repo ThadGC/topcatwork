@@ -53,6 +53,54 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # -- 0a. THE ENQUIRY ENDPOINT IS REACHED WITHOUT A REDIRECT ----------------
+  # ⛔ ADDED 3 September 2026. EVERY FORM ON THE LIVE SITE WAS BROKEN BY THIS.
+  #
+  # The client sent a screenshot of the contact form answering
+  #     "This endpoint takes a POST."
+  # which is the endpoint's own words, and the reason is that it never received
+  # the POST.
+  #
+  # MEASURED on the live domain:
+  #     POST /api/enquiry   -> 301 to /api/enquiry/
+  #     GET  /api/enquiry   -> {"ok":false,"errors":["This endpoint takes a POST."]}
+  #
+  # `api/enquiry/index.php` makes `api/enquiry` a real DIRECTORY, so mod_dir
+  # 301s the slash-less form. A browser answering a 301 re-issues the request
+  # as a GET and drops the body — that is what browsers do, and it is why the
+  # script reports being called with the wrong method. Rule 0 below passes the
+  # request through untouched, which was never enough: passing through is
+  # exactly what lets mod_dir have it.
+  #
+  # This rewrites the slash-less form straight onto the script, INTERNALLY, so
+  # there is no redirect for the browser to answer and the POST body survives.
+  # It has to sit above rule 0, because rule 0's `[L]` would otherwise end the
+  # round first.
+  #
+  # ⚠️ Written to match with and without the trailing slash, so the slashed
+  # form is served by the same line rather than relying on DirectoryIndex.
+  #
+  # ⛔ AND IT TAKES BOTH HALVES. THIS RULE ON ITS OWN DOES NOTHING, MEASURED.
+  # With only the rewrite, real Apache 2.4.67 still answered
+  #     POST /api/enquiry -> 301
+  # because mod_dir's fixup runs ahead of the per-directory rewrite and had
+  # already issued the redirect. The second half is `DirectorySlash Off` in
+  # api/enquiry/.htaccess, and the two together are exactly the shape rule 1b
+  # uses to rescue /articles — which is the precedent that says this works.
+  #
+  # The 2 Sep note about `DirectorySlash Off` making /api/articles WORSE still
+  # stands and does not contradict this: there it was turned off for a path
+  # that had NO explicit rewrite, so nothing was left to answer the slash-less
+  # form and it 404d. Turned off beside a rewrite that answers, it is correct.
+  # Never add one without the other.
+  #
+  # VERIFIED on real Apache 2.4.67 with PHP over CGI, against a stub that
+  # reports the method it was actually called with:
+  #     POST /api/enquiry            -> {"method":"POST","body":"name=test&msg=hello"}  0 redirects
+  #     POST /api/enquiry/           -> {"method":"POST","body":"name=test&msg=hello"}  0 redirects
+  #     POST /api/enquiry/index.php  -> {"method":"POST","body":"name=test&msg=hello"}  0 redirects
+  RewriteRule ^api/enquiry/?$ /api/enquiry/index.php [L]
+
   # -- 0. THE ENQUIRY ENDPOINT IS LEFT ALONE ---------------------------------
   # ⛔ EVERY FORM ON THE SITE POSTS TO /api/enquiry. Rule 2 below would not
   # touch it — `api/enquiry` is a real directory, so its `!-d` test already
